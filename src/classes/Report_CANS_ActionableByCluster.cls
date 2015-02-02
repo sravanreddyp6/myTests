@@ -29,9 +29,9 @@ public with sharing class Report_CANS_ActionableByCluster {
         
             optClusters =  new List<SelectOption>();
             optClusters.Add( new SelectOption('','--None--'));
-            optClusters.Add( new SelectOption('Behavior_and_Risk','Behavior and Risk'));
+            optClusters.Add( new SelectOption('Behavior_and_Risk','Behavior & Risk'));
             optClusters.Add( new SelectOption('Education','Education'));
-            optClusters.Add( new SelectOption('WellBeing','Well Being'));
+            optClusters.Add( new SelectOption('WellBeing','Well-Being'));
 
             optInterval = new List<SelectOption>();
             optInterval.Add( new SelectOption('Intake', 'Intake'));
@@ -141,23 +141,23 @@ public with sharing class Report_CANS_ActionableByCluster {
 
     public void buildRpt(){
          
-        Integer pbscount = 0;
+        Integer pbscount = 0, uniquePBS = 0;
+        
         String pbstate = '';
         
-        List<Assessment_Response__c> DDPeople = [select assessment__r.accountperson__c from assessment_response__c  
+        List<ID> DDPBS = new LIst<ID>();
+		for (List<Assessment_Response__c> DDPeople :  [select assessment__r.accountperson__c from assessment_response__c  
 									where score__c > 0 
 									and question__r.question_number__c = 37 
 									and assessment__r.interval__c = 'Intake'  
 									and assessment__r.disregard__c = false 
                                     and assessment__r.status__c = 'Locked'  
-                                    and assessment__r.admission__r.state__c in :CANSStates];
-		
-		List<ID> DDPBS = new LIst<ID>();
-		for (Assessment_Response__c ar: DDPeople ) 
-			DDPBS.Add( (ID) ar.assessment__r.accountperson__c);
-			                                                  
+                                    and assessment__r.admission__r.state__c in :CANSStates]) {
+			for (Assessment_Response__c ar: DDPeople ) 
+				DDPBS.Add( (ID) ar.assessment__r.accountperson__c);
+        }	                                                  
                                                   
-        String strQuery = 'select count(accountperson__c), admission__r.state__c from assessment__c where id in (select assessment__c ' + 
+        String strQuery = 'select count_distinct(accountperson__c), count(accountperson__c), admission__r.state__c from assessment__c where id in (select assessment__c ' + 
                                                          ' from assessment_response__c' + 
                                                          ' where score__c in (2, 6)' +
                                                          ' and question__r.question_number__c in :questionsInScope' ;
@@ -187,16 +187,17 @@ public with sharing class Report_CANS_ActionableByCluster {
         // count of qualifying 'actionable' = number of PBS with intake or discharge scoring 2 or 3 for any question in the cluster
         list<AggregateResult> QualifyingCountByState = database.query(strQuery);
 
-		integer totalPBS = 0, totalQual = 0;
+		integer totalPBS = 0, totalQual = 0; 
         for ( AggregateResult ar : QualifyingCountByState ) {
             
-            pbscount = (Integer)ar.get('expr0');
+            uniquePBS = (Integer)ar.get('expr0');
+            pbscount = (Integer)ar.get('expr1');
             pbstate = (String)ar.get('state__c');
             
             StateRowData stdata = srd.get(pbstate);
-            stdata.PBSCount = pbscount;
+            stdata.PBSCount = uniquePBS;
             stdata.QualifyingCount = pbscount;
-            totalPBS += pbscount;
+            totalPBS += uniquePBS;
             totalQual += pbscount;
             
         }
@@ -223,26 +224,6 @@ public with sharing class Report_CANS_ActionableByCluster {
 		
 		        
         // count of qualifying 'actionable' = number of PBS with intake or discharge scoring 2 or 3 for any question in the cluster
-       /* list<AggregateResult> QualifyingCountByQuestion = [ select count(score__c), 
-        														   question__c, 
-        														   assessment__r.admission__r.state__c 
-        													from assessment_response__c 
-        													where 
-        													score__c in (2, 6) 
-	                                                         and question__r.question_number__c in :QuestionsInScope
-    	                                                     and assessment__r.Interval__c = :selectedInterval
-        	                                                 and assessment__r.assessment_type__r.name = 'CANS'
-            	                                             and assessment__r.disregard__c = false
-                	                                         and assessment__r.status__c = 'Locked'
-                                                         	 and assessment__r.admission__r.state__c in :CANSStates 
-                                            and assessment__r.assessment_date__c >= :startDate 
-                                            and assessment__r.assessment_date__c <= :endDate
-                                            and assessment__r.service_line__c in :selectedSL
-                                            group by question__c, assessment__r.admission__r.state__c
-                                            ];
-                                            
-           */                                 
-                                            
        strQuery = 'select count(score__c), question__c, assessment__r.admission__r.state__c from assessment_response__c' + 
         		' where score__c in (2, 6) and question__r.question_number__c in :QuestionsInScope' ;
         		
@@ -288,7 +269,7 @@ public with sharing class Report_CANS_ActionableByCluster {
         }   
         
 		showData = true;
-        System.Debug( 'Final Result: ' + srd );      
+//        System.Debug( 'Final Result: ' + srd );      
     }
     
     
@@ -303,7 +284,7 @@ public with sharing class Report_CANS_ActionableByCluster {
             strState = var_State;
             PBSCount = 0;
             QualifyingCount = 0; 
-			          
+			     
         }
     }
    

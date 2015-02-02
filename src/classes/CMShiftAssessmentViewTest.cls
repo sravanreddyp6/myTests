@@ -3,6 +3,7 @@ private class CMShiftAssessmentViewTest {
 
 	private static testmethod void myTests() {
 		TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
+		
 		Evaluation__c eval = new Evaluation__c ();
 		eval.ServiceAssignment__c = testData.theSA.Id;
 		eval.Resident_Demonstrating_Issues__c ='test;test2';
@@ -10,7 +11,16 @@ private class CMShiftAssessmentViewTest {
 		eval.Mood__c = 'test;test2';
 		eval.Breathe_sounds__c ='test;test2';
 		eval.Autonomic_Dysreflexia_Areas_Assessed__c = 'test;test2';
+		eval.Shift_Start_time__c = system.Now();
+		eval.Shift_End_time__c = system.Now()+5;
 		insert eval;
+		
+		Task t = new Task();
+		t.WhatID = eval.Id;
+		t.WhoId = testData.contactID;
+		t.status ='Open';
+		
+		insert t;
 		
 		PageReference pg = Page.CMShiftAssessmentView;
 		test.setCurrentpage(pg);
@@ -30,6 +40,11 @@ private class CMShiftAssessmentViewTest {
 		controller.getDysreflexiaValues();
 		
 		controller.showAddVitalsDetail();
+		
+		controller.evaluation.Shift_Start_Time__c = system.Now().addMinutes(1);
+		Datetime startTime = system.Now().addMinutes(1); 
+		controller.updateshiftTime();
+		system.assertEquals(startTime, controller.evaluation.shift_start_time__c);
 		
 		system.assertEquals(null,controller.currentVitalsDetail.Id);
 		controller.saveVitalsDetail();
@@ -54,10 +69,15 @@ private class CMShiftAssessmentViewTest {
 		controller.showEditpUlcerDetail();
 		controller.savepUlcerDetail();
 		
-		controller.disregardEval();
-		system.assertEquals('Disregard',controller.evaluation.Status__c,controller.evaluation.Status__c);
+		CMShiftAssessmentView.finddupeEval(datetime.Now().format(), system.Now().addMinutes(5).format(), testData.theSA.Id, controller.evaluation.Id);
 		
+		controller.disregardEval();
+		Task tk = [SELECT Id, Status FROM Task WHERE WhatId =:controller.evaluation.Id LIMIT 1];
+		system.assertEquals('Disregard',controller.evaluation.Status__c,controller.evaluation.Status__c);
+		system.AssertEquals('Completed',tk.Status);
+	
 		controller.finalizeEval();
 		system.assertEquals('Final',controller.evaluation.Status__c,controller.evaluation.Status__c);
+		
 	}
 }

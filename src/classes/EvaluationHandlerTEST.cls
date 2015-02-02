@@ -43,7 +43,9 @@ private class EvaluationHandlerTEST {
         update myEval;
 
         Evaluation__c eval2 = [ SELECT Is_Signed__c FROM Evaluation__c WHERE Id = :myEval.Id LIMIT 1 ];
-        System.assert(eval2.Is_Signed__c==false);
+        //System.assert(eval2.Is_Signed__c==false);
+        System.assert(eval2.Is_Signed__c==True); // Once E-signed is checked, user's are not allowed to make an update on Nurses Documentation.
+        
 
         delete myEval;
 

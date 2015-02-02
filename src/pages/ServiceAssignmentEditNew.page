@@ -1197,14 +1197,14 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:pageBlockSectionItem >
 						<apex:outputPanel >
 							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="evalstartdate"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="evalstartdate" shiftTop="20" />
 							<apex:inputhidden value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
 					<apex:pageBlockSectionItem >
 					<apex:outputpanel >
 							<apex:outputLabel Value="Shift End Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="evalenddate"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="evalenddate" shiftTop="20" />
 							<apex:inputhidden value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
 						</apex:outputpanel>
 					</apex:pageBlockSectionItem>

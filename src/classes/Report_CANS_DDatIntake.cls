@@ -28,6 +28,7 @@ public with sharing class Report_CANS_DDatIntake {
 	                                          and disregard__c = false
 	                                          and status__c = 'Locked'
 	                                          group by Admission__r.state__c
+	                                          order by Admission__r.state__c
 	                                         ]) {
 	            system.debug(ar);
 	            
@@ -125,6 +126,7 @@ public with sharing class Report_CANS_DDatIntake {
                                             and assessment_date__c >= :startDate 
                                             and assessment_date__c <= :endDate
                                             group by admission__r.state__c
+                                            order by admission__r.state__c
                                             ];
 
         for ( AggregateResult ar : CountByState ) {
@@ -157,6 +159,7 @@ public with sharing class Report_CANS_DDatIntake {
                                             and assessment_date__c >= :startDate 
                                             and assessment_date__c <= :endDate
                                             group by admission__r.state__c
+                                            order by admission__r.state__c
                                             ];
 
         for ( AggregateResult ar : QualifyingCountByState ) {
@@ -252,7 +255,7 @@ public with sharing class Report_CANS_DDatIntake {
         public double calcPct( ) {
         	
         	if ( PBSCount > 0 ) 
-        		PercentDD= ((Double)qualifyingCount / (Double)PBSCount ) *100;
+        		PercentDD= ((Double)qualifyingCount / (Double)PBSCount ); // will be formatted at % by page
         	else
         		PercentDD = 0;
         		

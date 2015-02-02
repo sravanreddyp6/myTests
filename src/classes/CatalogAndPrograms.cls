@@ -19,9 +19,7 @@ public with sharing class CatalogAndPrograms {
         pg.setRedirect(true);
         return pg; 
     }
-  
-    public boolean showRes{get; set;}
-    
+      
     public pageReference updatePrgAssoc(){
 	    upsert curr_catalog;
 	    curCtlg = curr_catalog.id;	   

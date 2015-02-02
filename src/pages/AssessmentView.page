@@ -8,6 +8,15 @@
 		.bPageBlock[id$=CANS_Assessment_Detail] {
 			margin-top: 10px;
 		}
+		.breadcrumb,
+		.breadcrumb a,
+		.breadcrumb a.visited {
+			color: #6699ff !important;
+			text-decoration: none
+		}
+		.breadcrumb a:hover {
+			text-decoration: underline
+		}
 	</style>
 	<br />
 	<div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;
@@ -17,7 +26,9 @@
 		<apex:outputText>Assessment</apex:outputText>
 	</div>
 	<apex:pageMessages />
-	<apex:outputField value="{!Assessment__c.OWNERID}" style="display: none;" />
+	<apex:outputPanel style="display:none">
+		<apex:outputField value="{!Assessment__c.OWNERID}" />
+	</apex:outputPanel>
 	<apex:outputPanel id="AssmtDetail" rendered="{!Assessment__c.Assessment_Type__r.Name != 'CANS'}">
 		<apex:detail subject="{!Assessment__c.ID}" relatedList="true" />
 	</apex:outputPanel>
@@ -36,7 +47,7 @@
 			<apex:outputField value="{!Assessment__c.Status__c}" />
 			<apex:outputField value="{!Assessment__c.Score__c}" label="Total Assessment Score" />
 			<apex:outputField value="{!Assessment__c.Disregard__c}" />
-			<apex:outputField value="{!Assessment__c.TFC_Family_Vistas__c}" />
+			<apex:outputField value="{!Assessment__c.Service_Line__c}" />
 			<apex:pageBlockSectionItem />
 			<apex:pageBlockSectionItem>
 				<apex:outputLabel value="Created By" />
@@ -91,8 +102,7 @@
 	<apex:outputPanel layout="block" style="text-align:center;">
 		<apex:form>
 			<apex:pageMessages id="pageErrors"></apex:pageMessages>
-			<apex:commandButton value="Return to Admission" action="/{!Assessment__c.Admission__r.Id}" />
-			<apex:commandButton value="Submit Assessment" action="{!SaveAndLock}" rendered="{!!Assessment__c.Locked__c}" status="myStatus" />
+			<apex:commandButton value="Finalize" action="{!SaveAndLock}" rendered="{!!Assessment__c.Locked__c}" status="myStatus" />
 			<apex:commandButton value="Unlock" action="{!Unlock}" rendered="{!Assessment__c.Locked__c && unlockAllowed}" status="myStatus" />
 			<apex:commandButton value="Disregard" action="{!setDisregard}" rendered="{!disregardAllowed}" status="myStatus" />
 		</apex:form>
