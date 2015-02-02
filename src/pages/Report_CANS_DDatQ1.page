@@ -68,63 +68,70 @@ td.details-control {
 table.dataTable tbody td.no-padding {
     padding: 0;
 }
-
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
 </style>
+
+<div class="header">CANS with Developmental Disability Identified at 1st Quarterly Assessment</div>
 
 	<apex:form >
 
 
 		<apex:pageMessages id="messages"></apex:pageMessages>
 
-		<apex:pageBlock id="CANSReportBlock"
-			title="CANS Developmental Disability Identified at 1st Quarterly Assessment">
-			<apex:actionregion >
-
+		<apex:pageBlock id="CANSReportBlock" title="Filters">
+				<apex:pageBlockButtons location="bottom">
+				<apex:commandButton value="Run" action="{!runReport}"
+								reRender="dataTable, tbl_maker, messages, buttonPanel"
+								status="myStatus" />
+				</apex:pageBlockButtons>
+								
 				<apex:pageBlockSection columns="1">
-
-
+				<apex:pageBlockSectionItem >
+				<apex:outputLabel value="" />
 					<apex:outputPanel >
-						<apex:outputLabel styleclass="labelCol" value="Start Date"
-							for="start_date" />
-						<apex:input type="auto" id="start_date" size="10"
-							label="Start Date" styleClass="datepicker" value="{! StartDate}" />
-						<apex:outputLabel styleclass="labelCol" value="End Date"
-							for="end_date" />
-						<apex:input type="auto" id="end_date" size="10" label="End Date"
-							styleClass="datepicker" value="{! EndDate}" />
+						<apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" />
+						<apex:input type="auto" id="start_date" size="10" label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+						<apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" />
+						<apex:input type="auto" id="end_date" size="10" label="End Date" styleClass="datepicker" value="{! EndDate}" />
 					</apex:outputPanel>
-					 
-					<apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+				<apex:outputLabel value="" />
+									 
+					<apex:outputPanel >
 					<apex:outputLabel styleClass="labelCol" value="Service Lines" />
  					<apex:selectCheckboxes value="{!selectedSL}" id="serviceLine" >
 					<apex:selectOptions value="{!optSL}" />
 					</apex:selectCheckboxes>
 					<a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
 					</apex:outputPanel>
-
-					<apex:pageBLockSectionItem >
-						<apex:outputPanel layout="none" id="buttonPanel">
-							<apex:commandButton value="Run" action="{!runReport}"
-								reRender="dataTable, tbl_maker, messages, buttonPanel"
-								status="myStatus" />
-						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+				<apex:outputLabel value="" />
 					</apex:pageBLockSectionItem>
 				</apex:pageBlockSection>
-			</apex:actionregion>
 		</apex:pageBlock>
 	</apex:form>
 
-	<apex:pageBlock id="dataTable">
+	<apex:pageBlock id="dataTable" title="Results">
+	<apex:pageBlockButtons id="exportbtn"> 
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('stateRows', 'CANS DD at 1st Quarterly')" value="Export to Excel" rendered="{!showData}" /></div>
+        </apex:pageBlockButtons>
+        
 <apex:outputPanel rendered="{!showData}">
 <table id="stateRows" cellspacing="0" class="hover" width="100%">
 	                <thead>
 	                    <tr>
 	                        <th></th>
 	                        <th>State</th>
-	                        <th style="text-align:right">Persons Being Served with 1st Quarterly</th>
-	                        <th style="text-align:right">Persons Being Served with Developmental Disability at 1st Quarterly</th>
-                            <th style="text-align:right">Percent with Developmental Disability at 1st Quarterly</th>
-	                        <th style="display:none">Details</th>
+	                        <th style="text-align:right">PBS with 1st Quarterly</th>
+	                        <th style="text-align:right">PBS with DD at 1st Quarterly</th>
+                            <th style="text-align:right">Percent with DD at 1st Quarterly</th>
+	                        <th style="display:none"></th>
 	                    </tr>
 	                </thead>
 	                <tbody>
@@ -134,7 +141,7 @@ table.dataTable tbody td.no-padding {
 	                                <td>{!s}</td>
 	                                <td style="text-align:right">{!srd[s].PBSCount}</td>
 	                                <td style="text-align:right">{!srd[s].QualifyingCount}</td>
-	                                <td style="text-align:right"><apex:outputtext value="{0,Number, #0.00}"><apex:param value="{!srd[s].PercentDD}" /></apex:outputtext></td>
+	                                <td style="text-align:right"><apex:outputtext value="{0,Number, #0.00%}"><apex:param value="{!srd[s].PercentDD}" /></apex:outputtext></td>
 	                                <td style="display:none">{! if (CONTAINS(asmtStates, s), asmtsByState[s],'' ) }</td>
 	                            </tr>
 	                    </apex:repeat>
@@ -219,7 +226,7 @@ j$(document).ready(function() {
 	initializeStateTable = function(){
     var table = j$('#stateRows').DataTable({
                     "scrollCollapse":   true,
-                    "order"         :   [[1, 'asc']],
+                    "ordering"      :   false,
                     "paging"        :   false,
                     "searching"		: 	false,
                     "columnDefs"    :   [{
@@ -251,6 +258,30 @@ j$(document).ready(function() {
 
 	initializeStateTable();
     });
+    
+    var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+  	//table2=j$('[id$=' + table+']');
+  	table2=table;
+  	
+    if (!table2.nodeType) table2 = document.getElementById(table2)
+    
+    // When the stripped button is clicked, clone the existing source
+	var clonedTable = j$(table2).clone();
+
+	// Strip your empty characters from the cloned table (hidden didn't seem to work since the cloned table isn't visible)
+	clonedTable.find('[style*="display:none"]').remove();
+
+    var ctx = {worksheet: name || 'Worksheet', table: clonedTable[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+    
+    
 
 </script>
 	</apex:outputPanel>

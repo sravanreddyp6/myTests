@@ -157,7 +157,66 @@
 			j$('[id$=enterNew]').hide();
 
 		}
+	
+	jQuery(document).ready(function (j$) {
+		handleVitals = function () {
+				var diagHR = j$('[id$=DiagheartRate]').val();
+				var diagO2 = j$('[id$=DiagO2]').val();
+
+				if (diagHR != '' && (diagHR > 120 || diagHR < 60)) {
+
+					j$('[id$=DiaginterventionLabel]').show();
+					j$('[id$=DiaginterventionPicklist]').show();
+
+					if (j$('[id$=DiaginterventionPicklist]').val() == 'Yes') {
+						j$('[id$=DiagnarrativeLabel]').show();
+						j$('[id$=DiaginterventionDescribe]').show();
+					} else {
+						j$('[id$=DiagnarrativeLabel]').hide();
+						j$('[id$=DiaginterventionDescribe]').hide();
+						j$('[id$=DiaginterventionDescribe]').val('');
+
+					}
+				} else {
+					j$('[id$=DiaginterventionLabel]').hide();
+					j$('[id$=DiaginterventionPicklist]').hide();
+					j$('[id$=DiagnarrativeLabel]').hide();
+					j$('[id$=DiaginterventionDescribe]').hide();
+					j$('[id$=DiaginterventionDescribe]').val('');
+					j$('[id$=DiaginterventionPicklist]').val('');
+				}
+
+				if (diagO2 != '' && diagO2 < 90) {
+
+					j$('[id$=DiagO2interventionLabel]').show();
+					j$('[id$=DiagO2interventionPicklist]').show();
+
+					if (j$('[id$=DiagO2interventionPicklist]').val() == 'Yes') {
+						j$('[id$=DiagO2narrativeLabel]').show();
+						j$('[id$=DiagO2interventionDescribe]').show();
+					} else {
+						j$('[id$=DiagO2narrativeLabel]').hide();
+						j$('[id$=DiagO2interventionDescribe]').hide();
+						j$('[id$=DiagO2interventionDescribe]').val('');
+
+					}
+
+				} else {
+
+					j$('[id$=DiagO2interventionLabel]').hide();
+					j$('[id$=DiagO2interventionPicklist]').hide();
+					j$('[id$=DiagO2narrativeLabel]').hide();
+					j$('[id$=DiagO2interventionDescribe]').hide();
+					j$('[id$=DiagO2interventionDescribe]').val('');
+					j$('[id$=DiagO2interventionPicklist]').val('');
+
+				}
+
+			};
+			
+			handleVitals();
 		
+	});
 
 	</script>
 
@@ -309,7 +368,7 @@
 				</apex:pageBlock>
 			</apex:tab>
 
-			<apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			<apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" >
 						<apex:pageBlockSectionItem >
@@ -325,8 +384,8 @@
 				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection title="Vitals Detail" Columns="1">
-						<apex:actionFunction name="showAddVitalsDetail" action="{!showAddVitalsDetail}" status="loadingVitalsDetailStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Add Vitals Detail', '{!$Component.wholePage}');" />
-						<apex:actionFunction name="showEditVitalsDetail" action="{!showEditVitalsDetail}" status="loadingVitalsDetaiStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Edit Vitals Detail', '{!$Component.wholePage}');">
+						<apex:actionFunction name="showAddVitalsDetail" action="{!showAddVitalsDetail}" status="loadingVitalsDetailStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Add Vitals Detail', '{!$Component.wholePage}'); handleVitals();" />
+						<apex:actionFunction name="showEditVitalsDetail" action="{!showEditVitalsDetail}" status="loadingVitalsDetaiStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Edit Vitals Detail', '{!$Component.wholePage}'); handleVitals();">
 							<apex:param name="currentVitalsDetailId" assignTo="{!currentVitalsDetailId}" value="" />
 						</apex:actionFunction>
 						<apex:outputPanel layout="none">
@@ -532,6 +591,7 @@
 						<apex:outputField value="{!Evaluation__c.Cheeks_Sores_Describe__c}" label="If Sores, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Cheeks__c), CONTAINS(Evaluation__c.Cheeks__c, 'Sores'))}" />
 						<apex:outputField value="{!Evaluation__c.Lips__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Lips_Sores_Describe__c}" label="If Sores, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Lips__c), CONTAINS(Evaluation__c.Lips__c, 'Sores'))}" />
+						<apex:outputField value="{!Evaluation__c.Teeth_Problems__c}" label="Teeth Problems" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Breath__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Saliva__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Narrative_Note__c}" label="Add Narrative Note" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
@@ -567,10 +627,10 @@
 						<apex:outputField value="{!Evaluation__c.Abdomen__c}" />
 						<apex:pageBlockSectionItem />
 						
-						<apex:outputfield Value="{!Evaluation__c.Weight_picklist__c}" label="Weight" />
+						<apex:outputfield Value="{!Evaluation__c.Weight_Picklist__c}" label="Weight" />
 						<apex:pageBlockSectionItem />
 						
-						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Weight_picklist__c == 'Yes'}" >
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Weight_Picklist__c == 'Yes'}" >
 							<apex:outputLabel value="" />
 							<apex:outputPanel >
 	                            <apex:outputLabel value="Current Weight"
@@ -590,7 +650,7 @@
 	                            <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
 	                        </apex:outputPanel>
 						</apex:pageBlockSectionItem>
-						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Weight_picklist__c == 'Yes'}" />
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Weight_Picklist__c == 'Yes'}" />
 
 						<apex:outputField value="{!Evaluation__c.Bowel_Continence__c}" />
 						<apex:pageBlockSectionItem />
@@ -863,7 +923,7 @@
 						<apex:outputText value=""  label="COMMUNICATION" />
 						<apex:outputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" label="Ability to make Needs known" />
 						<apex:outputText value="{!if (CONTAINS(Evaluation__c.Expression__c, 'Non-Verbal'), Evaluation__c.Expression__c + ' - ' + Evaluation__c.Expression_Other__c, Evaluation__c.Expression__c)}" label="Expression"  rendered="{!Evaluation__c.Able_to_make_Needs_Known__c == 'No'}"/>
-					</apex:pageBlockSection >
+					</apex:pageBlockSection>
 					<apex:pageBlockSection title="Safety" columns="1" >
 						<apex:outputField value="{!Evaluation__c.Safety_Awareness__c}" label="Safety Awareness" />
 						<apex:outputField value="{!Evaluation__c.Bed_Alarm__c}" label="Bed Alarm" />
@@ -1027,7 +1087,7 @@
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
 		<apex:outputPanel id="vitalsDetailDialog" style="display:none">
-			<span class="ui-helper-hidden-accessible"><output type="text"/></span>
+			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<apex:pageBlock title="Add/Edit Vitals Detail" id="vitalsDetailDialogMainBlock">
 				<apex:pageblockButtons location="bottom">
 					<apex:actionFunction name="saveVitalsDetail" action="{!saveVitalsDetail}" rerender="vitalsTable,vitalsDetailDialogMainBlock,vitalsDetailDialogErrors" status="saveVitalsDetailStatus" oncomplete="afterSave('{!$Component.vitalsDetailDialog}', request.options.parameters.keepDialogOpen, showAddVitalsDetail);">
@@ -1049,6 +1109,7 @@
 				<apex:pageMessages id="vitalsDetailDialogErrors" />
 				<apex:pageBlockSection columns="2">
 					<apex:inputField value="{!currentVitalsDetail.Date__c}" />
+					<apex:inputField value="{!currentVitalsDetail.Blood_Pressure__c}" />
 					<apex:pageBlockSectionItem >
 						<apex:outputPanel >
 							<apex:outputLabel for="DiagheartRate" value="Heart Rate" />
@@ -1097,7 +1158,6 @@
 					</apex:pageBlockSectionItem>
 					<apex:inputField value="{!currentVitalsDetail.R__c}" />
 					<apex:inputField value="{!currentVitalsDetail.Temperature__c}" />
-					<apex:inputField value="{!currentVitalsDetail.O2_Saturation__c}" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</apex:outputPanel>

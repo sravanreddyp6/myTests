@@ -1,4 +1,4 @@
-<apex:page showHeader="true" sidebar="false" controller="Report_Assessment_CANS_PBS_OverTime">
+<apex:page showHeader="true" sidebar="false" controller="Report_Assessment_CANS_PBS_OverTime" docType="html-5.0" readOnly="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
@@ -9,96 +9,90 @@
 <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/custom-green/jquery-ui.min.css')}"/>
 <style type="text/css">
-	.rowScore0{ background-color: white;}
-	.rowScore1{ background-color: rgba(255, 255, 0, 0.65);}
-	.rowScore2{ background-color: rgba(255, 165, 0, 0.65);}
-	.rowScore3{ background-color: rgba(255, 0, 0, 0.65);}
-	.groupHeader{background-color: rgb(229, 229, 229); font-weight: bold;}
+    .rowScore0{ background-color: white;}
+    .rowScore1{ background-color: rgba(255, 255, 0, 0.65);}
+    .rowScore2{ background-color: rgba(255, 165, 0, 0.65);}
+    .rowScore3{ background-color: rgba(255, 0, 0, 0.65);}
+    .groupHeader{background-color: rgb(229, 229, 229); font-weight: bold;}
 </style>
-<script>
-$(document).ready(function() {
-console.log('started');
-    $('#PBS_TBL').dataTable( {
-        "bPaginate": true,
-        "ordering": false, 
-        "bFilter": true, 
-        "bInfo" : false, 
-        "bLengthChange": false  
-    } );    
-} );
-
-</script>
 <apex:form >
-<h1 style="font-size: 25px; padding: 3px;">CANS Over Time by Person Being Served (Table)</h1>
-<apex:pageBlock >
+<h1 style="font-size: 25px; padding: 9px; display: block;">CANS Over Time by Person Being Served (Table)</h1>
+<apex:pageBlock title="Filters" >
     <apex:pageBlockSection columns="1">
-        <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="Select Cluster">
-        	<apex:selectOption itemLabel="All" itemValue="All"></apex:selectOption>
-            <apex:selectOption itemLabel="Behavior & Risk" itemValue="Behavior & Risk"></apex:selectOption>
-            <apex:selectOption itemLabel="Education" itemValue="Education"></apex:selectOption>
-            <apex:selectOption itemLabel="Well-Being" itemValue="Well-Being" ></apex:selectOption>
+       <apex:selectList required="true" size="1" label="Person Being Served" value="{!selectedPBS}" >
+           <apex:selectOptions value="{!optPBS}" />
+        </apex:selectList>     
+        <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="CANS Assessment Data">
+            <apex:selectOption itemLabel="All" itemValue="All"></apex:selectOption>
+            <apex:selectOption itemLabel="Behavior & Risk Cluster" itemValue="Behavior & Risk"></apex:selectOption>
+            <apex:selectOption itemLabel="Education Cluster" itemValue="Education"></apex:selectOption>
+            <apex:selectOption itemLabel="Well-Being Cluster" itemValue="Well-Being" ></apex:selectOption>
         </apex:selectList>
-        <apex:pageBlockSectionItem >
-        	<apex:outputLabel >Find a PBS and press Run!</apex:outputLabel>
-        	<apex:outputPanel layout="block" style="width: 400px;">
-        		<table id="PBS_TBL" >
-        			<thead><tr><th>Name</th><th>Action</th></tr></thead>
-        			<apex:repeat value="{!PBSes}" var="PBS">
-        				<tr><td>{!PBS.AccountPerson__r.name}</td><td>
-        				<apex:commandButton value="Run!" action="{!runRpt}" reRender="DATA_SET" status="myStatus">
-        					<apex:param assignTo="{!selectedPBS}" value="{!PBS.AccountPerson__c}" name="selectedPBS"  /> 	
-        				</apex:commandButton></td></tr>
-        			</apex:repeat>
-    			</table>
-    			
-        	</apex:outputPanel>
-        	
+        <apex:pageBlockSectionItem >       
+            <apex:outputLabel ></apex:outputLabel>
+            <apex:commandButton value="Run" action="{!runRpt}" reRender="DATA_SET" status="myStatus"/>
         </apex:pageBlockSectionItem>
-        
     </apex:pageBlockSection>
 </apex:pageBlock>   
 </apex:form>
 
 
 <apex:outputPanel id="DATA_SET">
+<apex:pageMessages />
+<apex:pageBlock title="Results" rendered="{!selectedPBS != null}">
+<apex:pageBlockButtons >
+	<div style="float: right"><input class="btn" type="button" onclick="tableToExcel('rptDataTbl', 'CANS Over Time by Person Being Served (Table)')" value="Export to Excel" /></div>
+</apex:pageBlockButtons>
 <table id="rptDataTbl">
 <thead>
-	<tr>
-		<th>Interval</th>
-		<th>Domain</th>
-		<apex:repeat value="{!Columns}" var="col">
-			<th>{!col}</th>
-		</apex:repeat>
-	</tr>
+    <tr>
+        <th>Interval</th>
+        <th>Domain</th>
+        <apex:repeat value="{!Columns}" var="col">
+            <th>
+            	<apex:outputLink value="/{!mapColumnAssess[col].id}" target="_blank"> 
+            		<apex:outputPanel rendered="{!mapColumnAssess[col].Interval__c != 'Quarterly'}">{!mapColumnAssess[col].Interval__c}</apex:outputPanel>
+            		<apex:outputPanel rendered="{!mapColumnAssess[col].Interval__c == 'Quarterly'}">Q&nbsp;{!mapColumnAssess[col].Quarter__c}</apex:outputPanel>
+            		 
+            		<br/>
+            		<apex:outputField value="{!mapColumnAssess[col].Assessment_Date__c}">
+            			
+            		</apex:outputField>
+            		</apex:outputLink>
+    		</th>
+        </apex:repeat>
+    </tr>
 </thead>
 <tbody>
-	<tr>
-		<td>Overall Score</td>
-		<td></td>
-		<apex:repeat value="{!Columns}" var="col">
-			<td >{!mapOverallScore[col]}</td>
-		</apex:repeat>			
-	</tr>
+    <tr>
+        <td>Overall Score</td>
+        <td></td>
+        <apex:repeat value="{!Columns}" var="col">
+            <td >{!mapOverallScore[col]}</td>
+        </apex:repeat>          
+    </tr>
 <apex:repeat value="{!QuestionsNumbersInScope}" var="row">
-	<tr>
-		<td>{!mapQuestions[row].Question_Title__c}</td>
-		<td>{!if(selectedCluster='All' , mapQuestions[row].Question_Domain__r.name, SelectedCluster)}</td>
-		<apex:repeat value="{!Columns}" var="col">
-			<td class="rowScore{!mapAnswers[TEXT(row)+col].rating__c}">{!mapAnswers[TEXT(row)+col].rating__c}</td>
-		</apex:repeat>	
-	</tr>
+    <tr>
+        <td>{!mapQuestions[row].Question_Title__c}</td>
+        <td>{!if(selectedCluster='All' , mapQuestions[row].Question_Domain__r.name, SelectedCluster)}</td>
+        <apex:repeat value="{!Columns}" var="col">
+            <td class="rowScore{!mapAnswers[TEXT(row)+col].rating__c}">{!mapAnswers[TEXT(row)+col].rating__c}</td>
+        </apex:repeat>  
+    </tr>
 </apex:repeat>
 </tbody>
-</table>	
+</table>    
 <script>
-$(document).ready(function() {
+j$ = jQuery.noConflict();
+//$ = jQuery.noConflict();
+j$(document).ready(function() {
 console.log('started');
-    $('#rptDataTbl').dataTable( {
+    j$('#rptDataTbl').dataTable( {
         "bPaginate": false,
         "ordering": false, 
         "bFilter": false, 
         "bInfo" : false,
-		"columnDefs": [
+        "columnDefs": [
             { "visible": false, "targets": 1 }
         ],
         "order": [[ 1, 'asc' ]],
@@ -110,34 +104,38 @@ console.log('started');
  
             api.column(1, {page:'current'} ).data().each( function ( group, i ) {
                 if ( last !== group ) {
-                    $(rows).eq( i ).before(
+                    j$(rows).eq( i ).before(
                         '<tr class="group groupHeader"><td class="groupHeader" colspan="99">'+group+'</td></tr>'
                     );
  
                     last = group;
                 }
             } );
-        },        
-            dom: 'T<"clear">lfrtip',        
-            "tableTools": {
-               "aButtons": [ 
-                   {"sExtends": "xls", "sTitle": "Children with Improved CANS at Discharge"},
-                   {
-                    "sExtends": "pdf",
-                    "sPdfOrientation": "landscape",
-                    "sTitle": "Children with Improved CANS at Discharge"
-                    }              
-                ],         
-               "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"  
-               }       
+        }      
     } );    
 } );
 
 </script>
+</apex:pageBlock>
 </apex:outputPanel>
 
 
 
+
+<script>
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=j$('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+</script>
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">

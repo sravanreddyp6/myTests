@@ -23,9 +23,9 @@ public with sharing class Report_CANS_PBSOverTimeGraph {
         
         optClusters =  new List<SelectOption>();
         optClusters.Add( new SelectOption('','All'));
-        optClusters.Add( new SelectOption('Behavior_and_Risk','Behavior and Risk'));
-        optClusters.Add( new SelectOption('Education','Education'));
-        optClusters.Add( new SelectOption('WellBeing','Well Being'));
+        optClusters.Add( new SelectOption('Behavior_and_Risk','Behavior & Risk Cluster'));
+        optClusters.Add( new SelectOption('Education','Education Cluster'));
+        optClusters.Add( new SelectOption('WellBeing','Well-Being Cluster'));
     
             
         QuestionsList = new Map<ID, Assessment_Question__c>();
@@ -34,10 +34,10 @@ public with sharing class Report_CANS_PBSOverTimeGraph {
         optPBS = new List<SelectOption>();
         optPBS.Add( new SelectOption('','--None--'));
         // get the list of people i can see who have final, non-diregarded cans
-        List<AggregateResult> arCANSList = [select count(id), accountperson__c, accountperson__r.name, accountperson__r.lastname from assessment__c where assessment_type__r.name = 'CANS' and  disregard__c = false and status__c = 'Locked' group by accountperson__c, accountperson__r.name, accountperson__r.lastname  order by accountperson__r.lastname];
+        List<AggregateResult> arCANSList = [select count(id), accountperson__c, accountperson__r.name, accountperson__r.lastname, accountperson__r.firstname from assessment__c where assessment_type__r.name = 'CANS' and  disregard__c = false and status__c = 'Locked' group by accountperson__c, accountperson__r.name, accountperson__r.lastname, accountperson__r.firstname  order by accountperson__r.lastname];
                 
         for ( AggregateResult ar : arCANSList ) {
-            optPBS.Add( new SelectOption((String)ar.get('accountperson__c'), (String)ar.get('name')));
+            optPBS.Add( new SelectOption((String)ar.get('accountperson__c'), (String)ar.get('lastname') + ',' + (String)ar.get('firstname')));
             mapPBS.put ( (ID)ar.get('accountperson__c'), (String)ar.get('name')); // store to retrieve person's name
         }
         showData = false;
