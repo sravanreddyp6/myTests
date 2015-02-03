@@ -257,7 +257,13 @@ public with sharing class Report_CANS_ActionableByCluster {
                                                          ' and assessment__r.admission__r.state__c in :CANSStates' + 
                                                          ' and assessment__r.assessment_date__c >= :startDate' + 
                                             			 ' and assessment__r.assessment_date__c <= :endDate' +
-                                            			 ' and assessment__r.service_line__c in :selectedSL';
+                                            			 ' and ';
+                                            			 
+         if ( includeNullSL)  {
+ 				strQuery += '( service_line__c = null OR service_line__c in :selectedSL)';        	
+         } else {
+         		strQuery += 'service_line__c in :selectedSL';
+         }                                    			 
                                             			 
 		if ( selectedDD == 'With')
 			strQuery += ' and assessment__r.accountperson__c in :DDPBS';
