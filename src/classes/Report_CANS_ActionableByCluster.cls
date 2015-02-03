@@ -260,9 +260,9 @@ public with sharing class Report_CANS_ActionableByCluster {
                                             			 ' and ';
                                             			 
          if ( includeNullSL)  {
- 				strQuery += '( service_line__c = null OR service_line__c in :selectedSL)';        	
+ 				strQuery += '( assessment__r.service_line__c = null OR assessment__r.service_line__c in :selectedSL)';        	
          } else {
-         		strQuery += 'service_line__c in :selectedSL';
+         		strQuery += 'assessment__r.service_line__c in :selectedSL';
          }                                    			 
                                             			 
 		if ( selectedDD == 'With')
