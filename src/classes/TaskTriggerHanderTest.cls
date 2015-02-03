@@ -25,7 +25,7 @@ private class TaskTriggerHanderTest {
 	    	update task;
     	} catch (Exception e){
     		System.assertequals('System.DmlException', e.getTypeName());
-    		System.assertequals(e.getMessage().contains('Task cannot be Completed untill the associated document status is not updated to Received.'),true);
+    		System.assertequals(e.getMessage().contains('Task can not be completed until the associated document status is updated to Received.'),true);
     	}
     }
     
@@ -36,10 +36,10 @@ private class TaskTriggerHanderTest {
         Task t = new Task();
         t.OwnerId = UserInfo.getUserId();
         t.WhatId = eval.id;
-        t.subject = 'Shift Assessment Status Reminder';
+        t.subject = 'Nurses Shift Documentation Status Reminder';
         t.Status = 'In Progress';
         t.Priority = 'Normal';
-        t.Description = 'Shift Assessment '+eval.Name+' is waiting to be finalized.'+ System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + eval.Id;
+        t.Description = 'Nurses Shift Documentation '+eval.Name+' is waiting to be finalized.'+ System.Url.getSalesforceBaseUrl().toExternalForm() + '/' + eval.Id;
         t.WhoId = person.id;
         t.ActivityDate = eval.Shift_End_Time__c.date();
         insert t;
@@ -50,7 +50,7 @@ private class TaskTriggerHanderTest {
             update t;
         } catch (Exception e){
             System.assertequals('System.DmlException', e.getTypeName());
-            System.assertequals(e.getMessage().contains('This task cannot be upated as the Associated Shift Assessment is not finalized or Disregarded'),true);
+            System.assertequals(e.getMessage().contains('This task cannot be upated as the Associated Nurses Shift Documentation is not finalized or Disregarded'),true);
         }
     }    
     

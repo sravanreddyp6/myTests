@@ -1282,7 +1282,7 @@ public void loadProgramList() {
                              ORDER BY CreatedDate DESC)
                       FROM Evaluation__c
                      WHERE ServiceAssignment__c = :theServAssign.Id
-                     ORDER By CreatedDate desc LIMIT 5
+                     ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
                 ];
             }
             return evaluations;
@@ -1378,12 +1378,10 @@ public void loadProgramList() {
 
   public void showAddevaluation() {
     evaluation = new Evaluation__c();
-    String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName;
-    string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1);
-    if(pbsLastName == null) pbsLastName = '';
-    if(pbsFirstinitial == null) pbsFirstinitial = '';
+    String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
+    string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
     evaluation = new Evaluation__c();
-    evaluation.Name = pbsFirstinitial+'.'+pbsLastName+'ShiftAsmt'+DateTime.Now().format('yyMMdd')+'-';
+    evaluation.Name = pbsFirstinitial+'. '+pbsLastName;
     evaluation.RecordTypeID = Utility.getEValuationRecordType('CMShiftAssessment');
     evaluation.ServiceAssignment__c = this.theServAssign.Id;
     evaluation.Status__c = 'Draft';
@@ -1395,13 +1393,16 @@ public void loadProgramList() {
   public pageReference saveEvaluation() {
 
       try{
-      	  evaluation.Name = this.evaluation.Name+evaluation.Shift_Start_time__c.format('h:mm a');
+      	  string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : ''; 
+      	   
+      	  evaluation.Name = this.evaluation.Name+' - '+evaluation.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString())+' - NSD - '+ownerfirstInitial+'. '+userinfo.getLastName();
           insert evaluation;
           PageReference pg = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.Id);
           return pg;
       }
-      catch (Exception e) {
-          Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+      catch (DMLException e) {
+          throw new MyException('Nurses Shift Document could not be created',e); 
+          //Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
       }
 
     return null;
@@ -1464,6 +1465,8 @@ public void loadProgramList() {
       limit 150];
     }
 
+public class MyException extends Exception {}
+
     @RemoteAction
     public static Diagnosis__c loadDiagnosis(string diagnosisId) {
             Diagnosis__c dg =
@@ -1504,6 +1507,7 @@ public void loadProgramList() {
         upsert dg;
         return true;
    }
+
 
  @RemoteAction
     public static Service_Location__c loadServiceLocation(string locationId) {

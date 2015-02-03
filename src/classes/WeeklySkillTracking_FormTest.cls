@@ -151,13 +151,13 @@ public with sharing class WeeklySkillTracking_FormTest {
        
        insert testObjective;
        
-       Folder fold = new Folder();
-       fold.Name = 'TestFold';
+      // Folder fold = new Folder();
+      // fold.Name = 'TestFold';
        
        Document bkg = new Document();
        bkg.Name = 'Skill_Tracking_Day_Background';
        bkg.Body = Blob.valueof('hi');
-       bkg.FolderId = [select Name, Id from Folder][0].Id;
+       bkg.FolderId = UserInfo.getUserId(); //[select Name, Id from Folder][0].Id;
        
        insert bkg;
        

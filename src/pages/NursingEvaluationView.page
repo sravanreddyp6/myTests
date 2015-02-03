@@ -75,7 +75,7 @@ hr {
         <a href="/{!Evaluation__c.ServiceAssignment__r.Admission__c}">Admission</a>&nbsp;>&nbsp;
         <a href="/{!Evaluation__c.ServiceAssignment__c}">Service
             Assignment</a>&nbsp;>&nbsp;
-        <apex:outputText value="Nursing Assessment" />
+        <apex:outputText value="Resident Assessment" />
     </div>
     <apex:form id="wholePage">
         <apex:pageMessages id="pageMessages" />
@@ -1678,8 +1678,8 @@ hr {
                     </apex:pageBlocksection>
                 </apex:pageBlock>
             </apex:tab>
-            <apex:commandButton onclick="window.location='/apex/NursesAssessmentEsign?id={!Evaluation__c.Id}'; return false;"
-                    value="E-Sign" style="position: absolute; margin-left: 820px; margin-top: 8px; " />
+            <apex:commandButton onClick="authenticate(); return false;"
+                    value="E-Sign" style="position: absolute; margin-left: 820px; margin-top: 8px; " rendered="{!!Evaluation__c.Is_Signed__c}" />
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
@@ -1720,5 +1720,6 @@ hr {
                 </apex:PageBlockSection>
             </apex:pageBlock>
         </apex:outputPanel>
+        <c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="NursingEvaluationEsign" objectId="{!Evaluation__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location='/{!Evaluation__c}'; return false;" />
     </apex:form>
 </apex:page>

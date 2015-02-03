@@ -267,6 +267,10 @@ table#persons_table.dataTable {
                                                     name="person" />
                                                 <apex:param value="{!admission.State__c}" name="State" />
                                                 <apex:param value="{!$CurrentPage.URL}" name="retURL" />
+                                            </apex:outputLink>
+                                            <apex:outputLink styleClass="servicelink" value="/{!sa.ID}#ShiftAssessments"
+                                            	rendered="{!$User.Operating_Group__c == 'Care Meridian'}" >
+                                            	View Shift Docs
                                             </apex:outputLink></td>
                                         <td style="display:none;">{!admission.Status__c}</td>
                                     </tr>
@@ -349,8 +353,8 @@ table#persons_table.dataTable {
                                         <apex:outputLink styleClass="servicelink" value="/{!jo.Service_Assignment__r.Id}#Notes"
                                             rendered="{! jo.Status__c='Active Final' && !HideNoteLink}">
                                             View Current Notes
-                                            
-                                        </apex:outputLink></td>
+                                        </apex:outputLink>
+                                        </td>
                                     <td style="display:none;">{!jo.Service_Assignment__r.Admission__r.Status__c}</td>
                                 </tr>
                             </apex:repeat>

@@ -950,7 +950,7 @@ public with sharing class referrals_Controller{
 						}
 					}
 					if (hasLocError){
-						ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'A primary location must be selected to close the referral'));
+						ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One Location Working Referral must be updated to \'Rank = Primary\' in order to close the referral.'));
 						return null;
 					}
 				}

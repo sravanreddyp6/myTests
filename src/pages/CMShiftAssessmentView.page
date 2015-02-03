@@ -7,7 +7,7 @@
 	<apex:includeScript value="{!$Resource.AnotoJS}" />
 	<apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}" />
 	
-	<c:PersonalRecord pbsId="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__c}" servAssignId="{!Evaluation__c.ServiceAssignment__c}" evaluationId="{!Evaluation__c.Id}" admId="{!Evaluation__c.ServiceAssignment__r.Admission__c}" parentPage="ShiftAssessment"/>
+	<c:PersonalRecord pbsId="{!Evaluation__c.ServiceAssignment__r.admission__r.Person_Being_Served__c}" servAssignId="{!Evaluation__c.ServiceAssignment__c}" evaluationId="{!Evaluation__c.Id}" admId="{!Evaluation__c.ServiceAssignment__r.Admission__c}" parentPage="NursesShiftDocument"/>
 	<br />
 	<script>
 		function openWin(url) {
@@ -17,39 +17,55 @@
 		j$ = jQuery.noConflict();
 
         finalize = function() {
-           
-           var allow = '{!Evaluation__c.Diagnostics_Section_Completed__c}' && '{!Evaluation__c.Psycho_Social_Section_Completed__c}' && '{!Evaluation__c.Cardio_Section_Completed__c}' && '{!Evaluation__c.Nutrition_Section_Completed__c}' && '{!Evaluation__c.Skin_Section_Completed__c}' && '{!Evaluation__c.Ortho_Section_Completed__c}' && '{!Evaluation__c.Neuro_Section_Completed__c}';
+           var allow = true;
            var errorTab ='demographicsTab';
            	
-           	if({!!Evaluation__c.Diagnostics_Section_Completed__c})
+           	if({!!Evaluation__c.Diagnostics_Section_Completed__c}){
+           		allow = false;
            		errorTab = 'diagnosticTab';
-           	else if({!!Evaluation__c.Cardio_Section_Completed__c})
+           	}
+           	else if({!!Evaluation__c.Cardio_Section_Completed__c}){
+           		allow = false;
            		errorTab = 'cardioTab';
-           	else if({!!Evaluation__c.Nutrition_Section_Completed__c})
+           	}
+           	else if({!!Evaluation__c.Nutrition_Section_Completed__c}){
+           		allow = false;
            		errorTab = 'nutritionTab';
-           	else if({!!Evaluation__c.Skin_Section_Completed__c})
+           	}
+           	else if({!!Evaluation__c.Skin_Section_Completed__c}){
+           		allow = false;
            		errorTab = 'skinBodyTab';
-           	else if({!!Evaluation__c.Neuro_Section_Completed__c})
+           	}
+           	else if({!!Evaluation__c.Neuro_Section_Completed__c}){
+           		allow = false;
            		errorTab = 'neuroTab';
-           	else if({!!Evaluation__c.Ortho_Section_Completed__c})
+           	}
+           	else if({!!Evaluation__c.Ortho_Section_Completed__c}){
+           		allow = false;
            		errorTab = 'orthoTab';
-           	else if({!!Evaluation__c.Psycho_Social_Section_Completed__c})
+           	}
+           	else if({!!Evaluation__c.Psycho_Social_Section_Completed__c}){
+           		allow = false;
            		errorTab = 'psychoSocialTab';
+           	}
            
-            if(allow=='false'){
-               var x = confirm('This assessment cannot be finalized as there are errors in finalizing. On Clicking OK You will be redirected to edit mode that display the errors. Please correct them and then finalize');
+            if(allow == false){
+               var x = confirm('This assessment is missing required fields that must be completed in order to Finalize. Review and complete the missing fields before Finalizing the record');
                
                if(x==true) {
-                   openWin('/apex/CMShiftAssessmentEdit?id={!Evaluation__c.Id}&showErrors=1&tab='+errorTab);
+                   window.open('/apex/CMShiftAssessmentEdit?id={!Evaluation__c.Id}&showErrors=1&tab='+errorTab,'_self');
                }else{
                    return null;
                }
                 
-            } 
-            if(allow == 'true'){
-            
+            }
+            if(allow == true && {!!Evaluation__c.Is_Signed__c}) {
+            	alert('Please E-sign before finalizing');
+            	
+            }
+             
+            if(allow == true && {!Evaluation__c.Is_Signed__c}){
                 var c = confirm('Are you sure about finalizing?');
-                
                 if(c==true) {
                     finalizeEval();
                 }else {
@@ -63,7 +79,6 @@
         disregard = function() {
         
         	var d = confirm('Do you want to proceed disregarding this Assessment?');
-        	
         	if(d==true) {
                 disregardEval();
             }else {
@@ -71,6 +86,137 @@
             }
         
         }
+        
+        
+        validateEval = function () {
+            var evalErrors = [];
+            var dupe = [];
+            var startValue = j$('[id$=evalstartTime]').val();
+            var st = new Date(startValue);
+            var formatStart = moment(st).format();
+            var start = new Date(formatStart);
+            var endValue = j$('[id$=evalendTime]').val();
+            var en = new Date(endValue);
+            var formatEnd = moment(en).format();
+            var end = new Date(formatEnd);
+
+            j$('#evaluationMessages').html('');
+
+            if (startValue == '' || endValue == '') {
+                evalErrors.push('Shift Start time and end time cannot be blank');
+            }
+
+            if (start >= end) {
+                evalErrors.push('Shift End time Should be greater than Start time');
+            }
+
+			if (evalErrors.length > 0) {
+
+				j$.each(evalErrors, function (index, error) {
+					j$('#evaluationMessages').append('<li class="error">' + error + '</li>');
+				});
+
+			} else {
+
+						Visualforce.remoting.Manager.invokeAction(
+						'{!$RemoteAction.CMShiftAssessmentView.finddupeEval}',
+							startValue,endValue,'{!Evaluation__c.ServiceAssignment__c}','{!Evaluation__c.Id}',
+						function(result, event){
+							if (event.status) {
+								console.log(result);
+								if(result){
+										dupe.push('There is already an existing  Nurses Shift Documentation for the current timings. Do you still want to proceed?');
+										j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
+										j$('[id$=evalstartdate]').prop('disabled', true);
+										j$('[id$=evalenddate]').prop('disabled', true);
+										j$('[id$=evalProceed]').show();
+										j$('[id$=enterNew]').show();
+										j$('[id$=evalSave]').hide();
+								} else{
+									evaluationSave();
+								}
+
+							} else if (event.type === 'exception') {
+								document.getElementById("dupeFound").innerHTML = event.message;
+							} else {
+								document.getElementById("dupeFound").innerHTML = event.message;
+							}
+						},
+						{escape: true}
+					);
+
+				}
+
+		}
+
+		clearDates = function() {
+			j$('[id$=evalProceed]').hide();
+			j$('[id$=evalstartdate]').prop('disabled', false);
+			j$('[id$=evalenddate]').prop('disabled', false);
+			j$('[id$=evalSave]').show();
+			j$('[id$=enterNew]').hide();
+
+		}
+	
+	jQuery(document).ready(function (j$) {
+		handleVitals = function () {
+				var diagHR = j$('[id$=DiagheartRate]').val();
+				var diagO2 = j$('[id$=DiagO2]').val();
+
+				if (diagHR != '' && (diagHR > 120 || diagHR < 60)) {
+
+					j$('[id$=DiaginterventionLabel]').show();
+					j$('[id$=DiaginterventionPicklist]').show();
+
+					if (j$('[id$=DiaginterventionPicklist]').val() == 'Yes') {
+						j$('[id$=DiagnarrativeLabel]').show();
+						j$('[id$=DiaginterventionDescribe]').show();
+					} else {
+						j$('[id$=DiagnarrativeLabel]').hide();
+						j$('[id$=DiaginterventionDescribe]').hide();
+						j$('[id$=DiaginterventionDescribe]').val('');
+
+					}
+				} else {
+					j$('[id$=DiaginterventionLabel]').hide();
+					j$('[id$=DiaginterventionPicklist]').hide();
+					j$('[id$=DiagnarrativeLabel]').hide();
+					j$('[id$=DiaginterventionDescribe]').hide();
+					j$('[id$=DiaginterventionDescribe]').val('');
+					j$('[id$=DiaginterventionPicklist]').val('');
+				}
+
+				if (diagO2 != '' && diagO2 < 90) {
+
+					j$('[id$=DiagO2interventionLabel]').show();
+					j$('[id$=DiagO2interventionPicklist]').show();
+
+					if (j$('[id$=DiagO2interventionPicklist]').val() == 'Yes') {
+						j$('[id$=DiagO2narrativeLabel]').show();
+						j$('[id$=DiagO2interventionDescribe]').show();
+					} else {
+						j$('[id$=DiagO2narrativeLabel]').hide();
+						j$('[id$=DiagO2interventionDescribe]').hide();
+						j$('[id$=DiagO2interventionDescribe]').val('');
+
+					}
+
+				} else {
+
+					j$('[id$=DiagO2interventionLabel]').hide();
+					j$('[id$=DiagO2interventionPicklist]').hide();
+					j$('[id$=DiagO2narrativeLabel]').hide();
+					j$('[id$=DiagO2interventionDescribe]').hide();
+					j$('[id$=DiagO2interventionDescribe]').val('');
+					j$('[id$=DiagO2interventionPicklist]').val('');
+
+				}
+
+			};
+			
+			handleVitals();
+		
+	});
 
 	</script>
 
@@ -81,7 +227,7 @@
 		[id$=bodyMapOtherComments] {
 			clear: both;
 		}
-		.thinking {
+		.thinking2 {
 			opacity: 0.8;
 			background-color: #ccc;
 			position: fixed;
@@ -91,7 +237,7 @@
 			left: 0px;
 			z-index: 1000;
 		}
-		.thinkingwheel {
+		.thinkingwheel2 {
 			position: absolute;
 			left: 40%;
 			top: 48%;
@@ -138,6 +284,20 @@
 			border-bottom-width: 1px;
 			border-bottom-color: #E8E8E8
 		}
+		
+		.warning{
+			border: 1px solid;
+			margin: 10px 0px;
+			padding:15px 10px 15px 50px;
+			background-repeat: no-repeat;
+			background-position: 10px center;
+			color: #9F6000;
+			background-color: #FEEFB3;
+		}
+		
+		#evaluationMessages .error {
+			color: red;
+		}
 
 	</style>
 	<!-- div id="breadcrumb" class="breadcrumb">
@@ -154,6 +314,11 @@
 
 		<apex:outputpanel rendered="false">
 			<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__c}" />
+			<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.LastName}" />
+			<apex:inputhidden value="{!Evaluation__c.ServiceAssignment__r.Admission__r.Person_Being_Served__r.FirstName}" />
+			<apex:inputhidden value="{!Evaluation__c.Owner}" />
+			<apex:inputhidden value="{!Evaluation__c.Owner.LastName}" />
+			<apex:inputhidden value="{!Evaluation__c.Owner.FirstName}" />
 			<apex:inputhidden value="{!Evaluation__c.Resident_Demonstrating_Issues__c}" />
 			<apex:inputhidden value="{!Evaluation__c.Orientation__c}" />
 			<apex:inputhidden value="{!Evaluation__c.Mood__c}" />
@@ -161,6 +326,7 @@
 			<apex:inputhidden value="{! Evaluation__c.Autonomic_Dysreflexia_Areas_Assessed__c}" />
 		</apex:outputpanel>
 		<apex:pageMessages id="pageMessages" />
+		<apex:actionFunction name="evaluationSave" action="{!updateshiftTime}" status="saveevaluationStatus" reRender="" />
 		<apex:actionfunction name="finalizeEval" action="{!finalizeEval}" status="pageProcessing" reRender="pageMessages" />
 		<apex:actionFunction name="disregardEval" action="{!disregardEval}" status="pageProcessing" reRender="pageMessages,btnDisregard" />
 		<apex:tabPanel id="wholeTabPanel" value="{!selectedTab}" styleClass="evaluationTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
@@ -202,7 +368,7 @@
 				</apex:pageBlock>
 			</apex:tab>
 
-			<apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
+			<apex:tab label="Diagnostics" name="diagnosticTab" styleClass="{!IF(Evaluation__c.Diagnostics_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" >
 						<apex:pageBlockSectionItem >
@@ -218,8 +384,8 @@
 				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageBlockSection title="Vitals Detail" Columns="1">
-						<apex:actionFunction name="showAddVitalsDetail" action="{!showAddVitalsDetail}" status="loadingVitalsDetailStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Add Vitals Detail', '{!$Component.wholePage}');" />
-						<apex:actionFunction name="showEditVitalsDetail" action="{!showEditVitalsDetail}" status="loadingVitalsDetaiStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Edit Vitals Detail', '{!$Component.wholePage}');">
+						<apex:actionFunction name="showAddVitalsDetail" action="{!showAddVitalsDetail}" status="loadingVitalsDetailStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Add Vitals Detail', '{!$Component.wholePage}'); handleVitals();" />
+						<apex:actionFunction name="showEditVitalsDetail" action="{!showEditVitalsDetail}" status="loadingVitalsDetaiStatus" rerender="vitalsDetailDialogMainBlock" oncomplete="openModalDialog('{!$Component.vitalsDetailDialog}', 'Edit Vitals Detail', '{!$Component.wholePage}'); handleVitals();">
 							<apex:param name="currentVitalsDetailId" assignTo="{!currentVitalsDetailId}" value="" />
 						</apex:actionFunction>
 						<apex:outputPanel layout="none">
@@ -252,7 +418,9 @@
 						<apex:pageBlockSectionItem rendered="{!Evaluation__c.IV_Picklist__c == 'Yes'}">
 							<apex:outputLabel value="IV Type" />
 							<apex:outputPanel >
-								<apex:outputText styleClass="labelCol" value="PICC" />
+								<apex:outputText styleClass="labelCol" value="Peripheral" />
+								<apex:outputField value="{!Evaluation__c.PCA__c}" />
+								<apex:outputText styleClass="labelCol" value="PICC" style="margin-left:20px;" />
 								<apex:outputField value="{!Evaluation__c.PICC__c}" />
 								<apex:outputText styleClass="labelCol" value="Central" style="margin-left:20px;" />
 								<apex:outputField value="{!Evaluation__c.Central__c}" />
@@ -305,7 +473,7 @@
 							<apex:outputLabel for="periph" value="Peripheral Pulses" />
 							<apex:outputText id="periph" value="{!Evaluation__c.Peripheral_Pulses_Present__c & if(Evaluation__c.Peripheral_Pulses_Present__c == 'No', ' - ' & Evaluation__c.Peripheral_Pulses_Describe__c, '')}" />
 						</apex:pageBlockSectionItem>
-						<apex:outputField Value="{!Evaluation__c.Autonomic_Dysreflexia__c}" />
+						<apex:outputField Value="{!Evaluation__c.Autonomic_Dysreflexia__c}" label="Autonomic Dysreflexia Episode"/>
 						<apex:pageBlockSectionItem />
 						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Autonomic_Dysreflexia__c == 'Yes'}">
 							<apex:outputLabel for="areasAssessed" value="Were the Following areas assessed?" />
@@ -410,6 +578,9 @@
 				<apex:pageBlock id="nutritionMainBlock">
 					<apex:pageBlockSection columns="1" title="Nutrition & Hydration" id="nutritionHydrationSection">
 						<apex:outputField value="{!Evaluation__c.Nutrition_Route__c}" label="Feeding Type" />
+						
+						<c:EvaluationResponseTable parentId="{!Evaluation__c.Id}" type="Fluid Intake" formId="{!$Component.wholePage}" uniqueId="fluidIntake" />
+						
 						<apex:outputField value="{!Evaluation__c.Oral_Health_Check__c}" />
 						<apex:outputField value="{!Evaluation__c.Issues_Noted__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Tongue__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
@@ -420,6 +591,7 @@
 						<apex:outputField value="{!Evaluation__c.Cheeks_Sores_Describe__c}" label="If Sores, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Cheeks__c), CONTAINS(Evaluation__c.Cheeks__c, 'Sores'))}" />
 						<apex:outputField value="{!Evaluation__c.Lips__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Lips_Sores_Describe__c}" label="If Sores, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Lips__c), CONTAINS(Evaluation__c.Lips__c, 'Sores'))}" />
+						<apex:outputField value="{!Evaluation__c.Teeth_Problems__c}" label="Teeth Problems" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Breath__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Saliva__c}" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.Narrative_Note__c}" label="Add Narrative Note" rendered="{!Evaluation__c.Oral_Health_Check__c='Yes'}" />
@@ -428,8 +600,8 @@
 							<apex:outputText value="" />
 						</apex:pageBlockSectionItem>
 						<apex:outputField value="{!Evaluation__c.PEDS_Teething__c}" label="Teething"/>
-						<apex:outputField value="{!Evaluation__c.PEDS_History_of_Tonsils__c}" label="History of Tonsilitis" />
-						<apex:outputField value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}" label="If Yes, Describe Tonsilitis History" rendered="{!Evaluation__c.PEDS_History_of_Tonsils__c='Yes'}" />
+						<apex:outputField value="{!Evaluation__c.PEDS_History_of_Tonsils__c}" label="History of Tonsillitis" />
+						<apex:outputField value="{!Evaluation__c.PEDS_Tonsil_History_Describe__c}" label="If Yes, Describe Tonsillitis History" rendered="{!Evaluation__c.PEDS_History_of_Tonsils__c='Yes'}" />
 						<apex:outputField value="{!Evaluation__c.PEDS_Pacifier__c}" label="Pacifier" />
 						<apex:outputField value="{!Evaluation__c.PEDS_Pacifier_Type_Usage__c}" label="if Yes, Type & usage" rendered="{!Evaluation__c.PEDS_Pacifier__c='Yes'}" />
 					</apex:pageBlockSection>
@@ -454,11 +626,39 @@
 
 						<apex:outputField value="{!Evaluation__c.Abdomen__c}" />
 						<apex:pageBlockSectionItem />
-
-						<apex:outputField value="{!Evaluation__c.Elimination_Bowel_Status__c}" label="Status" />
+						
+						<apex:outputfield Value="{!Evaluation__c.Weight_Picklist__c}" label="Weight" />
 						<apex:pageBlockSectionItem />
+						
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Weight_Picklist__c == 'Yes'}" >
+							<apex:outputLabel value="" />
+							<apex:outputPanel >
+	                            <apex:outputLabel value="Current Weight"
+	                                style="font-weight: Bold; color: #4A4A56; font-size: 10px;" />
+	                                &nbsp;&nbsp;&nbsp;
+	                                <apex:outputField id="lbs"
+	                                value="{!Evaluation__c.Weightlbs__c}" style="margin-left: 25px;" />
+	                            <apex:outputLabel for="lbs" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightlbs__c.label}</apex:outputLabel>
+	                            <span />
+	                            <apex:outputField id="oz" value="{!Evaluation__c.Weightoz__c}"
+	                                style="margin-left: 25px;" />
+	                            <apex:outputLabel for="in" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.Weightoz__c.label}</apex:outputLabel>
+	                            <span />
+	                            <apex:outputText value=" (or) " />
+	                            <apex:outputField id="kg" value="{!Evaluation__c.WeightKg__c}"
+	                                style="margin-left: 25px;" />
+	                            <apex:outputLabel for="kg" style="font-weight:Bold;">{!$ObjectType.Evaluation__c.Fields.WeightKg__c.label}</apex:outputLabel>
+	                        </apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Weight_Picklist__c == 'Yes'}" />
 
-						<apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="If Other, Describe" rendered="{!AND(!ISBLANK(Evaluation__c.Elimination_Bowel_Status__c), CONTAINS(Evaluation__c.Elimination_Bowel_Status__c, 'Other'))}" />
+						<apex:outputField value="{!Evaluation__c.Bowel_Continence__c}" />
+						<apex:pageBlockSectionItem />
+						
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Continent_Appliance__c}" label="Devices"  />
+                        <apex:pageBlockSectionItem />
+                        
+                        <apex:outputField value="{!Evaluation__c.Elimination_Bowel_No_Appliance_Other__c}" label="Specify Other" />
 						<apex:pageBlockSectionItem />
 
 						<apex:outputField value="{!Evaluation__c.Usual_Elimination_Frequeny__c}" />
@@ -480,12 +680,14 @@
 						<apex:pageBlockSectionItem />
 
 						<apex:outputField value="{!Evaluation__c.Incontinent_Neuro_Bowel_Describe__c}" label="If Yes, Describe Program" rendered="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c='Yes'}" />
-						<apex:pageBlockSectionItem />
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Incontinent_Neurogenic_Bowel__c='Yes'}"/>
 
 						<apex:outputField value="{!Evaluation__c.Perception_of_Need_to_Defecate__c}" />
 						<apex:pageBlockSectionItem />
 					</apex:pageBlockSection>
-					<apex:pageBlockSection title="Elimination - Bladder" columns="1">
+					<apex:pageBlockSection title="Elimination - Bladder" columns="1" >
+						<apex:outputField value="{!Evaluation__c.Bladder_Continence__c}" />
+                       	<apex:outputField value="{!Evaluation__c.Elimination_Bladder_No_Continent_Details__c}" label="Devices" />
 						<apex:outputField value="{!Evaluation__c.Neurogenic_Bladder__c}" />
 						<apex:outputField value="{!Evaluation__c.Urinary_Issues_Checkbox__c}" />
 						<apex:outputField value="{!Evaluation__c.Urinary_Issues__c}" label="If Yes, Issue Type" rendered="{!Evaluation__c.Urinary_Issues_Checkbox__c='Yes'}" />
@@ -675,8 +877,9 @@
 				</apex:pageBlock>
 				<apex:pageBlock >
 					<apex:pageblockSection Columns="1">
-						<apex:outputField value="{!Evaluation__c.Rancho_Level__c}" />
-					</apex:pageBlockSection>
+						<apex:outputField value="{!Evaluation__c.Cognition_Intact__c}" />
+						<apex:outputField value="{!Evaluation__c.Rancho_Level__c}" rendered="{!Evaluation__c.Cognition_Intact__c == 'No'}" />
+						<apex:outputField value="{!Evaluation__c.Level_of_Conciousness__c}" rendered="{!Evaluation__c.Cognition_Intact__c == 'No'}" />
 					<apex:pageBlockSection columns="1" rendered="{!Evaluation__c.Rancho_Level__c != '(1) No Response' && Evaluation__c.Rancho_Level__c != null}" >
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="Responds To" />
@@ -688,11 +891,21 @@
 								<apex:outputText value="{!If (Evaluation__c.Visual__c, 'Visual Stim;', '')}" />
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
-
-						<apex:outputField value="{!Evaluation__c.Level_of_Conciousness__c}" />
 						<apex:outputField value="{!Evaluation__c.Orientation__c}" label="Orientation" />
-
 						<apex:pageBlockSectionItem >
+							<apex:outputLabel value="Behavior" />
+							<apex:outputPanel >
+								<apex:outputText value="{!if (Evaluation__c.Cooperative__c, 'Cooperative;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Impulsive__c, 'Impulsive;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Inappropriate__c, 'Inappropriate;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Agitated__c, 'Agitated;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Combative__c, 'Combative;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Confused__c, 'Confused;','')}" />
+								<apex:outputText value="{!if (Evaluation__c.Unresponsive__c, 'Unresponsive;','')}" />
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						</apex:pageblockSection>
+						<apex:pageBlockSectionItem rendered="{!Evaluation__c.Cognition_Intact__c == 'Yes'}">
 							<apex:outputLabel value="Behavior" />
 							<apex:outputPanel >
 								<apex:outputText value="{!if (Evaluation__c.Cooperative__c, 'Cooperative;','')}" />
@@ -707,10 +920,10 @@
 						<apex:outputField value="{!Evaluation__c.Mood__c}" label="Mood" />
 						<apex:outputField value="{!Evaluation__c.Desire_to_hurt_themselves__c}" label="Has Resident Expressed Desire to Hurt Him/Herself?"  rendered="{!CONTAINS(Evaluation__c.Mood__c,'Sad') || CONTAINS(Evaluation__c.Mood__c,'flat') }"/>
 						<apex:outputField value="{!Evaluation__c.Plan_to_Harm_themselves__c}" label="Does Resident Have a Plan to Harm Him/Herself?" rendered="{!Evaluation__c.Desire_to_hurt_themselves__c == 'Yes'}"/>
-						<apex:outputText value=""  label="Communication" />
+						<apex:outputText value=""  label="COMMUNICATION" />
 						<apex:outputField value="{!Evaluation__c.Able_to_make_Needs_Known__c}" label="Ability to make Needs known" />
 						<apex:outputText value="{!if (CONTAINS(Evaluation__c.Expression__c, 'Non-Verbal'), Evaluation__c.Expression__c + ' - ' + Evaluation__c.Expression_Other__c, Evaluation__c.Expression__c)}" label="Expression"  rendered="{!Evaluation__c.Able_to_make_Needs_Known__c == 'No'}"/>
-					</apex:pageblockSection>
+					</apex:pageBlockSection>
 					<apex:pageBlockSection title="Safety" columns="1" >
 						<apex:outputField value="{!Evaluation__c.Safety_Awareness__c}" label="Safety Awareness" />
 						<apex:outputField value="{!Evaluation__c.Bed_Alarm__c}" label="Bed Alarm" />
@@ -748,7 +961,6 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
-
 			<apex:tab label="Ortho" name="orthoTab" styleClass="{!IF(Evaluation__c.Ortho_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" >
@@ -804,6 +1016,7 @@
 						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="{! if ( Evaluation__c.External_Device_Picklist__c == 'Yes', 'External Devices<br /><br />Location<br /><br />Type<br />', 'External Devices')}" escape="false" />
 							<apex:outputPanel rendered="{!Evaluation__c.External_Device_Picklist__c == 'Yes'}">
+								<apex:outputText value="Yes" />
 								<br />
 								<br />
 								<apex:outputText id="edloc" value="{!Evaluation__c.External_Devices_Location__c}" />
@@ -817,7 +1030,6 @@
 					</apex:pageBlockSection>
 				</apex:pageBlock>
 			</apex:tab>
-
 			<apex:tab label="Psycho/Social" name="psychoSocialTab" styleClass="{!IF(Evaluation__c.Psycho_Social_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2" >
@@ -857,8 +1069,17 @@
 			</apex:tab>
 			<apex:commandButton value="Finalize" onClick="finalize(); return false;" style="position: absolute; margin-left: 680px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft'}" />
 			<apex:commandButton value="Disregard" style="position: absolute; margin-left: 730px; margin-top: 8px;" rendered="{!Evaluation__c.Status__c =='Draft' &&  Evaluation__c.OwnerId == $User.Id}" onClick="disregard(); return false;"/>
-			<apex:commandButton value="E-Sign" style="position: absolute; margin-left: 792px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c != 'Disregard' && !Evaluation__c.Is_Signed__c}" onClick="authenticate(); return false;" />
-			<apex:commandButton value="Print PDF" style="position: absolute; margin-left: 840px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
+			<apex:commandButton value="Print PDF" style="position: absolute; margin-left: 792px; margin-top: 8px;"  onclick="openWin('/apex/CMShiftAssessmentPDF?id={!Evaluation__c.Id}'); return false;" />
+			<apex:commandButton value="Edit Shift Time" style="position: absolute; margin-left: 853px; margin-top: 8px;" onclick="openModalDialog('{!$Component.evaluationModal}','Edit Shift Time','{!$Component.wholePage}'); j$('#evaluationMessages').html(''); clearDates();" reRender="evaluations,msgs"  rendered="{!Evaluation__c.Status__c = 'Draft' && !Evaluation__c.Is_Signed__c}" >
+				<apex:actionStatus id="AddevaluationStatus">
+					<apex:facet name="start">
+						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
+			</apex:commandButton>
+			<apex:commandButton value="E-Sign" style="position: absolute; margin-left: 942px; margin-top: 8px;" rendered="{!Evaluation__c.OwnerId == $User.Id && Evaluation__c.Status__c == 'Draft' && !Evaluation__c.Is_Signed__c && Evaluation__c.Diagnostics_Section_Completed__c && Evaluation__c.Cardio_Section_Completed__c && Evaluation__c.Ortho_Section_Completed__c && Evaluation__c.Neuro_Section_Completed__c && Evaluation__c.Psycho_Social_Section_Completed__c 
+				&& Evaluation__c.Nutrition_Section_Completed__c && Evaluation__c.Skin_Section_Completed__c }" onClick="authenticate(); return false;" />
 		</apex:tabPanel>
 		<apex:pageBlock id="buttons">
 			<apex:pageBlockButtons location="bottom">
@@ -866,7 +1087,7 @@
 			</apex:pageBlockButtons>
 		</apex:pageBlock>
 		<apex:outputPanel id="vitalsDetailDialog" style="display:none">
-			<span class="ui-helper-hidden-accessible"><output type="text"/></span>
+			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<apex:pageBlock title="Add/Edit Vitals Detail" id="vitalsDetailDialogMainBlock">
 				<apex:pageblockButtons location="bottom">
 					<apex:actionFunction name="saveVitalsDetail" action="{!saveVitalsDetail}" rerender="vitalsTable,vitalsDetailDialogMainBlock,vitalsDetailDialogErrors" status="saveVitalsDetailStatus" oncomplete="afterSave('{!$Component.vitalsDetailDialog}', request.options.parameters.keepDialogOpen, showAddVitalsDetail);">
@@ -888,6 +1109,7 @@
 				<apex:pageMessages id="vitalsDetailDialogErrors" />
 				<apex:pageBlockSection columns="2">
 					<apex:inputField value="{!currentVitalsDetail.Date__c}" />
+					<apex:inputField value="{!currentVitalsDetail.Blood_Pressure__c}" />
 					<apex:pageBlockSectionItem >
 						<apex:outputPanel >
 							<apex:outputLabel for="DiagheartRate" value="Heart Rate" />
@@ -936,7 +1158,6 @@
 					</apex:pageBlockSectionItem>
 					<apex:inputField value="{!currentVitalsDetail.R__c}" />
 					<apex:inputField value="{!currentVitalsDetail.Temperature__c}" />
-					<apex:inputField value="{!currentVitalsDetail.O2_Saturation__c}" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</apex:outputPanel>
@@ -970,12 +1191,47 @@
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</apex:outputPanel>
-		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!Evaluation__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location='/{!Evaluation__c}'; return false;" />
+		<apex:outputPanel id="evaluationModal" style="display:none">
+			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+			<div id='evaluationMessages'></div>
+			<apex:pageBlock title="Edit Shift Time" >
+				<apex:pageBlockSection columns="2" id="evaluationEntry">
+					<apex:pageBlockSectionItem >
+						<apex:outputPanel >
+							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="evalstartdate"/>
+							<apex:inputhidden value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+					<apex:outputpanel >
+							<apex:outputLabel Value="Shift End Time" styleClass="labelCol"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="evalenddate"/>
+							<apex:inputhidden value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
+						</apex:outputpanel>
+					</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+				<div id="dupeFound" ></div>
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Save" onclick="validateEval();return false;" id="evalSave" />
+					<apex:commandbutton value="Proceed" onClick="evaluationSave(); return false;" id="evalProceed"/>
+					<apex:commandButton value="Enter New Time" onClick="clearDates(); j$('#dupeFound').html(''); return false;" id="enterNew"/>
+					<apex:commandButton value="Cancel" onclick="window.location='/apex/CMShiftAssessmentView?id={!Evaluation.Id}&tab={!selectedTab}'; return false;" />
+					<apex:actionStatus id="saveevaluationStatus">
+						<apex:facet name="start">
+							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+						</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
+				</apex:pageBlockButtons>
+			</apex:pageBlock>
+		</apex:outputPanel>
+	<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!Evaluation__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location='/{!Evaluation__c}'; return false;" />
 	</apex:form>
 	<apex:actionStatus id="pageProcessing">
 		<apex:facet name="start">
-			<div class="thinking">
-				<div class="thinkingwheel">
+			<div class="thinking2">
+				<div class="thinkingwheel2">
 					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Saving &amp; Processing...</span>
 				</div>
 			</div>
