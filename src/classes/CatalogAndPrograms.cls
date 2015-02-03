@@ -19,9 +19,7 @@ public with sharing class CatalogAndPrograms {
         pg.setRedirect(true);
         return pg; 
     }
-  
-    public boolean showRes{get; set;}
-    
+      
     public pageReference updatePrgAssoc(){
 	    upsert curr_catalog;
 	    curCtlg = curr_catalog.id;	   
@@ -84,7 +82,7 @@ public with sharing class CatalogAndPrograms {
         ctlgs = new List<SelectOption>();
         ctlgs.add(new SelectOption('',''));
         ctlgs.add(new SelectOption(CREATE_NEW_PLAN_CD, CREATE_NEW_PLAN));
-        for (Clinical_Catalog__c c : [select id, Catalog_Name__c from Clinical_Catalog__c]){
+        for (Clinical_Catalog__c c : [select id, Catalog_Name__c from Clinical_Catalog__c order by Catalog_Name__c]){
             ctlgs.add(new SelectOption(c.id,c.Catalog_Name__c));
             }
     }

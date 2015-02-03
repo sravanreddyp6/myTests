@@ -163,9 +163,9 @@
             var en = new Date(endValue);
             var formatEnd = moment(en).format();
             var end = new Date(formatEnd);
-            
+
             j$('#evaluationMessages').html('');
-            
+
             if (startValue == '' || endValue == '') {
                 evalErrors.push('Shift Start time and end time cannot be blank');
             }
@@ -189,10 +189,10 @@
 							if (event.status) {
 								console.log(result);
 								if(result){
-										dupe.push('There is already an existing Shift Assessment for the current timings. Do you still want to proceed?');
+										dupe.push('There is already an existing Nurses Shift Documentation for the current timings. Do you still want to proceed?');
 										j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
-										j$('[id$=startdate]').prop('disabled', true);
-										j$('[id$=enddate]').prop('disabled', true);
+										j$('[id$=evalstartdate]').prop('disabled', true);
+										j$('[id$=evalenddate]').prop('disabled', true);
 										j$('[id$=evalProceed]').show();
 										j$('[id$=enterNew]').show();
 										j$('[id$=evalSave]').hide();
@@ -216,10 +216,10 @@
 		clearDates = function() {
 			j$('[id$=evalstartTime]').val('');
 			j$('[id$=evalendTime]').val('');
-			j$('[id$=startdate]').prop('disabled', false);
-			j$('[id$=enddate]').prop('disabled', false);
-			j$('[id$=startdate]').val('');
-			j$('[id$=enddate]').val('');
+			j$('[id$=evalstartdate]').prop('disabled', false);
+			j$('[id$=evalenddate]').prop('disabled', false);
+			j$('[id$=evalstartdate]').val('');
+			j$('[id$=evalenddate]').val('');
 			j$('#evaluationMessages').html('');
 			j$('#dupeFound').html('');
 			j$('[id$=evalProceed]').hide();
@@ -232,7 +232,7 @@
 	<br />
 	<apex:form id="myFRM">
 		<apex:actionFunction name="evaluationSave" action="{!saveEvaluation}" status="saveevaluationStatus" reRender="" />
-		<apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('evaluationModal','span','Add Shift Assessment',null,1000); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" />
+		<apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('evaluationModal','span','Add Nurses Shift Documentation',null,1000); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" />
 		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
 		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
 		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
@@ -1000,21 +1000,21 @@ END: Uncomment to have the element collapsed by default -->
 
 		<!-- Admission and Shift Assessments Section -->
 		<apex:outputPanel id="evaluationModal" style="display:none">
-			<span class="ui-helper-hidden-accessible"><input type="text"/></span> 
+			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<div id='evaluationMessages'></div>
-			<apex:pageBlock title="Add ShiftAssessment" rendered="{!vfVarIsCM}">
+			<apex:pageBlock title="Add Nurses Shift Documentation" rendered="{!vfVarIsCM}">
 				<apex:pageBlockSection columns="2" id="evaluationEntry">
 					<apex:pageBlockSectionItem >
 						<apex:outputPanel >
 							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="startdate"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="evalstartdate" shiftTop="20" />
 							<apex:inputhidden value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
 					<apex:pageBlockSectionItem >
 					<apex:outputpanel >
 							<apex:outputLabel Value="Shift End Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="enddate"/>
+							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="evalenddate" shiftTop="20" />
 							<apex:inputhidden value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
 						</apex:outputpanel>
 					</apex:pageBlockSectionItem>
@@ -1034,10 +1034,11 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageBlockButtons>
 			</apex:pageBlock>
 		</apex:outputPanel>
-		<apex:pageBlock title="Admission and Shift Assessments" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
+		<a name="ShiftAssessments" id="ShiftAssessments"></a>
+		<apex:pageBlock title="Resident Assessment and Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
 			<div class="pbHeaderButton">
 				<!-- apex:CommandButton value="Admission and Shift Assessment" rendered="{!(evaluations == null || evaluations.size=0) && Service_Assignment__c.Status__c!='Inactive'}" action="{!addNurAssessment}"/ -->
-				<apex:commandButton value="Add Shift Assessment" rendered="{!vfVarIsCM}" onclick="showAddevaluation(); j$('[id$=evalProceed]').hide(); j$('[id$=enterNew]').hide();return false;" />
+				<apex:commandButton value="Add Nurses Shift Documentation" rendered="{!vfVarIsCM}" onclick="showAddevaluation(); j$('[id$=evalProceed]').hide(); j$('[id$=enterNew]').hide();return false;" />
 				<apex:actionStatus id="AddevaluationStatus">
 					<apex:facet name="start">
 						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1051,29 +1052,29 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Name">
 					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
 				</apex:column>
-				<apex:column  headerValue="Shift Start Time" >
+				<apex:column headerValue="Shift Start Time" >
 					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
 				</apex:column>
-				<apex:column  headerValue="Shift End Time" >
+				<apex:column headerValue="Shift End Time" >
 					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
 				</apex:column>
 				<apex:column value="{!evs.Status__c}" />
-				<!-- apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" />
+				<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" />
 				<apex:column headerValue="Signed By">
 					 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false">
 						<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a>
 					</apex:outputText>
-				</apex:column >
+				</apex:column>
 				<apex:column headerValue="Signed At">
 					<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}">
 						<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" />
 					</apex:outputText>
-				</apex:column -->
+				</apex:column>
 				<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
 				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>
 			<apex:outputText value="No Records to display" rendered="{!evaluations.size=0 || evaluations == null}" />
-			<apex:outputPanel rendered="{!evaluations.size>0}">Showing 5 most recent Records. Click <a href="/a11?id={!Service_Assignment__c.Id}&rlid=00NU0000003nvkw&lsr=0" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+			<apex:outputPanel rendered="{!evaluations.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 		</apex:pageBlock>
 
 		<!--  Notes section -->

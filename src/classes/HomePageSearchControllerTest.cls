@@ -1,4 +1,4 @@
-@isTest(seeAllData=true)
+@isTest
 public class HomePageSearchControllerTest {
     public static Id getAccountRecordType(){
     List<RecordType> RecTypes= [SELECT Id, Name from recordtype where SobjectType = 'Account' and IsPersonType = true and IsActive = true and Name = 'Person Being Served'];

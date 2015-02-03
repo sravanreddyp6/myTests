@@ -1,6 +1,7 @@
 @isTest
 public with sharing class EvaluationEditControllerTests {
     public static testmethod void simpleTests() {
+    	
         Person_Being_Referred__c pbr = new Person_Being_Referred__c();
         insert pbr;
         Referral__c referral = new Referral__c(
@@ -45,5 +46,23 @@ public with sharing class EvaluationEditControllerTests {
             '/apex/CareMeridianEvaluationEdit?id='+eval.id,
             controller.redirect().getUrl()
         );
+        
+        TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
+        eval = new Evaluation__c(
+        	ServiceAssignment__c = testData.theSA.Id,
+        	RecordTypeId = Utility.getEvaluationRecordType('CMShiftAssessment'),
+        	Status__c = 'Draft',
+        	OwnerId = UserInfo.getUserId()
+        );
+        insert eval;
+        controller = new EvaluationEditController(
+            new ApexPages.StandardController(eval)
+        );
+      
+        System.assertEquals(
+            '/apex/CMShiftAssessmentEdit?id='+eval.id,
+            controller.redirect().getUrl()
+        );
+        
     }
 }

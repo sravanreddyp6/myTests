@@ -25,6 +25,10 @@ public with sharing class CMShiftAssessmentEdit {
 	public List<string>selectedDysreflexia { get ; set; }
 	public List<selectOption>verbalExpressionValues;
 	public List<string>selectedVerbalExpression { get; set; }
+	public List<SelectOption>bowelValues ;
+    public List<string>selectedBowel {get; set;}
+	public List<SelectOption>bladderValues ;
+    public List<string>selectedBladder {get; set;}
 
 	public Evaluation_Response__c[] pains {
 		get {
@@ -193,6 +197,10 @@ public with sharing class CMShiftAssessmentEdit {
 		selectedDysreflexia = new List<String>();
 		verbalExpressionValues = new List<selectOption>();
 		selectedVerbalExpression = new List<String>();
+		bowelValues = new List<selectOption>();
+        selectedBowel = new List<String>();
+		bladderValues = new List<selectOption>();
+        selectedBladder = new List<String>();
 
 
 		if(!String.isBlank(this.evaluation.Resident_Demonstrating_Issues__c))
@@ -213,6 +221,12 @@ public with sharing class CMShiftAssessmentEdit {
 		if(!String.isBlank(this.evaluation.Expression_Other__c))
 			selectedVerbalExpression = this.evaluation.Expression_Other__c.split(';');
 			
+		 if(!String.isBlank(this.evaluation.Elimination_Bowel_No_Continent_Appliance__c))
+            selectedBowel = this.evaluation.Elimination_Bowel_No_Continent_Appliance__c.split(';');
+			
+		if(!String.isBlank(this.evaluation.Elimination_Bladder_No_Continent_Details__c))
+            selectedBladder = this.evaluation.Elimination_Bladder_No_Continent_Details__c.split(';');
+            	
 		if(ApexPages.currentPage().getParameters().get('showErrors') == '1'){
 			checkErrors();
 		}
@@ -228,7 +242,7 @@ public with sharing class CMShiftAssessmentEdit {
 	public void showEditVitalsDetail() {
 		this.currentVitalsDetail = [
 			SELECT ID, Name, Date__c, Temperature__c, R__c, O2_Saturation__c, Blood_Pressure__c,
-				Heart_Rate__c
+                   Heart_Rate__c, HR_Intervention_Needed__c, HR_Narrative_Note__c, O2_Intervention_Needed__c, O2_Narrative_Note__c
 			FROM Evaluation_Response__c WHERE ID=:currentVitalsDetailId
 		];
 	}
@@ -328,7 +342,7 @@ public with sharing class CMShiftAssessmentEdit {
 			this.evaluation.Mood__c = mod;
 		}
 		else
-			this.evaluation.Mood__c ='';
+			this.evaluation.Mood__c = '';
 
 		//for breathe sounds multi-select
 		String strtypes = '';
@@ -367,6 +381,32 @@ public with sharing class CMShiftAssessmentEdit {
 		}
 		else
 			this.evaluation.Expression_Other__c ='';
+		
+		//for Bowel incont Multi-picklist 
+		string blr ='';       
+        for(string c: selectedBowel){
+        	blr += c+';';
+        }	
+        if(blr!=''){
+            blr = blr.Substring(0,blr.length()-1);
+            this.evaluation.Elimination_Bowel_No_Continent_Appliance__c= blr;
+            
+        }
+        else
+        this.evaluation.Elimination_Bowel_No_Continent_Appliance__c =''; 
+		
+		//for Bladder incont Multi-picklist
+		string clr = '';         
+       	for(string c: selectedBladder){
+       		clr += c+';';	
+       	}     
+        if(clr!=''){
+            clr = clr.Substring(0,clr.length()-1);
+            this.evaluation.Elimination_Bladder_No_Continent_Details__c= clr;      
+        }
+        else
+        this.evaluation.Elimination_Bladder_No_Continent_Details__c ='';
+                
 
 		// Saving the selected options for multi-checkbox fields
 		for (String field: selectOptionWidgetsMap.keySet()) {
@@ -562,7 +602,8 @@ public with sharing class CMShiftAssessmentEdit {
 		Boolean nutrition = true;
 		List<string> nutritionErrors = errorMap.get('nutritionTab');
 		nutritionErrors.clear();
-		if(this.evaluation.nutrition_route__c == ''){
+		
+		if(this.evaluation.nutrition_route__c == null || this.evaluation.nutrition_route__c == ''){
 			nutrition = false;
 			nutritionErrors.add('Please Choose atleast one Feeding type');
 		}
@@ -602,6 +643,16 @@ public with sharing class CMShiftAssessmentEdit {
 				nutrition = false;
 				nutritionErrors.add('Please Choose atleast one check box for Saliva');
 			}
+			
+			if(this.evaluation.Teeth_Problems__c == null){
+				nutrition = false;
+				nutritionErrors.add('Teeth Problems field is mandatory');
+			}
+			
+			if(this.evaluation.breath__c == ''){
+				nutrition = false;
+				nutritionErrors.add('Please choose atleast one checkbox for Breath');
+			}
 
 			if(this.evaluation.Narrative_Note__c == '') {
 				nutrition = false;
@@ -615,35 +666,50 @@ public with sharing class CMShiftAssessmentEdit {
 
 		}
 
-		if(this.evaluation.RUQ__c == 'Yes' && this.evaluation.RUQ_Describe__c == null) {
+		if(this.evaluation.RUQ__c == 'Abnormal' && this.evaluation.RUQ_Describe__c == null) {
 			nutrition = false;
 			nutritionErrors.add('RUQ Description is Mandatory');
 
 		}
 
-		if(this.evaluation.LUQ__c == 'Yes' && this.evaluation.LUQ_Describe__c == null) {
+		if(this.evaluation.LUQ__c == 'Abnormal' && this.evaluation.LUQ_Describe__c == null) {
 			nutrition = false;
 			nutritionErrors.add('LUQ Descritption is Mandatory');
 
 		}
 
-		if(this.evaluation.RLQ__c == 'Yes' && this.evaluation.RLQ_Describe__c == null) {
+		if(this.evaluation.RLQ__c == 'Abnormal' && this.evaluation.RLQ_Describe__c == null) {
 			nutrition = false;
 			nutritionErrors.add('RLQ Description is Mandatory');
 
 		}
 
-		if(this.evaluation.LLQ__c == 'Yes' && this.evaluation.LLQ_Describe__c == null) {
+		if(this.evaluation.LLQ__c == 'Abnormal' && this.evaluation.LLQ_Describe__c == null) {
 			nutrition = false;
 			nutritionErrors.add('LLQ Description is Mandatory');
 
+		}
+		
+		if(this.evaluation.Weight_picklist__c == 'Yes' && this.evaluation.WeightKg__c == null) {
+			nutrition = false;
+			nutritionErrors.add('Please enter Weight information');
+		}
+		
+		if(this.evaluation.Bowel_Continence__c == null) {
+			nutrition = false;
+			nutritionErrors.add('Bowel Continence field is Mandatory');
+		}
+		
+		if(this.evaluation.Bowel_Continence__c == 'Incontinent' && this.evaluation.Elimination_Bowel_No_Continent_Appliance__c == ''){
+			nutrition = false;
+			nutritionErrors.add('Please choose atleast one device for Bowel Continence');
 		}
 
 		if(this.evaluation.Bowel_Issues__c == null) {
 			nutrition = false;
 			nutritionErrors.add('Bowel issues field is Mandatory');
 		}
-
+		
 		if(this.evaluation.Bowel_Issues__c == 'Yes') {
 			if(this.evaluation.bowel_issue_type__c == '') {
 				nutrition = false;
@@ -656,6 +722,44 @@ public with sharing class CMShiftAssessmentEdit {
 				nutritionErrors.add('Bowel issues additional information is Mandatory');
 			}
 
+		}
+		
+		if(this.evaluation.Bladder_Continence__c == null){
+			nutrition = false;
+			nutritionErrors.add('Bladder Continence field is mandatory');
+		}
+		
+		if(this.evaluation.Bladder_Continence__c == 'Incontinent' && this.evaluation.Elimination_Bladder_No_Continent_Details__c == '') {
+			nutrition = false;
+			nutritionErrors.add('Please choose atleast one device for Bladder Continence');
+		}
+		
+		if(this.evaluation.Urinary_Issues_Checkbox__c == null){
+			nutrition = false;
+			nutritionErrors.add('Urinary issues field is mandatory');	
+		}
+		
+		if(this.evaluation.Urinary_Issues_Checkbox__c == 'Yes') {
+			if(this.evaluation.urinary_issues__c == '') {
+				nutrition = false;
+				nutritionErrors.add('Urinary Issue type is mandatory');
+			}
+			
+			if(this.evaluation.Urine_Color__c == null ) {
+				nutrition = false;
+				nutritionErrors.add('Urine Color is mandatory');
+			}
+			
+			if(this.evaluation.urine_clarity__c == null ) {
+				nutrition = false;
+				nutritionErrors.add('Urinary Clarity is mandatory');
+			}
+			
+			if(this.evaluation.Urine_Odor__c == null ) {
+				nutrition = false;
+				nutritionErrors.add('Urinary odor is mandatory');
+			}
+			
 		}
 		
 		if(this.evaluation.Dialysis_Picklist__c == null) {
@@ -721,43 +825,80 @@ public with sharing class CMShiftAssessmentEdit {
 		Boolean neuro = true;
 		List<string> neuroErrors = errorMap.get('neuroTab');
 		neuroErrors.clear();
-
-		if(this.evaluation.Rancho_Level__c == null) {
+		
+		if(this.evaluation.Cognition_Intact__c == null) {
 			neuro = false;
-			neuroErrors.add('Rancho level is Mandatory');
+			neuroErrors.add('Cognition Intact field is Mandatory');
+			
+		}
+		
+		if(this.evaluation.Cognition_Intact__c == 'No') {
+			
+			if(this.evaluation.Rancho_Level__c == null) {
+				neuro = false;
+				neuroErrors.add('Rancho level is Mandatory');
+			}
+			
+			if(this.evaluation.Level_of_Conciousness__c == null){
+				neuro = false;
+				neuroErrors.add('Level of Conciousness is Mandatory');
+			}
+			
+		}
+		
+		if((this.evaluation.Cognition_Intact__c == 'Yes' || (this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1) No Response'))&& !(this.evaluation.Cooperative__c || this.evaluation.Impulsive__c || this.evaluation.Inappropriate__c || this.evaluation.Agitated__c || this.evaluation.Combative__c || this.evaluation.Confused__c || this.evaluation.Unresponsive__c)){
+				neuro = false;
+				neuroErrors.add('Please atleast one checkbox for Behavior');
 		}
 
-		if(this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1) No Response') {
+		if(this.evaluation.Rancho_Level__c != null && this.evaluation.Rancho_Level__c != '(1) No Response' ) {
+			
+			if(this.evaluation.Orientation__c == '') {
+				neuro = false;
+				neuroErrors.add('Please atleast one checkbox for Orientation');
+				
+			}
+			
+			if(!(this.evaluation.Verbal_Stim__c || this.evaluation.Auditory_Stim__c || this.evaluation.Tactile_Stim__c || this.evaluation.Responds_To_Pain__c || this.evaluation.Visual__c)) {
+				neuro = false;
+				neuroErrors.add('Please atleast one checkbox for Responds to');
+				
+			}
+			
+		}
+			
+		if(this.evaluation.Mood__c == '') {
+			neuro = false;
+			neuroErrors.add('Please choose atleast one checkbox for Mood');
+		}
 
-			if(this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat')) {
-
-				if(this.evaluation.Desire_to_hurt_themselves__c == null) {
-					neuro = false;
-					neuroErrors.add('Has Resident Expressed Desire to Hurt Him/Herself? field is mandatory when mood is flat or sad');
-				}
-
-				if(this.evaluation.Desire_to_hurt_themselves__c =='Yes' && this.evaluation.Plan_to_Harm_themselves__c == null) {
-					neuro = false;
-					neuroErrors.add('Does Resident Have a Plan to Harm Him/Herself? is mandatory');
-				}
-
+		if( this.evaluation.Mood__c != null) {
+				
+			if((this.evaluation.Mood__c.Contains('Sad') || this.evaluation.Mood__c.Contains('Flat')) && evaluation.Desire_to_hurt_themselves__c == null ) {
+				neuro = false;
+				neuroErrors.add('Has Resident Expressed Desire to Hurt Him/Herself? field is mandatory when mood is flat or sad');
 			}
 
-			if( this.evaluation.Able_to_make_Needs_Known__c == null) {
+			if(this.evaluation.Desire_to_hurt_themselves__c =='Yes' && this.evaluation.Plan_to_Harm_themselves__c == null) {
 				neuro = false;
-				neuroErrors.add('Ability to make needs known field is mandatory');
-				}
-
-			if(this.evaluation.Able_to_make_Needs_Known__c == 'No' && this.evaluation.Expression__c == null) {
-				neuro = false;
-				neuroErrors.add('Expression field is mandatory');
+				neuroErrors.add('Does Resident Have a Plan to Harm Him/Herself? is mandatory');
 			}
 
-			if(this.evaluation.Expression__c == 'Non-Verbal' && this.evaluation.Expression_Other__c == '') {
-				neuro = false;
-				neuroErrors.add('Please choose other expression when expression is non-verbal');
-			}
+		}
 
+		if( this.evaluation.Able_to_make_Needs_Known__c == null) {
+			neuro = false;
+			neuroErrors.add('Ability to make needs known field is mandatory');
+		}
+
+		if(this.evaluation.Able_to_make_Needs_Known__c == 'No' && this.evaluation.Expression__c == null) {
+			neuro = false;
+			neuroErrors.add('Expression field is mandatory');
+		}
+
+		if(this.evaluation.Expression__c == 'Non-Verbal' && this.evaluation.Expression_Other__c == '') {
+			neuro = false;
+			neuroErrors.add('Please choose other expression when expression is non-verbal');
 		}
 
 		if(this.evaluation.Safety_Awareness__c == null){
@@ -887,6 +1028,16 @@ public with sharing class CMShiftAssessmentEdit {
 		List<Selectoption> expressionValue = Utility.getPicklistValues(evaluation, 'Expression_Other__c');
 		return expressionValue;
 	}
+	
+   public List<selectoption> getbowelValues(){
+            List<Selectoption> bowelValue = Utility.getPicklistValues(evaluation, 'Elimination_Bowel_No_Continent_Appliance__c');
+            return bowelValue; 
+   }
+	
+   public List<selectoption> getbladderValues(){
+            List<Selectoption> bladderValue = Utility.getPicklistValues(evaluation, 'Elimination_Bladder_No_Continent_Details__c');
+            return bladderValue; 
+   }
 
 	public PageReference addPainResponse() {
 		pains.add(new Evaluation_Response__c(

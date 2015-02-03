@@ -3,7 +3,7 @@
     <!-- START: Trick VF into setting focus to top of page instead of to first input field  --> 
     function setFocusOnLoad() {}
 </script>
-
+<a href="/">Home</a> > Associated Document
 <apex:form >
     <apex:pageBlock title="Associated Document Edit:" id="detail" mode="edit">
             <apex:pageBlockButtons >
@@ -15,6 +15,7 @@
                 <apex:outputField value="{!PB_AssociatedDoc__c.Due_Date__c}" />
                 <apex:inputField value="{!PB_AssociatedDoc__c.Status__c}" />
                 <apex:inputField value="{!PB_AssociatedDoc__c.Status_Date__c}" />
+                <apex:inputField value="{!PB_AssociatedDoc__c.Comments__c}" />
             </apex:pageBlockSection>
             
         </apex:pageBlock>

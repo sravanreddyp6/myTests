@@ -585,13 +585,16 @@ public with sharing class referralConversion_Controller {
             SELECT ID, NAME FROM Evaluation__c
             WHERE Referral__c =:refCurr.Id LIMIT 1
         ]; //using List to avoid System.Query Exception when no records are returned
+        
+        string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(',') != null ? this.referralRecord.Name_PBR__c.Substringbefore(',') : '' ; //newSA.Admission__r.Person_Being_Served__r.LastName;
+        string pbsfirstinitial = this.referralRecord.Name_PBR__c.substringAfter(', ') != null ? this.referralRecord.Name_PBR__c.substringAfter(', ').substring(0,1) : '';
+        string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : ''; 
 
         if(refEval.isEmpty()){
-            string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(','); //newSA.Admission__r.Person_Being_Served__r.LastName;
-            if(pbslastName == null) pbslastName = '';
+        	
             Evaluation__c nurseEval = new Evaluation__c(
                                             ServiceAssignment__c = newSA.id,
-                                            Name = pbslastName +'AdmissionAssessment'+ DateTime.Now().format('MMddyy'),
+                                            Name = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName(),
                                             RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
             );
             insert nurseEval;
@@ -599,7 +602,7 @@ public with sharing class referralConversion_Controller {
         else {
             id evalID = refEval[0].id;
             list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
-            String asmtName = refEval[0].Name.length()>10 ? refEval[0].Name.Substringbefore('Eval')+'AdmissionAssessment'+ DateTime.Now().format('MMddyy') : 'AdmissionAssessment'+ DateTime.Now().format('MMddyy');
+            String asmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
             String query = 'SELECT ';
             FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
 
