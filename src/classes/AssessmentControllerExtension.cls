@@ -131,7 +131,10 @@ public with sharing class AssessmentControllerExtension {
 
 	// updates the billable flag on the record then redirects to detail view of Progress Note
 	public PageReference setDisregard () {
-
+            if(assmt.Status__c == 'Locked'){
+                assmt.Status__c = 'UnlockedToDisregard';
+                update assmt;
+            }
 		assmt.Disregard__c = true;
 		update assmt;
 		System.Debug('turned on disregard: ' + assmt);
