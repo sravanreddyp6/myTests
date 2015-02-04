@@ -1277,23 +1277,30 @@
 				<apex:outputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" />
 				<apex:outputField value="{!Referral__c.Update_Notes__c}" style="width: 90%;" />
 			</apex:pageBlockSection>
+      <br/>
 			<apex:pageBlockSection showHeader="false" columns="2" collapsible="false">
 				<apex:pageBlockSectionItem >
-					<apex:outputText />
+					<apex:outputText >Created By:</apex:outputText>
 					<apex:outputPanel >
-						Created By:&nbsp;
+						
 						<apex:outputField value="{!Referral__c.CreatedById}" />,&nbsp;
 						<apex:outputField value="{!Referral__c.CreatedDate}" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem >
-					<apex:outputText />
+					<apex:outputText >Last Modified By:</apex:outputText>
 					<apex:outputPanel >
-						Last Modified By:&nbsp;
 						<apex:outputField value="{!Referral__c.LastModifiedById}" />,&nbsp;
 						<apex:outputField value="{!Referral__c.LastModifiedDate}" />
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+              <apex:outputText >Owner:</apex:outputText>
+              <apex:outputPanel >
+                <apex:outputField value="{!Referral__c.OwnerID}"/>
+                <i>to change, click on Edit </i>
+              </apex:outputPanel>
+            </apex:pageBlockSectionItem>        
 			</apex:pageBlockSection>
 
 			<!--  START NEW PLACEMENT SECTION -->

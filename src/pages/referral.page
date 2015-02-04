@@ -1598,6 +1598,7 @@
 
                 <apex:inputField id="infoRealese" value="{!Referral__c.Is_Information_Release_Signed__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
+                <apex:inputField value="{!Referral__c.OwnerID}"/>
             </apex:pageBlockSection>
             <apex:actionRegion >
                 <apex:pageBlockSection title="Placement Risk" id="placementRiskBlock" rendered="{!referralRecordType=='Cambridge Florida' ||
