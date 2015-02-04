@@ -2022,6 +2022,16 @@
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!referralRecordtype == 'NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian', ReferralRecordType != 'NeuroRestorative')}" />
+                
+                <apex:inputField value="{!Referral__c.New_Address_Location__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+
+                <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+
+                <apex:inputField value="{!Referral__c.Current_Location_Name__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />                
+
                 <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street1" />
 
                 <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
@@ -2091,8 +2101,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-                <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+
                 <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
                 <apex:inputField value="{!Referral__c.Phone__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" id="MN_Phone" />
                 <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
