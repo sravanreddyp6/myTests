@@ -1,4 +1,4 @@
-<apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt,SeizureExtension" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+<apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!$Resource.pbscardcss}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -279,7 +279,7 @@
                 });
             } else {
                 Visualforce.remoting.Manager.invokeAction(
-	                '{!$RemoteAction.SeizureExtension.findDuplicateSeizure}',
+	                '{!$RemoteAction.ServiceAssignmentExt.findDuplicateSeizure}',
 	                startValue,
 	                endValue,
 	                '{!Service_Assignment__c.Id}',
@@ -292,9 +292,9 @@
 	                                saveSeizure();
 	                            }
 	                    } else if (event.type === 'exception') {
-	                        document.getElementById("dupeFound").innerHTML = event.message;
+	                        document.getElementById("seizureMessages").innerHTML = event.message;
 	                    } else {
-	                        document.getElementById("dupeFound").innerHTML = event.message;
+	                        document.getElementById("seizureMessages").innerHTML = event.message;
 	                    }
 	                },
 	                {escape: true}
@@ -357,9 +357,9 @@
 		</apex:actionFunction>
 		
         <!-- start seizure actions-->
-        <apex:actionFunction name="showAddSeizure" status="AddSeizureStatus" action="{!showAddSeizure}" oncomplete="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry,seizureMessages" />
+<!--         <apex:actionFunction name="showAddSeizure" status="AddEditSeizureStatus" action="{!showAddSeizure}" oncomplete="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry,seizureMessages" /> -->
         <apex:actionFunction name="saveSeizure" action="{!saveSeizure}" status="saveSeizureStatus" oncomplete="seizureScrollToTop(true); if (closeSeizure && jQuery('.errorMsg').length == 0) closeModalDialog('seizureTrackingModal', 'div');" rerender="SeizureTrackingList,seizureEntry,seizureMessages" />
-        <apex:actionFunction name="showEditSeizure" action="{!showEditSeizure}" status="editSeizureStatus" oncomplete="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600);seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry, seizureMessages">
+        <apex:actionFunction name="showEditSeizure" action="{!showEditSeizure}" status="AddEditSeizureStatus" oncomplete="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600);seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry, seizureMessages">
             <apex:param name="seizureId" value="" />
         </apex:actionFunction>
         <!-- end seizure actions-->
@@ -1028,7 +1028,7 @@ END: Uncomment to have the element collapsed by default -->
                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                         </apex:facet>
                         <apex:facet name="stop">
-	                        <apex:outputPanel>
+	                        <apex:outputPanel >
 			                    <apex:commandButton id="saveSeizure" value="Save" onclick="seizureSave(true);return false;" />
 			                    <apex:commandButton id="saveAndNewSeizure" value="Save & New" onclick="seizureSave(false); return false;" />
 			                    <apex:commandButton value="Cancel" onclick="closeModalDialog('seizureTrackingModal', 'div');j$('#seizureMessages').html('');return false;" />
@@ -1048,25 +1048,26 @@ END: Uncomment to have the element collapsed by default -->
         <a id="Seizure_Tracking"></a>
         <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB}">
             <div class="pbHeaderButton">        
-            <apex:actionStatus id="AddSeizureStatus">
-                <apex:facet name="start">
-                    <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-                </apex:facet>
-                <apex:facet name="stop" >
-                    <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" />
+<!--             <apex:actionStatus id="AddSeizureStatus"> -->
+<!--                 <apex:facet name="start"> -->
+<!--                     <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
+<!--                 </apex:facet> -->
+<!--                 <apex:facet name="stop" > -->
+<!--                <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" /> -->
+                    <input type="button" class="btn" value="Add Seizure" onclick="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
 <!--                <input type="button" class="btn" value="Add Seizure" onclick="showAddSeizure(); return false;"/> -->
-                </apex:facet>
-            </apex:actionStatus>
+<!--                 </apex:facet> -->
+<!--             </apex:actionStatus> -->
             </div>
             <apex:outputText value="No seizures to display" rendered="{!seizures.size==0}" />
-            <apex:outputPanel rendered="{!seizures.size > 5}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+            <apex:outputPanel rendered="{!seizures.size > 5}">Showing 5 most recent Records. Click <a href="/apex/SeizureListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 
-            <apex:actionStatus id="editSeizureStatus">
-                <apex:facet name="start">
-                    <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-                </apex:facet>
-                <apex:facet name="stop"></apex:facet>
-            </apex:actionStatus>
+<!--             <apex:actionStatus id="editSeizureStatus"> -->
+<!--                 <apex:facet name="start"> -->
+<!--                     <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
+<!--                 </apex:facet> -->
+<!--                 <apex:facet name="stop"></apex:facet> -->
+<!--             </apex:actionStatus> -->
                 
             <apex:pageBlockTable value="{!seizures}" var="seizure" rendered="{!seizures.size>0}" rows="5">
                 <apex:column headerValue="Action" width="12%">
@@ -1079,6 +1080,30 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:column value="{!seizure.Duplicate_Entry__c}" width="5%"/>
             </apex:pageBlockTable>
         </apex:pageBlock>
+        
+        <apex:actionStatus id="AddEditSeizureStatus" >
+            <apex:facet name="start">  
+                    <style>
+                    .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+                .foggy{
+                    opacity:0.8;
+                    background-color:#ccc;
+                    position:fixed;
+                    width:100%;
+                    height:100%;
+                    top:0px;
+                    left:0px;
+                    z-index:1000;
+                }  
+                </style>
+        
+                <div class="foggy" />        
+                <div class="thinkingwheel" >    
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                </div> 
+            </apex:facet>  
+            <apex:facet name="stop"> </apex:facet>         
+        </apex:actionStatus>
         <!-- end Seizures section-->    
         
 
