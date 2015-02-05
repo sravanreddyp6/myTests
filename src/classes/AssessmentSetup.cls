@@ -270,24 +270,36 @@ public without sharing class AssessmentSetup {
         
         for ( Assessment__c a : assessments ){
         
-            List<Assessment__c> allAssmtsOfTypeForAdmission = [SELECT Id, Interval__c, Quarter__c FROM Assessment__c WHERE AccountPerson__c = :a.AccountPerson__c AND Admission__c = :a.Admission__c AND Assessment_Type__c = :a.Assessment_Type__c AND Disregard__c = false ORDER BY Quarter__c];
+            List<Assessment__c> allAssmtsOfTypeForAdmission = [SELECT Id, Interval__c, Quarter__c, Assessment_Date__c FROM Assessment__c WHERE AccountPerson__c = :a.AccountPerson__c AND Admission__c = :a.Admission__c AND Assessment_Type__c = :a.Assessment_Type__c AND Disregard__c = false ORDER BY Quarter__c];
             System.Debug('List allAssmtsOfTypeForAdmission: ' + allAssmtsOfTypeForAdmission);
             
 
             
-                   
+            date earlestAssess;
+            system.debug('this date assess' + a.Assessment_Date__c);
             for ( Assessment__c aprev : allAssmtsOfTypeForAdmission){
-                // START: Confirm Intake is first assessment of type        
+                //set earlest date when null or is greater then the previous assessment loop one in the loop
+                //after the loop we'll check this vs the current assessment in the main loop (a)
+                //eb-360
+                if (earlestAssess == null){earlestAssess = aprev.Assessment_Date__c;}
+                else if (earlestAssess > aprev.Assessment_Date__c){earlestAssess = aprev.Assessment_Date__c;}
+
+                // START: Confirm Intake is first assessment of type  
                 if( aprev.Interval__c == 'Intake' ){
                     a.addError('The interval Intake can only be selected when there are no other Intake Assessments for this Admission.');
                 }
                 // END: Confirm Intake is first assessment of type
-
+                //end eb-360
                 // START: Confirm that no assessment can be entered after the discharge. 
                 if (aprev.Interval__c == 'Discharge'){
                     a.addError('A discharge assessment of this assessment type already exists for this admission.  Additional assessments of a given type cannot be created after an assessment with interval \'Discharged\' has been created for that type.  If you require assistance, please contact your system administrator.');
                 }
                 // END: Confirm that no assessment can be entered after the discharge
+            }
+            //eb-360
+            if(a.Interval__c == 'Intake' && a.Assessment_Date__c > earlestAssess){
+                String strDate = datetime.newInstance(earlestAssess.year() , earlestAssess.month() , earlestAssess.day()).format('MM/dd/yy');
+                a.addError('Intake Assessments must be the earlest Assessment: The Intake Assessment you are trying to create has an assessment date after an exsiting one (' + strDate + ').');
             }
             
             
