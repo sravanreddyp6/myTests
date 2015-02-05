@@ -4,9 +4,6 @@
         <field>CUST_NAME</field>
     </columns>
     <columns>
-        <field>Referral__c.Name_PBR__c</field>
-    </columns>
-    <columns>
         <field>SUBJECT</field>
     </columns>
     <columns>
@@ -36,11 +33,17 @@
             <operator>notEqual</operator>
             <value>Closed</value>
         </criteriaItems>
+        <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
         <field>Referral__c.Service_Location_Program__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Referral__c.Name_PBR__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Referral Status of Admission Activities</name>
