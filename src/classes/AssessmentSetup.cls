@@ -285,7 +285,7 @@ public without sharing class AssessmentSetup {
                 else if (earlestAssess > aprev.Assessment_Date__c){earlestAssess = aprev.Assessment_Date__c;}
 
                 // START: Confirm Intake is first assessment of type  
-                if( aprev.Interval__c == 'Intake' ){
+                if( a.Interval__c == 'Intake' && aprev.Interval__c == 'Intake' ){
                     a.addError('The interval Intake can only be selected when there are no other Intake Assessments for this Admission.');
                 }
                 // END: Confirm Intake is first assessment of type
@@ -328,7 +328,7 @@ public without sharing class AssessmentSetup {
                 // our number from the object is not Integer type.  So, we
                 // can use this Double and expect integers.
                 Double lastAndHighestQrtrNum = 0;
-                
+                set<Double> AssessmentQuarters = new set<Double>();
                 for ( Assessment__c aprev : allAssmtsOfTypeForAdmission){
 
                     
@@ -371,6 +371,7 @@ public without sharing class AssessmentSetup {
                         // lifetime.
                         if( aprev.Quarter__c > 0 ){
                             lastAndHighestQrtrNum = aprev.Quarter__c;
+                            AssessmentQuarters.add(aprev.Quarter__c);
                         }
                     
                     }
@@ -392,10 +393,19 @@ public without sharing class AssessmentSetup {
                 if ( a.Quarter__c > (lastAndHighestQrtrNumInt + 1) ){
                     qrtrNumAllowed = false;
                 }
-                        System.Debug('Value of qrtrNumAllowed at Line 283: ' + qrtrNumAllowed);             
+                //there may have been a q2 assessment that was disregarded after a q3,
+                // it should allowed to be created even though its no the next in the line
+                
+                
+                if(a.Quarter__c < (lastAndHighestQrtrNumInt + 1) && !AssessmentQuarters.contains(a.Quarter__c )){
+                  qrtrNumAllowed = true;
+                }
+
+
+                System.Debug('Value of qrtrNumAllowed at Line 283: ' + qrtrNumAllowed);             
                 // If qtrNumAllowed equals false after all that, prevent insert.
                 if(qrtrNumAllowed == false){
-                    a.addError('The Quarterly Assessment Number you have indicated, ' + a.Quarter__c + ', does not seem to be the next expected quarterly assessment for this admission.  Please check the numbering of the quarterly assessments under this admission and try again.  If one or more quarterly assessments have been missed, you may need to enter and save a blank assessment for the previous quarter(s) to proceed.  If you need assistance, please contact your system administrator.');
+                    a.addError('The Quarterly Assessment Number you have indicated (' + a.Quarter__c + ') does not seem to be the next expected quarterly assessment (' + (lastAndHighestQrtrNumInt + 1) +') for this admission.  Please check the numbering of the quarterly assessments under this admission and try again.  If one or more quarterly assessments have been missed, you may need to enter and save a blank assessment for the previous quarter(s) to proceed.  If you need assistance, please contact your system administrator.');
                 }   
             
             }
