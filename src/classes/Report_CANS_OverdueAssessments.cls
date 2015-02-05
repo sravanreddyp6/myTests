@@ -28,7 +28,7 @@ public with sharing class Report_CANS_OverdueAssessments {
 		listWrapper = new List<List<Assessment__c>>();
 		Integer totalCounter = 0;
 		Integer listCounter = 0;
-		for (Assessment__c[] assessments: [ SELECT Id, Name, Admission__r.Person_Being_Served__r.Name, Admission__r.Person_Being_Served__r.Owner.Name, Admission__r.Person_Being_Served__r.Owner.Id, Assessment_Date__c, Owner.Name, Owner.Id FROM Assessment__c WHERE Id IN :assessmentIds ]) {
+		for (Assessment__c[] assessments: [ SELECT Id, Name, Admission__r.Person_Being_Served__r.Name, Admission__r.Person_Being_Served__r.Owner.Name, Admission__r.Person_Being_Served__r.Owner.Id, Assessment_Date__c, Owner.Name, Owner.Id, Status__c, Disregard__c FROM Assessment__c WHERE Id IN :assessmentIds ]) {
 			for (Assessment__c assessment: assessments) {
 				listCounter = totalCounter / 999;
 				System.debug('List Counter: ' + listCounter);
