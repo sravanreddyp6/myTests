@@ -7,6 +7,8 @@
 				<th>Last Assessment Name</th>
 				<th>Last Assessment Date</th>
 				<th>Last Assessment Owner</th>
+				<th>Last Assessment Status</th>
+				<th>Last Assessment Disregarded?</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -30,6 +32,8 @@
 						<td class="dataCell">
 							<a href="{!baseUrl}/{!assessment.Owner.Id}">{!assessment.Owner.Name}</a>
 						</td>
+						<td class="dataCell">{!assessment.Status__c}</td>
+						<td class="dataCell">{!IF(assessment.Disregard__c, 'Yes', 'No')}</td>
 					</tr>
 				</apex:repeat>
 			</apex:repeat>
