@@ -1,4 +1,4 @@
-public without sharing class AdmissionViewExtension {
+public with sharing class AdmissionViewExtension {
         public String[] availableAssessmentTypes { get {
            return new String[] {'Risk', 'CANS', 'ISSA'};
         }}
@@ -73,7 +73,8 @@ public without sharing class AdmissionViewExtension {
                 assessmentTypes.put(t.Name, true);
         }
         this.riskAssessments = fetchAssessments('Risk', this.admission.ID);
-        this.cansAssessments = fetchAssessments('CANS', this.admission.ID);
+        IgnoreSharing noSharing = new IgnoreSharing();
+        this.cansAssessments = noSharing.getAllCans(this.admission.ID);
         this.issaAssessments = fetchAssessments('ISSA', this.admission.ID);
         
         setcanCreateAsmt();
@@ -135,7 +136,21 @@ public without sharing class AdmissionViewExtension {
         return theId;
     
     
-    }    
+    }  
+
+    public without sharing class IgnoreSharing{
+        public list<Assessment__c> getAllCans(ID admissionId){
+            return [
+               SELECT Name, Assessment_Date__c, Finalized_Date__c, Score__c,
+                      Owner.FirstName, Owner.LastName, Owner.Name, Status__c, disregard__c
+               FROM Assessment__c
+               WHERE Assessment_Type__r.Name='CANS' AND Admission__c=:admissionId Order By CreatedDate DESC 
+            ]; 
+        }
+        public IgnoreSharing(){
+
+        }
+    }  
     
     
 }
