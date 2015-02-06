@@ -250,7 +250,9 @@
         validateSeizure = function () {
             var seizureErrors = [];
             var startValue = j$('[id$=seizureEntry_startDateTime]').val();
+            var formatStart = new Date(moment(new Date(startValue)).format());
             var endValue = j$('[id$=seizureEntry_endDateTime]').val();
+            var formatEnd = new Date(moment(new Date(endValue)).format());
 
             j$('#seizureMessages').html('');
             if (startValue == '' && endValue == '') {
@@ -262,7 +264,7 @@
             else if (endValue == '') {
                 seizureErrors.push('The End Time must contain a value. Please enter an End Time of the Seizure event.');
             }
-            else if (startValue >= endValue) {
+            else if (formatStart >= formatEnd) {
                 seizureErrors.push('The End Time must come AFTER your Start Time. Please adjust the Start and End times.');
             }
             if (startValue.substring(0,10) > getToday()) {
