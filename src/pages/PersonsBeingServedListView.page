@@ -271,7 +271,15 @@ table#persons_table.dataTable {
                                             <apex:outputLink styleClass="servicelink" value="/{!sa.ID}#ShiftAssessments"
                                             	rendered="{!$User.Operating_Group__c == 'Care Meridian'}" >
                                             	View Shift Docs
-                                            </apex:outputLink></td>
+                                            </apex:outputLink>
+                                            &nbsp;<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" 
+                                                rendered="{!$User.Operating_Group__c != 'Cambridge'}" >
+                                                Add Seizure
+                                                <apex:param value="{!sa.ID}" name="service_assignment" />
+                                                <apex:param value="{!admission.Person_Being_Served__r.ID}" name="pbsId" />
+                                                <apex:param value="{!$CurrentPage.URL}" name="retURL" />
+                                            </apex:outputLink>
+                                            </td>
                                         <td style="display:none;">{!admission.Status__c}</td>
                                     </tr>
                                 </apex:repeat>
@@ -303,7 +311,7 @@ table#persons_table.dataTable {
                             rendered="{!(accountIdToJOSize[acct]>0)}">
                             <apex:repeat value="{!accountIdToJO[acct]}" var="jo">
                                 <tr
-                                    data-name="{!(accountIdMap[acct].LastName + ', ' +accountIdMap[acct].FirstName)}">
+                                    data-name="; + ', ' +accountIdMap[acct].FirstName)}">
                                     <td><a href="/{!accountIdMap[acct].PersonContactId}"
                                         data-record-id="{!acct}" class="account_link">{!(accountIdMap[acct].LastName
                                             + ', ' +accountIdMap[acct].FirstName)}</a></td>
@@ -354,6 +362,13 @@ table#persons_table.dataTable {
                                             rendered="{! jo.Status__c='Active Final' && !HideNoteLink}">
                                             View Current Notes
                                         </apex:outputLink>
+                                        &nbsp;<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" 
+                                                rendered="{!$User.Operating_Group__c != 'Cambridge'}" >
+                                                Add Seizure
+                                                <apex:param value="{!jo.Service_Assignment__r.ID}" name="service_assignment" />
+                                                <apex:param value="{!jo.Service_Assignment__r.Person_Being_Served__r.ID}" name="pbsId" />
+                                                <apex:param value="{!$CurrentPage.URL}" name="retURL" />
+                                            </apex:outputLink>
                                         </td>
                                     <td style="display:none;">{!jo.Service_Assignment__r.Admission__r.Status__c}</td>
                                 </tr>
