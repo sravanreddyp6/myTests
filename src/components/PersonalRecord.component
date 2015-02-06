@@ -70,9 +70,9 @@
     <div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;
     <a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
     <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink><apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS'}" />
-    <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS'}">&nbsp;>&nbsp;<apex:outputLink rendered="{!parentPage!= 'Admission'}" value="/{!admId}">Admission</apex:outputLink><apex:outputText rendered="{!parentPage == 'Admission'}" value="Admission" /></apex:outputPanel>
+    <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS'}">&nbsp;>&nbsp;<apex:outputLink rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'}" value="/{!admId}">Admission</apex:outputLink><apex:outputText rendered="{!parentPage == 'Admission'}" value="Admission" /></apex:outputPanel>
     <apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' )}" value=" > {!asmtType} Assessment" />
-    <apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'NursesShiftDocument' || parentPage = 'ShiftAssessmentListView' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage='GoalObjRpt' || parentPage='ServAssignClose' || parentPage='ServAssignCloseApproval' || ( parentPage=='Assessment' && BEGINS(asmtType, 'FAD'))}">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
+    <apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'NursesShiftDocument' || parentPage = 'ShiftAssessmentListView' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage='GoalObjRpt' || parentPage='ServAssignClose' || parentPage='ServAssignCloseApproval' || ( parentPage=='Assessment' && BEGINS(asmtType, 'FAD')) || parentPage='SeizureListView'}">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
     <apex:outputText id="asmtlink2" rendered="{!parentPage == 'Assessment' &&  BEGINS(asmtType, 'FAD') }" value=" > {! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')}" />
     <apex:outputPanel id="planlink" rendered="{! parentPage == 'SkillsTracking' || parentPage == 'BehaviorTracking' || ( parentPage == 'ShiftNote' && planID != null)}">&nbsp;>&nbsp;<a href="/{!apId}">Action Plan</a></apex:outputPanel>
     <apex:outputText id="planlinkplan" rendered="{!parentPage == 'ActionPlan'}" value=" > Action Plan" />
@@ -90,6 +90,7 @@
     <apex:outputPanel id="servAssignCloseText" rendered="{!parentPage == 'ServAssignClose'}">&nbsp;>&nbsp;Service Assignment Closure</apex:outputPanel>
     <apex:outputPanel id="servAssignCloseApprovalLink" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;<a href="/{!servAssignClose}">Service Assignment Closure</a></apex:outputPanel>
     <apex:outputPanel id="servAssignCloseApprovalText" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;Service Assignment Closure: Approval</apex:outputPanel>
+    <apex:outputPanel id="SeizureEdit" rendered="{!parentPage == 'SeizureEdit'}">&nbsp;Seizure</apex:outputPanel>
     </div>
     <br />
 
@@ -172,7 +173,14 @@
                             <tr>
                             <td style="vertical-align:top; text-align:left;line-height:20px">
                                 <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#RP" class="servicelink">View Related Parties</a><br />
-                                <a href="/apex/uploader?parentid={!con.Id}"  class="servicelink">Add/Edit Picture</a>
+                                <a href="/apex/uploader?parentid={!con.Id}"  class="servicelink">Add/Edit Picture</a><br />
+                                
+                                <apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" 
+                                                rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && servAssigns.size > 0 }" >
+                                                Add Seizure
+                                                <apex:param value="{!con.Id}" name="pbsId" />
+                                                <apex:param value="{!$CurrentPage.URL}" name="retURL" />
+                                </apex:outputLink>
                             </td>
 
                             <td style="vertical-align:top; padding-left:10px; padding-right:20px; line-height:20px">

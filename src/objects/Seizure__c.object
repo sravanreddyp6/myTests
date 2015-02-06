@@ -47,9 +47,12 @@
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Comments__c</fullName>
         <externalId>false</externalId>
@@ -70,8 +73,8 @@
     <fields>
         <fullName>End_DateTime__c</fullName>
         <externalId>false</externalId>
-        <label>End DateTime</label>
-        <required>false</required>
+        <label>Seizure End Time</label>
+        <required>true</required>
         <trackTrending>false</trackTrending>
         <type>DateTime</type>
     </fields>
@@ -102,8 +105,8 @@
     <fields>
         <fullName>Start_DateTime__c</fullName>
         <externalId>false</externalId>
-        <label>Start DateTime</label>
-        <required>false</required>
+        <label>Seizure Start Time</label>
+        <required>true</required>
         <trackTrending>false</trackTrending>
         <type>DateTime</type>
     </fields>
@@ -116,4 +119,18 @@
     <pluralLabel>Seizures</pluralLabel>
     <searchLayouts/>
     <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>End_time_Can_not_be_after_the_Start_time</fullName>
+        <active>true</active>
+        <errorConditionFormula>Start_DateTime__c &gt;= End_DateTime__c</errorConditionFormula>
+        <errorDisplayField>Start_DateTime__c</errorDisplayField>
+        <errorMessage>The End Time must come AFTER your Start Time. Please adjust the Start and End times.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Start_Time_cannot_be_in_the_future</fullName>
+        <active>true</active>
+        <errorConditionFormula>DATEVALUE(Start_DateTime__c) &gt; TODAY()</errorConditionFormula>
+        <errorDisplayField>Start_DateTime__c</errorDisplayField>
+        <errorMessage>The Start Time cannot be in the future. Please adjust the Start Time of the Seizure event.</errorMessage>
+    </validationRules>
 </CustomObject>

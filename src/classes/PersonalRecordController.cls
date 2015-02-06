@@ -3,6 +3,7 @@ public with sharing class PersonalRecordController {
     public blob photo { get; set; }
     public Contact con { get; set; }
     public Evaluation_Response__c[] evaluationResponses { get; set; }
+    public List<Service_Assignment__c> servAssigns { get; set; }    
     public Integer guardianCount { get; set;}
     public boolean hasPhoto { get; set; }
     public String contactId { get;
@@ -34,6 +35,8 @@ public with sharing class PersonalRecordController {
                 this.hasPhoto = true;
             } else
                 this.hasPhoto = false;
+                
+            servAssigns = [Select Id, Name from Service_Assignment__c where Person_Being_Served__c = : value and Status__c = 'Active'];
         }
     }
 
