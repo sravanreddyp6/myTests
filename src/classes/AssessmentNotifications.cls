@@ -131,7 +131,7 @@ global class AssessmentNotifications implements Database.Batchable<sObject> {
 			}
 		}
 
-		if((dropThisAdmissionsAssmts == false) && (daysSinceLastFulfilledDueDate == 75 || daysSinceLastFulfilledDueDate == 85 || daysSinceLastFulfilledDueDate >= 90) && a.Admission__r.status__c == 'Active'){
+		if((dropThisAdmissionsAssmts == false) && (daysSinceLastFulfilledDueDate == 75 || daysSinceLastFulfilledDueDate == 82 || daysSinceLastFulfilledDueDate >= 87) && a.Admission__r.status__c == 'Active'){
 			System.Debug('WE NEED TO SEND AN EMAIL!');
 			Messaging.sendEmail(sendNotification(a, thisAdmissionsAssmtDueDates.get(assmtsExpectedThisAdmission), a.Admission__c, assmtsExpectedThisAdmission, ownerToAccountMap));
 			admissionsWithSentMail.add(a.Admission__c);

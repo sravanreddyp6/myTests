@@ -131,11 +131,24 @@ public with sharing class AssessmentControllerExtension {
 
 	// updates the billable flag on the record then redirects to detail view of Progress Note
 	public PageReference setDisregard () {
-
+            boolean wasLockedBefore = false;
+            if(assmt.Status__c == 'Locked'){
+                wasLockedBefore = true;
+                assmt.Locked__c = false;
+                assmt.Status__c = 'Re-opened';
+                system.debug('fere '+ assmt.Status__c);
+                update assmt;
+            }
 		assmt.Disregard__c = true;
 		update assmt;
+        if(wasLockedBefore){
+                assmt.Status__c = 'Locked';
+                assmt.Locked__c = true;
+                update assmt;            
+        }        
 		System.Debug('turned on disregard: ' + assmt);
 		return new PageReference('/' + assmt.Id);
+
 	}
 
 	public PageReference edit() {

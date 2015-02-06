@@ -1505,6 +1505,17 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Current_Location_Name__c</fullName>
+        <description>Added in EB-353</description>
+        <externalId>false</externalId>
+        <label>Current Location Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Current_Location_Type__c</fullName>
         <externalId>false</externalId>
         <label>Current Location Type</label>
@@ -3465,6 +3476,16 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>New_Address_Location__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>added in EB-353</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Check this box if the Current Location is different from the Facility or Permanent Address</inlineHelpText>
+        <label>New Address Location</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>No_Cross_Cultural_Placement__c</fullName>
@@ -82654,6 +82675,15 @@
         <errorConditionFormula>ISPICKVAL(Referral_Status__c, &apos;Closed&apos;) &amp;&amp;  ISPICKVAL(Close_Reason__c,&apos;&apos;)</errorConditionFormula>
         <errorDisplayField>Close_Reason__c</errorDisplayField>
         <errorMessage>Close Reason is required when status equals Closed.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>CurrentLocationName_Required</fullName>
+        <active>true</active>
+        <description>added in eb-353</description>
+        <errorConditionFormula>RecordType.DeveloperName = &apos;NeuroRestorative&apos; &amp;&amp;
+ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c</errorConditionFormula>
+        <errorDisplayField>Current_Location_Name__c</errorDisplayField>
+        <errorMessage>Current Location name is required when New Address Location is checked</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Family_Involvement_Level_Validation</fullName>

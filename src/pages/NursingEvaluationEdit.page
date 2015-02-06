@@ -907,7 +907,6 @@
         <apex:actionFunction action="{!changeTab}" name="changeTab" status="pageProcessing" oncomplete="setCurrentTab('{!nextTab}');setUpFields(); removeSpacer(); scrollToTop(); handleNutrition(); handleNeuro();handlePsychoSocial();handleSkinBody()" reRender="pageMessages, wholeTabPanel, buttons">
             <apex:param name="nextTab" assignTo="{!nextTab}" value="" />
         </apex:actionFunction>
-
         <apex:tabPanel value="{!selectedTab}" id="wholeTabPanel" activeTabClass="evaluationActiveTab" inactiveTabClass="evaluationInactiveTab" headerClass="evaluationTabHeader" contentClass="evaluationTabContent">
             <apex:tab label="Demographics" name="demographicsTab" ontabenter="changeTab('demographicsTab'); return false;" styleClass="{!IF(Evaluation__c.Details_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}">
                 <apex:pageBlock >
@@ -2856,6 +2855,12 @@
                     </apex:pageBlocksection>
                 </apex:pageBlock>
              </apex:tab>
+             <apex:tab label="Fall Assessment" name="fallAssessment" ontabenter="changeTab('fallAssessment'); return false;" styleClass="{!IF(Evaluation__c.Discharge_Section_Completed__c, 'sectionCompleted', 'sectionNotCompleted')}" >
+             	<apex:pageBlock>
+             		<apex:pageBlockSection title="Assessment Questions" >
+             		</apex:pageBlockSection>
+             	</apex:pageBlock>
+			</apex:tab>
         </apex:tabPanel>
         <apex:pageBlock id="buttons">
             <apex:pageBlockButtons location="bottom">
