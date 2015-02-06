@@ -1,4 +1,4 @@
-public with sharing class AdmissionViewExtension {
+public without sharing class AdmissionViewExtension {
         public String[] availableAssessmentTypes { get {
            return new String[] {'Risk', 'CANS', 'ISSA'};
         }}

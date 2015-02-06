@@ -4,9 +4,6 @@
         <field>CUST_NAME</field>
     </columns>
     <columns>
-        <field>Referral__c.Name_PBR__c</field>
-    </columns>
-    <columns>
         <field>SUBJECT</field>
     </columns>
     <columns>
@@ -36,6 +33,12 @@
             <operator>notEqual</operator>
             <value>Closed</value>
         </criteriaItems>
+        <criteriaItems>
+            <column>STATUS</column>
+            <operator>notContain</operator>
+            <value>N/A</value>
+        </criteriaItems>
+        <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
@@ -43,10 +46,15 @@
         <field>Referral__c.Service_Location_Program__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Referral__c.Name_PBR__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
     <name>Referral Status of Admission Activities</name>
     <params>
         <name>closed</name>
-        <value>open</value>
+        <value>all</value>
     </params>
     <params>
         <name>type</name>
@@ -59,10 +67,10 @@
     <reportType>ActivityCustomEntity$Referral__c</reportType>
     <scope>organization</scope>
     <showDetails>true</showDetails>
+    <sortColumn>SUBJECT</sortColumn>
+    <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
-        <endDate>2014-11-19</endDate>
-        <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2014-11-01</startDate>
+        <interval>INTERVAL_CURNEXTY</interval>
     </timeFrameFilter>
 </Report>
