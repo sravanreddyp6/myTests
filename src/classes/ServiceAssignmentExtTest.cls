@@ -330,7 +330,6 @@ private class ServiceAssignmentExtTest {
 	        insert sa;
 	        system.assertEquals('CA' , ServiceAssignmentExt.loadServiceLocation(svl.id).State__c);
             system.assertEquals(true, ServiceAssignmentExt.saveServiceLocation(sa.id, svl.id));
-          
     }
     
 	public testmethod static void showFundingSources(){
@@ -452,4 +451,42 @@ private class ServiceAssignmentExtTest {
         insert testObjective;
         
     }
+    
+    public testmethod static void remoteActionfindDuplicateSeizure(){
+        CreateObjects();
+        Datetime stEndTime = Datetime.now();
+        Seizure__c seizure = new Seizure__c();
+        seizure.Start_DateTime__c = stEndTime;
+        seizure.End_DateTime__c = stEndTime.addDays(1);
+        seizure.Service_Assignment__c = ServAssign.Id;
+        insert seizure;
+        System.assertequals(false, ServiceAssignmentExt.findDuplicateSeizure(
+                                    stEndTime.addHours(1).format(),
+                                       stEndTime.addDays(1).format(),
+                                       Id.valueOf(ServAssign.Id),
+                                       Id.valueOf(seizure.id) ) );
+        System.assertequals(true, ServiceAssignmentExt.findDuplicateSeizure(
+                                       stEndTime.addHours(1).format(),
+                                       stEndTime.addDays(1).format(),
+                                       Id.valueOf(ServAssign.Id),
+                                       null) );
+    }
+    
+    public testmethod static void saveAndEditSeizure(){
+        CreateObjects();
+        Datetime stEndTime = Datetime.now();
+                
+        ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+        ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+        controller.seizure.Start_DateTime__c = stEndTime;
+        controller.seizure.End_DateTime__c = stEndTime.addDays(1);
+        controller.saveSeizure();
+        System.assertequals(1, [select id from Seizure__c].size());
+        
+        PageReference pageRef = Page.SeizureEdit;
+        Test.setCurrentPage(pageRef);
+        Apexpages.currentPage().getParameters().put('seizureId', [select id from Seizure__c].get(0).id);
+        controller.showEditSeizure();
+    }
+        
 }
