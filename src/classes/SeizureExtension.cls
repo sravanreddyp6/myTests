@@ -10,9 +10,7 @@ public with sharing class SeizureExtension {
             this.seizure.Service_Assignment__c = ApexPages.CurrentPage().getParameters().get('service_assignment');
             this.seizure.Observed_By__c = UserInfo.getUserId();
     	}else{
-	        this.seizure = [select id, Service_Assignment__c, Service_Assignment__r.Person_Being_Served__c, 
-	                                Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c 
-	                          from Seizure__c where id = : ApexPages.CurrentPage().getParameters().get('seizureId')];    		
+	        this.seizure = [select id, Service_Assignment__c, Service_Assignment__r.Person_Being_Served__c, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c from Seizure__c where id = : ApexPages.CurrentPage().getParameters().get('seizureId')];
     	}
 
         
