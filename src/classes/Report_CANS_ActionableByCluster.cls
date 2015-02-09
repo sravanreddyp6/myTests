@@ -77,10 +77,12 @@ public with sharing class Report_CANS_ActionableByCluster {
 		  // Add these values to the selectoption list.
 		  for (Schema.PicklistEntry a : values)
 		  { 
-		     optSL.add(new SelectOption(a.getLabel(), a.getValue())); 
+		     optSL.add(new SelectOption(a.getValue(), a.getLabel())); 
 		     selectedSL.add(a.getValue());
 		  }
 		  
+		  optSL.add(new SelectOption( 'NS', 'Not specified'));
+		  selectedSL.add( 'NS');
 		  
 		 totalExists = false; 
 		showData = false;
@@ -105,6 +107,12 @@ public with sharing class Report_CANS_ActionableByCluster {
        }
        system.debug( 'start=' + startDate + ', end=' + endDate + ', cluster=' + selectedCluster);
        
+       if ( selectedSL.size() == 0 ){
+            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
+                    'Please select at least one service line for this report');
+                    ApexPages.addMessage(myMsg);
+                    inputErr = true;
+       }
        if ( String.isEmpty(selectedCluster)  ){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
                     'Please select the cluster for this report');
@@ -144,6 +152,12 @@ public with sharing class Report_CANS_ActionableByCluster {
         Integer pbscount = 0, uniquePBS = 0;
         
         String pbstate = '';
+        Boolean includeNullSL = false;
+        
+        for ( string s : selectedSL ) {
+        	if ( s == 'NS')
+        		includeNullSL = true;
+        }
         
         List<ID> DDPBS = new LIst<ID>();
 		for (List<Assessment_Response__c> DDPeople :  [select assessment__r.accountperson__c from assessment_response__c  
@@ -171,9 +185,14 @@ public with sharing class Report_CANS_ActionableByCluster {
                                                          ' and assessment__r.status__c = \'Locked\'' + 
                                                          ' and assessment__r.admission__r.state__c in :CANSStates)' + 
                                                          ' and assessment_date__c >= :startDate' + 
-                                            			 ' and assessment_date__c <= :endDate' +
-                                            			 ' and service_line__c in :selectedSL';
-                                            			 
+                                            			 ' and assessment_date__c <= :endDate'+
+                                            			 ' and ';
+         if ( includeNullSL)  {
+ 				strQuery += '( service_line__c = null OR service_line__c in :selectedSL)';        	
+         } else {
+         		strQuery += 'service_line__c in :selectedSL';
+         }
+         
 		if ( selectedDD == 'With')
 			strQuery += ' and accountperson__c in :DDPBS';
 			
@@ -238,7 +257,13 @@ public with sharing class Report_CANS_ActionableByCluster {
                                                          ' and assessment__r.admission__r.state__c in :CANSStates' + 
                                                          ' and assessment__r.assessment_date__c >= :startDate' + 
                                             			 ' and assessment__r.assessment_date__c <= :endDate' +
-                                            			 ' and assessment__r.service_line__c in :selectedSL';
+                                            			 ' and ';
+                                            			 
+         if ( includeNullSL)  {
+ 				strQuery += '( assessment__r.service_line__c = null OR assessment__r.service_line__c in :selectedSL)';        	
+         } else {
+         		strQuery += 'assessment__r.service_line__c in :selectedSL';
+         }                                    			 
                                             			 
 		if ( selectedDD == 'With')
 			strQuery += ' and assessment__r.accountperson__c in :DDPBS';

@@ -54,10 +54,12 @@ public with sharing class Report_CANS_DDatIntake {
 		  // Add these values to the selectoption list.
 		  for (Schema.PicklistEntry a : values)
 		  { 
-		     optSL.add(new SelectOption(a.getLabel(), a.getValue())); 
+		     optSL.add(new SelectOption(a.getValue(), a.getLabel())); 
 		     selectedSL.add(a.getValue());
 		  }
 		  
+		  optSL.add(new SelectOption( 'NS', 'Not specified'));
+		  selectedSL.add( 'NS');		  
 		  
             
     }
@@ -79,7 +81,12 @@ public with sharing class Report_CANS_DDatIntake {
                     inputErr = true;
        }
        system.debug( 'start=' + startDate + ', end=' + endDate);
-       
+       if ( selectedSL.size() == 0 ){
+            ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
+                    'Please select at least one service line for this report');
+                    ApexPages.addMessage(myMsg);
+                    inputErr = true;
+       }
        // get the list of questions for front-end display of text
        QuestionsList = new Map<ID, Assessment_Question__c>([select id, question_number__c, question_title__c from assessment_question__c where question_number__c in :QuestionsinScope and Question_Domain__r.Assessment_Type__r.Name = 'CANS']); 
        	asmtsByState = new Map<String, String>();
@@ -111,10 +118,37 @@ public with sharing class Report_CANS_DDatIntake {
         String pbstate = '';
         integer totalPBS = 0, totalQual = 0;
 
+		Boolean includeNullSL = false;
+        
+        for ( string s : selectedSL ) {
+        	if ( s == 'NS')
+        		includeNullSL = true;
+        }
+        
 		System.Debug('before:' + srd);
 		// count of all PBS with 1st quarterly by state in time period 
-        list<AggregateResult> CountByState = [ 
-                                            select count(accountperson__c), admission__r.state__c 
+        list<AggregateResult> CountByState = new List<AggregateResult>();
+        
+        if ( includeNullSL )
+        	CountByState = [ 	
+        								select count(accountperson__c), admission__r.state__c 
+                                            from assessment__c 
+                                            where 
+                                            Interval__c = 'Quarterly'
+                                            and quarter__c = 1
+                                            and assessment_type__r.name = 'CANS'
+                                            and disregard__c = false
+                                            and status__c = 'Locked'
+                                            and ( service_line__c in :selectedSL
+                                            	or service_line__c = null )
+                                            and assessment_date__c >= :startDate 
+                                            and assessment_date__c <= :endDate
+                                            group by admission__r.state__c
+                                            order by admission__r.state__c
+                                            ];
+		else
+			CountByState = [ 	
+        								select count(accountperson__c), admission__r.state__c 
                                             from assessment__c 
                                             where 
                                             Interval__c = 'Quarterly'
@@ -128,7 +162,7 @@ public with sharing class Report_CANS_DDatIntake {
                                             group by admission__r.state__c
                                             order by admission__r.state__c
                                             ];
-
+		
         for ( AggregateResult ar : CountByState ) {
             
             pbscount = (Integer)ar.get('expr0');
@@ -142,7 +176,31 @@ public with sharing class Report_CANS_DDatIntake {
         system.debug('in between:' + srd);
         
         // count of qualifying 'actionable' = number of PBS with intake or discharge scoring 1, 2 or 3 for any question in the cluster
-        list<AggregateResult> QualifyingCountByState = [ 
+        list<AggregateResult> QualifyingCountByState = new list<AggregateResult>();
+        
+        if ( includeNullSL )
+        	QualifyingCountByState = [ 
+                                            select count(accountperson__c), admission__r.state__c 
+                                            from assessment__c 
+                                            where id in (select assessment__c 
+                                                         from assessment_response__c 
+                                                         where score__c > 0
+                                                         and question__r.question_number__c in :QuestionsInScope
+                                                         and assessment__r.Interval__c = 'Quarterly'
+                                                         and assessment__r.Quarter__c = 1
+                                                         and assessment__r.assessment_type__r.name = 'CANS'
+                                                         and assessment__r.disregard__c = false
+                                                         and assessment__r.status__c = 'Locked'
+                                                         and ( assessment__r.service_line__c in :selectedSL
+                                                         	or assessment__r.service_line__c = null )
+                                                         and assessment__r.admission__r.state__c in :CANSStates  )
+                                            and assessment_date__c >= :startDate 
+                                            and assessment_date__c <= :endDate
+                                            group by admission__r.state__c
+                                            order by admission__r.state__c
+                                            ];
+			else 
+				QualifyingCountByState = [ 
                                             select count(accountperson__c), admission__r.state__c 
                                             from assessment__c 
                                             where id in (select assessment__c 
@@ -190,7 +248,28 @@ public with sharing class Report_CANS_DDatIntake {
         System.Debug( 'Final Result: ' + srd );   
         
         // get the drilldown data
-        List<Assessment_Response__c> asmtresp = [select assessment__r.name, assessment__c, score__c, assessment__r.assessment_date__c, assessment__r.admission__r.state__c 
+        List<Assessment_Response__c> asmtresp = new List<Assessment_Response__c>();
+        
+        if (includeNullSL )
+        	asmtresp = [select assessment__r.name, assessment__c, score__c, assessment__r.assessment_date__c, assessment__r.admission__r.state__c 
+                                                         from assessment_response__c 
+                                                         where 
+                                                         question__r.question_number__c in :QuestionsInScope
+                                                         and score__c > 0
+                                                         and assessment__r.Interval__c = 'Quarterly'
+                                                         and assessment__r.quarter__c = 1
+                                                         and assessment__r.assessment_type__r.name = 'CANS'
+                                                         and assessment__r.disregard__c = false
+                                                         and assessment__r.status__c = 'Locked'
+                                                         and assessment__r.admission__r.state__c in :CANSStates
+                                                         and ( assessment__r.service_line__c in :selectedSL
+                                                         	or assessment__r.service_line__c = null )
+                                            			 and assessment__r.assessment_date__c >= :startDate 
+                                            			 and assessment__r.assessment_date__c <= :endDate
+                                            			 order by assessment__r.admission__r.state__c];
+                                            			 
+        else 
+        	asmtresp = [select assessment__r.name, assessment__c, score__c, assessment__r.assessment_date__c, assessment__r.admission__r.state__c 
                                                          from assessment_response__c 
                                                          where 
                                                          question__r.question_number__c in :QuestionsInScope
@@ -205,8 +284,7 @@ public with sharing class Report_CANS_DDatIntake {
                                             			 and assessment__r.assessment_date__c >= :startDate 
                                             			 and assessment__r.assessment_date__c <= :endDate
                                             			 order by assessment__r.admission__r.state__c];
-                                            			 
-        
+
         // group the assessment responses by state, and put into a list for the front end                                   
         List<Assessment_Response__c> listbyState = new List<Assessment_Response__c>();
         String currst = '', st = '';                                    			 

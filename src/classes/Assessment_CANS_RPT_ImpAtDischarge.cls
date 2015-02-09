@@ -66,10 +66,12 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
                 
         for( Schema.PicklistEntry f : ple){
-              serviceLines.add(new SelectOption(f.getLabel(), f.getValue()));
+              serviceLines.add(new SelectOption(f.getValue(), f.getLabel()));
               selectedServiceLines.add(f.getValue());
        }               
 
+		serviceLines.add(new SelectOption( 'NS', 'Not specified'));
+		selectedServiceLines.add( 'NS');
     }
 
     public PageReference runRpt(){
@@ -81,6 +83,15 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
     }
 
     public void buildRpt(){
+    	
+    	Boolean includeNullSL = false;
+        
+        for ( string s : selectedServiceLines ) {
+        	if ( s == 'NS')
+        		includeNullSL = true;
+        }
+        
+        
         // this determines the states we will work with 
         list<AggregateResult> statesWithIntakeAssess = [select Admission__r.State__c
                                         from Assessment__c 
@@ -95,7 +106,25 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             mapStateRowData.put(state, new StateRowData(state));
         }
         //this is for column Number of PBS Discharged per state
-        list<AggregateResult> intakeAssess = [select Admission__r.state__c, count(name) assesCount
+        list<AggregateResult> intakeAssess = new list<AggregateResult>();
+        if ( includeNullSL ) {
+			intakeAssess = [select Admission__r.state__c, count(name) assesCount
+                                                from Assessment__c 
+                                                    where Interval__c = 'Intake' 
+                                                        AND Admission__r.Status__c = 'Discharged'
+                                                        AND assessment_type__r.name = 'CANS'
+                                                        and disregard__c = false
+                                                        AND AccountPerson__r.id IN :PBSbyDD_Status
+                                                        AND ( Service_Line__c in :selectedServiceLines
+                                                        	OR Service_Line__c = null )
+                                                        AND Admission__r.Discharged_Date__c >= :StartDate
+                                                        AND Admission__r.Discharged_Date__c <= :EndDate
+
+                                                    group by Admission__r.state__c
+
+                                                    ];                                                          	
+        } else {
+        	intakeAssess = [select Admission__r.state__c, count(name) assesCount
                                                 from Assessment__c 
                                                     where Interval__c = 'Intake' 
                                                         AND Admission__r.Status__c = 'Discharged'
@@ -109,14 +138,28 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                     group by Admission__r.state__c
 
                                                     ];                                                  
-
+        }
         for(AggregateResult item : intakeAssess){
             string state =  string.valueof(item.get('state__c'));
             mapStateRowData.get(state).NumberPBSDisCharge = integer.valueof(item.get('assesCount'));
         }
 
 
-        list<Assessment__c> disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c
+        list<Assessment__c> disChargeAssess = new List<Assessment__c>();
+        if ( includeNullSL ) {
+        disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c
+                                                from Assessment__c 
+                                                where Interval__c = 'Discharge' 
+                                                    AND assessment_type__r.name = 'CANS'
+                                                    and disregard__c = false
+                                                    AND AccountPerson__r.id IN :PBSbyDD_Status
+                                                    AND ( Service_Line__c in :selectedServiceLines
+                                                    	OR Service_line__c = null )
+                                                    AND Assessment_Date__c >= :StartDate 
+                                                    AND Assessment_Date__c <= :EndDate
+                                                    ];
+        } else {
+        	        disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c
                                                 from Assessment__c 
                                                 where Interval__c = 'Discharge' 
                                                     AND assessment_type__r.name = 'CANS'
@@ -125,9 +168,8 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                     AND Service_Line__c in :selectedServiceLines
                                                     AND Assessment_Date__c >= :StartDate 
                                                     AND Assessment_Date__c <= :EndDate
-
                                                     ];
-
+        }
         map<string, PersonRowData> mapPersonRowData = new map<string, PersonRowData>();
         set<id> disChargeAssessPBSes = new set<id>();
         for(Assessment__c item : disChargeAssess){
@@ -136,19 +178,51 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             disChargeAssessPBSes.add(item.AccountPerson__r.Id);
         }
 
-        list<AggregateResult> intakeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
+		
+        list<AggregateResult> intakeAssessScore = new List<AggregateResult>();
+        
+        if ( includeNullSL ) {
+        	intakeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
                                                             from Assessment_Response__c 
                                                                 Where Assessment__r.AccountPerson__r.Id IN : disChargeAssessPBSes 
                                                                     AND Assessment__r.Interval__c = 'Quarterly' 
                                                                     AND Assessment__r.Quarter__c = 1 
-                                                                    AND Assessment__r.Service_Line__c in :selectedServiceLines
+                                                                    AND ( Assessment__r.Service_Line__c in :selectedServiceLines
+                                                                    	OR Assessment__r.Service_Line__c = null )
                                                                     and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
-
                                                                     Group By Assessment__r.AccountPerson__r.Id
                                                                     ];
-        list<AggregateResult> disChargeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
+        } else {
+        	        disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c
+                                                from Assessment__c 
+                                                where Interval__c = 'Discharge' 
+                                                    AND assessment_type__r.name = 'CANS'
+                                                    and disregard__c = false
+                                                    AND AccountPerson__r.id IN :PBSbyDD_Status
+                                                    AND Service_Line__c in :selectedServiceLines
+                                                    AND Assessment_Date__c >= :StartDate 
+                                                    AND Assessment_Date__c <= :EndDate
+                                                    ];
+        }
+       
+        list<AggregateResult> disChargeAssessScore = new list<AggregateResult>();
+        
+        if ( includeNullSL ) {
+        	disChargeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
+                                                            from Assessment_Response__c 
+                                                                Where Assessment__r.AccountPerson__r.Id IN : disChargeAssessPBSes 
+                                                                    AND Assessment__r.Interval__c = 'Discharge'
+                                                                    AND (Assessment__r.Service_Line__c in :selectedServiceLines
+                                                                    	OR Assessment__r.service_line__c = null)
+                                                                    and Assessment__r.disregard__c = false
+                                                                    AND Question__r.Question_Number__c IN :QuestionsInScope
+                                                                    AND Assessment__r.assessment_type__r.name = 'CANS'
+                                                                    Group By Assessment__r.AccountPerson__r.Id
+                                                                    ];      
+        } else {
+        	disChargeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
                                                             from Assessment_Response__c 
                                                                 Where Assessment__r.AccountPerson__r.Id IN : disChargeAssessPBSes 
                                                                     AND Assessment__r.Interval__c = 'Discharge'
@@ -156,10 +230,9 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                                     and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
-
                                                                     Group By Assessment__r.AccountPerson__r.Id
                                                                     ];      
-
+        }
         for(AggregateResult item : intakeAssessScore){
             string theKey = string.valueof(item.get('ID'));
             mapPersonRowData.get(theKey).IntakeScore = integer.valueof(item.get('score'));
