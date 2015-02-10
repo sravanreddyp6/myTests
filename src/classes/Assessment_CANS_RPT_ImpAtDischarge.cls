@@ -147,7 +147,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
 
         list<Assessment__c> disChargeAssess = new List<Assessment__c>();
         if ( includeNullSL ) {
-        disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c
+        disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c, admission__r.id
                                                 from Assessment__c 
                                                 where Interval__c = 'Discharge' 
                                                     AND assessment_type__r.name = 'CANS'
@@ -159,7 +159,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                     AND Assessment_Date__c <= :EndDate
                                                     ];
         } else {
-                    disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c
+                    disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c, admission__r.id
                                                 from Assessment__c 
                                                 where Interval__c = 'Discharge' 
                                                     AND assessment_type__r.name = 'CANS'
@@ -172,10 +172,12 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         }
         map<string, PersonRowData> mapPersonRowData = new map<string, PersonRowData>();
         set<id> disChargeAssessPBSes = new set<id>();
+        set<id> admissionInDischargeAssess = new set<id>();
         for(Assessment__c item : disChargeAssess){
             mapPersonRowData.put(item.AccountPerson__r.Id, new PersonRowData(item.AccountPerson__r.Id, item.Admission__r.State__c));
             mapStateRowData.get(item.Admission__r.State__c).NumberPBSDisChargeWithCANS +=1;
             disChargeAssessPBSes.add(item.AccountPerson__r.Id);
+            admissionInDischargeAssess.add(item.admission__r.id);
         }
 
         
@@ -192,6 +194,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                                     and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
+                                                                    AND Assessment__r.admission__c in :admissionInDischargeAssess
                                                                     Group By Assessment__r.AccountPerson__r.Id
                                                                     ];
         } else {
@@ -204,6 +207,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                                     and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
+                                                                    AND Assessment__r.admission__c in :admissionInDischargeAssess
                                                                     Group By Assessment__r.AccountPerson__r.Id
                                                                     ];
         }
@@ -220,6 +224,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                                     and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
+                                                                    AND Assessment__r.admission__c in :admissionInDischargeAssess
                                                                     Group By Assessment__r.AccountPerson__r.Id
                                                                     ];      
         } else {
@@ -231,6 +236,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                                     and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
+                                                                    AND Assessment__r.admission__c in :admissionInDischargeAssess
                                                                     Group By Assessment__r.AccountPerson__r.Id
                                                                     ];      
         }
