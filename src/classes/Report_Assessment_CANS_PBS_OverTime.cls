@@ -31,11 +31,11 @@ public with sharing class Report_Assessment_CANS_PBS_OverTime {
         optPBS = new List<SelectOption>();
         optPBS.Add( new SelectOption('','--None--'));
         // get the list of people i can see who have final, non-diregarded cans
-        List<AggregateResult> arCANSList = [select count(id), accountperson__c, accountperson__r.name, accountperson__r.lastname, accountperson__r.firstname from assessment__c where assessment_type__r.name = 'CANS' and  disregard__c = false and status__c = 'Locked' group by accountperson__c, accountperson__r.name, accountperson__r.lastname, accountperson__r.firstname  order by accountperson__r.lastname];
+        List<AggregateResult> arCANSList = [select count(id), accountperson__c, accountperson__r.name, accountperson__r.lastname from assessment__c where assessment_type__r.name = 'CANS' and  disregard__c = false and status__c = 'Locked' group by accountperson__c, accountperson__r.name, accountperson__r.lastname  order by accountperson__r.lastname];
                 
         for ( AggregateResult ar : arCANSList ) {
-            optPBS.Add( new SelectOption((String)ar.get('accountperson__c'), (String)ar.get('lastname') + ',' + (String)ar.get('firstname')));
-        }	
+            optPBS.Add( new SelectOption((String)ar.get('accountperson__c'), (String)ar.get('name')));
+        }		
 
 		selectedCluster = 'All';
 
@@ -99,7 +99,7 @@ public with sharing class Report_Assessment_CANS_PBS_OverTime {
 			string key = string.valueof(item.Question__r.Question_Number__c) + item.assessment__r.id + item.Assessment__r.interval__c ;
 			string overallKey = item.Assessment__r.id + item.Assessment__r.interval__c; 
 
-			if(item.Assessment__r.quarter__c >0){
+			if(item.Assessment__r.quarter__c >0 && item.Assessment__r.Interval__c =='Quarterly'){
 				key += string.valueof(item.Assessment__r.quarter__c);
 				overallKey += string.valueof(item.Assessment__r.quarter__c);
 			}
@@ -113,20 +113,4 @@ public with sharing class Report_Assessment_CANS_PBS_OverTime {
 		return null;
 	}
 
-	//public 
-	//
-	//dynamic Columns
-	//dynamic Questions
-	//Answers
-	//total
-	//grouping - domian or cluster
-
-	public class AssessQuestion{
-		public integer QuestionNumber;
-		
-
-		public AssessQuestion(){
-
-		}
-	}
 }
