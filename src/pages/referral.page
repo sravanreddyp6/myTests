@@ -1459,7 +1459,9 @@
                 <!-- ERNS-26 -->
                 <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}" rendered="{!ReferralRecordType!='NeuroRestorative'}" />
                 <!--apex:inputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
-
+                <!-- ADDED 	for  EB-365 -->
+				<apex:inputField value="{!Referral__c.Assessment_Date__c}" rendered="{!ReferralRecordType=='Wisconsin' || ReferralRecordType=='North Dakota'}" />	
+				
 
                 <!--  START NEURO EvalBy and RefBy SECTION -->
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
