@@ -10,7 +10,7 @@ public with sharing class referralResults_Controller {
   public String referralId {get;set;}
   
   public String pbrId {get;set;}
-  
+  public String retURL {get;set;}
    //public List<Referral__c> refResults { get; set; }
   public List<ReferralSearchResults> refResults { get; set; }
   
@@ -49,6 +49,11 @@ public with sharing class referralResults_Controller {
             personLastName = ApexPages.currentPage().getParameters().get('lastName');
             searchImmediately = true;
         }
+        if (ApexPages.currentPage().getParameters().get('retURL') != null) {
+            retURL = ApexPages.currentPage().getParameters().get('retURL');
+            searchImmediately = true;
+        }
+        
         if (ApexPages.currentPage().getParameters().get('dob') != null) {
             personDOB = Date.parse(ApexPages.currentPage().getParameters().get('dob'));
             searchImmediately = true;
@@ -87,6 +92,26 @@ public with sharing class referralResults_Controller {
         }
     }
 
+	public PageReference redirectToBack() {
+		 if(retURL==null){
+			 if(pbrId!=null){
+				 retURL = '/apex/referral?pbrID='+pbrId;
+			 }
+			 else{
+				 retURL = '/apex/referral?firstName='+personFirstName+'&lastName='+personLastName+'&personGender='+personGender+'&personAge='+personAge;
+				 if(personDOB!=null) {
+					 retURL = retURL+'&personDOB='+personDOB.format();
+				 }
+			 }
+
+		 }
+		 String url = retURL;
+		 PageReference pg = new PageReference(url);
+		 pg.setRedirect(true);
+		 return pg;
+	 } 
+    
+    
     public void searchRefs() {
 
         try

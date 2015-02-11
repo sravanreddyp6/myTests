@@ -622,7 +622,27 @@ public with sharing class referrals_Controller{
                 } else {
                         this.personBeingRefRecord = new Person_Being_Referred__c();
                 }
+				
+				if (ApexPages.currentPage().getParameters().get('firstName') != null) {
+            this.personBeingRefRecord.First_Name__c = ApexPages.currentPage().getParameters().get('firstName');
+        			}
 
+				if (ApexPages.currentPage().getParameters().get('lastName') != null) {
+            this.personBeingRefRecord.Last_Name__c = ApexPages.currentPage().getParameters().get('lastName');
+        			}
+        			if (ApexPages.currentPage().getParameters().get('personGender') != null) {
+            	this.personBeingRefRecord.Gender__c = ApexPages.currentPage().getParameters().get('personGender');
+        			}
+        			
+        			if (ApexPages.currentPage().getParameters().get('personAge') != null) {
+            	this.personBeingRefRecord.Age__c = Decimal.valueOf( ApexPages.currentPage().getParameters().get('personAge'));
+        			}
+        			
+        			if (ApexPages.currentPage().getParameters().get('personDOB') != null) {
+            	Date personDOB = Date.parse(ApexPages.currentPage().getParameters().get('personDOB'));
+            	this.personBeingRefRecord.Date_of_Birth__c = personDOB;
+        			}
+        			
                 if (pBSId != null) {
                         this.personBeingServedRecord = getPBSRec();
                         populateRelParties();
