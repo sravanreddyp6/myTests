@@ -147,7 +147,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
 
         list<Assessment__c> disChargeAssess = new List<Assessment__c>();
         if ( includeNullSL ) {
-        disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c, admission__r.id
+        disChargeAssess = [select id, name, AccountPerson__r.Id, AccountPerson__r.name, Admission__r.State__c, admission__r.id
                                                 from Assessment__c 
                                                 where Interval__c = 'Discharge' 
                                                     AND assessment_type__r.name = 'CANS'
@@ -159,7 +159,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                     AND Assessment_Date__c <= :EndDate
                                                     ];
         } else {
-                    disChargeAssess = [select id, name, AccountPerson__r.Id, Admission__r.State__c, admission__r.id
+                    disChargeAssess = [select id, name, AccountPerson__r.Id, AccountPerson__r.name, Admission__r.State__c, admission__r.id
                                                 from Assessment__c 
                                                 where Interval__c = 'Discharge' 
                                                     AND assessment_type__r.name = 'CANS'
@@ -174,10 +174,25 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         set<id> disChargeAssessPBSes = new set<id>();
         set<id> admissionInDischargeAssess = new set<id>();
         for(Assessment__c item : disChargeAssess){
-            mapPersonRowData.put(item.AccountPerson__r.Id, new PersonRowData(item.AccountPerson__r.Id, item.Admission__r.State__c));
-            mapStateRowData.get(item.Admission__r.State__c).NumberPBSDisChargeWithCANS +=1;
+            boolean addPBSToDischargeCount = true;
+            if(mapPersonRowData.containsKey(item.AccountPerson__r.Id)){ 
+                addPBSToDischargeCount = false;
+                system.debug('here - ' + item.id); 
+                system.debug('was - ' + mapPersonRowData.get(item.AccountPerson__r.Id));
+            }
+            
+            mapPersonRowData.put(item.AccountPerson__r.Id, new PersonRowData(item.AccountPerson__r.Id, item.Admission__r.State__c, item.AccountPerson__r.name, item.id));
+            
+            if(addPBSToDischargeCount){
+                mapStateRowData.get(item.Admission__r.State__c).NumberPBSDisChargeWithCANS +=1;
+            }
+            
+            if(disChargeAssessPBSes.contains(item.AccountPerson__r.Id)){ 
+                system.debug('here 2 - ' + item.id);
+            }
             disChargeAssessPBSes.add(item.AccountPerson__r.Id);
             admissionInDischargeAssess.add(item.admission__r.id);
+            system.debug('current count - ' + item.Admission__r.State__c + mapStateRowData.get(item.Admission__r.State__c).NumberPBSDisChargeWithCANS);
         }
 
         
@@ -288,14 +303,18 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         public string PBS;
         public integer IntakeScore;
         public integer disChargeScore;
+        public string PBSname;
+        public string dischargeID;
 
 
 
-        public PersonRowData(string PBSID, string var_state){
+        public PersonRowData(string PBSID, string var_state, string var_pbsName, string var_DC){
                 IntakeScore = 0;
                 disChargeScore = 0;
                 PBS = PBSID;
                 state = var_state;
+                PBSname = var_pbsName;
+                dischargeID = var_DC;
             
         }   
     }
