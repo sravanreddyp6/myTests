@@ -85,6 +85,9 @@
 <apex:form id="frm" >
     <apex:pageBlock title="Filters" >
         <apex:pageBlockSection columns="1" >
+        <apex:inputField id="personBeingServed" 
+                        value="{!servAssignFromSeiz.Service_Assignment__c}"
+                        required="true" /> 
         <apex:inputText id="start_date" 
                         size="10" 
                         onfocus="DatePicker.pickDate(false, this , false);" 
@@ -98,10 +101,10 @@
                         styleClass="datepicker" 
                         label="End Date"  
                         value="{!enddt}"
-                        required="true" />  
+                        required="true" /> 
         <apex:pageBlockSectionItem >
             <apex:outputPanel ></apex:outputPanel>
-            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs" status="myStatus" oncomplete="test()"/> 
+            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs" status="myStatus"/> 
         </apex:pageBlockSectionItem>
         </apex:pageBlockSection>
    </apex:pageBlock>
@@ -109,12 +112,12 @@
 </apex:actionRegion>
 
 <apex:outputPanel id="dataTable"> 
-   <apex:pageBlock title="Results" rendered="{!seizures.size >0}">
+   <apex:pageBlock title="Results" rendered="{! seizures != null && seizures.size > 0}">
 <!--         <apex:pageBlockButtons >  -->
 <!--             <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'Seizure Episodes')" value="Export to Excel"/></div> -->
 <!--         </apex:pageBlockButtons>  -->
 <!--         <br /> -->
-        <table id="mytbl" class="mytbl" width="90%">
+        <table id="mytbl" class="mytbl" max-width="90%">
                 <tr class="tblheader">
                     <td class="tblheader"></td>
 			        <apex:repeat var="day" value="{!dayCount}">
@@ -133,12 +136,16 @@
         </table>
         
         <apex:pageBlockTable value="{!seizures}" var="seizure">
-            <apex:column headerValue="Seizure Start Time" width="16%"><c:MilitaryDatetime dateTimeVal="{!seizure.Start_DateTime__c}"/></apex:column>
-            <apex:column headerValue="Seizure End Time" width="16%"><c:MilitaryDatetime dateTimeVal="{!seizure.End_DateTime__c}"/></apex:column>
-            <apex:column headerValue="Duration (min:sec)" width="16%"><c:MilitaryDatetime dateTimeVal="{!seizure.End_DateTime__c}"/></apex:column>            
-            <apex:column value="{!seizure.Observed_By__c}" width="16%"/>
-            <apex:column value="{!seizure.Comments__c}" width="44%"/>
+<!--             <apex:column headerValue="Service Assignment" width="15%">{!seizure.sa}</apex:column> -->
+            <apex:column headerValue="Seizure Start Time" width="15%">{!seizure.startDateTime}</apex:column>
+            <apex:column headerValue="Seizure End Time" width="15%">{!seizure.endDateTime}</apex:column>
+            <apex:column headerValue="Duration (min)" width="10%">{!seizure.duration}</apex:column>            
+            <apex:column headerValue="Observed By" width="15%">{!seizure.observedBy}</apex:column>
+            <apex:column headerValue="Comments" width="30%">{!seizure.comments}</apex:column>
         </apex:pageBlockTable>        
+   </apex:pageBlock>
+   <apex:pageBlock title="Results" rendered="{! seizures.size == 0 && startdt != null }">
+        <apex:outputText value="No seizures to display" />
    </apex:pageBlock>
 <br/>
 
@@ -163,7 +170,7 @@ function createtbl(){
     j$('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
 }
 j$(document).ready(function(){
-//    createtbl();
+    createtbl();
 });
 
 var tableToExcel = (function() {
