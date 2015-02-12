@@ -1193,6 +1193,8 @@
                 <apex:outputField value="{!Referral__c.Case_Manager_Name__c}" rendered="{!ReferralRecordType!='NeuroRestorative'}" />
                 <!-- ERNS-26 -->
                 <apex:outputField value="{!Referral__c.Case_Manager_Phone__c}" rendered="{!ReferralRecordType!='NeuroRestorative'}" />
+                 <!-- ADDED 	for  EB-365 -->
+                <apex:outputField value="{!Referral__c.Assessment_Date__c}" rendered="{!ReferralRecordType=='Wisconsin' || ReferralRecordType=='North Dakota'}" />
                 <!--apex:outputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
                 <apex:outputField value="{!Referral__c.Evaluated_By__c}" rendered="{!referralRecordType=='CareMeridian'}" />
 
