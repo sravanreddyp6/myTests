@@ -58,15 +58,13 @@ public with sharing class HomePageController{
 	public String CredId;
 	public String TypObj;
 
+
 	//Constructor
 	public HomePageController(){
 		checkTmnUserRecord();
 		shareobj();
-		mineTasks();
-	}
-
-	public void getReportList() {
 		reports();
+		mineTasks();
 	}
 
 	//Wrapper class for Approvals
@@ -300,67 +298,51 @@ public with sharing class HomePageController{
 		if(OperatingGroup != null){
 			set<string> okRefRpts = getReportsToShow(OperatingGroup );
 			system.debug('reports in scope - ' + okRefRpts);
-
-			for(Report rpt: filterReportAccess(report(RefId, null))) {
-				if (okRefRpts.contains(rpt.DeveloperName)) {
-					refrportlst.add(rpt);
+			for(Report rpt:report(RefId, null)){
+				if ( canSeeReport( rpt.Id )){
+					if(okRefRpts.contains(rpt.DeveloperName)){
+						refrportlst.add(rpt);
+					}
 				}
 			}
 		}
 
 		contractrportlst = new List<Report>();
-		for(Report rpt: filterReportAccess(report(CntrctId, null))) {
-			contractrportlst.add(rpt);
+		for(Report rpt:report(CntrctId, null)){
+			if ( canSeeReport( rpt.Id ))
+				contractrportlst.add(rpt);
 		}
 
 		credrportlst = new List<Report>();
-		for(Report rpt: filterReportAccess(report(CredId,null))) {
-			credrportlst.add(rpt);
+		for(Report rpt:report(CredId,null)){
+			if ( canSeeReport( rpt.Id ))
+				credrportlst.add(rpt);
 		}
 
 		docrportlst = new List<Report>();
-		for(Report rpt: filterReportAccess(report(ESDActivityId,'Docs'))) {
-			docrportlst.add(rpt);
+		for(Report rpt:report(ESDActivityId,'Docs')){
+			if ( canSeeReport( rpt.Id))
+				docrportlst.add(rpt);
 		}
 
 		PBSrportlst = new List<Report>();
-		for(Report rpt: filterReportAccess(report(ESDActivityId,ESDAct))) {
-			PBSrportlst.add(rpt);
+		for(Report rpt:report(ESDActivityId,ESDAct)){
+			if ( canSeeReport( rpt.Id))
+				PBSrportlst.add(rpt);
 		}
 
-		for(Report rpt1: filterReportAccess(report(ESDbillingId,ESDbill))) {
-			PBSrportlst.add(rpt1);
+		for(Report rpt1:report(ESDbillingId,ESDbill)){
+			if ( canSeeReport( rpt1.Id))
+				PBSrportlst.add(rpt1);
 		}
 
-		for(Report rpt2: filterReportAccess(report(ESDSupyId,ESDsup))) {
-			PBSrportlst.add(rpt2);
+		for(Report rpt2:report(ESDSupyId,ESDsup)){
+			if ( canSeeReport( rpt2.Id))
+				PBSrportlst.add(rpt2);
 		}
 
 		return null;
 	}
-	// Given a list of reports, return a list of reports that the context user
-	// has access to
-	public List<Report> filterReportAccess(List<Report> reports) {
-		System.debug('reports that need filter:' + reports);
-		Map<Id, Report> reportMaps = new Map<Id, Report>();
-		for (Report report: reports) {
-			reportMaps.put(report.Id, report);
-		}
-		Map<Id, UserRecordAccess> accessMap = new Map<Id, UserRecordAccess>([
-			SELECT RecordId, HasReadAccess
-			  FROM UserRecordAccess
-			 WHERE UserId = :UserInfo.getUserId()
-			   AND RecordId IN :reportMaps.keySet()
-		]);
-		List<Report> accessibleReports = new List<Report>();
-		for (Report report: reports) {
-			if (accessMap.get(report.Id).HasReadAccess) {
-				accessibleReports.add(reportMaps.get(report.Id));
-			}
-		}
-		return accessibleReports;
-	}
-
 	public List<Report> report(Id ownId,String ReportText){
 		String query = 'SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId';
 		if(ReportText!=null && ReportText=='ESDAct'){
@@ -492,6 +474,27 @@ public with sharing class HomePageController{
 		return null;
 	}
 
+
+	// This funtion is here to work around a salesforce bug where report folder security is not being honored through apex queries.
+	// To determine whether report is accessible to the user, attempt a page reference to the report.  A non-permitted user will receive an HTTP 500 error.
+	// We can put the page instantiation into a try/catch block and return appropriately
+	// We can remove this function when the bug is fixed.
+	Boolean canSeeReport( ID reportid ) {
+		return true;
+		// tests to see whether user can view report
+		try {
+			PageReference pr = new PageReference( '/' + string.valueof( reportID));
+
+			return (!pr.getContent().toString().contains('Data Not Available'));
+		}
+		catch(DmlException e) {
+			// DmlException handling code here.
+			return false;
+		} catch(Exception e) {
+			// Generic exception handling code here.
+			return false;
+		}
+	}
 	public set<string> getReportsToShow(string og){
 		set<string> items = new set<string>();
 
