@@ -1,7 +1,8 @@
 public with sharing class SeizureTrackingRpt {
     public Date startdt {get;set;}
     public Date enddt {get;set;}
-    public Seizure__c servAssignFromSeiz {get;set;}
+    //public Seizure__c servAssignFromSeiz {get;set;}
+    public String servAssign {get;set;}
     
     public transient Integer totalDays {get;set;}
     public transient list<String> dayCount {get;set;}
@@ -20,10 +21,11 @@ public with sharing class SeizureTrackingRpt {
     public SeizureTrackingRpt(){
     	startdt=null;
     	enddt =null;
-    	servAssignFromSeiz = new Seizure__c();
+    	//servAssignFromSeiz = new Seizure__c();
         dayCount = new List<String>();
         timeSlots = new List<String>();
         seizCount = new map<string, Integer>();
+        servAssign = ApexPages.currentPage().getParameters().get('saId');
     }
 
     private String getKey(Datetime dt){
@@ -42,8 +44,8 @@ public with sharing class SeizureTrackingRpt {
     public PageReference runreport(){
 //        startdt = Date.today().toStartOfMonth();
 //        enddt = startdt.addMonths(1);
-        if (startdt == null || enddt == null) {
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Start Date and End Date can not be empty.'));
+        if (servAssign == null || servAssign == '') {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Service Assigment is required.'));
 			return null;
         }
 
@@ -77,7 +79,8 @@ public with sharing class SeizureTrackingRpt {
                            from Seizure__c  where Duplicate_Entry__c = false
                                     And StartDate__c >= : startdt
                                     And StartDate__c <= : enddt
-                                    And Service_Assignment__c = : servAssignFromSeiz.Service_Assignment__c
+                                    // And Service_Assignment__c = : servAssignFromSeiz.Service_Assignment__c
+                                    And Service_Assignment__c = : servAssign
                                   order by Start_DateTime__c];
                                   
         this.seizures = new List<SeizureWrapper>();

@@ -85,9 +85,9 @@
 <apex:form id="frm" >
     <apex:pageBlock title="Filters" >
         <apex:pageBlockSection columns="1" >
-        <apex:inputField id="personBeingServed" 
-                        value="{!servAssignFromSeiz.Service_Assignment__c}"
-                        required="true" /> 
+<!--         <apex:inputField id="serviceAssigment"  -->
+<!--                         value="{!servAssignFromSeiz.Service_Assignment__c}" -->
+<!--                         required="true" />  -->
         <apex:inputText id="start_date" 
                         size="10" 
                         onfocus="DatePicker.pickDate(false, this , false);" 
@@ -104,7 +104,10 @@
                         required="true" /> 
         <apex:pageBlockSectionItem >
             <apex:outputPanel ></apex:outputPanel>
-            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs" status="myStatus"/> 
+            <apex:outputPanel >
+	            <apex:commandButton value="Run" action="{!runreport}" reRender="dataTable, msgs" status="myStatus"/>
+	            <apex:commandButton value="Cancel" onclick="window.open('/apex/ServiceAssignmentEditNew?id={!servAssign}', '_self'); return false;"/>
+            </apex:outputPanel> 
         </apex:pageBlockSectionItem>
         </apex:pageBlockSection>
    </apex:pageBlock>
@@ -144,7 +147,7 @@
             <apex:column headerValue="Comments" width="30%">{!seizure.comments}</apex:column>
         </apex:pageBlockTable>        
    </apex:pageBlock>
-   <apex:pageBlock title="Results" rendered="{! seizures.size == 0 && startdt != null }">
+   <apex:pageBlock title="Results" rendered="{!seizures.size == 0 && startdt != null}">
         <apex:outputText value="No seizures to display" />
    </apex:pageBlock>
 <br/>
