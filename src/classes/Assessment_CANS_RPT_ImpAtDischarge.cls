@@ -279,7 +279,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
 
 
 
-/**/
+/*
         StateRowData aqrow = new StateRowData('AQ');
             PersonRowData prd = new PersonRowData('1', 'poly', '2', 'poly-admit', 'AQ');
             prd.endScore = 2;
@@ -295,7 +295,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             aqrow.mPbsData.put('3', prd3);                                   
             mapStateRowData.put('AQ', aqrow);
 
-           
+     */      
 
         //does the admit have imoprovement from q1 to DC?
         for(StateRowData s : mapStateRowData.values() ){
