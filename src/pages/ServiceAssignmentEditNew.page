@@ -1058,6 +1058,7 @@ END: Uncomment to have the element collapsed by default -->
 <!--                <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" /> -->
                     <input type="button" class="btn" value="Add Seizure" onclick="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
 <!--                <input type="button" class="btn" value="Add Seizure" onclick="showAddSeizure(); return false;"/> -->
+                    <input type="button" class="btn" value="Seizure Report" onclick="window.open('/apex/SeizureTrackingRpt?saId={!Service_Assignment__c.Id}', '_self'); return false;" />
 <!--                 </apex:facet> -->
 <!--             </apex:actionStatus> -->
             </div>
@@ -1257,7 +1258,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c!='Inactive' && evaluations.size = 0}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
 					<apex:actionStatus id="AddResidentAssessmentStatus" >
 						<apex:facet name="start">
-							<apex:outputText> <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /><i><b>Please wait..</b></i></apex:outputText>
+							<apex:outputText > <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /><i><b>Please wait..</b></i></apex:outputText>
 						</apex:facet>
 						<apex:facet name="stop" />
 					</apex:actionStatus>
