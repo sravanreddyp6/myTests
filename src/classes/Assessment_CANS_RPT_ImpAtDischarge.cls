@@ -3,11 +3,19 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
     list<Admission__c> allAdmins = new list<Admission__c>();
     list<Assessment__c> allAssess = new list<Assessment__c>();
 
+
     list<integer> QuestionsInScope {
         get{ 
             if(selectedCluster == 'Well-Being'){return Assessment_CANS_Cluster_Defs.WellBeing;}
-            if(selectedCluster == 'Behavior & Risk'){return Assessment_CANS_Cluster_Defs.Behavior_AND_Risk;}
-            if(selectedCluster == 'Education'){return Assessment_CANS_Cluster_Defs.Education;}
+            else if(selectedCluster == 'Behavior & Risk'){return Assessment_CANS_Cluster_Defs.Behavior_AND_Risk;}
+            else if(selectedCluster == 'Education'){return Assessment_CANS_Cluster_Defs.Education;}
+            else {
+                list<integer> allQ = new list<integer>();
+                for(integer item = 1; item < 111; item++){
+                    allQ.add(item);
+                }
+                return allQ;                
+            }
             return null;
         }
     }
@@ -25,8 +33,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                         AND Assessment__r.Quarter__c = 1 ]){
                     returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
                 }
-            }
-            else if(selectedDD_Status == 'No_DD'){
+            }else if(selectedDD_Status == 'No_DD'){
                 for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
                                                     from Assessment_Response__c 
                                                         Where Question__r.Question_Number__c = 37 
@@ -36,9 +43,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                         AND Assessment__r.Quarter__c = 1]){
                     returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
                 }
-            }
-
-            else{
+            }else{
                 for(Assessment__c item: [select id, AccountPerson__r.Id from Assessment__c Where disregard__c = false ]){
                     returnInfo.add(item.AccountPerson__r.Id);
                 }
@@ -62,6 +67,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         //runRpt();
         selectedServiceLines = new list<string>();
         serviceLines = new list<SelectOption>();
+        selectedCluster = 'All';
         Schema.DescribeFieldResult fieldResult = Assessment__c.Service_Line__c.getDescribe();
         List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
                 
@@ -82,6 +88,8 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         
     }
 
+
+
     public void buildRpt(){
         
         Boolean includeNullSL = false;
@@ -92,251 +100,268 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         }
         
         
-        // this determines the states we will work with 
+        // this determines the states we will work with and display in column 1
         list<AggregateResult> statesWithIntakeAssess = [select Admission__r.State__c
                                         from Assessment__c 
                                         where Interval__c = 'Intake' 
                                         and assessment_type__r.name = 'CANS'
+                                        AND Status__c = 'Locked'
                                         and disregard__c = false
                                         group by Admission__r.state__c];
         //for each state we will make an item in the master map 
+        // we are gonna pull back the state from assessments and use it as our key
+        // we'll also add each person to a list as we go over them
         map<string, StateRowData> mapStateRowData = new map<string, StateRowData>();
         for(AggregateResult item : statesWithIntakeAssess){
             string state =  string.valueof(item.get('state__c'));
             mapStateRowData.put(state, new StateRowData(state));
         }
-        //this is for column Number of PBS Discharged per state
-        list<AggregateResult> intakeAssess = new list<AggregateResult>();
+
+        // next we'll add the discharge assessment - because they have the filters from the user on them
+        // later we will compair them to the Q1 assessment
+        list<Assessment__c> baseAssess = new List<Assessment__c>();
+        list<Assessment__c> endAssess = new List<Assessment__c>();
         if ( includeNullSL ) {
-            intakeAssess = [select Admission__r.state__c, count(name) assesCount
-                                                from Assessment__c 
-                                                    where Interval__c = 'Intake' 
-                                                        AND Admission__r.Status__c = 'Discharged'
-                                                        AND assessment_type__r.name = 'CANS'
-                                                        and disregard__c = false
-                                                        AND AccountPerson__r.id IN :PBSbyDD_Status
-                                                        AND ( Service_Line__c in :selectedServiceLines
-                                                            OR Service_Line__c = null )
-                                                        AND Admission__r.Discharged_Date__c >= :StartDate
-                                                        AND Admission__r.Discharged_Date__c <= :EndDate
+            endAssess = [select id, name, AccountPerson__r.Id, AccountPerson__r.name, 
+                                Admission__r.State__c, admission__r.id, admission__r.name,
+                                Assessment_Date__c, Score__c
+                         from Assessment__c 
+                                    where Interval__c = 'Discharge' 
+                                        AND assessment_type__r.name = 'CANS'
+                                        AND Status__c = 'Locked'
+                                        AND disregard__c = false
+                                        AND AccountPerson__r.id IN :PBSbyDD_Status
+                                        AND ( Service_Line__c in :selectedServiceLines
+                                            OR Service_line__c = null )
+                                        AND Assessment_Date__c >= :StartDate 
+                                        AND Assessment_Date__c <= :EndDate
+                            ];
 
-                                                    group by Admission__r.state__c
-
-                                                    ];                                                              
         } else {
-            intakeAssess = [select Admission__r.state__c, count(name) assesCount
-                                                from Assessment__c 
-                                                    where Interval__c = 'Intake' 
-                                                        AND Admission__r.Status__c = 'Discharged'
-                                                        AND assessment_type__r.name = 'CANS'
-                                                        and disregard__c = false
-                                                        AND AccountPerson__r.id IN :PBSbyDD_Status
-                                                        AND Service_Line__c in :selectedServiceLines
-                                                        AND Admission__r.Discharged_Date__c >= :StartDate
-                                                        AND Admission__r.Discharged_Date__c <= :EndDate
-
-                                                    group by Admission__r.state__c
-
-                                                    ];                                                  
+            endAssess = [select id, name, AccountPerson__r.Id, AccountPerson__r.name, 
+                                Admission__r.State__c, admission__r.id, admission__r.name,
+                                Assessment_Date__c, Score__c
+                         from Assessment__c 
+                                    where Interval__c = 'Discharge' 
+                                        AND assessment_type__r.name = 'CANS'
+                                        AND Status__c = 'Locked'
+                                        AND disregard__c = false
+                                        AND AccountPerson__r.id IN :PBSbyDD_Status
+                                        AND Service_Line__c in :selectedServiceLines
+                                        AND Assessment_Date__c >= :StartDate 
+                                        AND Assessment_Date__c <= :EndDate
+                            ];
         }
-        for(AggregateResult item : intakeAssess){
-            string state =  string.valueof(item.get('state__c'));
-            mapStateRowData.get(state).NumberPBSDisCharge = integer.valueof(item.get('assesCount'));
-        }
-
-
-        list<Assessment__c> disChargeAssess = new List<Assessment__c>();
-        if ( includeNullSL ) {
-        disChargeAssess = [select id, name, AccountPerson__r.Id, AccountPerson__r.name, Admission__r.State__c, admission__r.id
-                                                from Assessment__c 
-                                                where Interval__c = 'Discharge' 
-                                                    AND assessment_type__r.name = 'CANS'
-                                                    and disregard__c = false
-                                                    AND AccountPerson__r.id IN :PBSbyDD_Status
-                                                    AND ( Service_Line__c in :selectedServiceLines
-                                                        OR Service_line__c = null )
-                                                    AND Assessment_Date__c >= :StartDate 
-                                                    AND Assessment_Date__c <= :EndDate
-                                                    ];
-        } else {
-                    disChargeAssess = [select id, name, AccountPerson__r.Id, AccountPerson__r.name, Admission__r.State__c, admission__r.id
-                                                from Assessment__c 
-                                                where Interval__c = 'Discharge' 
-                                                    AND assessment_type__r.name = 'CANS'
-                                                    and disregard__c = false
-                                                    AND AccountPerson__r.id IN :PBSbyDD_Status
-                                                    AND Service_Line__c in :selectedServiceLines
-                                                    AND Assessment_Date__c >= :StartDate 
-                                                    AND Assessment_Date__c <= :EndDate
-                                                    ];
-        }
-        map<string, PersonRowData> mapPersonRowData = new map<string, PersonRowData>();
-        set<id> disChargeAssessPBSes = new set<id>();
-        set<id> admissionInDischargeAssess = new set<id>();
-        for(Assessment__c item : disChargeAssess){
+        //now we need do get all the admission id fron the assessments so we can get the correct Q1 assessments
+        //later we'll look to make sure a PBS has both Q1 and Discharge if they dont we'll kick them outta the master list!!!
+        //we'll set up some sets for later SOQL usage on the responses
+        set<id> admitInEndAssess = new set<id>();
+        set<id> admitInBaseAssess = new set<id>();
+        for(Assessment__c item : endAssess){
             boolean addPBSToDischargeCount = true;
-            if(mapPersonRowData.containsKey(item.AccountPerson__r.Id)){ 
-                addPBSToDischargeCount = false;
-                system.debug('here - ' + item.id); 
-                system.debug('was - ' + mapPersonRowData.get(item.AccountPerson__r.Id));
-            }
-            
-            mapPersonRowData.put(item.AccountPerson__r.Id, new PersonRowData(item.AccountPerson__r.Id, item.Admission__r.State__c, item.AccountPerson__r.name, item.id));
-            
-            if(addPBSToDischargeCount){
-                mapStateRowData.get(item.Admission__r.State__c).NumberPBSDisChargeWithCANS +=1;
-            }
-            
-            if(disChargeAssessPBSes.contains(item.AccountPerson__r.Id)){ 
-                system.debug('here 2 - ' + item.id);
-            }
-            disChargeAssessPBSes.add(item.AccountPerson__r.Id);
-            admissionInDischargeAssess.add(item.admission__r.id);
-            system.debug('current count - ' + item.Admission__r.State__c + mapStateRowData.get(item.Admission__r.State__c).NumberPBSDisChargeWithCANS);
+            string cur_state = item.Admission__r.State__c ;
+            string cur_pbs = item.AccountPerson__r.Id;
+            string cur_admit = item.Admission__r.id;
+                PersonRowData prd = new PersonRowData(cur_pbs, item.AccountPerson__r.name, cur_admit, item.Admission__r.name, cur_state);
+                prd.endAssess = item;
+                mapStateRowData.get(cur_state).mPbsData.put(cur_admit, prd);          
+                admitInEndAssess.add(cur_admit);
+       }
+
+        baseAssess = [select id, name, AccountPerson__r.Id, AccountPerson__r.name, 
+                            Admission__r.State__c, admission__r.id, admission__r.name,
+                            Assessment_Date__c, Score__c
+                                from Assessment__c 
+                                    where Interval__c = 'Quarterly' 
+                                    AND Quarter__c = 1
+                                    AND Admission__c in :admitInEndAssess
+                                    AND Disregard__c = false
+                                    AND Status__c = 'Locked'
+                    ];
+        //lets get the base assessment in the correct spot
+        for(Assessment__c item : baseAssess){
+            string cur_state = item.Admission__r.State__c ;
+            string cur_pbs = item.AccountPerson__r.Id;    
+            string cur_admit = item.Admission__r.id;
+            PersonRowData prd = mapStateRowData.get(cur_state).mPbsData.get(cur_admit); 
+            prd.baseAssess = item;
+            prd.admitHasBaseAndEndAssess = true;
+            admitInBaseAssess.add(cur_admit);
         }
 
-        
-        list<AggregateResult> intakeAssessScore = new List<AggregateResult>();
-        
+        //lets scrub the list removing admits that dont have both a Q1 and Discharge assessment
+        for(StateRowData s : mapStateRowData.values() ){
+            for(PersonRowData p : s.mPbsData.values() ){
+                if( !p.admitHasBaseAndEndAssess ) {
+                    s.mPbsData.remove(p.admitID);
+                    admitInEndAssess.remove(p.admitID);
+                }
+            }
+        }
+
+
+        //now we'll get a lists of the scores
+        list<AggregateResult> baseAssessScore = new list<AggregateResult>();
+        list<AggregateResult> endAssessScore = new list<AggregateResult>();
         if ( includeNullSL ) {
-            intakeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
+            baseAssessScore = [select sum(score__c) score, Assessment__r.Admission__r.Id admitID, Assessment__r.Admission__r.State__c State 
                                                             from Assessment_Response__c 
-                                                                Where Assessment__r.AccountPerson__r.Id IN : disChargeAssessPBSes 
+                                                                Where Assessment__r.admission__c IN : admitInBaseAssess 
                                                                     AND Assessment__r.Interval__c = 'Quarterly' 
                                                                     AND Assessment__r.Quarter__c = 1 
                                                                     AND ( Assessment__r.Service_Line__c in :selectedServiceLines
                                                                         OR Assessment__r.Service_Line__c = null )
+
                                                                     and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
-                                                                    AND Assessment__r.admission__c in :admissionInDischargeAssess
-                                                                    Group By Assessment__r.AccountPerson__r.Id
+                                                                    AND Assessment__r.Status__c = 'Locked'
+
+                                                                    Group By Assessment__r.Admission__r.Id, Assessment__r.Admission__r.State__c
                                                                     ];
+
+            endAssessScore = [select sum(score__c) score, Assessment__r.Admission__r.Id admitID, Assessment__r.Admission__r.State__c State 
+                                                        from Assessment_Response__c 
+                                                            Where Assessment__r.admission__c IN : admitInEndAssess 
+                                                                AND Assessment__r.Interval__c = 'Discharge'
+                                                                AND (Assessment__r.Service_Line__c in :selectedServiceLines
+                                                                    OR Assessment__r.service_line__c = null)
+
+                                                                and Assessment__r.disregard__c = false
+                                                                AND Question__r.Question_Number__c IN :QuestionsInScope
+                                                                AND Assessment__r.assessment_type__r.name = 'CANS'
+                                                                AND Assessment__r.Status__c = 'Locked'
+
+                                                                Group By Assessment__r.Admission__r.Id, Assessment__r.Admission__r.State__c
+                                                                ];                                                                 
         } else {
-            intakeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
+            baseAssessScore = [select sum(score__c) score, Assessment__r.Admission__r.Id admitID, Assessment__r.Admission__r.State__c State
                                                             from Assessment_Response__c 
-                                                                Where Assessment__r.AccountPerson__r.Id IN : disChargeAssessPBSes 
+                                                                Where Assessment__r.admission__c IN : admitInBaseAssess 
                                                                     AND Assessment__r.Interval__c = 'Quarterly' 
                                                                     AND Assessment__r.Quarter__c = 1 
                                                                     AND Assessment__r.Service_Line__c in :selectedServiceLines
+
                                                                     and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
-                                                                    AND Assessment__r.admission__c in :admissionInDischargeAssess
-                                                                    Group By Assessment__r.AccountPerson__r.Id
+                                                                    AND Assessment__r.Status__c = 'Locked'
+
+                                                                    Group By Assessment__r.Admission__r.Id, Assessment__r.Admission__r.State__c 
                                                                     ];
-        }
-       
-        list<AggregateResult> disChargeAssessScore = new list<AggregateResult>();
-        
-        if ( includeNullSL ) {
-            disChargeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
+
+            endAssessScore = [select sum(score__c) score, Assessment__r.Admission__r.Id admitID, Assessment__r.Admission__r.State__c State  
                                                             from Assessment_Response__c 
-                                                                Where Assessment__r.AccountPerson__r.Id IN : disChargeAssessPBSes 
-                                                                    AND Assessment__r.Interval__c = 'Discharge'
-                                                                    AND (Assessment__r.Service_Line__c in :selectedServiceLines
-                                                                        OR Assessment__r.service_line__c = null)
-                                                                    and Assessment__r.disregard__c = false
-                                                                    AND Question__r.Question_Number__c IN :QuestionsInScope
-                                                                    AND Assessment__r.assessment_type__r.name = 'CANS'
-                                                                    AND Assessment__r.admission__c in :admissionInDischargeAssess
-                                                                    Group By Assessment__r.AccountPerson__r.Id
-                                                                    ];      
-        } else {
-            disChargeAssessScore = [select sum(score__c) score, Assessment__r.AccountPerson__r.Id 
-                                                            from Assessment_Response__c 
-                                                                Where Assessment__r.AccountPerson__r.Id IN : disChargeAssessPBSes 
+                                                                Where Assessment__r.admission__c IN : admitInEndAssess 
                                                                     AND Assessment__r.Interval__c = 'Discharge'
                                                                     AND Assessment__r.Service_Line__c in :selectedServiceLines
+
                                                                     and Assessment__r.disregard__c = false
                                                                     AND Question__r.Question_Number__c IN :QuestionsInScope
                                                                     AND Assessment__r.assessment_type__r.name = 'CANS'
-                                                                    AND Assessment__r.admission__c in :admissionInDischargeAssess
-                                                                    Group By Assessment__r.AccountPerson__r.Id
+                                                                    AND Assessment__r.Status__c = 'Locked'
+
+                                                                    Group By Assessment__r.Admission__r.Id, Assessment__r.Admission__r.State__c
                                                                     ];      
         }
-        for(AggregateResult item : intakeAssessScore){
-            string theKey = string.valueof(item.get('ID'));
-            mapPersonRowData.get(theKey).IntakeScore = integer.valueof(item.get('score'));
+        for(AggregateResult item : baseAssessScore){
+            string theKey = string.valueof(item.get('admitID'));
+            string theState = string.valueof(item.get('State'));
+            integer thescore = integer.valueof(item.get('score'));
+            mapStateRowData.get(theState).mPbsData.get(theKey).baseScore = thescore;
         }
-        for(AggregateResult item : disChargeAssessScore){
-            string theKey = string.valueof(item.get('ID'));
-            mapPersonRowData.get(theKey).disChargeScore = integer.valueof(item.get('score'));
+        for(AggregateResult item : endAssessScore){
+            string theKey = string.valueof(item.get('admitID'));
+            string theState = string.valueof(item.get('State'));
+            integer thescore = integer.valueof(item.get('score'));
+            mapStateRowData.get(theState).mPbsData.get(theKey).endScore = thescore;            
         }
 
-        for(PersonRowData item : mapPersonRowData.values()) {
-            if(item.disChargeScore < item.IntakeScore){mapStateRowData.get(item.state).NumberPBSWithImprovement += 1;}
-        }
 
-        StateRowData TotalRow = new StateRowData('Total');
-        TotalRow.sortKey = 'zz';
-        
-        for(StateRowData item : mapStateRowData.values()){
-            if(item.NumberPBSDisChargeWithCANS != 0){
-                item.PercentPBSWithImprovement = (decimal.valueof(item.NumberPBSWithImprovement) / decimal.valueof(item.NumberPBSDisChargeWithCANS)).setScale(2);
-                item.PercentPBSWithImprovement = item.PercentPBSWithImprovement * 100;
-                item.PrettyPercentPBSWithImp = string.valueof(item.PercentPBSWithImprovement) + '%';
+
+/**/
+        StateRowData aqrow = new StateRowData('AQ');
+            PersonRowData prd = new PersonRowData('1', 'poly', '2', 'poly-admit', 'AQ');
+            prd.endScore = 2;
+            prd.baseScore = 1;
+            aqrow.mPbsData.put('1', prd); 
+            PersonRowData prd2 = new PersonRowData('1', 'zoly', '2', 'zoly-admit', 'AQ');
+            prd2.endScore = 7;
+            prd2.baseScore = 7;
+            aqrow.mPbsData.put('2', prd2);
+            PersonRowData prd3 = new PersonRowData('1', 'aoly', '2', 'aoly-admit', 'AQ');
+            prd3.endScore = 1;
+            prd3.baseScore = 15;
+            aqrow.mPbsData.put('3', prd3);                                   
+            mapStateRowData.put('AQ', aqrow);
+
+           
+
+        //does the admit have imoprovement from q1 to DC?
+        for(StateRowData s : mapStateRowData.values() ){
+            for(PersonRowData p : s.mPbsData.values() ){
+                if(p.endScore < p.baseScore){
+                    s.numAdmitImproved += 1;
+                    p.hasImprovement = true;
+                }
             }
-            
-
-            TotalRow.NumberPBSDisCharge += item.NumberPBSDisCharge;
-            TotalRow.NumberPBSDisChargeWithCANS += item.NumberPBSDisChargeWithCANS;
-            TotalRow.NumberPBSWithImprovement += item.NumberPBSWithImprovement;
-            
-
         }
-        if(TotalRow.NumberPBSDisChargeWithCANS != 0){ 
-            TotalRow.PercentPBSWithImprovement = (decimal.valueof(TotalRow.NumberPBSWithImprovement) / decimal.valueof(TotalRow.NumberPBSDisChargeWithCANS)).setScale(2);
-            TotalRow.PercentPBSWithImprovement = TotalRow.PercentPBSWithImprovement * 100;
-            TotalRow.PrettyPercentPBSWithImp = string.valueof(TotalRow.PercentPBSWithImprovement) + '%';
-        }
-        mapStateRowData.put('total', TotalRow);
+
 
         jsonStateData = JSON.serializePretty(mapStateRowData.values());
-        jsonPersonRowData = JSON.serializePretty(mapPersonRowData.values());
+
 
     }
 
 
     public class PersonRowData{
         public string State;
-        public string PBS;
-        public integer IntakeScore;
-        public integer disChargeScore;
-        public string PBSname;
-        public string dischargeID;
+
+        public integer baseScore = 0;
+        public integer endScore = 0;
+
+        public string pbsName;
+        public string pbsID;
+        public string admitID;
+        public string admitName;
+
+        public Assessment__c baseAssess {get; set;}
+        public Assessment__c endAssess {get; set;}
+
+        public boolean admitHasBaseAndEndAssess = false;
+        public boolean hasImprovement = false;
 
 
 
-        public PersonRowData(string PBSID, string var_state, string var_pbsName, string var_DC){
-                IntakeScore = 0;
-                disChargeScore = 0;
-                PBS = PBSID;
+        public PersonRowData(string var_pbsID, string var_pbsName, string var_admitID, string var_admitName, string var_state){
+                pbsID = var_pbsID;                
+                pbsName = var_pbsName;
+                admitID = var_admitID;
+                admitName = var_admitName;
                 state = var_state;
-                PBSname = var_pbsName;
-                dischargeID = var_DC;
+                baseAssess = new Assessment__c();
+                endAssess = new Assessment__c();
             
         }   
     }
 
     public class StateRowData{
         public string State;
-        public string sortKey;
-        public integer NumberPBSDisCharge;
-        public integer NumberPBSDisChargeWithCANS;
-        public integer NumberPBSWithImprovement;
-        public decimal PercentPBSWithImprovement;
-        public string PrettyPercentPBSWithImp;
+        public integer numAdmitBaseAndEnd {set; get {return mPbsData.size(); } }
+        public integer numAdmitImproved = 0;
+        public decimal percentImproved {set; get {
+            if(numAdmitImproved == 0){ return 0.00;}
+            else{return (decimal.valueof(numAdmitImproved) / decimal.valueof(numAdmitBaseAndEnd)).setScale(2) * 100; }
+            return null;
+            } }
+        public string prettyPercentImproved { set; get{ return string.valueof(percentImproved) + '%';} }
 
+        public map<string, PersonRowData> mPbsData {get; set;}
+        public list<PersonRowData> pbsData { set; get{return mPbsData.values();}}
 
         public StateRowData(string var_State){
             state = var_State;
-            sortKey = var_State;
-            NumberPBSDisCharge = 0;
-            NumberPBSDisChargeWithCANS = 0;
-            NumberPBSWithImprovement = 0;
-            PercentPBSWithImprovement = 0.00;
-            PrettyPercentPBSWithImp = '0.00%';
+            mPbsData = new map<string, PersonRowData>();
         }
     }
 
