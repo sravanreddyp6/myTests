@@ -55,6 +55,18 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
+        <fullName>Category_Sequence__c</fullName>
+        <defaultValue>1</defaultValue>
+        <externalId>false</externalId>
+        <label>Category Sequence</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Category__c</fullName>
         <description>Users can name a set of fields.</description>
         <externalId>false</externalId>
@@ -65,6 +77,33 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Controlling_Field__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>eval field that controls this field</description>
+        <externalId>false</externalId>
+        <label>Controlling Field</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Eval__c.Category__c</field>
+                <operation>equals</operation>
+                <valueField>Eval__c.Category__c</valueField>
+            </filterItems>
+            <filterItems>
+                <field>Eval__c.Sub_Category__c</field>
+                <operation>equals</operation>
+                <valueField>Eval__c.Sub_Category__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>Eval__c</referenceTo>
+        <relationshipLabel>Dependent Fields</relationshipLabel>
+        <relationshipName>Controlling_field</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Eval_Field_Type__c</fullName>
@@ -109,6 +148,29 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Field_Sequence__c</fullName>
+        <defaultValue>1</defaultValue>
+        <externalId>false</externalId>
+        <label>Field Sequence</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Length__c</fullName>
+        <externalId>false</externalId>
+        <label>Length</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>RegEx__c</fullName>
         <externalId>false</externalId>
         <label>RegEx</label>
@@ -127,6 +189,18 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Sub_Category_Sequence__c</fullName>
+        <defaultValue>1</defaultValue>
+        <externalId>false</externalId>
+        <label>Sub Category Sequence</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Sub_Category__c</fullName>
         <description>Users can sub categorize a group of fields.</description>
         <externalId>false</externalId>
@@ -136,6 +210,18 @@
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sub_Sub_Category_Sequence__c</fullName>
+        <defaultValue>1</defaultValue>
+        <externalId>false</externalId>
+        <label>Sub Sub Category Sequence</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -156,6 +242,16 @@
         <label>Visible</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>htmlid__c</fullName>
+        <externalId>false</externalId>
+        <label>htmlid</label>
+        <length>50</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <label>Eval</label>
     <nameField>

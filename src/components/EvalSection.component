@@ -1,0 +1,32 @@
+<apex:component controller="GenerateEvalComponent">
+	<apex:attribute name="parentId" description="Id of the parent Evaluation record" type="Id" assignTo="{!evaluationId}" />
+    <apex:attribute name="pbsParentId" description="Id of the parent PBS record" type="Id" assignTo="{!pbsId}" />
+    <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
+    <apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked" type="String" />
+    <apex:attribute name="formId" description="Id of the form element that includes this component" type="String" />
+    <apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
+    <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering" type="Boolean" required="false" default="false" />
+    <apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
+        type="String" required="false" />
+    
+    <apex:attribute name="evaltype" description="Kind of eval" type="string" assignTo="{!evalname}" required="true" />  
+    <apex:attribute name="category" description="Section of the Eval" type="string" assignTo="{!cat}" required="true" />
+    <apex:attribute name="subcategory" description="Sub-Section of the Eval" type="string" assignTo="{!subcat}" required="true" />
+    <apex:attribute name="subsubcategory" description="Section of the Eval" type="string" assignTo="{!subsubcat}" required="false" />
+    
+
+    <form id="evalForm">
+    <apex:pageBlock>
+    <apex:pageBlockSection title="{!subcategory}" >
+    <apex:repeat value="{!ctlList}" var="fld">
+    <apex:pageBlockSectionItem>
+    <apex:outputText value="{!fld}" escape="false" />
+    </apex:pageBlockSectionItem>
+    </apex:repeat>
+    <input class="btn" type="button" value="Save" onclick="" />
+    <input class="btn" type="button" value="Cancel" onclick="evalForm.reset()"/>
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+    </form>
+    
+</apex:component>
