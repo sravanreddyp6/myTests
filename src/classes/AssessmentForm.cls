@@ -77,7 +77,7 @@ return null;
 
 //This is used in the VF Page, it is the root repeat.
          
-   public List<Assessment_Domain_Result__c> ThisRecordsDomains
+   public transient List<Assessment_Domain_Result__c> ThisRecordsDomains
     {
         get{
                 return 
@@ -91,7 +91,7 @@ return null;
 //This is loaded into a map
 //Get a list of current responses.
 
-public List<Assessment_Response__c> ListForMapCurrentResponses
+public transient List<Assessment_Response__c> ListForMapCurrentResponses
     {
         get{
                 
@@ -106,7 +106,7 @@ public List<Assessment_Response__c> ListForMapCurrentResponses
 //This is loaded into a map
 //The Inner Select is used to loop through on the VF page. The sort by is key
 
-public List<Assessment_Question__c> ListForMapQuestions
+public transient List<Assessment_Question__c> ListForMapQuestions
     {
         get{return 
                 [Select ID, Question_Number__c, Question_Title__c, Name, Question_Description__c, Assessment_Type__c, 
@@ -120,7 +120,7 @@ public List<Assessment_Question__c> ListForMapQuestions
 
 //Same as all questions
 
-public List<Assessment_Domain__c> ListForMapDomains
+public transient List<Assessment_Domain__c> ListForMapDomains
     {
         get{
             return 
