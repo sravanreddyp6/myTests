@@ -1,0 +1,72 @@
+<!-- 
+//////////////////////////
+!!!!!!!!!!!!Important!!!!!!!!!!
+
+any field used in this page must also be used in the viewcontract page 
+//////////////////////////
+-->
+<apex:page standardController="TMN_Contract__c">
+            <apex:pageBlock id="details" mode="maindetail">
+                <apex:pageBlockSection columns="1" title="Contract" collapsible="false">
+                    <apex:outputField value="{!TMN_Contract__c.Type_of_Contract__c}"/>
+                    <apex:outputField value="{!TMN_Contract__c.Previous_Contract__c}" rendered="{!NOT(ISBLANK(TMN_Contract__c.Previous_Contract__c))}"/>
+                    <apex:outputField value="{!TMN_Contract__c.Name}"/>
+                    <apex:outputField label="Contract #" value="{!TMN_Contract__c.Contract_Number__c}"/>                                        
+                    <apex:outputField styleClass="txtArea" value="{!TMN_Contract__c.Description__c}"/>
+               </apex:pageBlockSection>
+               <apex:pageBlockSection columns="1" title="Location" collapsible="false">
+                    
+                    <apex:outputField value="{!TMN_Contract__c.Operating_Group__c}"/>
+                    <apex:outputField value="{!TMN_Contract__c.State__c}"/>
+                    <apex:outputField value="{!TMN_Contract__c.LegalEntity__c}"/>
+                    <apex:outputField value="{!TMN_Contract__c.Population__c}"/>                    
+                    <apex:outputField value="{!TMN_Contract__c.Service_Line__c}"/>
+                    <apex:outputField value="{!TMN_Contract__c.MentorRegionOfficeProgramName__c}"/>
+
+                    <apex:outputField styleClass="txtArea" value="{!TMN_Contract__c.Regions_Geography_Served__c}"/>
+                    
+                                                    
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" title="Timeframe" collapsible="false">              
+                    <apex:outputField value="{!TMN_Contract__c.Start_Date__c}"/>
+                    <apex:outputField value="{!TMN_Contract__c.Termination_Date__c}"/>                
+                </apex:pageBlockSection>      
+                <apex:pageBlockSection title="Required Termination Notice" collapsible="false" columns="1">
+                    <apex:outputField label=" " value="{!TMN_Contract__c.TermNote60__c}"/>                
+                    <apex:outputField label="Other in days" value="{!TMN_Contract__c.TermNoteOther__c}"/>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection collapsible="false" columns="1" title="Status"> 
+                    <apex:outputField value="{!TMN_Contract__c.Status__c}" />  
+                    <apex:outputField value="{!TMN_Contract__c.CancelledReason__c}"  />                     
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            
+                        <apex:pageBlock mode="maindetail" id="funding" >
+                <apex:pageBlockSection columns="1" title="Contract Value" collapsible="false">
+                    <apex:outputField label="Type" value="{!TMN_Contract__c.ValueEstStated__c}"/>  
+                    <apex:outputField label="Value in $" value="{!TMN_Contract__c.Value__c}"/>
+                   <apex:outputField label="Annual" value="{!TMN_Contract__c.ValueAnnual__c}"/>  
+                    <apex:outputField label="Value Bucket" value="{!TMN_Contract__c.ValueBucket__c}"/>                     
+                                   
+                
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" title="Funding" collapsible="false">
+                    <apex:outputField value="{!TMN_Contract__c.Funding_Type__c}"/>
+                    <apex:outputField value="{!TMN_Contract__c.ContractingParty__c}"/>
+                    <apex:outputField value="{!TMN_Contract__c.Rate_Structure__c}"/>
+                    <apex:outputField value="{!TMN_Contract__c.Value_Type__c}" />
+                    <apex:outputField value="{!TMN_Contract__c.Number_of_value_type__c}" label="If Value type is other than 'no ceiling', enter #" />  
+                    <apex:outputField value="{!TMN_Contract__c.SpendDown__c}"/>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Contacts" collapsible="false" columns="1">
+                    <apex:outputField value="{!TMN_Contract__c.OwnerID}"/>
+                    <apex:outputField styleClass="txtArea" value="{!TMN_Contract__c.ExternalContact__c}"/>                    
+                </apex:pageBlockSection>
+             
+            <apex:pageBlockSection title="Comments" collapsible="false" columns="1">
+                <apex:outputField value="{!TMN_Contract__c.Comments__c}"/>
+            </apex:pageBlockSection>
+    </apex:pageBlock>             
+</apex:page>
