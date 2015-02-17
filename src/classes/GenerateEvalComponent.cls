@@ -1,6 +1,5 @@
 public with sharing class GenerateEvalComponent {
 
-
 	public List<string> ctlList {get { return CreateFieldControls();} set;}
 	public string cat {get; set;}
 	public string subcat{get; set;} 
@@ -10,8 +9,12 @@ public with sharing class GenerateEvalComponent {
 	public ID evaluationID { get; set;}
 	public ID pbsID { get; set;}
 	
+	public static Map<ID, Eval__c> mapEvalItems;
+	public static Map<ID, Eval_Value__c> mapEvalValues;
+	
 	public GenerateEvalComponent( ) {
-		
+		mapEvalItems = new Map<ID, Eval__c>();
+		mapEvalValues = new Map<ID, Eval_Value__c>();
 	}
 	
 	
@@ -34,7 +37,7 @@ public with sharing class GenerateEvalComponent {
 	
 	// get the list of controls for this type, category, and subcategory
 	List<String> htmlcontrols = new List<String>();	
-	List<Eval__c> lstEvalItems = [select	id, 
+	List<Eval__c> listEvalItems = [select	id, 
 											htmlid__c,
 											field_name__c,
 											category__c, 
@@ -55,29 +58,31 @@ public with sharing class GenerateEvalComponent {
 									and		visible__c = true
 									order by 
 											category_sequence__c, sub_category_sequence__c, field_sequence__c];
+		// create a map for easy access									
+		mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
 		 
 		// get any populated values for this eval and section
 		List<Eval_Value__c> listEvalValues = [ select id, boolean__c, currency__c, date_time__c, number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c from eval_value__c
-												where eval__c in :lstEvalItems
+												where eval__c in :listEvalItems
 												and	what_id__c = :evaluationID
 												and	what_id_object__c = 'Evaluation__c'];
 		
 		// create a map by eval id
-		Map<ID, Eval_Value__c> mapEvalValues = new Map<ID, Eval_Value__c>();
+		mapEvalValues = new Map<ID, Eval_Value__c>();
 		for ( Eval_Value__c ev: listEvalValues ) 
 			mapEvalValues.put( ev.eval__c, ev);
 		
 		system.debug( 'Populated values:' + mapEvalValues );										 
 		String newHTMLfld = ''; 
 		String strval = '';
-		for( Eval__c e : lstEvalItems ){
+		for( Eval__c e : listEvalItems ){
 			try {
 				newHTMLfld = '';
 				strval = '';
 				
-				if ( e.eval_field_type__r.name == 'Boolean' )  {
+				if ( e.eval_field_type__r.name == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
 					if ( e.eval_field_type__r.html_element__c == 'Check') {
-						newHTMLfld = '<input id="' + e.htmlid__c + '" type="checkbox" name="' + e.field_name__c + '" value="' + 1 + '"';
+						newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
 						
 						// insert value
 						if ( mapEvalValues.ContainsKey( e.id )) 
@@ -85,10 +90,9 @@ public with sharing class GenerateEvalComponent {
 								newHTMLFld += ' checked ';
 								
 						newHTMLfld += '><span class="labelCol">' + e.field_name__c + '</span>';
-					}
-					else if (e.eval_field_type__r.html_element__c == 'Dropdown') {
+					} else if (e.eval_field_type__r.html_element__c == 'Dropdown') {
 						// Boolean dropdown values = --None--, Yes, No
-						newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select id="' + e.htmlid__c + '" >';
+						newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select id="' + e.htmlid__c + '" name="' + e.id + '">';
 						newHTMLfld += '<option value="">-- None --</option>';
 						if ( mapEvalValues.ContainsKey( e.id )) {
 							strval = mapEvalValues.get( e.id).Text_Under_250__c;
@@ -102,9 +106,9 @@ public with sharing class GenerateEvalComponent {
 							newHTMLfld += ' selected';
 						newHTMLfld += '>No</option>';
 						newHTMLfld += '</select>';
-					}
+					} //TODO: output radio buttons for Radio type
   				} else if (e.eval_field_type__r.name=='String') {
-  						newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '" type="text" name="' + e.field_name__c + '"';
+  						newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
   						if (mapEvalValues.ContainsKey( e.id )) {
   							newHTMLfld += 'value="' ;
   							if ( e.eval_field_type__r.length__c > 250 )
@@ -123,7 +127,7 @@ public with sharing class GenerateEvalComponent {
 							
 					// get the options
 					List<Eval_drop_Down__c> dropdownopts = ddOptions.get( e.id);
-					newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select id="' + e.htmlid__c + '" >';
+					newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select id="' + e.htmlid__c + '"  name="' + e.id + '">';
 					newHTMLfld += '<option value="">-- None --</option>';
 					for ( Eval_Drop_Down__c thisdd : dropdownopts) {
 						newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
@@ -133,7 +137,7 @@ public with sharing class GenerateEvalComponent {
 						newHTMLFld += '>' + thisdd.option_name__c + '</option>';
 					}
 					newHTMLfld += '</select>';
-				}
+				} //TODO: Complete output for other types - currency, number, datetime
 				
 				htmlControls.Add( newHTMLfld);
 			} 
@@ -146,30 +150,51 @@ public with sharing class GenerateEvalComponent {
 		return htmlControls;
 	}
 	
-	/*
+	
 	@RemoteAction
-    public static void addOrModifyEvalItem(ID evalId, String evalItemType, , String evaluationId) {
-        Eval_Value__c evalVal
-        if (evalID!=null) {
-            annotation = [
-                SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
-            ];
-        } else {
-            annotation = new Evaluation_Response__c();
-            annotation.Evaluation__c = evaluationId;
-            annotation.RecordTypeId = Utility.getEvaluationResponseRecordType('Annotation');
-        }
-        annotation.Annotation_Height__c = Height;
-        annotation.Annotation_Width__c = Width;
-        annotation.Annotation_X__c = x;
-        annotation.Annotation_Y__c = y;
-        annotation.Annotation_Source__c = Source;
-        annotation.Annotation_Shape__c = Shape;
-        annotation.Annotation_Text__c = Text;
-        System.debug('Annotation to upsert: ' + annotation);
-        upsert annotation;
-        return annotation;
+    public static void saveFields(ID evalId, String EvalType, String jsonForm) {
+    	
+      	Map<String,String> formData = (Map<String, String>) JSON.deserializeUntyped(jsonForm);
+		List<Eval__c> newValues = new List<Eval__c>();
+		
+		// use the values already on the eval
+		// check if data has changed
+		Eval_Value__c ev;
+		for ( String f : formData.Keyset()) {
+			
+			// get the eval item from the map so we know what type, etc.
+			Eval__c ei = mapEvalItems.get((ID)f);
+			
+			// construct new eval_value object
+			if ( mapEvalValues.containsKey( (ID)f ))  {
+				// value exists - need to update value
+				ev = mapEvalValues.get((ID)f);
+			}	else  {
+				ev = new Eval_Value__c();
+				ev.eval__c = (ID)f;
+			}
+			
+			// put the value in the right place
+			if ( ei.field_type__r.name == 'Boolean')
+				if (ei.eval_field_type__r.html_element__c == 'Check' || ei.eval_field_type__r.html_element__c = 'Radio') {
+					if ( formData.get(f) == '1')
+						ev.Boolean__c = true;
+					else
+						ev.Boolean__c = false;
+				}
+				else if (ei.eval_field_type__r.html_element__c == 'Dropdown')
+					ev.Text_Under_250__c = formData.get(f);
+			else if (ei.field_type__r.name == 'Dropdown')
+				ev.Text_Under_250__c = formData.get(f);
+			//TODO: Fill in other field types with value in correct place
+			
+			//TODO: If value is blanked out, delete the eval field value item
+			
+			ev.what_id__c = evalID;
+			ev.what_id_object__c = evalType;
+			newValues.add(ev);			
+		}        
+        upsert newValues;
     }
     
-*/
 }
