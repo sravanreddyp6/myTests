@@ -28,6 +28,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                         from Assessment_Response__c 
                                                         Where Question__r.Question_Number__c = 37 
                                                         AND Assessment__r.disregard__c = false 
+                                                        AND Assessment__r.Status__c = 'Locked'
                                                         AND Score__c > 0 
                                                         AND Assessment__r.Interval__c = 'Quarterly' 
                                                         AND Assessment__r.Quarter__c = 1 ]){
@@ -38,6 +39,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                     from Assessment_Response__c 
                                                         Where Question__r.Question_Number__c = 37 
                                                         AND Assessment__r.disregard__c = false 
+                                                        AND Assessment__r.Status__c = 'Locked'
                                                         AND Score__c = 0 
                                                         AND Assessment__r.Interval__c = 'Quarterly' 
                                                         AND Assessment__r.Quarter__c = 1]){
@@ -280,10 +282,11 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
 
 
 /*
+//some test data
         StateRowData aqrow = new StateRowData('AQ');
             PersonRowData prd = new PersonRowData('1', 'poly', '2', 'poly-admit', 'AQ');
             prd.endScore = 2;
-            prd.baseScore = 1;
+            prd.baseScore = 3;
             aqrow.mPbsData.put('1', prd); 
             PersonRowData prd2 = new PersonRowData('1', 'zoly', '2', 'zoly-admit', 'AQ');
             prd2.endScore = 7;
@@ -295,7 +298,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             aqrow.mPbsData.put('3', prd3);                                   
             mapStateRowData.put('AQ', aqrow);
 
-     */      
+        */   
 
         //does the admit have imoprovement from q1 to DC?
         for(StateRowData s : mapStateRowData.values() ){
@@ -351,7 +354,11 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         public integer numAdmitImproved = 0;
         public decimal percentImproved {set; get {
             if(numAdmitImproved == 0){ return 0.00;}
-            else{return (decimal.valueof(numAdmitImproved) / decimal.valueof(numAdmitBaseAndEnd)).setScale(2) * 100; }
+            else{
+                decimal startVal = decimal.valueof(numAdmitImproved);
+                decimal endVal = decimal.valueof(numAdmitBaseAndEnd);
+
+                return ((startVal / endVal) * 100).setScale(2); }
             return null;
             } }
         public string prettyPercentImproved { set; get{ return string.valueof(percentImproved) + '%';} }
