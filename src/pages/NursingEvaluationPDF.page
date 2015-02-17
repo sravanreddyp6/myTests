@@ -1,4 +1,4 @@
-<apex:page standardController="Evaluation__c" extensions="NursingEvaluationViewController,FieldPrintTransform" showHeader="false" applyHTMLTag="False" renderas="PDF">
+<apex:page standardController="Evaluation__c" extensions="NursingEvaluationViewController,fallAssessmentController,FieldPrintTransform" showHeader="false" applyHTMLTag="False" renderas="PDF">
     <head>
     <style>
         [id$=skinBodyFooter] {
@@ -1261,8 +1261,25 @@
         <apex:outputText value="{!Evaluation__c.Skin_Behavior__c}" label="Behavior"/><br/>
     </td></tr>
     </table>
-    
-    
+    <apex:repeat value="{!ThisRecordsDomains[0]}" var="thisDomain">
+    	<apex:pageBlockSection columns="1" title="Skin Assessment">
+             <apex:pageBlockTable value="{!MapskinDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" border="1px;">
+             		<apex:column HeaderValue="Area" width="150px;">
+             			<apex:outputText>{!thisQuestion.Question_Title__c}</apex:outputText>	
+					</apex:column>
+					<apex:column HeaderValue="Rating" style="width:50px;" >
+						<apex:outputText>{!MapskinAnswers[thisQuestion.id].Rating__c} </apex:outputText>
+					</apex:column>
+					<apex:column headerValue="Pressure Ulcer Risk" style="width:30Px;" >
+						<apex:outputText> {!CEILING(MapskinAnswers[thisQuestion.id].Score__c)} </apex:outputText>
+					</apex:column>
+             </apex:pageBlockTable>
+           	<apex:outputPanel style="margin-top:35px; margin-left: 100px; font-size: 13px; color: black;" id="totalScore">
+           		<apex:outputText value="Total Score: " />
+				<apex:outputText > {!CEILING(thisDomain.Score__c)} </apex:outputText>
+			</apex:outputPanel>
+        </apex:pageBlockSection>
+   </apex:repeat>
     <apex:pageBlockSection columns="1" id="skinBodyFooter">     
         <apex:dynamiccomponent componentvalue="{!ctlmap['skin_body_comments__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['skin_section_completed__c']}" />
@@ -1270,7 +1287,32 @@
 </apex:pageBlock>
 <hr />
   
-
+<apex:pageBlock title="Fall Risk Assessment" >
+	<apex:repeat value="{!ThisRecordsDomains[1]}" var="thisDomain">
+    	<apex:pageBlockSection columns="1" >
+             <apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" border="1px;">
+             		<apex:column HeaderValue="Category" width="150px;">
+             			<apex:outputText>{!thisQuestion.Question_Title__c}</apex:outputText>	
+					</apex:column>
+					<apex:column HeaderValue="Rating" style="width:80px;" >
+						<apex:outputText>{!MapAnswers[thisQuestion.id].Rating__c} </apex:outputText>
+					</apex:column>
+					<apex:column headerValue="Score" >
+						<apex:outputText> {!CEILING(MapAnswers[thisQuestion.id].Score__c)} </apex:outputText>
+					</apex:column>
+             </apex:pageBlockTable>
+             	<apex:outputPanel style="margin-top:35px; margin-left: 100px; font-size: 13px; color: black;" id="totalScore">
+             		<apex:outputText value="Total Score: " />
+					<apex:outputText rendered="{!thisDomain.Score__c <= 50}"> {!CEILING(thisDomain.Score__c)} (Low Risk) </apex:outputText>
+					<apex:outputText rendered="{!thisDomain.Score__c >50 && thisDomain.Score__c <= 120}" > {!CEILING(thisDomain.Score__c)} (Medium Risk)</apex:outputText>
+					<apex:outputText rendered="{!thisDomain.Score__c > 120}" > {!CEILING(thisDomain.Score__c)} (High Risk) </apex:outputText>
+				</apex:outputPanel>
+             </apex:pageBlockSection>
+            </apex:repeat>
+        <apex:pageBlockSection columns="1" >
+             <apex:outputField value="{!Evaluation__c.MAR_Section_Completed__c}" label="Fall Risk Assessment Completed" />
+        </apex:pageBlockSection>
+</apex:pageBlock>
 <apex:pageBlock title="Neurological">
 
 <table style="width:80%;">

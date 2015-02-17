@@ -1297,7 +1297,7 @@ public void loadProgramList() {
     	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
 		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
 		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-		
+		Assessment__c fallAsmt = new Assessment__c(Name=pbsLastName+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = theServAssign.Id,Admission__c = theServAssign.Admission__c);
    		if(!referral.Has_Evaluation__c){
    			Evaluation__c resAsmt = new Evaluation__c(
    											ServiceAssignment__c = theServAssign.Id,
@@ -1308,12 +1308,16 @@ public void loadProgramList() {
    			
    			insert resAsmt;
    			
+   			fallAsmt.Evaluation__c = resAsmt.Id;
+   			insert fallAsmt;
+   			
    			return new PageReference ('/apex/NursingEvaluationEdit?id='+resAsmt.Id);
    		}
    		else{
    			Id evalOnReferralId = referral.Evaluations__r[0].Id;
    			list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
    			list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
+   			
    			FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
    			string query = 'SELECT ';
    			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
@@ -1337,6 +1341,9 @@ public void loadProgramList() {
    			dynObjectEvaluationRecord.put('Name',resAsmtName);
    			
    			insert dynObjectEvaluationRecord;
+   			
+   			fallAsmt.Evaluation__c = dynObjectEvaluationRecord.Id;
+   			insert fallAsmt;
    			
    			String respQuery ='SELECT ';
    			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
