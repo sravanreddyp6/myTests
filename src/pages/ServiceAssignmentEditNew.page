@@ -256,7 +256,7 @@
 
             j$('#seizureMessages').html('');
             if (startValue == '' && endValue == '') {
-                seizureErrors.push('The Date must contain a value. Please enter the date of the Seizure event.');
+                seizureErrors.push('The Date must contain a valid value. Please enter the date of the Seizure event.');
             }
             else if (startValue == '') {
                 seizureErrors.push('The Start Time must contain a value. Please enter a Start Time of the Seizure event.');
@@ -1012,18 +1012,18 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlock >
                 <apex:pageBlockSection columns="1" id="seizureEntry">
                     <apex:pageBlockSectionItem ><apex:outputLabel Value="Start Time"/>
-                        <c:MilitaryDatetime edit="true" shiftTop="20" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem > <apex:outputLabel Value="End Time"/>
-                        <c:MilitaryDatetime edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
                     </apex:pageBlockSectionItem>
                     <apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy"/>
                     <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
                     <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
                     <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
                 </apex:pageBlockSection>
-                    <apex:inputHidden value="{!seizure.Start_DateTime__c}" id="seizureEntry_startDateTime" />
-                    <apex:inputHidden value="{!seizure.End_DateTime__c}" id="seizureEntry_endDateTime" />
+                    <apex:inputHidden value="{!seizureStart_DateTime}" id="seizureEntry_startDateTime" />
+                    <apex:inputHidden value="{!seizureEnd_DateTime}" id="seizureEntry_endDateTime" />
                 <apex:pageblockButtons location="bottom">
                     <apex:actionStatus id="saveSeizureStatus">
                         <apex:facet name="start">
@@ -1076,8 +1076,8 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:column headerValue="Action" width="12%">
                      <a href="#" onclick="loadSeizure('{!seizure.Id}');return false; ">Edit</a>
                 </apex:column>
-                <apex:column headerValue="Seizure Start Time" width="16%"><c:MilitaryDatetime dateTimeVal="{!seizure.Start_DateTime__c}"/></apex:column>
-                <apex:column headerValue="Seizure End Time" width="16%"><c:MilitaryDatetime dateTimeVal="{!seizure.End_DateTime__c}"/></apex:column>
+                <apex:column headerValue="Seizure Start Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.Start_DateTime__c}"/></apex:column>
+                <apex:column headerValue="Seizure End Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.End_DateTime__c}"/></apex:column>
                 <apex:column value="{!seizure.Observed_By__c}" width="16%"/>
                 <apex:column value="{!seizure.Comments__c}" width="40%"/>
                 <apex:column value="{!seizure.Duplicate_Entry__c}" width="5%"/>
