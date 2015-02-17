@@ -22,9 +22,9 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
     set<id> PBSbyDD_Status {
         get{
             set<id> returnInfo = new set<id>();
-
+            map<id, date> mapReturnCheck = new map <id, date>();
             if(selectedDD_Status == 'ONLY_DD'){
-                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
+                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id, Assessment__r.Assessment_Date__c 
                                                         from Assessment_Response__c 
                                                         Where Question__r.Question_Number__c = 37 
                                                         AND Assessment__r.disregard__c = false 
@@ -32,10 +32,18 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                         AND Score__c > 0 
                                                         AND Assessment__r.Interval__c = 'Quarterly' 
                                                         AND Assessment__r.Quarter__c = 1 ]){
-                    returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+                    if( !mapReturnCheck.containsKey(item.Assessment__r.AccountPerson__r.Id) ){
+                        mapReturnCheck.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                        returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+                    }
+                    else if(mapReturnCheck.get(item.Assessment__r.AccountPerson__r.Id) >  item.Assessment__r.Assessment_Date__c){
+                        mapReturnCheck.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                        returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+                    }
+                    
                 }
             }else if(selectedDD_Status == 'No_DD'){
-                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
+                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id, Assessment__r.Assessment_Date__c 
                                                     from Assessment_Response__c 
                                                         Where Question__r.Question_Number__c = 37 
                                                         AND Assessment__r.disregard__c = false 
@@ -43,7 +51,15 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
                                                         AND Score__c = 0 
                                                         AND Assessment__r.Interval__c = 'Quarterly' 
                                                         AND Assessment__r.Quarter__c = 1]){
-                    returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+                    
+                    if( !mapReturnCheck.containsKey(item.Assessment__r.AccountPerson__r.Id) ){
+                        mapReturnCheck.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                        returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+                    }
+                    else if(mapReturnCheck.get(item.Assessment__r.AccountPerson__r.Id) >  item.Assessment__r.Assessment_Date__c){
+                        mapReturnCheck.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                        returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+                    }
                 }
             }else{
                 for(Assessment__c item: [select id, AccountPerson__r.Id from Assessment__c Where disregard__c = false ]){
