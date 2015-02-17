@@ -65,7 +65,7 @@
                 seizureErrors.push('The Service Assignment is required.');
             }
             else if (startValue == '' && endValue == '') {
-                seizureErrors.push('The Date must contain a value. Please enter the date of the Seizure event.');
+                seizureErrors.push('The Date must contain a valid value. Please enter the date of the Seizure event.');
             }
             else if (startValue == '') {
                 seizureErrors.push('The Start Time must contain a value. Please enter a Start Time of the Seizure event.');
@@ -140,10 +140,10 @@
             <apex:inputField value="{!seizure.Service_Assignment__c}" id="seizureEntry_ServiceAssignment" rendered="{!seizure.Service_Assignment__c == null}" />
             <apex:outputField value="{!seizure.Service_Assignment__c}" rendered="{!seizure.Service_Assignment__c != ''}"/>               
             <apex:pageBlockSectionItem ><apex:outputLabel Value="Start Time"/>
-                <c:MilitaryDatetime shiftTop="20" edit="true" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+                <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
             </apex:pageBlockSectionItem>
             <apex:pageBlockSectionItem > <apex:outputLabel Value="End Time"/>
-                <c:MilitaryDatetime shiftTop="20" edit="true" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+                <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
             </apex:pageBlockSectionItem>
             <apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy" required="true" />
             <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
@@ -152,8 +152,8 @@
         
             <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
             <apex:inputHidden value="{!seizure.Service_Assignment__c}" id="seizureEntry_ServiceAssignmentId" />
-            <apex:inputHidden value="{!seizure.Start_DateTime__c}" id="seizureEntry_startDateTime" />
-            <apex:inputHidden value="{!seizure.End_DateTime__c}" id="seizureEntry_endDateTime" />
+            <apex:inputHidden value="{!seizureStart_DateTime}" id="seizureEntry_startDateTime" />
+            <apex:inputHidden value="{!seizureEnd_DateTime}" id="seizureEntry_endDateTime" />
             <apex:inputHidden value="{!retUrl}"/>
         <apex:pageBlockButtons location="bottom">
             <apex:commandButton id="saveSeizure" value="Save" action="{!saveSeizure}" style="display:none;"/>

@@ -97,14 +97,14 @@ public with sharing class SeizureTrackingRpt {
     }
     
     static String getTimeZoneValue(Datetime dt) {
-            return dt.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString());
+            return dt.format('MM/dd/yyyy HH:mm:ss', UserInfo.getTimeZone().toString());
     }
 
     static String getDuration(Datetime startDt, Datetime endDt) {
             Long milliseconds = endDt.getTime() - startDt.getTime();
             Long seconds = milliseconds / 1000;
             Long minutes = seconds / 60;
-            return String.valueOf(minutes); // +':'+String.valueOf(Math.mod(seconds, 60));
+            return String.valueOf(minutes) +':'+ String.valueOf(Math.mod(seconds, 60));
     }
     
     public class SeizureWrapper {

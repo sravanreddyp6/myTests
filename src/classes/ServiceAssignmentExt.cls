@@ -1608,6 +1608,9 @@ public class MyException extends Exception {}
     // EC-87: Seizure Tracking - Start 
     public Seizure__c seizure {get;set;}   
     public List<Seizure__c> seizures {get;set;}
+    public string seizureStart_DateTime {get;set;}
+    public string seizureEnd_DateTime {get;set;}
+    
     public void populateSeizures() {
         this.seizures = [select id, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c 
                            from Seizure__c 
@@ -1623,6 +1626,8 @@ public class MyException extends Exception {}
     	if (String.valueOf(this.seizure.Id) == '') {
             this.seizure.Id = null;
         }
+        this.seizure.Start_DateTime__c = getDateTimeFromString(seizureStart_DateTime);
+        this.seizure.End_DateTime__c = getDateTimeFromString(seizureEnd_DateTime);
         upsert this.seizure;
         populateSeizures();
     }
@@ -1633,10 +1638,26 @@ public class MyException extends Exception {}
                          where id = : seizureId];
     }
     
+    public static Datetime getDateTimeFromString(String dateTimeStr) {
+            //yyyy-MM-dd HH:mm:ss - this is the correct datetime format to return
+            string stringDate='';
+        try {
+             stringDate = dateTimeStr.substring(6,10) + '-' +dateTimeStr.substring(0,2) + '-' + dateTimeStr.substring(3,5) + ' ' + dateTimeStr.substring(11);
+             return Datetime.valueOf(stringDate);
+        } catch (Exception e) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Invalid date'));
+        }
+            
+        return null;
+        //return Datetime.valueOfGMT(stringDate);
+    }
+    
     @RemoteAction
     public static boolean findDuplicateSeizure(string seizureStart, string seizureEnd, Id saId, Id seizureId) {
-        DateTime st = Datetime.parse(seizureStart);
-        DateTime en = Datetime.parse(seizureEnd);
+        //DateTime st = Datetime.parse(seizureStart);
+        //DateTime en = Datetime.parse(seizureEnd);
+        DateTime st = getDateTimeFromString(seizureStart);
+        DateTime en = getDateTimeFromString(seizureEnd);
         boolean dupefound = false;
         List<Seizure__c> duplicateSeizure = [SELECT Id FROM Seizure__c WHERE Service_Assignment__c = :saId 
                                               AND ( ( Start_DateTime__c <= : st And End_DateTime__c > : st )   // one start at the same time OR after but the before the end of an existing one

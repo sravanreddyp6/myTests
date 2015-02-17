@@ -7,4 +7,12 @@ public with sharing class MilitaryDatetimeController {
         }
         return null;
     }
+    
+    public String getTimeWithSeconds() {
+        if( dateTimeValue != null ) {
+            String localeFormatDT = dateTimeValue.format('MM/dd/yyyy HH:mm:ss', UserInfo.getTimeZone().toString() );
+            return localeFormatDT;
+        }
+        return null;
+    }
 }
