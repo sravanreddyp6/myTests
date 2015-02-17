@@ -22,47 +22,54 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
     set<id> PBSbyDD_Status {
         get{
             set<id> returnInfo = new set<id>();
-            map<id, date> mapReturnCheck = new map <id, date>();
-            if(selectedDD_Status == 'ONLY_DD'){
-                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id, Assessment__r.Assessment_Date__c 
-                                                        from Assessment_Response__c 
-                                                        Where Question__r.Question_Number__c = 37 
-                                                        AND Assessment__r.disregard__c = false 
-                                                        AND Assessment__r.Status__c = 'Locked'
-                                                        AND Score__c > 0 
-                                                        AND Assessment__r.Interval__c = 'Quarterly' 
-                                                        AND Assessment__r.Quarter__c = 1 ]){
-                    if( !mapReturnCheck.containsKey(item.Assessment__r.AccountPerson__r.Id) ){
-                        mapReturnCheck.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
-                        returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
-                    }
-                    else if(mapReturnCheck.get(item.Assessment__r.AccountPerson__r.Id) >  item.Assessment__r.Assessment_Date__c){
-                        mapReturnCheck.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
-                        returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
-                    }
-                    
-                }
-            }else if(selectedDD_Status == 'No_DD'){
-                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id, Assessment__r.Assessment_Date__c 
+            map<id, date> mapOnlyDD = new map <id, date>();
+            map<id, date> mapNoDD = new map <id, date>();
+
+            for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id, Assessment__r.Assessment_Date__c 
                                                     from Assessment_Response__c 
-                                                        Where Question__r.Question_Number__c = 37 
-                                                        AND Assessment__r.disregard__c = false 
-                                                        AND Assessment__r.Status__c = 'Locked'
-                                                        AND Score__c = 0 
-                                                        AND Assessment__r.Interval__c = 'Quarterly' 
-                                                        AND Assessment__r.Quarter__c = 1]){
-                    
-                    if( !mapReturnCheck.containsKey(item.Assessment__r.AccountPerson__r.Id) ){
-                        mapReturnCheck.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
-                        returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
-                    }
-                    else if(mapReturnCheck.get(item.Assessment__r.AccountPerson__r.Id) >  item.Assessment__r.Assessment_Date__c){
-                        mapReturnCheck.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
-                        returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
-                    }
+                                                    Where Question__r.Question_Number__c = 37 
+                                                    AND Assessment__r.disregard__c = false 
+                                                    AND Assessment__r.Status__c = 'Locked'
+                                                    AND Score__c > 0 
+                                                    AND Assessment__r.Interval__c = 'Quarterly' 
+                                                    AND Assessment__r.Quarter__c = 1 ]){
+                if( !mapOnlyDD.containsKey(item.Assessment__r.AccountPerson__r.Id) ){
+                    mapOnlyDD.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
                 }
+                else if(mapOnlyDD.get(item.Assessment__r.AccountPerson__r.Id) <  item.Assessment__r.Assessment_Date__c){
+                    mapOnlyDD.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                }
+                
+            }
+            for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id, Assessment__r.Assessment_Date__c 
+                                                from Assessment_Response__c 
+                                                    Where Question__r.Question_Number__c = 37 
+                                                    AND Assessment__r.disregard__c = false 
+                                                    AND Assessment__r.Status__c = 'Locked'
+                                                    AND Score__c = 0 
+                                                    AND Assessment__r.Interval__c = 'Quarterly' 
+                                                    AND Assessment__r.Quarter__c = 1]){
+                if( !mapNoDD.containsKey(item.Assessment__r.AccountPerson__r.Id) ){
+                    mapNoDD.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                }
+                else if(mapNoDD.get(item.Assessment__r.AccountPerson__r.Id) <  item.Assessment__r.Assessment_Date__c){
+                    mapNoDD.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                }
+            }            
+
+
+            if(selectedDD_Status == 'ONLY_DD'){
+                for(ID item: mapOnlyDD.keySet() ){
+                    IF( mapNoDD.get(item) > mapOnlyDD.get(item) ){ mapOnlyDD.remove(item);}
+                }
+                returnInfo = mapOnlyDD.keySet();
+            }else if(selectedDD_Status == 'No_DD'){
+                for(ID item: mapNoDD.keySet() ){
+                    IF( mapOnlyDD.get(item) > mapNoDD.get(item) ){ mapNoDD.remove(item);}
+                } 
+                returnInfo = mapNoDD.keySet();
             }else{
-                for(Assessment__c item: [select id, AccountPerson__r.Id from Assessment__c Where disregard__c = false ]){
+                for(Assessment__c item: [select id, AccountPerson__r.Id from Assessment__c Where disregard__c = false AND Status__c = 'Locked' ]){
                     returnInfo.add(item.AccountPerson__r.Id);
                 }
             }
