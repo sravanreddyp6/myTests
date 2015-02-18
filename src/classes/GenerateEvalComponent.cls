@@ -176,7 +176,7 @@ public with sharing class GenerateEvalComponent {
 			}
 
 			// put the value in the right place
-			if ( ei.field_type__r.name == 'Boolean')
+			if ( ei.eval_field_type__r.name == 'Boolean')
 				if (ei.eval_field_type__r.html_element__c == 'Check' || ei.eval_field_type__r.html_element__c == 'Radio') {
 					if ( formData.get(f) == '1')
 						ev.Boolean__c = true;
