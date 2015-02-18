@@ -42,7 +42,7 @@ public with sharing class fallAssessmentController {
 		this.asmt = [SELECT Id, Name,Previous__c, Type__c, Evaluation__c, AssessmentQuestionCount__c, AssessmentResponseCount__c 
 						FROM Assessment__c where Evaluation__c = :this.evaluation.id AND Type__c = 'Resident Assessment' limit 1];
 		LoadData(this.asmt);
-			
+		
 	}
 	
 	//Initialization  
@@ -173,6 +173,8 @@ public with sharing class fallAssessmentController {
 	                                Where Assessment__c = :this.asmt.Id Order By Sort_Order__c ];
 	        }
 	    set;}
+	    
+	    
 	   
 	//This is loaded into a map
 	//Get a list of current responses.
