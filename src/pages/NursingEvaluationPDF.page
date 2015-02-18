@@ -1276,7 +1276,8 @@
              </apex:pageBlockTable>
            	<apex:outputPanel style="margin-top:35px; margin-left: 100px; font-size: 13px; color: black;" id="totalScore">
            		<apex:outputText value="Total Score: " />
-				<apex:outputText > {!CEILING(thisDomain.Score__c)} </apex:outputText>
+				<apex:outputText rendered="{!thisDomain.Score__c <= 13}"> {!CEILING(thisDomain.Score__c)} (Low Risk)</apex:outputText>
+				<apex:outputText rendered="{!thisDomain.Score__c > 13}"> {!CEILING(thisDomain.Score__c)} (High Risk)</apex:outputText>
 			</apex:outputPanel>
         </apex:pageBlockSection>
    </apex:repeat>

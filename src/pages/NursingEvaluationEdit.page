@@ -1844,6 +1844,10 @@
 											<apex:outputPanel id="meee" layout="block" styleClass="{!thisQuestion.id}" style="display: none;padding-left: 7px;">
 												<br/>{!thisQuestion.Question_Description__c}</apex:outputPanel>
 								</apex:column>
+								<apex:column id="qRatingColor" style="vertical-align: middle; width: 10px"  >
+									<apex:outputPanel styleClass="{!thisQuestion.id}q" layout="block" style="{!IF(Evaluation__c.Skin_Section_Completed__c && MapskinAnswers[thisQuestion.id].Rating__c == null,'text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: red;','text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: none;')}" id="answer2" >
+									</apex:outputPanel>
+								</apex:column >
 								<apex:column id="qRating" style="border-color: #ededed; width: 125px; text-align: left; vertical-align: middle; color: #788080; font-size: 9pt; ">
 									<apex:outputPanel layout="block" id="answer" styleClass="{!thisQuestion.id}q">
 										<apex:actionStatus id="myStatus">
@@ -1888,7 +1892,8 @@
 	               			</apex:pageBlockTable>
 	               			<apex:outputPanel style="margin-top:35px; margin-left: 450px; font-size: 30px; color: gray;" id="totalScore">
 	               				<apex:outputText value="Total Score: " />
-								<apex:outputText> {!CEILING(thisDomain.Score__c)}</apex:outputText>
+								<apex:outputText rendered="{!thisDomain.Score__c <= 13}" > {!CEILING(thisDomain.Score__c)} (Low Risk)</apex:outputText>
+								<apex:outputText rendered="{!thisDomain.Score__c > 13}" > {!CEILING(thisDomain.Score__c)} (High Risk)</apex:outputText>
 							</apex:outputPanel>
 	               		</apex:pageBlockSection>
                     </apex:repeat>
@@ -1914,6 +1919,10 @@
 											<apex:outputPanel id="meee" layout="block" styleClass="{!thisQuestion.id}" style="display: none;padding-left: 7px;">
 												<br/>{!thisQuestion.Question_Description__c}</apex:outputPanel>
 								</apex:column>
+								<apex:column id="qRatingColor" style="vertical-align: middle; width: 10px"  >
+									<apex:outputPanel styleClass="{!thisQuestion.id}q" layout="block" style="{!IF(Evaluation__c.MAR_Section_Completed__c && MapAnswers[thisQuestion.id].Rating__c == null,'text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: red;','text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: none;')}" id="answer2" >
+									</apex:outputPanel>
+								</apex:column >
 								<apex:column id="qRating" style="border-color: #ededed; width: 125px; text-align: left; vertical-align: middle; color: #788080; font-size: 9pt;">
 									<apex:outputPanel layout="block" id="answer" styleClass="{!thisQuestion.id}q" >
 										<apex:actionStatus id="myStatus">

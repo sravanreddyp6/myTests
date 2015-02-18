@@ -201,7 +201,7 @@ public with sharing class fallAssessmentController {
 	                        (Select 
 	                                Name, Score__c, Rating__c, Color__c, Rating_Description__c 
 	                                From Assessment_Question_Option__r 
-	                                Order By Score__c desc)  
+	                                Order By sort_order__c asc)  
 	                From Assessment_Question__c 
 	                Where Question_Domain__r.Assessment_Type2__c = 'Resident Assessment'];}
 	    set;} 
