@@ -156,7 +156,7 @@ public with sharing class GenerateEvalComponent {
 	public static void saveFields(ID evalId, String EvalType, String jsonForm) {
 
 		Map<String,String> formData = (Map<String, String>) JSON.deserializeUntyped(jsonForm);
-		List<Eval__c> newValues = new List<Eval__c>();
+		List<Eval_Value__c> newValues = new List<Eval_Value__c>();
 
 		// use the values already on the eval
 		// check if data has changed
