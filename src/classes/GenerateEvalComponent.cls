@@ -185,7 +185,7 @@ public with sharing class GenerateEvalComponent {
 				}
 				else if (ei.eval_field_type__r.html_element__c == 'Dropdown')
 					ev.Text_Under_250__c = formData.get(f);
-				else if (ei.field_type__r.name == 'Dropdown')
+				else if (ei.eval_field_type__r.name == 'Dropdown')
 					ev.Text_Under_250__c = formData.get(f);
 			//TODO: Fill in other field types with value in correct place
 
