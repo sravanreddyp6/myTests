@@ -11,6 +11,7 @@ public with sharing class referralResults_Controller {
   
   public String pbrId {get;set;}
   public String retURL {get;set;}
+  public String viewmode {get;set;}
    //public List<Referral__c> refResults { get; set; }
   public List<ReferralSearchResults> refResults { get; set; }
   
@@ -63,7 +64,9 @@ public with sharing class referralResults_Controller {
             searchImmediately = true;
         }
         personGender = ApexPages.currentPage().getParameters().get('gender');
-
+        if (ApexPages.currentPage().getParameters().get('viewmode') != null) {
+            viewmode = ApexPages.currentPage().getParameters().get('viewmode');
+        }
         referralId = ApexPages.currentPage().getParameters().get('referralId');
         pbrId = ApexPages.currentPage().getParameters().get('pbrId');
         system.debug('referralid: ' + referralId);
@@ -93,12 +96,21 @@ public with sharing class referralResults_Controller {
     }
 
 	public PageReference redirectToBack() {
-		 if(retURL==null){
+		if(viewmode!=null){
+		retURL = '/apex/referral2?id='+referralId+'&sfdc.override=1';
+		}
+		else if(retURL==null){
 			 if(pbrId!=null){
 				 retURL = '/apex/referral?pbrID='+pbrId;
 			 }
 			 else{
-				 retURL = '/apex/referral?firstName='+personFirstName+'&lastName='+personLastName+'&personGender='+personGender+'&personAge='+personAge;
+				 retURL = '/apex/referral?firstName='+personFirstName+'&lastName='+personLastName ;
+				if(personGender!=null) {
+					 retURL = retURL+'&personGender='+personGender;
+				 }
+				 if(personAge!=null) {
+					 retURL = retURL+'&personAge='+personAge;
+				 }
 				 if(personDOB!=null) {
 					 retURL = retURL+'&personDOB='+personDOB.format();
 				 }
