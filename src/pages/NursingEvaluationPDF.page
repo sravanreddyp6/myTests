@@ -67,7 +67,7 @@
 </head>
 
     <apex:pageMessages id="pageMessages" />
-        <div style="width:100%; text-align:right" class="header"><b>Person Being Served: &nbsp;</b><apex:outputText value="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name}" /><b>, Page</b> <span class="pagenumber"/><b> of </b><span class="pagecount"/></div>
+        <div style="width:100%; text-align:right" class="header"><b>Person Being Served: &nbsp;</b><apex:outputText value="{!Evaluation__c.ServiceAssignment__r.Person_Being_Served__r.Name + ' - ' + Evaluation__c.ServiceAssignment__r.Medical_Record_Number__c}" /><b>, Page</b> <span class="pagenumber"/><b> of </b><span class="pagecount"/></div>
 
     <apex:form id="wholePage">
     <apex:outputpanel rendered="false">
@@ -513,10 +513,14 @@
               	<apex:outputLabel value="Alias" styleClass="label"/><apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Service_location__r.name}" />
               	<br />
                 <apex:outputLabel id="Address" value="Address" styleClass="label"/>
-                <c:AddressDisplay Street1="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Street__c}"
+                <apex:outputText > {!Evaluation__c.ServiceAssignment__r.Service_Location__r.Street__c} <br/> 
+                		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!Evaluation__c.ServiceAssignment__r.Service_Location__r.City__c}, {!Evaluation__c.ServiceAssignment__r.Service_Location__r.State__c} 
+                		{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Zip__c}
+               </apex:outputText>
+                <!--c:AddressDisplay Street1="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Street__c}"
                                   City="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.City__c}"
                                   State="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.State__c}"
-                                  Zip="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Zip__c}"/>
+                                  Zip="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Zip__c}"/-->
               </td><td>
                 <apex:outputLabel id="Setting" value="Setting" styleClass="label"/>
                 <apex:outputField value="{!Evaluation__c.ServiceAssignment__r.Service_Location__r.Setting__c}"/><br/>
@@ -552,7 +556,7 @@
                 <apex:dynamiccomponent componentValue="{!ctlmap['advanced_directives_attached__c']}" />
               </td><td>
                 <apex:outputLabel id="StatusOther" value="Specify Other" styleClass="label"/>
-                <apex:outputField value="{!Evaluation__c.Code_Status_Other__c}"/>
+                <apex:outputText value="{!if(Evaluation__c.Code_Status_Other__c != null, Evaluation__c.Code_Status_Other__c, ' - ')}"/>
               </td></tr>
         </table>
 
@@ -580,9 +584,9 @@
 			</tr>
            <tr><td>
            <table><tr>
-				<td><apex:outputText value="{!Evaluation__c.Weightlbs__c}" /> <apex:outputLabel styleClass="label" value="lbs" /></td>
-				<td><apex:outputText value="{!Evaluation__c.Weightoz__c}" /> <apex:outputLabel styleClass="label" value="oz" /><apex:outputText value=" (or) "/> </td>
-				<td><apex:outputText value="{!Evaluation__c.WeightKg__c}" /> <apex:outputLabel styleClass="label" value="kg" /></td>
+				<td><apex:outputText value="{!if(Evaluation__c.Weightlbs__c != null, Evaluation__c.Weightlbs__c, ' - ')}" /> <apex:outputLabel styleClass="label" value="lbs" /></td>
+				<td><apex:outputText value="{!if(Evaluation__c.Weightoz__c != null, Evaluation__c.Weightoz__c, ' - ')}" /> <apex:outputLabel styleClass="label" value="oz" /><apex:outputText value=" (or) "/> </td>
+				<td><apex:outputText value="{!if(Evaluation__c.WeightKg__c != null, Evaluation__c.WeightKg__c, ' - ')}" /> <apex:outputLabel styleClass="label" value="kg" /></td>
 			</tr></table>
 			</td>
 			<td>
@@ -722,21 +726,21 @@
                 <td style="width:50%">
 					<apex:dynamiccomponent componentvalue="{!ctlmap['pulse_ox__c']}" /><br />
 					<apex:outputLabel for="podetails" value="Pulse Ox Details"  styleClass="labelCol"/>
-				    <apex:outputText id="podetails" value="{! Evaluation__c.Pulse_Ox_Details__c & ' ' & if (Evaluation__c.Pulse_Ox_Details__c == 'Intermittent', ' - schedule: ' & Evaluation__c.Pulse_Ox_Schedule__c, '' ) }" />
+				    <apex:outputText id="podetails" value="{! Evaluation__c.Pulse_Ox_Details__c & ' ' & if (Evaluation__c.Pulse_Ox_Details__c == 'Intermittent', ' - schedule: ' & Evaluation__c.Pulse_Ox_Schedule__c, ' - ' ) }" />
 			    </td>
 				<td>
 					<apex:outputLabel for="smokinghist" value="Smoking History" styleClass="labelCol"/> 
-					<apex:outputText id="smokinghist" value="{!Evaluation__c.Smoking_History__c & if( Evaluation__c.Smoking_History__c == 'Yes', '- #Packs/Day, Years: ' & Evaluation__c.Packs_Day_Years__c, '')}" />
+					<apex:outputText id="smokinghist" value="{!Evaluation__c.Smoking_History__c & if( Evaluation__c.Smoking_History__c == 'Yes', '- #Packs/Day, Years: ' & Evaluation__c.Packs_Day_Years__c, ' - ')}" />
 				</td>
 				</tr>
 				<tr>
 				<td>
 					<apex:outputLabel for="heartsounds" value="Heart Sounds" styleClass="labelCol"/>
-					<apex:outputText id="heartsounds" value="{!Evaluation__c.Heart_Sounds__c & if( Evaluation__c.Heart_Sounds__c == 'Irregular', '- ' & Evaluation__c.Heart_Sound_Describe__c, '')}" />
+					<apex:outputText id="heartsounds" value="{!Evaluation__c.Heart_Sounds__c & if( Evaluation__c.Heart_Sounds__c == 'Irregular', '- ' & Evaluation__c.Heart_Sound_Describe__c, ' - ')}" />
 				</td>
 				<td>
 					<apex:outputLabel for="periph" value="Peripheral Pulses" styleClass="labelCol"/>
-					<apex:outputText id="periph" value="{! Evaluation__c.Peripheral_Pulses_Present__c & if(Evaluation__c.Peripheral_Pulses_Present__c == 'No', ' - ' & Evaluation__c.Peripheral_Pulses_Describe__c, '')}" /><br />
+					<apex:outputText id="periph" value="{! Evaluation__c.Peripheral_Pulses_Present__c & if(Evaluation__c.Peripheral_Pulses_Present__c == 'No', ' - ' & Evaluation__c.Peripheral_Pulses_Describe__c, ' - ')}" /><br />
 				</td>
 				</tr>
 				<tr>
@@ -748,7 +752,7 @@
 				<tr><td colspan="2">
 					<apex:dynamiccomponent componentvalue="{!ctlmap['autonomic_dysreflexia__c']}" /><br />
 					<apex:outputLabel for="educatedRegardingAD" value="Has resident been educated regarding AD symptoms" styleClass="labelCol"/>
-					<apex:outputText value="{!Evaluation__c.Educated_Regarding_AD__c}"/>		
+					<apex:outputText value="{!if(Evaluation__c.Educated_Regarding_AD__c != null, Evaluation__c.Educated_Regarding_AD__c, ' - ')}"/>		
                 </td>
                 </tr>
             </table>
@@ -783,7 +787,7 @@
 			<tr>
 			<td colspan="2">
 			<apex:outputLabel for="breathsounds" value="Breath Sounds" styleClass="labelCol"/>
-		    <apex:outputText id="breathsounds" value="{!Evaluation__c.Breathe_Sounds__c & if( CONTAINS(Evaluation__c.Breathe_Sounds__c,  'Other'), ' (' & Evaluation__c.Breathe_Sound_Other__c & ')', '')}"  />
+		    <apex:outputText id="breathsounds" value="{!Evaluation__c.Breathe_Sounds__c & if( CONTAINS(Evaluation__c.Breathe_Sounds__c,  'Other'), ' (' & Evaluation__c.Breathe_Sound_Other__c & ')', ' - ')}"  />
 								
             </td>
             </tr>
@@ -808,7 +812,7 @@
                 <td>
 	 			<apex:dynamiccomponent componentvalue="{!ctlmap['trach_placement_date__c']}" /><br />
 				<apex:outputLabel for="trachsize" value="Trach Size" styleClass="labelCol"/>  
-				<apex:outputText id="trachsize" value="{! if (Evaluation__c.Trach_Size__c =='Other', Evaluation__c.Trach_Size_Other__c, Evaluation__c.Trach_Size__c) }" /><br />  
+				<apex:outputText id="trachsize" value="{! if (Evaluation__c.Trach_Size__c =='Other', Evaluation__c.Trach_Size_Other__c, if(Evaluation__c.Trach_Size__c != null,Evaluation__c.Trach_Size__c, ' - ' ))}" /><br />  
 				<apex:dynamiccomponent componentvalue="{!ctlmap['pmv__c']}" />
                 </td>                
             </tr>
@@ -823,7 +827,7 @@
 					<apex:dynamiccomponent componentvalue="{!ctlmap['o2__c']}" /><br />
 					<apex:dynamiccomponent componentvalue="{!ctlmap['liters_min__c']}" /><br />
 					<apex:outputLabel for="mask" value="Mask" styleClass="labelCol"/> 
-					<apex:outputText id="mask" value="{! if(Evaluation__c.Mask__c, Evaluation__c.Mask_type__c, '')}" /><br />    
+					<apex:outputText id="mask" value="{! if(Evaluation__c.Mask__c, Evaluation__c.Mask_type__c, ' - ')}" /><br />    
 					<apex:dynamiccomponent componentvalue="{!ctlmap['mist_type__c']}" /><br />
 					<apex:dynamiccomponent componentvalue="{!ctlmap['suctioning__c']}" /><br />
 					
@@ -855,7 +859,7 @@
                 </td>
                 <td>
 		     		<apex:outputLabel for="venttype" value="Ventilator Type" styleClass="labelCol"/>
-					<apex:outputText id="venttype" value="{!Evaluation__c.Ventilator_Type__c & if( Evaluation__c.Ventilator_Type__c == 'Intermittent', ' - schedule: ' & Evaluation__c.If_Intermittent_Schedule__c, '' )}" /><br />
+					<apex:outputText id="venttype" value="{!Evaluation__c.Ventilator_Type__c & if( Evaluation__c.Ventilator_Type__c == 'Intermittent', ' - schedule: ' & Evaluation__c.If_Intermittent_Schedule__c, ' - ' )}" /><br />
 					<apex:dynamiccomponent componentvalue="{!ctlmap['ventilator_rate__c']}" /><br />
 					<apex:dynamiccomponent componentvalue="{!ctlmap['peep__c']}" /><br />
 					<apex:dynamiccomponent componentvalue="{!ctlmap['ps__c']}" /><br />
@@ -877,25 +881,25 @@
 	</tr>
 	<tr>
 		<td colspan="2"><apex:outputLabel value="Feeding Type" styleClass="label" /> 
-        <apex:outputText value="{!Evaluation__c.Nutrition_Route__c}" label="Feeding Type"/>
+        <apex:outputText value="{!if(Evaluation__c.Nutrition_Route__c != null, Evaluation__c.Nutrition_Route__c, ' - ')}" label="Feeding Type"/>
 	</td>
 	</tr>
 	<tr>
 	<td>
 	<apex:outputLabel value="Formula" styleClass="label" for="formula"/> 
-    <apex:outputText value="{!Evaluation__c.Tube_Feed_Formula__c}" id="formula" label="Formula"/><br/>
+    <apex:outputText value="{!if(Evaluation__c.Tube_Feed_Formula__c != null, Evaluation__c.Tube_Feed_Formula__c, ' - ')}" id="formula" label="Formula"/><br/>
     <apex:outputLabel value="PO Type" styleClass="label" for="potype"/>
-	<apex:outputField id="potype" value="{!Evaluation__c.Tube_Feed_PO_Type__c}" label="PO Type" /><br />
+	<apex:outputText id="potype" value="{!if(Evaluation__c.Tube_Feed_PO_Type__c != null,Evaluation__c.Tube_Feed_PO_Type__c, ' - ' )}" label="PO Type" /><br />
 	<apex:outputLabel value="Fluid Intake" styleClass="label" for="fluidintake"/>
-	<apex:outputField id="fluidintake" value="{!Evaluation__c.Fluid_Intake__c}" />
+	<apex:outputText id="fluidintake" value="{!if(Evaluation__c.Fluid_Intake__c != null, Evaluation__c.Fluid_Intake__c, ' - ')}" />
 	</td>
 	<td>
 		<apex:outputLabel value="Tube Rate" styleClass="label" for="tuberate"/>
-		<apex:outputField id="tuberate" value="{!Evaluation__c.Tube_Feed_Rate__c}"  /><br />
+		<apex:outputText id="tuberate" value="{!if(Evaluation__c.Tube_Feed_Rate__c != null,Evaluation__c.Tube_Feed_Rate__c, ' - ')}"  /><br />
 		<apex:outputLabel value="PO Texture" styleClass="label" for="potexture"/>
-    	<apex:outputField id="potexture" value="{!Evaluation__c.Tube_Feed_Texture__c}" label="PO Texture" /><br />
+    	<apex:outputText id="potexture" value="{!if(Evaluation__c.Tube_Feed_Texture__c != null, Evaluation__c.Tube_Feed_Texture__c, ' - ')}" label="PO Texture" /><br />
     	<apex:outputLabel value="Lipids" styleClass="label" for="lipids"/>
-        <apex:outputField id="lipids" value="{!Evaluation__c.Lipids__c}" />
+        <apex:outputText id="lipids" value="{!if(Evaluation__c.Lipids__c != null,Evaluation__c.Lipids__c, ' - ')}" />
 	</td>
 	</tr>
 	</table>
@@ -932,18 +936,18 @@
    <tr>
    <td style="vertical-align:top">
    		<apex:outputLabel value="Tongue" for="tongue" styleClass="label" />
-   		<apex:outputText id="tongue" value="{!if ( CONTAINS(Evaluation__c.Tongue__c, 'Sores'), Evaluation__c.Tongue__c + ' - ' + Evaluation__c.Tongue_Sores_Describe__c, Evaluation__c.Tongue__c)}" label="Tongue"/><br />
+   		<apex:outputText id="tongue" value="{!if ( CONTAINS(Evaluation__c.Tongue__c, 'Sores'), Evaluation__c.Tongue__c + ' - ' + Evaluation__c.Tongue_Sores_Describe__c, if(Evaluation__c.Tongue__c!= null ,Evaluation__c.Tongue__c ,' - '))}" label="Tongue"/><br />
    			
    		<apex:outputLabel value="Cheeks" for="cheeks" styleClass="label" />	
-        <apex:outputText id="cheeks" value="{!if ( CONTAINS(Evaluation__c.Cheeks__c, 'Sores'), Evaluation__c.Cheeks__c + ' - ' + Evaluation__c.Cheeks_Sores_Describe__c, Evaluation__c.Cheeks__c)}" label="Cheeks"/><br />
+        <apex:outputText id="cheeks" value="{!if ( CONTAINS(Evaluation__c.Cheeks__c, 'Sores'), Evaluation__c.Cheeks__c + ' - ' + Evaluation__c.Cheeks_Sores_Describe__c, if(Evaluation__c.Cheeks__c!= null,Evaluation__c.Cheeks__c, ' - ' ))}" label="Cheeks"/><br />
                         
         <apex:dynamiccomponent componentvalue="{!ctlmap['breath__c']}" />
    </td>
    <td style="vertical-align:top">
     	<apex:outputLabel value="Gums" for="gums" styleClass="label" />
-        <apex:outputText value="{!if ( CONTAINS(Evaluation__c.Gums__c, 'Sores'), Evaluation__c.Gums__c + ' - ' + Evaluation__c.Gums_Sores_Describe__c, Evaluation__c.Gums__c)}" label="Gums"/><br />
+        <apex:outputText value="{!if ( CONTAINS(Evaluation__c.Gums__c, 'Sores'), Evaluation__c.Gums__c + ' - ' + Evaluation__c.Gums_Sores_Describe__c, if(Evaluation__c.Gums__c != null, Evaluation__c.Gums__c, ' - '))}" label="Gums"/><br />
     	<apex:outputLabel value="Lips" for="lips" styleClass="label" />
-        <apex:outputText value="{!if ( CONTAINS(Evaluation__c.Lips__c, 'Sores'), Evaluation__c.Lips__c + ' - ' + Evaluation__c.Lips_Sores_Describe__c, Evaluation__c.Lips__c)}" label="Lips"/><br />
+        <apex:outputText value="{!if ( CONTAINS(Evaluation__c.Lips__c, 'Sores'), Evaluation__c.Lips__c + ' - ' + Evaluation__c.Lips_Sores_Describe__c, if(Evaluation__c.Lips__c != null, Evaluation__c.Lips__c, ' - ' ))}" label="Lips"/><br />
     
     	 <apex:dynamiccomponent componentvalue="{!ctlmap['saliva__c']}" />
    </td>
@@ -951,7 +955,7 @@
    <tr>
    <td colspan="2">
             <apex:dynamiccomponent componentvalue="{!ctlmap['dentures__c']}" /> - <apex:dynamiccomponent componentvalue="{!ctlmap['dentures_type__c']}" /><br/>
-			<apex:outputlabel for="dentureusage" value="Denture Usage" styleClass="label"/><apex:outputText id="dentureusage" value="{! if (CONTAINS(Evaluation__c.Dentures_Usage_Details__c, 'Other'), Evaluation__c.Dentures_Usage_Details__c + ' - ' + Evaluation__c.Denture_Usage_Other__c, Evaluation__c.Dentures_Usage_Details__c)}" label="Usage Details"/>
+			<apex:outputlabel for="dentureusage" value="Denture Usage" styleClass="label"/><apex:outputText id="dentureusage" value="{! if (CONTAINS(Evaluation__c.Dentures_Usage_Details__c, 'Other'), Evaluation__c.Dentures_Usage_Details__c + ' - ' + Evaluation__c.Denture_Usage_Other__c, if(Evaluation__c.Dentures_Usage_Details__c!= null,Evaluation__c.Dentures_Usage_Details__c, ' - ' ))}" label="Usage Details"/>
 	</td>
 	</tr>
 	<tr>
@@ -1287,35 +1291,7 @@
     </apex:pageBlockSection>
 </apex:pageBlock>
 <hr />
-  
-<apex:pageBlock title="Fall Risk Assessment" >
-	<apex:repeat value="{!ThisRecordsDomains[1]}" var="thisDomain">
-    	<apex:pageBlockSection columns="1" >
-             <apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" border="1px;">
-             		<apex:column HeaderValue="Category" width="150px;">
-             			<apex:outputText>{!thisQuestion.Question_Title__c}</apex:outputText>	
-					</apex:column>
-					<apex:column HeaderValue="Rating" style="width:80px;" >
-						<apex:outputText>{!MapAnswers[thisQuestion.id].Rating__c} </apex:outputText>
-					</apex:column>
-					<apex:column headerValue="Score" >
-						<apex:outputText> {!CEILING(MapAnswers[thisQuestion.id].Score__c)} </apex:outputText>
-					</apex:column>
-             </apex:pageBlockTable>
-             	<apex:outputPanel style="margin-top:35px; margin-left: 100px; font-size: 13px; color: black;" id="totalScore">
-             		<apex:outputText value="Total Score: " />
-					<apex:outputText rendered="{!thisDomain.Score__c <= 50}"> {!CEILING(thisDomain.Score__c)} (Low Risk) </apex:outputText>
-					<apex:outputText rendered="{!thisDomain.Score__c >50 && thisDomain.Score__c <= 120}" > {!CEILING(thisDomain.Score__c)} (Medium Risk)</apex:outputText>
-					<apex:outputText rendered="{!thisDomain.Score__c > 120}" > {!CEILING(thisDomain.Score__c)} (High Risk) </apex:outputText>
-				</apex:outputPanel>
-             </apex:pageBlockSection>
-            </apex:repeat>
-        <apex:pageBlockSection columns="1" >
-             <apex:outputField value="{!Evaluation__c.MAR_Section_Completed__c}" label="Fall Risk Assessment Completed" />
-        </apex:pageBlockSection>
-</apex:pageBlock>
 <apex:pageBlock title="Neurological">
-
 <table style="width:80%;">
 <tr>
 <td style="border:1px solid black;width:100%"><apex:outputLabel value="Cognitive" styleClass="label" /></td>
@@ -1726,6 +1702,33 @@
 </apex:pageBlock>
 <hr />
 
+<apex:pageBlock title="Fall Risk Assessment" >
+	<apex:repeat value="{!ThisRecordsDomains[1]}" var="thisDomain">
+    	<apex:pageBlockSection columns="1" >
+             <apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" border="1px;">
+             		<apex:column HeaderValue="Category" width="150px;">
+             			<apex:outputText>{!thisQuestion.Question_Title__c}</apex:outputText>	
+					</apex:column>
+					<apex:column HeaderValue="Rating" style="width:80px;" >
+						<apex:outputText>{!MapAnswers[thisQuestion.id].Rating__c} </apex:outputText>
+					</apex:column>
+					<apex:column headerValue="Score" >
+						<apex:outputText> {!CEILING(MapAnswers[thisQuestion.id].Score__c)} </apex:outputText>
+					</apex:column>
+             </apex:pageBlockTable>
+             	<apex:outputPanel style="margin-top:35px; margin-left: 100px; font-size: 13px; color: black;" id="totalScore">
+             		<apex:outputText value="Total Score: " />
+					<apex:outputText rendered="{!thisDomain.Score__c <= 50}"> {!CEILING(thisDomain.Score__c)} (Low Risk) </apex:outputText>
+					<apex:outputText rendered="{!thisDomain.Score__c >50 && thisDomain.Score__c <= 120}" > {!CEILING(thisDomain.Score__c)} (Medium Risk)</apex:outputText>
+					<apex:outputText rendered="{!thisDomain.Score__c > 120}" > {!CEILING(thisDomain.Score__c)} (High Risk) </apex:outputText>
+				</apex:outputPanel>
+             </apex:pageBlockSection>
+            </apex:repeat>
+        <apex:pageBlockSection columns="1" >
+             <apex:outputField value="{!Evaluation__c.MAR_Section_Completed__c}" label="Fall Risk Assessment Completed" />
+        </apex:pageBlockSection>
+</apex:pageBlock>
+
  <apex:pageBlock title="Orthopedics">
     <table style="width:80%">
     <tr><td style="width:50%;vertical-align:top" >
@@ -2026,8 +2029,8 @@
 <hr />
 
 
-<apex:pageBlock title="Discharge Plan">
-    <apex:pageBlocksection columns="1">
+<apex:pageBlock title="Discharge Plan" >
+	<apex:pageblockSection columns="1" >
         <apex:dynamiccomponent componentvalue="{!ctlmap['discharge_info_from__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['prior_living_situation__c']}" />
         <apex:dynamiccomponent componentvalue="{!ctlmap['prior_living_situation_other__c']}" />
@@ -2041,13 +2044,22 @@
 </apex:pageBlock>
  <hr />
  
- <apex:pageBlock >
+ <!-- apex:pageBlock >
      <apex:pageBlockSection columns="1">
          <apex:outputText label="Evaluation Signed" value="{!IF(Evaluation__c.Is_Signed__c,'YES','NO')}" style="padding:10px;" />
          <apex:outputText label="Last Modified By" value="{!Evaluation__c.LastModifiedBy.Name}" style="padding:10px;"  />
          <apex:outputText value=" {!Evaluation__c.LastModifiedDate}"  style="padding:10px;" />
      </apex:pageBlockSection>
- </apex:pageBlock>
+ </apex:pageBlock-->
+ 
+ <apex:pageBlock title="E-Sign"  rendered="{!Evaluation__c.Is_Signed__c}">
+	<table width="100%" >
+		<tr>
+			<td><apex:outputLabel value="Signed By" styleClass="label" /> <apex:outputText value="{!signatures[0].Owner.Name}" /></td><br/>
+			<td><apex:outputLabel value="Signed Time" styleClass="label" /> <apex:outputField value="{!signatures[0].CreatedDate}" /></td>
+		</tr>
+	</table>
+</apex:pageBlock>
     
     </apex:form>
 </apex:page>
