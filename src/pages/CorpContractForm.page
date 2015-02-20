@@ -1,0 +1,265 @@
+<apex:page standardController="TMN_Corp_Contract__c" extensions="CorpContractForm">
+    <head>
+        <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqUI, '/jquery-ui.min.js')}" />
+        
+       <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+       
+        <script>
+            $j = jQuery.noConflict();
+                $j(document).ready(function() {
+                    $j( "#tabs" ).tabs()
+                  });     
+          function setFocusOnLoad() {}
+          function setTabs(){
+            /*  alert('hello world');*/
+              $j( "#tabs" ).tabs()          
+          }
+          </script>
+        <style>
+
+          
+            #tabs {
+                background: transparent;
+                border: none;
+            }
+            #tabs .ui-widget-header {
+                background: transparent;
+                border: none;
+                /*border-bottom: 1px solid #c0c0c0;*/
+                -moz-border-radius: 0px;
+                -webkit-border-radius: 0px;
+                border-radius: 0px;
+            }
+            #tabs .ui-state-default {
+                background: transparent;
+                border: none;
+                padding: 0;
+                margin: 0;
+            }
+            #tabs .ui-state-active {
+               /* background: transparent url(http://keith-wood.name/img/uiTabsArrow.png) no-repeat bottom center;*/
+                border: none;
+                
+            }
+            
+            #tabs .ui-state-default a {
+                color: #c0c0c0;
+                font-weight: bold;
+                font-size: 15px;
+                
+                
+            }
+            #tabs .ui-state-default  {
+            
+                border-bottom: 1px solid #c0c0c0;/**/
+                
+            }
+            #tabs .ui-state-hover {
+              /*  005B99border-top: 1px solid #96c6e7;*/
+            
+            }
+            #tabs .ui-state-hover a{
+                
+                color: #005B99;
+            
+            }
+            #tabs .ui-state-active a {
+                border-bottom: none;
+                border-top: 2px solid #96c6e7;
+                /*
+                border-top-left-radius : 7px;
+                border-top-right-radius : 7px;
+                */
+                color: #005B99;
+                outline: none;
+            }   
+            #tabs .ui-state-active  {
+                border-bottom: none;
+            } 
+            #tabs .ui-state-focus {border: none; background: none; outline: none;}
+            .dateFormat{display: none;}
+            .required{border-left: 3px Solid #ffb777; padding-left:2px;}
+            .notRequired{padding-left:5px;}
+            .txtArea{width: 300px; height: 110px;}
+            .Filled{border-left: 3px Solid #96c6e7; padding-left:2px;}
+            .mytab{width: 700px; margin-left: -10px;}
+            .myHeader{ font-weight: bold; font-size: 15px; border-top: 2px solid #005B99; padding: 5px; margin-top: 7px;} 
+                       
+            .pbSubheader {font-size:9pt;}
+            .clAnswer{border-left: 2px solid white;}            
+        </style>        
+        
+        
+
+    </head>
+
+
+<!--to control button width styling must be inline this makes for a common location to update styling-->
+    <apex:variable var="btnIstyle" value="text-align: left; width: 150px"/>
+<!-- Styles -->
+    <style>
+
+    </style>
+
+    <style>
+
+    </style>
+<!--decore-->
+<apex:sectionHeader title="Record ID - {!TMN_Corp_Contract__c.Name}" subtitle="{!TMN_Corp_Contract__c.Name}" />
+<!--chatter -->
+<chatter:feedWithFollowers entityId="{!TMN_Corp_Contract__c.id}"/><br/>
+
+    <div id="tabs" >
+      <ul>
+        <li><a href="#tabs-1" ><div>Contract Details</div></a></li>
+        <li><a href="#tabs-2">Contract Terms</a></li>
+        <li><a href="#tabs-3">Approvals</a></li>
+        <li><a href="#tabs-4">Attachments</a></li>
+      </ul>
+    
+    <br/> 
+
+<apex:outputPanel id="wrapper2">
+        
+    <apex:form >
+    <!--<apex:inputField value="{!TMN_Corp_Contract__c.Locked__c}"/>  -->
+       <apex:outputPanel layout="block" style="margin-top: -70px; margin-left: 720px; width: 250px; float: left; position: fixed;">
+            <apex:pageBlock id="messages" >
+                 <apex:actionStatus id="Performing">
+                                <apex:facet name="start">
+                                    <div class="waitingSearchDiv" id="el_loading"
+                                        style="background-color: #fbfbfb; height: 100%; opacity: 0.6; width: 100%;">
+                                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /><br/>                                        
+                                    </div>
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>
+                    </apex:actionStatus>            
+                <apex:inputField value="{!TMN_Corp_Contract__c.Locked__c}"/> Locked
+                <br/>
+                <apex:commandButton style="{!btnIstyle}"
+                    
+                    oncomplete="setTabs();"
+                    reRender="wrapper, details, messages"
+                    action="{!save}" 
+                    value="{!IF(ISBLANK(TMN_Corp_Contract__c.Name),'Save','Update')}" 
+                    status="Performing"/>
+                    <br/>
+                <apex:commandButton style="{!btnIstyle}" 
+                    action="{!cancel}" 
+                    value="Cancel"/>
+                    <br/>
+                <apex:commandButton style="{!btnIstyle}" 
+                    action="{!URLFOR($Action.TMN_Corp_Contract__c.Submit, TMN_Corp_Contract__c.id )}" 
+                    disabled="{!TMN_Corp_Contract__c.Percent_Complete__c != 100}"  
+                    value="Submit for Approval"/>
+                       
+                       <br/>
+                <apex:commandButton style="{!btnIstyle}" 
+                    action="{!delete}" 
+                    value="Delete"/>
+                    <br/>
+                <apex:pageMessages ></apex:pageMessages>                        
+                    <br/>
+                    <br/>  
+                    <b>Progress</b>                          
+                    <div style="width:100px; background-color: #ffb777; ">
+                        <div style="width:{!TMN_Corp_Contract__c.Percent_Complete__c}px; background-color: #96c6e7;">&nbsp;
+                        </div>
+                    </div>  
+                <i>    
+                    <apex:outputField value="{!TMN_Corp_Contract__c.Total_Required_Feilds_Answered__c}"/>
+                        /   
+                    <apex:outputField value="{!TMN_Corp_Contract__c.Total_Required_Fields__c }  "/>
+                        (  
+                    <apex:outputField value="{!TMN_Corp_Contract__c.Percent_Complete__c}"/>          
+                        )   
+                </i>
+            </apex:pageBlock>
+            
+        </apex:outputPanel>   
+            
+<div  id="tabs-1" class="mytab"> 
+    <apex:outputPanel id="details">          
+            <apex:pageBlock title="Contract Details" >
+                <apex:pageBlock mode="mainDetail">
+                <apex:pageBlockSection collapsible="false" columns="1" >
+                    <apex:repeat value="{!$ObjectType.TMN_Corp_Contract__c.FieldSets.Procure_Details}" var="thisField" >
+                        <!--<apex:pageBlockSection rendered="{!MapTags[thisField.FieldPath].Header__c}" title="{!MapTags[thisField.FieldPath].Header_Text__c}" collapsible="false" />-->
+                        <apex:outputPanel styleClass="myHeader" layout="block"  rendered="{!MapTags[thisField.FieldPath].Header__c}" >
+                            {!MapTags[thisField.FieldPath].Header_Text__c}
+                        </apex:outputPanel>       
+                        <apex:pageblockSectionItem >
+                            <apex:outputPanel layout="block" style="width:200px;" > 
+                                <apex:outputLabel >{!thisField.Label}</apex:outputLabel>                   
+                            </apex:outputPanel>            
+                            <apex:outputPanel layout="block" styleClass="{!IF(thisField.Required,'required','notRequired')} {!IF(thisField.Required &&!ISBLANK(TMN_Corp_Contract__c[thisField]),', Filled', '')}">
+                                <apex:inputField rendered="{!!TMN_Corp_Contract__c.Locked__c}" 
+                                    value="{!TMN_Corp_Contract__c[thisField]}" 
+                                    styleClass="{!IF(thisField.type='textarea','txtArea','')}" />
+                                <apex:outputField rendered="{!TMN_Corp_Contract__c.Locked__c}"
+                                    value="{!TMN_Corp_Contract__c[thisField]}"/>
+                            </apex:outputPanel>            
+                        </apex:pageblockSectionItem>
+                    </apex:repeat>  
+                                
+                </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:pageBlock>
+            
+            <br/>Created on &nbsp;<apex:outputField value="{!TMN_Corp_Contract__c.createddate}"/><br/> by <apex:outputField value="{!TMN_Corp_Contract__c.createdbyid}"/>
+            <br/><br/>Modified on &nbsp;<apex:outputField value="{!TMN_Corp_Contract__c.LastModifieddate}"/><br/> by <apex:outputField value="{!TMN_Corp_Contract__c.LastModifiedbyid}"/>
+      </apex:outputPanel>       
+</div>
+<div id="tabs-2" class="mytab">
+<apex:outputPanel id="wrapper">
+     <apex:pageBlock title="Contract Terms">
+             <apex:pageBlock mode="mainDetail">
+                 <apex:pageBlockSection collapsible="false" columns="1" >
+                    <apex:repeat value="{!$ObjectType.TMN_Corp_Contract__c.FieldSets.Contract_Terms}" var="thisField" >
+                        <apex:outputPanel styleClass="myHeader" layout="block"  rendered="{!MapTags[thisField.FieldPath].Header__c}" >
+                            {!MapTags[thisField.FieldPath].Header_Text__c}
+                        </apex:outputPanel>                             
+                            <apex:pageBlockSectionItem >
+                                <apex:outputPanel layout="block" style="width:200px;">
+                                    <apex:outputLabel >{!thisField.Label}</apex:outputLabel> 
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel layout="block"  
+                                    styleClass="{!IF(thisField.Required,'required','notRequired')}
+                                                {!IF(thisField.Required &&!ISBLANK(TMN_Corp_Contract__c[thisField]),', Filled', '')}">                                            
+                                    <apex:inputField rendered="{!!TMN_Corp_Contract__c.Locked__c}"
+                                        value="{!TMN_Corp_Contract__c[thisField]}"   
+                                        styleClass="{!IF(thisField.type='textarea','txtArea','')}" />
+                                    <apex:outputField rendered="{!TMN_Corp_Contract__c.Locked__c}"
+                                        value="{!TMN_Corp_Contract__c[thisField]}"/>
+                                    </apex:outputPanel>                                      
+                            
+                            </apex:pageBlockSectionItem>
+  
+                    </apex:repeat>
+            </apex:pageBlockSection>
+        </apex:pageBlock>    
+        </apex:pageBlock>
+</apex:outputPanel>        
+</div>                           
+</apex:form>  
+<div  id="tabs-3" class="mytab">   
+
+    <apex:outputPanel layout="block" style=" font-size: 11px;">
+    
+    
+                        
+                        <style>
+                            input[name=piSubmit] { display: none;}
+                        </style>
+                        <apex:relatedList list="ProcessSteps"/>
+                                              
+    </apex:outputPanel>
+</div>         
+<div  id="tabs-4" class="mytab">
+    <apex:relatedList list="NotesAndAttachments"/>
+</div>
+</apex:outputPanel>
+</div> <!-- end Tabs -->
+</apex:page>
