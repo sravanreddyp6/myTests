@@ -106,18 +106,6 @@
         <type>Lookup</type>
     </fields>
     <fields>
-        <fullName>Eval_Field_Type__c</fullName>
-        <deleteConstraint>Restrict</deleteConstraint>
-        <externalId>false</externalId>
-        <label>EvalFieldType</label>
-        <referenceTo>Eval_Field_Type__c</referenceTo>
-        <relationshipLabel>Evals</relationshipLabel>
-        <relationshipName>Evals</relationshipName>
-        <required>true</required>
-        <trackTrending>false</trackTrending>
-        <type>Lookup</type>
-    </fields>
-    <fields>
         <fullName>Eval_Record_Number__c</fullName>
         <displayFormat>{0}</displayFormat>
         <externalId>false</externalId>
@@ -158,6 +146,83 @@
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Field_Sub_Type__c</fullName>
+        <description>We may have to boolean types, one for a checkbox and another for a radio button...</description>
+        <externalId>false</externalId>
+        <label>Field Sub Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Check</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Radio</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Dropdown</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Field_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Field Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Boolean</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>String</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Int</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Double</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Date</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Datetime</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ID</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Currency</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Dropdown</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Multiselect</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Multicheckbox</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Length__c</fullName>

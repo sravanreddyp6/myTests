@@ -20,11 +20,11 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     
     <form id="evalForm" method="post" >
-    <apex:pageBlock>
+    <apex:pageBlock rendered="{!ctlList.size>0}">
     <apex:outputText value="{! 'EVAL TYPE: ' + evaltype}" />
-    <apex:pageBlockSection title="{!subcategory}" >
+    <apex:pageBlockSection title="{!subcategory}" collapsible="false">
     <apex:repeat value="{!ctlList}" var="fld">
-    <apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
     <apex:outputText value="{!fld}" escape="false" />
     </apex:pageBlockSectionItem>
     </apex:repeat>
@@ -37,40 +37,45 @@
     
     <script>
     jQuery.noConflict();
-    
-    jQuery(document).ready(function ($) {
-    var serializeObject = function ($) {
-      var o = {};
-      var a = this.serializeArray();
-      $.each(a, function () {
-          if (o[this.name] !== undefined) {
-              if (!o[this.name].push) {
-                  o[this.name] = [o[this.name]];
-              }
-              o[this.name].push(this.value || '');
-         } else {
-             o[this.name] = this.value || '';
-         }
-     });
-     return o;
- 	};
- 	
-   	$('#evalForm').on("submit", function (event) {
-   		event.preventDefault();
-           var formData = $(this).serializeArray();
-       		var jsonData = JSON.stringify(formData);
+
+   	function bindSubmitEvent () {  $('#evalForm').on("submit", function (event) {
+   			event.preventDefault();
+           	var formData = $(this).serializeArray();
+			var jsonData = JSON.stringify(formData);
+       		var uuid = (new Date()).getTime();
+			
       		console.log(jsonData);
       		// vf remote to save data
       		debugger;
-      		GenerateEvalComponent.saveFields('{!parentID}', '{!evaltype}', jsonData,
+			GenerateEvalComponent.saveFields('{!parentID}', '{!$User.Id}'+'-'+uuid, '{!evaltype}', '{!category}', '{!subcategory}', jsonData,
                			function (result, event) {
                     	if (!event.status) {
                         	alert("Failed to save data! Error: " + event.message);
                         	anno.addAnnotation(element);
+                    	}else{
+                    		$("#evalForm").empty();
                     	}
                 	});
-			
         });
+	}
+	
+    jQuery(document).ready(function ($) {
+	    var serializeObject = function ($) {
+	      var o = {};
+	      var a = this.serializeArray();
+	      $.each(a, function () {
+	          if (o[this.name] !== undefined) {
+	              if (!o[this.name].push) {
+	                  o[this.name] = [o[this.name]];
+	              }
+	              o[this.name].push(this.value || '');
+	         } else {
+	             o[this.name] = this.value || '';
+	         }
+	     });
+	     return o;
+	 	};
+	 	bindSubmitEvent();
 	});
 
 

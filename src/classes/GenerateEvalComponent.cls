@@ -17,7 +17,6 @@ public with sharing class GenerateEvalComponent {
 		mapEvalValues = new Map<ID, Eval_Value__c>();
 	}
 
-
 	public List<string> CreateFieldControls () {
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
@@ -46,8 +45,99 @@ public with sharing class GenerateEvalComponent {
 			       sub_category__c,
 			       sub_category_sequence__c,
 			       eval_type__r.name,
-			       eval_field_type__r.name,
-			       eval_field_type__r.html_element__c,
+			       Field_Type__c,
+			       Field_Sub_Type__c,
+			       field_sequence__c,
+			       required__c
+			  from eval__c
+			 where eval_type__r.name = :evalname
+			   and category__c =:cat
+			   and sub_category__c = :subcat
+			   and visible__c = true
+			order by category_sequence__c, sub_category_sequence__c, field_sequence__c
+		];
+		// create a map for easy access
+		mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
+
+
+		String newHTMLfld = '';
+		String strval = '';
+		for( Eval__c e : listEvalItems ){
+			try {
+				newHTMLfld = '';
+				strval = '';
+
+				if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
+					if ( e.Field_Sub_Type__c == 'Check') {
+						newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
+						newHTMLfld += '><span class="labelCol">' + e.field_name__c + '</span>';
+					} else if (e.Field_Sub_Type__c == 'Dropdown') {
+						// Boolean dropdown values = --None--, Yes, No
+						newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select id="' + e.htmlid__c + '" name="' + e.id + '">';
+						newHTMLfld += '<option value="">-- None --</option>';
+						newHTMLfld += '<option value="1"';
+						newHtmlfld += '>Yes</option>';
+						newHTMLfld += '<option value="0"';
+						newHTMLfld += '>No</option>';
+						newHTMLfld += '</select>';
+					} //TODO: output radio buttons for Radio type
+				} else if (e.Field_Type__c=='String') {
+					newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+					newHTMLfld +=  '/>';
+				} else if (e.Field_Type__c == 'DropDown') {
+
+					// get the options
+					List<Eval_drop_Down__c> dropdownopts = ddOptions.get( e.id);
+					newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select id="' + e.htmlid__c + '"  name="' + e.id + '">';
+					newHTMLfld += '<option value="">-- None --</option>';
+					for ( Eval_Drop_Down__c thisdd : dropdownopts) {
+						newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
+						newHTMLFld += '>' + thisdd.option_name__c + '</option>';
+					}
+					newHTMLfld += '</select>';
+				} //TODO: Complete output for other types - currency, number, datetime
+
+				htmlControls.Add( newHTMLfld);
+			}
+			catch( Exception ex)
+			{
+				System.Debug( ex);
+			}
+		}
+
+		return htmlControls;
+	}
+	
+	public List<string> CreateFieldControlsForEdit () {
+
+		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
+		List<Eval_Drop_Down__c> dd = [ select whatid__c, option_name__c, option_value__c from eval_drop_down__c where What_Id_Object__c = 'Eval__c' order by whatid__c ];
+		List<Eval_Drop_Down__c> newdd;
+		for ( Eval_Drop_Down__c edd : dd ) {
+			if ( ddOptions.ContainsKey( edd.whatid__c)) {
+				if ( (newdd = ddOptions.get(edd.whatid__c)) == null )
+					newdd = new List<Eval_Drop_Down__c>();
+			} else {
+				newdd = new List<Eval_Drop_Down__c>();
+			}
+			newdd.Add( edd);
+			ddOptions.put( edd.whatid__c, newdd);
+
+		}
+
+		// get the list of controls for this type, category, and subcategory
+		List<String> htmlcontrols = new List<String>();
+		List<Eval__c> listEvalItems = [
+			select id,
+			       htmlid__c,
+			       field_name__c,
+			       category__c,
+			       category_sequence__c,
+			       sub_category__c,
+			       sub_category_sequence__c,
+			       eval_type__r.name,
+			       Field_Type__c,
+			       Field_Sub_Type__c,
 			       field_sequence__c,
 			       required__c
 			  from eval__c
@@ -81,8 +171,8 @@ public with sharing class GenerateEvalComponent {
 				newHTMLfld = '';
 				strval = '';
 
-				if ( e.eval_field_type__r.name == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
-					if ( e.eval_field_type__r.html_element__c == 'Check') {
+				if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
+					if ( e.Field_Sub_Type__c == 'Check') {
 						newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
 
 						// insert value
@@ -91,7 +181,7 @@ public with sharing class GenerateEvalComponent {
 								newHTMLFld += ' checked ';
 
 						newHTMLfld += '><span class="labelCol">' + e.field_name__c + '</span>';
-					} else if (e.eval_field_type__r.html_element__c == 'Dropdown') {
+					} else if (e.Field_Sub_Type__c == 'Dropdown') {
 						// Boolean dropdown values = --None--, Yes, No
 						newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select id="' + e.htmlid__c + '" name="' + e.id + '">';
 						newHTMLfld += '<option value="">-- None --</option>';
@@ -108,11 +198,11 @@ public with sharing class GenerateEvalComponent {
 						newHTMLfld += '>No</option>';
 						newHTMLfld += '</select>';
 					} //TODO: output radio buttons for Radio type
-				} else if (e.eval_field_type__r.name=='String') {
+				} else if (e.Field_Type__c=='String') {
 					newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 					if (mapEvalValues.ContainsKey( e.id )) {
 						newHTMLfld += 'value="' ;
-						if ( e.eval_field_type__r.length__c > 250 )
+						if ( e.length__c > 250 )
 							newHTMLfld += mapEvalValues.get(e.id).text_under_250__c;
 						else
 							newHTMLfld += mapEvalValues.get(e.id).text_over_250__c;
@@ -120,7 +210,7 @@ public with sharing class GenerateEvalComponent {
 						newHTMLfld	+= '"';
 					}
 					newHTMLfld +=  '/>';
-				} else if (e.eval_field_type__r.name == 'DropDown') {
+				} else if (e.Field_Type__c == 'DropDown') {
 
 					// get the value
 					if ( mapEvalValues.ContainsKey( e.id ))
@@ -151,11 +241,54 @@ public with sharing class GenerateEvalComponent {
 		return htmlControls;
 	}
 
+	public class FormKeyVal{
+		public Id name;
+		public String value; 
+	}
 
 	@RemoteAction
-	public static void saveFields(ID evalId, String EvalType, String jsonForm) {
+	public static void saveFields(ID evalId, String evalSectionId, String EvalType, String cat, String subcat, String jsonForm) {
+		
+		mapEvalItems = new Map<ID, Eval__c>([ select   id,
+												       htmlid__c,
+												       field_name__c,
+												       category__c,
+												       category_sequence__c,
+												       sub_category__c,
+												       sub_category_sequence__c,
+												       eval_type__r.name,
+												       Field_Type__c,
+												       Field_Sub_Type__c,
+												       field_sequence__c,
+												       required__c,
+												       length__c
+												  from eval__c
+												 where eval_type__r.name = :EvalType
+												   and category__c =:cat
+												   and sub_category__c = :subcat
+												   and visible__c = true
+												order by category_sequence__c, sub_category_sequence__c, field_sequence__c]);
+		
+		// get any populated values for this eval and section
+		List<Eval_Value__c> listEvalValues = [
+			select id, boolean__c, currency__c, date_time__c, number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c from eval_value__c
+			 where eval_Section_Id__c = :evalSectionId
+			   and what_id__c = :evalId
+			   and what_id_object__c = 'Evaluation__c'
+		];
 
-		Map<String,String> formData = (Map<String, String>) JSON.deserializeUntyped(jsonForm);
+		// create a map by eval id
+		mapEvalValues = new Map<ID, Eval_Value__c>();
+		for ( Eval_Value__c ev: listEvalValues )
+			mapEvalValues.put( ev.eval__c, ev);
+
+		//Map<String,Object> formData = (Map<String, Object>) JSON.deserializeUntyped(jsonForm);		
+		list<FormKeyVal> objs = (list<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
+		Map<String,String> formData = new map<String, String>();
+		for(FormKeyVal d : objs){
+			formData.put(d.name, d.value);
+		}
+
 		List<Eval_Value__c> newValues = new List<Eval_Value__c>();
 
 		// use the values already on the eval
@@ -173,29 +306,44 @@ public with sharing class GenerateEvalComponent {
 			}	else  {
 				ev = new Eval_Value__c();
 				ev.eval__c = (ID)f;
+				ev.eval_Section_Id__c = evalSectionId;
 			}
 
 			// put the value in the right place
-			if ( ei.eval_field_type__r.name == 'Boolean')
-				if (ei.eval_field_type__r.html_element__c == 'Check' || ei.eval_field_type__r.html_element__c == 'Radio') {
+			if ( ei.Field_Type__c == 'Boolean'){
+				if (ei.Field_Sub_Type__c == 'Check' || ei.Field_Sub_Type__c == 'Radio') {
 					if ( formData.get(f) == '1')
 						ev.Boolean__c = true;
 					else
 						ev.Boolean__c = false;
 				}
-				else if (ei.eval_field_type__r.html_element__c == 'Dropdown')
+				else if (ei.Field_Sub_Type__c == 'Dropdown')
 					ev.Text_Under_250__c = formData.get(f);
-				else if (ei.eval_field_type__r.name == 'Dropdown')
+			}
+			else if (ei.Field_Type__c == 'Int'){
+				ev.Number_No_Decimal__c = Integer.valueOf(formData.get(f));
+			}
+			else if (ei.Field_Type__c == 'Date' || ei.Field_Type__c == 'Datetime' ){
+				ev.Date_Time__c = DateTime.parse(formData.get(f));
+			}
+			else if (ei.Field_Type__c == 'String' || ei.Field_Type__c == 'ID' || 
+					 ei.Field_Type__c == 'Multiselect' || ei.Field_Type__c == 'Multicheckbox' || 
+					 ei.Field_Type__c == 'Dropdown' || ei.Field_Type__c == 'Double' || 
+					 ei.Field_Type__c == 'Currency'){
+				if ( ei.length__c > 250 )
+					ev.Text_Over_250__c = formData.get(f);
+				else
 					ev.Text_Under_250__c = formData.get(f);
-			//TODO: Fill in other field types with value in correct place
+			}
 
 			//TODO: If value is blanked out, delete the eval field value item
 
 			ev.what_id__c = evalID;
-			ev.what_id_object__c = evalType;
+			ev.what_id_object__c = 'Evaluation__c';
 			newValues.add(ev);
 		}
 		upsert newValues;
+		//return true;
 	}
 
 }
