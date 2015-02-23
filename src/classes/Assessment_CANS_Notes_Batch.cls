@@ -53,7 +53,7 @@ global class Assessment_CANS_Notes_Batch implements Database.Batchable<sObject> 
 														from assessment__c 
 															where CreatedDate <= :daysAgo
 																AND Status__c <> 'Locked'
-																AND Admission__r.status__c = 'Active'
+																AND Disregard__c = false 
 																AND Assessment_Type__r.name = 'CANS'];
 			Messaging.sendEmail(Assessment_CANS_Notes_Batch_Ex.incompleteAssessmentNotes(incompAssess) );
 				devMsg += '<br/> requiring note because assessment is not finished = ' + incompAssess.size();
