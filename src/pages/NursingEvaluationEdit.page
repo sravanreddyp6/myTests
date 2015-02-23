@@ -1847,7 +1847,7 @@
 								<apex:column id="qRatingColor" style="vertical-align: middle; width: 10px"  >
 									<apex:outputPanel styleClass="{!thisQuestion.id}q" layout="block" style="{!IF(Evaluation__c.Skin_Section_Completed__c && MapskinAnswers[thisQuestion.id].Rating__c == null,'text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: red;','text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: none;')}" id="answer2" >
 									</apex:outputPanel>
-								</apex:column >
+								</apex:column>
 								<apex:column id="qRating" style="border-color: #ededed; width: 125px; text-align: left; vertical-align: middle; color: #788080; font-size: 9pt; ">
 									<apex:outputPanel layout="block" id="answer" styleClass="{!thisQuestion.id}q">
 										<apex:actionStatus id="myStatus">
@@ -1877,11 +1877,11 @@
 												<br/> {!thisOption.Rating_Description__c}
 											</div>
 										</apex:repeat>
-									</apex:outputPanel >
+									</apex:outputPanel>
 								</apex:column>
 								<apex:column id="qScore" style="border-color: #ededed;text-align: left; vertical-align: middle; color: #788080; font-size: 12pt;" headerValue="Pressure Ulcer Risk" >
 									<apex:outputPanel layout="block" id="scoring" styleClass="{!thisQuestion.id}q">
-											<apex:outputText> {!CEILING(MapskinAnswers[thisQuestion.id].Score__c)} </apex:outputText>
+											<apex:outputText > {!CEILING(MapskinAnswers[thisQuestion.id].Score__c)} </apex:outputText>
 									</apex:outputPanel>
 								</apex:column>
 								<!-- apex:column id="clearSelections" >
@@ -2371,7 +2371,7 @@
 								<apex:column id="qRatingColor" style="vertical-align: middle; width: 10px"  >
 									<apex:outputPanel styleClass="{!thisQuestion.id}q" layout="block" style="{!IF(Evaluation__c.MAR_Section_Completed__c && MapAnswers[thisQuestion.id].Rating__c == null,'text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: red;','text-align: center; vertical-align: middle; height:18px; width: 15px; background-color: none;')}" id="answer2" >
 									</apex:outputPanel>
-								</apex:column >
+								</apex:column>
 								<apex:column id="qRating" style="border-color: #ededed; width: 125px; text-align: left; vertical-align: middle; color: #788080; font-size: 9pt;">
 									<apex:outputPanel layout="block" id="answer" styleClass="{!thisQuestion.id}q" >
 										<apex:actionStatus id="myStatus">
@@ -2401,23 +2401,25 @@
 												<br/> {!thisOption.Rating_Description__c}
 											</div>
 										</apex:repeat>
-									</apex:outputPanel >
+									</apex:outputPanel>
 								</apex:column>
 								<apex:column id="qScore" style="border-color: #ededed;text-align: left; vertical-align: middle; color: #788080; font-size: 12pt;" headerValue="Score" >
 									<apex:outputPanel layout="block" id="scoring" styleClass="{!thisQuestion.id}q" >
-											<apex:outputText> {!CEILING(MapAnswers[thisQuestion.id].Score__c)} </apex:outputText>
+											<apex:outputText > {!CEILING(MapAnswers[thisQuestion.id].Score__c)} </apex:outputText>
 									</apex:outputPanel>
 								</apex:column>
 								<apex:column id="clearSelections" >
-									<apex:CommandLInk value="Clear Selections" action="{!clearSelection}" status ="myStatus" reRender="options, mymess, answer, answer2, meee, scoring, totalScore" >
-										<apex:param assignTo="{!QuestionID}" value="{!thisQuestion.id}" name="QuestionID" />
-									</apex:CommandLInk>
+									<apex:outputPanel id="clear" layout="block"  rendered="{!MapQuestions[thisQuestion.id].Question_title__c != 'Age' }" >
+										<apex:CommandLInk value="Clear Selections" action="{!clearSelection}" status="myStatus" reRender="options, mymess, answer, answer2, meee, scoring, totalScore"  >
+											<apex:param assignTo="{!QuestionID}" value="{!thisQuestion.id}" name="QuestionID" />
+										</apex:CommandLInk>
+									</apex:outputPanel>
 								</apex:column>
 	               			</apex:pageBlockTable>
 	               			<apex:outputPanel style="margin-top:35px; margin-left: 450px; font-size: 40px; color: gray;" id="totalScore">
 	               				<apex:outputText value="Total Score: " />
 								<apex:outputText rendered="{!thisDomain.Score__c <= 50}"> {!CEILING(thisDomain.Score__c)} (Low Risk) </apex:outputText>
-								<apex:outputText rendered="{!thisDomain.Score__c >50 && thisDomain.Score__c <= 120}" >{!CEILING(thisDomain.Score__c)} (Medium Risk)</apex:outputText>
+								<apex:outputText rendered="{!thisDomain.Score__c >50 && thisDomain.Score__c <= 120}" >{!CEILING(thisDomain.Score__c)} (Moderate Risk)</apex:outputText>
 								<apex:outputText rendered="{!thisDomain.Score__c > 120}" > {!CEILING(thisDomain.Score__c)} (High Risk) </apex:outputText>
 							</apex:outputPanel>
 	               		</apex:pageBlockSection>

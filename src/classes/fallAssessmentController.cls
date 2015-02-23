@@ -47,6 +47,8 @@ public with sharing class fallAssessmentController {
 	
 	//Initialization  
     public void LoadData(Assessment__c TheVoidsAssessment){
+    	
+	Assessment_Response__c ageResponse = new Assessment_Response__c();
       //Loops to set maps up
       for (Assessment_Domain__c me : ListForMapDomains){
       		if(me.Name =='Fall Risk Assessment Domain'){
@@ -77,8 +79,10 @@ public with sharing class fallAssessmentController {
       		if(meee.Question__r.Question_Domain__r.Name == 'Skin Assessment Domain'){
       			MapskinAnswers.put(meee.Question__c,  meee);
       		}
+      		
       }
       	
+     // update ageResponse;
                                  
     } 
 
@@ -184,7 +188,7 @@ public with sharing class fallAssessmentController {
 	        get{
 	                
 	            return 
-	                [Select ID,  Name, Question__c,Score__c, Rating__c, Color__c, Question__r.Question_Domain__r.Name
+	                [Select ID,  Name, Question__c,Score__c, Rating__c, Color__c, Question__r.Question_Domain__r.Name, Question__r.Question_Title__c
 	                        From Assessment_Response__c 
 	                        Where Assessment__c = :this.asmt.id ];
 	        }

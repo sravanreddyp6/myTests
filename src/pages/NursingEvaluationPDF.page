@@ -1269,13 +1269,13 @@
     	<apex:pageBlockSection columns="1" title="Skin Assessment">
              <apex:pageBlockTable value="{!MapskinDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" border="1px;">
              		<apex:column HeaderValue="Area" width="150px;">
-             			<apex:outputText>{!thisQuestion.Question_Title__c}</apex:outputText>	
+             			<apex:outputText >{!thisQuestion.Question_Title__c}</apex:outputText>	
 					</apex:column>
 					<apex:column HeaderValue="Rating" style="width:50px;" >
-						<apex:outputText>{!MapskinAnswers[thisQuestion.id].Rating__c} </apex:outputText>
+						<apex:outputText >{!MapskinAnswers[thisQuestion.id].Rating__c} </apex:outputText>
 					</apex:column>
 					<apex:column headerValue="Pressure Ulcer Risk" style="width:30Px;" >
-						<apex:outputText> {!CEILING(MapskinAnswers[thisQuestion.id].Score__c)} </apex:outputText>
+						<apex:outputText > {!CEILING(MapskinAnswers[thisQuestion.id].Score__c)} </apex:outputText>
 					</apex:column>
              </apex:pageBlockTable>
            	<apex:outputPanel style="margin-top:35px; margin-left: 100px; font-size: 13px; color: black;" id="totalScore">
@@ -1707,19 +1707,19 @@
     	<apex:pageBlockSection columns="1" >
              <apex:pageBlockTable value="{!MapDomains[thisDomain.Assessment_Domain__c].Question__r}" var="thisQuestion" border="1px;">
              		<apex:column HeaderValue="Category" width="150px;">
-             			<apex:outputText>{!thisQuestion.Question_Title__c}</apex:outputText>	
+             			<apex:outputText >{!thisQuestion.Question_Title__c}</apex:outputText>	
 					</apex:column>
 					<apex:column HeaderValue="Rating" style="width:80px;" >
-						<apex:outputText>{!MapAnswers[thisQuestion.id].Rating__c} </apex:outputText>
+						<apex:outputText >{!MapAnswers[thisQuestion.id].Rating__c} </apex:outputText>
 					</apex:column>
 					<apex:column headerValue="Score" >
-						<apex:outputText> {!CEILING(MapAnswers[thisQuestion.id].Score__c)} </apex:outputText>
+						<apex:outputText > {!CEILING(MapAnswers[thisQuestion.id].Score__c)} </apex:outputText>
 					</apex:column>
              </apex:pageBlockTable>
              	<apex:outputPanel style="margin-top:35px; margin-left: 100px; font-size: 13px; color: black;" id="totalScore">
              		<apex:outputText value="Total Score: " />
 					<apex:outputText rendered="{!thisDomain.Score__c <= 50}"> {!CEILING(thisDomain.Score__c)} (Low Risk) </apex:outputText>
-					<apex:outputText rendered="{!thisDomain.Score__c >50 && thisDomain.Score__c <= 120}" > {!CEILING(thisDomain.Score__c)} (Medium Risk)</apex:outputText>
+					<apex:outputText rendered="{!thisDomain.Score__c >50 && thisDomain.Score__c <= 120}" > {!CEILING(thisDomain.Score__c)} (Moderate Risk)</apex:outputText>
 					<apex:outputText rendered="{!thisDomain.Score__c > 120}" > {!CEILING(thisDomain.Score__c)} (High Risk) </apex:outputText>
 				</apex:outputPanel>
              </apex:pageBlockSection>
