@@ -7,6 +7,8 @@
 
 public with sharing class referralResults_Controller {
 
+  public integer submitCount{ get; set; }
+	
   public String referralId {get;set;}
   
   public String pbrId {get;set;}
@@ -25,6 +27,7 @@ public with sharing class referralResults_Controller {
   public String personAge { get; set;}
   public Date personDOB { get; set; }
   public List<SelectOption> genderList { get; set;}
+  private Boolean searchImmediately;
  
   public static final String REFERRAL_EDIT_URL = '/apex/referral';
 
@@ -33,11 +36,11 @@ public with sharing class referralResults_Controller {
     Description : To initialize all data members of Class.
   *****************************************************************************/ 
      public referralResults_Controller() {
-
+		submitCount = -1;
 		populateGenderList();
 		
         // Fill in the information from the GET request (for new referrals only)
-        Boolean searchImmediately = false;
+       searchImmediately = false;
         if (ApexPages.currentPage().getParameters().get('referralNumber') != null) {
             referralNumber = ApexPages.currentPage().getParameters().get('referralNumber');
             searchImmediately = true;
@@ -94,38 +97,11 @@ public with sharing class referralResults_Controller {
             searchRefs();
         }
     }
-
-	public PageReference redirectToBack() {
-		if(viewmode!=null){
-		retURL = '/apex/referral2?id='+referralId+'&sfdc.override=1';
-		}
-		else if(retURL==null){
-			 if(pbrId!=null){
-				 retURL = '/apex/referral?pbrID='+pbrId;
-			 }
-			 else{
-				 retURL = '/apex/referral?firstName='+personFirstName+'&lastName='+personLastName ;
-				if(personGender!=null) {
-					 retURL = retURL+'&personGender='+personGender;
-				 }
-				 if(personAge!=null) {
-					 retURL = retURL+'&personAge='+personAge;
-				 }
-				 if(personDOB!=null) {
-					 retURL = retURL+'&personDOB='+personDOB.format();
-				 }
-			 }
-
-		 }
-		 String url = retURL;
-		 PageReference pg = new PageReference(url);
-		 pg.setRedirect(true);
-		 return pg;
-	 } 
-    
+ 
     
     public void searchRefs() {
-
+		
+		
         try
         {
         	double age2 = null;
@@ -136,6 +112,12 @@ public with sharing class referralResults_Controller {
         	refResults = SearchLogicOnPBSR.search(referralNumber,personLastName, personFirstName, Date.valueOf(personDOB), age2, personGender);
             system.debug(refResults);
             
+            // for the browser back count
+            if (!searchImmediately) 
+				submitCount -= 1;
+            else	// reset the immediate flag
+            	searchImmediately = false;
+		
            // return null;
         } catch(exception e) {
             ApexPages.addMessages(e);
