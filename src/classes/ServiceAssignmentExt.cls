@@ -369,7 +369,7 @@ public without sharing class ServiceAssignmentExt {
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
+                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
                 initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,Admission__r.Person_Being_Served__r.LastName,
@@ -1297,7 +1297,7 @@ public void loadProgramList() {
     	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
 		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
 		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-		Assessment__c fallAsmt = new Assessment__c(Name=pbsLastName+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = theServAssign.Id,Admission__c = theServAssign.Admission__c);
+		Assessment__c fallAsmt = new Assessment__c(Name=pbsLastName+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = theServAssign.Id,Admission__c = theServAssign.Admission__c, AccountPerson__c = theServAssign.Person_Being_Served__r.AccountId);
    		if(!referral.Has_Evaluation__c){
    			Evaluation__c resAsmt = new Evaluation__c(
    											ServiceAssignment__c = theServAssign.Id,
