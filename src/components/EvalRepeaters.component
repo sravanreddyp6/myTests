@@ -3,7 +3,7 @@
     <apex:attribute name="evaltype" description="Kind of eval" type="string" assignTo="{!evalname}" required="true" />
     <apex:attribute name="opGrp" description="Operating group for eval" type="string" assignTo="{!operatingGroup}" required="true" />
     
-    <apex:pageBlock>
+    <apex:pageBlock >
 	    <apex:repeat value="{!evals}" var="eval">
 		    <div id="{! eval.cat + eval.subcat + eval.subsubcat}" class="panel panel-danger">
 		      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- Shift'}</h3>
