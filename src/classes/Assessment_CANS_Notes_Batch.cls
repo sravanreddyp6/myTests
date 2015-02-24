@@ -46,14 +46,33 @@ global class Assessment_CANS_Notes_Batch implements Database.Batchable<sObject> 
 			//we also need to send notes for assessments that are not incomplete and over 30 days old
 			// if gov limits are hit we can move this check to a new batch class/sched.
 			date daysAgo = system.today().addDays(-30);
+			set<id> inactiveAdmitsWithLastAssessment = new set<id>();
+			for(Assessment__c item: [select id, admission__c 
+											from assessment__c 
+												where Assessment_Type__r.name = 'CANS' 
+												AND Interval__c = 'Discharge'
+												AND Admission__r.Status__c != 'Active'
+												AND Status__c = 'Locked' ]){
+				inactiveAdmitsWithLastAssessment.add(item.admission__c);
+
+			}
+
 			list<Assessment__c> incompAssess = [select id, name, assessment_date__c, CreatedDate,
 													owner.id, owner.isActive, Owner.LastName, Owner.FirstName,
 													admission__c, accountperson__c, accountperson__r.PBS_Identifier__pc,
-													status__c 
+													status__c, Interval__c 
 														from assessment__c 
 															where CreatedDate <= :daysAgo
 																AND Status__c <> 'Locked'
 																AND Disregard__c = false 
+																AND (
+																		(
+																			admission__r.Status__c = 'Active' 
+																		)
+																		OR(
+																			admission__c NOT IN :inactiveAdmitsWithLastAssessment 
+																		)
+																	)
 																AND Assessment_Type__r.name = 'CANS'];
 			Messaging.sendEmail(Assessment_CANS_Notes_Batch_Ex.incompleteAssessmentNotes(incompAssess) );
 				devMsg += '<br/> requiring note because assessment is not finished = ' + incompAssess.size();
