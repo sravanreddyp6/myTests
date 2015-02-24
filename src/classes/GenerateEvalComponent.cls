@@ -95,8 +95,16 @@ public with sharing class GenerateEvalComponent {
 						newHTMLFld += '>' + thisdd.option_name__c + '</option>';
 					}
 					newHTMLfld += '</select>';
-				} //TODO: Complete output for other types - currency, number, datetime
-
+				//TODO: Complete output for other types - currency, number, datetime
+				}
+				else if (e.Field_Type__c == 'Date') {
+					newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input class="datepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+					newHTMLfld +=  '/>';
+				}
+                else if (e.Field_Type__c == 'Datetime') {
+                    newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input class="datetimepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+                    newHTMLfld +=  '/>';
+                }
 				htmlControls.Add( newHTMLfld);
 			}
 			catch( Exception ex)
@@ -290,7 +298,7 @@ public with sharing class GenerateEvalComponent {
 		}
 
 		List<Eval_Value__c> newValues = new List<Eval_Value__c>();
-
+		List<Eval_Value__c> delValues = new List<Eval_Value__c>();
 		// use the values already on the eval
 		// check if data has changed
 		Eval_Value__c ev;
@@ -303,47 +311,54 @@ public with sharing class GenerateEvalComponent {
 			if ( mapEvalValues.containsKey( (ID)f ))  {
 				// value exists - need to update value
 				ev = mapEvalValues.get((ID)f);
-			}	else  {
-				ev = new Eval_Value__c();
-				ev.eval__c = (ID)f;
-				ev.eval_Section_Id__c = evalSectionId;
+			}	else {
+					ev = new Eval_Value__c();
+					ev.eval__c = (ID)f;
+					ev.eval_Section_Id__c = evalSectionId;
+					ev.what_id__c = evalID;
+					ev.what_id_object__c = 'Evaluation__c';
 			}
 
-			// put the value in the right place
-			if ( ei.Field_Type__c == 'Boolean'){
-				if (ei.Field_Sub_Type__c == 'Check' || ei.Field_Sub_Type__c == 'Radio') {
-					if ( formData.get(f) == '1')
-						ev.Boolean__c = true;
-					else
-						ev.Boolean__c = false;
+			if (formData.get(f) != null && formData.get(f) != '') {
+				// put the value in the right place
+				if ( ei.Field_Type__c == 'Boolean'){
+					if (ei.Field_Sub_Type__c == 'Check' || ei.Field_Sub_Type__c == 'Radio') {
+						if ( formData.get(f) == '1')
+							ev.Boolean__c = true;
+						else
+							ev.Boolean__c = false;
+					}
+					else if (ei.Field_Sub_Type__c == 'Dropdown')
+						ev.Text_Under_250__c = formData.get(f);
 				}
-				else if (ei.Field_Sub_Type__c == 'Dropdown')
-					ev.Text_Under_250__c = formData.get(f);
+				else if (ei.Field_Type__c == 'Int'){
+					ev.Number_No_Decimal__c = Integer.valueOf(formData.get(f));
+				}
+				else if (ei.Field_Type__c == 'Date'){
+					ev.Date_Time__c = Datetime.newInstance(Date.parse(formData.get(f)), Time.newInstance(0,0,0,0));
+				}
+				else if (ei.Field_Type__c == 'Datetime' ){
+                    ev.Date_Time__c = Datetime.parse(formData.get(f));
+                }
+				else if (ei.Field_Type__c == 'String' || ei.Field_Type__c == 'ID' || 
+						 ei.Field_Type__c == 'Multiselect' || ei.Field_Type__c == 'Multicheckbox' || 
+						 ei.Field_Type__c == 'Dropdown' || ei.Field_Type__c == 'Double' || 
+						 ei.Field_Type__c == 'Currency'){
+					if ( ei.length__c > 250 )
+						ev.Text_Over_250__c = formData.get(f);
+					else
+						ev.Text_Under_250__c = formData.get(f);
+				}
+				
+				newValues.add(ev);
 			}
-			else if (ei.Field_Type__c == 'Int'){
-				ev.Number_No_Decimal__c = Integer.valueOf(formData.get(f));
-			}
-			else if (ei.Field_Type__c == 'Date' || ei.Field_Type__c == 'Datetime' ){
-				ev.Date_Time__c = DateTime.parse(formData.get(f));
-			}
-			else if (ei.Field_Type__c == 'String' || ei.Field_Type__c == 'ID' || 
-					 ei.Field_Type__c == 'Multiselect' || ei.Field_Type__c == 'Multicheckbox' || 
-					 ei.Field_Type__c == 'Dropdown' || ei.Field_Type__c == 'Double' || 
-					 ei.Field_Type__c == 'Currency'){
-				if ( ei.length__c > 250 )
-					ev.Text_Over_250__c = formData.get(f);
-				else
-					ev.Text_Under_250__c = formData.get(f);
+			else if (ev.id != null ) {
+				delValues.add(ev);
 			}
 
-			//TODO: If value is blanked out, delete the eval field value item
-
-			ev.what_id__c = evalID;
-			ev.what_id_object__c = 'Evaluation__c';
-			newValues.add(ev);
 		}
+		delete delValues;
 		upsert newValues;
-		//return true;
 	}
 
 }
