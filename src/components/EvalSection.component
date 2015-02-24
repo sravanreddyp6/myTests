@@ -18,6 +18,8 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
     
     <form id="evalForm" method="post" >
     <apex:pageBlock rendered="{!ctlList.size>0}">
@@ -75,7 +77,9 @@
 	     });
 	     return o;
 	 	};
-	 	bindSubmitEvent();
+	 	
+	 	$('.datepicker').datetimepicker({timepicker:false, format:'m/d/Y', closeOnDateSelect:true});
+	 	$('.datetimepicker').datetimepicker({});
 	});
 
 
