@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Action Skill Result</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Action Skill Results</value>
+    </caseValues>
+    <fields>
+        <label><!-- Action Plan Objective --></label>
+        <name>Action_Plan_Objective__c</name>
+        <relationshipLabel><!-- Action Skill Results --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Attempts --></label>
+        <name>Attempts__c</name>
+    </fields>
+    <fields>
+        <label><!-- Day --></label>
+        <name>Day__c</name>
+    </fields>
+    <fields>
+        <label><!-- Initials --></label>
+        <name>Initials__c</name>
+    </fields>
+    <fields>
+        <label><!-- Met Objective --></label>
+        <name>Met_Objective__c</name>
+        <picklistValues>
+            <masterLabel>N</masterLabel>
+            <translation><!-- N --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Y</masterLabel>
+            <translation><!-- Y --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Status --></label>
+        <name>Status__c</name>
+        <picklistValues>
+            <masterLabel>D</masterLabel>
+            <translation><!-- D --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>FP</masterLabel>
+            <translation><!-- FP --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>H</masterLabel>
+            <translation><!-- H --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>HL</masterLabel>
+            <translation><!-- HL --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>I</masterLabel>
+            <translation><!-- I --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>L</masterLabel>
+            <translation><!-- L --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>M</masterLabel>
+            <translation><!-- M --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>PP</masterLabel>
+            <translation><!-- PP --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>S</masterLabel>
+            <translation><!-- S --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>V</masterLabel>
+            <translation><!-- V --></translation>
+        </picklistValues>
+    </fields>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- Attempts required for this value of status --></errorMessage>
+        <name>Attempts_Required_for_certain_status</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Cannot set the number of attempts for this status. --></errorMessage>
+        <name>Attempts_invalid_for_certain_statuses</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Prompt/Status must be one of predefined values. --></errorMessage>
+        <name>Ensure_Status_is_a_PickList_value</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Met Objective must be No for this value of status --></errorMessage>
+        <name>Met_Objective_No_for_this_status</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Met Objective required for this value of status --></errorMessage>
+        <name>Met_Objective_Required_for_this_status</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Cannot set Met Objective for this status. --></errorMessage>
+        <name>Met_Objective_invalid_for_certain_status</name>
+    </validationRules>
+</CustomObjectTranslation>
