@@ -38,6 +38,39 @@ global class Assessment_CANS_Notes_Sch implements Schedulable {
 
 		Assessment_CANS_Notes_Batch b = new Assessment_CANS_Notes_Batch(assessReqNote, devMsg, devMsg2);
 		database.executebatch(b);
+
+		date daysAgo = system.today().addDays(-30);
+		set<id> inactiveAdmitsWithLastAssessment = new set<id>();
+		for(Assessment__c item: [select id, admission__c 
+										from assessment__c 
+											where Assessment_Type__r.name = 'CANS' 
+											AND Interval__c = 'Discharge'
+											AND Admission__r.Status__c != 'Active'
+											AND Status__c = 'Locked' ]){
+			inactiveAdmitsWithLastAssessment.add(item.admission__c);
+
+		}		
+
+		list<Assessment__c> incompAssess = [select id, name, assessment_date__c, CreatedDate,
+															owner.id, owner.isActive, Owner.LastName, Owner.FirstName,
+															admission__c, accountperson__c, accountperson__r.PBS_Identifier__pc,
+															status__c, Interval__c 
+																from assessment__c 
+																	where CreatedDate <= :daysAgo
+																		AND Status__c <> 'Locked'
+																		AND Disregard__c = false 
+																		AND (
+																				(
+																					admission__r.Status__c = 'Active' 
+																				)
+																				OR(
+																					admission__c NOT IN :inactiveAdmitsWithLastAssessment 
+																				)
+																			)
+																		AND Assessment_Type__r.name = 'CANS'];	
+		devMsg2 = '<br/>' + Assessment_CANS_Notes_Batch_Ex.getIDfromList(incompAssess);																		
+		Assessment_CANS_Notes_Batch2 b2 = new Assessment_CANS_Notes_Batch2(incompAssess, 'Imcomplete size - ' + incompAssess.size(), devMsg2);
+		database.executebatch(b2);																			
 	}
 
 }
