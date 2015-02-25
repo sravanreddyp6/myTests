@@ -68,7 +68,7 @@ public with sharing class GenerateEvalComponent {
 				strval = '';
 
 				if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
-					if ( e.Field_Sub_Type__c == 'Check') {
+					if ( e.Field_Sub_Type__c == 'Checkbox') {
 						newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
 						newHTMLfld += '><span class="labelCol">' + e.field_name__c + '</span>';
 					} else if (e.Field_Sub_Type__c == 'Dropdown') {
@@ -106,15 +106,20 @@ public with sharing class GenerateEvalComponent {
                     newHTMLfld +=  '/>';
                 }
                 
-                else if (e.Field_Type__c == 'Multicheckbox') {
-                	newHTMLfld = '<div><label class="labelCol">' + e.field_name__c + '</label>';
-                	// get the options
-                    List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
-                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
-	                	newHTMLfld += '<span class="labelCol">' + thisdd.Option_Name__c + '</span><input id="' + e.htmlid__c+thisdd.id + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '"';
-                        newHTMLfld += '/>';
-                    }
-                     newHTMLfld += '</div>';
+                else if (e.Field_Type__c == 'Multiselect') {
+                	if ( e.Field_Sub_Type__c == 'Checkbox') {
+	                	newHTMLfld = '<div><label class="labelCol">' + e.field_name__c + '</label>';
+	                	// get the options
+	                    List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
+	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
+		                	newHTMLfld += '<span class="labelCol">' + thisdd.Option_Name__c + '</span><input id="' + e.htmlid__c+thisdd.id + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '"';
+	                        newHTMLfld += '/>';
+	                    }
+	                     newHTMLfld += '</div>';
+                	}else{
+                		//ToDo: Regular multiselect. 
+                	}
+                	
                 }
                 
                 
@@ -193,7 +198,7 @@ public with sharing class GenerateEvalComponent {
 				strval = '';
 
 				if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
-					if ( e.Field_Sub_Type__c == 'Check') {
+					if ( e.Field_Sub_Type__c == 'Checkbox') {
 						newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
 
 						// insert value
@@ -338,7 +343,7 @@ public with sharing class GenerateEvalComponent {
 			if (formData.get(f) != null && formData.get(f) != '') {
 				// put the value in the right place
 				if ( ei.Field_Type__c == 'Boolean'){
-					if (ei.Field_Sub_Type__c == 'Check' || ei.Field_Sub_Type__c == 'Radio') {
+					if (ei.Field_Sub_Type__c == 'Checkbox' || ei.Field_Sub_Type__c == 'Radio') {
 						if ( formData.get(f) == '1')
 							ev.Boolean__c = true;
 						else
@@ -357,8 +362,7 @@ public with sharing class GenerateEvalComponent {
                     ev.Date_Time__c = Datetime.parse(formData.get(f));
                 }
 				else if (ei.Field_Type__c == 'String' || ei.Field_Type__c == 'ID' || 
-						 ei.Field_Type__c == 'Multiselect' || ei.Field_Type__c == 'Multicheckbox' || 
-						 ei.Field_Type__c == 'Dropdown' || ei.Field_Type__c == 'Double' || 
+						 ei.Field_Type__c == 'Multiselect' || ei.Field_Type__c == 'Dropdown' || ei.Field_Type__c == 'Double' || 
 						 ei.Field_Type__c == 'Currency'){
 					if ( ei.length__c > 250 )
 						ev.Text_Over_250__c = formData.get(f);
