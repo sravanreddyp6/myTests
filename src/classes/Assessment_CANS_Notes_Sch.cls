@@ -39,7 +39,7 @@ global class Assessment_CANS_Notes_Sch implements Schedulable {
 		Assessment_CANS_Notes_Batch b = new Assessment_CANS_Notes_Batch(assessReqNote, devMsg, devMsg2);
 		database.executebatch(b);
 
-		date daysAgo = system.today().addDays(-30);
+		datetime daysAgo = system.now().addDays(-30);
 		set<id> inactiveAdmitsWithLastAssessment = new set<id>();
 		for(Assessment__c item: [select id, admission__c 
 										from assessment__c 
