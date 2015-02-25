@@ -1,99 +1,32 @@
-global class Assessment_CANS_Notes_Batch implements Database.Batchable<sObject> {
+global class Assessment_CANS_Notes_Batch implements Database.Batchable<sObject>, Database.Stateful {
 	
 	global final list<Assessment__c> query ;
+	global string devMsg;
+	global string devMsg2;
 	
-	global Assessment_CANS_Notes_Batch(List<Assessment__c> q) {
+	global Assessment_CANS_Notes_Batch(List<Assessment__c> q, string msg, string msg2) {
 		system.debug('starting construct');
-		Query=q;
+		Query=q; devMsg = msg; devMsg2 = msg2;
+		//devMsg = devmsg; 
 	}
 	
 	global list<SObject> start(Database.BatchableContext bc) {
 		system.debug('starting start');
+		
 		return Query;
 	}
 
    	global void execute(Database.BatchableContext BC, List<Assessment__c> scope) {
-   	//this list will get distilled down over the next few steps into a list of assessment for which we need to send an email to the owner
-   	// because a new assessment is due
-   	//;ets get a baseline to start with
-   	// we'll distill the following query to just the most recent assessments
-   		string devMsg = '';
-   		try {
-	   			system.debug('starting ex');
-	   			system.debug(scope);
-   				devMsg += 'initail scope size = ' + scope.size();
-			Assessment__c[] assessReqNote = Assessment_CANS_Notes_Batch_Ex.mostRecentAssessments(scope);
-				system.debug('starting requires email');
-				system.debug(assessReqNote);
-				devMsg += '<br/> after finding most recent assessment size = ' + assessReqNote.size();
-			// now with the most recent assessment we'll find out if they need an email/task note
-			assessReqNote = Assessment_CANS_Notes_Batch_Ex.requiresEmail(assessReqNote);
-				system.debug('starting remove inactive users');
-				system.debug(assessReqNote);
-				devMsg += '<br/> requiring email size = ' + assessReqNote.size();
 
-			assessReqNote = Assessment_CANS_Notes_Batch_Ex.removeAndProcessInactiveUsers(assessReqNote);
-				system.debug('starting emails');
-				system.debug(assessReqNote);
-				devMsg += '<br/> after inactive users removed size = ' + assessReqNote.size();
-			Messaging.sendEmail(Assessment_CANS_Notes_Batch_Ex.missingAssessmentNotes(assessReqNote) );
+   		system.debug('starting ex');
+   		//string devMsg = '';
+   		try {
+
+			Messaging.sendEmail(Assessment_CANS_Notes_Batch_Ex.missingAssessmentNotes(scope) );
 
 			//now lets process any new task we need to create
-			Integer taskCount =  Assessment_CANS_Notes_Batch_Ex.setupTasks( assessReqNote );
+			Integer taskCount =  Assessment_CANS_Notes_Batch_Ex.setupTasks( scope );
 				devMsg += '<br/> requiring task size = ' + taskCount;
-
-
-			//we also need to send notes for assessments that are not incomplete and over 30 days old
-			// if gov limits are hit we can move this check to a new batch class/sched.
-			date daysAgo = system.today().addDays(-30);
-			set<id> inactiveAdmitsWithLastAssessment = new set<id>();
-			for(Assessment__c item: [select id, admission__c 
-											from assessment__c 
-												where Assessment_Type__r.name = 'CANS' 
-												AND Interval__c = 'Discharge'
-												AND Admission__r.Status__c != 'Active'
-												AND Status__c = 'Locked' ]){
-				inactiveAdmitsWithLastAssessment.add(item.admission__c);
-
-			}
-
-			list<Assessment__c> incompAssess = [select id, name, assessment_date__c, CreatedDate,
-													owner.id, owner.isActive, Owner.LastName, Owner.FirstName,
-													admission__c, accountperson__c, accountperson__r.PBS_Identifier__pc,
-													status__c, Interval__c 
-														from assessment__c 
-															where CreatedDate <= :daysAgo
-																AND Status__c <> 'Locked'
-																AND Disregard__c = false 
-																AND (
-																		(
-																			admission__r.Status__c = 'Active' 
-																		)
-																		OR(
-																			admission__c NOT IN :inactiveAdmitsWithLastAssessment 
-																		)
-																	)
-																AND Assessment_Type__r.name = 'CANS'];
-			Messaging.sendEmail(Assessment_CANS_Notes_Batch_Ex.incompleteAssessmentNotes(incompAssess) );
-				devMsg += '<br/> requiring note because assessment is not finished = ' + incompAssess.size();
-				
-				Messaging.reserveSingleEmailCapacity(1);
-				Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-
-				User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Paul' AND LastName = 'Perisic' LIMIT 1];
-
-				mail.setTargetObjectId(idForAssmtDeveloper.Id);
-				mail.setReplyTo('notifications@thementornetwork.com');
-				mail.setSenderDisplayName('Complete: MENTOR CANS Notification');
-				mail.setSubject('Complete: MENTOR CANS Notification');
-				mail.setBccSender(false);
-				mail.setccAddresses(new string[] {'_TMN_Dev_Team@thementornetwork.com'});
-				mail.setUseSignature(false);
-				mail.setHtmlBody('CANS notes processing finished <br/><br/> <b>data for the nerds:</b> <br/>' + devMsg ) ;
-				mail.setSaveAsActivity(false);
-				List<Messaging.SingleEmailMessage> devEmail = new List<Messaging.SingleEmailMessage>();
-				devEmail.add(mail);
-				Messaging.sendEmail(devEmail);
 
 		}
 		catch( Exception e ){
@@ -107,7 +40,7 @@ global class Assessment_CANS_Notes_Batch implements Database.Batchable<sObject> 
 			mail.setSenderDisplayName('FAILURE: MENTOR CANS Notification');
 			mail.setSubject('FAILURE: MENTOR CANS Notification');
 			mail.setBccSender(false);
-			mail.setccAddresses(new string[] {'_TMN_Dev_Team@thementornetwork.com'});
+			//mail.setccAddresses(new string[] {'_TMN_Dev_Team@thementornetwork.com'});
 			mail.setUseSignature(false);
 			mail.setHtmlBody('Hello an error occured: <br/>' + e + '<br/>Stack trace:' + e.getStackTraceString() ) ;
 			mail.setSaveAsActivity(false);
@@ -121,7 +54,23 @@ global class Assessment_CANS_Notes_Batch implements Database.Batchable<sObject> 
 	
 	
 	global void finish(Database.BatchableContext BC) {
-		
+				Messaging.reserveSingleEmailCapacity(1);
+				Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+
+				User idForAssmtDeveloper = [ SELECT Id FROM User WHERE FirstName = 'Paul' AND LastName = 'Perisic' LIMIT 1];
+
+				mail.setTargetObjectId(idForAssmtDeveloper.Id);
+				mail.setReplyTo('notifications@thementornetwork.com');
+				mail.setSenderDisplayName('Complete: MENTOR CANS Notification');
+				mail.setSubject('Complete: MENTOR CANS Notification');
+				mail.setBccSender(false);
+				///mail.setccAddresses(new string[] {'_TMN_Dev_Team@thementornetwork.com'});
+				mail.setUseSignature(false);
+				mail.setHtmlBody('CANS notes processing finished <br/><br/> <b>data for the nerds:</b> <br/>' + devMsg + '<br/><br/> <b>Data filtering - </b><br/>' + devMsg2 ) ;
+				mail.setSaveAsActivity(false);
+				List<Messaging.SingleEmailMessage> devEmail = new List<Messaging.SingleEmailMessage>();
+				devEmail.add(mail);
+				Messaging.sendEmail(devEmail);		
 	}
 	
 }
