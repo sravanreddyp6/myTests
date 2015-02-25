@@ -20,7 +20,7 @@ public with sharing class GenerateEvalComponent {
 	public List<string> CreateFieldControls () {
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
-		List<Eval_Drop_Down__c> dd = [ select whatid__c, option_name__c, option_value__c from eval_drop_down__c where What_Id_Object__c = 'Eval__c' order by whatid__c ];
+		List<Eval_Drop_Down__c> dd = [ select whatid__c, option_name__c, option_value__c from eval_drop_down__c where What_Id_Object__c = 'Eval__c' order by whatid__c, Sequence__c ];
 		List<Eval_Drop_Down__c> newdd;
 		for ( Eval_Drop_Down__c edd : dd ) {
 			if ( ddOptions.ContainsKey( edd.whatid__c)) {
@@ -105,6 +105,19 @@ public with sharing class GenerateEvalComponent {
                     newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input class="datetimepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     newHTMLfld +=  '/>';
                 }
+                
+                else if (e.Field_Type__c == 'Multicheckbox') {
+                	newHTMLfld = '<div><label class="labelCol">' + e.field_name__c + '</label>';
+                	// get the options
+                    List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
+                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
+	                	newHTMLfld += '<span class="labelCol">' + thisdd.Option_Name__c + '</span><input id="' + e.htmlid__c+thisdd.id + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '"';
+                        newHTMLfld += '/>';
+                    }
+                     newHTMLfld += '</div>';
+                }
+                
+                
 				htmlControls.Add( newHTMLfld);
 			}
 			catch( Exception ex)
@@ -293,8 +306,11 @@ public with sharing class GenerateEvalComponent {
 		//Map<String,Object> formData = (Map<String, Object>) JSON.deserializeUntyped(jsonForm);		
 		list<FormKeyVal> objs = (list<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
 		Map<String,String> formData = new map<String, String>();
+		String oldMapVal;
 		for(FormKeyVal d : objs){
-			formData.put(d.name, d.value);
+			 oldMapVal = formData.put(d.name, d.value);
+			 if (oldMapVal != null && oldMapVal != '')
+			     formData.put(d.name, formData.get(d.name) +';'+ oldMapVal);
 		}
 
 		List<Eval_Value__c> newValues = new List<Eval_Value__c>();
