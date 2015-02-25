@@ -45,6 +45,7 @@ global class Assessment_CANS_Notes_Sch implements Schedulable {
 										from assessment__c 
 											where Assessment_Type__r.name = 'CANS' 
 											AND Interval__c = 'Discharge'
+											AND Disregard__c = false 
 											AND Admission__r.Status__c != 'Active'
 											AND Status__c = 'Locked' ]){
 			inactiveAdmitsWithLastAssessment.add(item.admission__c);
