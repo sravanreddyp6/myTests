@@ -8,6 +8,8 @@ public with sharing class GenerateEvalComponent {
 	public SObject fullobj{ get; set;}
 	public ID evaluationID { get; set;}
 	public ID pbsID { get; set;}
+    public string evalSectionId { get; set;}
+
 
 	public static Map<ID, Eval__c> mapEvalItems;
 	public static Map<ID, Eval_Value__c> mapEvalValues;
