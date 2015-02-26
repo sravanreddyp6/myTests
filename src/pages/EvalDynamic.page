@@ -1,0 +1,133 @@
+<apex:page title="Shift Notes" Controller="EvalDynamicExt" standardStylesheets="true" sidebar="true" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />      
+    <!-- Bootstrap core CSS -->    
+    <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}"/>
+    <!-- Custom styles for this template -->    
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}"/>	
+
+    <!-- Bootstrap core JavaScript-->
+    <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/bootstrap.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/docs.min.js')}" />
+
+
+
+<script>
+
+function clearPanel() {
+   $("#theForm").remove();
+}
+
+function  showForm() {
+	$("#panel-form").empty().append($("#evalForm"));
+	bindSubmitEvent();
+}
+
+</script>
+
+
+ </head>
+
+  <body>
+
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="#">This is the BLUE CARD place holder</a>
+<!--           <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" servAssignNew="{!newSA}" admId="{!admissionId}" /> -->
+        </nav>
+      </div>
+    </div>
+
+  <div class="container">
+
+      <div class="blog-header"></div>
+
+      <div class="row">
+
+        <div class="col-sm-4"> 
+          <div id="here" class="sidebar-module-sm sidebar-module-inset">
+	    <h4>{!$User.FirstName} {!$User.LastName}</h4>
+	    <p>Shift: 07:00-14:00</p>
+		<a id="addTrach" class="btn btn-success btn-sm pull-left" href="#" role="button" onClick="alert('Sign form comes up!');">Head to Toe <br/>(click to sign)</a>
+		<a id="addTrach" class="btn btn-danger btn-sm pull-right" href="#" role="button" onClick="alert('Sign form comes up!');">Shift Note <br/>(click to sign)</a>
+	  </div>
+          <div id="here" class="sidebar-module sidebar-module-inset">
+
+
+		<c:EvalRepeaters parentID="a11J0000001K8OVIA0" evaltype="Head to Toe" opGrp="Care Meridian"/>
+
+	    
+	  </div><!-- sidebar-module -->
+
+        </div><!-- /.blog-sidebar -->
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+
+	    <div class="panel panel-info">
+	      <div class="panel-heading"><h3 class="panel-title">Enter and Save</h3></div>
+	      <div id="panel-form" class="panel-body">
+
+              </div>
+   	    </div>
+          </div><!-- /.blog-post -->
+
+        </div><!-- /.blog-main -->
+
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+<apex:form >
+<apex:actionFunction name="createPanel" action="{!myAction}" rerender="outputsection" status="myStatus" oncomplete="showForm();">
+	<apex:param name="evaltype" value="" />
+	<apex:param name="Category" value="" />
+	<apex:param name="SubCategory" value="" />
+	<apex:param name="evalSectionId" value="" />
+	<apex:param name="evalSectionType" value="" />
+</apex:actionFunction>
+</apex:form>
+
+<c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
+subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
+evalSectionType="Shift" parentID="a11J0000001K8OVIA0"/>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">  
+            <style>
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+        .foggy{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }  
+        </style>
+
+        <div class="foggy" />        
+        <div class="thinkingwheel" >    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+</body>
+  
+</apex:page>

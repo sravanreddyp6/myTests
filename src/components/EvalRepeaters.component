@@ -1,0 +1,54 @@
+<apex:component controller="EvalRepeaters">
+	<apex:attribute name="parentId" description="Id of the parent Evaluation record" type="Id" assignTo="{!evaluationId}" />
+    <apex:attribute name="evaltype" description="Kind of eval" type="string" assignTo="{!evalname}" required="true" />
+    <apex:attribute name="opGrp" description="Operating group for eval" type="string" assignTo="{!operatingGroup}" required="true" />
+    
+    <apex:pageBlock >
+    
+	    <apex:repeat value="{!evals}" var="eval">
+	
+		    <div id="{! eval.compositeKey + 'shift'}" class="panel panel-danger">
+		    
+		      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- Shift'}</h3></div>
+		      <div class="panel-body">  
+		      
+		       
+		      <apex:outputPanel rendered="{! CONTAINS( evalDataKeys, 'Shift~' + eval.compositeKey+ '||')}">
+		      
+		       <apex:repeat value="{! evalDataList['Shift~' + eval.compositeKey]}" var="edata" >
+		       <apex:outputPanel rendered="{!edata.sectiontype=='Shift'}">
+		       <a onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','Shift');">
+				<apex:outputText value="{! edata.owner }"  /> @ <apex:outputText value=" {!edata.created}" />
+				</a><br />
+				</apex:outputPanel>
+				 
+ 			</apex:repeat>
+ 			
+ 			</apex:outputPanel>
+ 			
+			<a id="{! eval.compositeKey}Summary" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="alert('PDF with summary');">V</a>
+		        <div class="pull-right">&nbsp; </div>	
+		        
+			<a id="{! eval.compositeKey}" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="createPanel('{!evaltype}', '{!eval.cat}', '{!eval.subcat}',  '{! IF(CONTAINS( evalDataKeys, 'Shift~' + eval.compositeKey+ '||'),'Activity Log','Shift' )}');">A</a>
+	        </div>
+	</div>
+	<div id="{! eval.compositeKey + 'activitylog'}" class="panel panel-info">	   
+	   	    
+	   	      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- Activity Log'}</h3></div>
+		      <div class="panel-body">
+		      
+		       <apex:repeat value="{! evalDataList['Activity Log~' + eval.compositeKey]}" var="edata" rendered="{! CONTAINS( evalDataKeys, 'Activity Log~' + eval.compositeKey + '||')}">
+		       <apex:outputPanel rendered="{!edata.sectiontype=='Activity Log'}">
+		       <a onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log');">
+				<apex:outputText value="{! edata.owner }"  /> @ <apex:outputText value=" {!edata.created}" />
+				</a><br />
+				</apex:outputPanel>
+ 			</apex:repeat>
+ 		
+			</div>
+	   	 </div> 
+		    
+	    </apex:repeat>    
+	</apex:pageBlock>
+	    
+</apex:component>
