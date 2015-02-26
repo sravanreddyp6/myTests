@@ -110,11 +110,11 @@
 			left: 50%;
 			padding: 10px;
 			position: absolute;
-			/* These are the 3 css properties you will need to change so the popup
-            displays in the center of the screen. First set the width. Then set
-            margin-left to negative half of what the width is. You can add
-            the height property for a fixed size pop up if you want. */
 
+			/* These are the 3 css properties you will need to change so the popup
+			displays in the center of the screen. First set the width. Then set
+			margin-left to negative half of what the width is. You can add
+			the height property for a fixed size pop up if you want. */
 			width: 500px;
 			margin-left: -250px;
 			top: 100px;
@@ -234,10 +234,6 @@
 
 	<script>
 		j$ = jQuery.noConflict();
-
-		function showHideList(id) {
-			j$('#' + id).slideToggle();
-		}
 	</script>
 
 	<apex:form id="formid">
@@ -246,12 +242,9 @@
 			I would like to access...
 		</apex:outputPanel>
 		<br />
-		<apex:inputText label="First Name" title="First Name" value="{!FrstName}" id="FName"> First Name</apex:inputText>
-		&nbsp; &nbsp; &nbsp; &nbsp;
-		<apex:inputText label="First Name" title="Last Name" value="{!LstName}" id="LName">Last Name</apex:inputText>
-		&nbsp; &nbsp; &nbsp; &nbsp;
-		<apex:commandButton id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
-		&nbsp;
+		<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " /><apex:inputText title="First Name" value="{!FrstName}" id="FName" />
+		<apex:outputLabel for="{!$Component.LName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " /><apex:inputText title="Last Name" value="{!LstName}" id="LName" />
+		<apex:commandButton style="margin-left: 10px; " id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
 		<br />
 		<br />
 		<apex:outputPanel layout="block" styleClass="grid-container">
@@ -261,6 +254,17 @@
 			<c:HomePageComponents objectName="Contract Management" />
 			<c:HomePageComponents objectName="Documents" />
 		</apex:outputPanel>
+		<apex:pageBlock >
+			<apex:pageBlockSection columns="1">
+				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program">
+					<apex:actionSupport event="onchange" reRender="serviceAssignmentTable" action="{!updateProgramSelection}"/>
+					<apex:selectOptions value="{!programslist}"/>
+				</apex:selectList>
+			</apex:pageBlockSection>
+			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable">
+				<apex:column value="{!serviceAssignment.Person_Being_Served__r.Name}" headerValue="Person Being Served Name" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
 
 
 		<apex:pageBlock title="My Tasks">
@@ -279,7 +283,7 @@
 			<br />
 			<br />
 			<apex:pageBlockTable value="{!populateTasks}" var="tsk" id="PageBT">
-				<apex:column>
+				<apex:column >
 					<a href="/{!tsk.Id}/e?close=1&retURL=/apex/Home">X</a>
 				</apex:column>
 				<apex:column headerValue="Created">

@@ -58,11 +58,34 @@ public with sharing class HomePageController{
 	public String CredId;
 	public String TypObj;
 
+	public Id selectedProgram { get; set; }
+	public list<SelectOption> programslist { get; set; }
+	public Service_Assignment__c[] serviceAssignments { get; set; }
+
 	//Constructor
 	public HomePageController(){
+		programsList = new list<SelectOption>();
+		List<AggregateResult> slPrgms = [
+			SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
+			  FROM service_assignment__c
+			GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c
+			HAVING COUNT(service_location__r.id) > 0
+			ORDER BY service_location__r.program__c
+		];
+		for (AggregateResult slPrgm : slPrgms) {
+			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
+		}
 		checkTmnUserRecord();
 		shareobj();
 		mineTasks();
+	}
+
+	public void updateProgramSelection() {
+		serviceAssignments = [
+			SELECT Person_Being_Served__r.Name
+			FROM Service_Assignment__c
+			WHERE Service_Location__c = :selectedProgram
+		];
 	}
 
 	public void getReportList() {
