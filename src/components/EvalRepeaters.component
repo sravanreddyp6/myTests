@@ -5,28 +5,48 @@
     
     <apex:pageBlock >
 	    <apex:repeat value="{!evals}" var="eval">
-		    <div id="{! eval.cat + eval.subcat + eval.subsubcat}" class="panel panel-danger">
+	
+		    <div id="{! eval.cat + eval.subcat + eval.subsubcat + 'shift'}" class="panel panel-danger">
 		    
-		      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- Shift'}</h3>
-			<!-- <span class="label label-primary pull-right">Shift</span> -->
-	              </div>
+		      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- Shift'}</h3></div>
 		      <div class="panel-body"> 
 		       <apex:repeat value="{! evalDataList[eval.compositeKey]}" var="edata">
-		       <a onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}');">
+		       <apex:outputPanel rendered="{!edata.sectiontype=='Shift'}">
+		       <a onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','Shift');">
 				<apex:outputText value="{! edata.owner }"  />
 				-->
 				<apex:outputText value=" {!edata.created}" />
-				</a>
+				</a><br />
+				</apex:outputPanel>
+ 			</apex:repeat>
+			<a id="{! eval.cat + eval.subcat + eval.subsubcat}" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="alert('PDF with summary');">V</a>
+		        <div class="pull-right">&nbsp; </div>	
+			<a id="{! eval.cat + eval.subcat + eval.subsubcat}Summary" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="createPanel('{!evaltype}', '{!eval.cat}', '{!eval.subcat}');">A</a>
+	        </div>
+	</div>
+	<div id="{! eval.cat + eval.subcat + eval.subsubcat + 'activitylog'}" class="panel panel-danger">	   
+	   	    
+	   	      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- Activity Log'}</h3></div>
+		      <div class="panel-body"> 
+		       <apex:repeat value="{! evalDataList[eval.compositeKey]}" var="edata">
+		       <apex:outputPanel rendered="{!edata.sectiontype=='Activity Log'}">
+		       <a onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log');">
+				<apex:outputText value="{! edata.owner }"  />
+				-->
+				<apex:outputText value=" {!edata.created}" />
+				</a><br />
+				</apex:outputPanel>
  			</apex:repeat>
 			<a id="{! eval.cat + eval.subcat + eval.subsubcat}" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="alert('PDF with summary');">V</a>
 		        <div class="pull-right">&nbsp; </div>	
 			<a id="{! eval.cat + eval.subcat + eval.subsubcat}Summary" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="createPanel('{!evaltype}', '{!eval.cat}', '{!eval.subcat}');">A</a>
 	              </div>
-	   	    </div>
+	              
+	
 	   	     
-	   	   
+	   	 </div> 
 			
-		    <div id="{! eval.cat + eval.subcat}"></div>
+		    
 	    </apex:repeat>    
 	</apex:pageBlock>
 	    

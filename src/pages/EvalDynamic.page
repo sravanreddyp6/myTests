@@ -23,11 +23,6 @@
 
 <script>
 
-function  createPanel(location){
-    $("#" + location).append('<div class="panel panel-default"> <div class="panel-heading"><h3 class="panel-title">Cardio/Sputum</h3></div> <div class="panel-body">12:00 --> Shaun Wood</div> </div>');
-    clearPanel();
-}
-
 function clearPanel() {
    $("#theForm").remove();
 }
@@ -61,7 +56,7 @@ function  showForm() {
 
         <div class="col-sm-4"> 
           <div id="here" class="sidebar-module-sm sidebar-module-inset">
-	    <h4>Lisa Chawla</h4>
+	    <h4>{!$User.FirstName} {!$User.LastName}</h4>
 	    <p>Shift: 07:00-14:00</p>
 		<a id="addTrach" class="btn btn-success btn-sm pull-left" href="#" role="button" onClick="alert('Sign form comes up!');">Head to Toe <br/>(click to sign)</a>
 		<a id="addTrach" class="btn btn-danger btn-sm pull-right" href="#" role="button" onClick="alert('Sign form comes up!');">Shift Note <br/>(click to sign)</a>
@@ -71,30 +66,7 @@ function  showForm() {
 
 		<c:EvalRepeaters parentID="a11J0000001K8OVIA0" evaltype="Head to Toe" opGrp="Care Meridian"/>
 
-	    <div  class="panel panel-danger">
-	      <div class="panel-heading"><h4 class="panel-title">Demo/Address -- Shift</h4>
-		<!-- <span class="label label-primary pull-right">Shift</span> -->
-              </div>
-	      <div class="panel-body">12:00 --> Angus Young
-		<a id="addTrach" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="createPanel('demoAddress');">V</a>
-	        <div class="pull-right">&nbsp; </div>	
-		<a id="addTrach" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="alert('PDF with summary');">A</a>
-              </div>
-   	    </div>
-	    <div id="demoAddress"></div>
-
-	    <div class="panel panel-success">
-	      <div class="panel-heading"><h3 class="panel-title">Cardio/Trach -- Shift</h3>
-		</div>
-	      <div class="panel-body">12:00 --> Sravan Pinninti
-		<a id="addTrach" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="alert('PDF with summary');">V</a>
-	        <div class="pull-right">&nbsp; </div>	
-		<a id="addTrach" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="createPanel('cardioTrach');">A</a>
-              </div>
-   	    </div>
-	    <div id="cardioTrach"></div>
-
-
+	    
 	  </div><!-- sidebar-module -->
 
         </div><!-- /.blog-sidebar -->
@@ -124,13 +96,15 @@ function  showForm() {
 	<apex:param name="Category" value="" />
 	<apex:param name="SubCategory" value="" />
 	<apex:param name="evalSectionId" value="" />
+	<apex:param name="evalSectionType" value="" />
 </apex:actionFunction>
 </apex:form>
 
 <!-- <c:EvalSection id="outputsection" uniqueId="abc" category="{!eval__c.category__c}" subcategory="{!eval__c.sub_category__c}" evaltype="{!evaltype}" parentID="a11J0000001K8OVIA0"/> -->
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
-subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}" parentID="a11J0000001K8OVIA0"/>
+subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
+evalSectionType="{!$CurrentPage.parameters.evalSectionType}" parentID="a11J0000001K8OVIA0"/>
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">  
