@@ -123,13 +123,14 @@ function  showForm() {
 	<apex:param name="evaltype" value="" />
 	<apex:param name="Category" value="" />
 	<apex:param name="SubCategory" value="" />
+	<apex:param name="evalSectionId" value="" />
 </apex:actionFunction>
 </apex:form>
 
 <!-- <c:EvalSection id="outputsection" uniqueId="abc" category="{!eval__c.category__c}" subcategory="{!eval__c.sub_category__c}" evaltype="{!evaltype}" parentID="a11J0000001K8OVIA0"/> -->
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
-subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" parentID="a11J0000001K8OVIA0"/>
+subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}" parentID="a11J0000001K8OVIA0"/>
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">  
