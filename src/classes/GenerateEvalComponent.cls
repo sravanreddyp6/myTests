@@ -8,7 +8,7 @@ public with sharing class GenerateEvalComponent {
 	public ID evaluationID { get; set;}
 	public ID pbsID { get; set;}
     public string evalSectionId { get; set;}
-
+    public string evalSectionType { get; set;}
 
 	public static Map<ID, Eval__c> mapEvalItems;
 	public static Map<ID, Eval_Value__c> mapEvalValues;
@@ -83,7 +83,9 @@ public with sharing class GenerateEvalComponent {
 				newHTMLfld = '';
 				strval = '';
 
-				if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
+                if ( e.Field_Type__c == 'Hidden' )  { 
+                        newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden"';                        
+                } else if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
                     if ( e.Field_Sub_Type__c == 'Checkbox') {
                         newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
 
@@ -111,15 +113,18 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld += '</select>';
                     } //TODO: output radio buttons for Radio type
                 } else if (e.Field_Type__c=='String') {
-                    newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+                    newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input required id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' ;
                         if ( e.length__c > 250 )
-                            newHTMLfld += mapEvalValues.get(e.id).text_under_250__c;
+                            strVal = mapEvalValues.get(e.id).text_under_250__c;
                         else
-                            newHTMLfld += mapEvalValues.get(e.id).text_over_250__c;
+                            strVal = mapEvalValues.get(e.id).text_over_250__c;
 
-                        newHTMLfld  += '"';
+                        if (strVal != null && strVal != '')
+                            newHTMLfld += strVal + '"';
+                        else
+                            newHTMLfld += '"';
                     }
                     newHTMLfld +=  '/>';
                 } else if (e.Field_Type__c == 'DropDown') {
@@ -201,7 +206,7 @@ public with sharing class GenerateEvalComponent {
 	}
 
 	@RemoteAction
-	public static void saveFields(ID evalId, String evalSectionId, String EvalType, String cat, String subcat, String jsonForm) {
+	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String cat, String subcat, String jsonForm) {
 		
 		mapEvalItems = new Map<ID, Eval__c>([ select   id,
 												       htmlid__c,
@@ -264,6 +269,7 @@ public with sharing class GenerateEvalComponent {
 					ev = new Eval_Value__c();
 					ev.eval__c = (ID)f;
 					ev.eval_Section_Id__c = evalSectionId;
+					ev.Eval_Section_Type__c = evalSectionType;
 					ev.what_id__c = evalID;
 					ev.what_id_object__c = 'Evaluation__c';
 			}
