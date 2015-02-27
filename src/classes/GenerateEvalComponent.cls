@@ -84,20 +84,20 @@ public with sharing class GenerateEvalComponent {
 				strval = '';
 
                 if ( e.Field_Type__c == 'Hidden' )  { 
-                        newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden"';                        
+                        newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" />';                        
                 } else if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
                     if ( e.Field_Sub_Type__c == 'Checkbox') {
-                        newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
+                        newHTMLfld = '<span class="labelCol">' + e.field_name__c + '</span><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
 
                         // insert value
                         if ( mapEvalValues.ContainsKey( e.id ))
                             if ( mapEvalValues.get(e.id).boolean__c)
                                 newHTMLFld += ' checked ';
 
-                        newHTMLfld += '><span class="labelCol">' + e.field_name__c + '</span>';
+                        newHTMLfld += '/>';
                     } else if (e.Field_Sub_Type__c == 'Dropdown') {
                         // Boolean dropdown values = --None--, Yes, No
-                        newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select id="' + e.htmlid__c + '" name="' + e.id + '">';
+                        newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select  id="' + e.htmlid__c + '" name="' + e.id + '">';
                         newHTMLfld += '<option value="">-- None --</option>';
                         if ( mapEvalValues.ContainsKey( e.id )) {
                             strval = mapEvalValues.get( e.id).Text_Under_250__c;
@@ -113,17 +113,17 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld += '</select>';
                     } //TODO: output radio buttons for Radio type
                 } else if (e.Field_Type__c=='String') {
-                    newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input required id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+                    newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' ;
                         if ( e.length__c > 250 )
-                            strVal = mapEvalValues.get(e.id).text_under_250__c;
-                        else
                             strVal = mapEvalValues.get(e.id).text_over_250__c;
+                        else
+                            strVal = mapEvalValues.get(e.id).text_under_250__c;
 
                         if (strVal != null && strVal != '')
-                            newHTMLfld += strVal + '"';
-                        else
+                            newHTMLfld += strVal;
+                            
                             newHTMLfld += '"';
                     }
                     newHTMLfld +=  '/>';
@@ -169,20 +169,19 @@ public with sharing class GenerateEvalComponent {
                     }
                     
                 	if ( e.Field_Sub_Type__c == 'Checkbox') {
-	                	newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label>';
+	                	newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><br/>';
 	                	// get the options
 	                    List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
-		                	newHTMLfld += '<span class="labelCol">' + thisdd.Option_Name__c + '</span><input id="' + e.htmlid__c+thisdd.id + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '"';
+		                	newHTMLfld += '<label class="labelCol"></label><input id="' + e.htmlid__c+thisdd.id + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '"';
 		                	
 			                // insert value
 	                        if ( mapEvalValues.ContainsKey( e.id ))
 	                            if ( selectedVals.contains(thisdd.Option_Value__c))
 	                                newHTMLFld += ' checked ';
                                 
-	                        newHTMLfld += '/>';
+	                        newHTMLfld += '/> <span>' + thisdd.Option_Name__c + '</span><br/>';
 	                    }
-	                     newHTMLfld += '</div>';
                 	}else{
                 		//ToDo: Regular multiselect. 
                 	}

@@ -22,11 +22,12 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+
     
     <form id="evalForm" method="post" >
     <apex:pageBlock rendered="{!ctlList.size>0}">
     <apex:outputText value="{! 'EVAL TYPE: ' + evaltype}" />
-    <apex:pageBlockSection title="{!subcategory}" collapsible="false" columns="2">
+    <apex:pageBlockSection title="{!subcategory}" collapsible="false">
     <apex:repeat value="{!ctlList}" var="fld">
     <apex:pageBlockSectionItem >
     <apex:outputText value="{!fld}" escape="false" />
@@ -51,15 +52,21 @@
       		console.log(jsonData);
       		// vf remote to save data
       		debugger;
-			GenerateEvalComponent.saveFields('{!parentID}', '{!$User.Id}'+'-'+uuid, '{!evalSectionType}','{!evaltype}', '{!category}', '{!subcategory}', jsonData,
-               			function (result, event) {
-                    	if (!event.status) {
-                        	alert("Failed to save data! Error: " + event.message);
-                        	anno.addAnnotation(element);
-                    	}else{
-                    		$("#evalForm").empty();
-                    	}
-                	});
+			GenerateEvalComponent.saveFields('{!parentID}'
+                                             , ( ('{!evalSectionUuid}' != '') ? '{!evalSectionUuid}' : '{!$User.Id}' + '-' + uuid )
+                                             , '{!evalSectionType}'
+                                             , '{!evaltype}'
+                                             , '{!category}'
+                                             , '{!subcategory}'
+                                             , jsonData
+                                             , function (result, event) {
+                                                    if (!event.status) {
+                                                        alert("Failed to save data! Error: " + event.message);
+                                                        anno.addAnnotation(element);
+                                                    }else{
+                                                        $("#evalForm").empty();
+                                                    }
+            });
         });
 	}
 	
@@ -82,6 +89,7 @@
 	 	
 	 	$('.datepicker').datetimepicker({timepicker:false, format:'m/d/Y', closeOnDateSelect:true});
 	 	$('.datetimepicker').datetimepicker({});
+	 	
 	});
 
 
