@@ -68,7 +68,9 @@ private class ServiceLocationTriggerHandler_TEST {
         sl.status__c = 'Active';
         update sl;
         
-        system.AssertEquals( sc.createddate, sc.lastmodifieddate);
+        // trigger should not fire
+        // first was testing the create date = last modified but the workflow rule on service code can run more than 1 second so that isn't a valid test
+        system.AssertEquals( sc.program_rollup__c, '1000');
         
         
     }
