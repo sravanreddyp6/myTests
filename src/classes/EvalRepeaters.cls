@@ -3,6 +3,7 @@ public with sharing class EvalRepeaters {
 	public string evalname{get; set;}
 	public string operatingGroup{get; set;}
 	
+	public String evalDataKeys { get; set;}
 	public Map<String, List<EvalValueWrapper>> evalDataList;
 	public Map<String, List<EvalValueWrapper>> getEvalDataList() {
 		
@@ -14,9 +15,10 @@ public with sharing class EvalRepeaters {
 												order by eval_section_type__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) desc];
 
 		String compositeKey = '';
+		
 		for (AggregateResult ag : evalValues){
 			
-			compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
+			compositeKey = (string)ag.get('eval_section_type__c') + '~' + (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
 			EvalValueWrapper evw = new EvalValueWrapper(String.valueof(ag.get('eval_section_type__c')), String.valueof(ag.get('eval_section_id__c')), String.valueOf(ag.get('category__c')), String.valueOf(ag.get('sub_category__c')), 
 												String.valueOf(ag.get('sub_sub_category__c')), String.valueOf(ag.get('name')), DateTime.valueOf( ag.get('created')), String.valueOf( ag.get('eval_section_id__c')) );
 			
@@ -30,6 +32,12 @@ public with sharing class EvalRepeaters {
 			}	
 		}
 		system.debug(evalData);
+		
+		
+		for ( String key: evalData.keySet()) {
+			evalDataKeys += key + '||';
+		}
+		system.debug(evalDataKeys);
 		return evalData;
 		
 	}
@@ -59,6 +67,8 @@ public with sharing class EvalRepeaters {
 	
 	public EvalRepeaters(){
 		evalDataList = new Map<String, List<EvalValueWrapper>>();
+		evalDataKeys = '';
+		getEvalDataList();
 		
 	}
 
