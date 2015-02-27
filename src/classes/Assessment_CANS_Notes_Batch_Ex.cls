@@ -1,9 +1,19 @@
 public with sharing class Assessment_CANS_Notes_Batch_Ex {
-
+	public static string devMessage;
 	public Assessment_CANS_Notes_Batch_Ex() {
 		
 	}
 
+
+
+	public static string getIDfromList(list<Assessment__c> a){
+		string str = '<br/>';
+		for(Assessment__c item : a){
+			str += item.id + '<br/>';
+		}
+		str += '<br/><br/>';
+		return str;
+	}
 	public static list<Assessment__c> mostRecentAssessments(List<Assessment__c> AllAssess){
 		//when given a list of assessments this method will return a list of the most recent assessment based on based on assessment date and group by admissions
 		//
@@ -32,7 +42,7 @@ public with sharing class Assessment_CANS_Notes_Batch_Ex {
 		for(Assessment__c item : AllAssess){
 			Integer assessmentDaysFromToday = item.Assessment_Date__c.daysbetween(system.today() );
 			system.debug('days from today' + assessmentDaysFromToday);
-			if( assessmentDaysFromToday == 75 || assessmentDaysFromToday == 82 || assessmentDaysFromToday >= 87 ){
+			if( item.Interval__c != 'Discharge' && (assessmentDaysFromToday == 75 || assessmentDaysFromToday == 82 || assessmentDaysFromToday >= 87) ){
 				returnedItems.add( item );
 			}
 		}
