@@ -51,7 +51,7 @@
       		console.log(jsonData);
       		// vf remote to save data
       		debugger;
-			GenerateEvalComponent.saveFields('{!parentID}', '{!$User.Id}'+'-'+uuid, '{!evaltype}', '{!category}', '{!subcategory}', jsonData,
+			GenerateEvalComponent.saveFields('{!parentID}', '{!$User.Id}'+'-'+uuid, '{!evalSectionType}','{!evaltype}', '{!category}', '{!subcategory}', jsonData,
                			function (result, event) {
                     	if (!event.status) {
                         	alert("Failed to save data! Error: " + event.message);

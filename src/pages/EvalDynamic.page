@@ -100,11 +100,9 @@ function  showForm() {
 </apex:actionFunction>
 </apex:form>
 
-<!-- <c:EvalSection id="outputsection" uniqueId="abc" category="{!eval__c.category__c}" subcategory="{!eval__c.sub_category__c}" evaltype="{!evaltype}" parentID="a11J0000001K8OVIA0"/> -->
-
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
 subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
-evalSectionType="{!$CurrentPage.parameters.evalSectionType}" parentID="a11J0000001K8OVIA0"/>
+evalSectionType="Shift" parentID="a11J0000001K8OVIA0"/>
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">  
