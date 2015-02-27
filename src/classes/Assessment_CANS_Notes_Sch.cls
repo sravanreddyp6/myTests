@@ -59,6 +59,7 @@ global class Assessment_CANS_Notes_Sch implements Schedulable {
 																from assessment__c 
 																	where CreatedDate <= :daysAgo
 																		AND Status__c <> 'Locked'
+																		AND owner.isActive = true
 																		AND Disregard__c = false 
 																		AND (
 																				(
