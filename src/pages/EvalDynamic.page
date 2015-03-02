@@ -63,8 +63,9 @@ function  showForm() {
 	  </div>
           <div id="here" class="sidebar-module sidebar-module-inset">
 
-
+		<apex:outputPanel id="evalRepeaters" layout="none">
 		<c:EvalRepeaters parentID="a11J0000001K8OVIA0" evaltype="Head to Toe" opGrp="Care Meridian"/>
+		</apex:outputPanel>
 
 	    
 	  </div><!-- sidebar-module -->
@@ -98,6 +99,7 @@ function  showForm() {
 	<apex:param name="evalSectionId" value="" />
 	<apex:param name="evalSectionType" value="" />
 </apex:actionFunction>
+<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" />
 </apex:form>
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 

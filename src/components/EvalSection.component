@@ -66,7 +66,8 @@
                                                         alert("Failed to save data! Error: " + event.message);
                                                         anno.addAnnotation(element);
                                                     }else{
-                                                        $("#evalForm").empty();
+                                                    	$("#evalForm").empty();
+                                                    	refreshEvalRepeaters();	// call out to page to refresh list of repeaters
                                                     }
             });
         });
@@ -81,7 +82,7 @@
            annotation.Id = null;
        }
        Visualforce.remoting.Manager.invokeAction(
-           '{!$RemoteAction.GenerateEvalComponent2.addOrModifyAnnotation}',
+           '{!$RemoteAction.GenerateEvalComponent.addOrModifyAnnotation}',
            annotation.Id,
            annotation.src,
            annotation.shapes[0].geometry.x,
@@ -104,7 +105,7 @@
           
   	function removeAnnotation( annotation ) {
   		Visualforce.remoting.Manager.invokeAction(
-                    '{!$RemoteAction.GenerateEvalComponent2.deleteAnnotation}',
+                    '{!$RemoteAction.GenerateEvalComponent.deleteAnnotation}',
                     annotation.Id,
                     function (result, event) {
                         if (!event.status) {
