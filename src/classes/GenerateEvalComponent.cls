@@ -89,26 +89,35 @@ public with sharing class GenerateEvalComponent {
         system.debug( 'Populated values:' + mapEvalValues );
 		String newHTMLfld = '';
 		String strval = '';
+		String reqfldHTML = '';
 		for( Eval__c e : listEvalItems ){
 			try {
 				newHTMLfld = '';
 				strval = '';
+				
+				if (e.Required__c) {
+				    reqfldHTML = '<div class="requiredInput" style="display: table-cell;"><div class="requiredBlock"></div>';
+				} else {
+                    reqfldHTML = '<div style="display: table-cell;">';
+				}
 
                 if ( e.Field_Type__c == 'Hidden' )  { 
                         newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" />';                        
                 } else if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
                     if ( e.Field_Sub_Type__c == 'Checkbox') {
-                        newHTMLfld = '<span class="labelCol">' + e.field_name__c + '</span><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
+                        newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
 
                         // insert value
                         if ( mapEvalValues.ContainsKey( e.id ))
                             if ( mapEvalValues.get(e.id).boolean__c)
                                 newHTMLFld += ' checked ';
 
-                        newHTMLfld += '/>';
+                        newHTMLfld += '/></div>';
                     } else if (e.Field_Sub_Type__c == 'Dropdown') {
                         // Boolean dropdown values = --None--, Yes, No
-                        newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select  id="' + e.htmlid__c + '" name="' + e.id + '">';
+                        newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                        newHTMLfld += reqfldHTML;
+                        newHTMLfld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '">';
                         newHTMLfld += '<option value="">-- None --</option>';
                         if ( mapEvalValues.ContainsKey( e.id )) {
                             strval = mapEvalValues.get( e.id).Text_Under_250__c;
@@ -121,10 +130,12 @@ public with sharing class GenerateEvalComponent {
                         if (strval == '0')
                             newHTMLfld += ' selected';
                         newHTMLfld += '>No</option>';
-                        newHTMLfld += '</select>';
+                        newHTMLfld += '</select></div></div>';
                     } //TODO: output radio buttons for Radio type
                 } else if (e.Field_Type__c=='String') {
-                    newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+                    newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld += reqfldHTML;
+                    newHTMLfld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' ;
                         if ( e.length__c > 250 )
@@ -137,7 +148,7 @@ public with sharing class GenerateEvalComponent {
                             
                             newHTMLfld += '"';
                     }
-                    newHTMLfld +=  '/>';
+                    newHTMLfld +=  '/></div></div>';
                 } else if (e.Field_Type__c == 'DropDown') {
 
                     // get the value
@@ -146,7 +157,9 @@ public with sharing class GenerateEvalComponent {
 
                     // get the options
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get( e.id);
-                    newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><select id="' + e.htmlid__c + '"  name="' + e.id + '">';
+                    newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld += reqfldHTML;
+                    newHTMLfld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '">';
                     newHTMLfld += '<option value="">-- None --</option>';
                     for ( Eval_Drop_Down__c thisdd : dropdownopts) {
                         newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
@@ -155,21 +168,25 @@ public with sharing class GenerateEvalComponent {
 
                         newHTMLFld += '>' + thisdd.option_name__c + '</option>';
                     }
-                    newHTMLfld += '</select>';
+                    newHTMLfld += '</select></div></div>';
                 }  else if (e.Field_Type__c == 'Date') {
-					newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input class="datepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+					newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld += reqfldHTML;
+                    newHTMLfld += '<input class="datepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 					if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c;
                         newHTMLfld  += '"';
                     }
-                    newHTMLfld +=  '/>';
+                    newHTMLfld +=  '/></div></div>';
 				} else if (e.Field_Type__c == 'Datetime') {
-                    newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><input class="datetimepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+                    newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld += reqfldHTML;
+                    newHTMLfld += '<input class="datetimepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c;
                         newHTMLfld  += '"';
                     }
-                    newHTMLfld +=  '/>';
+                    newHTMLfld +=  '/></div></div>';
                 } else if (e.Field_Type__c == 'Multiselect') {
                 	String selectedVals;
                     if ( mapEvalValues.ContainsKey( e.id )){
@@ -180,19 +197,20 @@ public with sharing class GenerateEvalComponent {
                     }
                     
                 	if ( e.Field_Sub_Type__c == 'Checkbox') {
-	                	newHTMLfld = '<label class="labelCol">' + e.field_name__c + '</label><br/>';
+	                	newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><br/>';
 	                	// get the options
 	                    List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
-		                	newHTMLfld += '<label class="labelCol"></label><input id="' + e.htmlid__c+thisdd.id + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '"';
+		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.id + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '"';
 		                	
 			                // insert value
 	                        if ( mapEvalValues.ContainsKey( e.id ))
 	                            if ( selectedVals.contains(thisdd.Option_Value__c))
 	                                newHTMLFld += ' checked ';
                                 
-	                        newHTMLfld += '/> <span>' + thisdd.Option_Name__c + '</span><br/>';
+	                        newHTMLfld += '/>&nbsp<span>' + thisdd.Option_Name__c + '</span><br/>';
 	                    }
+	                    newHTMLfld +=  '</div>';
                 	}else{
                 		//ToDo: Regular multiselect. 
                 	}
