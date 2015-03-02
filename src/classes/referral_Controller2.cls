@@ -539,7 +539,7 @@ public with sharing class referral_Controller2 {
 		return pg;
 	}
 	public PageReference redirectToSearch() {
-		PageReference pg = new PageReference('/apex/referralSearch?referralId='+referralRecord.id+'&pbrId='+personBeingRefRecord.id+'&pbsId=' +personBeingServedRecord.id);
+		PageReference pg = new PageReference('/apex/referralSearch?referralId='+referralRecord.id+'&pbrId='+personBeingRefRecord.id+'&pbsId=' +personBeingServedRecord.id+'&viewmode=yes');
 		pg.setRedirect(true);
 		return pg;
 	}
