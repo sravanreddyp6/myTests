@@ -11,7 +11,7 @@ public without sharing class AssessmentSetup {
       List<Assessment__c> theseAssessments = new List<Assessment__c>();
       theseAssessments = assessments;
       Map<ID, Assessment__c> assessmentMap = new Map<ID, Assessment__c>();
-      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c FROM Assessment__c WHERE ID IN :assessments]) {
+      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c, AccountPerson__c, AccountPerson__r.PersonContact.Age__c FROM Assessment__c WHERE ID IN :assessments]) {
         assessmentMap.put(assessment.ID, assessment);
       }
       
@@ -87,6 +87,60 @@ public without sharing class AssessmentSetup {
                         }
                     }
                 }
+                // For Resident Assessment
+                else if(a.Type__c=='Resident Assessment'){
+                	if(domainMap.get(assmtDomainLoopId).Assessment_Type2__c=='Resident Assessment') {
+                        dummyAdr = new Assessment_Domain_Result__c();
+                        dummyAdr.Assessment__c = a.Id; 
+                        dummyAdr.Assessment_Domain__c = domainMap.get(assmtDomainLoopId).Id;
+                        insert dummyAdr;                                    
+                    
+                        for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
+                        	if(q.Question_title__c == 'Age'){
+                        		Decimal rating = assessmentMap.get(a.id).AccountPerson__r.PersonContact.Age__c;
+                        		string ratingString;
+                        		Decimal score;
+                        		if(rating < 1){
+                        			ratingString = '<1';
+                        			score = 0;
+                        		}
+                        		else if(rating >= 1 && rating <= 6){
+                        			ratingString = '1 to 6';
+                        			score = 5;
+                        		}
+                        		else if(rating >= 6 && rating <= 65) {
+                        			ratingString = '6 to 65';
+                        			score = 0;
+                        		}
+                        		else{
+                        			ratingString = '>65';
+                        			score = 4;
+                        		}
+                        		
+                        		dummyAr.add(new Assessment_Response__c(
+	                              Assessment__c = a.Id,
+	                              Question__c = q.ID,
+	                              Assessment_Domain_Result__c = dummyAdr.Id,
+	                              Rating__c = ratingString,
+	                              Score__c = score,
+	                              Color__c = NULL)
+                            	);
+                        		
+                        	}
+                        	
+                        	else{ 
+	                            dummyAr.add(new Assessment_Response__c(
+	                              Assessment__c = a.Id,
+	                              Question__c = q.ID,
+	                              Assessment_Domain_Result__c = dummyAdr.Id,
+	                              Rating__c = NULL,
+	                              Color__c = NULL)
+	                            );
+                          	}
+                        }
+                    }
+                	
+                }
                 // END: RBO-289       
                 else if (a.Assessment_Type__c == domainMap.get(assmtDomainLoopId).Assessment_Type__c){
                     dummyAdr = new Assessment_Domain_Result__c();
@@ -95,9 +149,6 @@ public without sharing class AssessmentSetup {
                     insert dummyAdr;
                     
                     // Try question inserts in this loop 11/2/12 11:20 AM     
-                    
-                    
-                    
                     for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
                       // Check if this assessment admission's state is in the
                       // excluded list for this question
@@ -176,8 +227,10 @@ public without sharing class AssessmentSetup {
         Map<Id,Assessment__c> assmtMap = new Map<Id,Assessment__c>();
         
         for (Assessment__c assmt : assessments){
-            assmtId.add(assmt.Id);
-            assmtMap.put(assmt.Id,assmt);
+        	if(assmt.Type__c != 'Resident Assessment'){
+            	assmtId.add(assmt.Id);
+            	assmtMap.put(assmt.Id,assmt);
+        	}
         }
         
         // Re-select the assessments that were already inserted prior to trigger fire
@@ -270,25 +323,38 @@ public without sharing class AssessmentSetup {
         
         for ( Assessment__c a : assessments ){
         
-            List<Assessment__c> allAssmtsOfTypeForAdmission = [SELECT Id, Interval__c, Quarter__c FROM Assessment__c WHERE AccountPerson__c = :a.AccountPerson__c AND Admission__c = :a.Admission__c AND Assessment_Type__c = :a.Assessment_Type__c AND Disregard__c = false ORDER BY Quarter__c];
+            List<Assessment__c> allAssmtsOfTypeForAdmission = [SELECT Id, Interval__c, Quarter__c, Assessment_Date__c FROM Assessment__c WHERE AccountPerson__c = :a.AccountPerson__c AND Admission__c = :a.Admission__c AND Assessment_Type__c = :a.Assessment_Type__c AND Disregard__c = false ORDER BY Quarter__c];
             System.Debug('List allAssmtsOfTypeForAdmission: ' + allAssmtsOfTypeForAdmission);
             
-            // START: Confirm Intake is first assessment of type        
-            if( a.Interval__c == 'Intake' ){
-                if ( allAssmtsOfTypeForAdmission.size() > 0 ){
-                    // Prevent insert and throw error
-                    a.addError('Intake can only be selected as the interval for the first assessment of a given type under an admission. Another assessment of this type was found for the person being served. Please select a different inteveral or contact a system administrator for assistance.');
-                }
-            }
-            // END: Confirm Intake is first assessment of type
+
             
-            // START: Confirm that no assessment can be entered after the discharge.        
+            date earlestAssess;
+            system.debug('this date assess' + a.Assessment_Date__c);
             for ( Assessment__c aprev : allAssmtsOfTypeForAdmission){
+                //set earlest date when null or is greater then the previous assessment loop one in the loop
+                //after the loop we'll check this vs the current assessment in the main loop (a)
+                //eb-360
+                if (earlestAssess == null){earlestAssess = aprev.Assessment_Date__c;}
+                else if (earlestAssess > aprev.Assessment_Date__c){earlestAssess = aprev.Assessment_Date__c;}
+
+                // START: Confirm Intake is first assessment of type  
+                if( a.Interval__c == 'Intake' && aprev.Interval__c == 'Intake' ){
+                    a.addError('The interval Intake can only be selected when there are no other Intake Assessments for this Admission.');
+                }
+                // END: Confirm Intake is first assessment of type
+                //end eb-360
+                // START: Confirm that no assessment can be entered after the discharge. 
                 if (aprev.Interval__c == 'Discharge'){
                     a.addError('A discharge assessment of this assessment type already exists for this admission.  Additional assessments of a given type cannot be created after an assessment with interval \'Discharged\' has been created for that type.  If you require assistance, please contact your system administrator.');
                 }
+                // END: Confirm that no assessment can be entered after the discharge
             }
-            // END: Confirm that no assessment can be entered after the discharge
+            //eb-360
+            if(a.Interval__c == 'Intake' && a.Assessment_Date__c > earlestAssess){
+                String strDate = datetime.newInstance(earlestAssess.year() , earlestAssess.month() , earlestAssess.day()).format('MM/dd/yy');
+                a.addError('Intake Assessments must be the earlest Assessment: The Intake Assessment you are trying to create has an assessment date after an exsiting one (' + strDate + ').');
+            }
+            
             
             // START: Prevent Quarterly and Discharge if Intake not present.
             if( a.Interval__c == 'Quarterly' || a.Interval__c == 'Discharge' ){
@@ -315,7 +381,7 @@ public without sharing class AssessmentSetup {
                 // our number from the object is not Integer type.  So, we
                 // can use this Double and expect integers.
                 Double lastAndHighestQrtrNum = 0;
-                
+                set<Double> AssessmentQuarters = new set<Double>();
                 for ( Assessment__c aprev : allAssmtsOfTypeForAdmission){
 
                     
@@ -358,6 +424,7 @@ public without sharing class AssessmentSetup {
                         // lifetime.
                         if( aprev.Quarter__c > 0 ){
                             lastAndHighestQrtrNum = aprev.Quarter__c;
+                            AssessmentQuarters.add(aprev.Quarter__c);
                         }
                     
                     }
@@ -379,10 +446,19 @@ public without sharing class AssessmentSetup {
                 if ( a.Quarter__c > (lastAndHighestQrtrNumInt + 1) ){
                     qrtrNumAllowed = false;
                 }
-                        System.Debug('Value of qrtrNumAllowed at Line 283: ' + qrtrNumAllowed);             
+                //there may have been a q2 assessment that was disregarded after a q3,
+                // it should allowed to be created even though its no the next in the line
+                
+                
+                if(a.Quarter__c < (lastAndHighestQrtrNumInt + 1) && !AssessmentQuarters.contains(a.Quarter__c )){
+                  qrtrNumAllowed = true;
+                }
+
+
+                System.Debug('Value of qrtrNumAllowed at Line 283: ' + qrtrNumAllowed);             
                 // If qtrNumAllowed equals false after all that, prevent insert.
                 if(qrtrNumAllowed == false){
-                    a.addError('The Quarterly Assessment Number you have indicated, ' + a.Quarter__c + ', does not seem to be the next expected quarterly assessment for this admission.  Please check the numbering of the quarterly assessments under this admission and try again.  If one or more quarterly assessments have been missed, you may need to enter and save a blank assessment for the previous quarter(s) to proceed.  If you need assistance, please contact your system administrator.');
+                    a.addError('The Quarterly Assessment Number you have indicated (' + a.Quarter__c + ') does not seem to be the next expected quarterly assessment (' + (lastAndHighestQrtrNumInt + 1) +') for this admission.  Please check the numbering of the quarterly assessments under this admission and try again.  If one or more quarterly assessments have been missed, you may need to enter and save a blank assessment for the previous quarter(s) to proceed.  If you need assistance, please contact your system administrator.');
                 }   
             
             }

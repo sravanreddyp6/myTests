@@ -54,10 +54,13 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>ASSESSMENT - Stores basic assessment info</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>false</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>CANS_Fields</fullName>
         <description>Dynamically generate summary table for CANS Assessment</description>
@@ -333,6 +336,18 @@ Delete Me</description>
         <label>Disregard</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Evaluation__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Evaluation</label>
+        <referenceTo>Evaluation__c</referenceTo>
+        <relationshipLabel>Assessments</relationshipLabel>
+        <relationshipName>Assessments</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Family_Annual_Income__c</fullName>
@@ -673,6 +688,10 @@ Delete Me</description>
         <picklist>
             <picklistValues>
                 <fullName>FAD Summary</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Resident Assessment</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>

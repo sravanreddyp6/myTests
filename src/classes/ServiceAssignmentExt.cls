@@ -369,7 +369,7 @@ public without sharing class ServiceAssignmentExt {
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
+                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
                 initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,Admission__r.Person_Being_Served__r.LastName,
@@ -1291,24 +1291,90 @@ public void loadProgramList() {
    }
 
 //Commented out by Sravan - 11/25/2014 as Users will not create Admission Assessment from Service Assignemnt page. It will carry over from Referral.
- /*  public PageReference addNurAssessment(){
-        String pbsLastName = theServAssign.Admission__r.Person_Being_Served__r.LastName;
-        if(pbsLastName == null) pbsLastName = '';
-        Evaluation__c nurseEval = new Evaluation__c();
-        nurseEVal.Name = pbsLastName + 'nursesAssessment' + DateTime.Now().format('MMddyy');
-        nurseEval.RecordTypeId = Utility.getEValuationRecordType('NursesAssessment');
-        nurseEval.ServiceAssignment__c = theServAssign.Id;
-
-        insert nurseEval;
-
-        return new PageReference ('/apex/NursingEvaluationView?id='+nurseEval.id);
-
-    } */
-
+   public PageReference addResidentAssessment(){
+   		//List<Evaluation__c> evalonReferral = [SELECT Id FROM Evaluation__c WHERE Referral__c = :theServAssign.Referral__c limit 1 ];
+   		string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
+    	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
+		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
+		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
+		Assessment__c fallAsmt = new Assessment__c(Name=pbsLastName+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = theServAssign.Id,Admission__c = theServAssign.Admission__c, AccountPerson__c = theServAssign.Person_Being_Served__r.AccountId);
+   		if(!referral.Has_Evaluation__c){
+   			Evaluation__c resAsmt = new Evaluation__c(
+   											ServiceAssignment__c = theServAssign.Id,
+   											Name = resAsmtName,
+   											RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
+   														
+   			);
+   			
+   			insert resAsmt;
+   			
+   			fallAsmt.Evaluation__c = resAsmt.Id;
+   			insert fallAsmt;
+   			
+   			return new PageReference ('/apex/NursingEvaluationEdit?id='+resAsmt.Id);
+   		}
+   		else{
+   			Id evalOnReferralId = referral.Evaluations__r[0].Id;
+   			list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
+   			list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
+   			
+   			FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+   			string query = 'SELECT ';
+   			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
+   			
+   			for(Schema.FieldSetMember f: copyFields.getFields()) {
+   				query += f.getFieldPath() + ', ';
+   			}
+   			
+   			query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
+   			
+   			sObject existingEval = Database.Query(query);
+   			string evaluationObj = 'Evaluation__c';
+   			sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
+   			
+   			for(Schema.FieldSetMember f: copyFields.getFields()){
+   				dynObjectEvaluationRecord.put(f.getFieldPath(),existingEval.get(f.getfieldpath()));
+   				
+   			}
+   			dynObjectEvaluationRecord.put('RecordtypeId',Utility.getEvaluationRecordType('NursesAssessment'));
+   			dynObjectEvaluationRecord.put('ServiceAssignment__c',theServAssign.Id);
+   			dynObjectEvaluationRecord.put('Name',resAsmtName);
+   			
+   			insert dynObjectEvaluationRecord;
+   			
+   			fallAsmt.Evaluation__c = dynObjectEvaluationRecord.Id;
+   			insert fallAsmt;
+   			
+   			String respQuery ='SELECT ';
+   			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
+                    respQuery +=f.getFieldPath() + ', ';
+            }
+            
+            respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalOnReferralId AND RecordType.Name IN:responseRectypes';
+            list<Evaluation_Response__c> evalResponses = database.query(respQuery);
+            if(evalResponses!=null){
+                for(Evaluation_Response__c erp : evalResponses){
+                    Evaluation_Response__c newRecord = erp.clone(false);
+                    newRecord.Evaluation__c = dynobjectEvaluationRecord.Id;
+                    if (newRecord.RecordType.Name == 'Allergy') {
+                        newRecord.Person_Being_Served__c = theServAssign.Admission__r.Person_Being_Served__c;
+                    }
+                    tobeCreated.add(newRecord);
+                }
+                
+           		insert tobeCreated;
+   			}
+        
+       		 return new PageReference ('/apex/NursingEvaluationEdit?id='+dynObjectEvaluationRecord.Id);
+    	} 
+    	
+    	return null;
+  	}
+    
     public PageReference createFadAssess(){
         list<Assessment__c> oldAssess = new list<Assessment__c>();
         oldAssess = [select id from assessment__c where type__c ='FAD Summary' AND Service_Assignment__c = :theServAssign.id Order By CreatedDate Desc limit 1];
-
+       
         Assessment__c assess = new Assessment__c ();
         assess.type__c = 'FAD Summary';
         assess.Admission__c = admission.id;
