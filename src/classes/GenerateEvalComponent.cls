@@ -8,10 +8,21 @@ public with sharing class GenerateEvalComponent {
 	public ID evaluationID { get; set;}
 	public ID pbsID { get; set;}
     public string evalSectionId { get; set;}
-    public string evalSectionType { get; set;}
+    public string evalSecType { get; set;}
 
 	public static Map<ID, Eval__c> mapEvalItems;
 	public static Map<ID, Eval_Value__c> mapEvalValues;
+	    public Evaluation_Response__c[] annotations { set;
+        get {
+            return [
+                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
+                       Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluationId
+                 AND RecordType.Name='Annotation'
+            ];
+        }
+    }
 
 	public GenerateEvalComponent( ) {
 		mapEvalItems = new Map<ID, Eval__c>();
@@ -185,6 +196,16 @@ public with sharing class GenerateEvalComponent {
                 	}else{
                 		//ToDo: Regular multiselect. 
                 	}
+                } else if (e.field_type__c == 'BodyMap') {
+                	
+       				newHTMLfld = '<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
+                	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL('WholeBodyNoGrid') + '" id="bodyMap" />';
+                	newHTMLfld += '</div>';
+                    newHTMLfld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
+                    newHTMLfld += '<table id="annotations">';
+                    newHTMLfld += '<tbody></tbody></table></div>';
+                    
+                	
                 }
                 
                 
@@ -313,5 +334,58 @@ public with sharing class GenerateEvalComponent {
 		delete delValues;
 		upsert newValues;
 	}
+	
+	
+	@RemoteAction
+    public static Evaluation_Response__c addOrModifyAnnotation(ID annotationId, String source, Decimal x, Decimal y, Decimal Width, Decimal Height, String Shape, String Text, String evaluationId) {
+        Evaluation_Response__c annotation;
+        if (annotationId!=null) {
+            annotation = [
+                SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
+            ];
+        } else {
+            annotation = new Evaluation_Response__c();
+            annotation.Evaluation__c = evaluationId;
+            annotation.RecordTypeId = source.contains('Neurotab') ? Utility.getEvaluationResponseRecordType('NeuroAnnotation'): Utility.getEvaluationResponseRecordType('Annotation');
+        }
+        annotation.Annotation_Height__c = Height;
+        annotation.Annotation_Width__c = Width;
+        annotation.Annotation_X__c = x;
+        annotation.Annotation_Y__c = y;
+        annotation.Annotation_Source__c = Source;
+        annotation.Annotation_Shape__c = Shape;
+        annotation.Annotation_Text__c = Text;
+        System.debug('Annotation to upsert: ' + annotation);
+        upsert annotation;
+        return annotation;
+    }
+    
+     
+    @RemoteAction
+    public static void deleteAnnotation(ID annotationId) {
+        delete [
+            SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
+        ];
+    }
+    
+    
+    public static String GetResourceURL(String resourceName) {
+
+		List<StaticResource> resourceList = [
+		   SELECT Name, NamespacePrefix, SystemModStamp 
+		   FROM StaticResource 
+		   WHERE Name = :resourceName
+		];
+                    
+		if (resourceList.size() == 1) {
+		   String namespace = resourceList[0].NamespacePrefix;
+		   return '/resource/' 
+		      + resourceList[0].SystemModStamp.getTime() + '/' 
+		      + (namespace != null && namespace != '' ? namespace + '__' : '') 
+		      + resourceName; 
+		} else return '';
+
+}
+
 
 }
