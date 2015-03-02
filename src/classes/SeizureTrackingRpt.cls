@@ -3,6 +3,7 @@ public with sharing class SeizureTrackingRpt {
     public Date enddt {get;set;}
     //public Seizure__c servAssignFromSeiz {get;set;}
     public String servAssign {get;set;}
+    public Service_Assignment__c SA {get; private set;}
     
     public transient Integer totalDays {get;set;}
     public transient list<String> dayCount {get;set;}
@@ -26,6 +27,11 @@ public with sharing class SeizureTrackingRpt {
         timeSlots = new List<String>();
         seizCount = new map<string, Integer>();
         servAssign = ApexPages.currentPage().getParameters().get('saId');
+        
+        if( servAssign != null && servAssign != '') {
+            SA = [SELECT Id, Name, Admission__c, admission__r.Person_Being_Served__c FROM Service_Assignment__c WHERE Id=:servAssign limit 1];
+        }
+        
     }
 
     private String getKey(Datetime dt){
@@ -50,6 +56,8 @@ public with sharing class SeizureTrackingRpt {
         }
 
         totalDays = startdt.daysBetween(enddt);
+ 
+        
         dayCount = new List<String>();
 
         timeSlots = new List<String>();
