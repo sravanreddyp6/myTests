@@ -151,7 +151,7 @@
         </apex:pageBlockSection>
         
             <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
-            <apex:inputHidden value="{!seizure.Service_Assignment__c}" id="seizureEntry_ServiceAssignmentId" />
+            <apex:inputHidden value="{!seizure.Service_Assignment__c}" id="seizureEntry_ServiceAssignmentId" rendered="{!seizure.Service_Assignment__c != ''}"/>
             <apex:inputHidden value="{!seizureStart_DateTime}" id="seizureEntry_startDateTime" />
             <apex:inputHidden value="{!seizureEnd_DateTime}" id="seizureEntry_endDateTime" />
             <apex:inputHidden value="{!retUrl}"/>
