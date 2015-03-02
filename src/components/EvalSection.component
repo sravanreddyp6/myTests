@@ -22,7 +22,10 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
-
+    <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
+    <apex:includeScript value="{!$Resource.AnotoJS}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
+    
     
     <form id="evalForm" method="post" >
     <apex:pageBlock rendered="{!ctlList.size>0}">
@@ -51,7 +54,6 @@
 			
       		console.log(jsonData);
       		// vf remote to save data
-      		debugger;
 			GenerateEvalComponent.saveFields('{!parentID}'
                                              , ( ('{!evalSectionUuid}' != '') ? '{!evalSectionUuid}' : '{!$User.Id}' + '-' + uuid )
                                              , '{!evalSectionType}'
@@ -70,6 +72,50 @@
         });
 	}
 	
+	
+	function addOrModifyAnnotation (annotation, isNew) {
+       if (isNew) {
+           if (annotation.Id !== undefined) {
+               return;  // So that annotations added at initial page loads are not duplicated
+           };
+           annotation.Id = null;
+       }
+       Visualforce.remoting.Manager.invokeAction(
+           '{!$RemoteAction.GenerateEvalComponent2.addOrModifyAnnotation}',
+           annotation.Id,
+           annotation.src,
+           annotation.shapes[0].geometry.x,
+           annotation.shapes[0].geometry.y,
+           annotation.shapes[0].geometry.width,
+           annotation.shapes[0].geometry.height,
+           annotation.shapes[0].type,
+           annotation.text,
+           '{!parentId}',
+           function (result, event) {
+               if (event.status) {
+                   annotation.Id = result.Id;
+               } else {
+                   alert("Failed to update annotation! Error: " + event.message);
+               }
+           }
+       );
+   }
+          
+          
+  	function removeAnnotation( annotation ) {
+  		Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.GenerateEvalComponent2.deleteAnnotation}',
+                    annotation.Id,
+                    function (result, event) {
+                        if (!event.status) {
+                            alert("Failed to delete annotation! Error: " + event.message);
+                            anno.addAnnotation(annotation);
+                        }
+                    }
+                 );
+    }
+    
+      
     jQuery(document).ready(function ($) {
 	    var serializeObject = function ($) {
 	      var o = {};
@@ -89,9 +135,56 @@
 	 	
 	 	$('.datepicker').datetimepicker({timepicker:false, format:'m/d/Y', closeOnDateSelect:true});
 	 	$('.datetimepicker').datetimepicker({});
-	 	
-	});
+
+	   anno.reset();
+                    var el = $('#bodyMap').get(0);
+                    if (el) {
+                        anno.makeAnnotatable(el);
+                    }
+                    var $el = $(el);
+                    
+                    <apex:repeat value="{!annotations}" var="annotation" rendered="{! subcategory == 'Body Map'}">
+                    anno.addAnnotation({
+                        Id: "{!annotation.Id}",
+                        src: $("#bodyMap").prop("src"),
+                        text: "{!JSENCODE(annotation.Annotation_Text__c)}",
+                        shapes: [{
+                            type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
+                            geometry: {
+                                x: {!annotation.Annotation_X__c},
+                                y: {!annotation.Annotation_Y__c},
+                                width: {!annotation.Annotation_Width__c},
+                                height: {!annotation.Annotation_Height__c}
+                            }
+                        }]
+                    });
+                    </apex:repeat>
+                    var createAnnotationElements = function (annotations) {
+                        $('.annotation-number').remove();
+                        $('table#annotations tr').remove();
+                        $.each(annotations, function (index, annotation) {
+                            var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+                            $el.parent().append($divEl);
+                            var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+                            $divEl.append($textEl);
+                            $("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+                        });
+                    }
+                    createAnnotationElements(anno.getAnnotations());
+                    anno.addHandler('onAnnotationCreated', function (annotation) {
+                        createAnnotationElements(anno.getAnnotations());
+                        addOrModifyAnnotation(annotation, true);
+                    });
+                    anno.addHandler('onAnnotationUpdated', function (annotation) {
+                        createAnnotationElements(anno.getAnnotations());
+                        addOrModifyAnnotation(annotation, false);
+                    });
+                    anno.addHandler('onAnnotationRemoved', function (annotation) {
+                        createAnnotationElements(anno.getAnnotations());
+                        removeAnnotation(annotation);
+                    });
 
 
+});
     </script>
 </apex:component>
