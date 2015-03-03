@@ -12,7 +12,7 @@ public with sharing class EvalRepeaters {
 		List<AggregateResult> evalValues = [ select eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) created, owner.name, ownerid 
 												from eval_value__c
 												group by eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, owner.name, ownerid
-												order by eval_section_type__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) desc];
+												order by eval_section_type__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c,  min(createddate) desc];
 
 		String compositeKey = '';
 		
@@ -50,7 +50,8 @@ public with sharing class EvalRepeaters {
 											 from 	eval__c
 											where	eval_type__r.name = :evalname 
 											  and 	eval_type__r.Category__c = :operatingGroup
-										group  by 	category__c, sub_category__c, sub_sub_category__c];
+										group  by 	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c, category__c, sub_category__c, sub_sub_category__c
+										order by	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c];
 		
 		
 		string compositeKey = '';								
