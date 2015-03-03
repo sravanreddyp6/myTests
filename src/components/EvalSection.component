@@ -118,6 +118,12 @@
     
       
     jQuery(document).ready(function ($) {
+    
+    	// if not editable, make all input fields disabled
+    	<apex:outputPanel rendered="{! !editEnabled }" layout="none">
+    	$(':input').prop('disabled', true);
+    	</apex:outputPanel>
+    
 	    var serializeObject = function ($) {
 	      var o = {};
 	      var a = this.serializeArray();

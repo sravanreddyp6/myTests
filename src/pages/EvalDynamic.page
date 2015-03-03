@@ -98,13 +98,14 @@ function  showForm() {
 	<apex:param name="SubCategory" value="" />
 	<apex:param name="evalSectionId" value="" />
 	<apex:param name="evalSectionType" value="" />
+	<apex:param name="canEdit" value="" />
 </apex:actionFunction>
 <apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" />
 </apex:form>
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
 subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
-evalSectionType="{!$CurrentPage.parameters.evalSectionType}" parentID="a11J0000001K8OVIA0"/>
+evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="a11J0000001K8OVIA0"/>
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">  
