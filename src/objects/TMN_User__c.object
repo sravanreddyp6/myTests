@@ -47,10 +47,13 @@
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>true</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>Wizard</fullName>
         <description>Wizard visualforce page</description>
@@ -77,6 +80,94 @@
         <label>Wizard</label>
     </fieldSets>
     <fields>
+        <fullName>Accountable_Approval_Manager__c</fullName>
+        <externalId>false</externalId>
+        <label>Accountable Approval Manager</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Accountable_Manager_Mentor_Email__c</fullName>
+        <externalId>false</externalId>
+        <label>Accountable Manager Mentor Email</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Alias__c</fullName>
+        <externalId>false</externalId>
+        <label>Alias</label>
+        <precision>10</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Approval_Level__c</fullName>
+        <defaultValue>0</defaultValue>
+        <externalId>false</externalId>
+        <label>Approval Level</label>
+        <precision>2</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Business_Unit_Region__c</fullName>
+        <externalId>false</externalId>
+        <label>Business Unit Region</label>
+        <picklist>
+            <picklistValues>
+                <fullName>NEURO-NORTH</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NEURO-SOUTH</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Business_Unit__c</fullName>
+        <externalId>false</externalId>
+        <label>Business Unit</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Hastings South</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Redwood North</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Redwood West</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Compliance_Link__c</fullName>
         <description>Annual Compliance Link</description>
         <externalId>false</externalId>
@@ -88,6 +179,37 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Current_Person_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Current Person Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Alliance</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Contractor</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Employee</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Potential Employee</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Email__c</fullName>
@@ -143,6 +265,38 @@
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Identity_ID__c</fullName>
+        <displayFormat>{000000}</displayFormat>
+        <externalId>false</externalId>
+        <label>Identity ID</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <fullName>Job_Level__c</fullName>
+        <externalId>false</externalId>
+        <label>Job Level</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Job Level 1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Job Level 2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Job Level 3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Job_Status__c</fullName>
         <description>By default, this will be Active for any person in the database. As time goes and the feed only puts in Active users, we&apos;ll need to update the ones in the database but are not in the feed to Inactive.</description>
         <externalId>false</externalId>
@@ -172,6 +326,16 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Last_Day__c</fullName>
+        <description>The last day the person is considered an employee</description>
+        <externalId>false</externalId>
+        <label>Last Day</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>Last_Name__c</fullName>
@@ -207,6 +371,26 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Mentor_Cell_Phone__c</fullName>
+        <externalId>false</externalId>
+        <label>Mentor Cell Phone</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Middle_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Middle Name</label>
+        <length>25</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Network_Username__c</fullName>
         <externalId>false</externalId>
         <label>Network Username</label>
@@ -216,6 +400,24 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Office_Location__c</fullName>
+        <externalId>false</externalId>
+        <label>Office Location</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Office_Phone__c</fullName>
+        <externalId>false</externalId>
+        <label>Office Phone</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
     </fields>
     <fields>
         <fullName>Operating_Group__c</fullName>
@@ -250,6 +452,15 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Personal_Phone__c</fullName>
+        <externalId>false</externalId>
+        <label>Personal Phone</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
         <fullName>Salesforce_User_Account__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -263,6 +474,52 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Service_Line__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Line</label>
+        <picklist>
+            <picklistValues>
+                <fullName>ServiceLine1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ServiceLine2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ServiceLine3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Service_Region__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Region</label>
+        <picklist>
+            <picklistValues>
+                <fullName>ServiceRegion1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ServiceRegion2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ServiceRegion3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Suppress_External_Update__c</fullName>
         <defaultValue>false</defaultValue>
         <description>Whether or not this record is updated nightly from Oracle.  If the value is true, none of the fields will update, and any changes made in SF will remain until this box is reset to false.  This flag is used for the case when a user&apos;s operating group is temporary in Force (such as CM Ludlow).</description>
@@ -271,6 +528,27 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Teleo_ID__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>true</externalId>
+        <label>Teleo ID</label>
+        <length>20</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Termination_Date__c</fullName>
+        <externalId>false</externalId>
+        <label>Termination Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>Unique_Id__c</fullName>
@@ -286,17 +564,6 @@
         <unique>true</unique>
     </fields>
     <fields>
-        <fullName>Work_State_Code__c</fullName>
-        <externalId>false</externalId>
-        <formula>RIGHT( Work_State__c , 2)</formula>
-        <label>Work State Code</label>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>Work_State__c</fullName>
         <externalId>false</externalId>
         <label>Work State</label>
@@ -309,7 +576,7 @@
     </fields>
     <label>TMN User</label>
     <listViews>
-        <fullName>All</fullName>
+        <fullName>Camb</fullName>
         <columns>First_Name__c</columns>
         <columns>Last_Name__c</columns>
         <columns>NAME</columns>
@@ -322,25 +589,60 @@
         <columns>Work_State__c</columns>
         <columns>Hire_Date__c</columns>
         <filterScope>Everything</filterScope>
-        <label>All</label>
+        <filters>
+            <field>Operating_Group__c</field>
+            <operation>startsWith</operation>
+            <value>Camb</value>
+        </filters>
+        <label>Camb</label>
+    </listViews>
+    <listViews>
+        <fullName>Care</fullName>
+        <columns>First_Name__c</columns>
+        <columns>Last_Name__c</columns>
+        <columns>NAME</columns>
+        <columns>Salesforce_User_Account__c</columns>
+        <columns>Email__c</columns>
+        <columns>Employee_Number__c</columns>
+        <columns>Job_Status__c</columns>
+        <columns>Job_Title__c</columns>
+        <columns>Operating_Group__c</columns>
+        <columns>Work_State__c</columns>
+        <columns>Hire_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Operating_Group__c</field>
+            <operation>startsWith</operation>
+            <value>Care</value>
+        </filters>
+        <label>Care</label>
+    </listViews>
+    <listViews>
+        <fullName>Neuro</fullName>
+        <columns>First_Name__c</columns>
+        <columns>Last_Name__c</columns>
+        <columns>NAME</columns>
+        <columns>Salesforce_User_Account__c</columns>
+        <columns>Email__c</columns>
+        <columns>Employee_Number__c</columns>
+        <columns>Job_Status__c</columns>
+        <columns>Job_Title__c</columns>
+        <columns>Operating_Group__c</columns>
+        <columns>Work_State__c</columns>
+        <columns>Hire_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Operating_Group__c</field>
+            <operation>startsWith</operation>
+            <value>Neuro</value>
+        </filters>
+        <label>Neuro</label>
     </listViews>
     <nameField>
         <label>User Name</label>
         <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
-    <namedFilters>
-        <fullName>nf_01IU0000000GF6aMAG_00NJ000000129t0MAA</fullName>
-        <active>true</active>
-        <field>Referral__c.Evaluated_By_Internal__c</field>
-        <filterItems>
-            <field>TMN_User__c.Operating_Group__c</field>
-            <operation>equals</operation>
-            <valueField>$User.Operating_Group__c</valueField>
-        </filterItems>
-        <isOptional>false</isOptional>
-        <name>Referral_Evaluated By (Internal)</name>
-    </namedFilters>
     <pluralLabel>TMN Users</pluralLabel>
     <searchLayouts>
         <customTabListAdditionalFields>Email__c</customTabListAdditionalFields>
