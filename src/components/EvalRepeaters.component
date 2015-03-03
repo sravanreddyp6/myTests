@@ -13,13 +13,18 @@
 		      <div class="panel-body">  
 		      
 		       
-		      <apex:outputPanel rendered="{! CONTAINS( evalDataKeys, 'Shift~' + eval.compositeKey+ '||')}">
+		      <apex:outputPanel rendered="{! CONTAINS( evalDataKeys, 'Shift~' + eval.compositeKey+ '||')}" layout="none">
 		      
+		       <apex:variable value="{!0}" var="counter" />
 		       <apex:repeat value="{! evalDataList['Shift~' + eval.compositeKey]}" var="edata" >
-		       <apex:outputPanel rendered="{!edata.sectiontype=='Shift'}">
-		       <a onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','Shift', {! edata.ownerID == $User.Id });">
+		       <apex:outputPanel rendered="{!edata.sectiontype=='Shift'}" layout="none">
+		       <a href="#" onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','Shift', {! edata.ownerID == $User.Id });">
 				<apex:outputText value="{! edata.owner }"  /> @ <apex:outputText value=" {!edata.created}" />
-				</a><br />
+				</a>
+				<apex:outputText value="<br />" escape="false" rendered="{! counter > 0}" />
+				<apex:variable var="counter" value="{!counter + 1}" />
+				
+				
 				</apex:outputPanel>
 				 
  			</apex:repeat>
@@ -39,7 +44,7 @@
 		      
 		       <apex:repeat value="{! evalDataList['Activity Log~' + eval.compositeKey]}" var="edata" rendered="{! CONTAINS( evalDataKeys, 'Activity Log~' + eval.compositeKey + '||')}">
 		       <apex:outputPanel rendered="{!edata.sectiontype=='Activity Log'}">
-		       <a onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log', {! edata.ownerID == $User.Id });">
+		       <a href="#" onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log', {! edata.ownerID == $User.Id });">
 				<apex:outputText value="{! edata.owner }"  /> @ <apex:outputText value=" {!edata.created}" />
 				</a><br />
 				</apex:outputPanel>
