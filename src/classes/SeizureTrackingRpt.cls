@@ -1,6 +1,7 @@
 public with sharing class SeizureTrackingRpt {
+	public String startdtStr {get;set;}
     public Date startdt {get;set;}
-    public Date enddt {get;set;}
+    private Date enddt {get;set;}
     //public Seizure__c servAssignFromSeiz {get;set;}
     public String servAssign {get;set;}
     public Service_Assignment__c SA {get; private set;}
@@ -18,8 +19,10 @@ public with sharing class SeizureTrackingRpt {
     	return this.seizures;
     }
     
+    private map<String, Integer> integerMonth = new map<String, Integer>();
     
     public SeizureTrackingRpt(){
+    	startdtStr = '';
     	startdt=null;
     	enddt =null;
     	//servAssignFromSeiz = new Seizure__c();
@@ -32,6 +35,18 @@ public with sharing class SeizureTrackingRpt {
             SA = [SELECT Id, Name, Admission__c, admission__r.Person_Being_Served__c FROM Service_Assignment__c WHERE Id=:servAssign limit 1];
         }
         
+        integerMonth.put('January',1);
+        integerMonth.put('February',2);
+        integerMonth.put('March',3);
+        integerMonth.put('April',4);
+        integerMonth.put('May',5);
+        integerMonth.put('June',6);
+        integerMonth.put('July',7);
+        integerMonth.put('August',8);
+        integerMonth.put('September',9);
+        integerMonth.put('October',10);
+        integerMonth.put('November',11);
+        integerMonth.put('December',12);
     }
 
     private String getKey(Datetime dt){
@@ -48,16 +63,22 @@ public with sharing class SeizureTrackingRpt {
     }
 
     public PageReference runreport(){
-//        startdt = Date.today().toStartOfMonth();
-//        enddt = startdt.addMonths(1);
+    	
+        try {
+            startdt = Date.newInstance(Integer.valueOf(startdtStr.substring(startdtStr.length() - 4)), integerMonth.get(startdtStr.substring(0, startdtStr.length() - 5) ), 1);
+            enddt = startdt.addMonths(1);
+        }  catch(Exception e){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Invalid month/year.'));
+            return null;
+        }
+
+        
         if (servAssign == null || servAssign == '') {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Service Assigment is required.'));
 			return null;
         }
 
         totalDays = startdt.daysBetween(enddt);
- 
-        
         dayCount = new List<String>();
 
         timeSlots = new List<String>();
@@ -69,7 +90,7 @@ public with sharing class SeizureTrackingRpt {
         }
 
         seizCount = new map<string, Integer>();
-        for (Integer d=0; d<=totalDays; d++) {
+        for (Integer d=0; d<totalDays; d++) {
             dayCount.add(String.valueOf(startdt.addDays(d).day() ));
             for (String t : timeSlots) {
                 seizCount.put(String.valueOf(startdt.addDays(d).day() )+'-'+t, 0);

@@ -1,7 +1,9 @@
 <apex:page controller="SeizureTrackingRpt" title="Seizure Episodes" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab"  docType="html-5.0"  readOnly="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-<apex:includeScript value="{!$Resource.jquery}"/>
+<!-- <apex:includeScript value="{!$Resource.jquery}"/> -->
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
 <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
@@ -76,6 +78,10 @@
     font-weight: bold;
     padding: 12px;
 }
+
+.ui-datepicker-calendar {
+    display: none;
+    }
 </style>
 
     <c:PersonalRecord pbsId="{!SA.admission__r.Person_Being_Served__c}" servAssignId="{!SA.Id}" admId="{!SA.Admission__c}" parentPage="SeizureListView" />
@@ -91,19 +97,17 @@
 <!--                         value="{!servAssignFromSeiz.Service_Assignment__c}" -->
 <!--                         required="true" />  -->
         <apex:inputText id="start_date" 
-                        size="10" 
-                        onfocus="DatePicker.pickDate(false, this , false);" 
-                        styleClass="datepicker" 
-                        label="Start Date"  
-                        value="{!startdt}"
+                        styleClass="date-picker" 
+                        label="Date"  
+                        value="{!startdtStr}"
                         required="true" />
-        <apex:inputText id="end_date" 
-                        size="10" 
-                        onfocus="DatePicker.pickDate(false, this , false);" 
-                        styleClass="datepicker" 
-                        label="End Date"  
-                        value="{!enddt}"
-                        required="true" /> 
+<!--         <apex:inputText id="end_date"  -->
+<!--                         size="10"  -->
+<!--                         onfocus="DatePicker.pickDate(false, this , false);"  -->
+<!--                         styleClass="datepicker"  -->
+<!--                         label="End Date"   -->
+<!--                         value="{!enddt}" -->
+<!--                         required="true" />  -->
         <apex:pageBlockSectionItem >
             <apex:outputPanel ></apex:outputPanel>
             <apex:outputPanel >
@@ -175,6 +179,22 @@ function createtbl(){
     j$('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
 }
 j$(document).ready(function(){
+
+j$('.date-picker').datepicker( {
+    changeMonth: true,
+    changeYear: true,
+    showButtonPanel: true,
+    dateFormat: 'MM yy',
+    onClose: function(dateText, inst) { 
+        var month = j$("#ui-datepicker-div .ui-datepicker-month :selected").val();
+        var year = j$("#ui-datepicker-div .ui-datepicker-year :selected").val();
+        j$(this).datepicker('setDate', new Date(year, month, 1));
+    },
+     onGenerate:function(dp, input){
+        j$(".ui-datepicker-div").css( "top", "+=10" );
+    } 
+});
+
     createtbl();
 });
 
