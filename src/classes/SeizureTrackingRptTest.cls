@@ -4,7 +4,7 @@ private class SeizureTrackingRptTest {
    static testmethod void simpleTests(){
         TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
         
-        Datetime stEndTime = Datetime.now().addDays(-2);
+        Datetime stEndTime = Datetime.newInstance(2015,1,5).addDays(-2);
         
         List<Seizure__c> seizures = new List<Seizure__c>();
 
@@ -22,8 +22,7 @@ private class SeizureTrackingRptTest {
         ApexPages.currentPage().getParameters().put('saId', testData.theSA.Id);
         
         SeizureTrackingRpt controller = new SeizureTrackingRpt();
-        controller.startdt = stEndTime.date();
-        controller.enddt  = stEndTime.date().addDays(10);
+        controller.startdtStr = 'January 2015';
         
         controller.runreport();
         system.assert(controller.getSeizures().size() == 10);
