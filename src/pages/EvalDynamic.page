@@ -24,7 +24,7 @@
 <script>
 
 function clearPanel() {
-   $("#theForm").remove();
+   $("#panel-form").empty();
 }
 
 function  showForm() {
@@ -77,7 +77,10 @@ function  showForm() {
           <div class="blog-post">
 
 	    <div class="panel panel-info">
-	      <div class="panel-heading"><h3 class="panel-title">Enter and Save</h3></div>
+	      <div class="panel-heading clearfix">
+	      <h3 class="panel-title pull-left">Enter and Save</h3>
+	      <div class="pull-right"><a class="btn" onclick="clearPanel();" >X</a></div>
+	      </div>
 	      <div id="panel-form" class="panel-body">
 
               </div>
