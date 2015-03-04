@@ -48,6 +48,7 @@ public with sharing class EvalRepeaters {
 	
 	private void buildEvalDataList( List<EvalRepeaterWrapper> workingEvals ) {
 		
+		numErrors = 0;
 		evalDataKeys = '';
 				
 		List<AggregateResult> evalValues = [ select eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) created, owner.name, ownerid 
@@ -111,8 +112,10 @@ public with sharing class EvalRepeaters {
 				compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
 				system.debug(compositeKey);
 				for (EvalRepeaterWrapper e : workingEvals)
-					if ( e.compositekey == compositeKey) 
+					if ( e.compositekey == compositeKey) {
 						e.numErrors = (integer)ag.get('expr0');
+						numErrors += 1;
+					}
 			}
 		}
 		

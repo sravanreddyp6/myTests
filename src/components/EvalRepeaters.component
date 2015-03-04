@@ -2,18 +2,17 @@
 	<apex:attribute name="parentId" description="Id of the parent Evaluation record" type="Id" assignTo="{!evaluationId}" />
     <apex:attribute name="evaltype" description="Kind of eval" type="string" assignTo="{!evalname}" required="true" />
     <apex:attribute name="opGrp" description="Operating group for eval" type="string" assignTo="{!operatingGroup}" required="true" />
-    
+    <apex:attribute name="onComplete" description="JavaScript function to call when rendered" type="string" required="false" />
     <apex:pageBlock >
     
 	    <apex:repeat value="{!evals}" var="eval">
 
-		    <div id="{! eval.compositeKey + 'shift'}" class="panel {!if ( eval.numErrors > 0, 'panel-danger', 'panel-success')}">
+		    <div id="{! eval.compositeKey + 'shift'}" class="panel {!if ( eval.numErrors > 0, 'panel-danger', if ( CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'), 'panel-success', 'panel-warning'))}">
 		    
 		      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- ' + evaltype}</h3></div>
 		      <div class="panel-body">  
-		      
-		       
-		      <apex:outputPanel rendered="{! CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||')}" layout="none">
+
+		      <apex:outputPanel rendered="{! AND( NOT(ISBLANK(evalDataKeys)), CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'))}" layout="none">
 		      
 		       <apex:variable value="{!0}" var="counter" />
 		       <apex:repeat value="{! evalDataList[evaltype + '~' + eval.compositeKey]}" var="edata" >
@@ -28,7 +27,6 @@
 				</apex:outputPanel>
 				 
  			</apex:repeat>
- 			
  			</apex:outputPanel>
  			
 			<a id="{! eval.compositeKey}Summary" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="alert('PDF with summary');">V</a>
@@ -37,7 +35,8 @@
 			<a id="{! eval.compositeKey}" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="createPanel('{!evaltype}', '{!eval.cat}', '{!eval.subcat}', null, '{! IF(CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'),'Activity Log',evaltype )}', true);">A</a>
 	        </div>
 	</div>
-	<apex:outputPanel layout="none" rendered="{! CONTAINS( evalDataKeys, 'Activity Log~' + eval.compositeKey + '||')}">
+	 
+	<apex:outputPanel layout="none" rendered="{! AND(NOT(ISBLANK(evalDataKeys)), CONTAINS( evalDataKeys, 'Activity Log~' + eval.compositeKey + '||'))}">
 	<div id="{! eval.compositeKey + 'activitylog'}" class="panel panel-default">	   
 	   	    
 	   	      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- Activity Log'}</h3></div>
@@ -50,12 +49,27 @@
 				</a><br />
 				</apex:outputPanel>
  			</apex:repeat>
- 		
+ 	
 			</div>
 	   	 </div> 
 	   	 </apex:outputPanel>
-		    
-	    </apex:repeat>    
+	       	    
+	    </apex:repeat>
+	    
+	 
 	</apex:pageBlock>
 	
+	<script>
+		jQuery.noConflict();
+		jQuery(document).ready(function ($) {
+			if ('{!onComplete}' === "") {
+            	return;
+            } else {
+            	// evaluate the function
+            	<apex:outputPanel layout="none">
+            	 {! onComplete };
+            	</apex:outputPanel>
+            }
+            
+    </script>
 </apex:component>
