@@ -369,7 +369,7 @@ public without sharing class ServiceAssignmentExt {
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
+                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
                 initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,Admission__r.Person_Being_Served__r.LastName,
@@ -1292,54 +1292,61 @@ public void loadProgramList() {
 
 //Commented out by Sravan - 11/25/2014 as Users will not create Admission Assessment from Service Assignemnt page. It will carry over from Referral.
    public PageReference addResidentAssessment(){
-   		//List<Evaluation__c> evalonReferral = [SELECT Id FROM Evaluation__c WHERE Referral__c = :theServAssign.Referral__c limit 1 ];
-   		string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
-    	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
-		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
-		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-		
-   		if(!referral.Has_Evaluation__c){
-   			Evaluation__c resAsmt = new Evaluation__c(
-   											ServiceAssignment__c = theServAssign.Id,
-   											Name = resAsmtName,
-   											RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
-   														
-   			);
-   			
-   			insert resAsmt;
-   			
-   			return new PageReference ('/apex/NursingEvaluationEdit?id='+resAsmt.Id);
-   		}
-   		else{
-   			Id evalOnReferralId = referral.Evaluations__r[0].Id;
-   			list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
-   			list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
-   			FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
-   			string query = 'SELECT ';
-   			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
-   			
-   			for(Schema.FieldSetMember f: copyFields.getFields()) {
-   				query += f.getFieldPath() + ', ';
-   			}
-   			
-   			query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
-   			
-   			sObject existingEval = Database.Query(query);
-   			string evaluationObj = 'Evaluation__c';
-   			sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
-   			
-   			for(Schema.FieldSetMember f: copyFields.getFields()){
-   				dynObjectEvaluationRecord.put(f.getFieldPath(),existingEval.get(f.getfieldpath()));
-   				
-   			}
-   			dynObjectEvaluationRecord.put('RecordtypeId',Utility.getEvaluationRecordType('NursesAssessment'));
-   			dynObjectEvaluationRecord.put('ServiceAssignment__c',theServAssign.Id);
-   			dynObjectEvaluationRecord.put('Name',resAsmtName);
-   			
-   			insert dynObjectEvaluationRecord;
-   			
-   			String respQuery ='SELECT ';
-   			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
+        //List<Evaluation__c> evalonReferral = [SELECT Id FROM Evaluation__c WHERE Referral__c = :theServAssign.Referral__c limit 1 ];
+        string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
+        string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
+        string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
+        string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
+        Assessment__c fallAsmt = new Assessment__c(Name=pbsLastName+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = theServAssign.Id,Admission__c = theServAssign.Admission__c, AccountPerson__c = theServAssign.Person_Being_Served__r.AccountId);
+        if(!referral.Has_Evaluation__c){
+            Evaluation__c resAsmt = new Evaluation__c(
+                                            ServiceAssignment__c = theServAssign.Id,
+                                            Name = resAsmtName,
+                                            RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
+                                                        
+            );
+            
+            insert resAsmt;
+            
+            fallAsmt.Evaluation__c = resAsmt.Id;
+            insert fallAsmt;
+            
+            return new PageReference ('/apex/NursingEvaluationEdit?id='+resAsmt.Id);
+        }
+        else{
+            Id evalOnReferralId = referral.Evaluations__r[0].Id;
+            list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
+            list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
+            
+            FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+            string query = 'SELECT ';
+            FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
+            
+            for(Schema.FieldSetMember f: copyFields.getFields()) {
+                query += f.getFieldPath() + ', ';
+            }
+            
+            query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
+            
+            sObject existingEval = Database.Query(query);
+            string evaluationObj = 'Evaluation__c';
+            sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
+            
+            for(Schema.FieldSetMember f: copyFields.getFields()){
+                dynObjectEvaluationRecord.put(f.getFieldPath(),existingEval.get(f.getfieldpath()));
+                
+            }
+            dynObjectEvaluationRecord.put('RecordtypeId',Utility.getEvaluationRecordType('NursesAssessment'));
+            dynObjectEvaluationRecord.put('ServiceAssignment__c',theServAssign.Id);
+            dynObjectEvaluationRecord.put('Name',resAsmtName);
+            
+            insert dynObjectEvaluationRecord;
+            
+            fallAsmt.Evaluation__c = dynObjectEvaluationRecord.Id;
+            insert fallAsmt;
+            
+            String respQuery ='SELECT ';
+            for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
                     respQuery +=f.getFieldPath() + ', ';
             }
             
@@ -1355,14 +1362,14 @@ public void loadProgramList() {
                     tobeCreated.add(newRecord);
                 }
                 
-           		insert tobeCreated;
-   			}
+                insert tobeCreated;
+            }
         
-       		 return new PageReference ('/apex/NursingEvaluationEdit?id='+dynObjectEvaluationRecord.Id);
-    	} 
-    	
-    	return null;
-  	}
+             return new PageReference ('/apex/NursingEvaluationEdit?id='+dynObjectEvaluationRecord.Id);
+        } 
+        
+        return null;
+    }
     
     public pageReference addResAsmt(){
   		string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
@@ -1383,12 +1390,12 @@ public void loadProgramList() {
 		
 		
 			if(referral.Has_Evaluation__c) {
-	   			Id evalOnReferralId = referral.Evaluations__r[0].Id;
-	   			FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+	   			Id evalOnReferralId = referral.Evaluations__r[0].Id; //Grab the Id of the Existing evaluation record on referral
+	   			//FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses; //Calling the Field set
 	   			string query = 'SELECT ';
-	   			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
-	   			set<String> getEvals = new set<String>();
+	   			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment; // Calling the Field set where the about to be cloned field paths are stored
 	   			
+	   			set<String> getEvals = new set<String>(); //Collection to store the API names of the Fields which will be used in Query (API_Name_Flag__c)
 	   			for(Schema.FieldSetMember f: copyFields.getFields()) {
 	   				getEvals.add(f.getFieldPath());
 	   				query += f.getFieldPath() + ', ';
@@ -1398,23 +1405,47 @@ public void loadProgramList() {
 	   			sObject existingEval = Database.Query(query);
 	   			
 	   			Map<id,Eval__c> evalMap = new Map<id,Eval__c>([SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals]);
+	   			//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
+	   			set<string> catSubcat = new set<string>();
+	   			Map<string, string> uniqueTimeMap = new Map<string, string>();
 	   			
-	   			system.debug('EvalMApEvalMap+++++++++++++'+evalMap.values());
-	   			system.debug('EvalMapSize'+evalMap.size());
+	   			for(Eval__c ee: evalMap.values()){
+	   				catSubcat.add(ee.Category__c+'~'+ee.sub_category__c);
+	   			}
+	   			
+	   			string timeString =  Userinfo.getUserId()+'-'+DateTime.now().getTime();
+	   			integer n = 0;
+	   			system.debug('Strings+++++++++++++++++++++++'+catSubcat);
+	   			for(String s: catSubcat){
+	   				n = n+1;
+	   				uniqueTimeMap.put(s,timeString+string.valueOf(n));
+	   			}
+	   			
+	   			system.debug('timeMap+++++++++++=='+uniqueTimeMap);
+	   			
+	   			//Create Corresponding Eval Value Records
 	   			List<Eval_Value__c> values = new List<Eval_value__c>();
 	   			Eval_Value__c value;
-	   			integer i=0;
+	   			
 	   			for(Eval__c eval: evalMap.values()){
 	   				
 	   				string fieldName = eval.API_Name_Flag__c;
-	   				
 	   				if(existingEval.get(fieldName) != null ){
 	   					value = new Eval_Value__c();
 	   					value.Eval__c = eval.Id;
-	   					value.eval_Section_Id__c = Userinfo.getUserId()+'-'+DateTime.now().getTime();
 						value.Eval_Section_Type__c = 'Residential';
 						value.what_id__c = resAsmt.Id;
 						value.what_id_object__c = 'Evaluation__c';
+						
+						string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
+						
+						if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
+							system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
+							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
+							
+						}
+						
+						//Handle All Data Types
 						
 						if ( eval.Field_Type__c == 'Boolean'){
 							if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
@@ -1445,12 +1476,8 @@ public void loadProgramList() {
 								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
 						}
 						
-						
-						i=i+1;
-						System.debug('valuevalue+++++++++'+String.valueOf(existingEval.get(fieldName))+i+'====='+eval.Field_Name__c);
 						values.add(value);
-						
-	   					
+					
 	   				}
 	   					
 	   			}
@@ -1458,6 +1485,7 @@ public void loadProgramList() {
 	       		 insert values;
     	
 			}
+		// return to Eval Dynamic Page
 		return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
   	}
     
