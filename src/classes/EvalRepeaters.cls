@@ -2,49 +2,20 @@ public with sharing class EvalRepeaters {
 	public ID evaluationID { get; set;}
 	public string evalname{get; set;}
 	public string operatingGroup{get; set;}
+	public boolean anyErrors { get; set; }
+	public boolean anyEmpty{ get { return (numEmpty > 0);} set;}
+	
+	private integer numEmpty;
 	
 	public String evalDataKeys { get; set;}
-	public Map<String, List<EvalValueWrapper>> evalDataList;
-	public Map<String, List<EvalValueWrapper>> getEvalDataList() {
-		
-		Map<String, List<EvalValueWrapper>> evalData = new Map<String, List<EvalValueWrapper>>();
-		
-		List<AggregateResult> evalValues = [ select eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) created, owner.name, ownerid 
-												from eval_value__c
-												group by eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, owner.name, ownerid
-												order by eval_section_type__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c,  min(createddate) desc];
+	public Map<String, List<EvalValueWrapper>> evalDataList { get; set;}
 
-		String compositeKey = '';
-		
-		for (AggregateResult ag : evalValues){
-			
-			compositeKey = (string)ag.get('eval_section_type__c') + '~' + (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
-			EvalValueWrapper evw = new EvalValueWrapper(String.valueof(ag.get('eval_section_type__c')), String.valueof(ag.get('eval_section_id__c')), String.valueOf(ag.get('category__c')), String.valueOf(ag.get('sub_category__c')), 
-												String.valueOf(ag.get('sub_sub_category__c')), String.valueOf(ag.get('name')), String.valueOf( ag.get('ownerid')), DateTime.valueOf( ag.get('created')), String.valueOf( ag.get('eval_section_id__c')) );
-			
-			
-			if ( evalData.containsKey( compositeKey )) {
-				// add this entry to the list		
-				(evalData.get( compositeKey)).add(evw);
-			}	else {
-				// create a new list and add entry
-				evalData.put( compositeKey, new List<EvalValueWrapper>{ evw });
-			}	
-		}
-		system.debug(evalData);
-		
-		
-		for ( String key: evalData.keySet()) {
-			evalDataKeys += key + '||';
-		}
-		system.debug(evalDataKeys);
-		return evalData;
-		
-	}
-	
+	// this is the list of all possible cat/subcat for this eval type	
 	public list<EvalRepeaterWrapper> evals;
 	public list<EvalRepeaterWrapper> getEvals(){
-		evals = new list<EvalRepeaterWrapper>();
+		
+		List<EvalRepeaterWrapper> evalWraps = new list<EvalRepeaterWrapper>();
+		evalDataList = new Map<String, List<EvalValueWrapper>>() ;
 		
 		List<AggregateResult> evalTypes = [select	category__c, sub_category__c, sub_sub_category__c
 											 from 	eval__c
@@ -58,23 +29,84 @@ public with sharing class EvalRepeaters {
 		for (AggregateResult ag : evalTypes){
 			compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
 			
-			evals.add(new EvalRepeaterWrapper(String.valueOf(ag.get('category__c')), String.valueOf(ag.get('sub_category__c')), 
+			evalWraps.add(new EvalRepeaterWrapper(String.valueOf(ag.get('category__c')), String.valueOf(ag.get('sub_category__c')), 
 												String.valueOf(ag.get('sub_sub_category__c')), compositeKey ));
-			evalDataList.put( compositeKey, new List<EvalValueWrapper>());	// stick in an empty list
+												
 		}
-		system.debug(evals);
-		return evals;
+		system.debug(evalWraps);
+		
+		// all sections are empty to start
+		numEmpty = evalWraps.size();
+		system.debug( 'STARTING EMPTY: ' + numEmpty);	
+		buildEvalDataList();
+		
+		system.debug( 'ANY EMPTY? ' + numEmpty);
+		return evalWraps;
 	}
 	
-	public EvalRepeaters(){
-		evalDataList = new Map<String, List<EvalValueWrapper>>();
+	
+	private void buildEvalDataList() {
+		
 		evalDataKeys = '';
-		getEvalDataList();
+				
+		List<AggregateResult> evalValues = [ select eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) created, owner.name, ownerid 
+												from eval_value__c
+												where what_id__c = :evaluationID
+												group by eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, owner.name, ownerid
+												order by eval_section_type__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c,  min(createddate) desc];
+
+		String compositeKey = '';
+		
+		for (AggregateResult ag : evalValues){
+			
+			compositeKey = (string)ag.get('eval_section_type__c') + '~' + (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
+			EvalValueWrapper evw = new EvalValueWrapper(String.valueof(ag.get('eval_section_type__c')), String.valueof(ag.get('eval_section_id__c')), String.valueOf(ag.get('category__c')), String.valueOf(ag.get('sub_category__c')), 
+												String.valueOf(ag.get('sub_sub_category__c')), String.valueOf(ag.get('name')), String.valueOf( ag.get('ownerid')), DateTime.valueOf( ag.get('created')), String.valueOf( ag.get('eval_section_id__c')) );
+			
+			if ( evalDataList.containsKey( compositeKey )) {
+				
+				// if it's the base type, reduce the number of empty sections
+				if ( evw.sectionType == evalname) {
+					numEmpty -= (evalDataList.get(compositeKey)).size() == 0 ? 1 : 0;
+					system.debug( compositeKey + ' is not empty');
+				}
+						
+				// add this entry to the list
+				(evalDataList.get( compositeKey)).add(evw);
+			}	else {	
+				// reduce the number of empty sections
+				if ( evw.sectionType == evalname){
+						system.debug( compositeKey + ' is not empty');
+						numEmpty -= 1;
+				}
+				
+				// create a new list and add entry
+				evalDataList.put( compositeKey, new List<EvalValueWrapper>{ evw });
+			}	
+		}
+		system.debug('Data List keys ' +  evalDataList.keyset().size());
+		system.debug(evalDataList);
+		
+		for ( String key: evalDataList.keySet()) {
+			evalDataKeys += key + '||';
+		}
+		system.debug(evalDataKeys);
+	
+		
+	}
+	
+	
+	public EvalRepeaters(){
+		
 		
 	}
 
 
-
+	public boolean getanyErrors() { 
+		// return whether there is an error in any section for this eval 
+		return false;
+	}
+	
 	public class EvalValueWrapper {
 		
 		public string sectiontype { get; set;}
