@@ -1,13 +1,5 @@
 <apex:page title="Shift Notes" Controller="EvalDynamicExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
 
-<head>
-
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />      
     <!-- Bootstrap core CSS -->    
     <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}"/>
@@ -32,12 +24,15 @@ function  showForm() {
 	bindSubmitEvent();
 }
 
+function setupButtons( disableFlag ) {
+if ( disableFlag)
+	$("#btnESign").toggleClass('btn-success btn-danger');
+else
+	$("#btnESign").toggleClass('btn-danger btn-success');
+}
+
 </script>
 
-
- </head>
-
-  <body>
 
     <div class="blog-masthead">
       <div class="container">
@@ -55,13 +50,13 @@ function  showForm() {
       <div class="row">
 
         <div class="col-sm-4"> 
-          <div id="here" class="sidebar-module-sm sidebar-module-inset">
+          <div class="sidebar-module-sm sidebar-module-inset">
 	    <h4>{!$User.FirstName} {!$User.LastName}</h4>
 	    <p>Shift: 07:00-14:00</p>
-		<a id="addTrach" class="btn btn-success btn-sm pull-left" href="#" role="button" onClick="alert('Sign form comes up!');">Head to Toe <br/>(click to sign)</a>
-		<a id="addTrach" class="btn btn-danger btn-sm pull-right" href="#" role="button" onClick="alert('Sign form comes up!');">Shift Note <br/>(click to sign)</a>
+		<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="alert('Sign form comes up!');">{!$CurrentPage.parameters.evaltype} <br/>(click to sign)</a>
+		<a id="btnDone" class="btn btn-danger btn-sm pull-right" href="#" role="button" onClick="alert('Sign form comes up!');">Done<br/>(click to sign)</a>
 	  </div>
-          <div id="here" class="sidebar-module sidebar-module-inset">
+          <div class="sidebar-module sidebar-module-inset">
 
 		<apex:outputPanel id="evalRepeaters" layout="none">
 		<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
@@ -134,6 +129,5 @@ evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$Cur
     <apex:facet name="stop"> </apex:facet>         
 </apex:actionStatus>
 
-</body>
   
 </apex:page>
