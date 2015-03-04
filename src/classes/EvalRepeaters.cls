@@ -2,10 +2,11 @@ public with sharing class EvalRepeaters {
 	public ID evaluationID { get; set;}
 	public string evalname{get; set;}
 	public string operatingGroup{get; set;}
-	public boolean anyErrors { get; set; }
+	public boolean anyErrors { get { return (numErrors > 0);} set; }
 	public boolean anyEmpty{ get { return (numEmpty > 0);} set;}
 	
 	private integer numEmpty;
+	private integer numErrors;
 	
 	public String evalDataKeys { get; set;}
 	public Map<String, List<EvalValueWrapper>> evalDataList { get; set;}
@@ -38,20 +39,21 @@ public with sharing class EvalRepeaters {
 		// all sections are empty to start
 		numEmpty = evalWraps.size();
 		system.debug( 'STARTING EMPTY: ' + numEmpty);	
-		buildEvalDataList();
-		
+		buildEvalDataList( evalwraps );
 		system.debug( 'ANY EMPTY? ' + numEmpty);
+		system.debug( 'ANY ERRORS? ' + numErrors);
 		return evalWraps;
 	}
 	
 	
-	private void buildEvalDataList() {
+	private void buildEvalDataList( List<EvalRepeaterWrapper> workingEvals ) {
 		
 		evalDataKeys = '';
 				
 		List<AggregateResult> evalValues = [ select eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) created, owner.name, ownerid 
 												from eval_value__c
 												where what_id__c = :evaluationID
+												and eval__r.field_name__c not in ('isValid', 'ErrorMsg')
 												group by eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, owner.name, ownerid
 												order by eval_section_type__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c,  min(createddate) desc];
 
@@ -62,6 +64,7 @@ public with sharing class EvalRepeaters {
 			compositeKey = (string)ag.get('eval_section_type__c') + '~' + (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
 			EvalValueWrapper evw = new EvalValueWrapper(String.valueof(ag.get('eval_section_type__c')), String.valueof(ag.get('eval_section_id__c')), String.valueOf(ag.get('category__c')), String.valueOf(ag.get('sub_category__c')), 
 												String.valueOf(ag.get('sub_sub_category__c')), String.valueOf(ag.get('name')), String.valueOf( ag.get('ownerid')), DateTime.valueOf( ag.get('created')), String.valueOf( ag.get('eval_section_id__c')) );
+			
 			
 			if ( evalDataList.containsKey( compositeKey )) {
 				
@@ -82,7 +85,8 @@ public with sharing class EvalRepeaters {
 				
 				// create a new list and add entry
 				evalDataList.put( compositeKey, new List<EvalValueWrapper>{ evw });
-			}	
+			}
+				
 		}
 		system.debug('Data List keys ' +  evalDataList.keyset().size());
 		system.debug(evalDataList);
@@ -92,6 +96,26 @@ public with sharing class EvalRepeaters {
 		}
 		system.debug(evalDataKeys);
 	
+	
+		List<AggregateResult> evalErrors = [ select count(id), eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) created, owner.name, ownerid 
+												from eval_value__c
+												where what_id__c = :evaluationID
+												and eval__r.field_name__c = 'isValid'
+												and boolean__c = false
+												group by eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, owner.name, ownerid
+												order by eval_section_type__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c,  min(createddate) desc];
+		compositeKey = '';
+		
+		for (AggregateResult ag : evalErrors){
+			if ( (string)ag.get('eval_section_type__c') == evalname ) { // only look for errors in the base sections
+				compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
+				system.debug(compositeKey);
+				for (EvalRepeaterWrapper e : workingEvals)
+					if ( e.compositekey == compositeKey) 
+						e.numErrors = (integer)ag.get('expr0');
+			}
+		}
+		
 		
 	}
 	
@@ -138,12 +162,14 @@ public with sharing class EvalRepeaters {
 		public string subcat{get; set;}
 		public string subsubcat{get; set;}
 		public string compositeKey{ get; set; }
+		public integer numErrors { get; set; }
 		
 		public EvalRepeaterWrapper(String cat, string subcat, string subsubcat, string compKey){
 			this.cat = cat;
 			this.subcat = subcat;
 			this.subsubcat = subsubcat;
 			this.compositeKey = compKey;
+			this.numErrors = 0;
 		}
 	}
 
