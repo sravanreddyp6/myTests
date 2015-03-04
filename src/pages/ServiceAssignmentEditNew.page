@@ -1037,10 +1037,10 @@ END: Uncomment to have the element collapsed by default -->
 		<a name="ShiftAssessments" id="ShiftAssessments"></a>
 		<apex:pageBlock title="Resident Assessment and Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
 			<div class="pbHeaderButton">
-				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c!='Inactive' && evaluations.size = 0}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
+				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none" />
 					<apex:actionStatus id="AddResidentAssessmentStatus" >
 						<apex:facet name="start">
-							<apex:outputText> <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /><i><b>Please wait..</b></i></apex:outputText>
+							<apex:outputText > <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /><i><b>Please wait..</b></i></apex:outputText>
 						</apex:facet>
 						<apex:facet name="stop" />
 					</apex:actionStatus>
