@@ -55,6 +55,17 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
+        <fullName>API_Name_Flag__c</fullName>
+        <description>This field is created to save the API name of the Evaluation field to clone the values from Referral eval to Resident Assessment</description>
+        <externalId>false</externalId>
+        <label>API Name Flag</label>
+        <length>72</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Cat_Seq_Text__c</fullName>
         <description>text version of sequence</description>
         <externalId>false</externalId>
@@ -378,6 +389,48 @@
         <columns>RegEx__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>Head_to_Toe</fullName>
+        <columns>NAME</columns>
+        <columns>Category__c</columns>
+        <columns>Category_Sequence__c</columns>
+        <columns>Eval_Type__c</columns>
+        <columns>Field_Name__c</columns>
+        <columns>Field_Sequence__c</columns>
+        <columns>Field_Type__c</columns>
+        <columns>Field_Sub_Type__c</columns>
+        <columns>htmlid__c</columns>
+        <columns>Sub_Category__c</columns>
+        <columns>Sub_Category_Sequence__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Eval_Type__c</field>
+            <operation>equals</operation>
+            <value>Head to Toe</value>
+        </filters>
+        <label>Head to Toe</label>
+    </listViews>
+    <listViews>
+        <fullName>Resident_Evals</fullName>
+        <columns>NAME</columns>
+        <columns>Eval_Type__c</columns>
+        <columns>Category__c</columns>
+        <columns>Category_Sequence__c</columns>
+        <columns>Field_Name__c</columns>
+        <columns>API_Name_Flag__c</columns>
+        <columns>Field_Sequence__c</columns>
+        <columns>Field_Type__c</columns>
+        <columns>Field_Sub_Type__c</columns>
+        <columns>htmlid__c</columns>
+        <columns>External_Id__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Eval_Type__c</field>
+            <operation>equals</operation>
+            <value>Residential</value>
+        </filters>
+        <label>Resident Evals</label>
     </listViews>
     <nameField>
         <label>Eval Name</label>

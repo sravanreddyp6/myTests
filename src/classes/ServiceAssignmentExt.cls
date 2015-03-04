@@ -1364,6 +1364,103 @@ public void loadProgramList() {
     	return null;
   	}
     
+    public pageReference addResAsmt(){
+  		string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
+    	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
+		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
+		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
+		
+	  		Evaluation__c resAsmt = new Evaluation__c(
+	   											ServiceAssignment__c = theServAssign.Id,
+	   											Name = resAsmtName,
+	   											RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
+	   														
+	   			);
+	   			
+	   		insert resAsmt;
+	   		
+	   	//	return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
+		
+		
+			if(referral.Has_Evaluation__c) {
+	   			Id evalOnReferralId = referral.Evaluations__r[0].Id;
+	   			FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+	   			string query = 'SELECT ';
+	   			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
+	   			set<String> getEvals = new set<String>();
+	   			
+	   			for(Schema.FieldSetMember f: copyFields.getFields()) {
+	   				getEvals.add(f.getFieldPath());
+	   				query += f.getFieldPath() + ', ';
+	   			}
+	   			
+	   			query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
+	   			sObject existingEval = Database.Query(query);
+	   			
+	   			Map<id,Eval__c> evalMap = new Map<id,Eval__c>([SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals]);
+	   			
+	   			system.debug('EvalMApEvalMap+++++++++++++'+evalMap.values());
+	   			system.debug('EvalMapSize'+evalMap.size());
+	   			List<Eval_Value__c> values = new List<Eval_value__c>();
+	   			Eval_Value__c value;
+	   			integer i=0;
+	   			for(Eval__c eval: evalMap.values()){
+	   				
+	   				string fieldName = eval.API_Name_Flag__c;
+	   				
+	   				if(existingEval.get(fieldName) != null ){
+	   					value = new Eval_Value__c();
+	   					value.Eval__c = eval.Id;
+	   					value.eval_Section_Id__c = Userinfo.getUserId()+'-'+DateTime.now().getTime();
+						value.Eval_Section_Type__c = 'Residential';
+						value.what_id__c = resAsmt.Id;
+						value.what_id_object__c = 'Evaluation__c';
+						
+						if ( eval.Field_Type__c == 'Boolean'){
+							if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
+								if ( (Boolean)existingEval.get(fieldName) == true)
+									value.Boolean__c = true;
+								else
+									value.Boolean__c = false;
+							}
+							else if (eval.Field_Sub_Type__c == 'Dropdown')
+								value.Text_Under_250__c = (String)existingEval.get(fieldName);
+						}
+						
+						else if (eval.Field_Type__c == 'Int'){
+							value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
+						}
+						else if (eval.Field_Type__c == 'Date'){
+							value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
+						}
+						else if (eval.Field_Type__c == 'Datetime' ){
+		                    value.Date_Time__c = (Datetime)existingEval.get(fieldName);
+		                }
+						else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' || 
+						 		 eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' || 
+						 		 eval.Field_Type__c == 'Currency'){
+							if ( eval.length__c > 250 )
+								value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
+							else
+								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
+						}
+						
+						
+						i=i+1;
+						System.debug('valuevalue+++++++++'+String.valueOf(existingEval.get(fieldName))+i+'====='+eval.Field_Name__c);
+						values.add(value);
+						
+	   					
+	   				}
+	   					
+	   			}
+	   		
+	       		 insert values;
+    	
+			}
+		return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
+  	}
+    
     public PageReference createFadAssess(){
         list<Assessment__c> oldAssess = new list<Assessment__c>();
         oldAssess = [select id from assessment__c where type__c ='FAD Summary' AND Service_Assignment__c = :theServAssign.id Order By CreatedDate Desc limit 1];

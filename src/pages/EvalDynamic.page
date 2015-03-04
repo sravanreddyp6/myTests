@@ -64,7 +64,7 @@ function  showForm() {
           <div id="here" class="sidebar-module sidebar-module-inset">
 
 		<apex:outputPanel id="evalRepeaters" layout="none">
-		<c:EvalRepeaters parentID="a11J0000001K8OVIA0" evaltype="Head to Toe" opGrp="Care Meridian"/>
+		<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
 		</apex:outputPanel>
 
 	    
@@ -108,7 +108,7 @@ function  showForm() {
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
 subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
-evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="a11J0000001K8OVIA0"/>
+evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" />
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">  
