@@ -32,7 +32,7 @@ public with sharing class GenerateEvalComponent {
 	public List<string> CreateFieldControls () {
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
-		List<Eval_Drop_Down__c> dd = [ select whatid__c, option_name__c, option_value__c from eval_drop_down__c where What_Id_Object__c = 'Eval__c' order by whatid__c, Sequence__c ];
+		List<Eval_Drop_Down__c> dd = [ select whatid__c, option_name__c, option_value__c, Dependent_Fields__c from eval_drop_down__c where What_Id_Object__c = 'Eval__c' order by whatid__c, Sequence__c ];
 		List<Eval_Drop_Down__c> newdd;
 		for ( Eval_Drop_Down__c edd : dd ) {
 			if ( ddOptions.ContainsKey( edd.whatid__c)) {
@@ -61,7 +61,10 @@ public with sharing class GenerateEvalComponent {
 			       Field_Sub_Type__c,
 			       field_sequence__c,
 			       required__c,
-			       Length__c
+			       Length__c,
+			       visibility_rules__c,
+			       visibility_row_rules__c,
+			       Dependent_Fields__c
 			  from eval__c
 			 where eval_type__r.name = :evalname
 			   and category__c =:cat
@@ -105,7 +108,7 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" />';                        
                 } else if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
                     if ( e.Field_Sub_Type__c == 'Checkbox') {
-                        newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '"';
+                        newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '"';
 
                         // insert value
                         if ( mapEvalValues.ContainsKey( e.id ))
@@ -117,7 +120,7 @@ public with sharing class GenerateEvalComponent {
                         // Boolean dropdown values = --None--, Yes, No
                         newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                         newHTMLfld += reqfldHTML;
-                        newHTMLfld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '">';
+                        newHTMLfld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
                         newHTMLfld += '<option value="">-- None --</option>';
                         if ( mapEvalValues.ContainsKey( e.id )) {
                             strval = mapEvalValues.get( e.id).Text_Under_250__c;
@@ -159,7 +162,7 @@ public with sharing class GenerateEvalComponent {
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get( e.id);
                     newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     newHTMLfld += reqfldHTML;
-                    newHTMLfld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '">';
+                    newHTMLfld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
                     newHTMLfld += '<option value="">-- None --</option>';
                     for ( Eval_Drop_Down__c thisdd : dropdownopts) {
                         newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
@@ -201,7 +204,7 @@ public with sharing class GenerateEvalComponent {
 	                	// get the options
 	                    List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
-		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.id + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '"';
+		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
 		                	
 			                // insert value
 	                        if ( mapEvalValues.ContainsKey( e.id ))
