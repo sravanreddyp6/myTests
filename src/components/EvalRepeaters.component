@@ -6,8 +6,8 @@
     <apex:pageBlock >
     
 	    <apex:repeat value="{!evals}" var="eval">
-	
-		    <div id="{! eval.compositeKey + 'shift'}" class="panel panel-danger">
+
+		    <div id="{! eval.compositeKey + 'shift'}" class="panel {!if ( eval.numErrors > 0, 'panel-danger', 'panel-success')}">
 		    
 		      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- ' + evaltype}</h3></div>
 		      <div class="panel-body">  
@@ -38,7 +38,7 @@
 	        </div>
 	</div>
 	<apex:outputPanel layout="none" rendered="{! CONTAINS( evalDataKeys, 'Activity Log~' + eval.compositeKey + '||')}">
-	<div id="{! eval.compositeKey + 'activitylog'}" class="panel panel-info">	   
+	<div id="{! eval.compositeKey + 'activitylog'}" class="panel panel-default">	   
 	   	    
 	   	      <div class="panel-heading"><h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- Activity Log'}</h3></div>
 		      <div class="panel-body">
