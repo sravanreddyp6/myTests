@@ -634,7 +634,7 @@ public with sharing class referrals_Controller{
             	this.personBeingRefRecord.Gender__c = ApexPages.currentPage().getParameters().get('personGender');
         			}
         			
-        			if (ApexPages.currentPage().getParameters().get('personAge') != null) {
+        			if (ApexPages.currentPage().getParameters().get('personAge') != null  && ApexPages.currentPage().getParameters().get('personAge').length()>0) {
             	this.personBeingRefRecord.Age__c = Decimal.valueOf( ApexPages.currentPage().getParameters().get('personAge'));
         			}
         			
