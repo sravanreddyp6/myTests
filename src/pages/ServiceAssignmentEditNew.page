@@ -441,6 +441,12 @@
 					<!--         </apex:inputField> -->
 					<!--         </apex:actionregion> -->
 				</apex:pageblocksectionitem>
+                <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA}"  />
+                <apex:outputField value="{!theServAssign.Episode__c}" rendered="{! !editSA}"  />
+
+                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
+                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />                
+
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM}">
@@ -1040,7 +1046,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c!='Inactive' && evaluations.size = 0}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
 					<apex:actionStatus id="AddResidentAssessmentStatus" >
 						<apex:facet name="start">
-							<apex:outputText> <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /><i><b>Please wait..</b></i></apex:outputText>
+							<apex:outputText > <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /><i><b>Please wait..</b></i></apex:outputText>
 						</apex:facet>
 						<apex:facet name="stop" />
 					</apex:actionStatus>
