@@ -254,15 +254,34 @@
 			<c:HomePageComponents objectName="Contract Management" />
 			<c:HomePageComponents objectName="Documents" />
 		</apex:outputPanel>
-		<apex:pageBlock >
+		<apex:pageBlock title="Persons Being Served">
 			<apex:pageBlockSection columns="1">
-				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program">
+				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="serviceAssignmentTable" action="{!updateProgramSelection}"/>
 					<apex:selectOptions value="{!programslist}"/>
 				</apex:selectList>
 			</apex:pageBlockSection>
 			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable">
-				<apex:column value="{!serviceAssignment.Person_Being_Served__r.Name}" headerValue="Person Being Served Name" />
+				<apex:column headerValue="Person Being Served Name">
+					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
+				</apex:column>
+				<apex:column headerValue="View Current Shift">
+					<a href="#">Shift Link</a>
+				</apex:column>
+				<apex:column headerValue="Action">
+				</apex:column>
+				<apex:column headerValue="Navigation">
+					<apex:selectList id="navigationList" size="1">
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Packet" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Resident Assessment" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Action_Plans__r[0].Id}" itemLabel="Current Action Plan" rendered="{!serviceAssignment.Action_Plans__r.size > 0}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" />
+					</apex:selectList>
+					<apex:commandButton value="Go" onclick="window.location = jQuery(document.getElementById('{!$Component.navigationList}')).val(); return false;" />
+				</apex:column>
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 
