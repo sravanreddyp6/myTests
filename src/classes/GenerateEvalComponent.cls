@@ -108,7 +108,7 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" />';                        
                 } else if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
                     if ( e.Field_Sub_Type__c == 'Checkbox') {
-                        newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '"';
+                        newHTMLfld = '<div style="display: table-row;"><label for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '"';
 
                         // insert value
                         if ( mapEvalValues.ContainsKey( e.id ))
@@ -118,7 +118,7 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld += '/></div>';
                     } else if (e.Field_Sub_Type__c == 'Dropdown') {
                         // Boolean dropdown values = --None--, Yes, No
-                        newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                        newHTMLfld = '<div style="display: table-row;"><label for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                         newHTMLfld += reqfldHTML;
                         newHTMLfld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
                         newHTMLfld += '<option value="">-- None --</option>';
@@ -136,7 +136,7 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld += '</select></div></div>';
                     } //TODO: output radio buttons for Radio type
                 } else if (e.Field_Type__c=='String') {
-                    newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld = '<div style="display: table-row;"><label for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
@@ -160,7 +160,7 @@ public with sharing class GenerateEvalComponent {
 
                     // get the options
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get( e.id);
-                    newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld = '<div style="display: table-row;"><label for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
                     newHTMLfld += '<option value="">-- None --</option>';
@@ -173,7 +173,7 @@ public with sharing class GenerateEvalComponent {
                     }
                     newHTMLfld += '</select></div></div>';
                 }  else if (e.Field_Type__c == 'Date') {
-					newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+					newHTMLfld = '<div style="display: table-row;"><label for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input class="datepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 					if (mapEvalValues.ContainsKey( e.id )) {
@@ -182,7 +182,7 @@ public with sharing class GenerateEvalComponent {
                     }
                     newHTMLfld +=  '/></div></div>';
 				} else if (e.Field_Type__c == 'Datetime') {
-                    newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld = '<div style="display: table-row;"><label for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input class="datetimepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {

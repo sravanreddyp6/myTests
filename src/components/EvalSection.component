@@ -25,13 +25,12 @@
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
     <apex:includeScript value="{!$Resource.AnotoJS}"/>
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
-    
-        <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     
     <form id="evalForm" method="post" >
     <apex:pageBlock rendered="{!ctlList.size>0}">
-    <apex:outputText value="{! 'EVAL TYPE: ' + evaltype}" />
-    <apex:pageBlockSection title="{!subcategory}" collapsible="false">
+    <apex:outputText value="{!evaltype}" />
+    <apex:pageBlockSection title="{!category} / {!subcategory}" collapsible="false">
     <apex:repeat value="{!ctlList}" var="fld">
     <apex:pageBlockSectionItem >
     <apex:outputText value="{!fld}" escape="false" />
@@ -41,7 +40,7 @@
     <apex:pageBlockSection columns="1" rendered="{!editEnabled}">
     <apex:pageblocksectionitem dataStyle="text-align:center; width: 50%; max-width: 55%;">
     <input class="btn" type="submit" value="Save" id="btnSave" />
-    <input class="btn" type="button" value="Cancel" onclick="evalForm.reset()"/>
+    <input class="btn" type="button" value="Cancel" onclick="evalForm.reset(); setUpFields();"/>
     </apex:pageblocksectionitem>
     </apex:pageBlockSection>
     
@@ -52,17 +51,18 @@
     <script>
     jQuery.noConflict();
 
-   	function bindSubmitEvent () {  $('#evalForm').on("submit", function (event) {
-   	        beforeEvaluationSave();
-   			event.preventDefault();
-           	var formData = $(this).serializeArray();
-			var jsonData = JSON.stringify(formData);
-       		var uuid = (new Date()).getTime();
-			
-      		console.log(jsonData);
-      		// vf remote to save data
-      		debugger;
-			GenerateEvalComponent.saveFields('{!parentID}'
+    function bindSubmitEvent () {  $('#evalForm').on("submit", function (event) {
+            beforeEvaluationSave();
+            handleFormErros();
+            event.preventDefault();
+            var formData = $(this).serializeArray();
+            var jsonData = JSON.stringify(formData);
+            var uuid = (new Date()).getTime();
+            
+            console.log(jsonData);
+            // vf remote to save data
+            //debugger;
+            GenerateEvalComponent.saveFields('{!parentID}'
                                              , ( ('{!evalSectionUuid}' != '') ? '{!evalSectionUuid}' : '{!$User.Id}' + '-' + uuid )
                                              , '{!evalSectionType}'
                                              , '{!evaltype}'
@@ -80,8 +80,59 @@
             });
         });
 	}
-	
-	
+
+    beforeEvaluationSave = function () {
+                // Temporarily enable all the disabled fields before saving the
+                // record, so that they are included in the POST to the server.
+                $('body select, body input').each(function (_, target) {
+                    $target = $(target);
+                    if ($target.prop("disabled")) {
+                        $target.prop("disabled", false);
+                    }
+                });
+    }
+        	
+    setUpFields = function () {
+        // Apply rules to input fields
+                $('body input').on("change", function (event) {
+                    applyShowHideRulesToField(event.target);
+                    applyRulesToField(event.target);
+                });
+                $('body select').on("change", function (event) {
+                    applyShowHideRulesToField(event.target);
+                    applyRulesToField(event.target);
+                });
+                $('body input').each(function (_, target) {
+                    applyShowHideRulesToField(target);
+                    applyRulesToField(target);
+                });
+                $('body select').each(function (_, target) {
+                    applyShowHideRulesToField(target);
+                    applyRulesToField(target);
+                });
+    };
+    
+    handleFormErros = function () {
+                var errorMsg = '';                
+                // select all the required input fields and set the hidden boolean and the error message fields.
+                $(".requiredInput :input").filter(":visible").each(function (_, target) {
+                    var $target = $(target);
+                    if ($target.val() == '') 
+                        errorMsg += '<li>'+ $('label[for="'+$target.attr('id')+'"]')[0].innerHTML + ' field is mandatory.</li>';
+                });
+                if (errorMsg != '' ){
+                    $('#IsValid').val("true").trigger('change');
+                    $('#ErrorMsg').val(errorMsg).trigger('change');
+                } else {
+                    $('#IsValid').val("false").trigger('change');
+                    $('#ErrorMsg').val("").trigger('change');
+                }
+    }
+
+    $(".requiredInput :input").filter(":visible");
+    
+    
+            	
 	function addOrModifyAnnotation (annotation, isNew) {
        if (isNew) {
            if (annotation.Id !== undefined) {
@@ -148,42 +199,6 @@
 	     return o;
 	 	};
 	 	//debugger;
-
-        beforeEvaluationSave = function () {
-                // Temporarily enable all the disabled fields before saving the
-                // record, so that they are included in the POST to the server.
-                $('body select, body input').each(function (_, target) {
-                    $target = $(target);
-                    if ($target.prop("disabled")) {
-                        $target.prop("disabled", false);
-                    }
-                });
-        }
-            	 	
-        setUpFields = function () {
-                // Apply rules to input fields
-                $('body input').on("change", function (event) {
-                    applyShowHideRulesToField(event.target);
-                    applyRulesToField(event.target);
-                });
-                $('body select').on("change", function (event) {
-                    applyShowHideRulesToField(event.target);
-                    applyRulesToField(event.target);
-                });
-                $('body input').each(function (_, target) {
-                    applyShowHideRulesToField(target);
-                    applyRulesToField(target);
-                });
-                $('body select').each(function (_, target) {
-                    applyShowHideRulesToField(target);
-                    applyRulesToField(target);
-                });
-            };
-            
-        setUpFields();
-
-
-                        
 	 	$('.datepicker').datetimepicker({timepicker:false, format:'m/d/Y', closeOnDateSelect:true});
 	 	$('.datetimepicker').datetimepicker({});
 <apex:outputPanel layout="none" rendered="{! subcategory == 'Body Map'}">
