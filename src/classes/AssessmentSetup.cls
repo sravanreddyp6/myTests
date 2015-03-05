@@ -11,7 +11,7 @@ public without sharing class AssessmentSetup {
       List<Assessment__c> theseAssessments = new List<Assessment__c>();
       theseAssessments = assessments;
       Map<ID, Assessment__c> assessmentMap = new Map<ID, Assessment__c>();
-      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c FROM Assessment__c WHERE ID IN :assessments]) {
+      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c, AccountPerson__c, AccountPerson__r.PersonContact.Age__c FROM Assessment__c WHERE ID IN :assessments]) {
         assessmentMap.put(assessment.ID, assessment);
       }
       
@@ -87,6 +87,60 @@ public without sharing class AssessmentSetup {
                         }
                     }
                 }
+                // For Resident Assessment
+                else if(a.Type__c=='Resident Assessment'){
+                	if(domainMap.get(assmtDomainLoopId).Assessment_Type2__c=='Resident Assessment') {
+                        dummyAdr = new Assessment_Domain_Result__c();
+                        dummyAdr.Assessment__c = a.Id; 
+                        dummyAdr.Assessment_Domain__c = domainMap.get(assmtDomainLoopId).Id;
+                        insert dummyAdr;                                    
+                    
+                        for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
+                        	if(q.Question_title__c == 'Age'){
+                        		Decimal rating = assessmentMap.get(a.id).AccountPerson__r.PersonContact.Age__c;
+                        		string ratingString;
+                        		Decimal score;
+                        		if(rating < 1){
+                        			ratingString = '<1';
+                        			score = 0;
+                        		}
+                        		else if(rating >= 1 && rating <= 6){
+                        			ratingString = '1 to 6';
+                        			score = 5;
+                        		}
+                        		else if(rating >= 6 && rating <= 65) {
+                        			ratingString = '6 to 65';
+                        			score = 0;
+                        		}
+                        		else{
+                        			ratingString = '>65';
+                        			score = 4;
+                        		}
+                        		
+                        		dummyAr.add(new Assessment_Response__c(
+	                              Assessment__c = a.Id,
+	                              Question__c = q.ID,
+	                              Assessment_Domain_Result__c = dummyAdr.Id,
+	                              Rating__c = ratingString,
+	                              Score__c = score,
+	                              Color__c = NULL)
+                            	);
+                        		
+                        	}
+                        	
+                        	else{ 
+	                            dummyAr.add(new Assessment_Response__c(
+	                              Assessment__c = a.Id,
+	                              Question__c = q.ID,
+	                              Assessment_Domain_Result__c = dummyAdr.Id,
+	                              Rating__c = NULL,
+	                              Color__c = NULL)
+	                            );
+                          	}
+                        }
+                    }
+                	
+                }
                 // END: RBO-289       
                 else if (a.Assessment_Type__c == domainMap.get(assmtDomainLoopId).Assessment_Type__c){
                     dummyAdr = new Assessment_Domain_Result__c();
@@ -95,9 +149,6 @@ public without sharing class AssessmentSetup {
                     insert dummyAdr;
                     
                     // Try question inserts in this loop 11/2/12 11:20 AM     
-                    
-                    
-                    
                     for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
                       // Check if this assessment admission's state is in the
                       // excluded list for this question
@@ -176,8 +227,10 @@ public without sharing class AssessmentSetup {
         Map<Id,Assessment__c> assmtMap = new Map<Id,Assessment__c>();
         
         for (Assessment__c assmt : assessments){
-            assmtId.add(assmt.Id);
-            assmtMap.put(assmt.Id,assmt);
+        	if(assmt.Type__c != 'Resident Assessment'){
+            	assmtId.add(assmt.Id);
+            	assmtMap.put(assmt.Id,assmt);
+        	}
         }
         
         // Re-select the assessments that were already inserted prior to trigger fire

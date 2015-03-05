@@ -22,29 +22,54 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
     set<id> PBSbyDD_Status {
         get{
             set<id> returnInfo = new set<id>();
+            map<id, date> mapOnlyDD = new map <id, date>();
+            map<id, date> mapNoDD = new map <id, date>();
+
+            for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id, Assessment__r.Assessment_Date__c 
+                                                    from Assessment_Response__c 
+                                                    Where Question__r.Question_Number__c = 37 
+                                                    AND Assessment__r.disregard__c = false 
+                                                    AND Assessment__r.Status__c = 'Locked'
+                                                    AND Score__c > 0 
+                                                    AND Assessment__r.Interval__c = 'Quarterly' 
+                                                    AND Assessment__r.Quarter__c = 1 ]){
+                if( !mapOnlyDD.containsKey(item.Assessment__r.AccountPerson__r.Id) ){
+                    mapOnlyDD.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                }
+                else if(mapOnlyDD.get(item.Assessment__r.AccountPerson__r.Id) <  item.Assessment__r.Assessment_Date__c){
+                    mapOnlyDD.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                }
+                
+            }
+            for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id, Assessment__r.Assessment_Date__c 
+                                                from Assessment_Response__c 
+                                                    Where Question__r.Question_Number__c = 37 
+                                                    AND Assessment__r.disregard__c = false 
+                                                    AND Assessment__r.Status__c = 'Locked'
+                                                    AND Score__c = 0 
+                                                    AND Assessment__r.Interval__c = 'Quarterly' 
+                                                    AND Assessment__r.Quarter__c = 1]){
+                if( !mapNoDD.containsKey(item.Assessment__r.AccountPerson__r.Id) ){
+                    mapNoDD.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                }
+                else if(mapNoDD.get(item.Assessment__r.AccountPerson__r.Id) <  item.Assessment__r.Assessment_Date__c){
+                    mapNoDD.put(item.Assessment__r.AccountPerson__r.Id, item.Assessment__r.Assessment_Date__c);                    
+                }
+            }            
+
 
             if(selectedDD_Status == 'ONLY_DD'){
-                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
-                                                        from Assessment_Response__c 
-                                                        Where Question__r.Question_Number__c = 37 
-                                                        AND Assessment__r.disregard__c = false 
-                                                        AND Score__c > 0 
-                                                        AND Assessment__r.Interval__c = 'Quarterly' 
-                                                        AND Assessment__r.Quarter__c = 1 ]){
-                    returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
+                for(ID item: mapOnlyDD.keySet() ){
+                    IF( mapNoDD.get(item) > mapOnlyDD.get(item) ){ mapOnlyDD.remove(item);}
                 }
+                returnInfo = mapOnlyDD.keySet();
             }else if(selectedDD_Status == 'No_DD'){
-                for(Assessment_Response__c item: [select id, Assessment__r.AccountPerson__r.Id 
-                                                    from Assessment_Response__c 
-                                                        Where Question__r.Question_Number__c = 37 
-                                                        AND Assessment__r.disregard__c = false 
-                                                        AND Score__c = 0 
-                                                        AND Assessment__r.Interval__c = 'Quarterly' 
-                                                        AND Assessment__r.Quarter__c = 1]){
-                    returnInfo.add(item.Assessment__r.AccountPerson__r.Id);
-                }
+                for(ID item: mapNoDD.keySet() ){
+                    IF( mapOnlyDD.get(item) > mapNoDD.get(item) ){ mapNoDD.remove(item);}
+                } 
+                returnInfo = mapNoDD.keySet();
             }else{
-                for(Assessment__c item: [select id, AccountPerson__r.Id from Assessment__c Where disregard__c = false ]){
+                for(Assessment__c item: [select id, AccountPerson__r.Id from Assessment__c Where disregard__c = false AND Status__c = 'Locked' ]){
                     returnInfo.add(item.AccountPerson__r.Id);
                 }
             }
@@ -280,10 +305,11 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
 
 
 /*
+//some test data
         StateRowData aqrow = new StateRowData('AQ');
             PersonRowData prd = new PersonRowData('1', 'poly', '2', 'poly-admit', 'AQ');
             prd.endScore = 2;
-            prd.baseScore = 1;
+            prd.baseScore = 3;
             aqrow.mPbsData.put('1', prd); 
             PersonRowData prd2 = new PersonRowData('1', 'zoly', '2', 'zoly-admit', 'AQ');
             prd2.endScore = 7;
@@ -295,7 +321,7 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
             aqrow.mPbsData.put('3', prd3);                                   
             mapStateRowData.put('AQ', aqrow);
 
-     */      
+        */   
 
         //does the admit have imoprovement from q1 to DC?
         for(StateRowData s : mapStateRowData.values() ){
@@ -351,7 +377,11 @@ public with sharing class Assessment_CANS_RPT_ImpAtDischarge {
         public integer numAdmitImproved = 0;
         public decimal percentImproved {set; get {
             if(numAdmitImproved == 0){ return 0.00;}
-            else{return (decimal.valueof(numAdmitImproved) / decimal.valueof(numAdmitBaseAndEnd)).setScale(2) * 100; }
+            else{
+                decimal startVal = decimal.valueof(numAdmitImproved);
+                decimal endVal = decimal.valueof(numAdmitBaseAndEnd);
+
+                return ((startVal / endVal) * 100).setScale(2); }
             return null;
             } }
         public string prettyPercentImproved { set; get{ return string.valueof(percentImproved) + '%';} }

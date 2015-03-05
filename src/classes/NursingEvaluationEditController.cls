@@ -1,6 +1,6 @@
 public with sharing class NursingEvaluationEditController {
-        public Evaluation__c evaluation { get; set; }
-        public ApexPages.standardController stdController;
+    public Evaluation__c evaluation { get; set; }
+    public ApexPages.standardController stdController;
     public String selectedTab { get; set; }
     public String nextTab { get; set; }
     
@@ -474,7 +474,23 @@ public with sharing class NursingEvaluationEditController {
         // object-level validation, because if there are 2 errors on 2 pages,
         // the user won't be able to save at all.
        
+       if(this.selectedTab == 'fallAssessmentTab' && this.evaluation.MAR_Section_Completed__c){
+       		Boolean showError = fallAssessmentController.validateError(this.evaluation.Id,'Fall Risk Assessment Domain');
+       		if(showError){
+       			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'Please Answer All Questions Before Marking the Section as Completed.'); 
+				ApexPages.addMessage(myMsg);
+				return null;
+       		}
+       }
        
+       if(this.selectedTab == 'skinBodyTab' && this.evaluation.Skin_Section_Completed__c){
+       		Boolean showError = fallAssessmentController.validateError(this.evaluation.Id,'Skin Assessment Domain');
+       		if(showError){
+       			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'Please Answer All Questions under Skin Assessment Section Before Marking the Section as Completed.'); 
+				ApexPages.addMessage(myMsg);
+				return null;
+       		}	
+       }
        //for breathe sounds multi-select
         String strtypes = '';
         for (String s : selectedSounds)

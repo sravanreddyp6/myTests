@@ -172,8 +172,9 @@ table#State_Data thead .sorting {
 <i>Report compares the 1st Quarterly CANS and the Discharge CANS Assessments to determine improvement.</i>
 </apex:pageBlock>
 </apex:outputPanel>
-<script>
 
+<script>
+var j$ = jQuery.noConflict();
 var tableToExcel = (function() {
   var uri = 'data:application/vnd.ms-excel;base64,'
     , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
@@ -186,14 +187,6 @@ var tableToExcel = (function() {
     }
   })();
 
-
-</script>
-
-
-
-<apex:outputPanel id="scripts">
-<script>
-    var j$ = jQuery.noConflict();
     function selectSL(  onoff ) {
        if ( onoff == 0 ) {
               // turn them all off
@@ -209,7 +202,15 @@ var tableToExcel = (function() {
                         });
               }
  
-}   
+} 
+</script>
+
+
+
+<apex:outputPanel id="scripts">
+<script>
+    
+  
 
 function format ( d ) {
     var detailsTable = '<div class="subTblWrapper"><table id="' + d.State + '-tbl" class="subTbl" cellpadding="5" cellspacing="0" border="0">';
