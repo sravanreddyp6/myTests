@@ -344,7 +344,15 @@ public with sharing class GenerateEvalComponent {
 					else
 						ev.Text_Under_250__c = formData.get(f);
 				}
-				
+				else if (ei.Field_Type__c == 'Hidden'){
+                    if (ei.Field_Sub_Type__c == 'Boolean') {
+                        ev.Boolean__c = Boolean.valueOf(formData.get(f));
+                    }
+                    else if (ei.Field_Sub_Type__c == 'String') {
+                    	ev.Text_Over_250__c = formData.get(f);
+                    }
+                }
+                
 				newValues.add(ev);
 			}
 			else if (ev.id != null ) {
