@@ -1,0 +1,126 @@
+<apex:page standardController="ServiceAssignment_Document_JO__c" extensions="DocumentAddExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+<apex:stylesheet value="{!$Resource.mentoresdcss}" />
+<c:PersonalRecord pbsId="{!theServAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" /><br />
+<apex:pagemessages />
+<apex:pageBlock id="AddDocPanel">
+    <apex:form >
+        <apex:actionFunction name="ClearRelativeDueDateFields" action="{!ClearRelativeDueDateFields}" rerender="RddUnitsField,RddUomField,RddEventField,FixedDueDateField" />
+        <apex:actionFunction name="ClearFixedDueDateField" action="{!ClearFixedDueDateField}" rerender="RddUnitsField,RddUomField,RddEventField,FixedDueDateField" />
+        <apex:outputPanel id="DocListPanel">
+        <div class="contentArea" style="padding-left:50px;">
+            <span style="font-weight:bold;">Admission:</span>&nbsp; <apex:outputLink value="{!URLFOR($Action.Admission__c.View,theServAssign.Admission__c)}">{!theServAssign.Admission__r.Name}</apex:outputLink>&nbsp;
+            <span style="font-weight:bold;">Effective Date:&nbsp;</span> <apex:outputText value="{0,date,MM'/'dd'/'yyyy}"><apex:param value="{!theServAssign.Admission__r.Effective_Date__c}" /></apex:outputText><br />
+            <span style="font-weight:bold;">Service Assignment:&nbsp;&nbsp;</span> <apex:outputLink value="{!URLFOR($Action.Service_Assignment__c.View,theServAssign.Id)}">{!theServAssign.Name}</apex:outputLink><br />
+            <br />
+        </div>
+        <h2>Add a Document</h2><br /><br />{!selectedDoc}
+        <div class="pbHeaderButton">
+          <apex:commandButton action="{!saveDocXref}" value="Save" rendered="{!IF(currentSelectedDocId=='',false,true)}" />
+          <apex:commandButton value="Cancel" onclick="window.open('/apex/ServAssignExpectedDocs?id={!theServAssignId}');"  />
+        </div>
+      <apex:selectList size="1" id="DocumentList" label="Document" value="{!currentSelectedDocId}">
+          <apex:actionSupport event="onchange" action="{!defaultDueDateInfo}" reRender="AddDocPanel,DueDatePanel,DocListPanel">
+          </apex:actionSupport>
+          <apex:selectOptions value="{!selectOptionsForDocAdd}" />
+      </apex:selectList>
+    <br />
+    </apex:outputPanel>
+    <apex:outputPanel id="DueDatePanel" rendered="{!docIsSelected}">
+    <hr />
+    <table>
+    <tr>
+        <td colspan="2">
+        <h2>Due Date:</h2>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <input type="radio" id="RelativeRadio" name="DateType" value="Relative" onclick="dateFieldDisplay(this)" checked="checked" />
+        </td>
+        <td>
+        Relative Due Date
+        <span id="DateSpan1" style = "display:inline">
+        <apex:inputText id="RddUnitsField" value="{!rddUnits}" />
+        <apex:selectList id="RddUomField" size="1" value="{!rddUom}">
+            <apex:selectOptions value="{!selectOptionsRddUom}" />
+        </apex:selectList>
+
+        <apex:outputLabel id="RddEventLabel" value="after" />
+        <apex:selectList id="RddEventField" size="1" label="RddEventLabelStandardController" value="{!rddEvent}">
+            <apex:selectOptions value="{!selectOptionsRddEvent}" /> 
+        </apex:selectList>
+        </span>
+        <span id="DateSpan1a" style = "display:none">
+        <apex:inputField id="RddUnitsFieldStandardControllerB" value="{!ServiceAssignment_Document_JO__c.Relative_Due_Date_Units__c}" />
+        <script>document.getElementById('{!$Component.RddUnitsFieldStandardControllerB}').disabled = true; document.getElementById('{!$Component.RddUnitsFieldStandardControllerB}').value = '';</script>
+        <apex:inputField id="RddUomFieldStandardControllerB" value="{!ServiceAssignment_Document_JO__c.Relative_Due_Date_UOM__c}" />
+        <script>document.getElementById('{!$Component.RddUomFieldStandardControllerB}').disabled = true; document.getElementById('{!$Component.RddUomFieldStandardControllerB}').value = '';</script>
+        <apex:outputLabel id="RddEventLabelStandardControllerB" value="after" />
+        <apex:inputField id="RddEventFieldStandardControllerB" label="RddEventLabelStandardController" value="{!ServiceAssignment_Document_JO__c.Relative_Due_Date_Event__c}" />
+        <script>document.getElementById('{!$Component.RddEventFieldStandardControllerB}').disabled = true; document.getElementById('{!$Component.RddEventFieldStandardControllerB}').value = '';</script>
+        </span>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="radio" id="FixedRadio" name="DateType" value="Fixed" onclick="dateFieldDisplay(this)" />
+        </td>
+        <td>
+        Fixed Due Date&nbsp;&nbsp;
+        <span id="DateSpan2" style = "display:none">
+        <apex:inputField id="FixedDueDateField" value="{!ServiceAssignment_Document_JO__c.Fixed_Due_Date__c}">
+<!--
+            <apex:actionSupport event="onchange" rerender="">
+                <apex:param name="fixedDueDate" assignTo="{!fixedDueDate}" value="{!ServiceAssignment_Document_JO__c.Fixed_Due_Date__c}" />
+            </apex:actionSupport>
+-->
+        </apex:inputField>
+        </span>
+        <span id="DateSpan2a" style = "display:inline">
+        <apex:inputField id="FixedDueDateFieldB" value="{!ServiceAssignment_Document_JO__c.Fixed_Due_Date__c}" />
+        <script>document.getElementById('{!$Component.FixedDueDateFieldB}').disabled = true; document.getElementById('{!$Component.FixedDueDateFieldB}').value = '';</script>
+        </span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <apex:commandLink value="Reset to Defaults" action="{!resetToDefaults}" styleclass="servicelink" />
+        </td>
+    </tr>
+    </table>
+    <hr />
+    <h2>Due From:</h2>&nbsp;&nbsp;<apex:inputField value="{!ServiceAssignment_Document_JO__c.Due_From_Employee__c}" />
+    </apex:outputPanel>
+    </apex:form>
+</apex:pageBlock>
+<script> 
+    
+function dateFieldDisplay(variable)
+{
+    var typeOfDate = variable.value;
+    if(typeOfDate == 'Relative')
+    {
+        ClearFixedDueDateField();
+        document.getElementById('DateSpan1').style.display = 'inline';
+        document.getElementById('DateSpan1a').style.display = 'none'; 
+        document.getElementById('DateSpan2').style.display = 'none';
+        document.getElementById('DateSpan2a').style.display = 'inline';     
+    }
+    else if (typeOfDate == 'Fixed')
+    {
+        ClearRelativeDueDateFields();
+        document.getElementById('DateSpan1').style.display = 'none';
+        document.getElementById('DateSpan1a').style.display = 'inline';
+        document.getElementById('DateSpan2').style.display = 'inline';
+        document.getElementById('DateSpan2a').style.display = 'none';
+    }
+    else
+    {
+        document.getElementById('DateSpan1a').style.display = 'inline';
+        document.getElementById('DateSpan2a').style.display = 'inline'; 
+    }
+}
+
+</script>   
+</apex:page>
