@@ -59,7 +59,7 @@ public with sharing class HomePageController{
 	public String TypObj;
 
 	public Id selectedProgram { get; set; }
-	public list<SelectOption> programslist { get; set; }
+	public List<SelectOption> programslist { get; set; }
 	public Service_Assignment__c[] serviceAssignments { get; set; }
 
 	//Constructor
@@ -75,17 +75,28 @@ public with sharing class HomePageController{
 		for (AggregateResult slPrgm : slPrgms) {
 			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
 		}
+		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram');
+		if (initialProgramCookie == null) {
+			selectedProgram = programslist[0].getValue();
+		} else {
+			selectedProgram = initialProgramCookie.getValue();
+		}
+		updateProgramSelection();
 		checkTmnUserRecord();
 		shareobj();
 		mineTasks();
 	}
 
 	public void updateProgramSelection() {
+		System.debug('selectedProgram: ' + selectedProgram);
 		serviceAssignments = [
-			SELECT Person_Being_Served__r.Name
+			SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name,
+			       Admission__r.Id,
+			       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC)
 			FROM Service_Assignment__c
 			WHERE Service_Location__c = :selectedProgram
 		];
+		ApexPages.currentPage().setCookies(new Cookie[]{ new Cookie('homePageInitialProgram', selectedProgram, null, -1, false) });
 	}
 
 	public void getReportList() {
