@@ -1377,6 +1377,8 @@ public void loadProgramList() {
 		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
 		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
 		
+			Savepoint sp = Database.setSavepoint();
+			
 	  		Evaluation__c resAsmt = new Evaluation__c(
 	   											ServiceAssignment__c = theServAssign.Id,
 	   											Name = resAsmtName,
@@ -1384,7 +1386,18 @@ public void loadProgramList() {
 	   														
 	   			);
 	   			
-	   		insert resAsmt;
+	   		try{
+	   			
+	   			insert resAsmt;
+	   		}
+	   		
+	   		catch(DMLException e) {
+	   			
+	   			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Resident Assessment. Please Contact your Administrator');
+            	ApexPages.addMessage(myMsg);
+	   			
+	   		}
+	   		
 	   		
 	   	//	return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
 		
@@ -1393,18 +1406,29 @@ public void loadProgramList() {
 	   			Id evalOnReferralId = referral.Evaluations__r[0].Id; //Grab the Id of the Existing evaluation record on referral
 	   			//FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses; //Calling the Field set
 	   			string query = 'SELECT ';
-	   			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment; // Calling the Field set where the about to be cloned field paths are stored
+	   			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment; // Calling the Field set where the about to be cloned fieldvalue paths are stored
+	   			FieldSet behavior = SObjectType.Evaluation__c.FieldSets.Behavior;
 	   			
 	   			set<String> getEvals = new set<String>(); //Collection to store the API names of the Fields which will be used in Query (API_Name_Flag__c)
 	   			for(Schema.FieldSetMember f: copyFields.getFields()) {
-	   				getEvals.add(f.getFieldPath());
 	   				query += f.getFieldPath() + ', ';
 	   			}
 	   			
 	   			query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
 	   			sObject existingEval = Database.Query(query);
 	   			
+	   			for(Schema.FieldSetMember f: copyFields.getFields()){
+	   				if(string.isNOTBLANK(string.Valueof(existingEval.get(f.getFieldPath()))) && !string.Valueof(existingEval.get(f.getFieldPath())).equalsIgnoreCase('false')){
+	   					getEvals.add(f.getFieldPath());
+	   					
+	   				}
+	   			}
+	   			
+	   			system.debug('Checking the set for null values+++++++++'+getEvals);
+	   			system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
+	   			
 	   			Map<id,Eval__c> evalMap = new Map<id,Eval__c>([SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals]);
+	   			
 	   			//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
 	   			set<string> catSubcat = new set<string>();
 	   			Map<string, string> uniqueTimeMap = new Map<string, string>();
@@ -1427,62 +1451,94 @@ public void loadProgramList() {
 	   			List<Eval_Value__c> values = new List<Eval_value__c>();
 	   			Eval_Value__c value;
 	   			
+	   			string behaviorString = '';
+	   			
+	   			for(Schema.FieldSetMember f: behavior.getFields()){
+	   				
+	   				system.debug('behvaiorset+++++++'+behavior.getFields());
+	   				system.debug('fieldValue+++++'+existingEval.get(f.getFieldPath()));
+	   				
+	   				if(string.isNotBlank(string.valueOF(existingEval.get(f.getFieldPath())))) {
+	   					behaviorString += f.getLabel();
+	   					behaviorString += '; ';
+	   				}	
+	   				
+	   			}
+	   			
 	   			for(Eval__c eval: evalMap.values()){
 	   				
 	   				string fieldName = eval.API_Name_Flag__c;
-	   				if(existingEval.get(fieldName) != null ){
-	   					value = new Eval_Value__c();
-	   					value.Eval__c = eval.Id;
-						value.Eval_Section_Type__c = 'Residential';
-						value.what_id__c = resAsmt.Id;
-						value.what_id_object__c = 'Evaluation__c';
-						
-						string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
-						
-						if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
-							system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
-							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
-							
-						}
-						
-						//Handle All Data Types
-						
-						if ( eval.Field_Type__c == 'Boolean'){
-							if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
-								if ( (Boolean)existingEval.get(fieldName) == true)
-									value.Boolean__c = true;
-								else
-									value.Boolean__c = false;
-							}
-							else if (eval.Field_Sub_Type__c == 'Dropdown')
-								value.Text_Under_250__c = (String)existingEval.get(fieldName);
-						}
-						
-						else if (eval.Field_Type__c == 'Int'){
-							value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
-						}
-						else if (eval.Field_Type__c == 'Date'){
-							value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
-						}
-						else if (eval.Field_Type__c == 'Datetime' ){
-		                    value.Date_Time__c = (Datetime)existingEval.get(fieldName);
-		                }
-						else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' || 
-						 		 eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' || 
-						 		 eval.Field_Type__c == 'Currency'){
-							if ( eval.length__c > 250 )
-								value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
-							else
-								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
-						}
-						
-						values.add(value);
+	   				
+   					value = new Eval_Value__c();
+   					value.Eval__c = eval.Id;
+					value.Eval_Section_Type__c = 'Residential';
+					value.what_id__c = resAsmt.Id;
+					value.what_id_object__c = 'Evaluation__c';
 					
-	   				}
-	   					
+					string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
+					
+					if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
+						system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
+						value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
+						
+					}
+					
+					
+					
+					//Handle All Data Types
+					if ( eval.Field_Type__c == 'Boolean'){
+						if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
+							if ( (Boolean)existingEval.get(fieldName) == true)
+								value.Boolean__c = true;
+							else
+								value.Boolean__c = false;
+						}
+						else if (eval.Field_Sub_Type__c == 'Dropdown')
+							value.Text_Under_250__c = (String)existingEval.get(fieldName);
+					}
+					
+					else if (eval.Field_Type__c == 'Int'){
+						value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
+					}
+					else if (eval.Field_Type__c == 'Date'){
+						value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
+					}
+					else if (eval.Field_Type__c == 'Datetime' ){
+	                    value.Date_Time__c = (Datetime)existingEval.get(fieldName);
+	                }
+					else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' || 
+					 		 eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' || 
+					 		 eval.Field_Type__c == 'Currency'){
+						if ( eval.length__c > 250 )
+							value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
+						else
+							value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
+					}
+					
+					system.debug('behaviorString++++++++++'+behaviorString);
+					if(string.isNotBlank(behaviorString)){
+						if(eval.Field_Name__c == 'Behavior'){
+							value.Text_Under_250__c = behaviorString;
+						}
+					}
+					
+					values.add(value);
+				
 	   			}
-	   		
-	       		 insert values;
+	   			
+	   			
+	   			try{
+	   				
+	       			insert values;
+	   			}
+	   			catch (DMLException e){
+	   				
+	   				Database.rollback(sp); //Making sure to roll back the Evaluation creation in case of any failure.
+	   				ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Resident Assessment. Please Contact your Administrator');
+            		ApexPages.addMessage(myMsg);
+            		
+	   				return null;
+	   			}
     	
 			}
 		// return to Eval Dynamic Page
