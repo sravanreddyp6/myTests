@@ -104,8 +104,19 @@ public with sharing class GenerateEvalComponent {
                     reqfldHTML = '<div style="display: table-cell;">';
 				}
 
-                if ( e.Field_Type__c == 'Hidden' )  { 
-                        newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" />';                        
+                if ( e.Field_Type__c == 'Hidden' )  {
+                	newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" ';  
+                	if (mapEvalValues.ContainsKey( e.id )) {
+                        newHTMLfld += 'value="' ;
+	                	if (e.Field_Sub_Type__c == 'Boolean') {
+	                        newHTMLfld += mapEvalValues.get(e.id).boolean__c;
+	                    }
+	                    else if (e.Field_Sub_Type__c == 'String') {
+	                        newHTMLfld += mapEvalValues.get(e.id).Text_Over_250__c;
+	                    }
+                	}
+                    newHTMLfld += '"/>'; 
+                                              
                 } else if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
                     if ( e.Field_Sub_Type__c == 'Checkbox') {
                         newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '"';
