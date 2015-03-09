@@ -1,3 +1,6 @@
+/* 
+  Add comments here about what type of fields are not yet handelled. 
+*/
 public with sharing class GenerateEvalComponent {
 
 	public List<string> ctlList {get { return CreateFieldControls();} private set;}
@@ -215,7 +218,7 @@ public with sharing class GenerateEvalComponent {
 	                	// get the options
 	                    List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
-		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
+		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
 		                	
 			                // insert value
 	                        if ( mapEvalValues.ContainsKey( e.id ))
@@ -300,7 +303,7 @@ public with sharing class GenerateEvalComponent {
 		for(FormKeyVal d : objs){
 			 oldMapVal = formData.put(d.name, d.value);
 			 if (oldMapVal != null && oldMapVal != '')
-			     formData.put(d.name, formData.get(d.name) +';'+ oldMapVal);
+			     formData.put(d.name, oldMapVal +';'+ formData.get(d.name));
 		}
 
 		List<Eval_Value__c> newValues = new List<Eval_Value__c>();
