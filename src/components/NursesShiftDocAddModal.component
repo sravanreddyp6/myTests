@@ -30,10 +30,6 @@
 		jQuery(document).ready(function( $ ) {
 			"use strict";
 
-			window.showAddShiftDocModal = function () {
-				showAddShiftDoc{!uniqueId}();
-			}
-
 			var $shiftStartTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.shiftDocEntry.shiftStartTimeEntry.shiftStartTime}'));
 			var $shiftEndTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.shiftDocEntry.shiftEndTimeEntry.shiftEndTime}'));
 			var $shiftStartDate = $('#shiftStartDate');
@@ -143,7 +139,7 @@
 
 	<apex:form id="shiftDocModalForm">
 		<apex:actionFunction name="showAddShiftDoc{!uniqueId}" action="{!showAddShiftDoc}" status="{!status}" oncomplete="openModalDialog('shiftDocModal', 'span', 'Add Nurses Shift Documentation', null, 1000, 'shiftDocModalForm'); jQuery('#shiftDocMessages').html('');" rerender="{!onShowRerender}" />
-		<apex:actionFunction name="saveShiftDoc{!uniqueId}" action="{!saveShiftDoc}" status="saveShiftDocStatus" />
+		<apex:actionFunction name="saveShiftDoc{!uniqueId}" action="{!saveShiftDoc}" status="{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.saveShiftDocStatus}" />
 
 		<apex:outputPanel id="shiftDocModal" style="display: none">
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
@@ -158,7 +154,7 @@
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
 					<apex:pageBlockSectionItem id="shiftEndTimeEntry">
-						<apex:outputpanel>
+						<apex:outputpanel >
 							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
 							<c:MilitaryDatetime edit="true" hiddenFieldId="shiftEndTime" dateTimeVal="{!shiftDoc.Shift_End_Time__c}" datetimepickerid="shiftEndDate" shiftTop="20" />
 							<apex:inputhidden value="{!shiftDoc.Shift_End_Time__c}" id="shiftEndTime" />

@@ -3,6 +3,9 @@ public with sharing class NursesShiftDocAddModalController {
 	public Id serviceAssignmentId {
 		get;
 		set {
+			if (value == null) {
+				return;
+			}
 			serviceAssignment = [
 				SELECT Id, Admission__r.Person_Being_Served__r.LastName, Admission__r.Person_Being_Served__r.FirstName
 				  FROM Service_Assignment__c
