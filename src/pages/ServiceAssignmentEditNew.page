@@ -18,9 +18,6 @@
 			margin-bottom: 10px;
 		}
 		#fundingMessages,
-		#evaluationMessages .error {
-			color: red;
-		}
 		#fundingMessages .success {
 			color: green;
 		}
@@ -81,38 +78,6 @@
 			j$('input[id$=phaseToSave]').val(thePhase);
 		}
 
-		openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
-			if (!width) {
-				width = 800;
-			}
-			if (!dClass) {
-				dClass = 'fixed-dialog';
-			}
-			selector = tagType + '[id$=' + dialogId + ']';
-			if (j$(selector).dialog("isOpen") !== true) {
-				j$(selector).dialog({
-					dialogClass: dClass,
-					title: titleString,
-					modal: true,
-					width: width,
-					resizable: false,
-					minHeight: 0,
-					dialogClass: 'modalDialog',
-					closeOnEscape: false,
-					position: {
-						my: "center top",
-						at: "center top"
-					},
-					open: function () {
-						// Don't allow "background" to be scrollable when dialogs
-						// are open.
-						j$("body").css("overflow", "hidden");
-					}
-				}).parent().appendTo(j$('form[id$=myFRM]'));
-				j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
-			}
-		};
-
 		fundingSourceSave = function (isClose) {
 			// We cant use Visualforce functions/variables in a Static Resource JS file, so we have to pass it in here.
 			closeFundingSource = isClose;
@@ -151,91 +116,14 @@
 			return today;
 		}
 
-
-        validateEval = function () {
-            var evalErrors = [];
-            var dupe = [];
-            var startValue = j$('[id$=evalstartTime]').val();
-            var st = new Date(startValue);
-            var formatStart = moment(st).format();
-            var start = new Date(formatStart);
-            var endValue = j$('[id$=evalendTime]').val();
-            var en = new Date(endValue);
-            var formatEnd = moment(en).format();
-            var end = new Date(formatEnd);
-
-            j$('#evaluationMessages').html('');
-
-            if (startValue == '' || endValue == '') {
-                evalErrors.push('Shift Start time and end time cannot be blank');
-            }
-
-            if (start >= end) {
-                evalErrors.push('Shift End time Should be greater than Start time');
-            }
-
-			if (evalErrors.length > 0) {
-
-				j$.each(evalErrors, function (index, error) {
-					j$('#evaluationMessages').append('<li class="error">' + error + '</li>');
-				});
-
-			} else {
-
-						Visualforce.remoting.Manager.invokeAction(
-						'{!$RemoteAction.ServiceAssignmentExt.finddupeEval}',
-							startValue,endValue,'{!Service_Assignment__c.Id}',
-						function(result, event){
-							if (event.status) {
-								console.log(result);
-								if(result){
-										dupe.push('There is already an existing Nurses Shift Documentation for the current timings. Do you still want to proceed?');
-										j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
-										j$('[id$=evalstartdate]').prop('disabled', true);
-										j$('[id$=evalenddate]').prop('disabled', true);
-										j$('[id$=evalProceed]').show();
-										j$('[id$=enterNew]').show();
-										j$('[id$=evalSave]').hide();
-								} else{
-									evaluationSave();
-								}
-
-							} else if (event.type === 'exception') {
-								document.getElementById("dupeFound").innerHTML = event.message;
-							} else {
-								document.getElementById("dupeFound").innerHTML = event.message;
-							}
-						},
-						{escape: true}
-					);
-
-				}
-
-		}
-
-		clearDates = function() {
-			j$('[id$=evalstartTime]').val('');
-			j$('[id$=evalendTime]').val('');
-			j$('[id$=evalstartdate]').prop('disabled', false);
-			j$('[id$=evalenddate]').prop('disabled', false);
-			j$('[id$=evalstartdate]').val('');
-			j$('[id$=evalenddate]').val('');
-			j$('#evaluationMessages').html('');
-			j$('#dupeFound').html('');
-			j$('[id$=evalProceed]').hide();
-			j$('[id$=evalSave]').show();
-			j$('[id$=enterNew]').hide();
-
-		}
 	</script>
 	<apex:pagemessages id="msgs" />
 	<br />
+	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations" status="{!$Component.myFRM.residentAssessmentShiftDocBlock.addShiftDocStatus}" />
 	<apex:form id="myFRM">
-		<apex:actionFunction name="evaluationSave" action="{!saveEvaluation}" status="saveevaluationStatus" reRender="" />
-		<apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('evaluationModal','span','Add Nurses Shift Documentation',null,1000); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" />
 		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
-		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
-		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
+		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
+		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
 			<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 		</apex:actionFunction>
 		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1" />
@@ -435,11 +323,7 @@
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
 				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM}">
 					<apex:outputLabel value="Model" for="modelfield" />
-					<!--         <apex:actionregion > -->
 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
-					<!--              <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" /> -->
-					<!--         </apex:inputField> -->
-					<!--         </apex:actionregion> -->
 				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
 
@@ -998,46 +882,11 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
-		<!-- Admission and Shift Assessments Section -->
-		<apex:outputPanel id="evaluationModal" style="display:none">
-			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
-			<div id='evaluationMessages'></div>
-			<apex:pageBlock title="Add Nurses Shift Documentation" rendered="{!vfVarIsCM}">
-				<apex:pageBlockSection columns="2" id="evaluationEntry">
-					<apex:pageBlockSectionItem >
-						<apex:outputPanel >
-							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="evalstartdate" shiftTop="20" />
-							<apex:inputhidden value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
-						</apex:outputPanel>
-					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem >
-					<apex:outputpanel >
-							<apex:outputLabel Value="Shift End Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="evalenddate" shiftTop="20" />
-							<apex:inputhidden value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
-						</apex:outputpanel>
-					</apex:pageBlockSectionItem>
-				</apex:pageBlockSection>
-				<div id="dupeFound" ></div>
-				<apex:pageBlockButtons location="bottom">
-					<apex:commandButton value="Save" onclick="validateEval();return false;" id="evalSave" />
-					<apex:commandbutton value="Proceed" onClick="evaluationSave(); return false;" id="evalProceed"/>
-					<apex:commandButton value="Enter new time" onClick="clearDates(); j$('#dupeFound').html(''); return false;" id="enterNew"/>
-					<apex:commandButton value="Cancel" onclick="closeModalDialog('evaluationModal', 'span'); clearDates(); return false;" />
-					<apex:actionStatus id="saveevaluationStatus">
-						<apex:facet name="start">
-							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-						</apex:facet>
-						<apex:facet name="stop" />
-					</apex:actionStatus>
-				</apex:pageBlockButtons>
-			</apex:pageBlock>
-		</apex:outputPanel>
+
 		<a name="ShiftAssessments" id="ShiftAssessments"></a>
-		<apex:pageBlock title="Resident Assessment and Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
+		<apex:pageBlock title="Resident Assessment and Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
 			<div class="pbHeaderButton">
-			
+
 				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
 					<apex:actionStatus id="AddOldResidentAssessmentStatus" >
 						<apex:facet name="start">
@@ -1045,7 +894,7 @@ END: Uncomment to have the element collapsed by default -->
 						</apex:facet>
 						<apex:facet name="stop" />
 					</apex:actionStatus>
-					
+
 				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" />
 					<apex:actionStatus id="AddResidentAssessmentStatus" >
 						<apex:facet name="start">
@@ -1053,9 +902,9 @@ END: Uncomment to have the element collapsed by default -->
 						</apex:facet>
 						<apex:facet name="stop" />
 					</apex:actionStatus>
-				
-				<apex:commandButton value="Add Nurses Shift Documentation" rendered="{!Service_Assignment__c.Status__c!='Inactive' && evaluations.size > 0}" onclick="showAddevaluation(); j$('[id$=evalProceed]').hide(); j$('[id$=enterNew]').hide();return false;" />
-				<apex:actionStatus id="AddevaluationStatus">
+
+				<apex:commandButton value="Add Nurses Shift Documentation" rendered="{!Service_Assignment__c.Status__c!='Inactive' && evaluations.size > 0}" onclick="showAddShiftDocModal(); return false;" />
+				<apex:actionStatus id="AddShiftDocStatus">
 					<apex:facet name="start">
 						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
 					</apex:facet>
