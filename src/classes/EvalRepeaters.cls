@@ -102,20 +102,19 @@ public with sharing class EvalRepeaters {
 												from eval_value__c
 												where what_id__c = :evaluationID
 												and eval__r.field_name__c = 'isValid'
+												and eval_section_type__c = :evalname	// only look for errors in the base sections
 												and boolean__c = false
 												group by eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, owner.name, ownerid
 												order by eval_section_type__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c,  min(createddate) desc];
 		compositeKey = '';
 		
 		for (AggregateResult ag : evalErrors){
-			if ( (string)ag.get('eval_section_type__c') == evalname ) { // only look for errors in the base sections
-				compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
-				system.debug(compositeKey);
-				for (EvalRepeaterWrapper e : workingEvals)
-					if ( e.compositekey == compositeKey) {
-						e.numErrors = (integer)ag.get('expr0');
-						numErrors += 1;
-					}
+			compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
+//			system.debug(compositeKey);
+			for (EvalRepeaterWrapper e : workingEvals)
+				if ( e.compositekey == compositeKey) {
+					e.numErrors = (integer)ag.get('expr0');
+					numErrors += 1;
 			}
 		}
 		
@@ -124,16 +123,12 @@ public with sharing class EvalRepeaters {
 	
 	
 	public EvalRepeaters(){
-		
+		numEmpty = 0;
+		numErrors = 0;
 		
 	}
 
 
-	public boolean getanyErrors() { 
-		// return whether there is an error in any section for this eval 
-		return false;
-	}
-	
 	public class EvalValueWrapper {
 		
 		public string sectiontype { get; set;}
