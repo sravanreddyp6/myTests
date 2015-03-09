@@ -31,8 +31,8 @@
     <apex:pageBlock rendered="{!ctlList.size>0}">
     <apex:outputText value="{!evaltype}" />
     <apex:pageBlockSection title="{!category} / {!subcategory}" collapsible="false">
-    <apex:pageBlockSectionItem ><span id="evalSecValMsgs" style="color: red;"></span></apex:pageBlockSectionItem>
-    <apex:pageBlockSectionItem />
+    <apex:pageBlockSectionItem rendered="{!ctlList.size > 0 && hasErros}" ><span id="evalSecValMsgs" style="color: red;"></span></apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{!ctlList.size > 0 && hasErros}"/>
     <apex:repeat value="{!ctlList}" var="fld">
     <apex:pageBlockSectionItem >
     <apex:outputText value="{!fld}" escape="false" />
@@ -123,10 +123,10 @@
                         errorMsg += '<li>'+ $('label[for="'+$target.attr('id')+'"]')[0].innerHTML + ' field is mandatory.</li>';
                 });
                 if (errorMsg != '' ){
-                    $('#IsValid').val("true").trigger('change');
+                    $('#IsValid').val("false").trigger('change');
                     $('#ErrorMsg').val(errorMsg).trigger('change');
                 } else {
-                    $('#IsValid').val("false").trigger('change');
+                    $('#IsValid').val("true").trigger('change');
                     $('#ErrorMsg').val("").trigger('change');
                 }
     }
