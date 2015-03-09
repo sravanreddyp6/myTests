@@ -13,7 +13,7 @@ public with sharing class GenerateEvalComponent {
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
     
-    public boolean hasErros { get; private set;}
+    public transient boolean hasErros { get; private set;}
             
 	public static Map<ID, Eval__c> mapEvalItems;
 	public static Map<ID, Eval_Value__c> mapEvalValues;
