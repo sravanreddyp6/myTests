@@ -61,7 +61,7 @@
             var jsonData = JSON.stringify(formData);
             var uuid = (new Date()).getTime();
             
-            console.log(jsonData);
+            //console.log(jsonData);
             // vf remote to save data
             //debugger;
             GenerateEvalComponent.saveFields('{!parentID}'
@@ -201,7 +201,7 @@
 	 	
 <apex:outputPanel layout="none" rendered="{! subcategory == 'Body Map'}">
 	   anno.reset();
-                    var el = $('#bodyMap').get(0);
+                    var el = $('#bodyMap{!evalSectionUuid}').get(0);
                     if (el) {
                         anno.makeAnnotatable(el);
                     }
@@ -210,7 +210,7 @@
                     <apex:repeat value="{!annotations}" var="annotation" >
                     anno.addAnnotation({
                         Id: "{!annotation.Id}",
-                        src: $("#bodyMap").prop("src"),
+                        src: $("#bodyMap{!evalSectionUuid}").prop("src"),
                         text: "{!JSENCODE(annotation.Annotation_Text__c)}",
                         shapes: [{
                             type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
