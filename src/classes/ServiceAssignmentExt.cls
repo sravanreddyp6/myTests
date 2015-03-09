@@ -308,16 +308,6 @@ public without sharing class ServiceAssignmentExt {
       set;
   }
 
-  public Evaluation__c evaluation {
-      get{
-         if (evaluation == null) {
-            evaluation = new Evaluation__c();
-        }
-        return evaluation;
-    }
-    set; }
-
-
 // END:  Parent level properties with get/set methods.
 
 
@@ -1292,7 +1282,6 @@ public void loadProgramList() {
 
 //Commented out by Sravan - 11/25/2014 as Users will not create Admission Assessment from Service Assignemnt page. It will carry over from Referral.
    public PageReference addResidentAssessment(){
-        //List<Evaluation__c> evalonReferral = [SELECT Id FROM Evaluation__c WHERE Referral__c = :theServAssign.Referral__c limit 1 ];
         string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
         string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
         string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
@@ -1303,53 +1292,53 @@ public void loadProgramList() {
                                             ServiceAssignment__c = theServAssign.Id,
                                             Name = resAsmtName,
                                             RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
-                                                        
+
             );
-            
+
             insert resAsmt;
-            
+
             fallAsmt.Evaluation__c = resAsmt.Id;
             insert fallAsmt;
-            
+
             return new PageReference ('/apex/NursingEvaluationEdit?id='+resAsmt.Id);
         }
         else{
             Id evalOnReferralId = referral.Evaluations__r[0].Id;
             list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
             list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
-            
+
             FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
             string query = 'SELECT ';
             FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
-            
+
             for(Schema.FieldSetMember f: copyFields.getFields()) {
                 query += f.getFieldPath() + ', ';
             }
-            
+
             query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
-            
+
             sObject existingEval = Database.Query(query);
             string evaluationObj = 'Evaluation__c';
             sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
-            
+
             for(Schema.FieldSetMember f: copyFields.getFields()){
                 dynObjectEvaluationRecord.put(f.getFieldPath(),existingEval.get(f.getfieldpath()));
-                
+
             }
             dynObjectEvaluationRecord.put('RecordtypeId',Utility.getEvaluationRecordType('NursesAssessment'));
             dynObjectEvaluationRecord.put('ServiceAssignment__c',theServAssign.Id);
             dynObjectEvaluationRecord.put('Name',resAsmtName);
-            
+
             insert dynObjectEvaluationRecord;
-            
+
             fallAsmt.Evaluation__c = dynObjectEvaluationRecord.Id;
             insert fallAsmt;
-            
+
             String respQuery ='SELECT ';
             for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
                     respQuery +=f.getFieldPath() + ', ';
             }
-            
+
             respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalOnReferralId AND RecordType.Name IN:responseRectypes';
             list<Evaluation_Response__c> evalResponses = database.query(respQuery);
             if(evalResponses!=null){
@@ -1361,82 +1350,82 @@ public void loadProgramList() {
                     }
                     tobeCreated.add(newRecord);
                 }
-                
+
                 insert tobeCreated;
             }
-        
+
              return new PageReference ('/apex/NursingEvaluationEdit?id='+dynObjectEvaluationRecord.Id);
-        } 
-        
+        }
+
         return null;
     }
-    
+
     public pageReference addResAsmt(){
   		string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
     	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
 		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
 		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-		
+
 			Savepoint sp = Database.setSavepoint();
-			
+
 	  		Evaluation__c resAsmt = new Evaluation__c(
 	   											ServiceAssignment__c = theServAssign.Id,
 	   											Name = resAsmtName,
 	   											RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
-	   														
+
 	   			);
-	   			
+
 	   		try{
-	   			
+
 	   			insert resAsmt;
 	   		}
-	   		
+
 	   		catch(DMLException e) {
-	   			
+
 	   			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Resident Assessment. Please Contact your Administrator');
             	ApexPages.addMessage(myMsg);
-	   			
+
 	   		}
-	   		
-	   		
+
+
 	   	//	return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
-		
-		
+
+
 			if(referral.Has_Evaluation__c) {
 	   			Id evalOnReferralId = referral.Evaluations__r[0].Id; //Grab the Id of the Existing evaluation record on referral
 	   			//FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses; //Calling the Field set
 	   			string query = 'SELECT ';
 	   			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment; // Calling the Field set where the about to be cloned fieldvalue paths are stored
 	   			FieldSet behavior = SObjectType.Evaluation__c.FieldSets.Behavior;
-	   			
+
 	   			set<String> getEvals = new set<String>(); //Collection to store the API names of the Fields which will be used in Query (API_Name_Flag__c)
 	   			for(Schema.FieldSetMember f: copyFields.getFields()) {
 	   				query += f.getFieldPath() + ', ';
 	   			}
-	   			
+
 	   			query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
 	   			sObject existingEval = Database.Query(query);
-	   			
+
 	   			for(Schema.FieldSetMember f: copyFields.getFields()){
 	   				if(string.isNOTBLANK(string.Valueof(existingEval.get(f.getFieldPath()))) && !string.Valueof(existingEval.get(f.getFieldPath())).equalsIgnoreCase('false')){
 	   					getEvals.add(f.getFieldPath());
-	   					
+
 	   				}
 	   			}
-	   			
+
 	   			system.debug('Checking the set for null values+++++++++'+getEvals);
 	   			system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
-	   			
+
 	   			Map<id,Eval__c> evalMap = new Map<id,Eval__c>([SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals]);
-	   			
+
 	   			//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
 	   			set<string> catSubcat = new set<string>();
 	   			Map<string, string> uniqueTimeMap = new Map<string, string>();
-	   			
+
 	   			for(Eval__c ee: evalMap.values()){
 	   				catSubcat.add(ee.Category__c+'~'+ee.sub_category__c);
 	   			}
-	   			
+
 	   			string timeString =  Userinfo.getUserId()+'-'+DateTime.now().getTime();
 	   			integer n = 0;
 	   			system.debug('Strings+++++++++++++++++++++++'+catSubcat);
@@ -1444,47 +1433,47 @@ public void loadProgramList() {
 	   				n = n+1;
 	   				uniqueTimeMap.put(s,timeString+string.valueOf(n));
 	   			}
-	   			
+
 	   			system.debug('timeMap+++++++++++=='+uniqueTimeMap);
-	   			
+
 	   			//Create Corresponding Eval Value Records
 	   			List<Eval_Value__c> values = new List<Eval_value__c>();
 	   			Eval_Value__c value;
-	   			
+
 	   			string behaviorString = '';
-	   			
+
 	   			for(Schema.FieldSetMember f: behavior.getFields()){
-	   				
+
 	   				system.debug('behvaiorset+++++++'+behavior.getFields());
 	   				system.debug('fieldValue+++++'+existingEval.get(f.getFieldPath()));
-	   				
+
 	   				if(string.isNotBlank(string.valueOF(existingEval.get(f.getFieldPath())))) {
 	   					behaviorString += f.getLabel();
 	   					behaviorString += '; ';
-	   				}	
-	   				
+	   				}
+
 	   			}
-	   			
+
 	   			for(Eval__c eval: evalMap.values()){
-	   				
+
 	   				string fieldName = eval.API_Name_Flag__c;
-	   				
+
    					value = new Eval_Value__c();
    					value.Eval__c = eval.Id;
 					value.Eval_Section_Type__c = 'Residential';
 					value.what_id__c = resAsmt.Id;
 					value.what_id_object__c = 'Evaluation__c';
-					
+
 					string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
-					
+
 					if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
 						system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
 						value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
-						
+
 					}
-					
-					
-					
+
+
+
 					//Handle All Data Types
 					if ( eval.Field_Type__c == 'Boolean'){
 						if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
@@ -1496,7 +1485,7 @@ public void loadProgramList() {
 						else if (eval.Field_Sub_Type__c == 'Dropdown')
 							value.Text_Under_250__c = (String)existingEval.get(fieldName);
 					}
-					
+
 					else if (eval.Field_Type__c == 'Int'){
 						value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
 					}
@@ -1506,49 +1495,49 @@ public void loadProgramList() {
 					else if (eval.Field_Type__c == 'Datetime' ){
 	                    value.Date_Time__c = (Datetime)existingEval.get(fieldName);
 	                }
-					else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' || 
-					 		 eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' || 
+					else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' ||
+					 		 eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
 					 		 eval.Field_Type__c == 'Currency'){
 						if ( eval.length__c > 250 )
 							value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
 						else
 							value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
 					}
-					
+
 					system.debug('behaviorString++++++++++'+behaviorString);
 					if(string.isNotBlank(behaviorString)){
 						if(eval.Field_Name__c == 'Behavior'){
 							value.Text_Under_250__c = behaviorString;
 						}
 					}
-					
+
 					values.add(value);
-				
+
 	   			}
-	   			
-	   			
+
+
 	   			try{
-	   				
+
 	       			insert values;
 	   			}
 	   			catch (DMLException e){
-	   				
+
 	   				Database.rollback(sp); //Making sure to roll back the Evaluation creation in case of any failure.
 	   				ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Resident Assessment. Please Contact your Administrator');
             		ApexPages.addMessage(myMsg);
-            		
+
 	   				return null;
 	   			}
-    	
+
 			}
 		// return to Eval Dynamic Page
 		return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
   	}
-    
+
     public PageReference createFadAssess(){
         list<Assessment__c> oldAssess = new list<Assessment__c>();
         oldAssess = [select id from assessment__c where type__c ='FAD Summary' AND Service_Assignment__c = :theServAssign.id Order By CreatedDate Desc limit 1];
-       
+
         Assessment__c assess = new Assessment__c ();
         assess.type__c = 'FAD Summary';
         assess.Admission__c = admission.id;
@@ -1615,38 +1604,6 @@ public void loadProgramList() {
 
         return ref;
     }
-
-  public void showAddevaluation() {
-    evaluation = new Evaluation__c();
-    String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
-    string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
-    evaluation = new Evaluation__c();
-    evaluation.Name = pbsFirstinitial+'. '+pbsLastName;
-    evaluation.RecordTypeID = Utility.getEValuationRecordType('CMShiftAssessment');
-    evaluation.ServiceAssignment__c = this.theServAssign.Id;
-    evaluation.Status__c = 'Draft';
-    evaluation.Details_Section_Completed__c = true;
-
-
-  }
-
-  public pageReference saveEvaluation() {
-
-      try{
-      	  string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : ''; 
-      	   
-      	  evaluation.Name = this.evaluation.Name+' - '+evaluation.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString())+' - NSD - '+ownerfirstInitial+'. '+userinfo.getLastName();
-          insert evaluation;
-          PageReference pg = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.Id);
-          return pg;
-      }
-      catch (DMLException e) {
-          throw new MyException('Nurses Shift Document could not be created',e); 
-          //Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
-      }
-
-    return null;
-  }
 
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
@@ -1762,25 +1719,4 @@ public class MyException extends Exception {}
         upsert sa;
         return true;
    }
-   
-   @RemoteAction
-   public static boolean finddupeEval(string shiftStart, string shiftEnd, Id saId) {
-   		system.debug('I am remoting');
-   		system.debug(shiftStart);
-   		DateTime st = Datetime.parse(shiftStart);
-   		DateTime en = Datetime.parse(shiftEnd);
-   		boolean dupefound = false;
-   		List<Evaluation__c> dupeEval = [SELECT Id, Name, Shift_Start_time__c, Shift_end_time__c FROM Evaluation__c WHERE ServiceAssignment__c = :saId AND (
-        					(Shift_Start_time__c >= :st and Shift_Start_time__c <= :en)
-        				or 	(Shift_end_time__c >= :st and Shift_end_time__c <= :en)
-        				or  ( Shift_Start_time__c <= :st and Shift_end_time__c >= :en )) AND RecordType.Name = 'CMShiftAssessment' AND Status__c !='Disregard' LIMIT 1];
-        				
-   		system.debug(dupeEval);
-   		if(dupeEval.size() >0 ) {
-   			dupeFound = true;
-   		}
-   	
-   		return dupeFound;
-   }
-
 }
