@@ -12,7 +12,9 @@ public with sharing class GenerateEvalComponent {
 	public ID pbsID { get; set;}
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
-
+    
+    public boolean hasErros { get; private set;}
+            
 	public static Map<ID, Eval__c> mapEvalItems;
 	public static Map<ID, Eval_Value__c> mapEvalValues;
 	    public Evaluation_Response__c[] annotations { set;
@@ -30,6 +32,7 @@ public with sharing class GenerateEvalComponent {
 	public GenerateEvalComponent( ) {
 		mapEvalItems = new Map<ID, Eval__c>();
 		mapEvalValues = new Map<ID, Eval_Value__c>();
+		hasErros = false;
 	}
 
 	public List<string> CreateFieldControls () {
@@ -113,6 +116,9 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld += 'value="' ;
 	                	if (e.Field_Sub_Type__c == 'Boolean') {
 	                        newHTMLfld += mapEvalValues.get(e.id).boolean__c;
+	                        if(e.Field_Name__c == 'IsValid' && mapEvalValues.get(e.id).boolean__c == false ){
+	                        	hasErros = true;
+	                        }
 	                    }
 	                    else if (e.Field_Sub_Type__c == 'String') {
 	                        newHTMLfld += mapEvalValues.get(e.id).Text_Over_250__c;
