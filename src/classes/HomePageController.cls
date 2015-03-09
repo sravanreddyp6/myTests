@@ -62,6 +62,10 @@ public with sharing class HomePageController{
 	public List<SelectOption> programslist { get; set; }
 	public Service_Assignment__c[] serviceAssignments { get; set; }
 
+	// We use this variable to keep track of which service assignment we want
+	// to run an action on
+	public Id serviceAssignmentIdForAction { get; set; }
+
 	//Constructor
 	public HomePageController(){
 		programsList = new list<SelectOption>();
