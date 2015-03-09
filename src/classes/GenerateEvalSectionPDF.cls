@@ -131,15 +131,16 @@ public with sharing class GenerateEvalSectionPDF {
                         newHTMLfld += mapEvalValues.get(e.id).date_time__c; // output date format
                     newHTMLfld +=  '</div>';
                 } else if (e.Field_Type__c == 'Multiselect') {
-                	String selectedVals;
+                	
                     if ( mapEvalValues.ContainsKey( e.id )){
 	                	if ( e.length__c > 250 )
-	                       selectedVals = mapEvalValues.get(e.id).Text_Over_250__c;
+	                       strVal = mapEvalValues.get(e.id).Text_Over_250__c;
 	                    else
-	                       selectedVals = mapEvalValues.get(e.id).Text_Under_250__c;
+	                       strval = mapEvalValues.get(e.id).Text_Under_250__c;
                     }
+                    //system.debug( e.id + ' - multiselect -' + selectedVals);
                 	newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
-	                newHTMLfld += selectedVals;
+	                newHTMLfld += strval;
                     newHTMLfld +=  '</div>';
                 } else if (e.field_type__c == 'BodyMap') {
        				newHTMLfld = '<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
