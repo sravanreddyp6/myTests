@@ -34,7 +34,6 @@ public with sharing class NursesShiftDocAddModalController {
 		shiftDoc.RecordTypeID = Utility.getEvaluationRecordType('CMShiftAssessment');
 		shiftDoc.ServiceAssignment__c = this.serviceAssignment.Id;
 		shiftDoc.Status__c = 'Draft';
-		shiftDoc.Details_Section_Completed__c = true;
 	}
 
 	public pageReference saveShiftDoc() {
@@ -42,7 +41,7 @@ public with sharing class NursesShiftDocAddModalController {
 
 		shiftDoc.Name = this.shiftDoc.Name + ' - ' + shiftDoc.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString()) + ' - NSD - ' + ownerfirstInitial + '. ' + UserInfo.getLastName();
 		insert shiftDoc;
-		return new PageReference('/apex/CMShiftAssessmentEdit?id=' + shiftDoc.Id);
+		return new PageReference('/apex/EvaluationView?id=' + shiftDoc.Id);
 	}
 
 	@RemoteAction
