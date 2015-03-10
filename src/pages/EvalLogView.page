@@ -1,0 +1,19 @@
+<apex:page controller="EvalLogViewController" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="false" >
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />      
+
+    
+
+<script>
+</script>
+
+<!--  for the eval type and section passed in, get a list of all cat/subcat and output separate panels for each, in chronological order -->
+<apex:repeat value="{!evalDataList}" var="eval">
+	<c:EvalSectionPDF id="outputsection" category="{!eval.cat}" uuID="{!eval.sectionid}"
+	subcategory="{!eval.subcat}" evaltype="{!evalname}" evalSectionUuid="{!eval.sectionid}" evalSectionType="{!eval.sectiontype}"
+	editEnabled="false" parentID="{!$CurrentPage.parameters.evalId}" ownername="{!eval.owner}" createddate="{!eval.created}"/>
+	<br /><br />
+</apex:repeat>
+
+ 
+ 		
+</apex:page>
