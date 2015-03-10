@@ -59,10 +59,20 @@
         <description>The html ids array of the fields that are controlled based on the value in this field.</description>
         <externalId>false</externalId>
         <label>Dependent Fields</label>
-        <length>4000</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>10</visibleLines>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>External_Id__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>true</externalId>
+        <label>External Id</label>
+        <length>20</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
     </fields>
     <fields>
         <fullName>Option_Name__c</fullName>
@@ -146,7 +156,7 @@
         <label>All</label>
     </listViews>
     <listViews>
-        <fullName>a1qJ0000000Vyfz</fullName>
+        <fullName>EvalDropDowns</fullName>
         <columns>NAME</columns>
         <columns>Dependent_Fields__c</columns>
         <columns>Option_Name__c</columns>
@@ -157,31 +167,7 @@
         <columns>visibility_rules__c</columns>
         <columns>visibility_row_rules__c</columns>
         <filterScope>Everything</filterScope>
-        <filters>
-            <field>WhatId__c</field>
-            <operation>contains</operation>
-            <value>a1qJ0000000Vyfz</value>
-        </filters>
-        <label>a1qJ0000000Vyfz</label>
-    </listViews>
-    <listViews>
-        <fullName>a1qJ0000000Vyg9</fullName>
-        <columns>NAME</columns>
-        <columns>Dependent_Fields__c</columns>
-        <columns>Option_Name__c</columns>
-        <columns>Option_Value__c</columns>
-        <columns>Sequence__c</columns>
-        <columns>WhatId__c</columns>
-        <columns>What_Id_Object__c</columns>
-        <columns>visibility_rules__c</columns>
-        <columns>visibility_row_rules__c</columns>
-        <filterScope>Everything</filterScope>
-        <filters>
-            <field>WhatId__c</field>
-            <operation>contains</operation>
-            <value>a1qJ0000000Vyg9</value>
-        </filters>
-        <label>a1qJ0000000Vyg9</label>
+        <label>EvalDropDowns</label>
     </listViews>
     <nameField>
         <label>Eval Drop Down Name</label>
