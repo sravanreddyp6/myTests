@@ -20,25 +20,14 @@ function clearPanel() {
 }
 
 function  showForm(key) {
-
-	if(key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment') {
-		showAsmt();
-	}
-	
-	else{
-	
-		$("#panel-form").empty().append($('[id$=evalForm]'));
+    if (key == 'Head to Toe ~ Skin/Body ~ Wound Detail' || key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'){
+        $("#panel-form").empty().append($("[id$='evalResponsesForm']"));
+    }else{
+        $("#panel-form").empty().append($("[id$='evalForm']"));
 		bindSubmitEvent();
 		setUpFields();
 		$('#evalSecValMsgs').html($('#ErrorMsg').val());
-	
-	}
-	
 }
-
-function showAsmt() {
-	$("#panel-form").empty().append($('[id$=assessmentForm]'));
-
 }
 
 function setupButtons( disableFlag ) {
@@ -49,7 +38,12 @@ else
 }
 
 </script>
+<style>
+.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
+    left:auto !important;
+}
 
+</style>
 
 	<c:PersonalRecord pbsId="{!PBSID}" servAssignId="{!SAID}" parentPage="Evaluation" servAssignNew="false" admId="{!AdmId}" /> 
   <div class="container">
@@ -99,7 +93,7 @@ else
     </div><!-- /.container -->
 
 <apex:form >
-<apex:actionFunction name="createPanel" action="{!myAction}" rerender="outputsection,sec2" status="myStatus" oncomplete="showForm('{!evalType+' ~ '+cat+' ~ '+subCat}');">
+<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalRepeaters, outputsection, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+' ~ '+cat+' ~ '+subCat}');">
 	<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
 	<apex:param name="Category" value="" AssignTo="{!cat}" />
 	<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
@@ -122,6 +116,19 @@ evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$Cur
 <!-- 	</apex:form> -->
 <!-- </apex:outputPanel> -->
 
+<apex:outputPanel id="evalResponsesSection" style="display:none" >
+<apex:form id="evalResponsesForm">
+    <apex:pageBlock >
+        <c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe ~ Skin/Body ~ Wound Detail'}"/>
+        <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'}"/>
+        <apex:pageBlockButtons location="bottom">
+            <input class="btn" type="button" value="Close" onclick="clearPanel();"/>    
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+</apex:form>
+</apex:outputPanel>
+
+ 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">  
             <style>

@@ -35,7 +35,8 @@ public with sharing class EvalDynamicExt {
 		string displayKey = evalType+' ~ '+cat+' ~ '+subCat;
 		key = displayKey;
 		
-		if(key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment'){
+		if(key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment' || key == 'Head to Toe ~ Skin/Body ~ Wound Detail' || key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'){
+			createEvalValueRecord(key);
 			showMainComponent = false;
 		}
 		else{
@@ -43,4 +44,40 @@ public with sharing class EvalDynamicExt {
 		}
 		
 	}
+	
+	
+	private void createEvalValueRecord(String key){
+		String sectionId = UserInfo.getUserId() + Datetime.now().getTime();
+        String sectionType = evalType;
+		
+        List<Eval_Value__c> listEvalValues = [ select id from eval_value__c
+                                                where what_id__c = :evalId
+                                                  and what_id_object__c = 'Evaluation__c'
+                                                  and eval__r.category__c = :cat
+                                                  and eval__r.sub_category__c = :subcat];
+
+        if (listEvalValues.size() == 0){
+            list<Eval__c> evals = [ select id from Eval__c
+						             where eval_type__r.name = :evalType
+						               and category__c = :cat
+						               and sub_category__c = :subcat
+						               and visible__c = true
+						            order by category_sequence__c, sub_category_sequence__c, field_sequence__c];
+        
+	        list<Eval_Value__c> vals = new list<Eval_Value__c>();
+         
+	        for (Eval__c e : evals){
+	              vals.add(new eval_value__c(Eval__c = e.id, 
+	                                         Eval_Section_Id__c = sectionId,
+	                                         Eval_Section_Type__c = sectionType,
+	                                         what_id__c = evalID,
+	                                         what_id_object__c = 'Evaluation__c'));
+	        }
+	        insert vals;        	
+        } else {
+            sectionType = 'Activity Log';
+        }
+		
+	}
+	
 }
