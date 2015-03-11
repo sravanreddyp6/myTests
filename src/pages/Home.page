@@ -230,6 +230,9 @@
 		.dataTables_paginate {
 			padding: 3px;
 		}
+		#evalForm {
+			display: none;
+		}
 	</style>
 
 	<script>
@@ -266,11 +269,14 @@
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
 				<apex:column headerValue="View Current Shift">
-					<a href="#">Shift Link</a>
+					<apex:outputPanel rendered="{!serviceAssignment.Evaluations__r.size >0}">
+						<a href="/{!serviceAssignment.Evaluations__r[0].Id}">{!serviceAssignment.Evaluations__r[0].Name}</a>
+					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Action">
-					<apex:selectList id="actionList" size="1">
-						<apex:selectOption itemValue="createShiftDoc" html-data-service-assignment-id="{!serviceAssignment.Id}" itemLabel="Create New Shift Doc" />
+					<apex:selectList id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Is_Signed__c), serviceAssignment.Evaluations__r[0].Id, '')}">
+						<apex:selectOption itemValue="createShiftDoc" itemLabel="Create New Shift Doc" />
+						<apex:selectOptions value="{!actionList}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Is_Signed__c)}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="actionButton" />
 				</apex:column>
@@ -346,8 +352,21 @@
 		<apex:actionFunction status="pageProcessing" name="showAddShiftDocModal" rerender="shiftDocAddModal" oncomplete="showAddShiftDoc1(); return false;">
 			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
 		</apex:actionFunction>
+		<apex:actionFunction name="createPanel" rerender="{!$Component.evalSection}" oncomplete="showForm();" status="pageProcessing">
+			<apex:param name="evaltype" value="" />
+			<apex:param name="Category" value="" />
+			<apex:param name="SubCategory" value="" />
+			<apex:param name="evalSectionId" value="" />
+			<apex:param name="evalSectionType" value="" />
+			<apex:param name="canEdit" value="" />
+			<apex:param name="evalId" value="" />
+		</apex:actionFunction>
 	</apex:form>
+	<div id="shiftDocActionDialog" style="display: none; "></div>
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
+	<c:EvalSection id="evalSection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}"
+		subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
+		evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" />
 
 	<script>
 		function search_Names() {
@@ -364,13 +383,40 @@
 
 	<script type="text/javascript">
 		j$(document).ready(function($) {
-			$(document).on("click", "input.actionButton", function (event) {
+			window.refreshEvalRepeaters = function () {
+				// For the Home page we actually don't need to refresh anything,
+				// so we'll use this to close the modal instead
+				closeModalDialog('shiftDocActionDialog', 'div');
+				$('#evalForm').css('display', 'none');
+				alert('Activity Log has been saved!');
+			}
+			window.showForm = function () {
+				$("#shiftDocActionDialog").empty().append($("#evalForm"));
+				bindSubmitEvent();
+				setUpFields();
+				$('#evalSecValMsgs').html($('#ErrorMsg').val());
+				openModalDialog('shiftDocActionDialog', 'div', 'Add Activity Log Entry', null, 1000, 'mainForm', false);
+				$('#evalForm').css('display', 'block');
+				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
+				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
+					closeModalDialog('shiftDocActionDialog', 'div');
+					$('#evalForm').css('display', 'none');
+					event.preventDefault();
+				});
+			}
+			// Set up the PBS table
+			$(document.getElementById("{!$Component.mainForm.pbsBlock.serviceAssignmentTable}")).on("click", "input.actionButton", function (event) {
 				var $selectElement = $(this).parent().find('select');
 				var $selected = $selectElement.find('option:selected');
-				var serviceAssignmentId = $selected.data('service-assignment-id');
+				var serviceAssignmentId = $selectElement.data('service-assignment-id');
+				var latestShiftDocId = $selectElement.data('latest-shift-doc-id');
 				var selectedValue = $selected.val();
 				if (selectedValue == 'createShiftDoc') {
 					showAddShiftDocModal(serviceAssignmentId);
+				} else if (selectedValue.indexOf('shiftDocAction-') == 0) {
+					var category = selectedValue.replace('shiftDocAction-', '').split('~')[0];
+					var subcategory = selectedValue.replace('shiftDocAction-', '').split('~')[1];
+					createPanel('Head to Toe', category, subcategory, null, 'Activity Log', true, latestShiftDocId);
 				}
 				event.preventDefault();
 			});
