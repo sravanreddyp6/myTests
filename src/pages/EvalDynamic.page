@@ -19,11 +19,26 @@ function clearPanel() {
    $("#panel-form").empty();
 }
 
-function  showForm() {
-	$("#panel-form").empty().append($("#evalForm"));
-	bindSubmitEvent();
-	setUpFields();
-	$('#evalSecValMsgs').html($('#ErrorMsg').val());
+function  showForm(key) {
+
+	if(key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment') {
+		showAsmt();
+	}
+	
+	else{
+	
+		$("#panel-form").empty().append($('[id$=evalForm]'));
+		bindSubmitEvent();
+		setUpFields();
+		$('#evalSecValMsgs').html($('#ErrorMsg').val());
+	
+	}
+	
+}
+
+function showAsmt() {
+	$("#panel-form").empty().append($('[id$=assessmentForm]'));
+
 }
 
 function setupButtons( disableFlag ) {
@@ -84,10 +99,10 @@ else
     </div><!-- /.container -->
 
 <apex:form >
-<apex:actionFunction name="createPanel" action="{!myAction}" rerender="outputsection" status="myStatus" oncomplete="showForm();">
-	<apex:param name="evaltype" value="" />
-	<apex:param name="Category" value="" />
-	<apex:param name="SubCategory" value="" />
+<apex:actionFunction name="createPanel" action="{!myAction}" rerender="outputsection,sec2" status="myStatus" oncomplete="showForm('{!evalType+' ~ '+cat+' ~ '+subCat}');">
+	<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
+	<apex:param name="Category" value="" AssignTo="{!cat}" />
+	<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
 	<apex:param name="evalSectionId" value="" />
 	<apex:param name="evalSectionType" value="" />
 	<apex:param name="canEdit" value="" />
@@ -97,7 +112,15 @@ else
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
 subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
-evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" />
+evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" rendered="{!showMainComponent}"/>
+
+<!--  Commenting out this for now as the component is not yet in production quality  Sravan> -->
+<!-- <apex:outputPanel style="display:none" id="sec2" > -->
+<!-- 	<apex:form id="assessmentForm"> -->
+<!-- 		<c:fallAssessmentComponent evaluationId="a11J0000001LFLzIAO"  rendered="{!key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment'}"/> -->
+<!-- 		 <apex:commandbutton value="Close" onclick="clearPanel();" /> -->
+<!-- 	</apex:form> -->
+<!-- </apex:outputPanel> -->
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">  
