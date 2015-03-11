@@ -199,6 +199,38 @@
         <unique>false</unique>
     </fields>
     <label>Eval Value</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>OBJECT_ID</columns>
+        <columns>Eval__c</columns>
+        <columns>Eval_Section_Id__c</columns>
+        <columns>What_ID_Object__c</columns>
+        <columns>What_ID__c</columns>
+        <columns>NAME</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>Created_today</fullName>
+        <columns>NAME</columns>
+        <columns>Eval__c</columns>
+        <columns>Eval_Section_Id__c</columns>
+        <columns>Eval_Section_Type__c</columns>
+        <columns>Boolean__c</columns>
+        <columns>Text_Over_250__c</columns>
+        <columns>Text_Under_250__c</columns>
+        <columns>What_ID__c</columns>
+        <columns>What_ID_Object__c</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <columns>CREATED_DATE</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>CREATED_DATE</field>
+            <operation>equals</operation>
+            <value>TODAY</value>
+        </filters>
+        <label>Created today</label>
+    </listViews>
     <nameField>
         <label>EvalValues Name</label>
         <type>Text</type>

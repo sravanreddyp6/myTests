@@ -27,7 +27,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     
-    <form id="evalForm" method="post" >
+    <form id="evalForm" method="post" rendered="{!subcategory != 'Skin Assessment'}">
     <apex:pageBlock rendered="{!ctlList.size>0}">
     <apex:outputText value="{!evaltype}" />
     <apex:pageBlockSection title="{!category} / {!subcategory}" collapsible="false">
@@ -45,43 +45,58 @@
     <input class="btn" type="button" value="Cancel" onclick="evalForm.reset(); setUpFields();"/>
     </apex:pageblocksectionitem>
     </apex:pageBlockSection>
-    
     </apex:pageBlock>
     </form>
     
+<!--     <form id="asmtForm" rendered="{!subcategory == 'Skin Assessment'}" > -->
+<!--     	<apex:pageBlock> -->
+<!--     		<apex:pageBlockSection > -->
+<!--     			<apex:pageBlockSectionItem > -->
+<!--     				<apex:include pageName="{!$Page.fallAssessment}" /> -->
+<!--     			</apex:pageBlockSectionItem> -->
+<!--     		</apex:pageBlockSection> -->
+<!--     	</apex:pageBlock> -->
+<!--     </form> -->
+    
+    <!-- c:fallAssessmentComponent evaluationId="a11J0000001LFI2IAO" rendered="{!subcategory == 'Skin Assessment'}" /-->
+   
     
     <script>
     jQuery.noConflict();
+	
+	
+	
+	    function bindSubmitEvent () {  $('#evalForm').on("submit", function (event) {
+	            beforeEvaluationSave();
+	            handleFormErros();
+	            event.preventDefault();
+	            var formData = $(this).serializeArray();
+	            var jsonData = JSON.stringify(formData);
+	            var uuid = (new Date()).getTime();
+	            
+	            //console.log(jsonData);
+	            // vf remote to save data
+	            //debugger;
+	            GenerateEvalComponent.saveFields('{!parentID}'
+	                                             , ( ('{!evalSectionUuid}' != '') ? '{!evalSectionUuid}' : '{!$User.Id}' + '-' + uuid )
+	                                             , '{!evalSectionType}'
+	                                             , '{!evaltype}'
+	                                             , '{!category}'
+	                                             , '{!subcategory}'
+	                                             , jsonData
+	                                             , function (result, event) {
+	                                                    if (!event.status) {
+	                                                        alert("Failed to save data! Error: " + event.message);
+	                                                        anno.addAnnotation(element);
+	                                                    }else{
+	                                                    	$("#evalForm").empty();
+	                                                    	refreshEvalRepeaters();	// call out to page to refresh list of repeaters
+	                                                    }
+	            });
+	        });
+		}
+	
 
-    function bindSubmitEvent () {  $('#evalForm').on("submit", function (event) {
-            beforeEvaluationSave();
-            handleFormErros();
-            event.preventDefault();
-            var formData = $(this).serializeArray();
-            var jsonData = JSON.stringify(formData);
-            var uuid = (new Date()).getTime();
-            
-            //console.log(jsonData);
-            // vf remote to save data
-            //debugger;
-            GenerateEvalComponent.saveFields('{!parentID}'
-                                             , ( ('{!evalSectionUuid}' != '') ? '{!evalSectionUuid}' : '{!$User.Id}' + '-' + uuid )
-                                             , '{!evalSectionType}'
-                                             , '{!evaltype}'
-                                             , '{!category}'
-                                             , '{!subcategory}'
-                                             , jsonData
-                                             , function (result, event) {
-                                                    if (!event.status) {
-                                                        alert("Failed to save data! Error: " + event.message);
-                                                        anno.addAnnotation(element);
-                                                    }else{
-                                                    	$("#evalForm").empty();
-                                                    	refreshEvalRepeaters();	// call out to page to refresh list of repeaters
-                                                    }
-            });
-        });
-	}
 
     beforeEvaluationSave = function () {
                 // Temporarily enable all the disabled fields before saving the

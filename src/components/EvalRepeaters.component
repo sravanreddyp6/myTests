@@ -22,20 +22,17 @@
 			</div>
 			<div class="panel-body">
 
-				<apex:outputPanel
-					rendered="{! AND( NOT(ISBLANK(evalDataKeys)), CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'))}"
+				<apex:outputPanel rendered="{! AND( NOT(ISBLANK(evalDataKeys)), CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'))}"
 					layout="none">
 
 					<apex:variable value="{!0}" var="counter" />
-					<apex:repeat
-						value="{! evalDataList[evaltype + '~' + eval.compositeKey]}"
+					<apex:repeat value="{! evalDataList[evaltype + '~' + eval.compositeKey]}"
 						var="edata">
 						<apex:outputPanel rendered="{!edata.sectiontype== evaltype}"
 							layout="none">
 							<a href="#"
 								onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','{!evaltype}', {! edata.ownerID == $User.Id });">
-								<apex:outputText value="{! edata.owner }" /> @ <apex:outputText
-									value=" {!edata.created}" />
+								<apex:outputText value="{! edata.owner }" /> @ <apex:outputText value=" {!edata.created}" />
 							</a>
 							<apex:outputText value="<br />" escape="false"
 								rendered="{! counter > 0}" />
@@ -69,14 +66,12 @@
 				</div>
 				<div class="panel-body">
 
-					<apex:repeat
-						value="{! evalDataList['Activity Log~' + eval.compositeKey]}"
+					<apex:repeat value="{! evalDataList['Activity Log~' + eval.compositeKey]}"
 						var="edata">
 						<apex:outputPanel rendered="{!edata.sectiontype=='Activity Log'}">
 							<a href="#"
 								onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log', {! edata.ownerID == $User.Id });">
-								<apex:outputText value="{! edata.owner }" /> @ <apex:outputText
-									value=" {!edata.created}" />
+								<apex:outputText value="{! edata.owner }" /> @ <apex:outputText value=" {!edata.created}" />
 							</a>
 							<br />
 						</apex:outputPanel>
