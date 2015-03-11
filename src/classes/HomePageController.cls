@@ -61,10 +61,13 @@ public with sharing class HomePageController{
 	public Id selectedProgram { get; set; }
 	public List<SelectOption> programslist { get; set; }
 	public Service_Assignment__c[] serviceAssignments { get; set; }
+	public List<AggregateResult> shiftDocEvals { get; set; }
 
 	// We use this variable to keep track of which service assignment we want
 	// to run an action on
 	public Id serviceAssignmentIdForAction { get; set; }
+
+	public List<SelectOption> actionList { get; set; }
 
 	//Constructor
 	public HomePageController(){
@@ -85,6 +88,20 @@ public with sharing class HomePageController{
 		} else {
 			selectedProgram = initialProgramCookie.getValue();
 		}
+		shiftDocEvals = [
+			SELECT category__c, sub_category__c, sub_sub_category__c
+			  FROM eval__c
+			 WHERE eval_type__r.name = 'Head To Toe'
+			   AND eval_type__r.Category__c = 'Care Meridian'
+			GROUP BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c, category__c, sub_category__c, sub_sub_category__c
+			ORDER BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c
+		];
+		actionList = new List<SelectOption>();
+		for (AggregateResult eval: shiftDocEvals) {
+			actionList.add(new SelectOption('shiftDocAction-' + eval.get('category__c') + '~' + eval.get('sub_category__c'),
+				'Add Activity Log Entry for ' + eval.get('category__c') + '/' + eval.get('sub_category__c'))
+			);
+		}
 		updateProgramSelection();
 		checkTmnUserRecord();
 		shareobj();
@@ -96,11 +113,12 @@ public with sharing class HomePageController{
 		serviceAssignments = [
 			SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name,
 			       Admission__r.Id,
-			       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC)
+			       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC),
+			       (SELECT Id, Name, Is_Signed__c FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' ORDER BY CreatedDate DESC LIMIT 1)
 			FROM Service_Assignment__c
 			WHERE Service_Location__c = :selectedProgram
 		];
-		ApexPages.currentPage().setCookies(new Cookie[]{ new Cookie('homePageInitialProgram', selectedProgram, null, -1, false) });
+		ApexPages.currentPage().setCookies(new Cookie[]{ new Cookie('homePageInitialProgram', selectedProgram, null, 30*24*60*60, false) }); //  set the cookie max age to a month
 	}
 
 	public void getReportList() {

@@ -1,5 +1,5 @@
 (function ($) {
-    openModalDialog = function (dialogId, tagType, titleString, dClass, width, formName) {
+    openModalDialog = function (dialogId, tagType, titleString, dClass, width, formName, hideCloseButton) {
         if (!width) {
             width = 800;
         }
@@ -8,6 +8,9 @@
         }
         if (!formName) {
             formName = 'referralForm';
+        }
+        if (hideCloseButton === undefined) {
+            hideCloseButton = true;
         }
         selector = tagType + '[id$=' + dialogId + ']';
         if ($(selector).dialog("isOpen")!==true) {
@@ -30,7 +33,9 @@
                     $("body").css("overflow", "hidden");
                 }
             }).parent().appendTo($('form[id$=' + formName + ']'));
-            $(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+            if (hideCloseButton) {
+                $(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+            }
         }
     };
     closeModalDialog = function (dialogId, tagType) {
