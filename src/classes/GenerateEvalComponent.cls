@@ -195,7 +195,7 @@ public with sharing class GenerateEvalComponent {
                 }  else if (e.Field_Type__c == 'Date') {
 					newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     newHTMLfld += reqfldHTML;
-                    newHTMLfld += '<input class="datepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+                    newHTMLfld += '<input class="datepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 					if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c;
                         newHTMLfld  += '"';
@@ -204,7 +204,7 @@ public with sharing class GenerateEvalComponent {
 				} else if (e.Field_Type__c == 'Datetime') {
                     newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     newHTMLfld += reqfldHTML;
-                    newHTMLfld += '<input class="datetimepicker" ' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+                    newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c;
                         newHTMLfld  += '"';
