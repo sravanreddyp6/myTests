@@ -156,22 +156,36 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld += '</select></div></div>';
                     } //TODO: output radio buttons for Radio type
                 } else if (e.Field_Type__c=='String') {
-                    newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
-                    newHTMLfld += reqfldHTML;
-                    newHTMLfld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
-                    if (mapEvalValues.ContainsKey( e.id )) {
-                        newHTMLfld += 'value="' ;
-                        if ( e.length__c > 250 )
+                	
+                	if ( e.Field_Sub_Type__c == 'textarea') {
+                        newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                        newHTMLfld += reqfldHTML;
+                        newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" >';
+                        if (mapEvalValues.ContainsKey( e.id )) {
                             strVal = mapEvalValues.get(e.id).text_over_250__c;
-                        else
-                            strVal = mapEvalValues.get(e.id).text_under_250__c;
-
-                        if (strVal != null && strVal != '')
-                            newHTMLfld += strVal;
-                            
-                            newHTMLfld += '"';
-                    }
-                    newHTMLfld +=  '/></div></div>';
+	                        if (strVal != null && strVal != '')
+                                newHTMLfld += strVal;
+                        }
+                        newHTMLfld +=  '</textarea></div></div>';
+                        
+                    }else{
+	                    newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+	                    newHTMLfld += reqfldHTML;
+	                    newHTMLfld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+	                    if (mapEvalValues.ContainsKey( e.id )) {
+	                        newHTMLfld += 'value="' ;
+	                        if ( e.length__c > 250 )
+	                            strVal = mapEvalValues.get(e.id).text_over_250__c;
+	                        else
+	                            strVal = mapEvalValues.get(e.id).text_under_250__c;
+	
+	                        if (strVal != null && strVal != '')
+	                            newHTMLfld += strVal;
+	                            
+	                            newHTMLfld += '"';
+	                    }
+	                    newHTMLfld +=  '/></div></div>';
+                	}
                 } else if (e.Field_Type__c == 'DropDown') {
 
                     // get the value
@@ -235,7 +249,11 @@ public with sharing class GenerateEvalComponent {
 	                    }
 	                    newHTMLfld +=  '</div>';
                 	}else{
-                		//ToDo: Regular multiselect. 
+                		//ToDo: Regular multiselect.
+                		
+                		
+                		
+                		 
                 	}
                 } else if (e.field_type__c == 'BodyMap') {
                 	
