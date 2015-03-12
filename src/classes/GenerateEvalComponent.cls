@@ -232,11 +232,11 @@ public with sharing class GenerateEvalComponent {
 	                    else
 	                       selectedVals = mapEvalValues.get(e.id).Text_Under_250__c;
                     }
-                    
+
+                    // get the options
+                    List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
                 	if ( e.Field_Sub_Type__c == 'Checkbox') {
 	                	newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><br/>';
-	                	// get the options
-	                    List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
 		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
 		                	
@@ -249,10 +249,18 @@ public with sharing class GenerateEvalComponent {
 	                    }
 	                    newHTMLfld +=  '</div>';
                 	}else{
-                		//ToDo: Regular multiselect.
                 		
-                		
-                		
+	                    newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+	                    newHTMLfld += reqfldHTML;
+	                    newHTMLfld += '<select style="vertical-align: text-top" multiple="multiple" id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
+	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
+	                        newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
+	                        if ( selectedVals.contains(thisdd.Option_Value__c))
+	                            newHTMLFld += ' selected ';
+	
+	                        newHTMLFld += '>' + thisdd.option_name__c + '</option>';
+	                    }
+	                    newHTMLfld += '</select></div></div>';
                 		 
                 	}
                 } else if (e.field_type__c == 'BodyMap') {
