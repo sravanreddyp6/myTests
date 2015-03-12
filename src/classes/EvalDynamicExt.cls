@@ -49,7 +49,7 @@ public with sharing class EvalDynamicExt {
 	private void createEvalValueRecord(String key){
 		String sectionId = UserInfo.getUserId() + Datetime.now().getTime();
         String sectionType = evalType;
-		
+		boolean isValidVal;
         List<Eval_Value__c> listEvalValues = [ select id from eval_value__c
                                                 where what_id__c = :evalId
                                                   and what_id_object__c = 'Evaluation__c'
@@ -57,7 +57,7 @@ public with sharing class EvalDynamicExt {
                                                   and eval__r.sub_category__c = :subcat];
 
         if (listEvalValues.size() == 0){
-            list<Eval__c> evals = [ select id from Eval__c
+            list<Eval__c> evals = [ select id, Field_Name__c from Eval__c
 						             where eval_type__r.name = :evalType
 						               and category__c = :cat
 						               and sub_category__c = :subcat
@@ -67,9 +67,14 @@ public with sharing class EvalDynamicExt {
 	        list<Eval_Value__c> vals = new list<Eval_Value__c>();
          
 	        for (Eval__c e : evals){
+	        	  if (e.Field_Name__c=='IsValid')
+                    isValidVal = true;
+                  else
+                    isValidVal = false;      
 	              vals.add(new eval_value__c(Eval__c = e.id, 
 	                                         Eval_Section_Id__c = sectionId,
 	                                         Eval_Section_Type__c = sectionType,
+	                                         Boolean__c = isValidVal,
 	                                         what_id__c = evalID,
 	                                         what_id_object__c = 'Evaluation__c'));
 	        }
