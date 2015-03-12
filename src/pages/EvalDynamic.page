@@ -56,9 +56,11 @@ else
           <div class="sidebar-module-sm sidebar-module-inset">
 	    <h4>{!$User.FirstName} {!$User.LastName}</h4>
 	    <p>Shift: 07:00-14:00</p>
+	    
 		<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="alert('Sign form comes up!');">{!$CurrentPage.parameters.evaltype} <br/>(click to sign)</a>
-		<a id="btnDone" class="btn btn-danger btn-sm pull-right" href="#" role="button" onClick="alert('Sign form comes up!');">Done<br/>(click to sign)</a>
-	  </div>
+		<a id="btnPrint" class="btn-info btn-sm" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">Print</a>
+		<a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="alert('Sign form comes up!');">Done<br/>(click to sign)</a>
+		</div>
           <div class="sidebar-module sidebar-module-inset">
 
 		<apex:outputPanel id="evalRepeaters" layout="none">
