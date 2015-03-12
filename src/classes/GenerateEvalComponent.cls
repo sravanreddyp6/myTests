@@ -160,7 +160,7 @@ public with sharing class GenerateEvalComponent {
                 	if ( e.Field_Sub_Type__c == 'textarea') {
                         newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                         newHTMLfld += reqfldHTML;
-                        newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" >';
+                        newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" style="vertical-align: text-top" >';
                         if (mapEvalValues.ContainsKey( e.id )) {
                             strVal = mapEvalValues.get(e.id).text_over_250__c;
 	                        if (strVal != null && strVal != '')
