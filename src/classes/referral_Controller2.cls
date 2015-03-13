@@ -705,20 +705,24 @@ public with sharing class referral_Controller2 {
 		}
 	}
 
-	public void addNeuroAdmissionSteps() {
+	public void addAdmissionSteps() {
 		if (dummyTask.OwnerId == null) {
 			dummyTask.OwnerId.addError('Field is required!');
 			return;
 		}
-		Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
-		System.debug('stepSubjects: ' + stepSubjects);
+		Map<String, Admission_Step__c> allStepSubjects = Admission_Step__c.getAll();
+		Map<String, Admission_Step__c> stepSubjects = new Map<String, Admission_Step__c>();
+		for (String key: allStepSubjects.keySet()) {
+			if (allStepSubjects.get(key).Record_Type__c == ReferralRecordType) {
+				stepSubjects.put(key, allStepSubjects.get(key));
+			}
+		}
 		Set<String> nameSet = stepSubjects.keySet();
 		List<Integer> orderedNames = new List<Integer>();  // We use this list to sort the subjects by their names
 		for (String name: nameSet) {
 			orderedNames.add(Integer.valueOf(name));
 		}
 		orderedNames.sort();
-		System.debug('orderedNames: ' + orderedNames);
 		Id taskRecordType = Utility.getRecordTypeForTask('Referral Tasks');
 		for (Integer orderedName: orderedNames) {
 			// We do not batch insert the tasks here because it leads to inconsistent
@@ -733,7 +737,6 @@ public with sharing class referral_Controller2 {
 			);
 		}
 		populateActivities();
-		System.debug('this.activities: ' + this.activities);
 
 		// We also want to make sure that the user can't do this action more than once
 		referralRecord.Admission_Steps_Added__c = true;
