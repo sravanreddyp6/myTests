@@ -1,4 +1,4 @@
-<apex:page controller="HomePageController" sidebar="false" id="thePage">
+<apex:page controller="HomePageController" sidebar="false" id="thePage" tabStyle="Referral__c">
 	<apex:stylesheet value="{!URLFOR($Resource.Unsemantic, 'stylesheets/unsemantic-grid-responsive.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -231,7 +231,9 @@
 			padding: 3px;
 		}
 		#evalForm {
-			display: none;
+			width: 0px;
+			height: 0px;
+			visibility: hidden;
 		}
 	</style>
 
@@ -362,7 +364,7 @@
 			<apex:param name="evalId" value="" />
 		</apex:actionFunction>
 	</apex:form>
-	<div id="shiftDocActionDialog" style="display: none; "></div>
+	<div id="shiftDocActionDialog"></div>
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
 	<c:EvalSection id="evalSection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}"
 		subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
@@ -383,11 +385,16 @@
 
 	<script type="text/javascript">
 		j$(document).ready(function($) {
+			anno.addHandler('onSelectionCompleted', function () {
+				$('.annotorious-editor').css('z-index', '999999');
+			});
 			window.refreshEvalRepeaters = function () {
 				// For the Home page we actually don't need to refresh anything,
 				// so we'll use this to close the modal instead
 				closeModalDialog('shiftDocActionDialog', 'div');
-				$('#evalForm').css('display', 'none');
+				$('#evalForm').css('width', '0px');
+				$('#evalForm').css('height', '0px');
+				$('#evalForm').css('visibility', 'hidden');
 				alert('Activity Log has been saved!');
 			}
 			window.showForm = function () {
@@ -396,11 +403,15 @@
 				setUpFields();
 				$('#evalSecValMsgs').html($('#ErrorMsg').val());
 				openModalDialog('shiftDocActionDialog', 'div', 'Add Activity Log Entry', null, 1000, 'mainForm', false);
-				$('#evalForm').css('display', 'block');
+				$('#evalForm').css('width', 'auto');
+				$('#evalForm').css('height', 'auto');
+				$('#evalForm').css('visibility', 'visible');
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
 					closeModalDialog('shiftDocActionDialog', 'div');
-					$('#evalForm').css('display', 'none');
+					$('#evalForm').css('width', 'auto');
+					$('#evalForm').css('height', 'auto');
+					$('#evalForm').css('visibility', 'visible');
 					event.preventDefault();
 				});
 			}
