@@ -1,0 +1,159 @@
+<apex:page title="Shift Notes" Controller="EvalDynamicExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />      
+    <!-- Bootstrap core CSS -->    
+    <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}"/>
+    <!-- Custom styles for this template -->    
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}"/>	
+
+    <!-- Bootstrap core JavaScript-->
+    <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/bootstrap.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/docs.min.js')}" />
+
+
+
+<script>
+
+function clearPanel() {
+   $("#panel-form").empty();
+}
+
+function  showForm(key) {
+    if (key == 'Head to Toe ~ Skin/Body ~ Wound Detail' || key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'){
+        $("#panel-form").empty().append($("[id$='evalResponsesForm']"));
+    }else{
+        $("#panel-form").empty().append($("[id$='evalForm']"));
+		bindSubmitEvent();
+		setUpFields();
+		$('#evalSecValMsgs').html($('#ErrorMsg').val());
+}
+}
+
+function setupButtons( disableFlag ) {
+if ( disableFlag) 
+	$("#btnESign").removeClass('btn-success').addClass('btn-danger');
+else 
+	$("#btnESign").removeClass('btn-danger').addClass('btn-success');
+}
+
+</script>
+<style>
+.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
+    left:auto !important;
+}
+
+</style>
+
+	<c:PersonalRecord pbsId="{!PBSID}" servAssignId="{!SAID}" parentPage="Evaluation" servAssignNew="false" admId="{!AdmId}" /> 
+  <div class="container">
+
+      <div class="blog-header"></div>
+
+      <div class="row">
+
+        <div class="col-sm-4"> 
+          <div class="sidebar-module-sm sidebar-module-inset">
+	    <h4>{!$User.FirstName} {!$User.LastName}</h4>
+	    <p>Shift: 07:00-14:00</p>
+	    
+		<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="alert('Sign form comes up!');">{!$CurrentPage.parameters.evaltype} <br/>(click to sign)</a>
+		<a id="btnPrint" class="btn-info btn-sm" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">Print</a>
+		<a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="alert('Sign form comes up!');">Done<br/>(click to sign)</a>
+		</div>
+          <div class="sidebar-module sidebar-module-inset">
+
+		<apex:outputPanel id="evalRepeaters" layout="none">
+		<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
+		</apex:outputPanel>
+
+	    
+	  </div><!-- sidebar-module -->
+
+        </div><!-- /.blog-sidebar -->
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+
+	    <div class="panel panel-info">
+	      <div class="panel-heading clearfix">
+	      <h3 class="panel-title pull-left">Enter and Save</h3>
+	      <div class="pull-right"><a class="btn" onclick="clearPanel();" >X</a></div>
+	      </div>
+	      <div id="panel-form" class="panel-body">
+
+              </div>
+   	    </div>
+          </div><!-- /.blog-post -->
+
+        </div><!-- /.blog-main -->
+
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+<apex:form >
+<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalRepeaters, outputsection, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+' ~ '+cat+' ~ '+subCat}');">
+	<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
+	<apex:param name="Category" value="" AssignTo="{!cat}" />
+	<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
+	<apex:param name="evalSectionId" value="" />
+	<apex:param name="evalSectionType" value="" />
+	<apex:param name="canEdit" value="" />
+</apex:actionFunction>
+<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" />
+</apex:form>
+
+<c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
+subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
+evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" rendered="{!showMainComponent}"/>
+
+<!--  Commenting out this for now as the component is not yet in production quality  Sravan> -->
+<!-- <apex:outputPanel style="display:none" id="sec2" > -->
+<!-- 	<apex:form id="assessmentForm"> -->
+<!-- 		<c:fallAssessmentComponent evaluationId="a11J0000001LFLzIAO"  rendered="{!key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment'}"/> -->
+<!-- 		 <apex:commandbutton value="Close" onclick="clearPanel();" /> -->
+<!-- 	</apex:form> -->
+<!-- </apex:outputPanel> -->
+
+<apex:outputPanel id="evalResponsesSection" style="display:none" >
+<apex:form id="evalResponsesForm">
+    <apex:pageBlock >
+        <c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe ~ Skin/Body ~ Wound Detail'}"/>
+        <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'}"/>
+        <apex:pageBlockButtons location="bottom">
+            <input class="btn" type="button" value="Close" onclick="clearPanel();"/>    
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+</apex:form>
+</apex:outputPanel>
+
+ 
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">  
+            <style>
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+        .foggy{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }  
+        </style>
+
+        <div class="foggy" />        
+        <div class="thinkingwheel" >    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+  
+</apex:page>
