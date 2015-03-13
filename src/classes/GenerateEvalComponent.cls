@@ -239,11 +239,8 @@ public with sharing class GenerateEvalComponent {
 	                	newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><br/>';
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
 		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
-		                	
-			                // insert value
-	                        if ( mapEvalValues.ContainsKey( e.id ))
-	                            if ( selectedVals.contains(thisdd.Option_Value__c))
-	                                newHTMLFld += ' checked ';
+	                        if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
+	                               newHTMLFld += ' checked ';
                                 
 	                        newHTMLfld += '/>&nbsp<span>' + thisdd.Option_Name__c + '</span><br/>';
 	                    }
@@ -255,7 +252,7 @@ public with sharing class GenerateEvalComponent {
 	                    newHTMLfld += '<select style="vertical-align: text-top" multiple="multiple" id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
 	                        newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
-	                        if ( selectedVals.contains(thisdd.Option_Value__c))
+	                        if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
 	                            newHTMLFld += ' selected ';
 	
 	                        newHTMLFld += '>' + thisdd.option_name__c + '</option>';
