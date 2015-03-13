@@ -20,10 +20,10 @@ function clearPanel() {
 }
 
 function  showForm(key) {
-    if (key == 'Head to Toe ~ Skin/Body ~ Wound Detail' || key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'){
+    if (key == 'Head to Toe~Skin/Body~Wound Detail' || key == 'Head to Toe~Skin/Body~Pressure Ulcer Details'){
         $("#panel-form").empty().append($("[id$='evalResponsesForm']"));
     }
-    else if(key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment' || key == 'Residential ~ Skin/Body ~ Skin Assessment'){
+    else if(key == 'Residential~Fall Risk Assessment~Fall Assessment' || key == 'Residential~Skin/Body~Skin Assessment'){
     	$("#panel-form").empty().append($("[id$=assessmentForm]"));
     }
     else{
@@ -99,7 +99,7 @@ else
     </div><!-- /.container -->
 
 <apex:form >
-<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalRepeaters, outputsection, assessments, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+' ~ '+cat+' ~ '+subCat}');">
+<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalRepeaters, outputsection, assessments, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat}');">
 	<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
 	<apex:param name="Category" value="" AssignTo="{!cat}" />
 	<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
@@ -116,8 +116,8 @@ evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$Cur
 
 <apex:outputPanel style="display:none" id="assessments" >
 	<apex:form id="assessmentForm">
-		<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"  rendered="{!key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment'}" />
-		<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential ~ Skin/Body ~ Skin Assessment'}" />
+		<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"  rendered="{!key == 'Residential~Fall Risk Assessment~Fall Assessment'}" />
+		<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential~Skin/Body~Skin Assessment'}" />
         <input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />         
 	</apex:form>
 </apex:outputPanel>
@@ -125,8 +125,8 @@ evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$Cur
 <apex:outputPanel id="evalResponsesSection" style="display:none" >
 <apex:form id="evalResponsesForm">
     <apex:pageBlock >
-        <c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe ~ Skin/Body ~ Wound Detail'}"/>
-        <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'}"/>
+        <c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail'}"/>
+        <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details'}"/>
         <apex:pageBlockButtons location="bottom">
             <input class="btn" type="button" value="Close" onclick="clearPanel();"/>    
         </apex:pageBlockButtons>
