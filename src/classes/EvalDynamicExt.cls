@@ -18,7 +18,7 @@ public with sharing class EvalDynamicExt {
 		evalType = ApexPages.currentPage().getParameters().get('evaltype');
 		cat = ApexPages.currentPage().getParameters().get('Category');
 		subCat = ApexPages.currentPage().getParameters().get('SubCategory');
-		key = evalType+' ~ '+cat+' ~ '+subCat;
+		key = evalType+'~'+cat+'~'+subCat;
 		showMainComponent = true;
 		
 		thisEval = [ select id, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
@@ -32,11 +32,11 @@ public with sharing class EvalDynamicExt {
 	}
 
 	public void myAction(){
-		string displayKey = evalType+' ~ '+cat+' ~ '+subCat;
+		string displayKey = evalType+'~'+cat+'~'+subCat;
 		key = displayKey;
 		
-		if(key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment' || key == 'Head to Toe ~ Skin/Body ~ Wound Detail' || key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'
-			|| key == 'Residential ~ Skin/Body ~ Skin Assessment'){
+		if(key == 'Residential~Fall Risk Assessment~Fall Assessment' || key == 'Head to Toe~Skin/Body~Wound Detail' || key == 'Head to Toe~Skin/Body~Pressure Ulcer Details'
+			|| key == 'Residential~Skin/Body~Skin Assessment'){
 			createEvalValueRecord(key);
 			showMainComponent = false;
 		}
