@@ -95,7 +95,7 @@ public with sharing class GenerateEvalComponent {
         for ( Eval_Value__c ev: listEvalValues )
             mapEvalValues.put( ev.eval__c, ev);
 
-        system.debug( 'Populated values:' + mapEvalValues );
+        // system.debug( 'Populated values:' + mapEvalValues );
 		String newHTMLfld = '';
 		String strval = '';
 		String reqfldHTML = '';
@@ -157,7 +157,7 @@ public with sharing class GenerateEvalComponent {
                     } //TODO: output radio buttons for Radio type
                 } else if (e.Field_Type__c=='String') {
                 	
-                	if ( e.Field_Sub_Type__c == 'textarea') {
+                	if ( e.length__c >= 3000) {
                         newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                         newHTMLfld += reqfldHTML;
                         newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" style="vertical-align: text-top" >';
