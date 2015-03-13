@@ -22,7 +22,11 @@ function clearPanel() {
 function  showForm(key) {
     if (key == 'Head to Toe ~ Skin/Body ~ Wound Detail' || key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'){
         $("#panel-form").empty().append($("[id$='evalResponsesForm']"));
-    }else{
+    }
+    else if(key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment' || key == 'Residential ~ Skin/Body ~ Skin Assessment'){
+    	$("#panel-form").empty().append($("[id$=assessmentForm]"));
+    }
+    else{
         $("#panel-form").empty().append($("[id$='evalForm']"));
 		bindSubmitEvent();
 		setUpFields();
@@ -95,7 +99,7 @@ else
     </div><!-- /.container -->
 
 <apex:form >
-<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalRepeaters, outputsection, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+' ~ '+cat+' ~ '+subCat}');">
+<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalRepeaters, outputsection, assessments, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+' ~ '+cat+' ~ '+subCat}');">
 	<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
 	<apex:param name="Category" value="" AssignTo="{!cat}" />
 	<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
@@ -110,13 +114,13 @@ else
 subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
 evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" rendered="{!showMainComponent}"/>
 
-<!--  Commenting out this for now as the component is not yet in production quality  Sravan> -->
-<!-- <apex:outputPanel style="display:none" id="sec2" > -->
-<!-- 	<apex:form id="assessmentForm"> -->
-<!-- 		<c:fallAssessmentComponent evaluationId="a11J0000001LFLzIAO"  rendered="{!key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment'}"/> -->
-<!-- 		 <apex:commandbutton value="Close" onclick="clearPanel();" /> -->
-<!-- 	</apex:form> -->
-<!-- </apex:outputPanel> -->
+<apex:outputPanel style="display:none" id="assessments" >
+	<apex:form id="assessmentForm">
+		<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"  rendered="{!key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment'}" />
+		<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential ~ Skin/Body ~ Skin Assessment'}" />
+        <input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />         
+	</apex:form>
+</apex:outputPanel>
 
 <apex:outputPanel id="evalResponsesSection" style="display:none" >
 <apex:form id="evalResponsesForm">

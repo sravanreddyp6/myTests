@@ -35,7 +35,8 @@ public with sharing class EvalDynamicExt {
 		string displayKey = evalType+' ~ '+cat+' ~ '+subCat;
 		key = displayKey;
 		
-		if(key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment' || key == 'Head to Toe ~ Skin/Body ~ Wound Detail' || key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'){
+		if(key == 'Residential ~ Fall Risk Assessment ~ Fall Assessment' || key == 'Head to Toe ~ Skin/Body ~ Wound Detail' || key == 'Head to Toe ~ Skin/Body ~ Pressure Ulcer Details'
+			|| key == 'Residential ~ Skin/Body ~ Skin Assessment'){
 			createEvalValueRecord(key);
 			showMainComponent = false;
 		}
