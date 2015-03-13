@@ -1284,7 +1284,7 @@
                 <apex:pageBlockSectionItem >
                     <apex:outputText >Created By:</apex:outputText>
                     <apex:outputPanel >
-                        
+
                         <apex:outputField value="{!Referral__c.CreatedById}" />,&nbsp;
                         <apex:outputField value="{!Referral__c.CreatedDate}" />
                     </apex:outputPanel>
@@ -1302,7 +1302,7 @@
                 <apex:outputField value="{!Referral__c.OwnerID}"/>
                 <i>to change, click on Edit </i>
               </apex:outputPanel>
-            </apex:pageBlockSectionItem>        
+            </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
 
             <!--  START NEW PLACEMENT SECTION -->
@@ -1505,28 +1505,28 @@
                 <!--Left -->
                 <apex:outputField value="{!Referral__c.Axis_IV__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}" />
-        
-        <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />   
-        <apex:outputField value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />     
+
+        <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+        <apex:outputField value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.New_Address_Location__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-        
-                
-                
+
+
+
         <apex:outputField value="{!Referral__c.Street_1__c}" rendered="{!AND(OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota'),referralRecordType!='CareMeridian')}" />
 
                 <!--Left -->
                 <apex:outputField value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',ReferralRecordType != 'NeuroRestorative')}" />
 
-                
 
-                
+
+
                 <apex:outputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.Current_Location_Name__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />                
-                
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+
         <apex:outputField value="{!Referral__c.Street_1__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.Street_2__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
@@ -1786,16 +1786,16 @@
                 <apex:pageBlockSectionItem >
                     <apex:outputPanel >
                         <input type="button" class="btn" value="Add Referral Tracking Activity" onclick="showAddActivity(); return false;" />
-                        <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed', showNeuroFeatures)}" />
-                        <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed', showNeuroFeatures)}" style="margin-left: 8px; margin-right: 8px; " />
-                        <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed', showNeuroFeatures)}" required="false" />
+                        <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Indiana'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
+                        <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Indiana'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
+                        <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Indiana'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" required="false" />
                         <apex:actionStatus id="taskAssignStatus">
                             <apex:facet name="start">
                                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                             </apex:facet>
                             <apex:facet name="stop" />
                         </apex:actionStatus>
-                        <apex:actionFunction name="addNeuroAdmissionSteps" action="{!addNeuroAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
+                        <apex:actionFunction name="addAdmissionSteps" action="{!addAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
