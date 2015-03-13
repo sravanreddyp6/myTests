@@ -127,20 +127,23 @@ public with sharing class GenerateEvalSectionPDF {
         Map<String, Set<string>> mapEntryIndex = new Map<string, Set<string>>();
         
         String curritem = '';
+        mapEvalValues = new Map<ID, Eval_Value__c>();
         
         for ( Eval_Value__c ev: listEvalValues ) {
-        	mapEvalValues = new Map<ID, Eval_Value__c>();
+            
+            if ( ev.eval_section_id__c != curritem ) {
+				listEntries.add( ev.eval_section_id__c);	// add to list of entries
+				curritem = ev.eval_section_id__c;
+				mapEvalValues = new Map<ID, Eval_Value__c>();
+            } 
+
             mapEvalValues.put( ev.eval__c, ev);
             mapEntryValues.put( ev.eval_section_id__c, mapEvalValues);
             
             entrycompkey = ev.eval__r.category__c + '~' + ev.eval__r.sub_category__c + '~' + ev.eval__r.sub_sub_category__c;
             
             mapEntries.put( ev.eval_section_id__c, new EntryWrapper( entrycompkey, ev.eval_section_id__c, ev.owner.name, ev.createddate, ev.eval__r.category__c, ev.eval__r.sub_category__c, ev.eval_section_type__c));
-            
-            if ( ev.eval_section_id__c != curritem ) {
-				listEntries.add( ev.eval_section_id__c);	// add to list of entries
-				curritem = ev.eval_section_id__c;
-            }
+
 				            
             // make a map of entries keyed by section/sub/sub key
             if ( mapEntryIndex.get( entrycompkey ) == null ) {
