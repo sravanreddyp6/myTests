@@ -54,7 +54,7 @@ public with sharing class EvalRepeaters {
 		List<AggregateResult> evalValues = [ select eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) created, owner.name, ownerid 
 												from eval_value__c
 												where what_id__c = :evaluationID
-												and eval__r.field_name__c not in ('isValid', 'ErrorMsg')
+												and eval__r.field_name__c not in ('ErrorMsg')
 												group by eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, owner.name, ownerid
 												order by eval_section_type__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c,  min(createddate) desc];
 
