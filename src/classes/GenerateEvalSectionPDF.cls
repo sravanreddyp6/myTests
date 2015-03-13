@@ -50,7 +50,7 @@ public with sharing class GenerateEvalSectionPDF {
 		String query = 'select id, htmlid__c, field_name__c, category__c, category_sequence__c, sub_category__c, sub_sub_category__c, eval_type__r.name, Field_Type__c, Field_Sub_Type__c, length__c '
 					 + ' from eval__c  ' 
 					 + ' where eval_type__r.name = :evalname '
-					 + ' and field_name__c != \'isValid\' and field_name__c != \'ErrorMsg\' and visible__c = true ';
+					 + ' and field_name__c != \'isValid\' and field_name__c != \'ErrorMsg\' and visible__c = true ';	// don't want sections with only errors in them
 		
 		if ( !String.isEmpty(cat))
 			query += ' and category__c =:cat';
@@ -58,33 +58,9 @@ public with sharing class GenerateEvalSectionPDF {
 		if ( !String.isEmpty(subcat))
 			   query += ' and sub_category__c = :subcat';
 		
-		query += ' order by category_sequence__c, sub_category_sequence__c, field_sequence__c';
+		query += ' order by cat_seq_text__c, subcat_seq_text__c, field_sequence__c';
 		List<Eval__c> listEvalItems = Database.Query( query ); 
-		/*
-		[			select id,
-			       htmlid__c,
-			       field_name__c,
-			       category__c,
-			       category_sequence__c,
-			       sub_category__c,
-			       sub_category_sequence__c,
-			       sub_sub_category__c,
-			       sub_sub_category_sequence__c,
-			       eval_type__r.name,
-			       Field_Type__c,
-			       Field_Sub_Type__c,
-			       field_sequence__c,
-			       length__c
-			  from eval__c
-			 where eval_type__r.name = :evalname
-			   //and category__c =:cat
-			   //and sub_category__c = :subcat
-			   and field_name__c != 'isValid'
-			   and field_name__c != 'ErrorMsg'
-			   and visible__c = true
-			order by category_sequence__c, sub_category_sequence__c, field_sequence__c
-		];
-		*/
+		
 		// create a map for easy access
 		mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
 
@@ -154,8 +130,8 @@ public with sharing class GenerateEvalSectionPDF {
             
         }
 
-        system.debug( 'By entry:' + mapEntryValues);
-        system.debug( 'Entries by composite key:' + mapEntryIndex);
+        //system.debug( 'By entry:' + mapEntryValues);
+        //system.debug( 'Entries by composite key:' + mapEntryIndex);
 		String newHTMLfld = '';
 		String strval = '';
 		
@@ -168,7 +144,7 @@ public with sharing class GenerateEvalSectionPDF {
 		// for each category/sub/subsub
 		for ( String sectionkey : listSections) {
 		
-			system.debug( sectionkey );
+			//system.debug( sectionkey );
 		
 				
 			// for each entry in this section
@@ -177,7 +153,7 @@ public with sharing class GenerateEvalSectionPDF {
 			
 			for ( String entryId : mapEntryIndex.get(sectionkey) ) {
 				htmlControls = new List<String>();
-				system.debug( 'num fields entry in key ' + sectionkey + ':' + entryID + ', '+  mapevalitemsbycat.get(sectionkey).size());
+				//system.debug( 'num fields entry in key ' + sectionkey + ':' + entryID + ', '+  mapevalitemsbycat.get(sectionkey).size());
 			
 				// for each field in this category/sub/sub
 				for( Eval__c e : mapEvalItemsbyCat.get(sectionkey) ){
@@ -265,7 +241,7 @@ public with sharing class GenerateEvalSectionPDF {
                 
                htmlControls.add(newHtmlFld);
 				mapEvalEntryHTML.put( entryId, htmlControls );
-				system.debug( 'put control array onto : ' + entryid);
+				//system.debug( 'put control array onto : ' + entryid);
 				
 			}
 			catch( Exception ex)
