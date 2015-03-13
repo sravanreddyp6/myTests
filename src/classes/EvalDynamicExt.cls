@@ -47,7 +47,7 @@ public with sharing class EvalDynamicExt {
 	
 	
 	private void createEvalValueRecord(String key){
-		String sectionId = UserInfo.getUserId() + Datetime.now().getTime();
+		String sectionId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
         String sectionType = evalType;
 		boolean isValidVal;
         List<Eval_Value__c> listEvalValues = [ select id from eval_value__c
