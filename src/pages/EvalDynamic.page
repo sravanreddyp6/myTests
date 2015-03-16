@@ -44,7 +44,8 @@ else
 </script>
 <style>
 .ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
-    left:auto !important;
+    left: 50% !important;
+    margin: 0 0 0 -488px;
 }
 
 </style>
@@ -61,9 +62,9 @@ else
 	    <h4>{!$User.FirstName} {!$User.LastName}</h4>
 	    <p>Shift: 07:00-14:00</p>
 	    
-		<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="alert('Sign form comes up!');">{!$CurrentPage.parameters.evaltype} <br/>(click to sign)</a>
+        <a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">{!$CurrentPage.parameters.evaltype} <br/>(click to sign)</a>
 		<a id="btnPrint" class="btn-info btn-sm" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">Print</a>
-		<a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="alert('Sign form comes up!');">Done<br/>(click to sign)</a>
+        <a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="authenticate(); return false;">Done<br/>(click to sign)</a>
 		</div>
           <div class="sidebar-module sidebar-module-inset">
 
@@ -98,7 +99,7 @@ else
 
     </div><!-- /.container -->
 
-<apex:form >
+<apex:form id="wholePage">
 <apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalRepeaters, outputsection, assessments, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat}');">
 	<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
 	<apex:param name="Category" value="" AssignTo="{!cat}" />
@@ -108,6 +109,7 @@ else
 	<apex:param name="canEdit" value="" />
 </apex:actionFunction>
 <apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" />
+<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
 </apex:form>
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
