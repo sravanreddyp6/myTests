@@ -10,7 +10,7 @@ public with sharing class AuthenticationController {
             return null;
         }
         String LOGIN_DOMAIN;
-        if (URL.getSalesforceBaseUrl().getHost().left(4).equalsignorecase('c.cs')) {
+        if ([select Id, IsSandbox from Organization limit 1].get(0).IsSandbox) {
             // Sandbox
             LOGIN_DOMAIN = 'test';
         } else {
