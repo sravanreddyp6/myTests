@@ -24,9 +24,14 @@
    <apex:pageblocksectionitem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}">
    <c:EvaluationResponseTablePDF parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}"/>
    </apex:pageblocksectionitem>
-   <apex:pageBlockSectionItem  rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}" >
-   <apex:outputText value="" rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}" />
+      <apex:pageblocksectionitem rendered="{!mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assesssment' }">
+    	<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"  rendered="{!mapEntries[entry].compositeKey == 'Fall Risk Assessment~Fall Assessment~null'}" AssessmentName="Fall Risk Assessment" lowerScore="1" medianScore="30" higherScore="31" isPDF="true"/>
+		<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!mapEntries[entry].compositeKey == 'Skin/Body~Skin Assessment~null'}" AssessmentName="Skin Assessment" lowerScore="1" medianScore="14" higherScore="14" isPDF="true"/>
+    </apex:pageblocksectionitem>
+   <apex:pageBlockSectionItem  rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null' || mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assesssment'}" >
+   <apex:outputText value=""  />
     </apex:pageBlockSectionItem>
+    
     
     <apex:repeat value="{!mapEntryHTML[entry]}" var="fld" >
    		<apex:pageBlockSectionItem >
