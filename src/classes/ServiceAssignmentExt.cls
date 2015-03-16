@@ -1365,7 +1365,9 @@ public void loadProgramList() {
     	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
 		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
 		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-
+		Assessment__c fallAsmt = new Assessment__c(Name=pbsLastName+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = theServAssign.Id,Admission__c = theServAssign.Admission__c, AccountPerson__c = theServAssign.Person_Being_Served__r.AccountId);
+			
+			
 			Savepoint sp = Database.setSavepoint();
 
 	  		Evaluation__c resAsmt = new Evaluation__c(
@@ -1378,6 +1380,9 @@ public void loadProgramList() {
 	   		try{
 
 	   			insert resAsmt;
+	   			
+	   			fallAsmt.Evaluation__c = resAsmt.Id;
+            	insert fallAsmt;
 	   		}
 
 	   		catch(DMLException e) {
@@ -1412,6 +1417,7 @@ public void loadProgramList() {
 
 	   				}
 	   			}
+	   			getEvals.add('Behavior'); //Make Sure Behavior ApI_Flag_Name__c is also included
 
 	   			system.debug('Checking the set for null values+++++++++'+getEvals);
 	   			system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
@@ -1471,50 +1477,49 @@ public void loadProgramList() {
 						value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
 
 					}
-
-
-
-					//Handle All Data Types
-					if ( eval.Field_Type__c == 'Boolean'){
-						if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
-							if ( (Boolean)existingEval.get(fieldName) == true)
-								value.Boolean__c = true;
+			
+					if(fieldName != 'Behavior') {
+				
+						//Handle All Data Types
+						if ( eval.Field_Type__c == 'Boolean'){
+							if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
+								if ( (Boolean)existingEval.get(fieldName) == true)
+									value.Boolean__c = true;
+								else
+									value.Boolean__c = false;
+							}
+							else if (eval.Field_Sub_Type__c == 'Dropdown')
+								value.Text_Under_250__c = (String)existingEval.get(fieldName);
+						}
+	
+						else if (eval.Field_Type__c == 'Int'){
+							value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
+						}
+						else if (eval.Field_Type__c == 'Date'){
+							value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
+						}
+						else if (eval.Field_Type__c == 'Datetime' ){
+		                    value.Date_Time__c = (Datetime)existingEval.get(fieldName);
+		                }
+						else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' ||
+						 		 eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
+						 		 eval.Field_Type__c == 'Currency'){
+							if ( eval.length__c > 250 )
+								value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
 							else
-								value.Boolean__c = false;
+								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
 						}
-						else if (eval.Field_Sub_Type__c == 'Dropdown')
-							value.Text_Under_250__c = (String)existingEval.get(fieldName);
+						
 					}
 
-					else if (eval.Field_Type__c == 'Int'){
-						value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
-					}
-					else if (eval.Field_Type__c == 'Date'){
-						value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
-					}
-					else if (eval.Field_Type__c == 'Datetime' ){
-	                    value.Date_Time__c = (Datetime)existingEval.get(fieldName);
-	                }
-					else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' ||
-					 		 eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
-					 		 eval.Field_Type__c == 'Currency'){
-						if ( eval.length__c > 250 )
-							value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
-						else
-							value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
-					}
-
-					system.debug('behaviorString++++++++++'+behaviorString);
-					if(string.isNotBlank(behaviorString)){
-						if(eval.Field_Name__c == 'Behavior'){
+					if(string.isNotBlank(behaviorString) && eval.Field_Name__c == 'Behavior' ){
+						
 							value.Text_Under_250__c = behaviorString;
-						}
 					}
 
 					values.add(value);
 
 	   			}
-
 
 	   			try{
 
