@@ -8,22 +8,40 @@
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
     
-    <apex:repeat value="{!listEntries}" var="entry" >
-    <apex:pageBlock>
     
+    <apex:form>
+    
+    <apex:repeat value="{!listEntries}" var="entry" >
+    <apex:variable var="list" value="{!mapEntryHTML[entry]}" />
+   
+    <apex:pageBlock >
     <apex:pageBlockSection title="{!mapEntries[entry].cat } / {!mapEntries[entry].subcat} ({!evalName})" collapsible="false" columns="2">
-    <apex:outputText value="{!mapEntries[entry].entryType} by {!mapEntries[entry].owner} on {!mapEntries[entry].created}" /><apex:outputText value="" />
-    <apex:repeat value="{!mapEntryHTML[entry]}" var="fld">
+    <apex:outputText style="font-style:italic" value="{!mapEntries[entry].entryType} by {!mapEntries[entry].owner} on {!mapEntries[entry].created}" /><apex:outputText value="" />
+    
+   <apex:pageblocksectionitem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null'}"> 
+   <c:EvaluationResponseTablePDF parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" isPDF="true" rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null'}"/>
+   </apex:pageblocksectionitem>
+   <apex:pageblocksectionitem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}">
+   <c:EvaluationResponseTablePDF parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}"/>
+   </apex:pageblocksectionitem>
+   <apex:pageBlockSectionItem  rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}" >
+   <apex:outputText value="" rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}" />
+    </apex:pageBlockSectionItem>
+    
+    <apex:repeat value="{!mapEntryHTML[entry]}" var="fld" >
    		<apex:pageBlockSectionItem >
    		<apex:outputText value="{!fld}" escape="false" />
    		</apex:pageBlockSectionItem>
-    </apex:repeat> 
+    </apex:repeat>
     </apex:pageBlockSection>
+
     </apex:pageBlock>
  	</apex:repeat>
-    	
+   
+    </apex:form>	
  		
- 		<script>
+ 	<script>
+ 	
     jQuery.noConflict();
    
 	jQuery(document).ready(function ($) {
