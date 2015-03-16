@@ -7,17 +7,21 @@ public with sharing class SeizureExtension {
     
       
     public SeizureExtension() {
+        this.pbsId = ApexPages.CurrentPage().getParameters().get('pbsId');  // pbsId needed so that the blue card can initialize. 
     	this.retUrl = ApexPages.currentPage().getParameters().get('retURL');
     	if(ApexPages.CurrentPage().getParameters().get('seizureId') == null ){
             this.seizure = new Seizure__c();
             this.seizure.Service_Assignment__c = ApexPages.CurrentPage().getParameters().get('service_assignment');
+            if (this.seizure.Service_Assignment__c == null || this.seizure.Service_Assignment__c == ''){
+                list<Service_Assignment__c> sa = [select id from Service_Assignment__c where Person_Being_Served__c = : pbsId And Status__c = 'Active'];
+                if (sa.size() == 1) 
+                    this.seizure.Service_Assignment__c = sa.get(0).id;
+            }
             this.seizure.Observed_By__c = UserInfo.getUserId();
     	}else{
 	        this.seizure = [select id, Service_Assignment__c, Service_Assignment__r.Person_Being_Served__c, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c from Seizure__c where id = : ApexPages.CurrentPage().getParameters().get('seizureId')];
     	}
 
-        
-        this.pbsId = ApexPages.CurrentPage().getParameters().get('pbsId');  // pbsId needed so that the blue card can initialize. 
         if (this.pbsId == null || this.pbsId=='') {     //if the PBS id is not present then its a call to edit an existing seizure.
         	this.pbsId = this.seizure.Service_Assignment__r.Person_Being_Served__c;
         }
