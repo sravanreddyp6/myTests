@@ -116,8 +116,8 @@ evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$Cur
 
 <apex:outputPanel style="display:none" id="assessments" >
 	<apex:form id="assessmentForm">
-		<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"  rendered="{!key == 'Residential~Fall Risk Assessment~Fall Assessment'}" />
-		<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential~Skin/Body~Skin Assessment'}" />
+		<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"  rendered="{!key == 'Residential~Fall Risk Assessment~Fall Assessment'}" AssessmentName="Fall Risk Assessment" ispdf="true" lowerScore="1" medianScore="30" higherScore="31" />
+		<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential~Skin/Body~Skin Assessment'}" AssessmentName="Skin Assessment" ispdf="true" lowerScore="1" medianScore="14" higherScore="14" />
         <input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />         
 	</apex:form>
 </apex:outputPanel>
