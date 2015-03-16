@@ -58,7 +58,7 @@ public with sharing class EvalDynamicExt {
                                                   and eval__r.sub_category__c = :subcat];
 
         if (listEvalValues.size() == 0){
-            list<Eval__c> evals = [ select id, Field_Name__c from Eval__c
+            list<Eval__c> evals = [ select id, Field_Name__c, Sub_Category__c from Eval__c
 						             where eval_type__r.name = :evalType
 						               and category__c = :cat
 						               and sub_category__c = :subcat
@@ -68,10 +68,10 @@ public with sharing class EvalDynamicExt {
 	        list<Eval_Value__c> vals = new list<Eval_Value__c>();
          
 	        for (Eval__c e : evals){
-	        	  if (e.Field_Name__c=='IsValid')
-                    isValidVal = true;
+	        	  if (e.Field_Name__c=='IsValid' && (e.Sub_Category__c == 'Fall Assessment' || e.Sub_Category__c == 'Skin Assessment'))
+                    isValidVal = !EvalDynamicExt.validateAssessmentError(evalId, e.Sub_Category__c == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain');
                   else
-                    isValidVal = false;      
+                    isValidVal = true;      
 	              vals.add(new eval_value__c(Eval__c = e.id, 
 	                                         Eval_Section_Id__c = sectionId,
 	                                         Eval_Section_Type__c = sectionType,
@@ -85,5 +85,20 @@ public with sharing class EvalDynamicExt {
         }
 		
 	}
+	
+	 public static boolean validateAssessmentError(Id evalId, string DomainName){
+        Boolean error = false;
+        List<Assessment_Response__c> currentResponses = [SELECT Id, Rating__c FROM Assessment_Response__c WHERE Assessment__r.Evaluation__c = :evalId AND Question__r.Question_Domain__r.Name = :DomainName];
+        for(Assessment_Response__c resp: currentResponses){
+            if(resp.Rating__c == null){
+                error = true;
+                break;
+            }
+            
+        }
+        
+        return error;
+    }
+    
 	
 }

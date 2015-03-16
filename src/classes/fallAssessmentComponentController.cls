@@ -6,6 +6,7 @@ public with sharing class fallAssessmentComponentController {
     public Assessment__c asmt {get; set;}
     public Id thisevaluationId {get; set;}
     public string domainName {get; set;}
+    public Boolean displayError {get; set;}
     
     //Maps
     public Map<ID, Assessment_Domain__c> MapDomains = new Map<ID, Assessment_Domain__c>();
@@ -30,21 +31,13 @@ public with sharing class fallAssessmentComponentController {
     public fallAssessmentComponentController() {
       
         thisevaluationId = ApexPages.currentPage().getParameters().get('evalID');
-        evaluation = [SELECT Id, Name FROM Evaluation__c WHERE Id = :thisevaluationId];
+        evaluation = [SELECT Id, Name, MAR_Section_Completed__c  FROM Evaluation__c WHERE Id = :thisevaluationId];
         this.asmt = [SELECT Id, Name,Previous__c, Type__c, Evaluation__c, AssessmentQuestionCount__c, AssessmentResponseCount__c 
-                        FROM Assessment__c where Evaluation__c = :thisevaluationId AND Type__c = 'Resident Assessment' limit 1];           
+                        FROM Assessment__c where Evaluation__c = :thisevaluationId AND Type__c = 'Resident Assessment' limit 1];          
+        displayError = false; 
        // LoadData(this.asmt);
         
     }
-    
-  /*  public Evaluation__c preload(){
-        Evaluation__c eval;
-        eval= [SELECT Id, Name FROM Evaluation__c WHERE Id = :thisevaluationId];
-        this.asmt = [SELECT Id, Name,Previous__c, Type__c, Evaluation__c, AssessmentQuestionCount__c, AssessmentResponseCount__c 
-                        FROM Assessment__c where Evaluation__c = :eval.Id AND Type__c = 'Resident Assessment' limit 1];
-        LoadData(this.asmt);
-        return eval;
-    } */
     
     //Initialization  
     public void LoadData(Assessment__c TheVoidsAssessment){
@@ -94,6 +87,8 @@ public with sharing class fallAssessmentComponentController {
             }
             try{
                     upsert ar;
+                    updateevalValue(this.domainName);
+                    
             }
             catch(DMLException e){
                     ApexPages.addMessages(e);
@@ -110,6 +105,7 @@ public with sharing class fallAssessmentComponentController {
         ar.Score__c = null;
         try{
                 update ar;
+                updateevalValue(this.domainName);
         }
         catch(DMLException e){
                 ApexPages.addMessages(e);
@@ -118,9 +114,30 @@ public with sharing class fallAssessmentComponentController {
         return null;
     }
     
-    public static boolean validateError(Id i, string DomainName){
+    public void updateevalValue(string domainName) {
+    	
+    	if(domainName == 'Fall Risk Assessment Domain' ){
+    		displayError = fallAssessmentComponentController.validateError(this.evaluation.Id, 'Fall Risk Assessment Domain');
+    		Eval_Value__c value = [SELECT Id, Boolean__c FROM Eval_Value__c WHERE What_Id__c = :this.evaluation.Id AND Eval__r.Field_Name__c = 'IsValid' AND Eval__r.Category__c = 'Fall Risk Assessment' AND Eval__r.Sub_Category__c = 'Fall Assessment' ];
+    		value.Boolean__c = !displayError;
+    		update value;
+    	}
+    	
+    	if(domainName == 'Skin Assessment Domain') {
+    		
+    		displayError = fallAssessmentComponentController.validateError(this.evaluation.Id, 'Skin Assessment Domain');
+    		Eval_Value__c value = [SELECT Id, Boolean__c FROM Eval_Value__c WHERE What_Id__c = :this.evaluation.Id AND Eval__r.Field_Name__c = 'IsValid' AND Eval__r.Category__c = 'Skin/Body' AND Eval__r.Sub_Category__c = 'Skin Assessment' ];
+    		value.Boolean__c = !displayError;
+    		update value;
+    	}
+    	
+    
+    	
+    }
+    
+    public static boolean validateError(Id evalId, string DomainName){
         Boolean error = false;
-        List<Assessment_Response__c> currentResponses = [SELECT Id, Rating__c FROM Assessment_Response__c WHERE Assessment__r.Evaluation__c = :i AND Question__r.Question_Domain__r.Name = :DomainName];
+        List<Assessment_Response__c> currentResponses = [SELECT Id, Rating__c FROM Assessment_Response__c WHERE Assessment__r.Evaluation__c = :evalId AND Question__r.Question_Domain__r.Name = :DomainName];
         for(Assessment_Response__c resp: currentResponses){
             if(resp.Rating__c == null){
                 error = true;
