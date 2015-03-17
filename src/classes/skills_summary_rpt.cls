@@ -136,7 +136,7 @@ public with sharing class skills_summary_rpt {
            endDateTime = endDateTime.addseconds(-1);
        }
 
-		system.debug( startDate  + ', ' + endDate);
+		system.debug( startDate + ', ' + endDate);
 		List<myDate> mondays = getcoveredWeeks( startDate, endDate, startDate, endDate);
 	
 		system.debug( selectedPBS);
@@ -175,7 +175,7 @@ public with sharing class skills_summary_rpt {
 													(select Day__c, Attempts__c, Initials__c, Met_Objective__c, Status__c
                            								from Action_Skill_Results__r
                            								where Day__c >= :startDate 
-                            							and Day__c <= :endDate
+                            							and Day__c < :endDate
                           								order by Day__c) 
 										from action_plan_objective__c 
 										where action_plan_goal__r.action_plan__c in :apList
@@ -220,11 +220,6 @@ public with sharing class skills_summary_rpt {
  		system.debug( ed );
         Date firstMonday = sd.toStartOfWeek() +1;
         Date lastMonday = ed.toStartOfWeek() +1;
-        
-        // if end date is a sunday, don't pull in the following week - back up a week
-        if ( ed.toStartOfWeek() == ed && ed > sd )
-        	lastMonday -= 7;
-        	
         List<myDate> dates = new List<myDate>();
 
         for(Date monday=firstMonday;monday <= lastMonday; monday = monday + 7){
