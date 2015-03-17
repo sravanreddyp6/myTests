@@ -21,7 +21,7 @@ public with sharing class EvalDynamicExt {
 		key = evalType+'~'+cat+'~'+subCat;
 		showMainComponent = true;
 		
-		thisEval = [ select id, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
+		thisEval = [ select id, Status__c, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
 		
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
@@ -99,6 +99,19 @@ public with sharing class EvalDynamicExt {
         
         return error;
     }
+    
+    public pageReference reviseAssessment() {
+    	
+    	Evaluation__c newEval = thisEval.clone(false);
+    	newEval.Status__c = 'Draft';
+    	
+    	insert newEval;
+    	
+    	PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+newEval.Id+'&evalType=Residential&opGrp=Care Meridian');
+    	pg.setRedirect(true);
+    	return pg;
+    	
+	}
     
 	
 }

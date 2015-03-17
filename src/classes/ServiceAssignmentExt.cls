@@ -1373,6 +1373,7 @@ public void loadProgramList() {
 	  		Evaluation__c resAsmt = new Evaluation__c(
 	   											ServiceAssignment__c = theServAssign.Id,
 	   											Name = resAsmtName,
+	   											Status__c = 'Draft',
 	   											RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
 
 	   			);

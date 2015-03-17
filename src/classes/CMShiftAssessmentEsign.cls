@@ -6,7 +6,8 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
         insert currentResponse;
         Evaluation__c assessment = new Evaluation__c(
             Id = recordId,
-            Is_Being_Signed__c = true
+            Is_Being_Signed__c = true,
+            Status__c = 'Final'
         );
         update assessment;
         return null;

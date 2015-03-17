@@ -31,7 +31,7 @@ function  showForm(key) {
 		bindSubmitEvent();
 		setUpFields();
 		$('#evalSecValMsgs').html($('#ErrorMsg').val());
-}
+	}
 }
 
 function setupButtons( disableFlag ) {
@@ -40,6 +40,18 @@ if ( disableFlag)
 else 
 	$("#btnESign").removeClass('btn-danger').addClass('btn-success');
 }
+
+function revise(){
+	var r = confirm('Revising this Assessment will create a new Draft and you will be redirected to the new one');
+	if(r == true){
+		reviseAssessment();
+	}
+	else{
+		return null;
+	}
+
+}
+
 
 </script>
 <style>
@@ -62,7 +74,12 @@ else
 	    <h4>{!$User.FirstName} {!$User.LastName}</h4>
 	    <p>Shift: 07:00-14:00</p>
 	    
-        <a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">{!$CurrentPage.parameters.evaltype} <br/>(click to sign)</a>
+	    <apex:outputPanel rendered="{!thisEval.Status__c == 'Draft'}" >
+        	<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">{!$CurrentPage.parameters.evaltype} <br/>(E-Sign and Finalize)</a>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!thisEval.Status__c == 'Final'}" >
+        	<a id="btnRevise" class="btn-success btn-sm pull-left" href="#" role="button" onClick="revise(); return false;" >(Revise)</a>
+        </apex:outputPanel>
 		<a id="btnPrint" class="btn-info btn-sm" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">Print</a>
         <a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="authenticate(); return false;">Done<br/>(click to sign)</a>
 		</div>
@@ -110,6 +127,7 @@ else
 </apex:actionFunction>
 <apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" />
 <c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
+<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="none"/>
 </apex:form>
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
