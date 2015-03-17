@@ -271,14 +271,14 @@
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
 				<apex:column headerValue="View Current Shift">
-					<apex:outputPanel rendered="{!serviceAssignment.Evaluations__r.size >0}">
+					<apex:outputPanel rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Active')}">
 						<a href="/{!serviceAssignment.Evaluations__r[0].Id}">{!serviceAssignment.Evaluations__r[0].Name}</a>
 					</apex:outputPanel>
 				</apex:column>
-				<apex:column headerValue="Action">
-					<apex:selectList id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Is_Signed__c), serviceAssignment.Evaluations__r[0].Id, '')}">
+				<apex:column headerValue="Daily Actions">
+					<apex:selectList id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Active'), serviceAssignment.Evaluations__r[0].Id, '')}">
 						<apex:selectOption itemValue="createShiftDoc" itemLabel="Create New Shift Doc" />
-						<apex:selectOptions value="{!actionList}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Is_Signed__c)}" />
+						<apex:selectOptions value="{!actionList}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Active')}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="actionButton" />
 				</apex:column>

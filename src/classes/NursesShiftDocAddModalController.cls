@@ -33,7 +33,7 @@ public with sharing class NursesShiftDocAddModalController {
 		shiftDoc.Name = pbsFirstinitial+'. ' + pbsLastName;
 		shiftDoc.RecordTypeID = Utility.getEvaluationRecordType('CMShiftAssessment');
 		shiftDoc.ServiceAssignment__c = this.serviceAssignment.Id;
-		shiftDoc.Status__c = 'Draft';
+		shiftDoc.Status__c = 'Active';
 	}
 
 	public pageReference saveShiftDoc() {

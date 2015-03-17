@@ -114,7 +114,7 @@ public with sharing class HomePageController{
 			SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name,
 			       Admission__r.Id,
 			       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC),
-			       (SELECT Id, Name, Is_Signed__c FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' ORDER BY CreatedDate DESC LIMIT 1)
+			       (SELECT Id, Name, Status__c FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' ORDER BY CreatedDate DESC LIMIT 1)
 			FROM Service_Assignment__c
 			WHERE Service_Location__c = :selectedProgram
 		];
