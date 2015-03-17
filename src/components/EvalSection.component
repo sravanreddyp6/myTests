@@ -30,6 +30,15 @@
 		<apex:pageBlock rendered="{!ctlList.size>0}">
 			<apex:outputText value="{!evaltype}" />
 			<apex:pageBlockSection title="{!category} / {!subcategory}" collapsible="false">
+			
+				<apex:pageBlockSectionItem rendered="{!editEnabled}" />
+				<apex:pageblocksectionitem rendered="{!editEnabled}">
+				<div class="pbHeaderButton">
+					<input class="btn" type="submit" value="Save" id="btnSave" />
+					<input class="btn" type="button" value="Cancel" onclick="evalForm.reset(); setUpFields();" />
+				</div>
+				</apex:pageblocksectionitem>
+
 				<apex:pageBlockSectionItem rendered="{!ctlList.size > 0 && hasErros}"><span id="evalSecValMsgs" style="color: red;"></span></apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem rendered="{!ctlList.size > 0 && hasErros}" />
 				<apex:repeat value="{!ctlList}" var="fld">
@@ -38,12 +47,9 @@
 					</apex:pageBlockSectionItem>
 				</apex:repeat>
 			</apex:pageBlockSection>
-			<apex:pageBlockSection columns="1" rendered="{!editEnabled}">
-				<apex:pageblocksectionitem dataStyle="text-align:center; width: 50%; max-width: 55%;">
-					<input class="btn" type="submit" value="Save" id="btnSave" />
-					<input class="btn" type="button" value="Cancel" onclick="evalForm.reset(); setUpFields();" />
-				</apex:pageblocksectionitem>
-			</apex:pageBlockSection>
+
+
+			
 		</apex:pageBlock>
 	</form>
 

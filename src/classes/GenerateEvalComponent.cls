@@ -1,5 +1,6 @@
 /* 
-  Add comments here about what type of fields are not yet handelled. 
+Fields are not yet handelled. 
+Multiselect - Radio
 */
 public with sharing class GenerateEvalComponent {
 
@@ -185,8 +186,38 @@ public with sharing class GenerateEvalComponent {
 	                            newHTMLfld += '"';
 	                    }
 	                    newHTMLfld +=  '/></div></div>';
-                	}
-                } else if (e.Field_Type__c == 'DropDown') {
+                	} 
+                } else if (e.Field_Type__c == 'Double'){
+                	newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+	                    newHTMLfld += reqfldHTML;
+	                    newHTMLfld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid decimal number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+	                    if (mapEvalValues.ContainsKey( e.id )) {
+	                        newHTMLfld += 'value="' ;
+	                        strVal = mapEvalValues.get(e.id).text_under_250__c;
+	
+	                        if (strVal != null && strVal != '')
+	                            newHTMLfld += strVal;
+	                            
+	                            newHTMLfld += '"';
+	                    }
+	                    newHTMLfld +=  '/></div></div>';
+						
+				} else if (e.Field_Type__c == 'Int'){
+                	newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+	                    newHTMLfld += reqfldHTML;
+	                    newHTMLfld += '<input  pattern="[0-9]+" title="Please enter a valid number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+	                    if (mapEvalValues.ContainsKey( e.id )) {
+	                        newHTMLfld += 'value="' ;
+	                        strVal = String.valueOf(mapEvalValues.get(e.id).Number_No_Decimal__c);
+	
+	                        if (strVal != null && strVal != '')
+	                            newHTMLfld += strVal;
+	                            
+	                            newHTMLfld += '"';
+	                    }
+	                    newHTMLfld +=  '/></div></div>';
+						
+				} else if (e.Field_Type__c == 'DropDown') {
 
                     // get the value
                     if ( mapEvalValues.ContainsKey( e.id ))
@@ -211,7 +242,7 @@ public with sharing class GenerateEvalComponent {
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input class="datepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 					if (mapEvalValues.ContainsKey( e.id )) {
-                        newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c;
+                        newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.date().format();
                         newHTMLfld  += '"';
                     }
                     newHTMLfld +=  '/></div></div>';
