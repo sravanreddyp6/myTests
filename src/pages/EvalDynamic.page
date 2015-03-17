@@ -12,7 +12,7 @@
     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/docs.min.js')}" />
 
 
-
+	<apex:pageMessages id="msgs" />
 <script>
 
 function clearPanel() {
@@ -127,7 +127,7 @@ function revise(){
 </apex:actionFunction>
 <apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" />
 <c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
-<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="none"/>
+<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs"/>
 </apex:form>
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 

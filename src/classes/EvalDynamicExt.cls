@@ -102,14 +102,20 @@ public with sharing class EvalDynamicExt {
     
     public pageReference reviseAssessment() {
     
+    	//Roll back all the DML operations in case of any failure in the process of Cloning.
     	Savepoint sp = Database.setSavepoint();
-    		Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, 'Residential', 'Care Meridian');
-    	Database.rollback(sp);
-    	
-    	PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedEval.Id+'&evalType=Residential&opGrp=Care Meridian');
-    	pg.setRedirect(true);
-    	return pg;
-    	
+    		try{
+    			Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, 'Residential', 'Care Meridian');
+    			PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedEval.Id+'&evalType=Residential&opGrp=Care Meridian');
+    			pg.setRedirect(true);
+    			return pg;
+    		}
+    		catch(exception e){
+    			Database.rollback(sp);
+    			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
+    			return null;
+    			
+    		}
 	}
 	
 	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup){
