@@ -21,7 +21,7 @@ public with sharing class EvalDynamicExt {
 		key = evalType+'~'+cat+'~'+subCat;
 		showMainComponent = true;
 		
-		thisEval = [ select id, Status__c, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
+		thisEval = [ select id, Name, Status__c, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
 		
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
@@ -101,16 +101,69 @@ public with sharing class EvalDynamicExt {
     }
     
     public pageReference reviseAssessment() {
+    
+    	Savepoint sp = Database.setSavepoint();
+    		Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, 'Residential', 'Care Meridian');
+    	Database.rollback(sp);
     	
-    	Evaluation__c newEval = thisEval.clone(false);
-    	newEval.Status__c = 'Draft';
-    	
-    	insert newEval;
-    	
-    	PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+newEval.Id+'&evalType=Residential&opGrp=Care Meridian');
+    	PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedEval.Id+'&evalType=Residential&opGrp=Care Meridian');
     	pg.setRedirect(true);
     	return pg;
     	
+	}
+	
+	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup){
+		
+		Evaluation__c currentEval = eval;
+		
+		//CLone the current Evaluation and Insert a new one with Draft Status
+		Evaluation__c clonedEval = currentEval.clone(false);
+    	clonedEval.Status__c = 'Draft';
+    	insert clonedEval;
+    	
+    	//update the current Evaluation status to Final Revision 
+    	currentEval.Status__c = 'Final - Revision';
+    	update currentEval;
+    	
+    	
+    	if(evalType == 'Residential') {
+    		
+    		//Query the existing Assessment Responses and Assign the Score and Rating to the cloned Responses
+    		Map<Id, Assessment_Response__c> responseMap = new Map<Id, Assessment_Response__c>();
+    		for(Assessment_Response__c resp: [SELECT Id, Rating__c, Score__c, Question__c FROM Assessment_Response__c WHERE Assessment__r.Evaluation__c =: currentEval.Id AND Rating__c != null]){
+    			responseMap.put(resp.Question__c, resp);
+    		}
+    		
+    		Assessment__c fallSkinAsmt = new Assessment__c(Name=currentEval.Name+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = currentEval.serviceassignment__c, Admission__c = currentEval.serviceassignment__r.admission__c, AccountPerson__c = currenteval.serviceassignment__r.admission__r.person_being_served__r.AccountId);
+    		fallSkinAsmt.Evaluation__c = clonedEval.Id;
+    		
+    		insert fallSkinAsmt;
+    		
+    		List<Assessment_Response__c> tobeUpdated = new list<Assessment_Response__c>();
+    		
+    		for(Assessment_Response__c currentResponse: [SELECT Id, Rating__c, Question__c, Score__c FROM Assessment_Response__c WHERE Assessment__r.Evaluation__c = :clonedEval.Id AND Question__c IN: responseMap.keySet()]){
+    				currentResponse.Rating__c = responseMap.get(currentResponse.Question__c).Rating__c;
+    				currentResponse.Score__c = responseMap.get(currentResponse.Question__c).Score__c;
+    				tobeUpdated.add(currentResponse);
+    			
+    		}
+    		
+    		update tobeUpdated;
+    		
+    	}
+    	
+    	//Clone the Eval Value Records and replace the WhatId with the cloned Eval id
+    	
+    	List<Eval_Value__c> currentEvalValues = [SELECT Id,Boolean__c, Currency__c, Date_Time__c,Eval__c, Eval_Section_Id__C, Eval_Section_Type__c, Number_No_Decimal__c, Text_Over_250__c, Text_Under_250__c, What_Id__c, What_Id_Object__c FROM Eval_Value__c WHERE What_Id__c = :currentEval.Id ];
+    	List<Eval_value__c> clonedEvalValues = currentEvalValues.deepclone(false, false, false);
+    	for(Eval_Value__c value: clonedEvalValues){
+    		value.What_id__c = clonedEval.Id;
+    	}
+    	
+    	insert clonedEvalValues;
+    	
+    	return clonedEval;
+		
 	}
     
 	
