@@ -18,6 +18,7 @@ public with sharing class EvalRepeaters {
 		List<EvalRepeaterWrapper> evalWraps = new list<EvalRepeaterWrapper>();
 		evalDataList = new Map<String, List<EvalValueWrapper>>() ;
 		
+		// get list of all sections
 		List<AggregateResult> evalTypes = [select	category__c, sub_category__c, sub_sub_category__c
 											 from 	eval__c
 											where	eval_type__r.name = :evalname 
@@ -25,16 +26,38 @@ public with sharing class EvalRepeaters {
 										group  by 	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c, category__c, sub_category__c, sub_sub_category__c
 										order by	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c];
 		
+		// get list of repeatables
+		List<AggregateResult> evalRepeats = [select	category__c, sub_category__c, sub_sub_category__c
+											 from 	eval__c
+											where	eval_type__r.name = :evalname 
+											  and 	eval_type__r.Category__c = :operatingGroup
+											  and	eval__c.field_name__c = 'isRepeatable'
+											  and	eval__c.visible__c = false
+										group  by 	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c, category__c, sub_category__c, sub_sub_category__c
+										order by	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c];
 		
+		// first throw the repeats into a map by composite key
 		string compositeKey = '';								
+		Set<string> setRepeaters = new set<String>();
+		for (AggregateResult ag : evalRepeats){
+			compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));
+			setRepeaters.add( compositeKey );
+		}									
+			
+		
+		// now combine the results with the complete set of eval fields
+		compositeKey = '';					
+		boolean rep = false;			
 		for (AggregateResult ag : evalTypes){
 			compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));									
 			
+			rep = setRepeaters.contains( compositeKey);
 			evalWraps.add(new EvalRepeaterWrapper(String.valueOf(ag.get('category__c')), String.valueOf(ag.get('sub_category__c')), 
-												String.valueOf(ag.get('sub_sub_category__c')), compositeKey ));
+												String.valueOf(ag.get('sub_sub_category__c')), compositeKey, rep ));
 												
 		}
 		system.debug(evalWraps);
+		
 		
 		// all sections are empty to start
 		numEmpty = evalWraps.size();
@@ -161,13 +184,15 @@ public with sharing class EvalRepeaters {
 		public string subsubcat{get; set;}
 		public string compositeKey{ get; set; }
 		public integer numErrors { get; set; }
+		public boolean repeatable { get; set;}
 		
-		public EvalRepeaterWrapper(String cat, string subcat, string subsubcat, string compKey){
+		public EvalRepeaterWrapper(String cat, string subcat, string subsubcat, string compKey, boolean repeats){
 			this.cat = cat;
 			this.subcat = subcat;
 			this.subsubcat = subsubcat;
 			this.compositeKey = compKey;
 			this.numErrors = 0;
+			this.repeatable= repeats;
 		}
 	}
 
