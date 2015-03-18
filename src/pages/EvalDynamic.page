@@ -72,12 +72,13 @@ function revise(){
         <div class="col-sm-4"> 
           <div class="sidebar-module-sm sidebar-module-inset">
 	    <h4>{!$User.FirstName} {!$User.LastName}</h4>
-	    <p>Shift: 07:00-14:00</p>
+	    <p>Shift: 07:00-14:00<br/>{!thisEval.Status__c}</p>
+	    
 	    
 	    <apex:outputPanel rendered="{!thisEval.Status__c == 'Draft'}" >
         	<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">{!$CurrentPage.parameters.evaltype} <br/>(E-Sign and Finalize)</a>
         </apex:outputPanel>
-        <apex:outputPanel rendered="{!thisEval.Status__c == 'Final'}" >
+        <apex:outputPanel rendered="{!thisEval.Status__c == 'Final Admission' || thisEval.Status__c == 'Final Revision'}" >
         	<a id="btnRevise" class="btn-success btn-sm pull-left" href="#" role="button" onClick="revise(); return false;" >(Revise)</a>
         </apex:outputPanel>
 		<a id="btnPrint" class="btn-info btn-sm" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">Print</a>

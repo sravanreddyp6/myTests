@@ -887,7 +887,7 @@ END: Uncomment to have the element collapsed by default -->
 		<apex:pageBlock title="Resident Assessment and Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
 			<div class="pbHeaderButton">
 
-				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
+				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive' && evaluations.size == 0}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
 					<apex:actionStatus id="AddOldResidentAssessmentStatus" >
 						<apex:facet name="start">
 							<apex:outputText > <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /><i><b>Please wait..</b></i></apex:outputText>
@@ -895,7 +895,7 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:facet name="stop" />
 					</apex:actionStatus>
 
-				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" />
+				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c!='Inactive' &&  evaluations.size == 0}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" />
 					<apex:actionStatus id="AddResidentAssessmentStatus" >
 						<apex:facet name="start">
 							<apex:outputText > <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /><i><b>Please wait..</b></i></apex:outputText>

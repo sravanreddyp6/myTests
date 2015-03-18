@@ -15,7 +15,7 @@ public with sharing class EvaluationEditController{
     public PageReference redirect() {
         PageReference returnURL;
         if(evaluation.RecordTypeId == Utility.getEvaluationRecordType('NursesAssessment')) {
-            returnURL = new PageReference('/apex/NursingEvaluationEdit?id='+evaluation.id);
+            returnURL = new PageReference('/apex/EvalDynamic?evalId='+evaluation.Id+'&evalType=Residential&opGrp=Care+Meridian');
         } else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('NeuroRestorative')) {
             returnURL = new PageReference('/apex/NeuroEvaluationEdit?id='+evaluation.id);
         } else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('CareMeridian')) {
