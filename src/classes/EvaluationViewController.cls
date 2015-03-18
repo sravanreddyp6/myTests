@@ -10,7 +10,7 @@ public with sharing class EvaluationViewController {
 	public PageReference redirect() {
 		PageReference returnURL;
 		if(evaluation.RecordTypeId == Utility.getEvaluationRecordType('NursesAssessment')) {
-			returnURL = new PageReference('/apex/NursingEvaluationView?id='+evaluation.id);
+			returnURL = new PageReference('/apex/EvalDynamic?evalId=' + evaluation.Id + '&opGrp=Care Meridian&evalType=Residential');
 		} else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('NeuroRestorative')) {
 			returnURL = new PageReference('/apex/NeuroEvaluationView?id='+evaluation.id);
 		} else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('CareMeridian')) {

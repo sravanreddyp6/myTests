@@ -7,7 +7,7 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
         Evaluation__c assessment = new Evaluation__c(
             Id = recordId,
             Is_Being_Signed__c = true,
-            Status__c = 'Final'
+            Status__c = EvalDynamicExt.determineEvalStatus(recordId)
         );
         update assessment;
         return null;
