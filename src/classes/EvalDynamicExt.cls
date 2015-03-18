@@ -128,8 +128,8 @@ public with sharing class EvalDynamicExt {
     	insert clonedEval;
     	
     	//update the current Evaluation status to Final Revision 
-    	currentEval.Status__c = 'Final - Revision';
-    	update currentEval;
+    	//currentEval.Status__c = EvalDynamicExt.determineEvalStatus(currentEval, 'Residential', 'Care Meridian'); //Determine Status based on Created Date EC- 94
+    	//update currentEval;
     	
     	
     	if(evalType == 'Residential') {
@@ -143,7 +143,7 @@ public with sharing class EvalDynamicExt {
     		Assessment__c fallSkinAsmt = new Assessment__c(Name=currentEval.Name+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = currentEval.serviceassignment__c, Admission__c = currentEval.serviceassignment__r.admission__c, AccountPerson__c = currenteval.serviceassignment__r.admission__r.person_being_served__r.AccountId);
     		fallSkinAsmt.Evaluation__c = clonedEval.Id;
     		
-    		insert fallSkinAsmt;
+    		insert fallSkinAsmt; // This line will invoke the trigger on the Assessment__c object and inserts Assessment domain results and Assessment response records.
     		
     		List<Assessment_Response__c> tobeUpdated = new list<Assessment_Response__c>();
     		
@@ -170,6 +170,22 @@ public with sharing class EvalDynamicExt {
     	
     	return clonedEval;
 		
+	}
+	
+	Public static string determineEvalStatus(id evalId){
+		string status='';
+		Evaluation__c currentEval = [SELECT Id, ServiceAssignment__c FROM Evaluation__c WHERE Id=: evalId LIMIT 1];
+		
+			List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r order by createdDate asc) FROM Service_Assignment__c WHERE Id=: currentEval.ServiceAssignment__c LIMIT 1];
+			if(currentEval == servAssign[0].Evaluations__r[0]){
+				status = 'Final Admission';
+			}
+			else{
+				status = 'Final Revision';
+			}
+		
+		
+		return status;
 	}
     
 	
