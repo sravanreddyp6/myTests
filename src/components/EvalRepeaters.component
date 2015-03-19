@@ -34,8 +34,8 @@
 						<apex:outputPanel rendered="{!edata.sectiontype== evaltype}"
 							layout="none">
 							<a href="#"
-								onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','{!evaltype}', {! edata.ownerID == $User.Id });">
-								<apex:outputText value="{! edata.owner }" /> @ <apex:outputText value=" {!edata.created}" />
+								onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','{!evaltype}', {! edata.ownerID == $User.Id }); this.style.css('font-weight:bold');">
+								<apex:outputText value="{! edata.owner }" />&nbsp;@&nbsp;<apex:outputText value="{!edata.created24 }" />
 							</a>
 							<apex:outputText value="<br />" escape="false"
 								rendered="{! counter > 0}" />
@@ -77,7 +77,7 @@
 						<apex:outputPanel rendered="{!edata.sectiontype=='Activity Log'}">
 							<a href="#"
 								onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log', {! edata.ownerID == $User.Id });">
-								<apex:outputText value="{! edata.owner }" /> @ <apex:outputText value=" {!edata.created}" />
+								<apex:outputText value="{! edata.owner }" /> @ <apex:outputText value=" {!edata.created24}" /> 
 							</a>
 							<br />
 						</apex:outputPanel>

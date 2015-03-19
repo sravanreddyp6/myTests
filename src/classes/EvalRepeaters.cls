@@ -161,6 +161,7 @@ public with sharing class EvalRepeaters {
 		public string subsubcat { get; set;}
 		public string owner { get; set ;}
 		public datetime created { get; set; }
+		public string created24 { get; set; }
 		public string entryID { get; set; }
 		public string ownerID { get; set; }
 		
@@ -173,6 +174,7 @@ public with sharing class EvalRepeaters {
 			this.owner = owner;
 			this.ownerID  = ownerID;
 			this.created = created;
+			this.created24 = created.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString() );
 			this.entryID = entryid;
 		}
 	}
