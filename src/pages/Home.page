@@ -262,7 +262,7 @@
 		<apex:pageBlock title="Persons Being Served" id="pbsBlock">
 			<apex:pageBlockSection columns="1">
 				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program" size="1">
-					<apex:actionSupport event="onchange" reRender="serviceAssignmentTable" action="{!updateProgramSelection}"/>
+					<apex:actionSupport event="onchange" reRender="serviceAssignmentTable" action="{!updateProgramSelection}" />
 					<apex:selectOptions value="{!programslist}"/>
 				</apex:selectList>
 			</apex:pageBlockSection>
@@ -271,14 +271,14 @@
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
 				<apex:column headerValue="View Current Shift">
-					<apex:outputPanel rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Active')}">
+					<apex:outputPanel rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}">
 						<a href="/{!serviceAssignment.Evaluations__r[0].Id}">{!serviceAssignment.Evaluations__r[0].Name}</a>
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
-					<apex:selectList id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Active'), serviceAssignment.Evaluations__r[0].Id, '')}">
+					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft'), serviceAssignment.Evaluations__r[0].Id, '')}">
 						<apex:selectOption itemValue="createShiftDoc" itemLabel="Create New Shift Doc" />
-						<apex:selectOptions value="{!actionList}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Active')}" />
+						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="actionButton" />
 				</apex:column>
