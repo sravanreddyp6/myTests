@@ -61,17 +61,22 @@ public with sharing class HomePageController{
 	public Id selectedProgram { get; set; }
 	public List<SelectOption> programslist { get; set; }
 	public Service_Assignment__c[] serviceAssignments { get; set; }
-	public List<AggregateResult> shiftDocEvals { get; set; }
 
 	// We use this variable to keep track of which service assignment we want
 	// to run an action on
 	public Id serviceAssignmentIdForAction { get; set; }
 
-	public List<SelectOption> actionList { get; set; }
+	// Given the id of a service assignment, here's a map of the actions
+	// (excluding Create New Shift Doc) for the latest shift doc of that service
+	// asignment (providing that the shift doc is active)
+	public Map<Id, List<SelectOption>> serviceAssignmentToSelectOptionMap { get; set; }
+	// List of repeatable section/subsection/subsubsection for CM Shift Doc
+	public Set<String> cmShiftDocRepeatable;
 
 	//Constructor
 	public HomePageController(){
 		programsList = new list<SelectOption>();
+		serviceAssignmentToSelectOptionMap = new Map<Id, List<SelectOption>>();
 		List<AggregateResult> slPrgms = [
 			SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
 			  FROM service_assignment__c
@@ -88,19 +93,20 @@ public with sharing class HomePageController{
 		} else {
 			selectedProgram = initialProgramCookie.getValue();
 		}
-		shiftDocEvals = [
+		// get list of repeatables
+		List<AggregateResult> evalRepeats = [
 			SELECT category__c, sub_category__c, sub_sub_category__c
 			  FROM eval__c
 			 WHERE eval_type__r.name = 'Head To Toe'
 			   AND eval_type__r.Category__c = 'Care Meridian'
+			   AND eval__c.field_name__c = 'isRepeatable'
+			   AND eval__c.visible__c = false
 			GROUP BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c, category__c, sub_category__c, sub_sub_category__c
 			ORDER BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c
 		];
-		actionList = new List<SelectOption>();
-		for (AggregateResult eval: shiftDocEvals) {
-			actionList.add(new SelectOption('shiftDocAction-' + eval.get('category__c') + '~' + eval.get('sub_category__c'),
-				'Add Activity Log Entry for ' + eval.get('category__c') + '/' + eval.get('sub_category__c'))
-			);
+		cmShiftDocRepeatable = new set<String>();
+		for (AggregateResult ag : evalRepeats){
+			cmShiftDocRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
 		}
 		updateProgramSelection();
 		checkTmnUserRecord();
@@ -109,7 +115,6 @@ public with sharing class HomePageController{
 	}
 
 	public void updateProgramSelection() {
-		System.debug('selectedProgram: ' + selectedProgram);
 		serviceAssignments = [
 			SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name,
 			       Admission__r.Id,
@@ -118,6 +123,37 @@ public with sharing class HomePageController{
 			FROM Service_Assignment__c
 			WHERE Service_Location__c = :selectedProgram
 		];
+		Map<Id, Id> evaluationToServiceAssignmentMap = new Map<Id, Id>();
+		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
+			if (serviceAssignment.Evaluations__r.size() > 0 && serviceAssignment.Evaluations__r[0].Status__c == 'Draft') {
+				evaluationToServiceAssignmentMap.put(serviceAssignment.Evaluations__r[0].Id, serviceAssignment.Id);
+			}
+			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, new List<SelectOption>());
+		}
+		List<AggregateResult> responses = [
+			SELECT What_Id__c, Eval__r.Category__c cat, Eval__r.Sub_Category__c subCat,
+			       Eval__r.Sub_Sub_Category__c subSubCat
+			  FROM Eval_Value__c
+			 WHERE What_Id__c IN :evaluationToServiceAssignmentMap.keySet()
+			   AND Eval_Section_Type__c != 'Activity Log'
+			GROUP BY Eval__r.cat_seq_text__c, Eval__r.subcat_seq_text__c,
+			         Eval__r.subsubcat_seq_text__c, Eval__r.category__c,
+			         Eval__r.sub_category__c, Eval__r.Sub_Sub_Category__c,
+			         What_Id__c
+			ORDER BY Eval__r.cat_seq_text__c, Eval__r.subcat_seq_text__c,
+			         Eval__r.subsubcat_seq_text__c
+		];
+		for (AggregateResult response: responses) {
+			String compositeKey = response.get('cat') + '~' + response.get('subCat') + '~' + (String.isBlank((string) response.get('subSubCat')) ? '' : (string) response.get('subSubCat'));
+			if (!cmShiftDocRepeatable.contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
+				continue;
+			}
+			serviceAssignmentToSelectOptionMap.get(evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c'))).add(
+				new SelectOption('shiftDocAction-' + compositeKey,
+					'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
+				)
+			);
+		}
 		ApexPages.currentPage().setCookies(new Cookie[]{ new Cookie('homePageInitialProgram', selectedProgram, null, 30*24*60*60, false) }); //  set the cookie max age to a month
 	}
 
