@@ -118,6 +118,23 @@ public with sharing class EvalDynamicExt {
     		}
 	}
 	
+	
+	public pageReference disregardAssessment() {
+		
+		thisEval.Status__c = 'Disregard';
+		try{
+			update thisEval;
+			PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType=Residential&opGrp=Care Meridian');
+			pageRef.setRedirect(true);
+			return pageRef;
+		}
+		catch(exception e){
+			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
+			return null;	
+		}
+		
+	}
+	
 	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup){
 		
 		Evaluation__c currentEval = eval;
