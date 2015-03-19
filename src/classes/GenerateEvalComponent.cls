@@ -163,9 +163,9 @@ public with sharing class GenerateEvalComponent {
                 } else if (e.Field_Type__c=='String') {
                 	
                 	if ( e.length__c >= 3000) {
-                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
+                        newHTMLfld = '<td class="dataCol" style="vertical-align: top" ><div style="display: table-row;">';
                         newHTMLfld += reqfldHTML;
-                        newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" style="vertical-align: text-top" >';
+                        newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" >';
                         if (mapEvalValues.ContainsKey( e.id )) {
                             strVal = mapEvalValues.get(e.id).text_over_250__c;
 	                        if (strVal != null && strVal != '')
