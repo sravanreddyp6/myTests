@@ -86,11 +86,11 @@ function revise(){
 		
 		<a id="btnPrint" class="btn-info btn-sm" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">Print</a>
         
-        <apex:outputPanel  rendered="{!evalType == 'Head to Toe'}">
+        <apex:outputPanel rendered="{!evalType == 'Head to Toe'}">
         	<a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="authenticate(); return false;" >Finalize Shift<br/>(click to sign)</a>
         </apex:outputPanel>
         
-        <apex:outputPanel  rendered="{!thisEval.Status__c != 'Disregard'}">
+        <apex:outputPanel rendered="{!thisEval.Status__c != 'Disregard'}">
         	<a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="disregardAssessment(); return false;">Disregard</a>
         </apex:outputPanel>
 		</div>
