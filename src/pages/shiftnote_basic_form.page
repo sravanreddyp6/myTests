@@ -1,0 +1,407 @@
+<apex:page standardController="Progress_Note__c" extensions="Shift_Note_Basic,Notes_ProgressNote_AddlActions" sidebar="false" >
+<apex:variable value="{!Progress_Note__c}" var="pn"/>
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+<apex:repeat value="{!allgoals}" var="g" rendered="false">{!g.id}<br/></apex:repeat>
+<script>
+    function setFocusOnLoad() {}
+</script>
+
+<script>
+
+    function setFocusOnLoad() {}
+
+    var j$ = jQuery.noConflict();
+    
+function printpage(radioObj) {
+
+        
+    if(radioObj.value == 'WORD'){
+        return window.open('/apex/ActionPlan_Print?Id={!pn.Id}', '_blank');
+    
+    }
+
+    if(radioObj.value == 'PDF'){
+        return window.open('/apex/ActionPlan_Print?Id={!pn.Id}&pdf=1', '_blank');
+    
+    }    
+
+    return '';
+}
+  
+  
+       
+function hideStuff(cls, cls2, option, newtopion){
+    j$("."+cls).slideUp(400);   
+    j$("."+cls2).slideUp(400); 
+    
+    j$("."+option).slideUp(0); 
+    j$("."+newtopion).slideDown(0); 
+    
+    
+     
+};
+
+function showStuff(cls, cls2, option, newtopion){
+    j$("."+cls).slideDown(400);   
+    j$("."+cls2).slideDown(400); 
+    
+    j$("."+option).slideUp(0); 
+    j$("."+newtopion).slideDown(0);     
+     
+};
+
+function gotoend(div){
+    j$('html, body').animate({scrollTop: j$("#"+div).offset().top}, 1000); 
+
+};    
+    
+function toggleById(id, ms){
+    j$(document.getElementById(id)).toggle(ms);
+};
+
+function highlightButtons ( btype, sfid, on )
+{
+
+    j$('#' + btype + 'btn'+ sfid).toggle();
+    if (on) { 
+        j$('#' + btype + 'btn'+ sfid).css('background-color','#99f'); 
+        j$('#' + btype + 'icon'+ sfid).attr('src','{!URLFOR($Resource.GoalIcons, 'icon-edit-orange.png')}');
+        j$('#' + btype + 'icon'+ sfid).css('background-color','#99f');  
+    } else {
+        j$('#' + btype + 'icon'+ sfid).attr('src','{!URLFOR($Resource.GoalIcons, 'icon-edit-blue.png')}');
+        j$('#' + btype + 'icon'+ sfid).css('background-color','transparent');  
+    }        
+    
+}
+    
+</script>
+
+
+<style>
+    .dateFormat{ display: none;}
+    .txtarea{ width: 90%;}
+   // input{ padding: 5px;}
+    //.labelCol {padding-top: 10px !important;}
+    textarea{ padding: 5px;}
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}    
+.popupform{
+    position:absolute; left:35%; top:40%; background-color: white; border: 2px solid gray; padding: 2px;
+    width: 500px;
+    opacity: 1;
+
+}
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}  
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    background-color: gray;
+    opacity: .6;
+    z-index:1000;
+}
+.popupform{
+    position: fixed; 
+    left:35%; 
+    top:40%;
+     /*background-color: white; border: 2px solid gray; padding: 7px;*/
+    width: 500px;
+    opacity: 1;
+    z-index:1099;
+
+}
+.goalspacer{
+    width: 18%;
+
+} 
+.goal{padding: 3px; padding-left: 20px;}
+.obj{padding: 3px; padding-left: 60px;}
+.act{padding: 3px; padding-left: 80px;}
+.checkb{margin-left: -17px;}
+.chldwrapper{ max-width: 850px;}
+.chldheader{margin-left: -19px; font-weight: bold;  border-bottom: 1px solid #ececec;}
+</style>
+
+<apex:outputPanel style="display: none;">    
+    <apex:outputField value="{!pn.Action_Plan__c}" />
+    <apex:outputField value="{!pn.Person_Being_Served__r.name}" />
+    <apex:outputField value="{!pn.RecordType.name}" />
+</apex:outputPanel>
+
+<apex:variable value="false" 
+                var="hideFinal"
+                /> 
+<apex:variable value="{!(pn.Approval_Status__c =='Pending' || pn.Approval_Status__c =='Approved')}" 
+                var="hideFinal"
+                /> 
+<apex:variable value="{! !editMode}" 
+                var="hideFinal"
+                /> 
+<apex:outputPanel id="myFrm">
+
+    <c:PersonalRecord pbsId="{!pn.Person_Being_Served__c}" 
+                        parentPage="ShiftNote" 
+                        apId="{!pn.Action_Plan__c}" 
+                        servAssignId="{! IF( pn.Action_Plan__c != null, pn.Action_Plan__r.Service_Assignment__c, pn.Service_Assignment__c)}" 
+                        admId="{!pn.Admission__c}"
+                        />
+    <br />
+
+    <apex:form >                 
+        <apex:pageBlock title="Shift Note">  
+        <apex:outputPanel id="messages">
+            <apex:pageMessages />
+        </apex:outputPanel>
+            <apex:pageBlockButtons >
+                <div style="float: right" > 
+                    <apex:commandButton value="Edit"
+                                        action="{!myEdit}"  
+                                        rendered="{! !editMode && !pn.locked__c}" 
+                                        reRender="myFrm" 
+                                        status="myStatus"
+                                        />                    
+                    <apex:commandButton value="Save"  
+                                        action="{!mySave}"
+                                        rendered="{!editMode}" 
+                                        status="myStatus"
+                                        />
+                    <apex:commandButton value="Cancel"
+                                        action="{!myCancel}" 
+                                        immediate="true"
+                                        rendered="{!editMode}" 
+                                        status="myStatus"
+                                        />
+                    <apex:commandButton value="E-sign"
+                                        onclick="window.open('/apex/Note_ShiftNote_Esign?id={!pn.Id}', '_blank'); return false;" 
+                                        rendered="{! !editMode && !pn.locked__c}"
+                                        status="myStatus"
+                                        />                             
+                    <apex:commandButton value="Finalize" 
+                                        action="{!myCheckB4Final}"                                         
+                                        rendered="{!hideFinal && !pn.Locked__c}"  
+                                        styleClass="ackbtn" 
+                                        status="myStatus"
+                                        onComplete="toggleById('finalize_form'); return false;"
+                                        reRender="messages, finalize_form_wrapper" 
+                                        />
+                    <apex:commandButton value="Disregard"
+                                        action="{!updateLocked}"
+                                        rendered="{!canDisregard}"
+                                        />                                                
+                </div>           
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection columns="1" rendered="{!editMode}" >
+                <apex:inputField label="Shift Start Time" value="{!pn.Start_Time__c}"/>
+                <apex:inputField label="Shift End Time" value="{!pn.End_Time__c}"/>
+                <apex:inputField value="{!pn.Number_of_Required_Signatures__c}" 
+                                 required="true"
+                                 />     
+                <apex:outputField value="{!pn.Disregard_Note__c}" />         
+                                           
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" rendered="{! !editMode}" >
+                <apex:outputField label="Shift Start Time" value="{!pn.Start_Time__c}"/>
+                <apex:outputField label="Shift End Time" value="{!pn.End_Time__c}"/>
+                <apex:outputField value="{!pn.Number_of_Required_Signatures__c}" />      
+                <apex:outputField value="{!pn.Disregard_Note__c}" />         
+            </apex:pageBlockSection> 
+            
+        <apex:actionRegion >        
+            <apex:pageBlockSection columns="1" title="{!if(editMode,'Select ','')}Goals and Objectives" collapsible="false" id="planchildren">
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >
+                                     <apex:actionStatus id="toggleGoal" >
+                                        <apex:facet name="start">   
+                                            &nbsp;<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /></span>                                    
+                                        </apex:facet>  
+                                        <apex:facet name="stop">
+                                        </apex:facet> 
+                                    </apex:actionStatus>                     
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="block" styleClass="chldwrapper" >
+                        <apex:repeat value="{!goals}" 
+                                    var="g">
+                                <apex:outputPanel layout="block" rendered="{!goals[g].inNote || editMode}" styleClass="goal" > 
+                                    <apex:outputPanel layout="block" styleClass="chldheader">Goal</apex:outputPanel>                   
+                                    <apex:inputCheckbox value="{!goals[g].inNote}" id="agoal" 
+                                                        rendered="{! editMode}" 
+                                                        styleClass="checkb">                                                        
+                                                    <apex:actionSupport event="onclick" 
+                                                            reRender="planchildren" 
+                                                            status="toggleGoal" />
+                                    </apex:inputCheckbox>
+                                    <apex:outputLabel for="agoal">
+                                        <apex:image url="/img/checkbox_checked.gif" width="21" height="16" style="padding-top: 3px;"  rendered="{! !editMode}" />                                        
+                                        <apex:outputField value="{!goals[g].theGoal.Description__c} "/>
+                                    </apex:outputLabel>
+
+                                </apex:outputPanel>
+                                                     
+                            
+                            <apex:repeat value="{!goals[g].Objs}" 
+                                        var="o" >
+                                <apex:outputPanel layout="block" rendered="{!  goals[g].inNote &&(editMode ||  goals[g].objs[o].inNote)}" styleClass="obj">
+                                    <apex:outputPanel layout="block" styleClass="chldheader">Objective</apex:outputPanel>
+                                    <apex:inputCheckbox value="{!goals[g].objs[o].inNote}" 
+                                                        id="anobj" 
+                                                        rendered="{! editMode}" 
+                                                        styleClass="checkb">
+                                                    <apex:actionSupport event="onclick" 
+                                                            reRender="planchildren" 
+                                                            status="toggleGoal" />
+                                    </apex:inputCheckbox>                                                        
+                                    <apex:outputLabel for="anobj" rendered="{!editMode || goals[g].objs[o].inNote}">
+                                        <apex:image url="/img/checkbox_checked.gif" width="21" height="16" style="padding-top: 3px;"  rendered="{! !editMode}" />  
+                                        <apex:outputField value="{!goals[g].objs[o].theObj.Description__c}"/>
+                                    </apex:outputLabel>
+                                </apex:outputPanel>
+                                
+                                    <apex:repeat value="{!mapActions [o]}" var="a">
+                                        <apex:outputPanel layout="block" styleClass="act" rendered="{!goals[g].objs[o].inNote &&  goals[g].inNote}" >
+                                            <apex:outputPanel layout="block" styleClass="chldheader">Action</apex:outputPanel>
+                                            <apex:outputField value="{!a.description__c}"/>
+                                        </apex:outputPanel>
+                                    </apex:repeat>
+                                
+                            </apex:repeat>
+                        </apex:repeat>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>             
+            </apex:pageBlockSection>
+        </apex:actionRegion>
+    
+    
+            <apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{!editMode}">
+                <apex:inputField value="{!pn.Late_Entry__c}"/>
+                <apex:inputField required="true" styleClass="txtarea" value="{!pn.Narrative__c}"/>
+                <apex:inputField value="{!pn.Healthcare_Medical_Note__c}"/> 
+            </apex:pageBlockSection>
+    
+            <apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{! !editMode}">
+                <apex:outputField value="{!pn.Late_Entry__c}"/>
+                <apex:outputField value="{!pn.Narrative__c}"/> 
+                <apex:outputField value="{!pn.Healthcare_Medical_Note__c}"/> 
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="System Information" collapsible="false">
+                <apex:outputField value="{!pn.createdbyid}"/>
+                <apex:outputField value="{!pn.lastmodifiedbyid}"/>
+                <apex:outputField value=" {!pn.CreatedDate}" />
+                <apex:outputField value=" {!pn.LastModifiedDate}" />
+                <apex:outputField value="{!pn.No_Approval_Needed__c}"/>
+                <apex:outputField value="{!pn.Locked__c}" rendered="{! !editMode}"/>
+                <apex:outputField value="{!pn.Locked__c}" rendered="{!editMode}"/>
+                <apex:outputField value="{!pn.Approval_Status__c}"/>
+                <apex:outputField value=" {!pn.Approval_Status_Date__c}" />
+ 
+            
+            </apex:pageBlockSection>
+            
+            
+        
+        </apex:pageBlock>
+        
+        
+    <apex:outputPanel id="finalize_form_wrapper"> 
+    <apex:outputPanel rendered="{!canFinalize}"> 
+    <div id="finalize_form" style="display: none;">
+    <div class="hbbg"> </div>
+    <div id="p" class="popupform" >
+    
+        <apex:pageBlock id="block" >
+            <apex:pageBlockButtons location="bottom">
+                        <apex:commandButton value="Submit for Approval" 
+                                            action="{!myFinal}"  
+                                            rendered="{!!pn.No_Approval_Needed__c}"
+                                            />
+                        <apex:commandButton value="Mark Final" 
+                                            action="{!myFinal}" 
+                                            rendered="{!pn.No_Approval_Needed__c}"
+                                            />
+                        <apex:commandButton value="Cancel"
+                                            onclick="toggleById('finalize_form', '0'); return false;"
+                                            />                               
+                
+                 <apex:actionStatus id="final_form_status" >
+                    <apex:facet name="start">   
+                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>                                   
+                    </apex:facet>  
+                    <apex:facet name="stop"> </apex:facet>         
+                </apex:actionStatus>                                                           
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1" >            
+                <apex:outputPanel layout="block" style="font-size: 12px; font-weight: bold; color: #4A4A56; " rendered="{!!pn.No_Approval_Needed__c}" >
+                    <center>Once you submit this record for approval, you might not be able to edit it or recall it from the approval process depending on your settings.</center>
+                </apex:outputPanel>        
+                <apex:inputField value="{!pn.No_Approval_Needed__c}">
+                    <apex:actionSupport event="onclick" 
+                                        reRender="block" 
+                                        status="final_form_status"
+                                        />                
+                                    </apex:inputField>                                  
+            </apex:pageBlockSection>            
+        </apex:pageBlock>
+    </div>    
+    </div>  
+    </apex:outputPanel> 
+    </apex:outputPanel>   
+    </apex:form>
+</apex:outputPanel>
+
+<c:SObjectNotesAndAttachments parentId="{!pn.id}" showAction="false" rendered="{! !editMode}"></c:SObjectNotesAndAttachments>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+
+<script>
+    $j = jQuery.noConflict();
+    
+    $j(document).ready(function(){
+    $j('#Approvals a').attr('target','_top');
+    $j('#Approvals input').attr('formtarget','_top');
+    });
+</script>
+<style>
+    input[name=piSubmit] { display: none;}
+</style>
+<div id="Approvals">
+    <apex:relatedList list="ProcessSteps" rendered="{! !editMode}"/>
+    <c:SObjectHistories object="{!Progress_Note__c}" rendered="{! Progress_Note__c.id != null && !editMode}" ></c:SObjectHistories>
+</div>
+</apex:page>
