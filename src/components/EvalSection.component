@@ -26,45 +26,33 @@
 	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 
-	<form id="evalForm" method="post" rendered="{!subcategory != 'Skin Assessment'}">
-		<apex:pageBlock rendered="{!ctlList.size>0}">
-			<apex:outputText value="{!evaltype}" />
-			<apex:pageBlockSection title="{!category} / {!subcategory}" collapsible="false">
+    <style>
+        tr.border_bottom td {
+            border-bottom : 1pt solid #F0F0EF;
+        }
+        td.text_right {
+            text-align:right;
+            float:right;
+        }
+        td.text_left {
+            text-align:left;
+        }
+        td Label.labelCol {
+            text-align:right;
+        }
+    </style> 
 			
-				<apex:pageBlockSectionItem rendered="{!editEnabled}" />
-				<apex:pageblocksectionitem rendered="{!editEnabled}">
-				<div class="pbHeaderButton">
-					<input class="btn" type="submit" value="Save" id="btnSave" />
-					<input class="btn" type="button" value="Cancel" onclick="evalForm.reset(); setUpFields();" />
-				</div>
-				</apex:pageblocksectionitem>
-
-				<apex:pageBlockSectionItem rendered="{!ctlList.size > 0 && hasErros}"><span id="evalSecValMsgs" style="color: red;"></span></apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!ctlList.size > 0 && hasErros}" />
-				<apex:repeat value="{!ctlList}" var="fld">
-					<apex:pageBlockSectionItem >
-						<apex:outputText value="{!fld}" escape="false" />
-					</apex:pageBlockSectionItem>
-				</apex:repeat>
-			</apex:pageBlockSection>
-
-
-			
+    <form id="evalForm" method="post">
+        <apex:pageBlock>
+           
+            <apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:5px;" rendered="{!editEnabled}">
+                <input class="btn" type="submit" value="Save" id="btnSave" />
+				<input class="btn" type="button" value="Cancel" onclick="evalForm.reset(); setUpFields();" />
+            </apex:outputPanel>
+             <apex:outputPanel rendered="{!htmlTable != '' && hasErros}"><span id="evalSecValMsgs" style="color: red;"></span></apex:outputPanel>
+            <apex:outputText value="{!htmlTable}" escape="false" /> 
 		</apex:pageBlock>
 	</form>
-
-	<!--     <form id="asmtForm" rendered="{!subcategory == 'Skin Assessment'}" > -->
-	<!--     	<apex:pageBlock > -->
-	<!--     		<apex:pageBlockSection > -->
-	<!--     			<apex:pageBlockSectionItem > -->
-	<!--     				<apex:include pageName="{!$Page.fallAssessment}" /> -->
-	<!--     			</apex:pageBlockSectionItem> -->
-	<!--     		</apex:pageBlockSection> -->
-	<!--     	</apex:pageBlock> -->
-	<!--     </form> -->
-
-	<!-- c:fallAssessmentComponent evaluationId="a11J0000001LFI2IAO" rendered="{!subcategory == 'Skin Assessment'}" /-->
-
 
 	<script>
 		jQuery.noConflict();

@@ -16,7 +16,7 @@
 <script>
 
 function clearPanel() {
-   $("#panel-form").empty();
+   $("[id$='panel-panel-info']").empty();
 }
 
 function  showForm(key) {
@@ -106,19 +106,17 @@ function revise(){
         </div><!-- /.blog-sidebar -->
 
         <div class="col-sm-8 blog-main">
-
-          <div class="blog-post">
-
-	    <div class="panel panel-info">
+          <apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block" >
+	        <apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 	      <div class="panel-heading clearfix">
-	      <h3 class="panel-title pull-left">Enter and Save</h3>
+	          <h3 class="panel-title pull-left">{!$CurrentPage.parameters.Category}/{!$CurrentPage.parameters.SubCategory} -- {!$CurrentPage.parameters.evaltype}</h3>
 	      <div class="pull-right"><a class="btn" onclick="clearPanel();" >X</a></div>
 	      </div>
 	      <div id="panel-form" class="panel-body">
 
               </div>
-   	    </div>
-          </div><!-- /.blog-post -->
+	        </apex:outputPanel>
+          </apex:outputPanel><!-- /.blog-post -->
 
         </div><!-- /.blog-main -->
 
@@ -128,7 +126,7 @@ function revise(){
     </div><!-- /.container -->
 
 <apex:form id="wholePage">
-<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalRepeaters, outputsection, assessments, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat}');">
+<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalFormBody,evalRepeaters, outputsection, assessments, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat}');">
 	<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
 	<apex:param name="Category" value="" AssignTo="{!cat}" />
 	<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />

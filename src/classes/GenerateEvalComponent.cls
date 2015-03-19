@@ -1,10 +1,11 @@
 /* 
-Fields are not yet handelled. 
-Multiselect - Radio
+Fields type - sub types that are not yet handelled: 
+    Boolean - Radio
 */
 public with sharing class GenerateEvalComponent {
 
-	public List<string> ctlList {get { return CreateFieldControls();} private set;}
+    //public List<string> ctlList {get { return CreateFieldControls();} private set;}
+    public String htmlTable {get{ return CreateFieldControls();} private set;}
 	public string cat {get; set;}
 	public string subcat{get; set;}
 	public string subsubcat{get; set;}
@@ -36,7 +37,7 @@ public with sharing class GenerateEvalComponent {
 		hasErros = false;
 	}
 
-	public List<string> CreateFieldControls () {
+    public String CreateFieldControls () {
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
 		List<Eval_Drop_Down__c> dd = [ select whatid__c, option_name__c, option_value__c, Dependent_Fields__c, visibility_row_rules__c, visibility_rules__c from eval_drop_down__c where What_Id_Object__c = 'Eval__c' order by whatid__c, Sequence__c ];
@@ -97,11 +98,13 @@ public with sharing class GenerateEvalComponent {
             mapEvalValues.put( ev.eval__c, ev);
 
         // system.debug( 'Populated values:' + mapEvalValues );
+        String newHtmlLbl = '';
 		String newHTMLfld = '';
 		String strval = '';
 		String reqfldHTML = '';
 		for( Eval__c e : listEvalItems ){
 			try {
+            	newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
 				newHTMLfld = '';
 				strval = '';
 				
@@ -112,7 +115,8 @@ public with sharing class GenerateEvalComponent {
 				}
 
                 if ( e.Field_Type__c == 'Hidden' )  {
-                	newHTMLfld = '<input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" ';  
+                	newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
+                    newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" ';  
                 	if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' ;
 	                	if (e.Field_Sub_Type__c == 'Boolean') {
@@ -125,21 +129,21 @@ public with sharing class GenerateEvalComponent {
 	                        newHTMLfld += mapEvalValues.get(e.id).Text_Over_250__c;
 	                    }
                 	}
-                    newHTMLfld += '"/>'; 
+                    newHTMLfld += '"/></td>'; 
                                               
                 } else if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
                     if ( e.Field_Sub_Type__c == 'Checkbox') {
-                        newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '"';
+                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '"';
 
                         // insert value
                         if ( mapEvalValues.ContainsKey( e.id ))
                             if ( mapEvalValues.get(e.id).boolean__c)
                                 newHTMLFld += ' checked ';
 
-                        newHTMLfld += '/></div>';
+                        newHTMLfld += '/></div></td>';
                     } else if (e.Field_Sub_Type__c == 'Dropdown') {
                         // Boolean dropdown values = --None--, Yes, No
-                        newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
                         newHTMLfld += reqfldHTML;
                         newHTMLfld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
                         newHTMLfld += '<option value="">-- None --</option>';
@@ -154,12 +158,12 @@ public with sharing class GenerateEvalComponent {
                         if (strval == '0')
                             newHTMLfld += ' selected';
                         newHTMLfld += '>No</option>';
-                        newHTMLfld += '</select></div></div>';
+                        newHTMLfld += '</select></div></div></td>';
                     } //TODO: output radio buttons for Radio type
                 } else if (e.Field_Type__c=='String') {
                 	
                 	if ( e.length__c >= 3000) {
-                        newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
                         newHTMLfld += reqfldHTML;
                         newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" style="vertical-align: text-top" >';
                         if (mapEvalValues.ContainsKey( e.id )) {
@@ -167,10 +171,10 @@ public with sharing class GenerateEvalComponent {
 	                        if (strVal != null && strVal != '')
                                 newHTMLfld += strVal;
                         }
-                        newHTMLfld +=  '</textarea></div></div>';
+                        newHTMLfld +=  '</textarea></div></div></td>';
                         
                     }else{
-	                    newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
 	                    newHTMLfld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 	                    if (mapEvalValues.ContainsKey( e.id )) {
@@ -185,12 +189,12 @@ public with sharing class GenerateEvalComponent {
 	                            
 	                            newHTMLfld += '"';
 	                    }
-	                    newHTMLfld +=  '/></div></div>';
+                        newHTMLfld +=  '/></div></div></td>';
                 	} 
                 } else if (e.Field_Type__c == 'Double'){
-                	newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
-	                    newHTMLfld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid decimal number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+                        newHTMLfld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 	                    if (mapEvalValues.ContainsKey( e.id )) {
 	                        newHTMLfld += 'value="' ;
 	                        strVal = mapEvalValues.get(e.id).text_under_250__c;
@@ -200,10 +204,10 @@ public with sharing class GenerateEvalComponent {
 	                            
 	                            newHTMLfld += '"';
 	                    }
-	                    newHTMLfld +=  '/></div></div>';
+                        newHTMLfld +=  '/></div></div></td>';
 						
 				} else if (e.Field_Type__c == 'Int'){
-                	newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
 	                    newHTMLfld += '<input  pattern="[0-9]+" title="Please enter a valid number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 	                    if (mapEvalValues.ContainsKey( e.id )) {
@@ -215,7 +219,7 @@ public with sharing class GenerateEvalComponent {
 	                            
 	                            newHTMLfld += '"';
 	                    }
-	                    newHTMLfld +=  '/></div></div>';
+                        newHTMLfld +=  '/></div></div></td>';
 						
 				} else if (e.Field_Type__c == 'DropDown') {
 
@@ -225,7 +229,7 @@ public with sharing class GenerateEvalComponent {
 
                     // get the options
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get( e.id);
-                    newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
                     newHTMLfld += '<option value="">-- None --</option>';
@@ -236,25 +240,25 @@ public with sharing class GenerateEvalComponent {
 
                         newHTMLFld += '>' + thisdd.option_name__c + '</option>';
                     }
-                    newHTMLfld += '</select></div></div>';
+                    newHTMLfld += '</select></div></div></td>';
                 }  else if (e.Field_Type__c == 'Date') {
-					newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input class="datepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 					if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.date().format();
                         newHTMLfld  += '"';
                     }
-                    newHTMLfld +=  '/></div></div>';
+                    newHTMLfld +=  '/></div></div></td>';
 				} else if (e.Field_Type__c == 'Datetime') {
-                    newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c;
                         newHTMLfld  += '"';
                     }
-                    newHTMLfld +=  '/></div></div>';
+                    newHTMLfld +=  '/></div></div></td>';
                 } else if (e.Field_Type__c == 'Multiselect') {
                 	String selectedVals;
                     if ( mapEvalValues.ContainsKey( e.id )){
@@ -267,7 +271,7 @@ public with sharing class GenerateEvalComponent {
                     // get the options
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
                 	if ( e.Field_Sub_Type__c == 'Checkbox') {
-	                	newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label><br/>';
+                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
 		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
 	                        if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
@@ -275,10 +279,9 @@ public with sharing class GenerateEvalComponent {
                                 
 	                        newHTMLfld += '/>&nbsp<span>' + thisdd.Option_Name__c + '</span><br/>';
 	                    }
-	                    newHTMLfld +=  '</div>';
+                        newHTMLfld +=  '</div></td>';
                 	}else{
-                		
-	                    newHTMLfld = '<div style="display: table-row;"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '"  class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
 	                    newHTMLfld += '<select style="vertical-align: text-top" multiple="multiple" id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
@@ -288,22 +291,21 @@ public with sharing class GenerateEvalComponent {
 	
 	                        newHTMLFld += '>' + thisdd.option_name__c + '</option>';
 	                    }
-	                    newHTMLfld += '</select></div></div>';
-                		 
+                        newHTMLfld += '</select></div></div></td>';                         
                 	}
                 } else if (e.field_type__c == 'BodyMap') {
                 	
-       				newHTMLfld = '<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
+                    newHTMLfld = '<td><div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
                 	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL('WholeBodyNoGrid') + '?' + evalSectionId + '" id="bodyMap' + evalSectionID + '" />';
                 	newHTMLfld += '</div>';
                     newHTMLfld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
                     newHTMLfld += '<table id="annotations">';
-                    newHTMLfld += '<tbody></tbody></table></div>';
+                    newHTMLfld += '<tbody></tbody></table></div></td>';
                     
                 	
                 }
                 
-                
+                htmlControls.Add( newHtmlLbl);
 				htmlControls.Add( newHTMLfld);
 			}
 			catch( Exception ex)
@@ -312,7 +314,18 @@ public with sharing class GenerateEvalComponent {
 			}
 		}
 
-		return htmlControls;
+        String htmlTable2 = '<table style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';       
+        integer i=0;
+        for (String s : htmlControls){
+            if (Math.mod(i, 4) == 0 )
+                htmlTable2 += '</tr><tr class="border_bottom">';
+                  
+            htmlTable2 += s;
+            i++;
+        }
+        htmlTable2 += '</tr></table>';
+
+        return htmlTable2;
 	}
 	
 	public class FormKeyVal{
