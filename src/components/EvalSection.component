@@ -1,0 +1,253 @@
+<apex:component controller="GenerateEvalComponent">
+	<apex:attribute name="parentId" description="Id of the parent Evaluation record" type="Id" assignTo="{!evaluationId}" />
+	<apex:attribute name="pbsParentId" description="Id of the parent PBS record" type="Id" assignTo="{!pbsId}" />
+	<apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
+	<apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked" type="String" />
+	<apex:attribute name="formId" description="Id of the form element that includes this component" type="String" />
+	<apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
+	<apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering" type="Boolean" required="false" default="false" />
+	<apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs." type="String" required="false" />
+
+	<apex:attribute name="evaltype" description="Kind of eval" type="string" assignTo="{!evalname}" required="true" />
+	<apex:attribute name="category" description="Section of the Eval" type="string" assignTo="{!cat}" required="true" />
+	<apex:attribute name="subcategory" description="Sub-Section of the Eval" type="string" assignTo="{!subcat}" required="true" />
+	<apex:attribute name="subsubcategory" description="Section of the Eval" type="string" assignTo="{!subsubcat}" required="false" />
+	<apex:attribute name="evalSectionUuid" description="The identifier for the eval repeater section" type="string" assignTo="{!evalSectionId}" required="false" />
+	<apex:attribute name="evalSectionType" description="The type of the repeater section" type="string" required="false" />
+
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+	<apex:includeScript value="{!$Resource.AnnotoriousDev}" />
+	<apex:includeScript value="{!$Resource.AnotoJS}" />
+	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+
+    <style>
+        tr.border_bottom td {
+            border-bottom : 1pt solid #F0F0EF;
+        }
+        td.text_right {
+            text-align:right;
+            float:right;
+        }
+        td.text_left {
+            text-align:left;
+        }
+        td Label.labelCol {
+            text-align:right;
+        }
+    </style> 
+			
+    <form id="evalForm" method="post">
+        <apex:pageBlock>
+           
+            <apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:5px;" rendered="{!editEnabled}">
+                <input class="btn" type="submit" value="Save" id="btnSave" />
+				<input class="btn" type="button" value="Cancel" onclick="evalForm.reset(); setUpFields();" />
+            </apex:outputPanel>
+             <apex:outputPanel rendered="{!htmlTable != '' && hasErros}"><span id="evalSecValMsgs" style="color: red;"></span></apex:outputPanel>
+            <apex:outputText value="{!htmlTable}" escape="false" /> 
+		</apex:pageBlock>
+	</form>
+
+	<script>
+		jQuery.noConflict();
+
+		function addOrModifyAnnotation(annotation, isNew) {
+			if (isNew) {
+				if (annotation.Id !== undefined) {
+					return; // So that annotations added at initial page loads are not duplicated
+				};
+				annotation.Id = null;
+			}
+			Visualforce.remoting.Manager.invokeAction(
+				'{!$RemoteAction.GenerateEvalComponent.addOrModifyAnnotation}',
+				annotation.Id,
+				annotation.src,
+				annotation.shapes[0].geometry.x,
+				annotation.shapes[0].geometry.y,
+				annotation.shapes[0].geometry.width,
+				annotation.shapes[0].geometry.height,
+				annotation.shapes[0].type,
+				annotation.text,
+				'{!parentId}',
+				function(result, event) {
+					if (event.status) {
+						annotation.Id = result.Id;
+					} else {
+						alert("Failed to update annotation! Error: " + event.message);
+					}
+				}
+			);
+		}
+
+
+		function removeAnnotation(annotation) {
+			Visualforce.remoting.Manager.invokeAction(
+				'{!$RemoteAction.GenerateEvalComponent.deleteAnnotation}',
+				annotation.Id,
+				function(result, event) {
+					if (!event.status) {
+						alert("Failed to delete annotation! Error: " + event.message);
+						anno.addAnnotation(annotation);
+					}
+				}
+			);
+		}
+
+
+		jQuery(document).ready(function($) {
+			window.beforeEvaluationSave = function() {
+				// Temporarily enable all the disabled fields before saving the
+				// record, so that they are included in the POST to the server.
+				$('body select, body input').each(function(_, target) {
+					$target = $(target);
+					if ($target.prop("disabled")) {
+						$target.prop("disabled", false);
+					}
+				});
+			};
+
+			window.setUpFields = function() {
+				// Apply rules to input fields
+				$('body input').on("change", function(event) {
+					applyShowHideRulesToField(event.target);
+					applyRulesToField(event.target);
+				});
+				$('body select').on("change", function(event) {
+					applyShowHideRulesToField(event.target);
+					applyRulesToField(event.target);
+				});
+				$('body input').each(function(_, target) {
+					applyShowHideRulesToField(target);
+					applyRulesToField(target);
+				});
+				$('body select').each(function(_, target) {
+					applyShowHideRulesToField(target);
+					applyRulesToField(target);
+				});
+			};
+
+			window.handleFormErros = function() {
+				var errorMsg = '';
+				// select all the required input fields and set the hidden boolean and the error message fields.
+				$(".requiredInput :input").filter(":visible").each(function(_, target) {
+					var $target = $(target);
+					if ($target.val() == '')
+						errorMsg += '<li>' + $('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
+				});
+				if (errorMsg != '') {
+					$('#IsValid').val("false").trigger('change');
+					$('#ErrorMsg').val(errorMsg).trigger('change');
+				} else {
+					$('#IsValid').val("true").trigger('change');
+					$('#ErrorMsg').val("").trigger('change');
+				}
+			};
+			window.bindSubmitEvent = function () {
+				$('#evalForm').on("submit", function(event) {
+					beforeEvaluationSave();
+					handleFormErros();
+					event.preventDefault();
+					var formData = $(this).serializeArray();
+					var jsonData = JSON.stringify(formData);
+					var uuid = (new Date()).getTime();
+
+					//console.log(jsonData);
+					// vf remote to save data
+					//debugger;
+					GenerateEvalComponent.saveFields('{!parentID}', (('{!evalSectionUuid}' != '') ? '{!evalSectionUuid}' : '{!$User.Id}' + '-' + uuid), '{!evalSectionType}', '{!evaltype}', '{!category}', '{!subcategory}', jsonData, function(result, event) {
+						if (!event.status) {
+							alert("Failed to save data! Error: " + event.message);
+							anno.addAnnotation(element);
+						} else {
+							$("#evalForm").empty();
+							refreshEvalRepeaters(); // call out to page to refresh list of repeaters
+						}
+					});
+				});
+			};
+
+			// if not editable, make all input fields disabled
+			<apex:outputPanel rendered="{!!editEnabled}" layout="none">
+				$(':input').prop('disabled', true);
+			</apex:outputPanel>
+
+			var serializeObject = function($) {
+				var o = {};
+				var a = this.serializeArray();
+				$.each(a, function() {
+					if (o[this.name] !== undefined) {
+						if (!o[this.name].push) {
+							o[this.name] = [o[this.name]];
+						}
+						o[this.name].push(this.value || '');
+					} else {
+						o[this.name] = this.value || '';
+					}
+				});
+				return o;
+			};
+			$('.datepicker').datetimepicker({
+				timepicker: false,
+				format: 'm/d/Y',
+				closeOnDateSelect: true
+			});
+			$('.datetimepicker').datetimepicker({});
+
+			<apex:outputPanel layout="none" rendered="{!subcategory == 'Body Map'}">
+			anno.reset();
+			var el = $('#bodyMap{!evalSectionUuid}').get(0);
+			if (el) {
+				anno.makeAnnotatable(el);
+			}
+			var $el = $(el);
+
+			<apex:repeat value="{!annotations}" var="annotation">
+			anno.addAnnotation({
+				Id: "{!annotation.Id}",
+				src: $("#bodyMap{!evalSectionUuid}").prop("src"),
+				text: "{!JSENCODE(annotation.Annotation_Text__c)}",
+				shapes: [{
+					type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
+					geometry: {
+						x: {!annotation.Annotation_X__c},
+						y: {!annotation.Annotation_Y__c},
+						width: {!annotation.Annotation_Width__c},
+						height: {!annotation.Annotation_Height__c}
+					}
+				}]
+			});
+			</apex:repeat>
+			var createAnnotationElements = function(annotations) {
+				$('.annotation-number').remove();
+				$('table#annotations tr').remove();
+				$.each(annotations, function(index, annotation) {
+					var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+					$el.parent().append($divEl);
+					var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+					$divEl.append($textEl);
+					$("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+				});
+			}
+			createAnnotationElements(anno.getAnnotations());
+			anno.addHandler('onAnnotationCreated', function(annotation) {
+				createAnnotationElements(anno.getAnnotations());
+				addOrModifyAnnotation(annotation, true);
+			});
+			anno.addHandler('onAnnotationUpdated', function(annotation) {
+				createAnnotationElements(anno.getAnnotations());
+				addOrModifyAnnotation(annotation, false);
+			});
+			anno.addHandler('onAnnotationRemoved', function(annotation) {
+				createAnnotationElements(anno.getAnnotations());
+				removeAnnotation(annotation);
+			});
+			</apex:outputPanel>
+		});
+	</script>
+</apex:component>
