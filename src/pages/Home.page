@@ -137,6 +137,9 @@
 			float: right;
 			!important;
 		}
+		.dataTables_filter input {
+			margin-left: 3px;
+		}
 		.dataTables_length {
 			width: 150px;
 			float: left;
@@ -200,6 +203,9 @@
 			font: 10px Times New Roman, sans-serif;
 			cursor: pointer;
 		}
+		table.dataTable {
+			clear: both;
+		}
 		table.dataTable tr.odd {
 			background-color: white;
 		}
@@ -228,7 +234,7 @@
 		.dataTables_filter,
 		.dataTables_info,
 		.dataTables_paginate {
-			padding: 3px;
+			padding: 10px 3px 5px 3px;
 		}
 		#evalForm {
 			width: 0px;
@@ -236,10 +242,6 @@
 			visibility: hidden;
 		}
 	</style>
-
-	<script>
-		j$ = jQuery.noConflict();
-	</script>
 
 	<apex:form id="mainForm">
 		<apex:pageMessages />
@@ -262,7 +264,7 @@
 		<apex:pageBlock title="Persons Being Served" id="pbsBlock">
 			<apex:pageBlockSection columns="1">
 				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program" size="1">
-					<apex:actionSupport event="onchange" reRender="serviceAssignmentTable" action="{!updateProgramSelection}" status="pageProcessing" />
+					<apex:actionSupport event="onchange" reRender="serviceAssignmentTable" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
 					<apex:selectOptions value="{!programslist}"/>
 				</apex:selectList>
 			</apex:pageBlockSection>
@@ -295,6 +297,7 @@
 					<apex:commandButton value="Go" onclick="window.location = jQuery(document.getElementById('{!$Component.navigationList}')).val(); return false;" />
 				</apex:column>
 			</apex:pageBlockTable>
+			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
 
 
@@ -305,7 +308,7 @@
 					<apex:commandButton action="/setup/ui/recordtypeselect.jsp?ent=Task&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2F00T%2Fe%3FretURL%3D%252Fhome%252Fhome.jsp" value="Add Task" /> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 					<apex:selectList value="{!viewstsk}" size="1">
 						<apex:selectOptions value="{!viewvalues}" />
-						<apex:actionSupport event="onchange" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTable(); " status="pageProcessing" />
+						<apex:actionSupport event="onchange" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(); " status="pageProcessing" />
 					</apex:selectList>
 					<p/>
 				</apex:panelGrid>
@@ -346,8 +349,9 @@
 					<apex:outputText Value="{!app.cDate}"></apex:outputText>
 				</apex:column>
 			</apex:pageBlockTable>
+			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
-		<apex:actionFunction status="pageProcessing" name="updateTaskTable" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTable(request.options.parameters.sort_column, request.options.parameters.sort_order);">
+		<apex:actionFunction status="pageProcessing" name="updateTaskTable" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(request.options.parameters.sort_column, request.options.parameters.sort_order);">
 			<apex:param name="sort_column" value="" assignTo="{!sortColumn}" />
 			<apex:param name="sort_order" value="" assignTo="{!sortOrder}" />
 		</apex:actionFunction>
@@ -384,7 +388,8 @@
 
 
 	<script type="text/javascript">
-		j$(document).ready(function($) {
+		jQuery.noConflict();
+		jQuery(document).ready(function($) {
 			anno.addHandler('onSelectionCompleted', function () {
 				$('.annotorious-editor').css('z-index', '999999');
 			});
@@ -416,7 +421,7 @@
 				});
 			}
 			// Set up the PBS table
-			$(document.getElementById("{!$Component.mainForm.pbsBlock.serviceAssignmentTable}")).on("click", "input.actionButton", function (event) {
+			$(document.getElementById("{!$Component.mainForm.pbsBlock}")).on("click", "input.actionButton", function (event) {
 				var $selectElement = $(this).parent().find('select');
 				var $selected = $selectElement.find('option:selected');
 				var serviceAssignmentId = $selectElement.data('service-assignment-id');
@@ -466,48 +471,55 @@
 				}
 				return false;
 			});
-		});
-	</script>
-
-	<script type="text/javascript" language="javascript">
-		var j$ = jQuery.noConflict();
-		j$('table.dataTable').dataTable({
-			'aoColumnDefs': [{
-				'bSortable': false,
-				'aTargets': [0]
-			}],
-			sPaginationType: "full_numbers"
-		});
-		// This is not the usual way that dataTable server side processing works.
-		// Usually it needs to be fed a JSON object with the data in it, but
-		// I (Dang) think in this case that approach is not the optimal because
-		// we'll have to write a custom AJAX end point in the controller. Instead
-		// I choose to rerender the table and re-initialize the DataTable every
-		// time a POST is requested - basically using normal Salesforce page
-		// generation technique.
-		var reloadTable = function (sort_column, sort_order) {
-			if (!sort_column || !sort_order) {
-				sortPref = [];
-			} else {
-				sortPref = [[ sort_column, sort_order ]];
-			}
-			j$('[id$=PageBT]').dataTable({
-				searching: false,
-				paging: false,
-				bInfo: false,
+			$('table.dataTable').dataTable({
 				'aoColumnDefs': [{
 					'bSortable': false,
-					'aTargets': [0, 6]
+					'aTargets': [0]
 				}],
-				serverSide: true,
-				ajax: function (data, callback, settings) {
-					updateTaskTable(data.order[0].column, data.order[0].dir);
-				},
-				aaSorting: sortPref, // initial sort
-				deferLoading: {!populateTasks.size} // To make sure DataTables doesn't call the server when the table is populated
+				sPaginationType: "full_numbers"
 			});
-		};
-		reloadTable();
+			// This is not the usual way that dataTable server side processing works.
+			// Usually it needs to be fed a JSON object with the data in it, but
+			// I (Dang) think in this case that approach is not the optimal because
+			// we'll have to write a custom AJAX end point in the controller. Instead
+			// I choose to rerender the table and re-initialize the DataTable every
+			// time a POST is requested - basically using normal Salesforce page
+			// generation technique.
+			window.reloadTaskTable = function (sort_column, sort_order) {
+				if (!sort_column || !sort_order) {
+					sortPref = [];
+				} else {
+					sortPref = [[ sort_column, sort_order ]];
+				}
+				$('[id$=PageBT]').dataTable({
+					searching: false,
+					paging: false,
+					bInfo: false,
+					aoColumnDefs: [{
+						bSortable: false,
+						aTargets: [0, 6]
+					}],
+					serverSide: true,
+					ajax: function (data, callback, settings) {
+						updateTaskTable(data.order[0].column, data.order[0].dir);
+					},
+					aaSorting: sortPref, // initial sort
+					deferLoading: {!populateTasks.size} // To make sure DataTables doesn't call the server when the table is populated
+				});
+			};
+			reloadTaskTable();
+
+			window.reloadPBSTable = function () {
+				$('[id$=serviceAssignmentTable]').dataTable({
+					searching: false,
+					ordering: false,
+					bLengthChange: false,
+					sPaginationType: "full_numbers",
+					pageLength: 10
+				});
+			};
+			reloadPBSTable();
+		});
 	</script>
 	<apex:actionStatus id="pageProcessing">
 		<apex:facet name="start">
