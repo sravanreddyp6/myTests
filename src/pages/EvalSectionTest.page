@@ -1,0 +1,15 @@
+<apex:page standardController="Eval__c" extensions="EvalSectionPOC" >
+<apex:form>
+<apex:pageBlock>
+<apex:pageBlockSection title="Eval Info">
+<apex:inputText label="Eval Type" value="{!evaltype}" />
+<apex:inputText label="Category" value="{!Eval__c.category__c}"/>
+<apex:inputText label="SubCategory" value="{!Eval__c.sub_category__c}"/>
+<apex:commandbutton value="Generate" rerender="outputsection"/>
+</apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form>
+
+<c:EvalSection id="outputsection" uniqueId="abc" category="{!eval__c.category__c}" subcategory="{!eval__c.sub_category__c}" evaltype="{!evaltype}" parentID="a11J0000001K8OVIA0"/>
+
+</apex:page> 

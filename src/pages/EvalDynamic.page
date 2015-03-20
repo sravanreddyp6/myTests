@@ -1,0 +1,210 @@
+<apex:page title="Shift Notes" Controller="EvalDynamicExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+
+    <!-- Bootstrap core CSS -->    
+    <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}"/>
+    <!-- Custom styles for this template -->    
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}"/>	
+
+<!-- 
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />      
+-->
+
+    <!-- Bootstrap core JavaScript-->
+    <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/bootstrap.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/docs.min.js')}" />
+
+
+	<apex:pageMessages id="msgs" />
+<script>
+
+function clearPanel() {
+   $("[id$='panel-panel-info']").empty();
+}
+
+function  showForm(key) {
+    if (key == 'Head to Toe~Skin/Body~Wound Detail' || key == 'Head to Toe~Skin/Body~Pressure Ulcer Details'){
+        $("#panel-form").empty().append($("[id$='evalResponsesForm']"));
+    }
+    else if(key == 'Residential~Fall Risk Assessment~Fall Assessment' || key == 'Residential~Skin/Body~Skin Assessment'){
+    	$("#panel-form").empty().append($("[id$=assessmentForm]"));
+    }
+    else{
+        $("#panel-form").empty().append($("[id$='evalForm']"));
+		bindSubmitEvent();
+		setUpFields();
+		$('#evalSecValMsgs').html($('#ErrorMsg').val());
+	}
+}
+
+function setupButtons( disableFlag ) {
+if ( disableFlag) 
+	$("#btnESign").removeClass('btn-success').addClass('btn-danger');
+else 
+	$("#btnESign").removeClass('btn-danger').addClass('btn-success');
+}
+
+function revise(){
+	var r = confirm('Revising this Assessment will create a new Draft and you will be redirected to the new one');
+	if(r == true){
+		reviseAssessment();
+	}
+	else{
+		return null;
+	}
+
+}
+
+
+</script>
+<style>
+.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
+    left: 50% !important;
+    margin: 0 0 0 -488px;
+}
+
+</style>
+
+	<c:PersonalRecord pbsId="{!PBSID}" servAssignId="{!SAID}" parentPage="Evaluation" servAssignNew="false" admId="{!AdmId}" /> 
+  <div class="container">
+
+      <div class="blog-header"></div>
+
+      <div class="row">
+
+        <div class="col-sm-4"> 
+          <div class="sidebar-module-sm sidebar-module-inset" >
+          	<apex:outputPanel rendered="{!evalType == 'Head to Toe'}" >
+	    		<h4>Nurse: {!thisEval.Owner.Name}</h4>
+	   			 <p>Shift Status:{!thisEval.Status__c} {!thisEval.Shift_Start_time__c}</p>
+	    	</apex:outputPanel>
+	    	<apex:outputPanel rendered="{!evalType == 'Residential'}" >
+	    		<h4>Nurse: {!thisEval.Owner.Name}</h4>
+	   			 <p>Status:{!thisEval.Status__c} ({!thisEval.CreatedDate})</p>
+	    	</apex:outputPanel>
+	    	
+	    <apex:outputPanel >
+			<a id="btnPrint" class="btn-info btn-sm centered" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">View Summary</a>
+        </apex:outputPanel>
+	    <br/>
+	    <apex:outputPanel rendered="{!showFinalize}" >
+        	<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">E-Sign/Finalize</a>
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!showRevise}" >
+        	<a id="btnRevise" class="btn-success btn-sm pull-left" href="#" role="button" onClick="revise(); return false;" >Revise</a>
+        </apex:outputPanel>
+       
+        <apex:outputPanel rendered="{!evalType == 'Head to Toe'}">
+        	<a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="authenticate(); return false;" >Finalize Shift</a>
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!showDisregard}">
+        	<a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="disregardAssessment(); return false;">Disregard</a>
+        </apex:outputPanel>
+		</div>
+          <div class="sidebar-module sidebar-module-inset">
+
+		<apex:outputPanel id="evalRepeaters" layout="none">
+			<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
+		</apex:outputPanel>
+
+	    
+	  </div><!-- sidebar-module -->
+
+        </div><!-- /.blog-sidebar -->
+
+        <div class="col-sm-8 blog-main">
+          <apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block" >
+	        <apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
+	      <div class="panel-heading clearfix">
+	          <h3 class="panel-title pull-left">{!$CurrentPage.parameters.Category}/{!$CurrentPage.parameters.SubCategory} -- {!$CurrentPage.parameters.evaltype}</h3>
+	      <div class="pull-right"><a class="btn" onclick="clearPanel();" >X</a></div>
+	      </div>
+	      <div id="panel-form" class="panel-body">
+
+              </div>
+	        </apex:outputPanel>
+          </apex:outputPanel><!-- /.blog-post -->
+
+        </div><!-- /.blog-main -->
+
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+<apex:form id="wholePage">
+<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalFormBody,evalRepeaters, outputsection, assessments, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat}');">
+	<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
+	<apex:param name="Category" value="" AssignTo="{!cat}" />
+	<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
+	<apex:param name="evalSectionId" value="" />
+	<apex:param name="evalSectionType" value="" />
+	<apex:param name="canEdit" value="" />
+</apex:actionFunction>
+<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" />
+<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
+<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs"/>
+<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
+</apex:form>
+
+<c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
+subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
+evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" rendered="{!showMainComponent}"/>
+
+<apex:outputPanel style="display:none" id="assessments" >
+	<apex:form id="assessmentForm">
+		<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"  rendered="{!key == 'Residential~Fall Risk Assessment~Fall Assessment'}" AssessmentName="Fall Risk Assessment" lowerScore="1" medianScore="30" higherScore="31" />
+		<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential~Skin/Body~Skin Assessment'}" AssessmentName="Skin Assessment" lowerScore="1" medianScore="14" higherScore="14" />
+        <input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />         
+	</apex:form>
+</apex:outputPanel>
+
+<apex:outputPanel id="evalResponsesSection" style="display:none" >
+<apex:form id="evalResponsesForm">
+    <apex:pageBlock >
+        <c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail'}"/>
+        <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details'}"/>
+        <apex:pageBlockButtons location="bottom">
+            <input class="btn" type="button" value="Close" onclick="clearPanel();"/>    
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+</apex:form>
+</apex:outputPanel>
+
+ 
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">  
+            <style>
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+        .foggy{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }  
+        </style>
+
+        <div class="foggy" />        
+        <div class="thinkingwheel" >    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+
+<style>
+
+#tabContainer {
+	display: none;
+}
+
+</style>
+
+  
+</apex:page>
