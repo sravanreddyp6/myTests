@@ -33,12 +33,12 @@ public with sharing class NursesShiftDocAddModalController {
 		shiftDoc.Name = pbsFirstinitial+'. ' + pbsLastName;
 		shiftDoc.RecordTypeID = Utility.getEvaluationRecordType('CMShiftAssessment');
 		shiftDoc.ServiceAssignment__c = this.serviceAssignment.Id;
-		shiftDoc.Status__c = 'Active';
+		shiftDoc.Status__c = 'Draft';
 	}
 
 	public pageReference saveShiftDoc() {
 		String ownerfirstInitial = UserInfo.getFirstName() != null ? UserInfo.getFirstName().Substring(0,1) : '';
-
+		
 		shiftDoc.Name = this.shiftDoc.Name + ' - ' + shiftDoc.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString()) + ' - NSD - ' + ownerfirstInitial + '. ' + UserInfo.getLastName();
 		insert shiftDoc;
 		return new PageReference('/apex/EvaluationView?id=' + shiftDoc.Id);
