@@ -512,7 +512,10 @@
 			window.reloadPBSTable = function () {
 				$('[id$=serviceAssignmentTable]').dataTable({
 					searching: false,
-					ordering: false,
+					aoColumnDefs: [{
+						bSortable: false,
+						aTargets: [2, 3]
+					}],
 					bLengthChange: false,
 					sPaginationType: "full_numbers",
 					pageLength: 10
