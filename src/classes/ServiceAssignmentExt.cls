@@ -1271,7 +1271,7 @@ public void loadProgramList() {
                              WHERE RecordType.Name = 'E-Signature'
                              ORDER BY CreatedDate DESC)
                       FROM Evaluation__c
-                     WHERE ServiceAssignment__c = :theServAssign.Id
+                     WHERE ServiceAssignment__c = :theServAssign.Id AND Status__c != 'Disregard'
                      ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
                 ];
             }
