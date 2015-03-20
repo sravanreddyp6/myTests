@@ -45,7 +45,7 @@
     <form id="evalForm" method="post">
         <apex:pageBlock rendered="{!cat != ''}">
             <label class="labelCol">Created By:</label>{!evalSectionOwner}
-            <apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:1px;" rendered="{!editEnabled}">
+            <apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" rendered="{!editEnabled}">
                 <input class="btn" type="submit" value="Save" id="btnSave" />
 				<input class="btn" type="button" value="Cancel" onclick="evalForm.reset(); setUpFields();" />
             </apex:outputPanel>
