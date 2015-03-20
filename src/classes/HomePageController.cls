@@ -73,8 +73,12 @@ public with sharing class HomePageController{
 	// List of repeatable section/subsection/subsubsection for CM Shift Doc
 	public Set<String> cmShiftDocRepeatable;
 
+	// Whether to show people with inactive service assignments
+	public Boolean pbsOnlyShowActiveServiceAssignment { get; set; }
+
 	//Constructor
 	public HomePageController(){
+		pbsOnlyShowActiveServiceAssignment = true;
 		programsList = new list<SelectOption>();
 		serviceAssignmentToSelectOptionMap = new Map<Id, List<SelectOption>>();
 		List<AggregateResult> slPrgms = [
@@ -115,15 +119,16 @@ public with sharing class HomePageController{
 	}
 
 	public void updateProgramSelection() {
-		serviceAssignments = [
-			SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name,
-			       Admission__r.Id,
-			       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC),
-			       (SELECT Id, Name, Status__c FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' ORDER BY CreatedDate DESC LIMIT 1)
-			FROM Service_Assignment__c
-			WHERE Service_Location__c = :selectedProgram
-			ORDER BY Person_Being_Served__r.Name
-		];
+		String query = '' +
+			'SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
+			'       Admission__r.Id, ' +
+			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
+			'       (SELECT Id, Name, Status__c FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' ORDER BY CreatedDate DESC LIMIT 1) ' +
+			'FROM Service_Assignment__c ' +
+			'WHERE Service_Location__c = :selectedProgram ' +
+			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\'': '') +
+			'ORDER BY Person_Being_Served__r.Name';
+		serviceAssignments = Database.query(query);
 		Map<Id, Id> evaluationToServiceAssignmentMap = new Map<Id, Id>();
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
 			if (serviceAssignment.Evaluations__r.size() > 0 && serviceAssignment.Evaluations__r[0].Status__c == 'Draft') {

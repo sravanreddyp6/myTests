@@ -262,11 +262,14 @@
 			<c:HomePageComponents objectName="Documents" />
 		</apex:outputPanel>
 		<apex:pageBlock title="Persons Being Served" id="pbsBlock">
-			<apex:pageBlockSection columns="1">
+			<apex:pageBlockSection columns="2">
 				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
 					<apex:selectOptions value="{!programslist}"/>
 				</apex:selectList>
+				<apex:inputCheckbox value="{!pbsOnlyShowActiveServiceAssignment}" label="Active Service Assignment Only">
+					<apex:actionSupport event="onchange" action="{!updateProgramSelection}" rerender="pbsBlock" status="pageProcessing" oncomplete="reloadPBSTable(); " />
+				</apex:inputCheckbox>
 			</apex:pageBlockSection>
 			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable">
 				<apex:column headerValue="Person Being Served Name">
