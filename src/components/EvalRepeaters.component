@@ -33,7 +33,8 @@
                         var="edata">
                         <apex:outputPanel rendered="{!edata.sectiontype== evaltype}"
                             layout="none">
-                            <a href="#"
+                        	<!-- SSW made the links default to iServe purple based on k/k discussion -->
+                            <a href="#" style="color:#781d7d;"
                                 onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','{!evaltype}', {! edata.ownerID == $User.Id }); this.style.css('font-weight:bold');">
                                 <apex:outputText value="{! edata.owner }" />&nbsp;@&nbsp;<apex:outputText value="{!edata.created24 }" />
                             </a>
@@ -75,7 +76,8 @@
                     <apex:repeat value="{! evalDataList['Activity Log~' + eval.compositeKey]}"
                         var="edata">
                         <apex:outputPanel rendered="{!edata.sectiontype=='Activity Log'}">
-                            <a href="#"
+                        	<!-- SSW made the links default to iServe purple based on k/k discussion -->
+                            <a href="#" style="color:#781d7d;"
                                 onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log', {! edata.ownerID == $User.Id });">
                                 <apex:outputText value="{! edata.owner }" /> @ <apex:outputText value=" {!edata.created24}" /> 
                             </a>
