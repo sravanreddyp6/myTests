@@ -264,7 +264,7 @@
 		<apex:pageBlock title="Persons Being Served" id="pbsBlock">
 			<apex:pageBlockSection columns="1">
 				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program" size="1">
-					<apex:actionSupport event="onchange" reRender="serviceAssignmentTable" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
+					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
 					<apex:selectOptions value="{!programslist}"/>
 				</apex:selectList>
 			</apex:pageBlockSection>
@@ -282,7 +282,7 @@
 						<apex:selectOption itemValue="createShiftDoc" itemLabel="Create New Shift Doc" />
 						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}" />
 					</apex:selectList>
-					<apex:commandButton value="Go" styleClass="actionButton" />
+					<apex:commandButton value="Go" styleClass="pbsActionButton" />
 				</apex:column>
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
@@ -421,7 +421,7 @@
 				});
 			}
 			// Set up the PBS table
-			$(document.getElementById("{!$Component.mainForm.pbsBlock}")).on("click", "input.actionButton", function (event) {
+			$(document.getElementById("{!$Component.mainForm}")).on("click", "input.pbsActionButton", function (event) {
 				var $selectElement = $(this).parent().find('select');
 				var $selected = $selectElement.find('option:selected');
 				var serviceAssignmentId = $selectElement.data('service-assignment-id');
