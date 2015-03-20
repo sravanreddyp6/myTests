@@ -15,6 +15,24 @@ public with sharing class GenerateEvalComponent {
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
     
+    public transient string evalSectionOwner;
+    public string getEvalSectionOwner(){
+    	String str='';
+    	if (evalSectionId== null || evalSectionId == ''){
+            str = UserInfo.getName();
+    	}else {
+    		try{
+	            str = [select name from user where id = : evalSectionId.split('-').get(0)].get(0).Name;
+	            str += ' @ ';
+	            str += DateTime.newInstance(Long.valueOf(evalSectionId.split('-').get(1))).format('MM/dd/yyyy HH:mm');
+            }catch (Exception e){
+            	system.debug(e);
+            }
+    	}
+    	return str;
+    }
+    
+    
     public transient boolean hasErros { get; private set;}
             
 	public static Map<ID, Eval__c> mapEvalItems;
