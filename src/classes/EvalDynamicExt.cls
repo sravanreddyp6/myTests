@@ -12,6 +12,11 @@ public with sharing class EvalDynamicExt {
 	public Boolean showMainComponent {get; set;}
 	public string key {get; set;}
 	
+	
+	public Boolean showDisregard {get; set;}
+	public Boolean showRevise {get; set;}
+	public Boolean showFinalize{get; set;}
+	
 	public EvalDynamicExt(){
 		// get the record
 		evalID =  ApexPages.currentPage().getParameters().get('evalID');
@@ -20,14 +25,22 @@ public with sharing class EvalDynamicExt {
 		subCat = ApexPages.currentPage().getParameters().get('SubCategory');
 		key = evalType+'~'+cat+'~'+subCat;
 		showMainComponent = true;
+		showDisregard = false;
+		showRevise = false;
+		showFinalize = false;
 		
-		thisEval = [ select id, Name, Status__c, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
+		
+		thisEval = [ select id, Name, Status__c,Owner.Name, Shift_Start_Time__c, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
 		
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
 			AdmID = thisEval.serviceassignment__r.admission__c;
 			SAID = thisEval.serviceassignment__c;
+			
+			controlButtons();
 		}
+		
+		
 			
 	}
 
@@ -189,11 +202,72 @@ public with sharing class EvalDynamicExt {
 		
 	}
 	
+	public void controlButtons() {
+		List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id, Status__c, CreatedDate FROM Evaluations__r Where Id != :thisEval.Id AND Status__c != 'Disregard' order by CreatedDate desc) FROM Service_Assignment__c WHERE Id=: SAID LIMIT 1];
+		
+		
+		if(evalType == 'Residential'){
+			
+			if(thisEval.Status__c == 'Draft'){
+				showFinalize = true;
+				showRevise = false;
+				showDisregard = true;
+				
+			}
+			
+			else if(thisEval.Status__c == 'Final Admission' && servAssign[0].Evaluations__r.Size() == 0){
+				showFinalize = false;
+				showRevise = true;
+				showDisregard = true;
+				
+			}
+			
+			else if(thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r.Size() == 1 ){
+				showFinalize = false;
+				showRevise = true;
+				showDisregard = true;
+				
+			}
+			
+			else if(thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r[0].Status__c == 'Draft'){
+				
+				showFinalize = false;
+				showRevise = false;
+				showDisregard = false;
+				
+			}
+			
+			else if(thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r[0].Status__c == 'Final Revision' && thisEval.CreatedDate < servAssign[0].Evaluations__r[0].CreatedDate ){
+				
+				showFinalize = false;
+				showRevise = false;
+				showDisregard = false;
+				
+			}
+			
+			else if(thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r[0].Status__c == 'Final Revision' && thisEval.CreatedDate > servAssign[0].Evaluations__r[0].CreatedDate ){
+				
+				showFinalize = false;
+				showRevise = true;
+				showDisregard = true;
+				
+			}
+		
+			
+			
+		}
+		
+		
+		
+		
+		
+	}
+	
 	Public static string determineEvalStatus(id evalId){
 		string status='';
 		Evaluation__c currentEval = [SELECT Id, ServiceAssignment__c FROM Evaluation__c WHERE Id=: evalId LIMIT 1];
 		
-			List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r order by createdDate asc) FROM Service_Assignment__c WHERE Id=: currentEval.ServiceAssignment__c LIMIT 1];
+			List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r Where Status__c != 'Disregard' order by createdDate asc) FROM Service_Assignment__c WHERE Id=: currentEval.ServiceAssignment__c LIMIT 1];
 			if(currentEval == servAssign[0].Evaluations__r[0]){
 				status = 'Final Admission';
 			}
