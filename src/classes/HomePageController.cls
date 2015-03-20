@@ -122,6 +122,7 @@ public with sharing class HomePageController{
 			       (SELECT Id, Name, Status__c FROM Evaluations__r WHERE RecordType.Name = 'CMShiftAssessment' ORDER BY CreatedDate DESC LIMIT 1)
 			FROM Service_Assignment__c
 			WHERE Service_Location__c = :selectedProgram
+			ORDER BY Person_Being_Served__r.Name
 		];
 		Map<Id, Id> evaluationToServiceAssignmentMap = new Map<Id, Id>();
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
