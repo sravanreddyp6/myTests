@@ -43,9 +43,9 @@
     </style> 
 			
     <form id="evalForm" method="post">
-        <apex:pageBlock>
-           
-            <apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:5px;" rendered="{!editEnabled}">
+        <apex:pageBlock rendered="{!cat != ''}">
+            <label class="labelCol">Created By:</label>{!evalSectionOwner}
+            <apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:1px;" rendered="{!editEnabled}">
                 <input class="btn" type="submit" value="Save" id="btnSave" />
 				<input class="btn" type="button" value="Cancel" onclick="evalForm.reset(); setUpFields();" />
             </apex:outputPanel>
@@ -165,7 +165,7 @@
 							alert("Failed to save data! Error: " + event.message);
 							anno.addAnnotation(element);
 						} else {
-							$("#evalForm").empty();
+                            clearPanel();
 							refreshEvalRepeaters(); // call out to page to refresh list of repeaters
 						}
 					});
