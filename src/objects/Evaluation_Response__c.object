@@ -47,9 +47,12 @@
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>ABG_Detail</fullName>
         <description>Evaluation Response Component</description>
@@ -503,7 +506,52 @@
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
+        <displayedFields>
+            <field>LastModifiedById</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>LastModifiedDate</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
         <label>Pressure Ulcer Detail</label>
+    </fieldSets>
+    <fieldSets>
+        <fullName>Pressure_Ulcer_Detail_Log</fullName>
+        <description>Evaluation Response Component</description>
+        <displayedFields>
+            <field>Decubity_Stage__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Location__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Decubity_Measurement__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Treatment__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>LastModifiedById</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>LastModifiedDate</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Pressure Ulcer Detail Log</label>
     </fieldSets>
     <fieldSets>
         <fullName>Radiology_Detail</fullName>
@@ -603,7 +651,52 @@
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
+        <displayedFields>
+            <field>LastModifiedById</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>LastModifiedDate</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
         <label>Wound Detail</label>
+    </fieldSets>
+    <fieldSets>
+        <fullName>Wound_Detail_Log</fullName>
+        <description>Evaluation Response Component</description>
+        <displayedFields>
+            <field>Wound_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Wound_Description__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Location__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Treatment__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>LastModifiedById</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>LastModifiedDate</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Wound Detail Log</label>
     </fieldSets>
     <fields>
         <fullName>Albumin__c</fullName>
@@ -3909,6 +4002,158 @@
         </picklistValues>
     </recordTypes>
     <recordTypes>
+        <fullName>Pressure_Ulcer_Detail_Log</fullName>
+        <active>true</active>
+        <label>Pressure Ulcer Detail Log</label>
+        <picklistValues>
+            <picklist>Allergy_Type__c</picklist>
+            <values>
+                <fullName>Drug</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Food</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Category__c</picklist>
+            <values>
+                <fullName>CT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Doppler</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>X-Ray</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Position__c</picklist>
+            <values>
+                <fullName>Lying</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sitting</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Standing</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Test_Type__c</picklist>
+            <values>
+                <fullName>Acintobacter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>C-diff</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MDR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRSA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TB</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>VRE</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Wound_Type__c</picklist>
+            <values>
+                <fullName>Abrasion</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bruising</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Burn</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Surgical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Traumatic</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>X2_Negative_Cultures__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
         <fullName>Radiology_Detail</fullName>
         <active>true</active>
         <label>Radiology Detail</label>
@@ -4524,6 +4769,163 @@
         <fullName>Wound_Detail</fullName>
         <active>true</active>
         <label>Wound Detail</label>
+        <picklistValues>
+            <picklist>Allergy_Type__c</picklist>
+            <values>
+                <fullName>Drug</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Food</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Category__c</picklist>
+            <values>
+                <fullName>CT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Doppler</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>X-Ray</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Position__c</picklist>
+            <values>
+                <fullName>Lying</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sitting</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Standing</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Test_Type__c</picklist>
+            <values>
+                <fullName>Acintobacter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>C-diff</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MDR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRSA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TB</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>VRE</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Wound_Type__c</picklist>
+            <values>
+                <fullName>Abrasion</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bruising</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Burn</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Open</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Surgical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Traumatic</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>X2_Negative_Cultures__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Wound_Detail_Log</fullName>
+        <active>true</active>
+        <description>The activity log entries for Wound Detail.</description>
+        <label>Wound Detail Log</label>
         <picklistValues>
             <picklist>Allergy_Type__c</picklist>
             <values>
