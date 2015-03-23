@@ -1274,8 +1274,113 @@ public void loadProgramList() {
                      WHERE ServiceAssignment__c = :theServAssign.Id AND Status__c != 'Disregard'
                      ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
                 ];
+                
+                
+                
             }
             return evaluations;
+        }
+        set;
+   }
+   
+ /*  public Map<string,List<Evaluation__c>> evaluationMap {
+   		get{
+   			Map<string,list<Evaluation__c>> evMap = new Map<string,list<Evaluation__c>>();
+   			if(evaluationMap == null) {
+   				List<Evaluation__c> evals = [
+                    SELECT ID, Name, LastModifiedDate, Is_Signed__c,
+                            Status__c,Owner.Name,RecordType.Name,
+                           (SELECT Id, CreatedDate, Owner.Name, Owner.Id
+                              FROM Evaluation_Responses__r
+                             WHERE RecordType.Name = 'E-Signature'
+                             ORDER BY CreatedDate DESC)
+                      FROM Evaluation__c
+                     WHERE ServiceAssignment__c = :theServAssign.Id
+                     
+                     ORDER BY CreatedDate desc NULLS LAST
+                ];
+                
+   			
+                
+                if(evals.Size() > 0){
+                	List<Evaluation__c> residentAll = new List<Evaluation__c>();
+                	List<Evaluation__c> shiftDocs = new List<Evaluation__c>();
+                	List<Evaluation__c> residentValid = new List<Evaluation__c>();
+                	
+                	for(Evaluation__c e: evals){
+                		if(e.RecordType.Name == 'NursesAssessment'){
+                			residentAll.add(e);
+                		}
+                		if(e.RecordType.Name == 'CMShiftAssessment'){
+                			shiftDocs.add(e);
+                		}
+                		if(e.RecordType.Name == 'NursesAssessment' && e.Status__c != 'Disregard'){
+                			residentValid.add(e);
+                		}
+                		
+                	}
+                	evMap.put('ResidentAll', residentAll);
+                	evMap.put('HeadtoToe', shiftDocs);
+                	evMap.put('ResidentValid', residentValid);
+                }
+                
+   			}
+   			
+   			return evMap;
+   		}
+   	
+   		set;
+   	
+   }*/
+   
+    public List<Evaluation__c> residentAssessments{
+        get{
+            if(residentAssessments == null) {
+                residentAssessments = [
+                    SELECT ID, Name, LastModifiedDate, Is_Signed__c,
+                            Status__c,Owner.Name,
+                           (SELECT Id, CreatedDate, Owner.Name, Owner.Id
+                              FROM Evaluation_Responses__r
+                             WHERE RecordType.Name = 'E-Signature'
+                             ORDER BY CreatedDate DESC)
+                      FROM Evaluation__c
+                     WHERE ServiceAssignment__c = :theServAssign.Id
+                     AND Recordtype.Name = 'NursesAssessment'
+                     ORDER BY CreatedDate DESC NULLS LAST LIMIT 5
+                ];
+            }
+            return residentAssessments;
+        }
+        set;
+   }
+   
+   public Boolean getshowResAsmt(){
+   		List<Evaluation__c> nonDisregard = [SELECT Id from Evaluation__c WHERE Status__c != 'Disregard' AND ServiceAssignment__c = :theServAssign.Id AND RecordType.Name = 'NursesAssessment' LIMIT 1];
+   		
+   		if(nonDisregard.size() > 0){
+   			return false;
+   		}
+   		else{
+   			return true;
+   		}
+   }
+   public List<Evaluation__c> shiftAssessments{
+        get{
+            if(shiftAssessments == null) {
+                shiftAssessments = [
+                   SELECT ID, Name, LastModifiedDate, Is_Signed__c,
+                           Shift_Start_time__c, Shift_end_time__c, Status__c,Owner.Name,
+                           (SELECT Id, CreatedDate, Owner.Name, Owner.Id
+                              FROM Evaluation_Responses__r
+                             WHERE RecordType.Name = 'E-Signature'
+                             ORDER BY CreatedDate DESC)
+                      FROM Evaluation__c
+                     WHERE ServiceAssignment__c = :theServAssign.Id
+                     AND RecordType.Name = 'CMShiftAssessment'
+                     ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
+                ];
+            }
+            return shiftAssessments;
         }
         set;
    }
