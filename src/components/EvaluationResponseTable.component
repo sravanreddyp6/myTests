@@ -3,6 +3,12 @@
         type="Id" assignTo="{!evaluationId}" />
     <apex:attribute name="pbsParentId" description="Id of the parent PBS record"
         type="Id" assignTo="{!pbsId}" />
+    <apex:attribute name="cols" description="Number of columns on the page block"
+        type="Integer" assignTo="{!numCols}" /> 
+    <apex:attribute name="rows" description="Number of rows on the page block"
+        type="Integer" assignTo="{!numRows}" />          
+    <apex:attribute name="requiredFields" description="fields to require"
+        type="string[]" assignTo="{!reqFields}" />  
     <apex:attribute name="type" description="The type of this table"
         type="String" required="true" assignTo="{!responseType}" />
     <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
@@ -19,9 +25,10 @@
         type="Boolean" required="false" default="false" />
     <apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
         type="String" required="false" />
+    <apex:attribute name="eSignHandler" description="the handler class for the e-sign, provding this assumes the esign block should be rendered"        
+        type="String" required="false" />    
     <apex:attribute name="collapsible" description="Boolean describing whether or not the section is collapsible"
         type="Boolean" required="false" default="true" />
-
 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
@@ -112,6 +119,7 @@
                         <apex:facet name="stop">
                             <apex:outputPanel id="buttons">
                                 <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />
+                                
                                 <apex:commandButton value="Save & New" onClick="saveResponse{!uniqueId}(true); return false;" />
                                 <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
                             </apex:outputPanel>
