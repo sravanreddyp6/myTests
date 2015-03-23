@@ -17,6 +17,13 @@
 
 	<apex:pageMessages id="msgs" />
 <script>
+var isModified = false;
+var evaltype = null;
+var cat = null;
+var subCat = null;
+var evalSectionId = null;
+var evalSectionType = null;
+var canEdit = null;
 
 function clearPanel() {
    $("[id$='panel-panel-info']").empty();
@@ -35,6 +42,7 @@ function  showForm(key) {
 		setUpFields();
 		$('#evalSecValMsgs').html($('#ErrorMsg').val());
 	}
+    isModified=true;
 }
 
 function setupButtons( disableFlag ) {
@@ -56,6 +64,47 @@ function revise(){
 }
 
 
+
+
+jQuery(document).ready(function($) {
+    $("[id$='dialog-confirm-navigation']").dialog({
+      resizable: false,
+      draggable: true,
+      height:200,
+      modal: true,
+      autoOpen: false,
+      buttons: {
+        Yes: function() {
+            $( this ).dialog( "close" );
+            isModified = false;
+            $('#btnSave').trigger("click");
+                       
+        },
+        No: function() {
+            $( this ).dialog( "close" );
+            isModified = false;
+            createPanelAF(evaltype,cat,subCat,evalSectionId,evalSectionType,canEdit);
+        },
+        Cancel: function() {$( this ).dialog( "close" );}
+      }
+    });
+    
+});
+
+window.createPanel = function(evaltype1,cat1,subCat1,evalSectionId1,evalSectionType1,canEdit1){
+    evaltype = evaltype1;
+    cat = cat1,
+    subCat = subCat1,
+    evalSectionId = evalSectionId1,
+    evalSectionType = evalSectionType1,
+    canEdit = canEdit1;
+    if (isModified && canEdit){
+        jQuery("[id$='dialog-confirm-navigation']").dialog( "open" );
+    } else {
+        createPanelAF(evaltype,cat,subCat,evalSectionId,evalSectionType,canEdit);
+    }
+}
+    
 </script>
 <style>
 .ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
@@ -76,7 +125,7 @@ function revise(){
           <div class="sidebar-module-sm-no-scroll sidebar-module-inset" >
           	<apex:outputPanel rendered="{!evalType == 'Head to Toe'}" >
 	    		<h4>Nurse: {!thisEval.Owner.Name}</h4>
-	   			 <p>Shift Status:{!thisEval.Status__c} {!thisEval.Shift_Start_time__c}</p>
+	   			 <p>Shift Status:{!thisEval.Status__c} {!thisEval.Shift_Start_Time__c}</p>
 	    	</apex:outputPanel>
 	    	<apex:outputPanel rendered="{!evalType == 'Residential'}" >
 	    		<h4>Nurse: {!thisEval.Owner.Name}</h4>
@@ -119,7 +168,7 @@ function revise(){
 	        <apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 	      <div class="panel-heading clearfix">
 	          <h3 class="panel-title pull-left">{!$CurrentPage.parameters.Category}/{!$CurrentPage.parameters.SubCategory} -- {!$CurrentPage.parameters.evaltype}</h3>
-	      <div class="pull-right"><a class="btn" onclick="clearPanel();" >X</a></div>
+          <div class="pull-right"><a class="btn" onclick="isModified=false;clearPanel();" >X</a></div>
 	      </div>
 	      <div id="panel-form" class="panel-body">
 
@@ -135,7 +184,7 @@ function revise(){
     </div><!-- /.container -->
 
 <apex:form id="wholePage">
-<apex:actionFunction name="createPanel" action="{!myAction}" rerender="evalFormBody,evalRepeaters, outputsection, assessments, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat}');">
+<apex:actionFunction name="createPanelAF" action="{!myAction}" rerender="evalFormBody,evalRepeaters, outputsection, assessments, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat}');">
 	<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
 	<apex:param name="Category" value="" AssignTo="{!cat}" />
 	<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
@@ -174,6 +223,15 @@ evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$Cur
 </apex:outputPanel>
 
  
+<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block">
+    <apex:outputPanel layout="inline">
+        <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">        
+    </apex:outputPanel>
+        Do you want to save before navigating away?
+    </apex:outputPanel>
+</apex:outputPanel>
+
+
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">  
             <style>
