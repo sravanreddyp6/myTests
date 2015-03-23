@@ -15,7 +15,8 @@ public with sharing class EvalDynamicExt {
 	
 	public Boolean showDisregard {get; set;}
 	public Boolean showRevise {get; set;}
-	public Boolean showFinalize{get; set;}
+	public Boolean showEsign{get; set;}
+	public Boolean showshiftDone{get; set;}
 	
 	public EvalDynamicExt(){
 		// get the record
@@ -27,10 +28,10 @@ public with sharing class EvalDynamicExt {
 		showMainComponent = true;
 		showDisregard = false;
 		showRevise = false;
-		showFinalize = false;
+		showEsign = false;
+		showshiftDone = false;
 		
-		
-		thisEval = [ select id, Name, Status__c,Owner.Name, Shift_Start_Time__c, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
+		thisEval = [ select id, Name, Status__c,Owner.Name, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
 		
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
@@ -39,9 +40,7 @@ public with sharing class EvalDynamicExt {
 			
 			controlButtons();
 		}
-		
-		
-			
+				
 	}
 
 	public void myAction(){
@@ -58,7 +57,6 @@ public with sharing class EvalDynamicExt {
 		}
 		
 	}
-	
 	
 	private void createEvalValueRecord(String key){
 		String sectionId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
@@ -118,8 +116,8 @@ public with sharing class EvalDynamicExt {
     	//Roll back all the DML operations in case of any failure in the process of Cloning.
     	Savepoint sp = Database.setSavepoint();
     		try{
-    			Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, 'Residential', 'Care Meridian');
-    			PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedEval.Id+'&evalType=Residential&opGrp=Care Meridian');
+    			Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian');
+    			PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
     			pg.setRedirect(true);
     			return pg;
     		}
@@ -134,10 +132,52 @@ public with sharing class EvalDynamicExt {
 	
 	public pageReference disregardAssessment() {
 		
-		thisEval.Status__c = 'Disregard';
+		thisEval.Status__c = 'Disregard'; //Common for all the eval Types
+		
+		if(evalType == 'Residential'){
+			try{
+				update thisEval;
+				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
+				pageRef.setRedirect(true);
+				return pageRef;
+			}
+			catch(exception e){
+				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
+				return null;	
+			}
+			
+		}
+		
+		else if(evalType == 'Head to Toe'){
+			
+			Savepoint sp2 = Database.setSavepoint();
+			
+			try{
+				update thisEval;
+				Evaluation__c clonedShift = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian');
+				PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedShift.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
+	    		pg.setRedirect(true);
+	    		return pg;
+			}
+			catch(exception e){
+				Database.rollback(sp2);
+				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
+				return null;	
+				
+			}
+			
+		}
+		
+		return null;
+	}
+	
+	public pageReference completeShift() {
+		
+		thisEval.Status__c = 'Completed';
+		thisEval.Shift_End_time__c = system.Now();
 		try{
 			update thisEval;
-			PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType=Residential&opGrp=Care Meridian');
+			PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
 			pageRef.setRedirect(true);
 			return pageRef;
 		}
@@ -148,6 +188,7 @@ public with sharing class EvalDynamicExt {
 		
 	}
 	
+	//Generic Clone functionality to copy Eval Value records.
 	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup){
 		
 		Evaluation__c currentEval = eval;
@@ -156,14 +197,9 @@ public with sharing class EvalDynamicExt {
 		Evaluation__c clonedEval = currentEval.clone(false);
     	clonedEval.Status__c = 'Draft';
     	insert clonedEval;
-    	
-    	//update the current Evaluation status to Final Revision 
-    	//currentEval.Status__c = EvalDynamicExt.determineEvalStatus(currentEval, 'Residential', 'Care Meridian'); //Determine Status based on Created Date EC- 94
-    	//update currentEval;
-    	
-    	
-    	if(evalType == 'Residential') {
     		
+    	//Creation of Assessment records is specific to Residential Assessment. Not required in in Head to Toe!!
+    	if(evalType == 'Residential') {
     		//Query the existing Assessment Responses and Assign the Score and Rating to the cloned Responses
     		Map<Id, Assessment_Response__c> responseMap = new Map<Id, Assessment_Response__c>();
     		for(Assessment_Response__c resp: [SELECT Id, Rating__c, Score__c, Question__c FROM Assessment_Response__c WHERE Assessment__r.Evaluation__c =: currentEval.Id AND Rating__c != null]){
@@ -176,7 +212,6 @@ public with sharing class EvalDynamicExt {
     		insert fallSkinAsmt; // This line will invoke the trigger on the Assessment__c object and inserts Assessment domain results and Assessment response records.
     		
     		List<Assessment_Response__c> tobeUpdated = new list<Assessment_Response__c>();
-    		
     		for(Assessment_Response__c currentResponse: [SELECT Id, Rating__c, Question__c, Score__c FROM Assessment_Response__c WHERE Assessment__r.Evaluation__c = :clonedEval.Id AND Question__c IN: responseMap.keySet()]){
     				currentResponse.Rating__c = responseMap.get(currentResponse.Question__c).Rating__c;
     				currentResponse.Score__c = responseMap.get(currentResponse.Question__c).Score__c;
@@ -188,7 +223,7 @@ public with sharing class EvalDynamicExt {
     		
     	}
     	
-    	//Clone the Eval Value Records and replace the WhatId with the cloned Eval id
+    	//Clone the Eval Value Records and replace the WhatId with the cloned Eval id. This is common for all eval Types!!
     	
     	List<Eval_Value__c> currentEvalValues = [SELECT Id,Boolean__c, Currency__c, Date_Time__c,Eval__c, Eval_Section_Id__C, Eval_Section_Type__c, Number_No_Decimal__c, Text_Over_250__c, Text_Under_250__c, What_Id__c, What_Id_Object__c FROM Eval_Value__c WHERE What_Id__c = :currentEval.Id ];
     	List<Eval_value__c> clonedEvalValues = currentEvalValues.deepclone(false, false, false);
@@ -199,82 +234,98 @@ public with sharing class EvalDynamicExt {
     	insert clonedEvalValues;
     	
     	return clonedEval;
-		
+    	
 	}
-	
+	//Start - Control the visibility of buttons
 	public void controlButtons() {
-		List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id, Status__c, CreatedDate FROM Evaluations__r Where Id != :thisEval.Id AND Status__c != 'Disregard' order by CreatedDate desc) FROM Service_Assignment__c WHERE Id=: SAID LIMIT 1];
-		
-		
 		if(evalType == 'Residential'){
-			
+			showshiftDone = false;
+			List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id, Status__c, CreatedDate FROM Evaluations__r Where Id != :thisEval.Id AND Status__c != 'Disregard' AND RecordType.Name ='NursesAssessment' order by CreatedDate desc) FROM Service_Assignment__c WHERE Id=: SAID LIMIT 1];
 			if(thisEval.Status__c == 'Draft'){
-				showFinalize = true;
+				showEsign = true;
 				showRevise = false;
 				showDisregard = true;
-				
 			}
-			
 			else if(thisEval.Status__c == 'Final Admission' && servAssign[0].Evaluations__r.Size() == 0){
-				showFinalize = false;
+				showEsign = false;
 				showRevise = true;
 				showDisregard = true;
 				
 			}
-			
 			else if(thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r.Size() == 1 ){
-				showFinalize = false;
+				showEsign = false;
 				showRevise = true;
 				showDisregard = true;
 				
 			}
-			
 			else if(thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r[0].Status__c == 'Draft'){
 				
-				showFinalize = false;
+				showEsign = false;
 				showRevise = false;
 				showDisregard = false;
 				
 			}
-			
 			else if(thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r[0].Status__c == 'Final Revision' && thisEval.CreatedDate < servAssign[0].Evaluations__r[0].CreatedDate ){
 				
-				showFinalize = false;
+				showEsign = false;
 				showRevise = false;
 				showDisregard = false;
 				
 			}
-			
 			else if(thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r[0].Status__c == 'Final Revision' && thisEval.CreatedDate > servAssign[0].Evaluations__r[0].CreatedDate ){
 				
-				showFinalize = false;
+				showEsign = false;
 				showRevise = true;
 				showDisregard = true;
 				
 			}
 		
-			
-			
 		}
 		
-		
-		
-		
-		
+		if(evalType == 'Head to Toe'){
+			showRevise = false;
+			if(thisEval.Status__c == 'Draft'){
+				showEsign = true;
+				showDisregard = true;
+				showshiftDone = false;
+
+			}
+			else if(thisEval.Status__c == 'Final'){
+				showEsign = false;
+				showDisregard = true;
+				showshiftDone = true;
+				
+			}
+			else if(thisEval.Status__c == 'Completed'){
+				showEsign = false;
+				showDisregard = false;
+				showshiftDone = false;
+				
+			}
+				
+		}
+			
 	}
+	//End - Control the Visibility of Buttons
 	
 	Public static string determineEvalStatus(id evalId){
 		string status='';
-		Evaluation__c currentEval = [SELECT Id, ServiceAssignment__c FROM Evaluation__c WHERE Id=: evalId LIMIT 1];
+		Evaluation__c currentEval = [SELECT Id,Recordtype.Name, ServiceAssignment__c FROM Evaluation__c WHERE Id=: evalId LIMIT 1];
 		
 			List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r Where Status__c != 'Disregard' order by createdDate asc) FROM Service_Assignment__c WHERE Id=: currentEval.ServiceAssignment__c LIMIT 1];
-			if(currentEval == servAssign[0].Evaluations__r[0]){
+			
+			if(currentEval.RecordType.Name == 'CMShiftAssessment' ){
+				status = 'Final';
+			}
+			else if(currentEval.Recordtype.Name == 'NursesAssessment' && currentEval.Id == servAssign[0].Evaluations__r[0].Id){
 				status = 'Final Admission';
 			}
-			else{
+			else if(currentEval.Recordtype.Name == 'NursesAssessment' && currentEval.Id != servAssign[0].Evaluations__r[0].Id){
 				status = 'Final Revision';
 			}
-		
+			else{
+				status = 'Final';
+			}
 		
 		return status;
 	}
