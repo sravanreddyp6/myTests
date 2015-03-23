@@ -211,6 +211,7 @@ public with sharing class EvalDynamicExt {
 	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup){
 		
 		Evaluation__c currentEval = eval;
+		id currentEvalId = currentEval.Id;
 		
 		//CLone the current Evaluation and Insert a new one with Draft Status
 		Evaluation__c clonedEval = currentEval.clone(false);
@@ -251,7 +252,32 @@ public with sharing class EvalDynamicExt {
     	}
     	
     	insert clonedEvalValues;
+    	//Copy Evaluation Responsem Records
+    	list<Evaluation_Response__c> responsestobeCreated = new List<Evaluation_Response__c>();
+    	FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+    	list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
+    	String responseQuery ='SELECT ';
     	
+    	for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
+                    responseQuery += f.getFieldPath() + ', ';
+        }
+        
+        responseQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE RecordType.Name IN:responseRectypes AND Evaluation__c =:currentEvalId';
+        list<Evaluation_Response__c> evalResponses = database.query(responseQuery);
+        
+        if(evalResponses.size() > 0){
+         	for(Evaluation_Response__c erp : evalResponses){
+                Evaluation_Response__c newRecord = erp.clone(false);
+                newRecord.Evaluation__c = clonedEval.Id;
+            if (newRecord.RecordType.Name == 'Allergy') {
+                newRecord.Person_Being_Served__c = currentEval.serviceassignment__r.admission__r.person_being_served__c;
+            	}
+            	responsestobeCreated.add(newRecord);
+        	}
+
+             insert responsestobeCreated;
+         }
+        
     	return clonedEval;
     	
 	}
