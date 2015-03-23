@@ -63,6 +63,25 @@ function revise(){
 
 }
 
+function disregard(evalType){
+
+	if(evalType == 'Residential'){
+		disregardAssessment();
+	}
+	
+	if(evalType == 'Head to Toe'){
+		var c = confirm('Disregarding this Assessment will create a new Draft and you will be redirected to the new one');
+		if(c == true){
+			disregardAssessment();
+		}
+		else{
+			return null;
+		}
+	
+	}
+
+}
+
 
 
 
@@ -129,27 +148,27 @@ window.createPanel = function(evaltype1,cat1,subCat1,evalSectionId1,evalSectionT
 	    	</apex:outputPanel>
 	    	<apex:outputPanel rendered="{!evalType == 'Residential'}" >
 	    		<h4>Nurse: {!thisEval.Owner.Name}</h4>
-	   			 <p>Status:{!thisEval.Status__c} ({!thisEval.CreatedDate})</p>
+	   			 <p>Status:{!thisEval.Status__c} (<apex:outputText value=" {!thisEval.CreatedDate}"/>)</p>
 	    	</apex:outputPanel>
 	    	
 	    <apex:outputPanel >
 			<a id="btnPrint" class="btn-info btn-sm centered" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">View Summary</a>
         </apex:outputPanel>
 	    <br/>
-	    <apex:outputPanel rendered="{!showFinalize}" >
-        	<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">E-Sign/Finalize</a>
+	    <apex:outputPanel rendered="{!showEsign}" >
+        	<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">Finalize {!evalType}</a>
         </apex:outputPanel>
         
         <apex:outputPanel rendered="{!showRevise}" >
-        	<a id="btnRevise" class="btn-success btn-sm pull-left" href="#" role="button" onClick="revise(); return false;" >Revise</a>
+        	<a id="btnRevise" class="btn-success btn-sm pull-left" href="#" role="button" onClick="revise(); return false;" >Revise {!evalType}</a>
         </apex:outputPanel>
        
-        <apex:outputPanel rendered="{!evalType == 'Head to Toe'}">
-        	<a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="authenticate(); return false;" >Finalize Shift</a>
+        <apex:outputPanel rendered="{!showshiftDone}">
+        	<a id="btnDone" class="btn-success btn-sm pull-left" href="#" role="button" onClick="completeShift(); return false;" >Finalize Shift</a>
         </apex:outputPanel>
         
         <apex:outputPanel rendered="{!showDisregard}">
-        	<a id="btnDone" class="btn-danger btn-sm pull-right" href="#" role="button" onClick="disregardAssessment(); return false;">Disregard</a>
+        	<a id="btnDone" class="btn-success btn-sm pull-right" href="#" role="button" onClick="disregard('{!evalType}'); return false;">Disregard {!evalType}</a>
         </apex:outputPanel>
 		</div>
           <div class="sidebar-module sidebar-module-inset">
@@ -196,6 +215,7 @@ window.createPanel = function(evaltype1,cat1,subCat1,evalSectionId1,evalSectionT
 <c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
 <apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs"/>
 <apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
+<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
 </apex:form>
 
 <c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" 
