@@ -91,7 +91,7 @@
         .saveBtn:disabled {
             background: #dddddd !important;
             color: gray !important;
-        }        
+        }
     </style>
 
     <script>
@@ -470,7 +470,7 @@
             else{
                 j$('.saveBtn').prop('value', 'Save Referral');
             }
-        }        
+        }
     </script>
 
     <apex:form id="referralForm">
@@ -2324,9 +2324,9 @@
                     <apex:outputPanel >
                         <apex:commandButton value="Add Referral Tracking Activity" onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none'); return false;" />
                         <apex:actionRegion >
-                            <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Indiana'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
-                            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Indiana'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
-                            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Indiana'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c!='Closed')}" required="false" />
+                            <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
+                            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
+                            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c!='Closed')}" required="false" />
                             <apex:actionFunction name="addAdmissionSteps" action="{!addAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
                         </apex:actionRegion>
                         <apex:actionStatus id="taskAssignStatus">
@@ -3327,7 +3327,7 @@
                 </apex:outputPanel>
                 <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" cols="80" rendered="{!isCambridge || ReferralRecordType = 'NeuroRestorative'}" />
             </apex:pageBlockSection>
-            </span>            
+            </span>
 
         </apex:pageBlock>
     </apex:form>
