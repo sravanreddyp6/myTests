@@ -13,9 +13,10 @@ public without sharing class AssessmentSetup {
 
       
       Map<ID, Assessment__c> assessmentMap = new Map<ID, Assessment__c>();
-      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c FROM Assessment__c WHERE ID IN :assessments]) {
+      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c, AccountPerson__c, AccountPerson__r.PersonContact.Age__c FROM Assessment__c WHERE ID IN :assessments]) {
         assessmentMap.put(assessment.ID, assessment);
       }
+ 
       
       // List to hold the ID and Type of ALL domains, plus
       // child question data
@@ -145,8 +146,6 @@ public without sharing class AssessmentSetup {
                   
                 }                   
                 else if (a.Type__c=='Restraint Reduction') {}   
-                else if (a.Type__c=='Immunization - Child') {} 
-                else if (a.Type__c=='Immunization - Adult') {}
                 else if (a.Assessment_Type__c == domainMap.get(assmtDomainLoopId).Assessment_Type__c){
                     dummyAdr = new Assessment_Domain_Result__c();
                     dummyAdr.Assessment__c = a.Id; 
