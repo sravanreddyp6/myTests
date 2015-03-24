@@ -97,6 +97,11 @@ public with sharing class EvaluationResponseTableController {
             return dialog;
         }
         for (String column: columnsToFetch) {
+        	
+        	// don't show the last mod details on the entry screen
+        	if ( column == 'LastModifiedDate' || column == 'LastModifiedByID')
+        		continue;
+        		
             Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
             System.debug('col - '+ column);
             dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
