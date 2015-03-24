@@ -9,7 +9,6 @@ public with sharing class HomePageController{
 	public String viewstsk{get;set;}
 	public String FrstName{get;set;}
 	public String LstName{get;set;}
-	public boolean displayPop{get;set;}
 	public String objectName{get;set;}
 
 	private static Set<String> sObjNamesSet;
@@ -76,9 +75,14 @@ public with sharing class HomePageController{
 	// Whether to show people with inactive service assignments
 	public Boolean pbsOnlyShowActiveServiceAssignment { get; set; }
 
+	public transient List<HomePageSearchController.SearchResult> searchResultList { get; set; }
+	public Id searchResultPBS { get; set; }
+	public Id highlightedServiceAssignmentId { get; set; }
+
 	//Constructor
 	public HomePageController(){
 		pbsOnlyShowActiveServiceAssignment = true;
+		searchResultList = new List<HomePageSearchController.SearchResult>();
 		programsList = new list<SelectOption>();
 		serviceAssignmentToSelectOptionMap = new Map<Id, List<SelectOption>>();
 		List<AggregateResult> slPrgms = [
@@ -160,7 +164,12 @@ public with sharing class HomePageController{
 				)
 			);
 		}
+		highlightedServiceAssignmentId = null;
 		ApexPages.currentPage().setCookies(new Cookie[]{ new Cookie('homePageInitialProgram', selectedProgram, null, 30*24*60*60, false) }); //  set the cookie max age to a month
+	}
+
+	public String getOperatingGroup() {
+		return operatingGroup;
 	}
 
 	public void getReportList() {
@@ -563,31 +572,67 @@ public with sharing class HomePageController{
 			}
 		}
 	}
-	public PageReference getsearchNames(){
 
+	public PageReference getsearchNames() {
 		try {
-			if((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
+			if ((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
 				system.debug('coming here');
-				displayPop = false;
 				PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
 				newocp.setRedirect(true);
 				return newocp;
 			}
-
-			else{
-
-				displayPop = true;
-				return null;
-			}
-
-		} catch (DMLException e) {
-
-			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Error opening the Search Results.'));
 			return null;
-
+		} catch (DMLException e) {
+			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
+				'Error opening the Search Results.')
+			);
+			return null;
 		}
-
 		return null;
+	}
+
+	public void getSearchResults() {
+		if ((FrstName == null || FrstName == '') && (LstName ==null || LstName == '')) {
+			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
+				'You have to specify either a First Name or Last Name')
+			);
+			return;
+		}
+		HomePageSearchController searchController = new HomePageSearchController();
+		searchController.firstName = FrstName;
+		searchController.lastName = LstName;
+		searchResultList = searchController.getSearchResults(true, true, false);
+	}
+
+	public void highlightSearchResultPBS() {
+		Service_Assignment__c[] serviceAssignments = [
+			SELECT Id, Person_Being_Served__r.Id, Service_Location__r.Id, Status__c
+			FROM Service_Assignment__c
+			WHERE Person_Being_Served__c = :searchResultPBS
+			ORDER BY Person_Being_Served__r.Name
+		];
+		// We can only choose one row to highlight, so let's focus on ones with
+		// active service assignment (if none exists then we'll highlight the
+		// inactive ones)
+		Service_Assignment__c highlightedSA;
+		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
+			if (serviceAssignment.Status__c == 'Active') {
+				highlightedSA = serviceAssignment;
+			}
+			if (highlightedSA == null && serviceAssignment.Status__c != 'Active') {
+				highlightedSA = serviceAssignment;
+			}
+		}
+		if (highlightedSA != null) {
+			selectedProgram = highlightedSA.Service_Location__r.Id;
+			if (pbsOnlyShowActiveServiceAssignment && highlightedSA.Status__c != 'Active') {
+				pbsOnlyShowActiveServiceAssignment = false;
+			}
+			updateProgramSelection();
+			highlightedServiceAssignmentId = highlightedSA.Id;
+		} else {
+			highlightedServiceAssignmentId = null;
+		}
 	}
 
 	public set<string> getReportsToShow(string og){

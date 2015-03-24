@@ -14,7 +14,7 @@
 			height: 100%;
 			top: 0px;
 			left: 0px;
-			z-index: 1000;
+			z-index: 100000;
 		}
 		.thinkingwheel {
 			position: absolute;
@@ -206,30 +206,6 @@
 		table.dataTable {
 			clear: both;
 		}
-		table.dataTable tr.odd {
-			background-color: white;
-		}
-		table.dataTable tr.even {
-			background-color: white;
-		}
-		table.dataTable tr.odd td.sorting_1 {
-			background-color: white;
-		}
-		table.dataTable tr.odd td.sorting_2 {
-			background-color: white;
-		}
-		table.dataTable tr.odd td.sorting_3 {
-			background-color: white;
-		}
-		table.dataTable tr.even td.sorting_1 {
-			background-color: white;
-		}
-		table.dataTable tr.even td.sorting_2 {
-			background-color: white;
-		}
-		table.dataTable tr.even td.sorting_3 {
-			background-color: white;
-		}
 		.dataTables_length,
 		.dataTables_filter,
 		.dataTables_info,
@@ -241,17 +217,33 @@
 			height: 0px;
 			visibility: hidden;
 		}
+		[id$=serviceAssignmentTable] tr *:nth-child(5) {
+			/* This column is only used programmatically, so we don't need to
+			display it */
+			display: none;
+		}
 	</style>
 
 	<apex:form id="mainForm">
-		<apex:pageMessages />
+		<apex:pageMessages id="pageMessages" />
 		<apex:outputPanel layout="block" styleClass="block-title" id="main">
 			I would like to access...
 		</apex:outputPanel>
 		<br />
-		<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " /><apex:inputText title="First Name" value="{!FrstName}" id="FName" />
-		<apex:outputLabel for="{!$Component.LName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " /><apex:inputText title="Last Name" value="{!LstName}" id="LName" />
-		<apex:commandButton style="margin-left: 10px; " id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
+		<apex:outputPanel layout="none" rendered="{!OperatingGroup != 'Care Meridian'}">
+			<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
+			<apex:inputText title="First Name" value="{!FrstName}" id="FName" />
+			<apex:outputLabel for="{!$Component.LName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
+			<apex:inputText title="Last Name" value="{!LstName}" id="LName" />
+			<apex:commandButton style="margin-left: 10px; " id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
+		</apex:outputPanel>
+		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Care Meridian'}">
+			<apex:outputLabel for="{!$Component.PbsSearchFirstName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
+			<apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
+			<apex:outputLabel for="{!$Component.PbsSearchLastName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
+			<apex:inputText title="Last Name" value="{!LstName}" id="PbsSearchLastName" />
+			<apex:commandButton style="margin-left: 10px; " value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
+		</apex:outputPanel>
 		<br />
 		<br />
 		<apex:outputPanel layout="block" styleClass="grid-container">
@@ -271,7 +263,8 @@
 					<apex:actionSupport event="onchange" action="{!updateProgramSelection}" rerender="pbsBlock" status="pageProcessing" oncomplete="reloadPBSTable(); " />
 				</apex:inputCheckbox>
 			</apex:pageBlockSection>
-			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable">
+			<a id="pbsTable"></a>
+			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable" html-data-highlighted-sa-id="{!highlightedServiceAssignmentId}">
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
@@ -298,6 +291,9 @@
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" />
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="window.location = jQuery(document.getElementById('{!$Component.navigationList}')).val(); return false;" />
+				</apex:column>
+				<apex:column headerValue="saId">
+					{!serviceAssignment.Id}
 				</apex:column>
 			</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
@@ -354,6 +350,7 @@
 			</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
+		<apex:actionFunction name="getSearchResults" action="{!getSearchResults}" status="pageProcessing" oncomplete="showSearchResultDialog(); " rerender="pageMessages, searchResultPanel" />
 		<apex:actionFunction status="pageProcessing" name="updateTaskTable" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(request.options.parameters.sort_column, request.options.parameters.sort_order);">
 			<apex:param name="sort_column" value="" assignTo="{!sortColumn}" />
 			<apex:param name="sort_order" value="" assignTo="{!sortOrder}" />
@@ -361,7 +358,7 @@
 		<apex:actionFunction status="pageProcessing" name="showAddShiftDocModal" rerender="shiftDocAddModal" oncomplete="showAddShiftDoc1(); return false;">
 			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
 		</apex:actionFunction>
-		<apex:actionFunction name="createPanel" rerender="{!$Component.evalSection}" oncomplete="showForm();" status="pageProcessing">
+		<apex:actionFunction name="createPanel" rerender="{!$Component.evalSection}" oncomplete="showEvalForm();" status="pageProcessing">
 			<apex:param name="evaltype" value="" />
 			<apex:param name="Category" value="" />
 			<apex:param name="SubCategory" value="" />
@@ -372,14 +369,43 @@
 		</apex:actionFunction>
 	</apex:form>
 	<div id="shiftDocActionDialog"></div>
+	<div id="searchResultDialog"></div>
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
 	<c:EvalSection id="evalSection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}"
 		subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
 		evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" />
 
+	<apex:outputPanel id="searchResultPanel" style="display: none; ">
+		<apex:form id="searchPanelForm">
+			<apex:actionFunction name="highlightSearchResultPBS" action="{!highlightSearchResultPBS}" status="pageProcessing" rerender="pbsBlock" oncomplete="reloadPBSTable(); highlightServiceAssignmentOnPBSTable(request.options.parameters.pbsId); ">
+				<apex:param name="pbsId" value="" assignTo="{!searchResultPBS}" />
+			</apex:actionFunction>
+			<apex:outputPanel id="searchTablePanel">
+				<apex:pageBlock>
+					<apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
+						<apex:column headerValue="Name">
+							<apex:outputText rendered="{!(searchResult.Type=='Person Being Referred')}">
+								<a href="/apex/ReferralSearch?firstName={!searchResult.firstName}&&lastName={!searchResult.lastName}">
+									{!IF(searchResult.lastName != '', searchResult.lastName + ', ', '')}{!searchResult.firstName}
+								</a>
+							</apex:outputText>
+							<apex:outputText rendered="{!(searchResult.Type=='Person Being Served')}">
+								<a class="pbsSearchResult" href="#" data-record-id="{!searchResult.recordId}">
+									{!IF(searchResult.lastName != '', searchResult.lastName + ', ', '')}{!searchResult.firstName}
+								</a>
+							</apex:outputText>
+						</apex:column>
+						<apex:column headerValue="Age">{!searchResult.age}</apex:column>
+						<apex:column headerValue="State">{!searchResult.state}</apex:column>
+						<apex:column headerValue="Type">{!searchResult.type}</apex:column>
+					</apex:pageBlockTable>
+				</apex:pageBlock>
+			</apex:outputPanel>
+		</apex:form>
+	</apex:outputPanel>
+
 	<script>
 		function search_Names() {
-
 			var fname = document.getElementById("{!$Component.thePage.mainForm.FName}").value;
 			var lname = document.getElementById("{!$Component.thePage.mainForm.LName}").value;
 			if ((fname == null || fname == '') && (lname == null || lname == '')) {
@@ -389,13 +415,47 @@
 		}
 	</script>
 
-
 	<script type="text/javascript">
 		jQuery.noConflict();
+		jQuery.fn.dataTableExt.oApi.fnDisplayRow = function(oSettings, nRow) {
+			// Account for the "display" all case - row is already displayed
+			if (oSettings._iDisplayLength == -1) {
+				return;
+			}
+
+			// Find the node in the table
+			var iPos = -1;
+			for (var i = 0, iLen = oSettings.aiDisplay.length; i < iLen; i++) {
+				if (oSettings.aoData[oSettings.aiDisplay[i]].nTr == nRow) {
+					iPos = i;
+					break;
+				}
+			}
+
+			// Alter the start point of the paging display
+			if (iPos >= 0) {
+				oSettings._iDisplayStart = (Math.floor(i / oSettings._iDisplayLength)) * oSettings._iDisplayLength;
+				if (this.oApi._fnCalculateEnd) {
+					this.oApi._fnCalculateEnd(oSettings);
+				}
+			}
+
+			this.oApi._fnDraw(oSettings);
+		};
+
 		jQuery(document).ready(function($) {
 			anno.addHandler('onSelectionCompleted', function () {
 				$('.annotorious-editor').css('z-index', '999999');
 			});
+			window.initiateSearch = function () {
+				var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
+				var lname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchLastName}").value;
+				if ((fname == null || fname == '') && (lname == null || lname == '')) {
+					alert('Please fill one of the search boxes before you click on find');
+				} else {
+					getSearchResults();
+				}
+			};
 			window.refreshEvalRepeaters = function () {
 				// For the Home page we actually don't need to refresh anything,
 				// so we'll use this to close the modal instead
@@ -405,7 +465,7 @@
 				$('#evalForm').css('visibility', 'hidden');
 				alert('Activity Log has been saved!');
 			}
-			window.showForm = function () {
+			window.showEvalForm = function () {
 				$("#shiftDocActionDialog").empty().append($("#evalForm"));
 				bindSubmitEvent();
 				setUpFields();
@@ -422,7 +482,45 @@
 					$('#evalForm').css('visibility', 'visible');
 					event.preventDefault();
 				});
-			}
+			};
+			$('body').on('click', '[id$=searchTablePanel] a.pbsSearchResult', function (event) {
+				var pbsId = $(this).data('record-id');
+				highlightSearchResultPBS(pbsId);
+				event.preventDefault();
+			});
+			window.highlightServiceAssignmentOnPBSTable = function (pbsId) {
+				var saId = pbsTable.find('tbody').data('highlighted-sa-id');
+				var allRows = pbsTable.fnGetNodes();
+				var foundTr;
+				$.each(allRows, function (_, tr) {
+					if ($(tr).find('td:eq(4)').text().trim() == saId) {
+						foundTr = tr;
+					}
+				});
+				if (foundTr) {
+					var $foundTr = $(foundTr);
+					pbsTable.fnDisplayRow(foundTr);
+					location.href = '#pbsTable';
+					$foundTr.effect("highlight", {}, 3000);
+					closeModalDialog('searchResultDialog', 'div');
+				} else {
+					location.href = '/' + pbsId;
+				}
+			};
+			window.showSearchResultDialog = function () {
+				$("#searchResultDialog").empty().append($(document.getElementById('{!$Component.searchPanelForm}')));
+				openModalDialog('searchResultDialog', 'div', 'Search Results', null, 1000, 'mainForm', false);
+				$('[id$=searchTable]').dataTable({
+					bLengthChange: false,
+					sPaginationType: "full_numbers",
+					pageLength: 10
+				});
+				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
+				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
+					closeModalDialog('searchResultDialog', 'div');
+					event.preventDefault();
+				});
+			};
 			// Set up the PBS table
 			$(document.getElementById("{!$Component.mainForm}")).on("click", "input.pbsActionButton", function (event) {
 				var $selectElement = $(this).parent().find('select');
@@ -513,7 +611,7 @@
 			reloadTaskTable();
 
 			window.reloadPBSTable = function () {
-				$('[id$=serviceAssignmentTable]').dataTable({
+				window.pbsTable = $('[id$=serviceAssignmentTable]').dataTable({
 					searching: false,
 					aoColumnDefs: [{
 						bSortable: false,
@@ -521,7 +619,7 @@
 					}],
 					bLengthChange: false,
 					sPaginationType: "full_numbers",
-					pageLength: 10
+					pageLength: 1
 				});
 			};
 			reloadPBSTable();
