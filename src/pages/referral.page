@@ -1366,7 +1366,7 @@
         <apex:pageBlock mode="edit" id="referralDetailBlock" rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}">
             <apex:pageblockButtons location="bottom">
                 <!-- on this button status will not work b/c it doesn't invoke an action it uses onclick js-->
-                <apex:commandButton value="Save Referral" id="saveRefButton" onclick="saveBtnDisplay('true'); alertUseraboutLocation();return false;" rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
+                <apex:commandButton value="Save Referral" id="saveRefButton"  styleClass="saveBtn" onclick="saveBtnDisplay('true'); alertUseraboutLocation();return false;" rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
 
                 <apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}" />
             </apex:pageblockButtons>
