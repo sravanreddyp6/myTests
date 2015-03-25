@@ -266,14 +266,14 @@ public with sharing class EvalDynamicExt {
     	//Copy Evaluation Responsem Records
     	list<Evaluation_Response__c> responsestobeCreated = new List<Evaluation_Response__c>();
     	FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
-    	list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
+    	//list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'}; Commented to clone data from all record types
     	String responseQuery ='SELECT ';
     	
     	for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
                     responseQuery += f.getFieldPath() + ', ';
         }
         
-        responseQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE RecordType.Name IN:responseRectypes AND Evaluation__c =:currentEvalId';
+        responseQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Evaluation__c =:currentEvalId';
         list<Evaluation_Response__c> evalResponses = database.query(responseQuery);
         
         if(evalResponses.size() > 0){
