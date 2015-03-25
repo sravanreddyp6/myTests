@@ -20,7 +20,10 @@ public with sharing class AssessRestraint_RecordForm {
 		system.debug('SA - ' + this.saID);
 		system.debug('ASSess - ' + this.assessID);
 		saID = ApexPages.currentPage().getParameters().get('SAid');
-		assessID = ApexPages.currentPage().getParameters().get('AssessID');		
+		assessID = ApexPages.currentPage().getParameters().get('AssessID');
+		if (assessID == null){
+			assessID = ApexPages.currentPage().getParameters().get('id');
+		}		
 		Construct(saID, assessID);
 	}
 
