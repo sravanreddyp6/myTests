@@ -7,6 +7,7 @@
 	<apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
 	<apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering" type="Boolean" required="false" default="false" />
 	<apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs." type="String" required="false" />
+	<apex:attribute name="onEntrySaveSuccess" description="The Javascript to call when an entry is successfully saved" type="String" required="false" />
 
 	<apex:attribute name="evaltype" description="Kind of eval" type="string" assignTo="{!evalname}" required="true" />
 	<apex:attribute name="category" description="Section of the Eval" type="string" assignTo="{!cat}" required="true" />
@@ -26,25 +27,26 @@
 	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 
-    <style>
-        tr.border_bottom td {
-            border-bottom : 1pt solid #F0F0EF;
-        }
-        td.text_right {
-            text-align:right;
-            float:right;
-        }
-    </style> 
-			
-    <form id="evalForm" method="post">
-        <apex:pageBlock rendered="{!cat != ''}">
-            <label class="labelCol">Created By:</label>{!evalSectionOwner}
-            <apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" rendered="{!editEnabled}">
-                <input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false;" />
-                <input class="btn" type="button" value="Cancel" onclick="isModified=false; evalForm.reset(); setUpFields();" />
-            </apex:outputPanel>
-             <apex:outputPanel rendered="{!htmlTable != '' && hasErros}"><span id="evalSecValMsgs" style="color: red;"></span></apex:outputPanel>
-            <apex:outputText value="{!htmlTable}" escape="false" /> 
+	<style>
+		tr.border_bottom td {
+			border-bottom: 1pt solid #F0F0EF;
+		}
+
+		td.text_right {
+			text-align: right;
+			float: right;
+		}
+	</style>
+
+	<form id="evalForm" method="post">
+		<apex:pageBlock rendered="{!cat != ''}">
+			<label class="labelCol">Created By:</label>{!evalSectionOwner}
+			<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" rendered="{!editEnabled}">
+				<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false;" />
+				<input class="btn" type="button" value="Cancel" onclick="isModified=false; evalForm.reset(); setUpFields();" />
+			</apex:outputPanel>
+			<apex:outputPanel rendered="{!htmlTable != '' && hasErros}"><span id="evalSecValMsgs" style="color: red;"></span></apex:outputPanel>
+			<apex:outputText value="{!htmlTable}" escape="false" />
 		</apex:pageBlock>
 	</form>
 
@@ -159,8 +161,7 @@
 							alert("Failed to save data! Error: " + event.message);
 							anno.addAnnotation(element);
 						} else {
-                            clearPanel();
-							refreshEvalRepeaters(); // call out to page to refresh list of repeaters
+							{!onEntrySaveSuccess}
 						}
 					});
 				});
@@ -168,7 +169,7 @@
 
 			// if not editable, make all input fields disabled
 			<apex:outputPanel rendered="{!!editEnabled}" layout="none">
-                $('#evalForm :input').prop('disabled', true);
+			$('#evalForm :input').prop('disabled', true);
 			</apex:outputPanel>
 
 			var serializeObject = function($) {
