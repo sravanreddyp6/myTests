@@ -145,7 +145,7 @@ window.createPanel = function(evaltype1,cat1,subCat1,evalSectionId1,evalSectionT
           <div class="sidebar-module-sm-no-scroll sidebar-module-inset" >
           	<apex:outputPanel rendered="{!evalType == 'Head to Toe'}" >
 	    		<h4>Nurse: {!thisEval.Owner.Name}</h4>
-	    		<p>Head to Toe Status: {!thisEval.Head_to_toe_Status__c} <br/> Shift Status:{!thisEval.Status__c} {!thisEval.Shift_Start_Time__c}</p>
+	    		<p>Head to Toe Status: {!thisEval.Head_to_Toe_Status__c} <br/> Shift Status:{!thisEval.Status__c} {!thisEval.Shift_Start_Time__c}</p>
 	   			 
 	    	</apex:outputPanel>
 	    	<apex:outputPanel rendered="{!evalType == 'Residential'}" >
@@ -170,7 +170,7 @@ window.createPanel = function(evaltype1,cat1,subCat1,evalSectionId1,evalSectionT
         </apex:outputPanel>
         
         <apex:outputPanel rendered="{!showDisregard}">
-        	<a id="btnDone" class="btn-success btn-sm pull-right" href="#" role="button" onClick="disregard('{!evalType}'); return false;">Disregard {!evalType}</a>
+        	<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="disregard('{!evalType}'); return false;">Disregard {!evalType}</a>
         </apex:outputPanel>
 		</div>
           <div class="sidebar-module sidebar-module-inset">

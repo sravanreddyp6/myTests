@@ -34,7 +34,7 @@ public with sharing class NursesShiftDocAddModalController {
 		shiftDoc.RecordTypeID = Utility.getEvaluationRecordType('CMShiftAssessment');
 		shiftDoc.ServiceAssignment__c = this.serviceAssignment.Id;
 		shiftDoc.Status__c = 'Draft';
-		shiftDoc.Head_to_Toe_Status__c = 'Draft'; //Added by Sravanto differentiate Head to Toe Status from Shift Status
+		shiftDoc.Head_to_Toe_Status__c = 'Draft'; //Added by Sravan to differentiate Head to Toe Status from Shift Status
 	}
 
 	public pageReference saveShiftDoc() {
