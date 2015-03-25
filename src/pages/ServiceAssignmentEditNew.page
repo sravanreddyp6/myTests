@@ -940,7 +940,7 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>
 			<apex:outputText value="No Records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
-			<apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+			<apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 		</apex:pageBlock>
 		
 		<a name="ShiftAssessments" id="ShiftAssessments"></a>
@@ -997,7 +997,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>
 			<apex:outputText value="No Records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
-			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Shift" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 		</apex:pageBlock>
 		
 		<!--  Notes section -->
