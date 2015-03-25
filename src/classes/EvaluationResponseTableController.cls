@@ -1,8 +1,9 @@
 public with sharing class EvaluationResponseTableController {
     public Integer numCols {get; set;}
     public Integer numRows {get; set;}
-    public string password {get; set;}
     public Boolean hasError {get; set;}
+    public string username {get; set;}
+    public string password {get; set;}    
     public list<string> reqFields {get; set;}
     public Id evaluationId { get;
         set {
@@ -29,16 +30,6 @@ public with sharing class EvaluationResponseTableController {
             }
         }
     }
-    public boolean showFormButtons {
-        get {
-           
-            if( currentResponse.Disregard__c ){
-                return false;}
-            
-            return true;
-        }
-        set;
-    }    
     public String[] columnsToFetch { get; set; }
     public Map<String, String> columnsToHeadersMap { get; set; }
     public Boolean dialogShown { get; set; }
@@ -63,7 +54,6 @@ public with sharing class EvaluationResponseTableController {
         isEdit = false;
         reqFields = new list<string>();
         hasError = false;
-        password = null;
     }
 
     public PageReference showAddResponse() {
@@ -77,7 +67,7 @@ public with sharing class EvaluationResponseTableController {
     }
 
     public PageReference showEditResponse() {
-        String query = 'SELECT ID, Disregard__c, Signed_on__c, Signed_By__c,' + getNecessaryColumns(responseType) +
+        String query = 'SELECT ID, Disregard__c, eSigned_on__c, eSigned_By__c, ' + getNecessaryColumns(responseType) +
                 ' FROM Evaluation_Response__c WHERE Id = :currentResponseId';
         currentResponse = Database.query(query);
         dialogShown = true;
@@ -89,38 +79,38 @@ public with sharing class EvaluationResponseTableController {
         System.debug('saveResponse called, currentResponse: ' + currentResponse);
         try {
             hasError = false;
-            for(string rCol : reqFields){
-                if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
-                    currentResponse.addError( (columnsToHeadersMap.get(rCol) + ' is Required') );
-                    hasError = true;}
-            }
-            if( !hasError){upsert currentResponse;}
-            //e-sign?????
-
-            
-            
+            upsert currentResponse;
         } catch (DMLException ex) {
             hasError = true;
             // SF will automatically create a PageMessage Error here, so we don't
             // have to do anything
         }
     }
-    public void eSign(){
+    public PageReference eSignRecord(){
+        try {
+            hasError = false;
+
             if(password != null){ 
-                AuthenticationController.auth( UserInfo.getUserName(), password, 'EvaluationResponseTable_Esign', currentResponse.id ); 
+                AuthenticationController.auth( username, password, 'EvaluationResponseTable_Esign', currentResponseId ); 
             } 
-            password = null;       
+            password = null;   
+            }
+        catch (DMLException ex) {
+            hasError = true;
+
+        }            
+        return null;
+
     }
     public void disregardResponse() {
-        System.debug('saveResponse called, currentResponse: ' + currentResponse);
+
         try {
             hasError = false;
             currentResponse.Disregard__c = true;
             upsert currentResponse;
         } catch (DMLException ex) {
             hasError = true;
-            // SF will automatically create a PageMessage Error here, so we don't
-            // have to do anything
+
         }
     }
     public Component.Apex.PageBlockSection getDialog() {
@@ -135,17 +125,17 @@ public with sharing class EvaluationResponseTableController {
             return dialog;
         }
         for (String column: columnsToFetch) {
-        	
-        	// don't show the last mod details on the entry screen
-        	if ( column == 'LastModifiedDate' || column == 'LastModifiedByID')
-        		continue;
-        		
+            
+            // don't show the last mod details on the entry screen
+            if ( column == 'LastModifiedDate' || column == 'LastModifiedByID')
+                continue;
+                
             Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
             System.debug('col - '+ column);
             dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
             if(reqFields != null){
                 for(string rCol : reqFields){
-                    //if(column == rCol){dialogInput.required = true;}
+                    if(column == rCol){dialogInput.required = true;}
                 }
             }
             
@@ -156,7 +146,7 @@ public with sharing class EvaluationResponseTableController {
 
     private void fetchResponses(Id evaluationId, String responseType) {
         if(numRows == null){numRows = 1000;}
-        String query = 'SELECT Id, Disregard__c, Signed_on__c, Signed_By__c, ' + getNecessaryColumns(responseType) +
+        String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, ' + getNecessaryColumns(responseType) +
             ' FROM Evaluation_Response__c WHERE Evaluation__c = :evaluationId' +
             ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
             '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate' ;
@@ -165,7 +155,7 @@ public with sharing class EvaluationResponseTableController {
     }
 
     private void fetchResponsesFromPBS(Id pbsId, String responseType) {
-        String query = 'SELECT Id, Disregard__c, Signed_on__c, Signed_By__c, ' + getNecessaryColumns(responseType) +
+        String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c,' + getNecessaryColumns(responseType) +
             ' FROM Evaluation_Response__c WHERE Person_Being_Served__c = :pbsId' +
             ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
             '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate Limit ' + numRows;
