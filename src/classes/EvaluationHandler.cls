@@ -31,19 +31,19 @@ public with sharing class EvaluationHandler {
 				validateFields(eUpdated);
 			}
 			
-			system.debug('Issigned>>>> '+ eUpdated.Is_Signed__c);
+			/*system.debug('Issigned>>>> '+ eUpdated.Is_Signed__c);
 			system.debug('isbeing signed>>>>>>>>>>'+ eUpdated.Is_Being_Signed__c);
 			
 			if(eUpdated.Is_Being_Signed__c==true && eUpdated.Is_Signed__c == false) { // Temporary fix to make sure Is_Signed__c stays true when the Nurses Documentation is finalized - Sravan 01/26/2015 11:13 AM 
 				eUpdated.Is_Signed__c = true;
 			}
-		/*	else {
+			else {
 				eUpdated.Is_Signed__c = false;
-			}*/
+			}
 			eUpdated.Is_Being_Signed__c = false;
 			
 			system.debug('Issigned22222>>>> '+ eUpdated.Is_Signed__c);
-			system.debug('isbeing signed2222>>>>>>>>>>'+ eUpdated.Is_Being_Signed__c);
+			system.debug('isbeing signed2222>>>>>>>>>>'+ eUpdated.Is_Being_Signed__c);*/
 			
 		}
 		//Logic to Delete Annotations on NeuroTab when Pain Present field's value is set to 'No' or 'None'.

@@ -920,19 +920,22 @@ END: Uncomment to have the element collapsed by default -->
 					</apex:column>
 					<apex:column >
 						 <apex:facet name="header">Status</apex:facet>
-						 <apex:outputText>{!evs.Status__c}</apex:outputText>
+						 <apex:outputText >{!evs.Status__c}</apex:outputText>
 					</apex:column>
-					<apex:column value="{!evs.Is_Signed__c}" />
-					<apex:column headerValue="Signed By">
-						 <apex:outputText  escape="false"  rendered="{!evs.Evaluation_Responses__r.size!=0}">
-							<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a>
-						</apex:outputText>
+					<apex:column headerValue="Signed At" >
+						<apex:outputfield value=" {!evs.Signed_At__c}" />
 					</apex:column>
-					<apex:column headerValue="Signed At">
-						<apex:outputText  rendered="{!evs.Evaluation_Responses__r.size!=0}">
-							<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" />
-						</apex:outputText>
-					</apex:column>
+<!-- 					<apex:column value="{!evs.Is_Signed__c}" /> -->
+<!-- 					<apex:column headerValue="Signed By"> -->
+<!-- 						 <apex:outputText  escape="false"  rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 							<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a> -->
+<!-- 						</apex:outputText> -->
+<!-- 					</apex:column> -->
+<!-- 					<apex:column headerValue="Signed At"> -->
+<!-- 						<apex:outputText  rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 							<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" /> -->
+<!-- 						</apex:outputText> -->
+<!-- 					</apex:column> -->
 					<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
 					<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>
@@ -953,7 +956,7 @@ END: Uncomment to have the element collapsed by default -->
         				</div>
         			</apex:facet> 
 					<apex:facet name="stop" />
-				</apex:actionStatus >
+				</apex:actionStatus>
 			</div>
 			<apex:pageBlockTable styleclass="pcBody-list" value="{!shiftAssessments}" var="evs" rendered="{!shiftAssessments.size > 0}" id="evaluations2">
 				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}&tab=demographicsTab" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
@@ -967,18 +970,29 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Shift End Time" >
 					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
 				</apex:column>
-				<apex:column value="{!evs.Status__c}" />
-				<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" />
-				<apex:column headerValue="Signed By">
-					 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false">
-						<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a>
-					</apex:outputText>
+				<apex:column headerValue="Head to Toe Status">
+					<apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
 				</apex:column>
-				<apex:column headerValue="Signed At">
-					<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}">
-						<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" />
-					</apex:outputText>
+				<apex:column headerValue="Signed At" >
+					<apex:outputfield value=" {!evs.Head_to_Toe_Signed_At__c}" />
 				</apex:column>
+				<apex:column headerValue="Shift Status">
+					<apex:outputText value="{!evs.Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Signed At" >
+					<apex:outputfield value=" {!evs.Signed_At__c}" />
+				</apex:column>
+<!-- 				<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" /> -->
+<!-- 				<apex:column headerValue="Signed By"> -->
+<!-- 					 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false"> -->
+<!-- 						<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a> -->
+<!-- 					</apex:outputText> -->
+<!-- 				</apex:column> -->
+<!-- 				<apex:column headerValue="Signed At"> -->
+<!-- 					<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 						<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" /> -->
+<!-- 					</apex:outputText> -->
+<!-- 				</apex:column> -->
 				<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
 				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>
