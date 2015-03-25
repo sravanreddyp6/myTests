@@ -491,33 +491,6 @@
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}" type="Allergy" formId="{!$Component.FormID}" uniqueId="allergy" />
             </apex:pageBlock>
         </a>
-        <apex:pageBlock >
-            <!--Activity History Section-->
-            <!--Open Activities Section--->
-            <apex:pageBlockSection title="Open Activities" showHeader="true" columns="1" collapsible="true">
-                <apex:pageBlockTable value="{!taskOnCurrentPBSAccount}" var="OpenActivity" rendered="{!(taskOnCurrentPBSAccount.size>0)}">
-                    <apex:column >
-                        <apex:outputlink value="/{!OpenActivity.Id}">{!OpenActivity.Subject}</apex:outputLink>
-                        <apex:facet name="header"> Subject </apex:facet>
-                    </apex:column>
-                    <apex:column >
-                        <apex:outputLink value="/{!OpenActivity.WhoId}">{!OpenActivity.Who.Name}</apex:outputLink>
-                        <apex:facet name="header"> Name</apex:facet>
-                    </apex:column>
-                    <apex:column >
-                        <apex:outputLink value="/{!OpenActivity.OwnerId}">{!OpenActivity.Owner.Name}</apex:outputLink>
-                        <apex:facet name="header"> Assigned To </apex:facet>
-                    </apex:column>
-                    <apex:column value="{!OpenActivity.LastModifiedDate}" />
-
-                    <apex:column value="{!OpenActivity.Status}" />
-
-
-                </apex:pageBlockTable>
-                <apex:outputText value="No Tasks to display" rendered="{!(taskOnCurrentPBSAccount.size=0)}" />
-                <apex:outputPanel rendered="{!taskOnCurrentPBSAccount.size!=0}">Showing the 10 most recent tasks click&nbsp;
-                    <apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
-            </apex:pageBlockSection>
             <apex:pageBlock rendered="true" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="PPD Skin Test"
@@ -562,7 +535,35 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Adult" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
                                            
             
-            </apex:pageBlock>
+            </apex:pageBlock>        
+        <apex:pageBlock >
+            <!--Activity History Section-->
+            <!--Open Activities Section--->
+            <apex:pageBlockSection title="Open Activities" showHeader="true" columns="1" collapsible="true">
+                <apex:pageBlockTable value="{!taskOnCurrentPBSAccount}" var="OpenActivity" rendered="{!(taskOnCurrentPBSAccount.size>0)}">
+                    <apex:column >
+                        <apex:outputlink value="/{!OpenActivity.Id}">{!OpenActivity.Subject}</apex:outputLink>
+                        <apex:facet name="header"> Subject </apex:facet>
+                    </apex:column>
+                    <apex:column >
+                        <apex:outputLink value="/{!OpenActivity.WhoId}">{!OpenActivity.Who.Name}</apex:outputLink>
+                        <apex:facet name="header"> Name</apex:facet>
+                    </apex:column>
+                    <apex:column >
+                        <apex:outputLink value="/{!OpenActivity.OwnerId}">{!OpenActivity.Owner.Name}</apex:outputLink>
+                        <apex:facet name="header"> Assigned To </apex:facet>
+                    </apex:column>
+                    <apex:column value="{!OpenActivity.LastModifiedDate}" />
+
+                    <apex:column value="{!OpenActivity.Status}" />
+
+
+                </apex:pageBlockTable>
+                <apex:outputText value="No Tasks to display" rendered="{!(taskOnCurrentPBSAccount.size=0)}" />
+                <apex:outputPanel rendered="{!taskOnCurrentPBSAccount.size!=0}">Showing the 10 most recent tasks click&nbsp;
+                    <apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+            </apex:pageBlockSection>
+
             <apex:pageBlockSection title="Activity History" showHeader="true" columns="1" collapsible="true">
 
                 <apex:pageBlockTable value="{!eventOnCurrentPBSAccount}" var="ActiveHis" rendered="{!(eventOnCurrentPBSAccount.size>0)}">

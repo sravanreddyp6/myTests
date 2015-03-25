@@ -79,7 +79,16 @@ public with sharing class EvaluationResponseTableController {
         System.debug('saveResponse called, currentResponse: ' + currentResponse);
         try {
             hasError = false;
-            upsert currentResponse;
+            for(string rCol : reqFields){
+                if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
+                    currentResponse.addError( (columnsToHeadersMap.get(rCol) + ' is Required') );
+                    hasError = true;}
+            }
+            if( !hasError){upsert currentResponse;}
+            //e-sign?????
+
+            
+            
         } catch (DMLException ex) {
             hasError = true;
             // SF will automatically create a PageMessage Error here, so we don't
@@ -133,11 +142,6 @@ public with sharing class EvaluationResponseTableController {
             Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
             System.debug('col - '+ column);
             dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
-            if(reqFields != null){
-                for(string rCol : reqFields){
-                    if(column == rCol){dialogInput.required = true;}
-                }
-            }
             
             dialog.childComponents.add(dialogInput);
         }
