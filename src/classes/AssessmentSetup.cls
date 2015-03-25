@@ -233,8 +233,12 @@ public without sharing class AssessmentSetup {
         Set<Id> assmtId = new Set<Id>();
         Map<Id,Assessment__c> assmtMap = new Map<Id,Assessment__c>();
         
+        set<string> typesToIgnoreNaming = new set<string>();
+        typesToIgnoreNaming.add('Resident Assessment');
+        typesToIgnoreNaming.add('Restraint Reduction');
+
         for (Assessment__c assmt : assessments){
-          if(assmt.Type__c != 'Resident Assessment'){
+          if(  !typesToIgnoreNaming.contains(assmt.Type__c) ){
               assmtId.add(assmt.Id);
               assmtMap.put(assmt.Id,assmt);
           }
