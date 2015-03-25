@@ -145,7 +145,8 @@ window.createPanel = function(evaltype1,cat1,subCat1,evalSectionId1,evalSectionT
           <div class="sidebar-module-sm-no-scroll sidebar-module-inset" >
           	<apex:outputPanel rendered="{!evalType == 'Head to Toe'}" >
 	    		<h4>Nurse: {!thisEval.Owner.Name}</h4>
-	   			 <p>Shift Status:{!thisEval.Status__c} {!thisEval.Shift_Start_Time__c}</p>
+	    		<p>Head to Toe Status: {!thisEval.Head_to_toe_Status__c} <br/> Shift Status:{!thisEval.Status__c} {!thisEval.Shift_Start_Time__c}</p>
+	   			 
 	    	</apex:outputPanel>
 	    	<apex:outputPanel rendered="{!evalType == 'Residential'}" >
 	    		<h4>Nurse: {!thisEval.Owner.Name}</h4>
@@ -165,7 +166,7 @@ window.createPanel = function(evaltype1,cat1,subCat1,evalSectionId1,evalSectionT
         </apex:outputPanel>
        
         <apex:outputPanel rendered="{!showshiftDone}">
-        	<a id="btnDone" class="btn-success btn-sm pull-left" href="#" role="button" onClick="completeShift(); return false;" >Finalize Shift</a>
+        	<a id="btnDone" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;" >Finalize Shift</a>
         </apex:outputPanel>
         
         <apex:outputPanel rendered="{!showDisregard}">

@@ -35,7 +35,7 @@ public with sharing class EvalDynamicExt {
 		showEsign = false;
 		showshiftDone = false;
 		
-		thisEval = [ select id, Name, Status__c,Owner.Name, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
+		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
 		
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
@@ -151,9 +151,10 @@ public with sharing class EvalDynamicExt {
 	
 	public pageReference disregardAssessment() {
 		
-		thisEval.Status__c = 'Disregard'; //Common for all the eval Types
+		
 		
 		if(evalType == 'Residential'){
+			thisEval.Status__c = 'Disregard';
 			try{
 				update thisEval;
 				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
@@ -171,7 +172,11 @@ public with sharing class EvalDynamicExt {
 			
 			Savepoint sp2 = Database.setSavepoint();
 			
+			thisEval.Status__c = 'Disregard';
+			thisEval.Head_to_toe_Status__c = 'Disregard';
+			
 			try{
+				
 				update thisEval;
 				Evaluation__c clonedShift = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian');
 				PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedShift.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
@@ -212,10 +217,16 @@ public with sharing class EvalDynamicExt {
 		
 		Evaluation__c currentEval = eval;
 		id currentEvalId = currentEval.Id;
-		
 		//CLone the current Evaluation and Insert a new one with Draft Status
 		Evaluation__c clonedEval = currentEval.clone(false);
-    	clonedEval.Status__c = 'Draft';
+		clonedEval.Status__c = 'Draft'; //Common for all types
+		clonedEval.Signed_At__c = null;
+		clonedEval.Head_to_toe_Signed_At__c = null;
+		
+		if(evalType == 'Head to Toe'){
+			clonedEval.Head_to_toe_status__c = 'Draft';
+		}
+		
     	insert clonedEval;
     		
     	//Creation of Assessment records is specific to Residential Assessment. Not required in in Head to Toe!!
@@ -328,20 +339,22 @@ public with sharing class EvalDynamicExt {
 		}
 		
 		if(evalType == 'Head to Toe'){
-			showRevise = false;
-			if(thisEval.Status__c == 'Draft'){
+			
+			showRevise = false; // No revision functionality for Head to toe. Clone will happen during disregard.
+			
+			if(thisEval.Head_to_toe_Status__c == 'Draft' && thisEval.Status__c == 'Draft'){
 				showEsign = true;
 				showDisregard = true;
 				showshiftDone = false;
 
 			}
-			else if(thisEval.Status__c == 'Final'){
+			else if(thisEval.Head_to_toe_Status__c == 'Final' && thisEval.Status__c == 'Draft'){
 				showEsign = false;
 				showDisregard = true;
 				showshiftDone = true;
 				
 			}
-			else if(thisEval.Status__c == 'Completed'){
+			else if(thisEval.Head_to_toe_Status__c == 'Final' && thisEval.Status__c == 'Completed' ){
 				showEsign = false;
 				showDisregard = false;
 				showshiftDone = false;

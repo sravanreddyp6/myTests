@@ -1340,7 +1340,7 @@ public void loadProgramList() {
         get{
             if(residentAssessments == null) {
                 residentAssessments = [
-                    SELECT ID, Name, LastModifiedDate, Is_Signed__c,
+                    SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c,
                             Status__c,Owner.Name,
                            (SELECT Id, CreatedDate, Owner.Name, Owner.Id
                               FROM Evaluation_Responses__r
@@ -1371,8 +1371,8 @@ public void loadProgramList() {
         get{
             if(shiftAssessments == null) {
                 shiftAssessments = [
-                   SELECT ID, Name, LastModifiedDate, Is_Signed__c,
-                           Shift_Start_time__c, Shift_end_time__c, Status__c,Owner.Name,
+                   SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c, Head_to_Toe_Signed_At__c, 
+                           Shift_Start_time__c, Shift_end_time__c, Status__c, Head_to_Toe_Status__c, Owner.Name,
                            (SELECT Id, CreatedDate, Owner.Name, Owner.Id
                               FROM Evaluation_Responses__r
                              WHERE RecordType.Name = 'E-Signature'
@@ -1489,15 +1489,16 @@ public void loadProgramList() {
 	   		try{
 
 	   			insert resAsmt;
-	   			
+	   			//Assign Evaluation__c Id to Assessment__c record
 	   			fallAsmt.Evaluation__c = resAsmt.Id;
-            	insert fallAsmt;
+            	insert fallAsmt; // This will invoke the trigger on Assessment__c trigger to execute and create domain results and responses.
 	   		}
 
 	   		catch(DMLException e) {
-
+				Database.rollback(sp); //Making sure to roll back the Evaluation creation in case of any failure.
 	   			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Resident Assessment. Please Contact your Administrator');
             	ApexPages.addMessage(myMsg);
+            	return null;
 
 	   		}
 
@@ -1639,7 +1640,6 @@ public void loadProgramList() {
 	   				Database.rollback(sp); //Making sure to roll back the Evaluation creation in case of any failure.
 	   				ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Resident Assessment. Please Contact your Administrator');
             		ApexPages.addMessage(myMsg);
-
 	   				return null;
 	   			}
 
