@@ -101,7 +101,7 @@ public without sharing class ServiceAssignmentExt {
 //        canEditSA = oSchema.IsUpdateable();
 
     }
-
+ 
     private void setcanCreatePlan() {
         Schema.DescribeSObjectResult oSchema = Action_Plan__c.sObjectType.getDescribe();
         canCreatePlan = oSchema.IsCreateable();
@@ -127,7 +127,10 @@ public without sharing class ServiceAssignmentExt {
         return [select id, Name, Assessment_Date__c, Phase__c, Status__c, Disregard__c from Assessment__c where Type__c = 'FAD Summary' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
     }
 
+    public List<Assessment__c> getAssessments_RestraintReduction (){
 
+        return [select id, Name, Assessment_Date__c, Score__c, Status__c, Disregard__c from Assessment__c where Type__c = 'Restraint Reduction' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
+    }  
 
     public List<Service_Assignment_Closure__c> getServAssignCloses() {
         return [ SELECT id, Name, IFCS_Record_Number__c, Status__c FROM Service_Assignment_Closure__c WHERE Service_Assignment__c = :theServAssign.Id ];

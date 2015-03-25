@@ -18,6 +18,9 @@
 			margin-bottom: 10px;
 		}
 		#fundingMessages,
+		#evaluationMessages .error {
+			color: red;
+		}
 		#fundingMessages .success {
 			color: green;
 		}
@@ -1036,7 +1039,26 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 		<!-- end FAD Assessments -->
-
+        <a name="Assessment_res" id="Assessment_res"></a>
+        <apex:pageBlock id="Assessment_res" title="Restraint Reduction Assessment" rendered="{!Service_Assignment__c.id != null && vfVarIsCB}" >
+            <div class="pbHeaderButton">
+        <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
+                <apex:commandButton value="New Restraint Reduction Assessment" 
+                    onclick="window.open('/apex/Assess_Restraint_Form?sa={!Service_Assignment__c.id}', '_self'); return false;" rendered="{!(Assessments_RestraintReduction.size=0)}"/>          
+            </div>
+            <apex:outputText value="No Assessments to display" rendered="{!(Assessments_RestraintReduction.size=0)}" />
+            <apex:commandButton value="Summary Report"  rendered="{!(Assessments_RestraintReduction.size>0)}"
+                onclick="window.open('/apex/rptAssess_Restraint_PBS_Sum?PBS={!Service_Assignment__c.Person_Being_served__r.AccountID}', '_blank'); return false;" style="padding: 3px;"/>     
+            <apex:pageBlockTable value="{!Assessments_RestraintReduction}" var="assess" rendered="{!(Assessments_RestraintReduction.size!=0)}">
+                <apex:column headerValue="Name" >
+                    <a href="/apex/Assess_Restraint_Form?id={!assess.ID}">{!assess.name}</a>
+                </apex:column>        
+                <apex:column value="{!Assess.Assessment_Date__c}" headerValue="Date of Admistration"/>
+                <apex:column value="{!Assess.Score__c}" />
+                <apex:column value="{!Assess.Status__c}" />
+                <apex:column value="{!Assess.Disregard__c }" />
+            </apex:pageBlockTable>
+        </apex:pageBlock>
 		<!--  Funding Sources section -->
 		<!-- Add Funding Source modal. -->
 		<apex:outputPanel id="FundingSourceModal" style="display:none">
