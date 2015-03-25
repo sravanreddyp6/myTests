@@ -253,7 +253,7 @@
 			<c:HomePageComponents objectName="Contract Management" />
 			<c:HomePageComponents objectName="Documents" />
 		</apex:outputPanel>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock">
+		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!OperatingGroup == 'Care Meridian'}">
 			<apex:pageBlockSection columns="2">
 				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
@@ -500,7 +500,7 @@
 					var $foundTr = $(foundTr);
 					pbsTable.fnDisplayRow(foundTr);
 					location.href = '#pbsTable';
-					$foundTr.effect("highlight", {}, 3000);
+					$foundTr.effect("highlight", {}, 4000);
 					closeModalDialog('searchResultDialog', 'div');
 				} else {
 					location.href = '/' + pbsId;
