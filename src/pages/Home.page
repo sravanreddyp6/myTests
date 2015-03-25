@@ -373,7 +373,8 @@
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
 	<c:EvalSection id="evalSection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}"
 		subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
-		evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" />
+		evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}"
+		onEntrySaveSuccess="closeShiftDocActionDialog(); " />
 
 	<apex:outputPanel id="searchResultPanel" style="display: none; ">
 		<apex:form id="searchPanelForm">
@@ -381,7 +382,7 @@
 				<apex:param name="pbsId" value="" assignTo="{!searchResultPBS}" />
 			</apex:actionFunction>
 			<apex:outputPanel id="searchTablePanel">
-				<apex:pageBlock>
+				<apex:pageBlock >
 					<apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
 						<apex:column headerValue="Name">
 							<apex:outputText rendered="{!(searchResult.Type=='Person Being Referred')}">
@@ -456,9 +457,7 @@
 					getSearchResults();
 				}
 			};
-			window.refreshEvalRepeaters = function () {
-				// For the Home page we actually don't need to refresh anything,
-				// so we'll use this to close the modal instead
+			window.closeShiftDocActionDialog = function () {
 				closeModalDialog('shiftDocActionDialog', 'div');
 				$('#evalForm').css('width', '0px');
 				$('#evalForm').css('height', '0px');
