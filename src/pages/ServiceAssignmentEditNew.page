@@ -1054,11 +1054,11 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:pageBlock>
 		<!-- end FAD Assessments -->
         <a name="Assessment_res" id="Assessment_res"></a>
-        <apex:pageBlock id="Assessment_res" title="Restraint Reduction Assessment" rendered="{!Service_Assignment__c.id != null && vfVarIsCB}" >
+        <apex:pageBlock id="Assessment_res" title="Restraint Reduction Assessment" rendered="{!Service_Assignment__c.id != null }" >
             <div class="pbHeaderButton">
         <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
                 <apex:commandButton value="New Restraint Reduction Assessment" 
-                    onclick="window.open('/apex/Assess_Restraint_Form?sa={!Service_Assignment__c.id}', '_self'); return false;" rendered="{!(Assessments_RestraintReduction.size=0)}"/>          
+                    onclick="window.open('/apex/Assess_Restraint_Form?saID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{!(Assessments_RestraintReduction.size=0)}"/>          
             </div>
             <apex:outputText value="No Assessments to display" rendered="{!(Assessments_RestraintReduction.size=0)}" />
             <apex:commandButton value="Summary Report"  rendered="{!(Assessments_RestraintReduction.size>0)}"
