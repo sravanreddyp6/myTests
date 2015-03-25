@@ -4,8 +4,9 @@ public with sharing class AuthenticationController {
     public String handlerClass { get; set; }
     public Id parentId { get; set; }
 
-    public PageReference authenticate() {
-        if (username.toLowerCase() != UserInfo.getUserName().toLowerCase()) {
+
+	public static PageReference auth(string UN, string PW, string Handler_Class , string pID){
+        if (UN.toLowerCase() != UserInfo.getUserName().toLowerCase()) {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'You cannot log in as another user!'));
             return null;
         }
@@ -22,7 +23,7 @@ public with sharing class AuthenticationController {
         request.setMethod('POST');
         request.setHeader('Content-Type', 'text/xml;charset=UTF-8');
         request.setHeader('SOAPAction', '""');
-        request.setBody(buildSoapLogin(username, password));
+        request.setBody(buildSoapLogin(UN, PW));
 
         // If there is a loginResponse element, then login succeeded; else there
         // would be soap fault element after body
@@ -45,9 +46,13 @@ public with sharing class AuthenticationController {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, errorMsg));
             return null;
         }
-        Type t = Type.forName(handlerClass);
+        Type t = Type.forName(Handler_Class);
         AuthenticatedAction handler = (AuthenticatedAction) t.newInstance();
-        return handler.handle(parentId, UserInfo.getUserId());
+        return handler.handle(pID, UserInfo.getUserId());	
+	}
+
+    public PageReference authenticate() {
+		return auth(username, password, handlerClass, parentId);
     }
 
     public static String buildSoapLogin(String username, String password){
