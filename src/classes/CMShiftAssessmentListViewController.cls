@@ -14,7 +14,7 @@ public with sharing class CMShiftAssessmentListViewController {
    }
   
    public Id saId {get; private set;}
-   public string evalrecType{get; private set;}
+   //public string evalrecType{get; private set;}
    public Boolean isShift {get; set;}
    public Boolean isResidential {get; set;}
    public Service_Assignment__c SA {get; private set;}
