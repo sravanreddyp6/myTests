@@ -128,6 +128,7 @@
                         jQuery( this ).dialog( "close" );
 						isModified = false;
                         jQuery('#btnSave').trigger("click");
+                        createPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
 					},
 					No: function() {
                         jQuery( this ).dialog( "close" );
@@ -185,7 +186,7 @@
 						<p>Status:{!thisEval.Status__c} (<apex:outputText value=" {!thisEval.CreatedDate}" />)</p>
 					</apex:outputPanel>
 
-					<apex:outputPanel>
+					<apex:outputPanel >
 						<a id="btnPrint" class="btn-info btn-sm centered" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">View Summary</a>
 					</apex:outputPanel>
 					<br/>
@@ -263,7 +264,7 @@
 
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
 		<apex:form id="evalResponsesForm">
-			<apex:pageBlock>
+			<apex:pageBlock >
         <c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Head to Toe'}"/>
         <c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="woundLog" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Activity Log'}"/>
         <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Head to Toe'}"/>
