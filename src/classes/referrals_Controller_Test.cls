@@ -200,22 +200,23 @@ public class referrals_Controller_Test{
         }
 
         // Testing add referral tracking steps for Neuro
-        insert new Neuro_Admission_Steps__c[] {
-            new Neuro_Admission_Steps__c(Name='1', Subject__c='Subject 1'),
-            new Neuro_Admission_Steps__c(Name='2', Subject__c='Subject 2'),
-            new Neuro_Admission_Steps__c(Name='3', Subject__c='Subject 3')
+        insert new Admission_Step__c[] {
+            new Admission_Step__c(Name='1', Subject__c='Subject 1', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro1'),
+            new Admission_Step__c(Name='2', Subject__c='Subject 2', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro2'),
+            new Admission_Step__c(Name='3', Subject__c='Subject 3', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro3')
         };
-        Integer numberOfStepSubjects = Neuro_Admission_Steps__c.getAll().size();
+        Integer numberOfStepSubjects = Admission_Step__c.getAll().size();
         Person_Being_Referred__c pbr = Referral_CreateTestData.createPersonBeingReferred(25, null);
-        Referral__c rf = Referral_CreateTestData.createReferral('Generic', 'New', 'Test123', pbr);
+        Referral__c rf = Referral_CreateTestData.createReferral('NeuroRestorative', 'New', 'Test123', pbr);
         sc = new ApexPages.StandardController(rf);
+        controller = new referrals_Controller(sc);
         Task[] tasks = [
             SELECT Id FROM Task WHERE WhatId = :rf.Id
         ];
         Integer oldNumTask = tasks.size();
         User u = [ SELECT ID FROM User ][0];
         controller.dummyTask.OwnerId = u.Id;
-        controller.addNeuroAdmissionSteps();
+        controller.addAdmissionSteps();
         System.assertEquals(oldNumTask + numberOfStepSubjects, controller.activities.size());
     }
 }

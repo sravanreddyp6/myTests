@@ -88,6 +88,10 @@
         #datePicker {
             z-index: 9999;
         }
+        .saveBtn:disabled {
+            background: #dddddd !important;
+            color: gray !important;
+        }
     </style>
 
     <script>
@@ -457,11 +461,21 @@
                 j$(this).val('');
             });
         }
+        saveBtnDisplay = function(dStatus){
+            console.log('save status' + dStatus);
+            j$('.saveBtn').prop('disabled', dStatus);
+            if(dStatus){
+                j$('.saveBtn').prop('value', 'Processing...');
+            }
+            else{
+                j$('.saveBtn').prop('value', 'Save Referral');
+            }
+        }
     </script>
 
     <apex:form id="referralForm">
         <apex:actionFunction name="saveRef" action="{!saveRef}" />
-        <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); return false;" rerender="redFlagged" />
+        <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); saveBtnDisplay('false'); return false;" rerender="redFlagged" />
         <apex:actionRegion >
             <apex:actionFunction name="setReferralRecordType" action="{!setReferralRecordType}" rerender="ReferralDetail,ReferralDetail_1,Funding,progConsid,ReferralServices,msgs,ReferralDetailHeader,referralDetailBlock,progConsid,progConsiderationsDetail,placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock, refTypeHidden" />
         </apex:actionRegion>
@@ -1352,7 +1366,7 @@
         <apex:pageBlock mode="edit" id="referralDetailBlock" rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}">
             <apex:pageblockButtons location="bottom">
                 <!-- on this button status will not work b/c it doesn't invoke an action it uses onclick js-->
-                <apex:commandButton value="Save Referral" id="saveRefButton" onclick="alertUseraboutLocation();return false;" rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
+                <apex:commandButton value="Save Referral" id="saveRefButton"  styleClass="saveBtn" onclick="saveBtnDisplay('true'); alertUseraboutLocation();return false;" rendered="{!OR(!ISNULL(personBeingRefRecord.Id), !ISNULL(personBeingServedRecord.Id))}" oncomplete="unsetAdditionalFields(j$('select[id$=referralStatus]').val());" />
 
                 <apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}" />
             </apex:pageblockButtons>
@@ -1460,8 +1474,8 @@
                 <apex:inputField value="{!Referral__c.Case_Manager_Phone__c}" rendered="{!ReferralRecordType!='NeuroRestorative'}" />
                 <!--apex:inputField value="{!Referral__c.Evaluation_Date__c}" rendered="{!referralRecordType=='CareMeridian'}"/-->
                 <!-- ADDED  for  EB-365 -->
-                <apex:inputField value="{!Referral__c.Assessment_Date__c}" rendered="{!ReferralRecordType=='Wisconsin' || ReferralRecordType=='North Dakota'}" />   
-                
+                <apex:inputField value="{!Referral__c.Assessment_Date__c}" rendered="{!ReferralRecordType=='Wisconsin' || ReferralRecordType=='North Dakota'}" />
+
 
                 <!--  START NEURO EvalBy and RefBy SECTION -->
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
@@ -2024,7 +2038,7 @@
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!referralRecordtype == 'NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian', ReferralRecordType != 'NeuroRestorative')}" />
-                
+
                 <apex:inputField value="{!Referral__c.New_Address_Location__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
 
@@ -2032,7 +2046,7 @@
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
 
                 <apex:inputField value="{!Referral__c.Current_Location_Name__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />                
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
 
                 <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street1" />
 
@@ -2309,16 +2323,18 @@
                 <apex:pageBlockSectionItem >
                     <apex:outputPanel >
                         <apex:commandButton value="Add Referral Tracking Activity" onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none'); return false;" />
-                        <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed', showNeuroFeatures)}" />
-                        <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c != 'Closed' && showNeuroFeatures}" style="margin-left: 8px; margin-right: 8px; " />
-                        <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!ReferralRecordType='NeuroRestorative' && !Referral__c.Admission_Steps_Added__c && Referral__c.Referral_Status__c!='Closed' && showNeuroFeatures}" required="false" />
+                        <apex:actionRegion >
+                            <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
+                            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
+                            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c!='Closed')}" required="false" />
+                            <apex:actionFunction name="addAdmissionSteps" action="{!addAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
+                        </apex:actionRegion>
                         <apex:actionStatus id="taskAssignStatus">
                             <apex:facet name="start">
                                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                             </apex:facet>
                             <apex:facet name="stop" />
                         </apex:actionStatus>
-                        <apex:actionFunction name="addNeuroAdmissionSteps" action="{!addNeuroAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
