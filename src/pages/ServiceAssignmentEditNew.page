@@ -103,7 +103,7 @@
 				j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').hide();
 			}
 		}
-		
+
 		function getToday() {
 			var today = new Date();
 			var dd = today.getDate();
@@ -884,17 +884,17 @@ END: Uncomment to have the element collapsed by default -->
 
 			</apex:pageBlockSection>
 		</apex:pageBlock>
-		
+
 		<apex:pageBlock title="Resident Assessment" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
 			<div class="pbHeaderButton">
 				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
 					<apex:actionStatus id="AddOldResidentAssessmentStatus" >
 						<apex:facet name="start" >
 							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
-        					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">    
+        					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
             					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
         					</div>
-        				</apex:facet> 
+        				</apex:facet>
 						<apex:facet name="stop" />
 					</apex:actionStatus>
 
@@ -902,10 +902,10 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:actionStatus id="AddResidentAssessmentStatus" >
 						<apex:facet name="start">
 							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
-        					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">    
+        					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
             					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
         					</div>
-        				</apex:facet> 
+        				</apex:facet>
 						<apex:facet name="stop" />
 					</apex:actionStatus>
 			</div>
@@ -942,7 +942,7 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:outputText value="No Records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
 			<apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 		</apex:pageBlock>
-		
+
 		<a name="ShiftAssessments" id="ShiftAssessments"></a>
 
 		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
@@ -951,10 +951,10 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:actionStatus id="AddShiftDocStatus">
 					<apex:facet name="start">
 						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
-        				<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">    
+        				<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
             				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
         				</div>
-        			</apex:facet> 
+        			</apex:facet>
 					<apex:facet name="stop" />
 				</apex:actionStatus>
 			</div>
@@ -999,7 +999,7 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:outputText value="No Records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
 			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Shift" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 		</apex:pageBlock>
-		
+
 		<!--  Notes section -->
 		<a name="Notes" id="Notes"></a>
 		<apex:pageBlock id="Notes" title="{!if(vfVarIsCM,'Shift Notes','Notes')}" rendered="{! !editSA}">
@@ -1057,16 +1057,16 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageBlock id="Assessment_res" title="Restraint Reduction Assessment" rendered="{!Service_Assignment__c.id != null }" >
             <div class="pbHeaderButton">
         <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-                <apex:commandButton value="New Restraint Reduction Assessment" 
-                    onclick="window.open('/apex/Assess_Restraint_Form?saID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{!(Assessments_RestraintReduction.size=0)}"/>          
+                <apex:commandButton value="New Restraint Reduction Assessment"
+                    onclick="window.open('/apex/Assess_Restraint_Form?saID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{!(Assessments_RestraintReduction.size=0)}"/>
             </div>
             <apex:outputText value="No Assessments to display" rendered="{!(Assessments_RestraintReduction.size=0)}" />
             <apex:commandButton value="Summary Report"  rendered="{!(Assessments_RestraintReduction.size>0)}"
-                onclick="window.open('/apex/rptAssess_Restraint_PBS_Sum?PBS={!Service_Assignment__c.Person_Being_served__r.AccountID}', '_blank'); return false;" style="padding: 3px;"/>     
+                onclick="window.open('/apex/rptAssess_Restraint_PBS_Sum?PBS={!Service_Assignment__c.Person_Being_served__r.AccountID}', '_blank'); return false;" style="padding: 3px;"/>
             <apex:pageBlockTable value="{!Assessments_RestraintReduction}" var="assess" rendered="{!(Assessments_RestraintReduction.size!=0)}">
                 <apex:column headerValue="Name" >
                     <a href="/apex/Assess_Restraint_Form?id={!assess.ID}">{!assess.name}</a>
-                </apex:column>        
+                </apex:column>
                 <apex:column value="{!Assess.Assessment_Date__c}" headerValue="Date of Admistration"/>
                 <apex:column value="{!Assess.Score__c}" />
                 <apex:column value="{!Assess.Status__c}" />
@@ -1503,7 +1503,7 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:outputPanel>
 		</apex:outputPanel>
 	</apex:form>
-	<apex:relatedList list="Action_Summaries__r" rendered="{!showLocation && $ObjectType.Action_Summary__c.accessible && !editSA}" />
+	<apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
 	<c:SObjectNotesAndAttachments parentId="{!Service_Assignment__c.id}" showAction="false" rendered="{!!editSA && newSA==false}"></c:SObjectNotesAndAttachments>
 	<c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 
