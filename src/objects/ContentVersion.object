@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveNoteAction</actionName>
+        <type>Default</type>
+    </actionOverrides>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <enableFeeds>false</enableFeeds>
     <fields>
@@ -78,7 +86,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Salesforce - ESD</fullName>
+                <fullName>Salesforce - iServe (ESD)</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -127,10 +135,47 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Control_Review_Date__c</fullName>
-        <description>Use this field with Regulatory content to assign a date that the content must be reviewed for compliance purposes.</description>
+        <fullName>Content_Type__c</fullName>
+        <description>Initially configured for Redwood North, but applicable/usable throughout TMN (validated w/Kate M &amp; Adam). Applied to all Content Types (Health Care Protocols Library was the original library and used General vs the newer &quot;General TMN&quot;).</description>
         <externalId>false</externalId>
-        <inlineHelpText>Use this field with Regulatory content to assign a date that the content must be reviewed for compliance purposes.</inlineHelpText>
+        <inlineHelpText>Assign one or more Content Type.</inlineHelpText>
+        <label>Content Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>General</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Assessment</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Form</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Manager Toolkit Overview</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Protocol</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Training</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>7</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Control_Review_Date__c</fullName>
+        <description>Assign the date that the content will be reviewed for compliance purposes.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Assign the date that the content will be reviewed for compliance purposes (click in the box to use the date picker or enter a date formatted as mm/dd/yyyy).</inlineHelpText>
         <label>Control Review Date</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
@@ -138,7 +183,7 @@
     </fields>
     <fields>
         <fullName>Control_Type__c</fullName>
-        <description>Identify content that requires control to ensure appropriate governance and review. Control types include: regulatory implications, general controls (SOPs), SOX, or audit.</description>
+        <description>Identify content that requires control to ensure appropriate governance and review. Control types include: Regulatory implications, General (SOPs), SOx, or Audit.</description>
         <externalId>false</externalId>
         <inlineHelpText>This content requires control to ensure appropriate governance and review. Select at least 1 Control type from the picklist.</inlineHelpText>
         <label>Control Type</label>
@@ -148,7 +193,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>General Controls</fullName>
+                <fullName>General</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -156,14 +201,14 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>SOX</fullName>
+                <fullName>SOx</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
         <type>MultiselectPicklist</type>
-        <visibleLines>4</visibleLines>
+        <visibleLines>5</visibleLines>
     </fields>
     <fields>
         <fullName>Control__c</fullName>
@@ -198,19 +243,11 @@
         <fullName>Department__c</fullName>
         <description>The governing body - not the end-user of the document</description>
         <externalId>false</externalId>
-        <inlineHelpText>Select the group that owns/authors the content (not necessarily the end-users of the information).</inlineHelpText>
+        <inlineHelpText>Select the group that owns/authors the document - not the end-user.</inlineHelpText>
         <label>Department</label>
         <picklist>
             <picklistValues>
-                <fullName>All</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>IT</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>HR</fullName>
+                <fullName>CareMeridian</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -218,7 +255,15 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>PSG</fullName>
+                <fullName>Hastings</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IT</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -226,37 +271,49 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>NeuroRestorative</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PSG</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Quality (Corporate)</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>HS-Redwood</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>HS-Cambridge</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>SRS-NeuroRestorative</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>SRS-Care Meridian</fullName>
+                <fullName>Redwood</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
-        <type>Picklist</type>
+        <type>MultiselectPicklist</type>
+        <visibleLines>6</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Description</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>FileType</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>Language</fullName>
+        <trackHistory>false</trackHistory>
     </fields>
     <fields>
         <fullName>OwnerId</fullName>
+        <trackHistory>false</trackHistory>
         <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Publish_To__c</fullName>
+        <description>Makes content visible on the related App page. Example: Selecting Progress Notes would create a link to the document on the iServe (ESD) Persons Being Served tab.</description>
         <externalId>false</externalId>
+        <inlineHelpText>Makes content visible on the related App page. Example: Selecting Progress Notes would create a link to the document on the iServe (ESD) Persons Being Served tab.</inlineHelpText>
         <label>Publish To</label>
         <picklist>
             <picklistValues>
@@ -272,18 +329,18 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Report</fullName>
+                <fullName>Progress Notes</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Notes</fullName>
+                <fullName>Report</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
         <type>MultiselectPicklist</type>
-        <visibleLines>10</visibleLines>
+        <visibleLines>6</visibleLines>
     </fields>
     <fields>
         <fullName>Regulatory__c</fullName>
@@ -297,157 +354,25 @@
     </fields>
     <fields>
         <fullName>Review_Date__c</fullName>
-        <description>Use this field with Regulatory content to assign a date that the content must be reviewed for compliance purposes.</description>
+        <description>Assign a date that the content will be reviewed for compliance purposes.</description>
         <externalId>false</externalId>
-        <inlineHelpText>Use this field with Regulatory content to assign a date that the content must be reviewed for compliance purposes.</inlineHelpText>
+        <inlineHelpText>Click in the box to access the Calendar pop-up and then choose a date that the content will be reviewed for compliance purposes.</inlineHelpText>
         <label>Review Date</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <type>Date</type>
     </fields>
-    <recordTypes>
-        <fullName>Application_Help_Doc</fullName>
-        <active>true</active>
-        <label>Application Help Doc</label>
-        <picklistValues>
-            <picklist>Application__c</picklist>
-            <values>
-                <fullName>Salesforce - Chatter</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - Compliance Survey</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - Corporate Contracts</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - Libraries</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - NPA</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - PMC</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Control_Type__c</picklist>
-            <values>
-                <fullName>Audit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>General Controls</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Regulatory</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SOX</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Control__c</picklist>
-            <values>
-                <fullName>Audit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>General Controls</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Regulatory</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SOX</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Department__c</picklist>
-            <values>
-                <fullName>All</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Finance</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HR</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HS-Cambridge</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HS-Redwood</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>IT</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Legal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>PSG</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Quality %28Corporate%29</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SRS-Care Meridian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SRS-NeuroRestorative</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Publish_To__c</picklist>
-            <values>
-                <fullName>Contract Database</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>NPA</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Notes</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>PMC</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Report</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-    </recordTypes>
+    <fields>
+        <fullName>TagCsv</fullName>
+    </fields>
+    <fields>
+        <fullName>Title</fullName>
+        <trackHistory>false</trackHistory>
+    </fields>
     <recordTypes>
         <fullName>Control_Audit_Doc</fullName>
         <active>true</active>
+        <description>Used by IT Governance; this type mandates content review.</description>
         <label>Control</label>
         <picklistValues>
             <picklist>Application__c</picklist>
@@ -477,13 +402,40 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Content_Type__c</picklist>
+            <values>
+                <fullName>Assessment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Form</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Manager Toolkit Overview</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Protocol</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Training</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Control_Type__c</picklist>
             <values>
                 <fullName>Audit</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>General Controls</fullName>
+                <fullName>General</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -491,7 +443,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>SOX</fullName>
+                <fullName>SOx</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -517,7 +469,7 @@
         <picklistValues>
             <picklist>Department__c</picklist>
             <values>
-                <fullName>All</fullName>
+                <fullName>CareMeridian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -529,11 +481,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>HS-Cambridge</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HS-Redwood</fullName>
+                <fullName>Hastings</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -545,6 +493,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>NeuroRestorative</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>PSG</fullName>
                 <default>false</default>
             </values>
@@ -553,11 +505,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>SRS-Care Meridian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SRS-NeuroRestorative</fullName>
+                <fullName>Redwood</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -572,11 +520,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Notes</fullName>
+                <fullName>PMC</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>PMC</fullName>
+                <fullName>Progress Notes</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -586,8 +534,173 @@
         </picklistValues>
     </recordTypes>
     <recordTypes>
-        <fullName>ESD</fullName>
+        <fullName>General_TMN</fullName>
         <active>true</active>
+        <description>Used across TMN; use for new libraries instead of &quot;SF &apos;General&apos;&quot; for more control/customization. Note: this type was fna &quot;Application Help Doc,&quot; which is no longer in use; also, renamed as the CRMIT/FCT upload all defaulted to use this &quot;A&quot; vs General.</description>
+        <label>General TMN</label>
+        <picklistValues>
+            <picklist>Application__c</picklist>
+            <values>
+                <fullName>Salesforce - Chatter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Salesforce - Compliance Survey</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Salesforce - Corporate Contracts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Salesforce - Libraries</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Salesforce - NPA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Salesforce - PMC</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Content_Type__c</picklist>
+            <values>
+                <fullName>Assessment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Form</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Manager Toolkit Overview</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Protocol</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Training</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Control_Type__c</picklist>
+            <values>
+                <fullName>Audit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Regulatory</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SOx</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Control__c</picklist>
+            <values>
+                <fullName>Audit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General Controls</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Regulatory</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SOX</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Department__c</picklist>
+            <values>
+                <fullName>CareMeridian</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Finance</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hastings</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Legal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NeuroRestorative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PSG</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quality %28Corporate%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Redwood</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Publish_To__c</picklist>
+            <values>
+                <fullName>Contract Database</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>NPA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PMC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Progress Notes</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Report</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>IT_Systems</fullName>
+        <active>true</active>
+        <description>Used in IT Libraries with custom field to identify related application.</description>
         <label>IT Systems</label>
         <picklistValues>
             <picklist>Application__c</picklist>
@@ -672,10 +785,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Salesforce - ESD</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Salesforce - Libraries</fullName>
                 <default>false</default>
             </values>
@@ -685,6 +794,10 @@
             </values>
             <values>
                 <fullName>Salesforce - PMC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Salesforce - iServe %28ESD%29</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -705,13 +818,40 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Content_Type__c</picklist>
+            <values>
+                <fullName>Assessment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Form</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>General</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Manager Toolkit Overview</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Protocol</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Training</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Control_Type__c</picklist>
             <values>
                 <fullName>Audit</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>General Controls</fullName>
+                <fullName>General</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -719,7 +859,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>SOX</fullName>
+                <fullName>SOx</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -745,7 +885,7 @@
         <picklistValues>
             <picklist>Department__c</picklist>
             <values>
-                <fullName>All</fullName>
+                <fullName>CareMeridian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -757,11 +897,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>HS-Cambridge</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HS-Redwood</fullName>
+                <fullName>Hastings</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -773,6 +909,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>NeuroRestorative</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>PSG</fullName>
                 <default>false</default>
             </values>
@@ -781,11 +921,7 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>SRS-Care Meridian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SRS-NeuroRestorative</fullName>
+                <fullName>Redwood</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -800,291 +936,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Notes</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>PMC</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Report</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-    </recordTypes>
-    <recordTypes>
-        <fullName>Form</fullName>
-        <active>true</active>
-        <label>Form</label>
-        <picklistValues>
-            <picklist>Application__c</picklist>
-            <values>
-                <fullName>Salesforce - Chatter</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - Compliance Survey</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - Corporate Contracts</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - Libraries</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - NPA</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - PMC</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Control_Type__c</picklist>
-            <values>
-                <fullName>Audit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>General Controls</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Regulatory</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SOX</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Control__c</picklist>
-            <values>
-                <fullName>Audit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>General Controls</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Regulatory</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SOX</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Department__c</picklist>
-            <values>
-                <fullName>All</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Finance</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HR</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HS-Cambridge</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HS-Redwood</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>IT</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Legal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>PSG</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Quality %28Corporate%29</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SRS-Care Meridian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SRS-NeuroRestorative</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Publish_To__c</picklist>
-            <values>
-                <fullName>Contract Database</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>NPA</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Notes</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>PMC</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Report</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-    </recordTypes>
-    <recordTypes>
-        <fullName>Standard_Support_Procedure_SSP</fullName>
-        <active>true</active>
-        <label>Standard Support Procedure (SSP)</label>
-        <picklistValues>
-            <picklist>Application__c</picklist>
-            <values>
-                <fullName>Salesforce - Chatter</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - Compliance Survey</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - Corporate Contracts</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - Libraries</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - NPA</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Salesforce - PMC</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Control_Type__c</picklist>
-            <values>
-                <fullName>Audit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>General Controls</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Regulatory</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SOX</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Control__c</picklist>
-            <values>
-                <fullName>Audit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>General Controls</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Regulatory</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SOX</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Department__c</picklist>
-            <values>
-                <fullName>All</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Finance</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HR</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HS-Cambridge</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>HS-Redwood</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>IT</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Legal</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>PSG</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Quality %28Corporate%29</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SRS-Care Meridian</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>SRS-NeuroRestorative</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Publish_To__c</picklist>
-            <values>
-                <fullName>Contract Database</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>NPA</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Notes</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>PMC</fullName>
+                <fullName>Progress Notes</fullName>
                 <default>false</default>
             </values>
             <values>
