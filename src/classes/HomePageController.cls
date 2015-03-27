@@ -97,9 +97,14 @@ public with sharing class HomePageController{
 		}
 		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram');
 		if (initialProgramCookie == null) {
-			selectedProgram = programslist[0].getValue();
+			if (programsList.size() > 0) {
+				selectedProgram = programslist[0].getValue();
+			}
 		} else {
-			selectedProgram = initialProgramCookie.getValue();
+			String tmpId = initialProgramCookie.getValue();
+			if (tmpId != null && tmpId != '') {
+				selectedProgram = tmpId;  // Because you can't assign null to an ID variable
+			}
 		}
 		// get list of repeatables
 		List<AggregateResult> evalRepeats = [
