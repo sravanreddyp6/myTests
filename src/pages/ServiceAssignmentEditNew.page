@@ -266,6 +266,7 @@
                             <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}" /> &nbsp;
                             <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" /> &nbsp;
                             <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
+                        </apex:outputPanel>    
 	</script>
 	<apex:pagemessages id="msgs" />
 	<br />
@@ -292,8 +293,10 @@
 			<apex:param name="effstart" value="" assignTo="{!effDate}" />
 			<apex:param name="effend" value="" assignTo="{!effEnd}" />
 		</apex:actionFunction>
-
+		
+<!-- 
                         </apex:outputPanel>
+-->                        
                     </apex:facet>
                     <apex:facet name="start">
                         <apex:outputPanel >
