@@ -19,6 +19,7 @@ public with sharing class EvalDynamicExt {
 	public Boolean showRevise {get; set;}
 	public Boolean showEsign{get; set;}
 	public Boolean showshiftDone{get; set;}
+	public Boolean isUserOwner {get; set; }
 	
 	public EvalDynamicExt(){
 		// get the record
@@ -34,14 +35,18 @@ public with sharing class EvalDynamicExt {
 		showRevise = false;
 		showEsign = false;
 		showshiftDone = false;
+		isUserOwner = false;
 		
-		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
+		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
 		
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
 			AdmID = thisEval.serviceassignment__r.admission__c;
 			SAID = thisEval.serviceassignment__c;
-			
+		
+			if ( UserInfo.getUserId() == thisEval.OwnerID )	
+				isUserOwner = true;
+				
 			controlButtons();
 		}
 				
@@ -294,6 +299,16 @@ public with sharing class EvalDynamicExt {
 	}
 	//Start - Control the visibility of buttons
 	public void controlButtons() {
+		
+		if (!isUserOwner ) {
+			showEsign=false;
+			showRevise = false;
+			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
+			showDisregard = false;
+			
+			return;
+		}
+			
 		if(evalType == 'Residential'){
 			showshiftDone = false;
 			List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id, Status__c, CreatedDate FROM Evaluations__r Where Id != :thisEval.Id AND Status__c != 'Disregard' AND RecordType.Name ='NursesAssessment' order by CreatedDate desc) FROM Service_Assignment__c WHERE Id=: SAID LIMIT 1];
