@@ -54,9 +54,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Service Assignments describe the services that can be performed for a Person Being Served. This object is master-detail to Admissions.</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Admission__c</fullName>
         <externalId>false</externalId>
@@ -1076,21 +1079,6 @@
         <columns>End_Date__c</columns>
         <columns>Start_Date__c</columns>
         <filterScope>Everything</filterScope>
-        <filters>
-            <field>Start_Date__c</field>
-            <operation>greaterThan</operation>
-            <value>9/1/2013</value>
-        </filters>
-        <filters>
-            <field>NAME</field>
-            <operation>contains</operation>
-            <value>Only</value>
-        </filters>
-        <filters>
-            <field>End_Date__c</field>
-            <operation>greaterThan</operation>
-            <value>9/1/2013</value>
-        </filters>
         <label>All</label>
     </listViews>
     <listViews>
@@ -1113,19 +1101,6 @@
         <trackHistory>true</trackHistory>
         <type>Text</type>
     </nameField>
-    <namedFilters>
-        <fullName>nf_01IJ00000000JNEMA2_00NJ0000000IM6oMAG</fullName>
-        <active>true</active>
-        <field>Progress_Note__c.Service_Assignment__c</field>
-        <filterItems>
-            <field>Service_Assignment__c.Admission__c</field>
-            <operation>equals</operation>
-            <valueField>$Source.Admission__c</valueField>
-        </filterItems>
-        <isOptional>false</isOptional>
-        <name>Progress Note_Service Assignment</name>
-        <sourceObject>Progress_Note__c</sourceObject>
-    </namedFilters>
     <pluralLabel>Service Assignment</pluralLabel>
     <recordTypeTrackHistory>false</recordTypeTrackHistory>
     <recordTypes>

@@ -523,6 +523,7 @@ public with sharing class HomePageController{
 			items.add('Daily_Referrals');
 			items.add('Red_Flagged_Referrals');
 			items.add('Weekly_Referrals');
+			items.add('IL_AdmissionSteps');
 		}
 		if(og == 'Care Meridian'){
 			// EC-57 - added
