@@ -266,7 +266,17 @@
                             <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}" /> &nbsp;
                             <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" /> &nbsp;
                             <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
-                        </apex:outputPanel>    
+                        </apex:outputPanel>
+                    </apex:facet>
+                    <apex:facet name="start">
+                        <apex:outputPanel >
+                            <apex:image value="/img/loading.gif" style="height: 15px;" />
+                            <apex:commandButton value="Processing..." status="SaveStatus1" rendered="{!editSA}" disabled="true" />
+                        </apex:outputPanel>
+                    </apex:facet>
+                </apex:actionStatus>
+            </div>
+            
 	</script>
 	<apex:pagemessages id="msgs" />
 	<br />
@@ -294,11 +304,9 @@
 			<apex:param name="effend" value="" assignTo="{!effEnd}" />
 		</apex:actionFunction>
 		
-<!-- 
-                        </apex:outputPanel>
-                        
+<!--
+Moved code to Line 271
                     </apex:facet>
--->                    
                     <apex:facet name="start">
                         <apex:outputPanel >
                             <apex:image value="/img/loading.gif" style="height: 15px;" />
@@ -307,6 +315,7 @@
                     </apex:facet>
                 </apex:actionStatus>
             </div>
+-->            
             <apex:pageBlockSection id="ServAssignDetail" collapsible="false" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
