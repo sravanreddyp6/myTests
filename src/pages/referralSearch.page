@@ -75,7 +75,7 @@ var validateInput = function( ) {
 	
 	  
       <apex:pageblockButtons location="bottom">
-        <apex:commandButton value="Back" id="cancelButton" action="{!redirectToBack}" />
+      	<input type="button" class="btn" id="cancel" value="Back" onclick="window.history.go({!submitCount});" />
       </apex:pageblockButtons>
 
       <apex:outputPanel layout="block">

@@ -2,9 +2,12 @@
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+
+<apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}"/>  
+
 <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.js')}" />
-
 <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/custom-green/jquery-ui.min.css')}"/>
@@ -14,12 +17,20 @@
     .rowScore2{ background-color: rgba(255, 165, 0, 0.65);}
     .rowScore3{ background-color: rgba(255, 0, 0, 0.65);}
     .groupHeader{background-color: rgb(229, 229, 229); font-weight: bold;}
+    
+    .chosen-single {
+		background-color: white !important;
+		background-image:none !important;
+		box-shadow:none !important;
+		border-radius:0px !important;
+	}
+	
 </style>
 <apex:form >
 <h1 style="font-size: 25px; padding: 9px; display: block;">CANS Over Time by Person Being Served (Table)</h1>
 <apex:pageBlock title="Filters" >
     <apex:pageBlockSection columns="1">
-       <apex:selectList required="true" size="1" label="Person Being Served" value="{!selectedPBS}" >
+       <apex:selectList required="true" size="1" label="Person Being Served" value="{!selectedPBS}"  id="pbslist" styleclass="chosenSelect">
            <apex:selectOptions value="{!optPBS}" />
         </apex:selectList>     
         <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="CANS Assessment Data">
@@ -83,10 +94,13 @@
 </tbody>
 </table>    
 <script>
+
+
 j$ = jQuery.noConflict();
-//$ = jQuery.noConflict();
+
 j$(document).ready(function() {
-console.log('started');
+	console.log('started');
+	    
     j$('#rptDataTbl').dataTable( {
         "bPaginate": false,
         "ordering": false, 
@@ -112,7 +126,9 @@ console.log('started');
                 }
             } );
         }      
-    } );    
+    } );
+    
+
 } );
 
 </script>
@@ -123,6 +139,11 @@ console.log('started');
 
 
 <script>
+j$ = jQuery.noConflict();
+	j$( document ).ready(function() {
+	j$('[id$=pbslist]').chosen();
+	});
+
 
 var tableToExcel = (function() {
   var uri = 'data:application/vnd.ms-excel;base64,'

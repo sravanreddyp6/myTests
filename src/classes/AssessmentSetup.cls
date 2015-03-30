@@ -10,10 +10,13 @@ public without sharing class AssessmentSetup {
       
       List<Assessment__c> theseAssessments = new List<Assessment__c>();
       theseAssessments = assessments;
+
+      
       Map<ID, Assessment__c> assessmentMap = new Map<ID, Assessment__c>();
-      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c FROM Assessment__c WHERE ID IN :assessments]) {
+      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c, AccountPerson__c, AccountPerson__r.PersonContact.Age__c FROM Assessment__c WHERE ID IN :assessments]) {
         assessmentMap.put(assessment.ID, assessment);
       }
+ 
       
       // List to hold the ID and Type of ALL domains, plus
       // child question data
@@ -87,7 +90,62 @@ public without sharing class AssessmentSetup {
                         }
                     }
                 }
-                // END: RBO-289       
+                // END: RBO-289 
+                // For Resident Assessment
+                else if(a.Type__c=='Resident Assessment'){
+                  if(domainMap.get(assmtDomainLoopId).Assessment_Type2__c=='Resident Assessment') {
+                        dummyAdr = new Assessment_Domain_Result__c();
+                        dummyAdr.Assessment__c = a.Id; 
+                        dummyAdr.Assessment_Domain__c = domainMap.get(assmtDomainLoopId).Id;
+                        insert dummyAdr;                                    
+                    
+                        for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
+                          if(q.Question_title__c == 'Age'){
+                            Decimal rating = assessmentMap.get(a.id).AccountPerson__r.PersonContact.Age__c;
+                            string ratingString;
+                            Decimal score;
+                            if(rating < 1){
+                              ratingString = '<1';
+                              score = 0;
+                            }
+                            else if(rating >= 1 && rating <= 6){
+                              ratingString = '1 to 6';
+                              score = 5;
+                            }
+                            else if(rating >= 6 && rating <= 65) {
+                              ratingString = '6 to 65';
+                              score = 0;
+                            }
+                            else{
+                              ratingString = '>65';
+                              score = 4;
+                            }
+                            
+                            dummyAr.add(new Assessment_Response__c(
+                                Assessment__c = a.Id,
+                                Question__c = q.ID,
+                                Assessment_Domain_Result__c = dummyAdr.Id,
+                                Rating__c = ratingString,
+                                Score__c = score,
+                                Color__c = NULL)
+                              );
+                            
+                          }
+                          
+                          else{ 
+                              dummyAr.add(new Assessment_Response__c(
+                                Assessment__c = a.Id,
+                                Question__c = q.ID,
+                                Assessment_Domain_Result__c = dummyAdr.Id,
+                                Rating__c = NULL,
+                                Color__c = NULL)
+                              );
+                            }
+                        }
+                    }
+                  
+                }                   
+                else if (a.Type__c=='Restraint Reduction') {}   
                 else if (a.Assessment_Type__c == domainMap.get(assmtDomainLoopId).Assessment_Type__c){
                     dummyAdr = new Assessment_Domain_Result__c();
                     dummyAdr.Assessment__c = a.Id; 
@@ -175,9 +233,15 @@ public without sharing class AssessmentSetup {
         Set<Id> assmtId = new Set<Id>();
         Map<Id,Assessment__c> assmtMap = new Map<Id,Assessment__c>();
         
+        set<string> typesToIgnoreNaming = new set<string>();
+        typesToIgnoreNaming.add('Resident Assessment');
+        typesToIgnoreNaming.add('Restraint Reduction');
+
         for (Assessment__c assmt : assessments){
-            assmtId.add(assmt.Id);
-            assmtMap.put(assmt.Id,assmt);
+          if(  !typesToIgnoreNaming.contains(assmt.Type__c) ){
+              assmtId.add(assmt.Id);
+              assmtMap.put(assmt.Id,assmt);
+          }
         }
         
         // Re-select the assessments that were already inserted prior to trigger fire
@@ -200,68 +264,72 @@ public without sharing class AssessmentSetup {
         
         // Loop through the assessment IDs we got from the trigger.
         for (Id assmtIdsToLoopThrough : assmtID){
-        
             Assessment__c thisAssmt = assmtMap.get(assmtIdsToLoopThrough);
-            system.debug('ty why - ' + thisAssmt.Assessment_Type_Name__c);
-         //   if(thisAssmt.Assessment_Type_Name__c == 'CANS'){
-                
-                String typeOfThisAssmt;
-                Integer numberOfAdmissionForAssmtWeAreCreating;
-                
-                // Get all admissions for this person being served and order by date
-                List<Contact> thisPersonsContactID = [SELECT Id FROM Contact
-                    WHERE AccountId = :thisAssmt.AccountId__c];
-                List<Admission__c> thisPersonsAdmissions = [SELECT Id, Effective_Date__c FROM Admission__c
-                    WHERE Person_Being_Served__c = :thisPersonsContactID.get(0).Id ORDER BY Effective_Date__c];
-                Integer countOfAdmissions = thisPersonsAdmissions.size();
-                Map<Integer,Admission__c> mapOfThisPersonsAdmissions = new Map<Integer,Admission__c>();
-                Integer episodeMapCounter = 1;
-                
-                for (Admission__c e : thisPersonsAdmissions){
-                    mapOfThisPersonsAdmissions.put(episodeMapCounter, e);
-                    episodeMapCounter++;
-                }
-                
-                for ( Integer numberOfAdmission : mapOfThisPersonsAdmissions.keySet() ){
-                    if ( thisAssmt.Admission__c == mapOfThisPersonsAdmissions.get(numberOfAdmission).Id){
-                        numberOfAdmissionForAssmtWeAreCreating = numberOfAdmission;
-                    }
-                }
-                
-                
-                // Loop through all Assessment_Type__c IDs, and figure out what
-                // type of assessment this one is.
-                for( ID assmtTypesToLoopThrough : assmtTypeMap.keySet() ){
-                    if ( assmtTypesToLoopThrough == thisAssmt.Assessment_Type__c ){
-                        typeOfThisAssmt = assmtTypeMap.get(assmtTypesToLoopThrough).Name;
-                    }
-                }
-                
-                // Get the assessments of this type already completed for the user.
-                List<Assessment__c> assmtPreExisting = [SELECT Id, Name, Interval__c FROM Assessment__c 
-                    WHERE AccountPerson__c = :thisAssmt.AccountPerson__c
-                    AND Admission__c = :thisAssmt.Admission__c];
-                    
-                List<Account> thisPerson = [SELECT FirstName, LastName FROM Account WHERE Id = :thisAssmt.AccountId__c LIMIT 1];
-                String thisPersonFirstName = thisPerson.get(0).FirstName;
-                String thisPersonLastName = thisPerson.get(0).LastName;
-                
-                Integer countOfAssmts = assmtPreExisting.size();
-                //System.Debug('How many assessments has this person had?' + countOfAssmts);
-                
-                // Loop through the writabe list of assessments and update the Assessment_Custom_Name__c
-                // value.    
-                for (Assessment__c tryChangeCustomName : assmtsSelectedToUpdate){
-                    if (tryChangeCustomName.Id == assmtIdsToLoopThrough)
-                        if (tryChangeCustomName.Interval__c == 'Intake' || tryChangeCustomName.Interval__c == 'Discharge'){
-                            tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c;
-                        }
-                        else{
-                            tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c + thisAssmt.Quarter__c;
-                        }
-                    update tryChangeCustomName;
-                }
-         //   }
+            system.debug('ty why - ' + thisAssmt.Assessment_Type_Name__c);          
+          if(thisAssmt.Assessment_Type_Name__c == 'Immunization - Child'){}
+          else if(thisAssmt.Assessment_Type_Name__c == 'Immunization - Adult'){}
+          else{
+
+           //   if(thisAssmt.Assessment_Type_Name__c == 'CANS'){
+                  
+                  String typeOfThisAssmt;
+                  Integer numberOfAdmissionForAssmtWeAreCreating;
+                  
+                  // Get all admissions for this person being served and order by date
+                  List<Contact> thisPersonsContactID = [SELECT Id FROM Contact
+                      WHERE AccountId = :thisAssmt.AccountId__c];
+                  List<Admission__c> thisPersonsAdmissions = [SELECT Id, Effective_Date__c FROM Admission__c
+                      WHERE Person_Being_Served__c = :thisPersonsContactID.get(0).Id ORDER BY Effective_Date__c];
+                  Integer countOfAdmissions = thisPersonsAdmissions.size();
+                  Map<Integer,Admission__c> mapOfThisPersonsAdmissions = new Map<Integer,Admission__c>();
+                  Integer episodeMapCounter = 1;
+                  
+                  for (Admission__c e : thisPersonsAdmissions){
+                      mapOfThisPersonsAdmissions.put(episodeMapCounter, e);
+                      episodeMapCounter++;
+                  }
+                  
+                  for ( Integer numberOfAdmission : mapOfThisPersonsAdmissions.keySet() ){
+                      if ( thisAssmt.Admission__c == mapOfThisPersonsAdmissions.get(numberOfAdmission).Id){
+                          numberOfAdmissionForAssmtWeAreCreating = numberOfAdmission;
+                      }
+                  }
+                  
+                  
+                  // Loop through all Assessment_Type__c IDs, and figure out what
+                  // type of assessment this one is.
+                  for( ID assmtTypesToLoopThrough : assmtTypeMap.keySet() ){
+                      if ( assmtTypesToLoopThrough == thisAssmt.Assessment_Type__c ){
+                          typeOfThisAssmt = assmtTypeMap.get(assmtTypesToLoopThrough).Name;
+                      }
+                  }
+                  
+                  // Get the assessments of this type already completed for the user.
+                  List<Assessment__c> assmtPreExisting = [SELECT Id, Name, Interval__c FROM Assessment__c 
+                      WHERE AccountPerson__c = :thisAssmt.AccountPerson__c
+                      AND Admission__c = :thisAssmt.Admission__c];
+                      
+                  List<Account> thisPerson = [SELECT FirstName, LastName FROM Account WHERE Id = :thisAssmt.AccountId__c LIMIT 1];
+                  String thisPersonFirstName = thisPerson.get(0).FirstName;
+                  String thisPersonLastName = thisPerson.get(0).LastName;
+                  
+                  Integer countOfAssmts = assmtPreExisting.size();
+                  //System.Debug('How many assessments has this person had?' + countOfAssmts);
+                  
+                  // Loop through the writabe list of assessments and update the Assessment_Custom_Name__c
+                  // value.    
+                  for (Assessment__c tryChangeCustomName : assmtsSelectedToUpdate){
+                      if (tryChangeCustomName.Id == assmtIdsToLoopThrough)
+                          if (tryChangeCustomName.Interval__c == 'Intake' || tryChangeCustomName.Interval__c == 'Discharge'){
+                              tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c;
+                          }
+                          else{
+                              tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c + thisAssmt.Quarter__c;
+                          }
+                      update tryChangeCustomName;
+                  }
+           //   }
+          }
         }
         
     }
