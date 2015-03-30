@@ -48,9 +48,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>ASSESSMENT  - Individual score valiues for a person&apos;s assessmemt</description>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>Custom_Questions</fullName>
         <description>Used to clone Assessment responses dynamically</description>
@@ -66,6 +69,17 @@
         </displayedFields>
         <label>Custom Questions</label>
     </fieldSets>
+    <fields>
+        <fullName>Age__c</fullName>
+        <externalId>false</externalId>
+        <label>Age</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
     <fields>
         <fullName>Assessment_Domain_Result__c</fullName>
         <externalId>false</externalId>
@@ -104,6 +118,14 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Comment__c</fullName>
+        <externalId>false</externalId>
+        <label>Comment</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
         <fullName>Description_of_Risk__c</fullName>
         <externalId>false</externalId>
         <label>Description of Risk</label>
@@ -111,6 +133,35 @@
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Gender__c</fullName>
+        <externalId>false</externalId>
+        <label>Gender</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Male</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Female</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>OptionID__c</fullName>
+        <description>optional to attach the original assessment option to the record</description>
+        <externalId>false</externalId>
+        <label>OptionID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Plan_to_reduce_Risk__c</fullName>
@@ -134,6 +185,25 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>RatingDate__c</fullName>
+        <externalId>false</externalId>
+        <label>RatingDate</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>RatingNumber__c</fullName>
+        <externalId>false</externalId>
+        <label>RatingNumber</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Rating__c</fullName>
         <description>Rating / Score entered by user</description>
         <externalId>false</externalId>
@@ -143,6 +213,72 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Received_FCT_services_before__c</fullName>
+        <externalId>false</externalId>
+        <label>Received FCT services before?</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Relationship_to_Person_Being_Served_Othe__c</fullName>
+        <externalId>false</externalId>
+        <label>Relationship to Person Being Served Othe</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Relationship_to_Person_Being_Served__c</fullName>
+        <externalId>false</externalId>
+        <label>Relationship to Person Being Served</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Full Sibling</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Foster</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Adopted</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Half sibling</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Step-sibling</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Unknown</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Response_Has_Value__c</fullName>
@@ -208,9 +344,11 @@
     <label>Assessment Response</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>OBJECT_ID</columns>
         <columns>NAME</columns>
         <columns>Rating__c</columns>
         <columns>Assessment__c</columns>
+        <columns>CREATED_DATE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>

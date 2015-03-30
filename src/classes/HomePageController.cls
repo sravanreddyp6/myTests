@@ -9,7 +9,6 @@ public with sharing class HomePageController{
 	public String viewstsk{get;set;}
 	public String FrstName{get;set;}
 	public String LstName{get;set;}
-	public boolean displayPop{get;set;}
 	public String objectName{get;set;}
 
 	private static Set<String> sObjNamesSet;
@@ -58,13 +57,128 @@ public with sharing class HomePageController{
 	public String CredId;
 	public String TypObj;
 
+	public Id selectedProgram { get; set; }
+	public List<SelectOption> programslist { get; set; }
+	public Service_Assignment__c[] serviceAssignments { get; set; }
+
+	// We use this variable to keep track of which service assignment we want
+	// to run an action on
+	public Id serviceAssignmentIdForAction { get; set; }
+
+	// Given the id of a service assignment, here's a map of the actions
+	// (excluding Create New Shift Doc) for the latest shift doc of that service
+	// asignment (providing that the shift doc is active)
+	public Map<Id, List<SelectOption>> serviceAssignmentToSelectOptionMap { get; set; }
+	// List of repeatable section/subsection/subsubsection for CM Shift Doc
+	public Set<String> cmShiftDocRepeatable;
+
+	// Whether to show people with inactive service assignments
+	public Boolean pbsOnlyShowActiveServiceAssignment { get; set; }
+
+	public transient List<HomePageSearchController.SearchResult> searchResultList { get; set; }
+	public Id searchResultPBS { get; set; }
+	public Id highlightedServiceAssignmentId { get; set; }
 
 	//Constructor
 	public HomePageController(){
+		pbsOnlyShowActiveServiceAssignment = true;
+		searchResultList = new List<HomePageSearchController.SearchResult>();
+		programsList = new list<SelectOption>();
+		serviceAssignmentToSelectOptionMap = new Map<Id, List<SelectOption>>();
+		List<AggregateResult> slPrgms = [
+			SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
+			  FROM service_assignment__c
+			GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c
+			HAVING COUNT(service_location__r.id) > 0
+			ORDER BY service_location__r.program__c
+		];
+		for (AggregateResult slPrgm : slPrgms) {
+			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
+		}
+		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram');
+		if (initialProgramCookie == null) {
+			if (programsList.size() > 0) {
+				selectedProgram = programslist[0].getValue();
+			}
+		} else {
+			String tmpId = initialProgramCookie.getValue();
+			if (tmpId != null && tmpId != '') {
+				selectedProgram = tmpId;  // Because you can't assign null to an ID variable
+			}
+		}
+		// get list of repeatables
+		List<AggregateResult> evalRepeats = [
+			SELECT category__c, sub_category__c, sub_sub_category__c
+			  FROM eval__c
+			 WHERE eval_type__r.name = 'Head To Toe'
+			   AND eval_type__r.Category__c = 'Care Meridian'
+			   AND eval__c.field_name__c = 'isRepeatable'
+			   AND eval__c.visible__c = false
+			GROUP BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c, category__c, sub_category__c, sub_sub_category__c
+			ORDER BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c
+		];
+		cmShiftDocRepeatable = new set<String>();
+		for (AggregateResult ag : evalRepeats){
+			cmShiftDocRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
+		}
+		updateProgramSelection();
 		checkTmnUserRecord();
 		shareobj();
-		reports();
 		mineTasks();
+	}
+
+	public void updateProgramSelection() {
+		String query = '' +
+			'SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
+			'       Admission__r.Id, ' +
+			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
+			'       (SELECT Id, Name, Status__c FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' ORDER BY CreatedDate DESC LIMIT 1) ' +
+			'FROM Service_Assignment__c ' +
+			'WHERE Service_Location__c = :selectedProgram ' +
+			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\'': '') +
+			'ORDER BY Person_Being_Served__r.Name';
+		serviceAssignments = Database.query(query);
+		Map<Id, Id> evaluationToServiceAssignmentMap = new Map<Id, Id>();
+		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
+			if (serviceAssignment.Evaluations__r.size() > 0 && serviceAssignment.Evaluations__r[0].Status__c == 'Draft') {
+				evaluationToServiceAssignmentMap.put(serviceAssignment.Evaluations__r[0].Id, serviceAssignment.Id);
+			}
+			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, new List<SelectOption>());
+		}
+		List<AggregateResult> responses = [
+			SELECT What_Id__c, Eval__r.Category__c cat, Eval__r.Sub_Category__c subCat,
+			       Eval__r.Sub_Sub_Category__c subSubCat
+			  FROM Eval_Value__c
+			 WHERE What_Id__c IN :evaluationToServiceAssignmentMap.keySet()
+			   AND Eval_Section_Type__c != 'Activity Log'
+			GROUP BY Eval__r.cat_seq_text__c, Eval__r.subcat_seq_text__c,
+			         Eval__r.subsubcat_seq_text__c, Eval__r.category__c,
+			         Eval__r.sub_category__c, Eval__r.Sub_Sub_Category__c,
+			         What_Id__c
+			ORDER BY Eval__r.cat_seq_text__c, Eval__r.subcat_seq_text__c,
+			         Eval__r.subsubcat_seq_text__c
+		];
+		for (AggregateResult response: responses) {
+			String compositeKey = response.get('cat') + '~' + response.get('subCat') + '~' + (String.isBlank((string) response.get('subSubCat')) ? '' : (string) response.get('subSubCat'));
+			if (!cmShiftDocRepeatable.contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
+				continue;
+			}
+			serviceAssignmentToSelectOptionMap.get(evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c'))).add(
+				new SelectOption('shiftDocAction-' + compositeKey,
+					'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
+				)
+			);
+		}
+		highlightedServiceAssignmentId = null;
+		ApexPages.currentPage().setCookies(new Cookie[]{ new Cookie('homePageInitialProgram', selectedProgram, null, 30*24*60*60, false) }); //  set the cookie max age to a month
+	}
+
+	public String getOperatingGroup() {
+		return operatingGroup;
+	}
+
+	public void getReportList() {
+		reports();
 	}
 
 	//Wrapper class for Approvals
@@ -298,51 +412,67 @@ public with sharing class HomePageController{
 		if(OperatingGroup != null){
 			set<string> okRefRpts = getReportsToShow(OperatingGroup );
 			system.debug('reports in scope - ' + okRefRpts);
-			for(Report rpt:report(RefId, null)){
-				if ( canSeeReport( rpt.Id )){
-					if(okRefRpts.contains(rpt.DeveloperName)){
-						refrportlst.add(rpt);
-					}
+
+			for(Report rpt: filterReportAccess(report(RefId, null))) {
+				if (okRefRpts.contains(rpt.DeveloperName)) {
+					refrportlst.add(rpt);
 				}
 			}
 		}
 
 		contractrportlst = new List<Report>();
-		for(Report rpt:report(CntrctId, null)){
-			if ( canSeeReport( rpt.Id ))
-				contractrportlst.add(rpt);
+		for(Report rpt: filterReportAccess(report(CntrctId, null))) {
+			contractrportlst.add(rpt);
 		}
 
 		credrportlst = new List<Report>();
-		for(Report rpt:report(CredId,null)){
-			if ( canSeeReport( rpt.Id ))
-				credrportlst.add(rpt);
+		for(Report rpt: filterReportAccess(report(CredId,null))) {
+			credrportlst.add(rpt);
 		}
 
 		docrportlst = new List<Report>();
-		for(Report rpt:report(ESDActivityId,'Docs')){
-			if ( canSeeReport( rpt.Id))
-				docrportlst.add(rpt);
+		for(Report rpt: filterReportAccess(report(ESDActivityId,'Docs'))) {
+			docrportlst.add(rpt);
 		}
 
 		PBSrportlst = new List<Report>();
-		for(Report rpt:report(ESDActivityId,ESDAct)){
-			if ( canSeeReport( rpt.Id))
-				PBSrportlst.add(rpt);
+		for(Report rpt: filterReportAccess(report(ESDActivityId,ESDAct))) {
+			PBSrportlst.add(rpt);
 		}
 
-		for(Report rpt1:report(ESDbillingId,ESDbill)){
-			if ( canSeeReport( rpt1.Id))
-				PBSrportlst.add(rpt1);
+		for(Report rpt1: filterReportAccess(report(ESDbillingId,ESDbill))) {
+			PBSrportlst.add(rpt1);
 		}
 
-		for(Report rpt2:report(ESDSupyId,ESDsup)){
-			if ( canSeeReport( rpt2.Id))
-				PBSrportlst.add(rpt2);
+		for(Report rpt2: filterReportAccess(report(ESDSupyId,ESDsup))) {
+			PBSrportlst.add(rpt2);
 		}
 
 		return null;
 	}
+	// Given a list of reports, return a list of reports that the context user
+	// has access to
+	public List<Report> filterReportAccess(List<Report> reports) {
+		System.debug('reports that need filter:' + reports);
+		Map<Id, Report> reportMaps = new Map<Id, Report>();
+		for (Report report: reports) {
+			reportMaps.put(report.Id, report);
+		}
+		Map<Id, UserRecordAccess> accessMap = new Map<Id, UserRecordAccess>([
+			SELECT RecordId, HasReadAccess
+			  FROM UserRecordAccess
+			 WHERE UserId = :UserInfo.getUserId()
+			   AND RecordId IN :reportMaps.keySet()
+		]);
+		List<Report> accessibleReports = new List<Report>();
+		for (Report report: reports) {
+			if (accessMap.get(report.Id).HasReadAccess) {
+				accessibleReports.add(reportMaps.get(report.Id));
+			}
+		}
+		return accessibleReports;
+	}
+
 	public List<Report> report(Id ownId,String ReportText){
 		String query = 'SELECT Name, Id,OwnerId, description, DeveloperName, SystemModstamp FROM report where OwnerId=:ownId';
 		if(ReportText!=null && ReportText=='ESDAct'){
@@ -447,54 +577,69 @@ public with sharing class HomePageController{
 			}
 		}
 	}
-	public PageReference getsearchNames(){
 
+	public PageReference getsearchNames() {
 		try {
-			if((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
+			if ((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
 				system.debug('coming here');
-				displayPop = false;
 				PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
 				newocp.setRedirect(true);
 				return newocp;
 			}
-
-			else{
-
-				displayPop = true;
-				return null;
-			}
-
-		} catch (DMLException e) {
-
-			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Error opening the Search Results.'));
 			return null;
-
+		} catch (DMLException e) {
+			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
+				'Error opening the Search Results.')
+			);
+			return null;
 		}
-
 		return null;
 	}
 
-
-	// This funtion is here to work around a salesforce bug where report folder security is not being honored through apex queries.
-	// To determine whether report is accessible to the user, attempt a page reference to the report.  A non-permitted user will receive an HTTP 500 error.
-	// We can put the page instantiation into a try/catch block and return appropriately
-	// We can remove this function when the bug is fixed.
-	Boolean canSeeReport( ID reportid ) {
-		return true;
-		// tests to see whether user can view report
-		try {
-			PageReference pr = new PageReference( '/' + string.valueof( reportID));
-
-			return (!pr.getContent().toString().contains('Data Not Available'));
+	public void getSearchResults() {
+		if ((FrstName == null || FrstName == '') && (LstName ==null || LstName == '')) {
+			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
+				'You have to specify either a First Name or Last Name')
+			);
+			return;
 		}
-		catch(DmlException e) {
-			// DmlException handling code here.
-			return false;
-		} catch(Exception e) {
-			// Generic exception handling code here.
-			return false;
+		HomePageSearchController searchController = new HomePageSearchController();
+		searchController.firstName = FrstName;
+		searchController.lastName = LstName;
+		searchResultList = searchController.getSearchResults(true, true, false);
+	}
+
+	public void highlightSearchResultPBS() {
+		Service_Assignment__c[] serviceAssignments = [
+			SELECT Id, Person_Being_Served__r.Id, Service_Location__r.Id, Status__c
+			FROM Service_Assignment__c
+			WHERE Person_Being_Served__c = :searchResultPBS
+			ORDER BY Person_Being_Served__r.Name
+		];
+		// We can only choose one row to highlight, so let's focus on ones with
+		// active service assignment (if none exists then we'll highlight the
+		// inactive ones)
+		Service_Assignment__c highlightedSA;
+		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
+			if (serviceAssignment.Status__c == 'Active') {
+				highlightedSA = serviceAssignment;
+			}
+			if (highlightedSA == null && serviceAssignment.Status__c != 'Active') {
+				highlightedSA = serviceAssignment;
+			}
+		}
+		if (highlightedSA != null) {
+			selectedProgram = highlightedSA.Service_Location__r.Id;
+			if (pbsOnlyShowActiveServiceAssignment && highlightedSA.Status__c != 'Active') {
+				pbsOnlyShowActiveServiceAssignment = false;
+			}
+			updateProgramSelection();
+			highlightedServiceAssignmentId = highlightedSA.Id;
+		} else {
+			highlightedServiceAssignmentId = null;
 		}
 	}
+
 	public set<string> getReportsToShow(string og){
 		set<string> items = new set<string>();
 

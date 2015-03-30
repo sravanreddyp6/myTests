@@ -266,6 +266,32 @@
                             <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}" /> &nbsp;
                             <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" /> &nbsp;
                             <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
+	</script>
+	<apex:pagemessages id="msgs" />
+	<br />
+	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations" status="{!$Component.myFRM.residentAssessmentShiftDocBlock.addShiftDocStatus}" />
+	<apex:form id="myFRM">
+		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
+		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
+		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
+			<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
+		</apex:actionFunction>
+		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1" />
+		<apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" rendered="{!canEditSA}" />
+		<!-- To set focus on Top -->
+		<input id="hiddenElementId" type="hidden" />
+		<apex:inputhidden id="phaseToSave" value="{!theServAssign.Phase__c}" rendered="{!canEditSA}" />
+		<apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" rerender="pbDiagnosis,diagnosisModal,diagnosisEntry,diagnosisEntry2,msgs" />
+		<apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs" />
+		<apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="pbDiagnosis,modalWrapper,diagnosisEntry,diagnosisEntry2,ServAssignDetail,AOServAssignDetail,msgs">
+			<apex:param name="editid" value="" assignTo="{!diagEditId}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="refreshDiagnoses" action="{!refreshDiagnoses}" rerender="pbDiagnosis" />
+		<apex:actionFunction name="showAddLocation" action="{!showAddLocation}" immediate="true" rerender="serviceLocationEntry,locationDisplay, msgs" oncomplete="openDialog('serviceLocationModal', 'span', 'Add/Edit Location'); " />
+		<apex:actionFunction name="setEffectiveDate" action="{!setEffectiveDate}" rerender="ProgAssocViewNEW, ProgAssoc,ProgramSelect,ServCodeSelect" immediate="true">
+			<apex:param name="effstart" value="" assignTo="{!effDate}" />
+			<apex:param name="effend" value="" assignTo="{!effEnd}" />
+		</apex:actionFunction>
 
                         </apex:outputPanel>
                     </apex:facet>
@@ -451,6 +477,12 @@
              
 
             </apex:pageBlockSection>
+				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
+				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM}">
+					<apex:outputLabel value="Model" for="modelfield" />
+					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
+				</apex:pageblocksectionitem>
+			</apex:pageBlockSection>
 
             <apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM}">
                 <apex:pageBlockSectionItem rendered="{!editSA}">
@@ -1092,6 +1124,234 @@ END: Uncomment to have the element collapsed by default -->
             <apex:outputText value="No Records to display" rendered="{!evaluations.size=0 || evaluations == null}" />
             <apex:outputPanel rendered="{!evaluations.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
         </apex:pageBlock>
+		<apex:pageBlock title="Resident Assessment" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
+			<div class="pbHeaderButton">
+				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
+					<apex:actionStatus id="AddOldResidentAssessmentStatus" >
+						<apex:facet name="start" >
+							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+        					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+            					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        					</div>
+        				</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
+
+				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && showResAsmt}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" id="residentAsmtButton" />
+					<apex:actionStatus id="AddResidentAssessmentStatus" >
+						<apex:facet name="start">
+							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+        					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+            					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        					</div>
+        				</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
+			</div>
+			<apex:pageBlockTable styleclass="pcBody-list" value="{!residentAssessments}" var="evs"  rendered="{!residentAssessments.size > 0}" id="evaluations">
+					<apex:column >
+						 <apex:facet name="header">Action</apex:facet>
+						<apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
+					</apex:column>
+					<apex:column >
+						 <apex:facet name="header">Name</apex:facet>
+						<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+					</apex:column>
+					<apex:column >
+						 <apex:facet name="header">Status</apex:facet>
+						 <apex:outputText >{!evs.Status__c}</apex:outputText>
+					</apex:column>
+					<apex:column headerValue="Signed At" >
+						<apex:outputfield value=" {!evs.Signed_At__c}" />
+					</apex:column>
+<!-- 					<apex:column value="{!evs.Is_Signed__c}" /> -->
+<!-- 					<apex:column headerValue="Signed By"> -->
+<!-- 						 <apex:outputText  escape="false"  rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 							<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a> -->
+<!-- 						</apex:outputText> -->
+<!-- 					</apex:column> -->
+<!-- 					<apex:column headerValue="Signed At"> -->
+<!-- 						<apex:outputText  rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 							<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" /> -->
+<!-- 						</apex:outputText> -->
+<!-- 					</apex:column> -->
+					<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+					<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+			</apex:pageBlockTable>
+			<apex:outputText value="No Records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
+			<apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+		</apex:pageBlock>
+
+		<a name="ShiftAssessments" id="ShiftAssessments"></a>
+
+		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
+			<div class="pbHeaderButton">
+				<apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none"/>
+				<apex:actionStatus id="AddShiftDocStatus">
+					<apex:facet name="start">
+						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+        				<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+            				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        				</div>
+        			</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
+			</div>
+			<apex:pageBlockTable styleclass="pcBody-list" value="{!shiftAssessments}" var="evs" rendered="{!shiftAssessments.size > 0}" id="evaluations2">
+				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}&tab=demographicsTab" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Name">
+					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Shift Start Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Shift End Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Head to Toe Status">
+					<apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Signed At" >
+					<apex:outputfield value=" {!evs.Head_to_Toe_Signed_At__c}" />
+				</apex:column>
+				<apex:column headerValue="Shift Status">
+					<apex:outputText value="{!evs.Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Signed At" >
+					<apex:outputfield value=" {!evs.Signed_At__c}" />
+				</apex:column>
+<!-- 				<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" /> -->
+<!-- 				<apex:column headerValue="Signed By"> -->
+<!-- 					 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false"> -->
+<!-- 						<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a> -->
+<!-- 					</apex:outputText> -->
+<!-- 				</apex:column> -->
+<!-- 				<apex:column headerValue="Signed At"> -->
+<!-- 					<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 						<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" /> -->
+<!-- 					</apex:outputText> -->
+<!-- 				</apex:column> -->
+				<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+			</apex:pageBlockTable>
+			<apex:outputText value="No Records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
+			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Shift" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+		</apex:pageBlock>
+		<apex:pageBlock title="Resident Assessment" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
+			<div class="pbHeaderButton">
+				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
+					<apex:actionStatus id="AddOldResidentAssessmentStatus" >
+						<apex:facet name="start" >
+							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+        					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+            					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        					</div>
+        				</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
+
+				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && showResAsmt}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" id="residentAsmtButton" />
+					<apex:actionStatus id="AddResidentAssessmentStatus" >
+						<apex:facet name="start">
+							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+        					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+            					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        					</div>
+        				</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
+			</div>
+			<apex:pageBlockTable styleclass="pcBody-list" value="{!residentAssessments}" var="evs"  rendered="{!residentAssessments.size > 0}" id="evaluations">
+					<apex:column >
+						 <apex:facet name="header">Action</apex:facet>
+						<apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
+					</apex:column>
+					<apex:column >
+						 <apex:facet name="header">Name</apex:facet>
+						<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+					</apex:column>
+					<apex:column >
+						 <apex:facet name="header">Status</apex:facet>
+						 <apex:outputText >{!evs.Status__c}</apex:outputText>
+					</apex:column>
+					<apex:column headerValue="Signed At" >
+						<apex:outputfield value=" {!evs.Signed_At__c}" />
+					</apex:column>
+<!-- 					<apex:column value="{!evs.Is_Signed__c}" /> -->
+<!-- 					<apex:column headerValue="Signed By"> -->
+<!-- 						 <apex:outputText  escape="false"  rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 							<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a> -->
+<!-- 						</apex:outputText> -->
+<!-- 					</apex:column> -->
+<!-- 					<apex:column headerValue="Signed At"> -->
+<!-- 						<apex:outputText  rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 							<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" /> -->
+<!-- 						</apex:outputText> -->
+<!-- 					</apex:column> -->
+					<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+					<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+			</apex:pageBlockTable>
+			<apex:outputText value="No Records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
+			<apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+		</apex:pageBlock>
+
+		<a name="ShiftAssessments" id="ShiftAssessments"></a>
+
+		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
+			<div class="pbHeaderButton">
+				<apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none"/>
+				<apex:actionStatus id="AddShiftDocStatus">
+					<apex:facet name="start">
+						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+        				<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+            				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        				</div>
+        			</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
+			</div>
+			<apex:pageBlockTable styleclass="pcBody-list" value="{!shiftAssessments}" var="evs" rendered="{!shiftAssessments.size > 0}" id="evaluations2">
+				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}&tab=demographicsTab" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Name">
+					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Shift Start Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Shift End Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Head to Toe Status">
+					<apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Signed At" >
+					<apex:outputfield value=" {!evs.Head_to_Toe_Signed_At__c}" />
+				</apex:column>
+				<apex:column headerValue="Shift Status">
+					<apex:outputText value="{!evs.Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Signed At" >
+					<apex:outputfield value=" {!evs.Signed_At__c}" />
+				</apex:column>
+<!-- 				<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" /> -->
+<!-- 				<apex:column headerValue="Signed By"> -->
+<!-- 					 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false"> -->
+<!-- 						<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a> -->
+<!-- 					</apex:outputText> -->
+<!-- 				</apex:column> -->
+<!-- 				<apex:column headerValue="Signed At"> -->
+<!-- 					<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 						<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" /> -->
+<!-- 					</apex:outputText> -->
+<!-- 				</apex:column> -->
+				<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+			</apex:pageBlockTable>
+			<apex:outputText value="No Records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
+			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Shift" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+		</apex:pageBlock>
 
         <!--  Notes section -->
         <a name="Notes" id="Notes"></a>
@@ -1577,7 +1837,10 @@ END: Uncomment to have the element collapsed by default -->
             </apex:outputPanel>
         </apex:outputPanel>
     </apex:form>
+    <!--
     <apex:relatedList list="Action_Summaries__r" rendered="{!showLocation && $ObjectType.Action_Summary__c.accessible && !editSA}" />
+    -->
+    <apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
     <c:SObjectNotesAndAttachments parentId="{!Service_Assignment__c.id}" showAction="false" rendered="{!!editSA && newSA==false}"></c:SObjectNotesAndAttachments>
     <c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 

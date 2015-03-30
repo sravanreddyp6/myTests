@@ -28,7 +28,10 @@ public with sharing class Assessment_RiskForm_Redirect {
             ref = new PageReference('/apex/Assessment_IssaForm?id=' + assessment.id);
             return ref;       
         }      
-        
+        if (assessment.type__c == 'Restraint Reduction') {
+            ref = new PageReference('/apex/Assess_Restraint_Form?Assessid=' + assessment.id);
+            return ref;       
+        }        
         return null;
     } 
     //this is if the user clicked the edit link
