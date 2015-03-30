@@ -48,9 +48,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>ASSESSMENT  - Question for Assessment</description>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Allow_Custom_Question_Text__c</fullName>
         <defaultValue>false</defaultValue>
@@ -89,6 +92,14 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Is_MultiSelect__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Is MultiSelect</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Question_Description__c</fullName>
@@ -134,6 +145,40 @@
         <type>TextArea</type>
     </fields>
     <fields>
+        <fullName>Question_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Question Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Number</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Picklist</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Text</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TextArea</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TextLong</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Date</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>external_id__c</fullName>
         <externalId>true</externalId>
         <label>external id</label>
@@ -153,8 +198,26 @@
         <columns>Question_Domain__c</columns>
         <columns>Question_Title__c</columns>
         <columns>Assessment_Type__c</columns>
+        <columns>CREATED_DATE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>CANS</fullName>
+        <columns>NAME</columns>
+        <columns>Dev_Name__c</columns>
+        <columns>Question_Number__c</columns>
+        <columns>Question_Description__c</columns>
+        <columns>Question_Domain__c</columns>
+        <columns>Question_Title__c</columns>
+        <columns>Assessment_Type__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Assessment_Type__c</field>
+            <operation>equals</operation>
+            <value>a0cU0000002RG3n</value>
+        </filters>
+        <label>CANS</label>
     </listViews>
     <nameField>
         <displayFormat>{0}</displayFormat>

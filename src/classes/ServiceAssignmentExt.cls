@@ -127,7 +127,10 @@ public without sharing class ServiceAssignmentExt {
         return [select id, Name, Assessment_Date__c, Phase__c, Status__c, Disregard__c from Assessment__c where Type__c = 'FAD Summary' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
     }
 
+	public List<Assessment__c> getAssessments_RestraintReduction (){
 
+		return [select id, Name, Assessment_Date__c, Score__c, Status__c, Disregard__c from Assessment__c where Type__c = 'Restraint Reduction' AND Service_Assignment__c = :theServAssign.Id Order By Assessment_Date__c DESC];
+	}
 
     public List<Service_Assignment_Closure__c> getServAssignCloses() {
         return [ SELECT id, Name, IFCS_Record_Number__c, Status__c FROM Service_Assignment_Closure__c WHERE Service_Assignment__c = :theServAssign.Id ];
@@ -299,24 +302,10 @@ public without sharing class ServiceAssignmentExt {
 
   public String fundingSourceRecordType{
       get{
-//          if(this.fundingsources.size() > 0 ){
-//              fundingSourceRecordType = fundingsources.get(0).recordtype.name;
-//         }
-//          return fundingSourceRecordType;
             return 'CareMeridian';
       }
       set;
   }
-
-  public Evaluation__c evaluation {
-      get{
-         if (evaluation == null) {
-            evaluation = new Evaluation__c();
-        }
-        return evaluation;
-    }
-    set; }
-
 
 // END:  Parent level properties with get/set methods.
 
@@ -369,7 +358,7 @@ public without sharing class ServiceAssignmentExt {
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-                            Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
+					                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
                                 FROM Service_Assignment__c
                                 WHERE Id = :controller.getid()];
                 initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,Admission__r.Person_Being_Served__r.LastName,
@@ -544,9 +533,7 @@ public without sharing class ServiceAssignmentExt {
         }
 
     private boolean isRedwood(){
-        TMN_User__c[] tmnUsers = [
-            SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
-        ];
+				TMN_User__c[] tmnUsers = [ SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1 ];
         if (tmnUsers.size() == 0) {
             return false;
         }
@@ -847,44 +834,34 @@ public void loadProgramList() {
         return;
 
        system.debug( 'loading codes by: ' + currentprogramID + ', effdate: ' + SAStart  + ', effend: ' + SAEnd + ', asmt:' + AssessmentOnly +', state: ' + currentState );
-        listAvailableCodes = [SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
+				listAvailableCodes = [
+					SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
             WHERE Program_code__c = :currentProgramID
-                AND
-                ( end_date__c > :SAStart or end_date__c = null )
-                AND
-                    start_date__c <= :SAEnd
-                AND
-            Assessment_Only__c = :AssessmentOnly
-                AND
-            id NOT IN :SelectedCodeIDs
-                AND
-            state__c = :currentState
+					   AND ( end_date__c > :SAStart or end_date__c = null )
+					   AND start_date__c <= :SAEnd
+					   AND Assessment_Only__c = :AssessmentOnly
+					   AND id NOT IN :SelectedCodeIDs
+					   AND state__c = :currentState
             ORDER BY start_date__c desc, Service_Value__c];
 
        for(Service_Code__c sc : listAvailableCodes) {
         AvailableCodes.put(sc.Id,sc);
        }
+			}
 
-
-    }
     public void loadAvailableCodes () {
        List<Service_Code__c> listAvailableCodes = new List<Service_Code__c>();
        AvailableCodes = new Map<Id,Service_Code__c>();
 
-        listAvailableCodes = [SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
+				listAvailableCodes = [
+					SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c From Service_Code__c
             WHERE Program__c = :currentProgram
-                AND
-                start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null )
-                AND
-            Service_Line__c = :currentServiceLine
-                AND
-            Location__c= :currentLocation
-                AND
-            Assessment_Only__c = :AssessmentOnly
-                AND
-            id NOT IN :SelectedCodeIDs
-                AND
-            state__c = :currentState
+					   AND start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null )
+					   AND Service_Line__c = :currentServiceLine
+					   AND Location__c= :currentLocation
+					   AND Assessment_Only__c = :AssessmentOnly
+					   AND id NOT IN :SelectedCodeIDs
+					   AND state__c = :currentState
             ORDER BY Service_Value__c];
 
        for(Service_Code__c sc : listAvailableCodes) {
@@ -934,16 +911,12 @@ public void loadProgramList() {
         theLocations.Add(SOtmp);
 
         system.debug('inside get locations ' + currentProgram + ',' + currentSTate + ',' + effDate );
-                for(Service_Code__c local : [Select Location__c From Service_Code__c
-                           Where Program__c = :currentProgram
-                               AND
-                           Assessment_Only__c = :AssessmentOnly
-                           AND
-                                state__c = :currentState
-                           AND
-                                start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null)]
-                    ){
-
+				for(Service_Code__c local : [
+						SELECT Location__c FROM Service_Code__c
+						 WHERE Program__c = :currentProgram
+						   AND Assessment_Only__c = :AssessmentOnly
+						   AND state__c = :currentState
+						   AND start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null)]){
                        tmpLocs.Add(Local.Location__c);
                 }
 
@@ -968,17 +941,13 @@ public void loadProgramList() {
 
         system.debug('inside get service lines ' + currentProgram + ',' + currentLocation + ',' + currentSTate + ',' + effDate );
 
-        for(Service_Code__c local : [Select Location__c, Service_Line__c, Program__c From Service_Code__c
-                                        Where Program__c = :currentProgram
-                                            AND
-                                        Location__c = :currentLocation
-                                            AND
-                                        Assessment_Only__c = :AssessmentOnly
-                                        AND
-                                           state__c = :currentState
-                                        AND
-                                            start_date__c <= :effDate and ( end_date__c > :effDate or end_date__c = null)
-
+				for(Service_Code__c local : [
+					SELECT Location__c, Service_Line__c, Program__c FROM Service_Code__c
+					 WHERE Program__c = :currentProgram
+					   AND Location__c = :currentLocation
+					   AND Assessment_Only__c = :AssessmentOnly
+					   AND state__c = :currentState
+					   AND start_date__c <= :effDate and (end_date__c > :effDate or end_date__c = null)
           ]){
            tmpLocs.Add(local.Service_Line__c);
         }
@@ -1079,9 +1048,6 @@ public void loadProgramList() {
 
 
     public PageReference ResetPage() {
-
-//      ServAssignController.reset();
-//        theServAssign = (Service_Assignment__c)ServAssignController.getRecord();
         System.debug('theServAssign: ' + theServAssign);
         System.debug('initialRecord: ' + initialRecord);
         theServAssign = initialRecord;
@@ -1200,14 +1166,16 @@ public void loadProgramList() {
                 }
 
                 editSA = false;
-                theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
+						theServAssign = [
+							SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                             End_Date__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                             Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
                                 FROM Service_Assignment__c
-                                WHERE Id = :s.id];
+							WHERE Id = :s.id
+						];
 
                 LoadData(theServAssign);
 
@@ -1283,23 +1251,78 @@ public void loadProgramList() {
                              WHERE RecordType.Name = 'E-Signature'
                              ORDER BY CreatedDate DESC)
                       FROM Evaluation__c
+							WHERE ServiceAssignment__c = :theServAssign.Id AND Status__c != 'Disregard'
+							ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
+						];
+					}
+					return evaluations;
+				}
+				set;
+			}
+
+			public List<Evaluation__c> residentAssessments{
+				get{
+					if(residentAssessments == null) {
+						residentAssessments = [
+							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c,
+							       Status__c,Owner.Name,
+							       (SELECT Id, CreatedDate, Owner.Name, Owner.Id
+							          FROM Evaluation_Responses__r
+							         WHERE RecordType.Name = 'E-Signature'
+							        ORDER BY CreatedDate DESC)
+							FROM Evaluation__c
+							WHERE ServiceAssignment__c = :theServAssign.Id
+							AND Recordtype.Name = 'NursesAssessment'
+							ORDER BY CreatedDate DESC NULLS LAST LIMIT 5
+						];
+					}
+					return residentAssessments;
+				}
+				set;
+			}
+
+			public Boolean getshowResAsmt(){
+				List<Evaluation__c> nonDisregard = [SELECT Id from Evaluation__c WHERE Status__c != 'Disregard' AND ServiceAssignment__c = :theServAssign.Id AND RecordType.Name = 'NursesAssessment' LIMIT 1];
+
+				if(nonDisregard.size() > 0){
+					return false;
+				}
+				else{
+					return true;
+				}
+			}
+			public List<Evaluation__c> shiftAssessments{
+				get{
+					if(shiftAssessments == null) {
+						shiftAssessments = [
+							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c, Head_to_Toe_Signed_At__c,
+							Shift_Start_time__c, Shift_end_time__c, Status__c, Head_to_Toe_Status__c, Owner.Name,
+							(SELECT Id, CreatedDate, Owner.Name, Owner.Id
+							        FROM Evaluation_Responses__r
+							        WHERE RecordType.Name = 'E-Signature'
+							        ORDER BY CreatedDate DESC)
+							        FROM Evaluation__c
                      WHERE ServiceAssignment__c = :theServAssign.Id
+							        AND RecordType.Name = 'CMShiftAssessment'
                      ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
                 ];
             }
-            return evaluations;
+					return shiftAssessments;
         }
         set;
    }
 
+			public String getOperatingGroup() {
+				return pOpGroup;
+			}
+
 //Commented out by Sravan - 11/25/2014 as Users will not create Admission Assessment from Service Assignemnt page. It will carry over from Referral.
    public PageReference addResidentAssessment(){
-   		//List<Evaluation__c> evalonReferral = [SELECT Id FROM Evaluation__c WHERE Referral__c = :theServAssign.Referral__c limit 1 ];
    		string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
     	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
 		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
 		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-		
+				Assessment__c fallAsmt = new Assessment__c(Name=pbsLastName+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = theServAssign.Id,Admission__c = theServAssign.Admission__c, AccountPerson__c = theServAssign.Person_Being_Served__r.AccountId);
    		if(!referral.Has_Evaluation__c){
    			Evaluation__c resAsmt = new Evaluation__c(
    											ServiceAssignment__c = theServAssign.Id,
@@ -1310,6 +1333,9 @@ public void loadProgramList() {
    			
    			insert resAsmt;
    			
+					fallAsmt.Evaluation__c = resAsmt.Id;
+					insert fallAsmt;
+
    			return new PageReference ('/apex/NursingEvaluationEdit?id='+resAsmt.Id);
    		}
    		else{
@@ -1340,6 +1366,9 @@ public void loadProgramList() {
    			
    			insert dynObjectEvaluationRecord;
    			
+					fallAsmt.Evaluation__c = dynObjectEvaluationRecord.Id;
+					insert fallAsmt;
+
    			String respQuery ='SELECT ';
    			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
                     respQuery +=f.getFieldPath() + ', ';
@@ -1366,6 +1395,186 @@ public void loadProgramList() {
     	return null;
   	}
     
+			public pageReference addResAsmt(){
+				string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
+				string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
+				string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
+				string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
+				Assessment__c fallAsmt = new Assessment__c(Name=pbsLastName+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = theServAssign.Id,Admission__c = theServAssign.Admission__c, AccountPerson__c = theServAssign.Person_Being_Served__r.AccountId);
+
+
+				Savepoint sp = Database.setSavepoint();
+
+				Evaluation__c resAsmt = new Evaluation__c(
+						ServiceAssignment__c = theServAssign.Id,
+						Name = resAsmtName,
+						Status__c = 'Draft',
+						RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
+
+						);
+
+				try{
+
+					insert resAsmt;
+					//Assign Evaluation__c Id to Assessment__c record
+					fallAsmt.Evaluation__c = resAsmt.Id;
+					insert fallAsmt; // This will invoke the trigger on Assessment__c trigger to execute and create domain results and responses.
+				}
+
+				catch(DMLException e) {
+					Database.rollback(sp); //Making sure to roll back the Evaluation creation in case of any failure.
+					ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Resident Assessment. Please Contact your Administrator');
+					ApexPages.addMessage(myMsg);
+					return null;
+
+				}
+
+
+				//	return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
+
+
+				if(referral.Has_Evaluation__c) {
+					Id evalOnReferralId = referral.Evaluations__r[0].Id; //Grab the Id of the Existing evaluation record on referral
+					//FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses; //Calling the Field set
+					string query = 'SELECT ';
+					FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment; // Calling the Field set where the about to be cloned fieldvalue paths are stored
+					FieldSet behavior = SObjectType.Evaluation__c.FieldSets.Behavior;
+
+					set<String> getEvals = new set<String>(); //Collection to store the API names of the Fields which will be used in Query (API_Name_Flag__c)
+					for(Schema.FieldSetMember f: copyFields.getFields()) {
+						query += f.getFieldPath() + ', ';
+					}
+
+					query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
+					sObject existingEval = Database.Query(query);
+
+					for(Schema.FieldSetMember f: copyFields.getFields()){
+						if(string.isNOTBLANK(string.Valueof(existingEval.get(f.getFieldPath()))) && !string.Valueof(existingEval.get(f.getFieldPath())).equalsIgnoreCase('false')){
+							getEvals.add(f.getFieldPath());
+
+						}
+					}
+					getEvals.add('Behavior'); //Make Sure Behavior ApI_Flag_Name__c is also included
+
+					system.debug('Checking the set for null values+++++++++'+getEvals);
+					system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
+
+					Map<id,Eval__c> evalMap = new Map<id,Eval__c>([SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals]);
+
+					//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
+					set<string> catSubcat = new set<string>();
+					Map<string, string> uniqueTimeMap = new Map<string, string>();
+
+					for(Eval__c ee: evalMap.values()){
+						catSubcat.add(ee.Category__c+'~'+ee.sub_category__c);
+					}
+
+					string timeString =  Userinfo.getUserId()+'-'+DateTime.now().getTime();
+					integer n = 0;
+					system.debug('Strings+++++++++++++++++++++++'+catSubcat);
+					for(String s: catSubcat){
+						n = n+1;
+						uniqueTimeMap.put(s,timeString+string.valueOf(n));
+					}
+
+					system.debug('timeMap+++++++++++=='+uniqueTimeMap);
+
+					//Create Corresponding Eval Value Records
+					List<Eval_Value__c> values = new List<Eval_value__c>();
+					Eval_Value__c value;
+
+					string behaviorString = '';
+
+					for(Schema.FieldSetMember f: behavior.getFields()){
+
+						system.debug('behvaiorset+++++++'+behavior.getFields());
+						system.debug('fieldValue+++++'+existingEval.get(f.getFieldPath()));
+
+						if(string.isNotBlank(string.valueOF(existingEval.get(f.getFieldPath())))) {
+							behaviorString += f.getLabel();
+							behaviorString += '; ';
+						}
+
+					}
+
+					for(Eval__c eval: evalMap.values()){
+
+						string fieldName = eval.API_Name_Flag__c;
+
+						value = new Eval_Value__c();
+						value.Eval__c = eval.Id;
+						value.Eval_Section_Type__c = 'Residential';
+						value.what_id__c = resAsmt.Id;
+						value.what_id_object__c = 'Evaluation__c';
+
+						string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
+
+						if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
+							system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
+							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
+
+						}
+
+						if(fieldName != 'Behavior') {
+
+							//Handle All Data Types
+							if ( eval.Field_Type__c == 'Boolean'){
+								if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
+									if ( (Boolean)existingEval.get(fieldName) == true)
+										value.Boolean__c = true;
+									else
+										value.Boolean__c = false;
+								}
+								else if (eval.Field_Sub_Type__c == 'Dropdown')
+									value.Text_Under_250__c = (String)existingEval.get(fieldName);
+							}
+
+							else if (eval.Field_Type__c == 'Int'){
+								value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
+							}
+							else if (eval.Field_Type__c == 'Date'){
+								value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
+							}
+							else if (eval.Field_Type__c == 'Datetime' ){
+								value.Date_Time__c = (Datetime)existingEval.get(fieldName);
+							}
+							else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' ||
+									eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
+									eval.Field_Type__c == 'Currency'){
+								if ( eval.length__c > 250 )
+									value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
+								else
+									value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
+							}
+
+						}
+
+						if(string.isNotBlank(behaviorString) && eval.Field_Name__c == 'Behavior' ){
+
+							value.Text_Under_250__c = behaviorString;
+						}
+
+						values.add(value);
+
+					}
+
+					try{
+
+						insert values;
+					}
+					catch (DMLException e){
+
+						Database.rollback(sp); //Making sure to roll back the Evaluation creation in case of any failure.
+						ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Resident Assessment. Please Contact your Administrator');
+						ApexPages.addMessage(myMsg);
+						return null;
+					}
+
+				}
+				// return to Eval Dynamic Page
+				return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
+			}
+
     public PageReference createFadAssess(){
         list<Assessment__c> oldAssess = new list<Assessment__c>();
         oldAssess = [select id from assessment__c where type__c ='FAD Summary' AND Service_Assignment__c = :theServAssign.id Order By CreatedDate Desc limit 1];
@@ -1437,49 +1646,10 @@ public void loadProgramList() {
         return ref;
     }
 
-  public void showAddevaluation() {
-    evaluation = new Evaluation__c();
-    String pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
-    string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
-    evaluation = new Evaluation__c();
-    evaluation.Name = pbsFirstinitial+'. '+pbsLastName;
-    evaluation.RecordTypeID = Utility.getEValuationRecordType('CMShiftAssessment');
-    evaluation.ServiceAssignment__c = this.theServAssign.Id;
-    evaluation.Status__c = 'Draft';
-    evaluation.Details_Section_Completed__c = true;
-
-
-  }
-
-  public pageReference saveEvaluation() {
-
-      try{
-      	  string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : ''; 
-      	   
-      	  evaluation.Name = this.evaluation.Name+' - '+evaluation.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString())+' - NSD - '+ownerfirstInitial+'. '+userinfo.getLastName();
-          insert evaluation;
-          PageReference pg = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.Id);
-          return pg;
-      }
-      catch (DMLException e) {
-          throw new MyException('Nurses Shift Document could not be created',e); 
-          //Apexpages.AddMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
-      }
-
-    return null;
-  }
-
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
     fundingSource.Service_Assignment__c = this.theServAssign.Id;
-
-    //List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
-    // if (cmrt.size() > 0) {
-    //    ID CMID = cmrt[0].Id;
-    //    if ( fundingSource.RecordTypeId == CMID)
-    //        fundingSource.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
-    // }
   }
 
   public void showEditFundingSource() {
@@ -1583,27 +1753,7 @@ public class MyException extends Exception {}
         upsert sa;
         return true;
    }
-   
-   @RemoteAction
-   public static boolean finddupeEval(string shiftStart, string shiftEnd, Id saId) {
-   		system.debug('I am remoting');
-   		system.debug(shiftStart);
-   		DateTime st = Datetime.parse(shiftStart);
-   		DateTime en = Datetime.parse(shiftEnd);
-   		boolean dupefound = false;
-   		List<Evaluation__c> dupeEval = [SELECT Id, Name, Shift_Start_time__c, Shift_end_time__c FROM Evaluation__c WHERE ServiceAssignment__c = :saId AND (
-        					(Shift_Start_time__c >= :st and Shift_Start_time__c <= :en)
-        				or 	(Shift_end_time__c >= :st and Shift_end_time__c <= :en)
-        				or  ( Shift_Start_time__c <= :st and Shift_end_time__c >= :en )) AND RecordType.Name = 'CMShiftAssessment' AND Status__c !='Disregard' LIMIT 1];
-        				
-   		system.debug(dupeEval);
-   		if(dupeEval.size() >0 ) {
-   			dupeFound = true;
-   		}
-   	
-   		return dupeFound;
-   }
-   
+
    
     // EC-87: Seizure Tracking - Start 
     public Seizure__c seizure {get;set;}   

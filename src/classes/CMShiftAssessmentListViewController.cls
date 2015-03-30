@@ -12,8 +12,11 @@ public with sharing class CMShiftAssessmentListViewController {
 	    get  { if (sortField == null) {sortField = 'Shift_Start_time__c'; } return sortField;  }
 	    set;
    }
-   
+  
    public Id saId {get; private set;}
+   //public string evalrecType{get; private set;}
+   public Boolean isShift {get; set;}
+   public Boolean isResidential {get; set;}
    public Service_Assignment__c SA {get; private set;}
    public String sortColumn { get; set; }
    public String sortOrder { get; set; }
@@ -23,7 +26,18 @@ public with sharing class CMShiftAssessmentListViewController {
   	if( ApexPages.currentPage().getParameters().get('saId') != null) {
 		saId = ApexPages.currentPage().getParameters().get('saId');
 		SA = [SELECT Id, Admission__c, admission__r.Person_Being_Served__c FROM Service_Assignment__c WHERE Id=:saId LIMIT 1];
-	  	soql = 'SELECT ID, Name, LastModifiedDate, Is_Signed__c, Shift_Start_time__c, Shift_end_time__c, Status__c,Owner.Name,(SELECT Id, CreatedDate, Owner.Name, Owner.Id FROM Evaluation_Responses__r WHERE RecordType.Name = \'E-Signature\' ORDER BY CreatedDate DESC) FROM Evaluation__c  WHERE ServiceAssignment__c = :saId';
+		isShift = ApexPages.currentPage().getParameters().get('recType') == 'Shift';
+		isResidential = ApexPages.currentPage().getParameters().get('recType') == 'Residential';
+		
+	  //	soql = 'SELECT ID, Name, LastModifiedDate, Is_Signed__c, Shift_Start_time__c, Shift_end_time__c, Status__c,Owner.Name,(SELECT Id, CreatedDate, Owner.Name, Owner.Id FROM Evaluation_Responses__r WHERE RecordType.Name = \'E-Signature\' ORDER BY CreatedDate DESC) FROM Evaluation__c  WHERE ServiceAssignment__c = :saId';
+	  	if(isShift){
+	  		soql = 'SELECT ID, Name, LastModifiedDate, Shift_Start_time__c, Shift_end_time__c, Status__c, Is_Signed__c, Head_to_toe_Status__c, Signed_At__c, Head_to_toe_Signed_At__c, Owner.Name FROM Evaluation__c  WHERE ServiceAssignment__c = :saId AND Recordtype.Name = \'CMShiftAssessment\'';
+	  	}
+	  	
+	  	if(isResidential){
+	  		soql = 'SELECT ID, Name, LastModifiedDate, Shift_Start_time__c, Shift_end_time__c, Status__c, Is_Signed__c, Head_to_toe_Status__c, Signed_At__c, Head_to_toe_Signed_At__c, Owner.Name FROM Evaluation__c  WHERE ServiceAssignment__c = :saId AND Recordtype.Name = \'NursesAssessment\'';
+	  	}
+	  	
 	  	runQuery();
   	}
   }

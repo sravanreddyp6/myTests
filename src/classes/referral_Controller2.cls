@@ -28,6 +28,7 @@ public with sharing class referral_Controller2 {
 		}
 		set;
 	}
+	public string openLocationPopup {get; set;}
 	public Referral__c referralRecord { get; set; }
 	public Person_Being_Referred__c personBeingRefRecord { get; set; }
 	public Contact personBeingServedRecord { get; set; }
@@ -179,6 +180,7 @@ public with sharing class referral_Controller2 {
 		this.editableTasks = new Map<Id, Boolean>();
 		this.locations = new List<Referral_Location__c>();
 		this.dummyTask = new Task();
+		this.openLocationPopup = 'do not open';
 
 		system.debug( this.referralRecord);
 
@@ -532,6 +534,14 @@ public with sharing class referral_Controller2 {
 		populateLocations();
 		this.location = new Referral_Location__c(service_location__c = null);
 	}
+	
+	public pageReference saveAdmissionLocation(){
+		update this.referralRecord;
+		
+		PageReference pg= new PageReference(REFERRAL_CONVERT_URL +'?id='+referralRecord.id);
+		pg.setRedirect(true);
+		return pg;
+	}
 
 	public PageReference redirectToEdit() {
 		PageReference pg = new PageReference(REFERRAL_EDIT_URL +'?id='+referralRecord.id);
@@ -539,18 +549,28 @@ public with sharing class referral_Controller2 {
 		return pg;
 	}
 	public PageReference redirectToSearch() {
-		PageReference pg = new PageReference('/apex/referralSearch?referralId='+referralRecord.id+'&pbrId='+personBeingRefRecord.id+'&pbsId=' +personBeingServedRecord.id);
+		PageReference pg = new PageReference('/apex/referralSearch?referralId='+referralRecord.id+'&pbrId='+personBeingRefRecord.id+'&pbsId=' +personBeingServedRecord.id+'&viewmode=yes');
 		pg.setRedirect(true);
 		return pg;
 	}
 	public PageReference redirectToConversion() {
-		if (checkRequiredFields() ) {
-			PageReference pg = new PageReference(REFERRAL_CONVERT_URL +'?id='+referralRecord.id);
+		//EC-110 Sravan - 03/27/2015 
+		if (checkRequiredFields() && OperatingGroup == 'CareMeridian') {
+			this.openLocationPopup = 'open';
+			return null;
+			
+		}
+		else if (checkRequiredFields() && OperatingGroup != 'CareMeridian'){
+			pageReference pg = new PageReference(REFERRAL_CONVERT_URL +'?id='+referralRecord.id);
 			pg.setRedirect(true);
 			return pg;
-
-		} else
-			return null;
+			
+		}
+	   else{
+	 		this.openLocationPopup = 'do not open';
+		 	return null;
+			}
+			
 	}
 	public boolean checkRequiredFields(){
 		List<String> messages = new List<String>{};
@@ -656,7 +676,8 @@ public with sharing class referral_Controller2 {
 		}
 
 		// requirements for admission and service assignment: anticipated admission date, anticipated location
-		if ( this.referralRecord.Anticipated_Admission_Date__c == null ) {
+		//Ec-110 Sravan 03/27/2014
+		if ( this.referralRecord.Anticipated_Admission_Date__c == null && OperatingGroup != 'CareMeridian') {
 			messages.Add( 'Anticipated Admission Date' );
 			hasReq = false;
 		}
@@ -664,7 +685,8 @@ public with sharing class referral_Controller2 {
 		System.Debug( ' anticipated service location = ' +this.referralRecord.Service_Location__c );
 		//Added the And condtion to bypass the conversion error for CareMerdian Flavor - Sravan 5/15/2014.
 		//EB214. Closing a referral with the reason 'admitted' mandates the admission location for all flavours. So be logic applies to all. - Neeraj 10/22/2014
-		if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) ) {
+		//Latest Update - EC-110 Service Location will be entered in the ontermediate screen by CM users. - Sravan 03/27/2014 10:45 AM
+		if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) && OperatingGroup != 'CareMeridian') {
 			messages.Add( 'Anticipated Service Location' );
 			hasReq = false;
 		}
@@ -705,20 +727,24 @@ public with sharing class referral_Controller2 {
 		}
 	}
 
-	public void addNeuroAdmissionSteps() {
+	public void addAdmissionSteps() {
 		if (dummyTask.OwnerId == null) {
 			dummyTask.OwnerId.addError('Field is required!');
 			return;
 		}
-		Map<String, Neuro_Admission_Steps__c> stepSubjects = Neuro_Admission_Steps__c.getAll();
-		System.debug('stepSubjects: ' + stepSubjects);
+		Map<String, Admission_Step__c> allStepSubjects = Admission_Step__c.getAll();
+		Map<String, Admission_Step__c> stepSubjects = new Map<String, Admission_Step__c>();
+		for (String key: allStepSubjects.keySet()) {
+			if (allStepSubjects.get(key).Record_Type__c == ReferralRecordType) {
+				stepSubjects.put(key, allStepSubjects.get(key));
+			}
+		}
 		Set<String> nameSet = stepSubjects.keySet();
 		List<Integer> orderedNames = new List<Integer>();  // We use this list to sort the subjects by their names
 		for (String name: nameSet) {
 			orderedNames.add(Integer.valueOf(name));
 		}
 		orderedNames.sort();
-		System.debug('orderedNames: ' + orderedNames);
 		Id taskRecordType = Utility.getRecordTypeForTask('Referral Tasks');
 		for (Integer orderedName: orderedNames) {
 			// We do not batch insert the tasks here because it leads to inconsistent
@@ -733,10 +759,10 @@ public with sharing class referral_Controller2 {
 			);
 		}
 		populateActivities();
-		System.debug('this.activities: ' + this.activities);
 
 		// We also want to make sure that the user can't do this action more than once
 		referralRecord.Admission_Steps_Added__c = true;
 		update new Referral__c(Id=referralRecord.Id, Admission_Steps_Added__c=true);
 	}
+	
 }

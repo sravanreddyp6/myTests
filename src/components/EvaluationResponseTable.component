@@ -3,6 +3,12 @@
         type="Id" assignTo="{!evaluationId}" />
     <apex:attribute name="pbsParentId" description="Id of the parent PBS record"
         type="Id" assignTo="{!pbsId}" />
+    <apex:attribute name="cols" description="Number of columns on the page block"
+        type="Integer" assignTo="{!numCols}" /> 
+    <apex:attribute name="rows" description="Number of rows on the page block"
+        type="Integer" assignTo="{!numRows}" />          
+    <apex:attribute name="requiredFields" description="fields to require"
+        type="string[]" assignTo="{!reqFields}" />  
     <apex:attribute name="type" description="The type of this table"
         type="String" required="true" assignTo="{!responseType}" />
     <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
@@ -18,8 +24,16 @@
     <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering"
         type="Boolean" required="false" default="false" />
     <apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
-        type="String" required="false" />
-
+        type="String" required="false" />   
+    <apex:attribute name="collapsible" description="Boolean describing whether or not the section is collapsible"
+        type="Boolean" required="false" default="true" />
+    <apex:attribute name="showTitle" description="Boolean describing whether or not the section title is displayed"
+        type="Boolean" required="false" default="true" />
+    <apex:attribute name="showDisregard" description="show disregard options?"
+        type="Boolean" required="false" default="false" /> 
+    <apex:attribute name="eSign" description="show e-sign options"        
+        type="boolean" required="false" default="false" />                   
+        
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
@@ -27,7 +41,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
 
-    <apex:pageBlockSection columns="1" title="{!type}">
+    <apex:pageBlockSection id="evalResponseBlock" columns="1" title="{!IF(showTitle,type,'')}" collapsible="{!collapsible}">
         <apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
         <apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();">
             <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
@@ -44,9 +58,11 @@
         </apex:outputPanel>
         <apex:outputPanel id="responseTableWrapper">
             <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}">
-                <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="50px" rendered="{!editEnabled}">
-                    <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf}" />
-                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf}" />
+                <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled}">
+                    <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && !response.Disregard__c && (response.eSigned_By__c == null)}" />
+                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && !response.Disregard__c && (response.eSigned_By__c == null)}" />
+&nbsp;
+                    <apex:commandLink onclick="showEsign{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />                     
                 </apex:column>
                 <apex:repeat value="{!columnsToFetch}" var="column">
                     <apex:column value="{!response[column]}">
@@ -55,6 +71,13 @@
                         <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
                     </apex:column>
                 </apex:repeat>
+                <apex:column headerValue="Disregard" rendered="{!showDisregard}">  <apex:outputField value="{!response.Disregard__c}" /> </apex:column>
+                <apex:column headerValue="E-Sign Info" rendered="{!eSign}">
+                     <apex:outputText styleClass="view" value="{0, date, MM'/'dd'/'yyyy}">
+                        <apex:param value="{!response.eSigned_On__c}" />
+                    </apex:outputText> 
+                    &nbsp;<apex:outputField value="{!response.eSigned_By__c}"  />
+                </apex:column>                
             </apex:pageBlockTable>
         </apex:outputPanel>
 
@@ -105,11 +128,19 @@
                     <apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTableWrapper,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});">
                         <apex:param name="keepDialogOpen" value="" />
                     </apex:actionFunction>
+                    <apex:actionFunction name="disregardResponse{!uniqueId}" action="{!disregardResponse}" rerender="responseTableWrapper,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>                      
+                    <apex:actionFunction rendered="{!eSign}" name="showEsign{!uniqueId}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.authenticationDialog}', 'eSign {!type}', '{!formId}'); ">
+                        <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
+                    </apex:actionFunction>                     
                     <apex:actionStatus id="saveResponseStatus">
                         <apex:facet name="stop">
                             <apex:outputPanel id="buttons">
-                                <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />
+                                <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />                                
                                 <apex:commandButton value="Save & New" onClick="saveResponse{!uniqueId}(true); return false;" />
+                                &nbsp;
+                                <apex:commandButton value="Disregard" rendered="{! showDisregard}" onClick="disregardResponse{!uniqueId}(false); return false;" />
                                 <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
                             </apex:outputPanel>
                         </apex:facet>
@@ -127,4 +158,35 @@
         </apex:outputPanel>
     </apex:pageBlockSection>
     <hr />
+<apex:outputPanel rendered="{! eSign}" id="authenticationDialog" style="display: none; z-index: 200; color: red;">
+        <apex:actionRegion >
+            <apex:pageBlock title="Please enter your Username and Password" id="responseDialogMainBlock">
+                <apex:pageMessages id="authenticationMessages" />
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="E-Sign" action="{!eSignRecord}" rerender="{!$Component.evalResponseBlock.responseTableWrapper},responseDialogMainBlock,responseDialogErrors, authenticationMessages" status="authenticationStatus" oncomplete="if (jQuery('[id$=authenticationMessages]').find('.message').eq(0).attr('class').indexOf('confirm') != -1) { closeModalDialog( '{!$Component.authenticationDialog}' ); alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');  }" />
+                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.authenticationDialog}'); return false;" />
+                    <apex:actionStatus id="authenticationStatus">
+                        <apex:facet name="start">
+                            <div class="thinking">
+                                <div class="thinkingwheel">
+                                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                                </div>
+                            </div>
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:pageBlockButtons>
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Username" />
+                        <apex:inputText value="{!username}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Password" />
+                        <apex:inputSecret value="{!password}" />
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:actionRegion>
+    </apex:outputPanel>        
 </apex:component>

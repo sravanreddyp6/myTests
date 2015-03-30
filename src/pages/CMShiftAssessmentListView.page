@@ -11,7 +11,7 @@
 		<apex:pageBlock id="theBlock">
 			<apex:pageBlockSection columns="1" id="theSection">
 				<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs"  id="evaluationsT" styleClass="dataTable">
-					<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}&tab=demographicsTab" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
+					<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!evs.Status__c == 'Draft'}">Edit</apex:outputLink>
 					</apex:column>
 					<apex:column >
 						<apex:facet name="header">
@@ -21,7 +21,7 @@
 						</apex:facet>
 						<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
 					</apex:column>
-					<apex:column >
+					<apex:column rendered="{!isShift}">
 						<apex:facet name="header" >
 							<apex:commandLink Value="Shift Start Time" action="{!toggleSort}"  reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Shift_Start_Time__c" assignTo="{!sortField}" />
@@ -29,7 +29,7 @@
 						</apex:facet>
 						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
 					</apex:column>
-					<apex:column >
+					<apex:column rendered="{!isShift}">
 						<apex:facet name="header" >
 							<apex:commandLink Value="Shift End Time" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Shift_End_Time__c" assignTo="{!sortField}" />
@@ -37,9 +37,26 @@
 						</apex:facet>
 						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
 					</apex:column>
+					<apex:column rendered="{!isShift}" >
+						<apex:facet name="header" >
+							<apex:commandLink Value="Head to Toe Status" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Status__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
+					</apex:column>
+					<apex:column rendered="{!isShift}" >
+						<apex:facet name="header" >
+							<apex:commandLink Value="Signed At" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Head_to_toe_signed_at__c" assignTo="{!sortField}" />
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
+					</apex:column>
+					
 					<apex:column >
 						<apex:facet name="header" >
-							<apex:commandLink Value="Status" action="{!toggleSort}" reRender="evaluationsT,errors" >
+							<apex:commandLink Value="{!If(isShift, 'Shift Status','Status')}" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Status__c" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
@@ -47,23 +64,33 @@
 					</apex:column>
 					<apex:column >
 						<apex:facet name="header" >
-							<apex:commandLink Value="Signed" action="{!toggleSort}" reRender="evaluationsT,errors" >
-								<apex:param name="sortField" value="Is_Signed__c" assignTo="{!sortField}" />
+							<apex:commandLink Value="Signed At" action="{!toggleSort}" reRender="evaluationsT,errors" >
+								<apex:param name="sortField" value="Signed_At__c" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
-						<apex:outputField value="{!evs.Is_Signed__c}" />
+						<apex:outputText value=" {!evs.Signed_At__c}" />
 					</apex:column>
 					
-					<apex:column headerValue="Signed By">
-						 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false">
-							<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a>
-						</apex:outputText>
-					</apex:column>
-					<apex:column headerValue="Signed At">
-						<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}">
-							<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" />
-						</apex:outputText>
-					</apex:column>
+					
+<!-- 					<apex:column  > -->
+<!-- 						<apex:facet name="header" > -->
+<!-- 							<apex:commandLink Value="Signed" action="{!toggleSort}" reRender="evaluationsT,errors" > -->
+<!-- 								<apex:param name="sortField" value="Is_Signed__c" assignTo="{!sortField}" /> -->
+<!-- 							</apex:commandLink> -->
+<!-- 						</apex:facet> -->
+<!-- 						<apex:outputField value="{!evs.Is_Signed__c}" /> -->
+<!-- 					</apex:column> -->
+					
+<!-- 					<apex:column headerValue="Signed By"> -->
+<!-- 						 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false"> -->
+<!-- 							<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a> -->
+<!-- 						</apex:outputText> -->
+<!-- 					</apex:column> -->
+<!-- 					<apex:column headerValue="Signed At"> -->
+<!-- 						<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
+<!-- 							<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" /> -->
+<!-- 						</apex:outputText> -->
+<!-- 					</apex:column> -->
 					<apex:column >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Owner Name" action="{!toggleSort}" reRender="evaluationsT,errors" >
