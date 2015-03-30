@@ -51,10 +51,18 @@
 		}
 
 		function setupButtons(disableFlag) {
-			if (disableFlag)
+			if (disableFlag) {
                 jQuery("#btnESign").removeClass('btn-success').addClass('btn-danger');
-			else
+                jQuery("#btnESign").removeAttr('onclick');
+				jQuery("#btnEsign").removeAttr('href');
+                }
+			else {
                 jQuery("#btnESign").removeClass('btn-danger').addClass('btn-success');
+                jQuery("#btnEsign").attr('onclick','authenticate();');
+                jQuery("#btnEisgn").attr('href','#');
+                }
+            jQuery("#btnESign").prop('disabled', disableFlag);
+               
 		}
 
 		function revise() {
