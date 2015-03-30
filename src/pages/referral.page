@@ -5,7 +5,8 @@
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-    <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && !isErrorDisplayed && Referral__c.Close_Reason__c != 'Admitted' && locations.size == 0 && Referral__c.id != null}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
+    
+    <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && !isErrorDisplayed && Referral__c.Close_Reason__c != 'Admitted' && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning" ></apex:pageMessage>
     <style type="text/css">
         .dialogLoadingSpinner {
             margin-left: 5px;
@@ -1901,7 +1902,7 @@
                 <apex:inputField id="reviewOn" value="{!Referral__c.Review_On__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}" />
             </apex:pageBlockSection>
 
-            <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
+            <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo" rendered="{!ReferralRecordType != 'CareMeridian'}">
                 <apex:inputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
                 <apex:inputHidden id="sl_lkid" value="{!Referral__c.Service_Location__c}" />
 
