@@ -44,7 +44,7 @@ private class HomePageControllerTest{
     static testMethod void test(){
      
         Service_Location__c testLoc = Referral_CreateTestData.createServiceLocation('Test565');
-        User testUser = Referral_CreateTestData.createTestUser('testU','ReferralTestUser@tmn.com.test','Test','Test','Redwood');
+        User testUser = Referral_CreateTestData.createTestUser('testU','ReferralTestUser@tmn.com.test','Test','Test','Care Meridian');
         Person_Being_Referred__c pbr = createPersonBeingReferred('testfname','testlname',25, null);
         Related_Party__c rp = Referral_CreateTestData.createRelatedParty('Test565', 'Other', pbr);
         Referral__c ref = Referral_CreateTestData.createReferral('Generic', 'New', 'Test565', pbr);
@@ -63,29 +63,6 @@ private class HomePageControllerTest{
         User testUser3 = Referral_CreateTestData.createTestUser('testU3','ReferralTestUser3@tmn.com.test','Test','Test','NeuroRestorative');
         User testUser4 = Referral_CreateTestData.createTestUser('testU4','ReferralTestUser4@tmn.com.test','Test','Test','Cambridge');
         
-       /* code for approvals which did not work because result does not have any value  
-       Opportunity opp = new Opportunity(
-                                              
-                                              Name='Test Opportunity',
-                                              Account=getAccount(),
-                                              CloseDate=date.newinstance(2015, 2, 17),
-                                              StageName='Qualification'
-                                              );
-            insert opp;
-            
-            Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
-            req1.setComments('Submitting request for approval.');
-            req1.setObjectId(opp.id);
-            Approval.ProcessResult result = Approval.process(req1);
-            List<Id> newWorkItemIds = result.getNewWorkitemIds();
-            Approval.ProcessWorkitemRequest req2 = 
-            new Approval.ProcessWorkitemRequest();
-            req2.setComments('Approving request.');
-            req2.setAction('Approve');
-            req2.setNextApproverIds(new Id[] {UserInfo.getUserId()});
-            req2.setWorkitemId(newWorkItemIds.get(0));
-            Approval.ProcessResult result2 =  Approval.process(req2);
-       */
         Test.startTest();
         System.runAs(testUser){
             
@@ -109,7 +86,7 @@ private class HomePageControllerTest{
             controller.mineTasks();
             controller.viewstsk = 'This Month';
             controller.mineTasks();
-            system.assert(controller.referralPrefix == Referral__c.sObjectType.getDescribe().getKeyPrefix());
+            
            
                }
         System.runAs(testUser2){
@@ -140,17 +117,7 @@ private class HomePageControllerTest{
         Test.setCurrentPage(pageRef);
         
         HomePageController controller = new HomePageController();
-        System.assertNotEquals('', controller.personsBeingServedViews.get('me'));
-        System.assertNotEquals('', controller.personsBeingServedViews.get('all'));
-        System.assertNotEquals('', controller.personsBeingServedViews.get('recent'));
-        System.assertNotEquals('', controller.personsBeingServedViews.get('new'));
-        
-        System.assertNotEquals('', controller.ReferralViews.get('all'));
-        System.assertNotEquals('', controller.ReferralViews.get('my referrals'));
-        System.assertNotEquals('', controller.DocViews.get('all'));
-        System.assertNotEquals('', controller.DocViews.get('cambridge'));
-         System.assertNotEquals('', controller.TMNViews.get('my'));
-        
+
         controller.getListApprovals();
         Test.stopTest();
     }
