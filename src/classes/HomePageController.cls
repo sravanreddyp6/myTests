@@ -11,9 +11,12 @@ public with sharing class HomePageController{
 	public String LstName{get;set;}
 	public String objectName{get;set;}
 
+	// List of permission sets that the user is assigned to
+	public String permissionSetString { get; set; }
+
 	private static Set<String> sObjNamesSet;
 	//declaration of variables
-	
+
 	public List<Task> populateTasks{get;set;}
 	public Map<Id, String> taskToNameMap { get; set; }
 
@@ -90,6 +93,20 @@ public with sharing class HomePageController{
 			cmShiftDocRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
 		}
 		updateProgramSelection();
+
+		PermissionSetAssignment[] assignments = [
+			SELECT Id, PermissionSet.Label
+			FROM PermissionSetAssignment
+			WHERE AssigneeId = :UserInfo.getUserId()
+		];
+		List<String> permissionSets = new List<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Label);
+		}
+		permissionSetString = String.join(permissionSets, '~');
+		System.debug('permissionSets: ' + permissionSets);
+		System.debug('permissionSetString: ' + permissionSetString);
+
 		checkTmnUserRecord();
 		mineTasks();
 	}
@@ -144,7 +161,7 @@ public with sharing class HomePageController{
 		return operatingGroup;
 	}
 
-	
+
 	//Wrapper class for Approvals
 	public List<wrapper> getListApprovals(){
 		if(Refresh==false){
@@ -344,7 +361,7 @@ public with sharing class HomePageController{
 		}
 	}
 
-	
+
 	// START: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
 	public class TMN_User_Exception extends Exception {}
 
