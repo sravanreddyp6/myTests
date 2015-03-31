@@ -1574,7 +1574,35 @@ public void loadProgramList() {
 				// return to Eval Dynamic Page
 				return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
 			}
+			
+			
+	
+	public PageReference addrestraintEvent(){
+		
+		Savepoint sp = Database.setSavepoint(); 
+		
+		Evaluation__c restraintEvent = new Evaluation__c(
+				ServiceAssignment__c = theServAssign.Id,
+				Status__c = 'Draft',
+				RecordtypeId = Utility.getEvaluationRecordType('RestraintEvent')
+				);
 
+		try{
+
+			insert restraintEvent;
+		    return new pageReference ('/apex/EvalDynamic?evalId='+restraintEvent.Id+'&opGrp=Care Meridian&evalType=RestraintEvent');
+		}
+		catch(DMLException e) {
+			Database.rollback(sp); //Making sure to roll back the Evaluation creation in case of any failure.
+			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Restraint Event. Please Contact your Administrator');
+			ApexPages.addMessage(myMsg);
+			return null;
+
+		}
+		
+		return null;
+	}
+	
     public PageReference createFadAssess(){
         list<Assessment__c> oldAssess = new list<Assessment__c>();
         oldAssess = [select id from assessment__c where type__c ='FAD Summary' AND Service_Assignment__c = :theServAssign.id Order By CreatedDate Desc limit 1];
