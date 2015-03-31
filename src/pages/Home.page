@@ -1,5 +1,5 @@
 <apex:page controller="HomePageController" sidebar="false" id="thePage" tabStyle="Referral__c">
-	<apex:stylesheet value="{!URLFOR($Resource.Unsemantic, 'stylesheets/unsemantic-grid-responsive.css')}" />
+
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
@@ -30,64 +30,7 @@
 			max-width: none;
 			padding: 0;
 		}
-		.block {
-			border-width: 12px 4px;
-			border-style: solid;
-			border-color: #7AC143;
-			-webkit-border-radius: 8px;
-			-moz-border-radius: 8px;
-			border-radius: 8px;
-			padding: 0px;
-			margin-bottom: 12px;
-		}
-		.block-title {
-			color: #002C59;
-			padding: 0 4px;
-			font-size: 1.5em;
-		}
-		.block-inner {
-			background-color: #ffffff;
-			padding: 6px 6px 6px 6px;
-			border: 1px solid white;
-			border-radius: 8px;
-		}
-		.block-inner ul {
-			margin: 0px !important;
-			padding: 0px;
-			list-style-type: none;
-		}
-		.block-inner ul li {
-			padding-top: 3px;
-			margin: 3px;
-		}
-		.block-inner ul li ul {
-			margin-left: 0;
-			padding-left: 0;
-			list-style-type: disc;
-			list-style: inside;
-		}
-		.block-inner ul li ul li {
-			margin-left: 20px;
-			margin-bottom: 0px;
-			margin-top: 0px;
-			list-style-position: outside;
-		}
-		#accordion,
-		#accordion ul {
-			padding-left: 0;
-		}
-		#accordion li ul {
-			display: none;
-		}
-		#accordion li.current ul {
-			display: block;
-		}
-		#accordion a.heading {
-			display: block;
-		}
-		a.heading:hover {
-			cursor: pointer;
-		}
+		
 		.taskbutton {
 			background-color: #002C59;
 			color: #ffffff;
@@ -222,13 +165,12 @@
 			display it */
 			display: none;
 		}
+		
 	</style>
 
 	<apex:form id="mainForm">
 		<apex:pageMessages id="pageMessages" />
-		<apex:outputPanel layout="block" styleClass="block-title" id="main">
-			I would like to access...
-		</apex:outputPanel>
+		
 		<br />
 		<apex:outputPanel layout="none" rendered="{!OperatingGroup != 'Care Meridian'}">
 			<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
@@ -303,14 +245,17 @@
 		<apex:pageBlock title="My Tasks">
 
 			<apex:pageBlockButtons location="Top">
-				<apex:panelGrid columns="3">
-					<apex:commandButton action="/setup/ui/recordtypeselect.jsp?ent=Task&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2F00T%2Fe%3FretURL%3D%252Fhome%252Fhome.jsp" value="Add Task" /> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+				<table width="100%">
+					<tr>
+					<td align="right">
 					<apex:selectList value="{!viewstsk}" size="1">
 						<apex:selectOptions value="{!viewvalues}" />
 						<apex:actionSupport event="onchange" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(); " status="pageProcessing" />
 					</apex:selectList>
-					<p/>
-				</apex:panelGrid>
+					&nbsp;<apex:commandButton action="/setup/ui/recordtypeselect.jsp?ent=Task&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2F00T%2Fe%3FretURL%3D%252Fhome%252Fhome.jsp" value="Add Task" />
+					</td>
+					</tr>
+				</table>
 			</apex:pageBlockButtons>
 			<a href="/007">View All</a>
 			<br />
@@ -540,37 +485,19 @@
 			var setSize = function() { //define a function with the code you want to call
 				// resize all boxes to same height
 				var maxheight = 0;
-				$(".block-inner").each(function(index, element) {
+				$(".panel").each(function(index, element) {
 					if (this.clientHeight > maxheight)
 						maxheight = this.clientHeight;
 				});
 
-				$(".block").css("height", maxheight);
-				$(".block").clientHeight = maxheight;
+				$(".panel").css("height", maxheight);
+				$(".panel").clientHeight = maxheight;
 
 			};
 
 			$(window).resize(setSize);
 			setSize();
-
-			$('ul#accordion a.heading').click(function() {
-				$(this).css('outline', 'none');
-				if ($(this).parent().hasClass('current')) {
-					$(this).siblings('ul').slideUp('slow', function() {
-						$(this).parent().removeClass('current');
-						$.scrollTo('#accordion', 1000);
-					});
-				} else {
-					$('ul#accordion li.current ul').slideUp('slow', function() {
-						$(this).parent().removeClass('current');
-					});
-					$(this).siblings('ul').slideToggle('slow', function() {
-						$(this).parent().toggleClass('current');
-					});
-					$.scrollTo('#accordion', 1000);
-				}
-				return false;
-			});
+			
 			$('table.dataTable').dataTable({
 				'aoColumnDefs': [{
 					'bSortable': false,
