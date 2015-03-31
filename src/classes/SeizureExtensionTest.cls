@@ -15,13 +15,13 @@ private class SeizureExtensionTest {
         Apexpages.currentPage().getParameters().put('service_assignment', ServAssign.id);
         Apexpages.currentPage().getParameters().put('retURL', pageRef.getUrl());
         SeizureExtension extension =  new SeizureExtension();        
-        extension.seizure.Start_DateTime__c = stEndTime;
-        extension.seizure.End_DateTime__c = stEndTime;
+        extension.seizureStart_DateTime = stEndTime.format();
+        extension.seizureEnd_DateTime = stEndTime.format();
         
         extension.saveSeizure();
         System.assertequals(0,[select id from seizure__c].size());
         
-        extension.seizure.End_DateTime__c = stEndTime.addDays(1);
+        extension.seizureEnd_DateTime = stEndTime.addDays(1).format();
         extension.saveSeizure();
         System.assertequals(1,[select id from seizure__c].size());        
     
