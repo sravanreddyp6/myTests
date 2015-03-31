@@ -11,6 +11,7 @@ public ID PBSId{get;set;}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }
+public boolean disableAddAdm { get; set; }
 public boolean canViewFamilyInfo { 
     get {
         return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
@@ -116,6 +117,19 @@ public Map<String, String> fieldMap { get; set; }
         canCreateAdm = admSchema.IsCreateable();
     }
     
+    //for EPRIQM-51
+    private boolean setdisableAddAdm() {
+    		if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Hastings' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood')) {
+    	  List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId];
+    	  if(admissionList.size()>0){
+    	  	return false;
+    	  } else {
+    	       return true;
+    	  }
+    }
+    return true;
+    }
+    
     public PBSedit_controller(ApexPages.StandardController controller) {
 
         this.currentContact=(Contact)controller.getRecord();
@@ -136,7 +150,7 @@ public Map<String, String> fieldMap { get; set; }
         setIsEditor();
         setcanEdit();
         setcanCreateAdm();
-        
+      disableAddAdm =  setdisableAddAdm();
         if (ApexPages.currentPage().getParameters().get('edit') == 'true' && IsEditor) {
             showEditMode();
         }

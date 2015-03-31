@@ -470,7 +470,7 @@
         <a name="Adm" id="Adm"></a>
         <apex:pageBlock id="AdmissionListId">
             <div class="pbSubHeadButton">
-                <apex:commandButton Value="Add New Admission" onclick="window.open('/apex/AdmissionEdit?pbsId={!Contact.Id}&retURL={!URLENCODE(currentUrl)}', '_self'); return false;" rendered="{!AND(canCreateAdm, isEditor)}" />
+                <apex:commandButton Value="Add New Admission" onclick="window.open('/apex/AdmissionEdit?pbsId={!Contact.Id}&retURL={!URLENCODE(currentUrl)}', '_self'); return false;" rendered="{!AND(canCreateAdm,disableAddAdm, isEditor)}" />
             </div>
             <apex:pageBlockSection title="Admissions" showHeader="true" columns="1" collapsible="false">
                 <apex:pageblockTable value="{!admissions}" var="admsns" id="adminsId" rendered="{!(admissions.size>0)}">
