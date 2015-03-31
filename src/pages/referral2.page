@@ -435,12 +435,18 @@
             );
         }
         
-        function cmpopup() {
+        function cmpPopup() {
         	var v = j$('input[id$=popupHidden]').val();
-        	console.log('I am in here');
-        	console.log(v);
         	if(v == 'open') {
         		
+        		if('{!referralRecord.Service_Location__c}'.length > 0){
+        		
+        		 var lookupName = '{!$Component.referralForm:ReferralAdmissionLocationModalBlock:admissionLocationEntry:admSectionItem:al:comp:LookupElement}';
+        		 lookupName = lookupName.replace(/:/g, '\\:');
+            	 lookupName = '#'+ lookupName;
+        		 j$(lookupName).val('{!referralRecord.Service_Location__r.Name}');
+        	
+        		}
         		openModalDialog('ReferralAdmissionLocationModal', 'span', 'Add Admission Location');
         	
         	}else {
@@ -450,21 +456,30 @@
         
         function validateadmissionLocation(){
         	var errors=[];
-        	j$('#admissionLocationErrors').html('');
-        	
-        	//var alias =  j$('input[id$=page:referralForm:ReferralAdmissionLocationModalBlock:admissionLocationEntry:admSectionItem:al:comp:lookupElement]').val();
+        	j$('#admissionLocationErrors').html(errors);
+        	var lookupId = '{!$Component.referralForm:ReferralAdmissionLocationModalBlock:admissionLocationEntry:admSectionItem:al:comp:lookupElement_lkid}';
+            lookupId = lookupId.replace(/:/g, '\\:');
+            lookupId = '#' +lookupId;
+         
         	var admDate = j$('input[id$=antAdmDate]').val();
+        	var aliasId = j$(lookupId).val();
         	
-        	if(admDate == ''){
+        	
+        	if(admDate.length == 0){
         		errors.push('Please Choose an Admission Date');
         	}
         	
-        	if(errors.length >0 ){
+        	if(aliasId.length == 0){
+        		errors.push('Please Choose an Admission Location');
+        	}
+        	
+        	if(errors.length > 0 ){
         		j$.each(errors, function(index, error) {
-						//$admissionLocationErrors.append('<li class="error">' + error + '</li>');
+						
 						j$('#admissionLocationErrors').html('<li>' +error+ '</li>');
 					});
         	}else{
+        	
         		saveAdmissionLocation();
         	}
         	
@@ -489,7 +504,7 @@
         <apex:actionFunction name="showAddActivity" action="{!showAddActivity}" rerender="activities,activityEntry,msgs" oncomplete="openModalDialog('ActivityModal', 'span', 'Add Activity');" />
         <apex:actionFunction name="saveLocation" action="{!saveLocation}" rerender="locations,referralLocationEntry,msgs,nonClosedPrimaryLocationId" />
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,referralLocationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location'); " status="AddLocationStatus" />
-        <apex:actionFunction name="openlocationPopup" action="{!redirectToConversion}" rerender="popupDiv,msgs" oncomplete="cmpopup();" status="convertStatus" />
+        <apex:actionFunction name="openlocationPopup" action="{!redirectToConversion}" rerender="popupDiv,msgs" oncomplete="cmPopup();" status="convertStatus" />
 		<apex:actionFunction name="saveAdmissionLocation" action="{!saveAdmissionLocation}" reRender="msgs" status="convertStatus2"/>
 		
         <apex:pageMessages id="msgs" />
@@ -498,6 +513,7 @@
         <apex:inputhidden value="{!Referral__c.Person_Being_Served__c}" />
         <apex:inputhidden value="{!Referral__c.Service_Location_Program__c}" />
         <apex:inputhidden value="{!Referral__c.Service_Location_Program__c}" />
+         <apex:inputhidden value="{!Referral__c.Service_Location__r.Name}" />
         <!--<apex:outputpanel style="display:none">
         <apex:inputField value="{!Referral__c.RecordType.Name}" />
     </apex:outputpanel>-->
