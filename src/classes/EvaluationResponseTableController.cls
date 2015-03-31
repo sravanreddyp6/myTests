@@ -79,10 +79,12 @@ public with sharing class EvaluationResponseTableController {
         System.debug('saveResponse called, currentResponse: ' + currentResponse);
         try {
             hasError = false;
-            for(string rCol : reqFields){
-                if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
-                    currentResponse.addError( (columnsToHeadersMap.get(rCol) + ' is Required') );
-                    hasError = true;}
+            if(reqFields != null){
+	            for(string rCol : reqFields){
+	                if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
+	                    currentResponse.addError( (columnsToHeadersMap.get(rCol) + ' is Required') );
+	                    hasError = true;}
+	            }
             }
             if( !hasError){upsert currentResponse;}
             //e-sign?????
