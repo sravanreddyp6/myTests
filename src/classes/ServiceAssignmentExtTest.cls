@@ -213,18 +213,18 @@ private class ServiceAssignmentExtTest {
         
     }
     
-    public testmethod static void showShiftAssessment(){
-    	CreateObjects();
-    	ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
-        ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-        controller.showAddevaluation();
-        controller.evaluation.Shift_Start_time__c = system.Now();
-        controller.evaluation.Shift_End_time__c = system.now().addminutes(30);
-        controller.saveEvaluation();
-        List<Evaluation__c> shiftAsmts = [SELECT Id, NAME FROM Evaluation__c WHERE ServiceAssignment__c =:ServAssign.Id AND RecordType.Name = 'CMShiftAssessment'];
-        system.assertEquals(1,shiftAsmts.size());
+//    public testmethod static void showShiftAssessment(){
+//    	CreateObjects();
+//    	ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+//        ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+//        controller.showAddevaluation();
+//        controller.evaluation.Shift_Start_time__c = system.Now();
+//        controller.evaluation.Shift_End_time__c = system.now().addminutes(30);
+//        controller.saveEvaluation();
+//        List<Evaluation__c> shiftAsmts = [SELECT Id, NAME FROM Evaluation__c WHERE ServiceAssignment__c =:ServAssign.Id AND RecordType.Name = 'CMShiftAssessment'];
+//        system.assertEquals(1,shiftAsmts.size());
  
-    }
+//    }
     
     public testmethod static void showWorksheetBlocks(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
@@ -478,8 +478,8 @@ private class ServiceAssignmentExtTest {
                 
         ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
         ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-        controller.seizure.Start_DateTime__c = stEndTime;
-        controller.seizure.End_DateTime__c = stEndTime.addDays(1);
+        controller.seizureStart_DateTime = stEndTime.format();
+        controller.seizureEnd_DateTime = stEndTime.addDays(1).format();
         controller.saveSeizure();
         System.assertequals(1, [select id from Seizure__c].size());
         
