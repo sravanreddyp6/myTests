@@ -1335,7 +1335,7 @@
 
                 <apex:actionFunction name="saveActivity" action="{!saveActivity}" status="myStatus" rerender="activities,activityEntry,msgs" />
 
-                <apex:pageBlock title="Add Activity">
+                <apex:pageBlock title="Add Task">
                     <apex:pageblockButtons location="bottom">
                         <apex:commandButton value="Save" onclick="activitySave(true); return false;" />
                         <apex:commandButton value="Save & New" onclick="activitySave(false); return false;" />
@@ -1344,7 +1344,7 @@
 
                     <apex:facet name="header">
                         <p>
-                            <strong>Add Activity:</strong>
+                            <strong>Add Task:</strong>
                         </p>
                     </apex:facet>
 
@@ -2323,7 +2323,7 @@
             <apex:pageBlockSection columns="1" title="Referral Tracking" id="activities">
                 <apex:pageBlockSectionItem >
                     <apex:outputPanel >
-                        <apex:commandButton value="Add Referral Tracking Activity" onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Activity','none'); return false;" />
+                        <apex:commandButton value="Add Referral Tracking Task" onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Task','none'); return false;" />
                         <apex:actionRegion >
                             <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
                             <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
