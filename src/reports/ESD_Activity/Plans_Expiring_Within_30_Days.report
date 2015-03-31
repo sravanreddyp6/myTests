@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>Plan__c.Plan_Expiration_Date__c</field>
+    </columns>
+    <columns>
+        <field>Plan__c.Expiration_Date_Override__c</field>
+    </columns>
+    <columns>
+        <field>Plan__c.Account_Owner_Name__c</field>
+    </columns>
+    <columns>
+        <field>Plan__c.Plan_Program_Names__c</field>
+    </columns>
+    <columns>
+        <field>Plan__c.Plan_Location_Names__c</field>
+    </columns>
+    <description>A report that will show Plans that are going to expire in the next 30 days.</description>
+    <filter>
+        <criteriaItems>
+            <column>Plan__c.Days_Till_Expiration__c</column>
+            <operator>lessOrEqual</operator>
+            <value>30</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>Plan__c.Status__c</column>
+            <operator>equals</operator>
+            <value>Active</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Plans Expiring Within 30 Days</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$Plan__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Plan__c.Anticipated_Transition_Date__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
