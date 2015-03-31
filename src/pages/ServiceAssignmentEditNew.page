@@ -22,7 +22,7 @@
 		}
 		#fundingMessages .success {
 			color: green;
-		}		
+		}
 		.warning{
 			border: 1px solid;
 			margin: 10px 0px;
@@ -156,7 +156,7 @@
 			return today;
 		}
 
-		
+
 
 
 
@@ -169,7 +169,7 @@
         function loadSeizure(seizureId) {
             showEditSeizure(seizureId);
         }
-	    
+
         validateSeizure = function () {
             var seizureErrors = [];
             var startValue = j$('[id$=seizureEntry_startDateTime]').val();
@@ -196,7 +196,7 @@
             if (j$('[id$=seizureEntry_observedBy]').val() == '') {
                 seizureErrors.push('The Observed By field must contain a value. Please enter the name of the individual who observed the event of the Seizure event.');
             }
-            
+
             if (seizureErrors.length > 0) {
                 seizureScrollToTop();
                 j$.each(seizureErrors, function (index, error) {
@@ -226,9 +226,9 @@
                 );
             }
         }
-	    
-	    
-	    seizureScrollToTop = function (isSuccess) {	       
+
+
+	    seizureScrollToTop = function (isSuccess) {
 	        if (isSuccess && jQuery('.errorMsg').length == 0 ) {
 	            j$('#seizureMessages').append('<li class="success">Save successful!</li>');
 	        }
@@ -239,8 +239,8 @@
 	    seizureClearMessages = function () {
 	        j$('#seizureMessages').html('');
 	    }
-    
-    
+
+
         j$(function() {
             j$('[id$=seizure-dialog-confirm]').dialog({
 			    resizable:false,
@@ -252,7 +252,7 @@
 		                 }
 		    });
         });
-    
+
 	</script>
 	<apex:pagemessages id="msgs" />
 	<br />
@@ -279,7 +279,7 @@
 			<apex:param name="effstart" value="" assignTo="{!effDate}" />
 			<apex:param name="effend" value="" assignTo="{!effEnd}" />
 		</apex:actionFunction>
-		
+
         <!-- start seizure actions-->
 <!--         <apex:actionFunction name="showAddSeizure" status="AddEditSeizureStatus" action="{!showAddSeizure}" oncomplete="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry,seizureMessages" /> -->
         <apex:actionFunction name="saveSeizure" action="{!saveSeizure}" status="saveSeizureStatus" oncomplete="seizureScrollToTop(true); if (closeSeizure && jQuery('.errorMsg').length == 0) closeModalDialog('seizureTrackingModal', 'div');" rerender="SeizureTrackingList,seizureEntry,seizureMessages" />
@@ -287,7 +287,7 @@
             <apex:param name="seizureId" value="" />
         </apex:actionFunction>
         <!-- end seizure actions-->
-        
+
 		<!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
 		<apex:pageBlock mode="detail" title="Service Assignment{!if(editSA==true,' Edit','')}">
 
@@ -968,7 +968,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <a id="Seizure_Tracking"></a>
         <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB}">
-            <div class="pbHeaderButton">        
+            <div class="pbHeaderButton">
 <!--             <apex:actionStatus id="AddSeizureStatus"> -->
 <!--                 <apex:facet name="start"> -->
 <!--                     <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
@@ -990,7 +990,7 @@ END: Uncomment to have the element collapsed by default -->
 <!--                 </apex:facet> -->
 <!--                 <apex:facet name="stop"></apex:facet> -->
 <!--             </apex:actionStatus> -->
-                
+
             <apex:pageBlockTable value="{!seizures}" var="seizure" rendered="{!seizures.size>0}" rows="5">
                 <apex:column headerValue="Action" width="12%">
                      <a href="#" onclick="loadSeizure('{!seizure.Id}');return false; ">Edit</a>
@@ -1002,9 +1002,9 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:column value="{!seizure.Duplicate_Entry__c}" width="5%"/>
             </apex:pageBlockTable>
         </apex:pageBlock>
-        
+
         <apex:actionStatus id="AddEditSeizureStatus" >
-            <apex:facet name="start">  
+            <apex:facet name="start">
                     <style>
                     .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
                 .foggy{
@@ -1016,18 +1016,18 @@ END: Uncomment to have the element collapsed by default -->
                     top:0px;
                     left:0px;
                     z-index:1000;
-                }  
+                }
                 </style>
-        
-                <div class="foggy" />        
-                <div class="thinkingwheel" >    
+
+                <div class="foggy" />
+                <div class="thinkingwheel" >
                     <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
-                </div> 
-            </apex:facet>  
-            <apex:facet name="stop"> </apex:facet>         
+                </div>
+            </apex:facet>
+            <apex:facet name="stop"> </apex:facet>
         </apex:actionStatus>
-        <!-- end Seizures section-->    
-        
+        <!-- end Seizures section-->
+
 
 		<!--  Plan section -->
 		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="planstatus" />
@@ -1063,7 +1063,7 @@ END: Uncomment to have the element collapsed by default -->
 
 			</apex:pageBlockSection>
 		</apex:pageBlock>
-		
+
 		<!--  SkillWorksheet section -->
 		<a name="SkillWorksheet" id="SkillWorksheetAnchor"></a>
 		<apex:pageBlock id="SkillWorksheet" title="Active Skill Worksheets" rendered="{! showWorksheetBlocks && vfVarCanAccessWS}">
@@ -1135,6 +1135,7 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
+		<a id="residentAssessment"></a>
 		<apex:pageBlock title="Resident Assessment" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
 			<div class="pbHeaderButton">
 				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
@@ -1192,7 +1193,7 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:outputText value="No Records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
 			<apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 		</apex:pageBlock>
-				
+
 		<a name="ShiftAssessments" id="ShiftAssessments"></a>
 
 		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
