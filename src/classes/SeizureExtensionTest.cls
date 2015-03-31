@@ -10,30 +10,31 @@ private class SeizureExtensionTest {
         PageReference pageRef = Page.SeizureEdit;
         Test.setCurrentPage(pageRef);
         
-        Datetime stEndTime = Datetime.now();
+		string stEndTime = '11/16/2014 13:00:55';
+        string stEndNextTime = '11/17/2014 13:00:55';
         
         Apexpages.currentPage().getParameters().put('service_assignment', ServAssign.id);
         Apexpages.currentPage().getParameters().put('retURL', pageRef.getUrl());
         SeizureExtension extension =  new SeizureExtension();        
-        extension.seizure.Start_DateTime__c = stEndTime;
-        extension.seizure.End_DateTime__c = stEndTime;
+        extension.seizureStart_DateTime = stEndTime;
+        extension.seizureEnd_DateTime = stEndTime;
         
         extension.saveSeizure();
         System.assertequals(0,[select id from seizure__c].size());
         
-        extension.seizure.End_DateTime__c = stEndTime.addDays(1);
+        extension.seizureEnd_DateTime = stEndNextTime;
         extension.saveSeizure();
         System.assertequals(1,[select id from seizure__c].size());        
     
     	System.assertequals(false, SeizureExtension.findDuplicateSeizure(
-    	                               extension.seizure.Start_DateTime__c.format(),
-    	                               extension.seizure.End_DateTime__c.format(),
+    	                               stEndTime,
+    	                               stEndTime,
     	                               ServAssign.Id,
     	                               extension.seizure.id ) );
 
         System.assertequals(true, SeizureExtension.findDuplicateSeizure(
-                                       stEndTime.addHours(1).format(),
-                                       stEndTime.addDays(1).format(),
+                                       stEndTime,
+                                       stEndNextTime,
                                        ServAssign.Id,
                                        '') );
                                        
