@@ -1590,7 +1590,7 @@ public void loadProgramList() {
 		try{
 
 			insert restraintEvent;
-		    return new pageReference ('/apex/EvalDynamic?evalId='+restraintEvent.Id+'&opGrp=Care Meridian&evalType=RestraintEvent');
+		    return new pageReference ('/apex/EvalDynamic?evalId='+restraintEvent.Id+'&opGrp=Care Meridian&evalType=Restraint Event');
 		}
 		catch(DMLException e) {
 			Database.rollback(sp); //Making sure to roll back the Evaluation creation in case of any failure.
