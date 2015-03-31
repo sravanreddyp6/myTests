@@ -24,7 +24,9 @@
     <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering"
         type="Boolean" required="false" default="false" />
     <apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
-        type="String" required="false" />   
+        type="String" required="false" default=""/>
+    <apex:attribute name="visiblityRowRules" description="The visibility rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
+        type="String" required="false" default=""/>           
     <apex:attribute name="collapsible" description="Boolean describing whether or not the section is collapsible"
         type="Boolean" required="false" default="true" />
     <apex:attribute name="showTitle" description="Boolean describing whether or not the section title is displayed"
@@ -65,7 +67,9 @@
                     <apex:commandLink onclick="showEsign{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />                     
                 </apex:column>
                 <apex:repeat value="{!columnsToFetch}" var="column">
-                    <apex:column value="{!response[column]}">
+                    <apex:column value="{!response[column]}"  rendered="{! NOT CONTAINS('Hearing_Aid_Type__c,Hearing_Aid_Present__c,Glasses_Contacts_Purpose__c,
+                                                                         Glasses_Present__c,Contacts_Type__c,Contacts_Present__c,JawWires_Present__c,Denture_Type__c,
+                                                                         Side_Rail_Position__c,Assistive_Device_Removable__c,Assistive_Device_Restricts_Movement__c', column)}">  
                         <!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
                         in the PBS page they come up empty, so we must manually show them. -->
                         <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
@@ -94,31 +98,60 @@
 
                 jQuery(document).ready(function ($) {
                     attachRules{!uniqueId} = function () {
-                        if ('{!rules}' === "") {
+                        if ('{!rules}' === "" && '{!visiblityRowRules}' === "") {
                             return;
                         }
-                        var allFieldRules = JSON.parse(desanitize('{!rules}'));
-                        $.each(allFieldRules, function (controllingField, fieldRules) {
-                            $.each(fieldRules, function (controllingValue, controlledFields) {
-                                $.each(controlledFields, function (index, controlledField) {
-                                    // Swap out the field names and put in the actual field ids.
-                                    fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
-                                });
-                            });
-                            $('[id$='+controllingField+']').data("rules", fieldRules);
-                        });
-                        $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
-                            applyRulesToField(event.target);
-                        });
-                        $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
-                            applyRulesToField(event.target);
-                        });
-                        $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
-                            applyRulesToField(target);
-                        });
-                        $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
-                            applyRulesToField(target);
-                        });
+
+                        if ('{!visiblityRowRules}' != "") {
+	                        var allFieldVisiblityRowRules = JSON.parse(desanitize('{!visiblityRowRules}'));                        
+	                        $.each(allFieldVisiblityRowRules, function (controllingField, fieldRules) {
+	                            $.each(fieldRules, function (controllingValue, controlledFields) {
+	                                $.each(controlledFields, function (index, controlledField) {
+	                                    // Swap out the field names and put in the actual field ids.
+	                                    fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
+	                                });        
+	                            });                            
+	                            $('[id$='+controllingField+']').data("visibility-rules", fieldRules);
+	                            $('[id$='+controllingField+']').data("visibility-row-rules", true);
+	                        });                        
+	                        $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
+	                            applyShowHideRulesToField(event.target);
+	                        });
+	                         $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
+	                            applyShowHideRulesToField(event.target);
+	                        });
+	                        $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
+	                            applyShowHideRulesToField(target);
+	                        });
+	                        $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
+	                            applyShowHideRulesToField(target);
+	                        });
+                        }
+
+                        if ('{!rules}' != "") {
+	                        var allFieldRules = JSON.parse(desanitize('{!rules}'));
+	                        $.each(allFieldRules, function (controllingField, fieldRules) {
+	                            $.each(fieldRules, function (controllingValue, controlledFields) {
+	                                $.each(controlledFields, function (index, controlledField) {
+	                                    // Swap out the field names and put in the actual field ids.
+	                                    fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
+	                                });
+	                            });
+	                            $('[id$='+controllingField+']').data("rules", fieldRules);
+	                        });                        
+	                        $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
+	                            applyRulesToField(event.target);
+	                        });
+	                        $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
+	                            applyRulesToField(event.target);
+	                        });
+	                        $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
+	                            applyRulesToField(target);
+	                        });
+	                        $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
+	                            applyRulesToField(target);
+	                        });
+                        }
                     };
                 });
             </script>
