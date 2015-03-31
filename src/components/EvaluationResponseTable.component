@@ -6,9 +6,7 @@
     <apex:attribute name="cols" description="Number of columns on the page block"
         type="Integer" assignTo="{!numCols}" /> 
     <apex:attribute name="rows" description="Number of rows on the page block"
-        type="Integer" assignTo="{!numRows}" />          
-    <apex:attribute name="requiredFields" description="fields to require"
-        type="string[]" assignTo="{!reqFields}" />  
+        type="Integer" assignTo="{!numRows}" />           
     <apex:attribute name="type" description="The type of this table"
         type="String" required="true" assignTo="{!responseType}" />
     <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
@@ -103,54 +101,54 @@
                         }
 
                         if ('{!visiblityRowRules}' != "") {
-	                        var allFieldVisiblityRowRules = JSON.parse(desanitize('{!visiblityRowRules}'));                        
-	                        $.each(allFieldVisiblityRowRules, function (controllingField, fieldRules) {
-	                            $.each(fieldRules, function (controllingValue, controlledFields) {
-	                                $.each(controlledFields, function (index, controlledField) {
-	                                    // Swap out the field names and put in the actual field ids.
-	                                    fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
-	                                });        
-	                            });                            
-	                            $('[id$='+controllingField+']').data("visibility-rules", fieldRules);
-	                            $('[id$='+controllingField+']').data("visibility-row-rules", true);
-	                        });                        
-	                        $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
-	                            applyShowHideRulesToField(event.target);
-	                        });
-	                         $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
-	                            applyShowHideRulesToField(event.target);
-	                        });
-	                        $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
-	                            applyShowHideRulesToField(target);
-	                        });
-	                        $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
-	                            applyShowHideRulesToField(target);
-	                        });
+                            var allFieldVisiblityRowRules = JSON.parse(desanitize('{!visiblityRowRules}'));                        
+                            $.each(allFieldVisiblityRowRules, function (controllingField, fieldRules) {
+                                $.each(fieldRules, function (controllingValue, controlledFields) {
+                                    $.each(controlledFields, function (index, controlledField) {
+                                        // Swap out the field names and put in the actual field ids.
+                                        fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
+                                    });        
+                                });                            
+                                $('[id$='+controllingField+']').data("visibility-rules", fieldRules);
+                                $('[id$='+controllingField+']').data("visibility-row-rules", true);
+                            });                        
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
+                                applyShowHideRulesToField(event.target);
+                            });
+                             $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
+                                applyShowHideRulesToField(event.target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
+                                applyShowHideRulesToField(target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
+                                applyShowHideRulesToField(target);
+                            });
                         }
 
                         if ('{!rules}' != "") {
-	                        var allFieldRules = JSON.parse(desanitize('{!rules}'));
-	                        $.each(allFieldRules, function (controllingField, fieldRules) {
-	                            $.each(fieldRules, function (controllingValue, controlledFields) {
-	                                $.each(controlledFields, function (index, controlledField) {
-	                                    // Swap out the field names and put in the actual field ids.
-	                                    fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
-	                                });
-	                            });
-	                            $('[id$='+controllingField+']').data("rules", fieldRules);
-	                        });                        
-	                        $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
-	                            applyRulesToField(event.target);
-	                        });
-	                        $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
-	                            applyRulesToField(event.target);
-	                        });
-	                        $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
-	                            applyRulesToField(target);
-	                        });
-	                        $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
-	                            applyRulesToField(target);
-	                        });
+                            var allFieldRules = JSON.parse(desanitize('{!rules}'));
+                            $.each(allFieldRules, function (controllingField, fieldRules) {
+                                $.each(fieldRules, function (controllingValue, controlledFields) {
+                                    $.each(controlledFields, function (index, controlledField) {
+                                        // Swap out the field names and put in the actual field ids.
+                                        fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
+                                    });
+                                });
+                                $('[id$='+controllingField+']').data("rules", fieldRules);
+                            });                        
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
+                                applyRulesToField(event.target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
+                                applyRulesToField(event.target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
+                                applyRulesToField(target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
+                                applyRulesToField(target);
+                            });
                         }
                     };
                 });

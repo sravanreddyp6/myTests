@@ -79,15 +79,15 @@ public with sharing class EvaluationResponseTableController {
         System.debug('saveResponse called, currentResponse: ' + currentResponse);
         try {
             hasError = false;
+           // string tmp = getNecessaryColumns(responseType);
             if(reqFields != null){
-	            for(string rCol : reqFields){
-	                if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
-	                    currentResponse.addError( (columnsToHeadersMap.get(rCol) + ' is Required') );
-	                    hasError = true;}
-	            }
+                for(string rCol : reqFields){
+                    if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
+                        currentResponse.addError( (columnsToHeadersMap.get(rCol) + ' is Required') );
+                        hasError = true;}
+                }
             }
             if( !hasError){upsert currentResponse;}
-            //e-sign?????
 
             
             
@@ -171,6 +171,7 @@ public with sharing class EvaluationResponseTableController {
 
     private String getNecessaryColumns(String recordType) {
         // Convention: Record Type and Fieldset have the exact same label
+        
         List<Schema.FieldSet> allFieldSets = Schema.SObjectType.Evaluation_Response__c.FieldSets.getMap().values();
         Schema.FieldSet fieldSetToUse;
 
@@ -185,7 +186,14 @@ public with sharing class EvaluationResponseTableController {
         for (Schema.FieldSetMember column: columns) {
             columnsToFetch.add(column.getFieldPath());
             columnsToHeadersMap.put(column.getFieldPath(), column.getLabel());
+            system.debug('field ' + column.getFieldPath() );
+            system.debug('field req' + column.getRequired() );
+            if( column.getRequired() ){
+                reqFields.add( column.getFieldPath() );
+            }
         }
+        system.debug('all cols ' + columnsToFetch );
+        system.debug('req cols ' + reqFields );
         return String.join(columnsToFetch, ', ');
     }
 }
