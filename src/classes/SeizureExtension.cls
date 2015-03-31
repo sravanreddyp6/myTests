@@ -12,7 +12,7 @@ public with sharing class SeizureExtension {
     	if(ApexPages.CurrentPage().getParameters().get('seizureId') == null ){
             this.seizure = new Seizure__c();
             this.seizure.Service_Assignment__c = ApexPages.CurrentPage().getParameters().get('service_assignment');
-            if (this.seizure.Service_Assignment__c == null || this.seizure.Service_Assignment__c == ''){
+            if (this.seizure.Service_Assignment__c == null){
                 list<Service_Assignment__c> sa = [select id from Service_Assignment__c where Person_Being_Served__c = : pbsId And Status__c = 'Active'];
                 if (sa.size() == 1) 
                     this.seizure.Service_Assignment__c = sa.get(0).id;

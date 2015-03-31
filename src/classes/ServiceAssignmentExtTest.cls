@@ -474,12 +474,11 @@ private class ServiceAssignmentExtTest {
     
     public testmethod static void saveAndEditSeizure(){
         CreateObjects();
-        Datetime stEndTime = Datetime.now();
                 
         ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
         ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-        controller.seizureStart_DateTime = stEndTime.format();
-        controller.seizureEnd_DateTime = stEndTime.addDays(1).format();
+        controller.seizureStart_DateTime = '11/16/2014 13:00:55';
+        controller.seizureEnd_DateTime = '11/17/2014 13:00:55';
         controller.saveSeizure();
         System.assertequals(1, [select id from Seizure__c].size());
         
