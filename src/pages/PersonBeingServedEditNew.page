@@ -309,32 +309,15 @@
                 </apex:pageBlockSectionItem>
 
             </apex:pageBlockSection>
-
+			<!-- rearranged this section information for  EPRIQM-107  -->
             <!--Family Information Section-->
 
             <apex:pageBlockSection columns="2" rendered="{!canViewFamilyInfo}" title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo">
-                <span />
+                 <apex:inputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
+                 <apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
                 <apex:inputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
                 <apex:outputfield value="{!Contact.Family_Military_Involvement__c}" rendered="{!!pbsEditModeOn}" />
-                <apex:inputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
-                <apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
-                <apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
-                <apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
-
-
-                <apex:PageBlockSectionitem >
-                    <apex:outputLabel Value="Family Native American Tribe" for="nativetribe" />
-                    <apex:outputpanel id="familynativeamericantribe">
-                        <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn && NOT(Contact.Family_Native_American_Ancestry__c)}" html-disabled="true" />
-                        <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" required="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
-
-                    </apex:outputpanel>
-                </apex:PageBlockSectionitem>
-
-
-                <apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
-
-                <apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">
+                 <apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">
                     <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry" />
                     <apex:actionRegion >
                         <apex:inputField id="nativeancestry" value="{!Contact.Family_Native_American_Ancestry__c}">
@@ -351,7 +334,20 @@
                     </apex:actionRegion>
                 </apex:pageBlockSectionItem>
                 <apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
-
+                
+                <apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
+                <apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
+                
+                 <apex:PageBlockSectionitem rendered="{!pbsEditModeOn}" >
+                    <apex:outputLabel Value="Family Native American Tribe" for="nativetribe" />
+                    <apex:outputpanel id="familynativeamericantribe" >
+                        <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!pbsEditModeOn && NOT(Contact.Family_Native_American_Ancestry__c)}" html-disabled="true" />
+                        <apex:inputfield value="{!Contact.Family_Native_American_Tribe__c}" required="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
+                    </apex:outputpanel>
+                </apex:PageBlockSectionitem>
+   				   <apex:outputfield value="{!Contact.Family_Native_American_Tribe__c}" rendered="{!!pbsEditModeOn && Contact.Family_Native_American_Ancestry__c}" />
+                <apex:inputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!pbsEditModeOn}" />
+                <apex:outputfield value="{!Contact.Family_Prior_Military_Involvement_Date__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c = 'Prior'}" />
             </apex:pageBlockSection>
 
         </apex:pageBlock>
