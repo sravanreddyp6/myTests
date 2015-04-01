@@ -170,6 +170,9 @@ public with sharing class referral_Controller2 {
 
 	public referral_Controller2(ApexPages.standardController ctl){
 		system.debug('in constructor');
+		if(!test.isRunningTest()){
+			ctl.addFields(new list<string>{'Service_Location__r.Name'});
+		}
 		this.referralRecord = (Referral__c) ctl.getRecord();
 		this.operatinggroup=([select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty())?''
 				:[select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1][0].operating_group__c;
