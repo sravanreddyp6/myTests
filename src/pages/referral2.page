@@ -513,9 +513,6 @@
         <apex:inputhidden value="{!Referral__c.Person_Being_Served__c}" />
         <apex:inputhidden value="{!Referral__c.Service_Location_Program__c}" />
         <apex:inputhidden value="{!Referral__c.Service_Location_Program__c}" />
-        <apex:outputPanel style="display:none" >
-        	<apex:outputField value="{!Referral__c.Service_Location__r.Name}" />
-        </apex:outputPanel>
 <!--         <apex:inputhidden value="{!Referral__c.Service_Location__r.Name}" /> -->
         <!--<apex:outputpanel style="display:none">
         <apex:inputField value="{!Referral__c.RecordType.Name}" />
@@ -1188,7 +1185,7 @@
                 		</apex:pageBlockSectionItem>
                 		<apex:pageBlockSectionItem id="admSectionItem" >
                 			<apex:outputLabel value="Alias" />
-                			<c:CustomLookup id="al" formID="referralForm" uniqueId="searchAdmissionLocation" type="Service_Location__c" parentId="{!referralRecord.Service_Location__c}" parentName="{!referralRecord.Service_Location__r.Name}" filters="name,city__c,state__c" return="programid__c,setting__c,program__c,service_value__c,street__c,city__c,state__c,zip__c,phone__c" />
+                			<c:CustomLookup id="al" formID="referralForm" uniqueId="searchAdmissionLocation" type="Service_Location__c" parentId="{!referralRecord.Service_Location__c}" parentName="{!admissionLocationName}" filters="name,city__c,state__c" return="programid__c,setting__c,program__c,service_value__c,street__c,city__c,state__c,zip__c,phone__c" />
                 		</apex:pageBlockSectionItem>
                 	</apex:pageblockSection>
 				</apex:pageBlock>
