@@ -1324,7 +1324,7 @@ END: Uncomment to have the element collapsed by default -->
 
 		<!-- Restraint Events Start -->
 		<a name="Assessment_res" id="Assessment_res"></a>
-		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!Service_Assignment__c.id != null && Service_Assignment__c.Status__c != 'Inactive' && showResAsmt}">
+		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && showResAsmt}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" />
 			</div>
