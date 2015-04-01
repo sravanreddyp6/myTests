@@ -9,6 +9,8 @@ public with sharing class AssessRestraint_RecordForm {
 
 	public Service_Assignment__c saForNewAssess {get; set;}
 	public List<QuestionModel> Questions {get; set;}
+	Public Id evalId{get; set;}
+	public Evaluation__C thisEval {get; set;}
 	public string getPBSid(){ return assess.id == null ? saForNewAssess.Person_Being_Served__c : assess.AccountPerson__r.PersonContactId; }
 	public string getAdmitid(){ return assess.id == null ? saForNewAssess.Admission__c : assess.Admission__c; }
 
@@ -19,7 +21,11 @@ public with sharing class AssessRestraint_RecordForm {
 		
 		system.debug('SA - ' + this.saID);
 		system.debug('ASSess - ' + this.assessID);
-		saID = ApexPages.currentPage().getParameters().get('SAid');
+		evalID =  ApexPages.currentPage().getParameters().get('evalID');
+		this.thisEval = [SELECT Id, serviceassignment__c FROM Evaluation__c WHERE Id=: evalID];
+		
+		//saID = ApexPages.currentPage().getParameters().get('SAid');
+		saID = thisEval.serviceassignment__c;
 		assessID = ApexPages.currentPage().getParameters().get('AssessID');
 		if (assessID == null){
 			assessID = ApexPages.currentPage().getParameters().get('id');

@@ -35,6 +35,7 @@ public with sharing class referral_Controller2 {
 	public List<Person_Being_Referred__c> refResults { get; set; }
 	public ID referralLocationId { get; set; }
 	public String referralLocationName { get; set; }
+	public String admissionLocationName {get; set;}
 	public Map<Id, Boolean> editableTasks { get; set; }
 	public Boolean isCambridge { get; set; }
 	public Boolean isCareMeridian{get; set;}
@@ -181,6 +182,7 @@ public with sharing class referral_Controller2 {
 		this.locations = new List<Referral_Location__c>();
 		this.dummyTask = new Task();
 		this.openLocationPopup = 'do not open';
+		this.admissionLocationName = this.referralRecord.Service_Location__r.Name;
 
 		system.debug( this.referralRecord);
 

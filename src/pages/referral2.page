@@ -444,7 +444,7 @@
         		 var lookupName = '{!$Component.referralForm:ReferralAdmissionLocationModalBlock:admissionLocationEntry:admSectionItem:al:comp:LookupElement}';
         		 lookupName = lookupName.replace(/:/g, '\\:');
             	 lookupName = '#'+ lookupName;
-        		 j$(lookupName).val('{!referralRecord.Service_Location__r.Name}');
+        		 j$(lookupName).val({!admissionLocationName});
         	
         		}
         		openModalDialog('ReferralAdmissionLocationModal', 'span', 'Add Admission Location');
@@ -513,7 +513,10 @@
         <apex:inputhidden value="{!Referral__c.Person_Being_Served__c}" />
         <apex:inputhidden value="{!Referral__c.Service_Location_Program__c}" />
         <apex:inputhidden value="{!Referral__c.Service_Location_Program__c}" />
-         <apex:inputhidden value="{!Referral__c.Service_Location__r.Name}" />
+        <apex:outputPanel style="display:none" >
+        	<apex:outputField value="{!Referral__c.Service_Location__r.Name}" />
+        </apex:outputPanel>
+<!--         <apex:inputhidden value="{!Referral__c.Service_Location__r.Name}" /> -->
         <!--<apex:outputpanel style="display:none">
         <apex:inputField value="{!Referral__c.RecordType.Name}" />
     </apex:outputpanel>-->
@@ -2959,4 +2962,5 @@
     	</apex:actionstatus>
     </apex:form>
     <div style="text-align:right; width:100%" class="whitenoise">{!referralRecordType}</div>
+    <div style="text-align:right; width:100%" class="whitenoise">{!admissionLocationName}</div>
 </apex:page>
