@@ -512,14 +512,15 @@
                                            uniqueId="Immunization_Child"
                                            rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                            cols="1"
-                                           rows="5"                                           
+                                           rows="5"
+                                           requiredFields="{!ImmuneReqFields}"
                                            showDisregard="true"
                                            eSign="true"
                                            addEnabled="{!contact.Age__c < 18}"
                                            editEnabled="{!contact.Age__c < 18}"/>
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
 
-            </apex:pageBlock> 
+            </apex:pageBlock>
             <apex:pageBlock rendered="{!contact.Age__c > 17}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Adult"
@@ -528,6 +529,7 @@
                                            rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                            cols="1"
                                            rows="5"
+                                           requiredFields="{!ImmuneReqFields}"
                                            showDisregard="true"
                                            eSign="true" />
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Adult" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
@@ -535,7 +537,7 @@
 
             </apex:pageBlock>
         <apex:pageBlock >
-            <!--Activity History Section-->
+            <!--Task History Section-->
             <!--Open Tasks Section--->
             <apex:pageBlockSection title="Open Tasks" showHeader="true" columns="1" collapsible="true">
                 <apex:pageBlockTable value="{!taskOnCurrentPBSAccount}" var="OpenActivity" rendered="{!(taskOnCurrentPBSAccount.size>0)}">
