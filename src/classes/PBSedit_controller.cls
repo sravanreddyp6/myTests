@@ -119,7 +119,7 @@ public Map<String, String> fieldMap { get; set; }
     
     //for EPRIQM-51
     private boolean setdisableAddAdm() {
-    		if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Hastings' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood')) {
+    		if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood')) {
     	  List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId];
     	  if(admissionList.size()>0){
     	  	return false;
