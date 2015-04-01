@@ -69,7 +69,7 @@ public with sharing class EvaluationResponseTableController {
         currentResponse.RecordTypeId = Utility.getEvaluationResponseRecordType(responseType);
         currentResponse.Evaluation__c = evaluationId;
         currentResponse.Person_Being_Served__c = pbsId;
-        currentResponse.Service_Assignment__c - saId;
+        currentResponse.Service_Assignment__c = saId;
         dialogShown = true;
         isEdit = false;
         return null;
