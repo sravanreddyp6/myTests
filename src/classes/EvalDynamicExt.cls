@@ -57,7 +57,7 @@ public with sharing class EvalDynamicExt {
 		key = displayKey;
 		
 		if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key.contains('Head to Toe~Skin/Body~Wound Detail') || key.contains('Head to Toe~Skin/Body~Pressure Ulcer Details')
-			|| key == 'Residential~Skin/Body~Skin Assessment~Residential'){
+			|| key == 'Residential~Skin/Body~Skin Assessment~Residential' || key.contains('Restraint Event~Reduction Review~Reduction Review')){
 			createEvalValueRecord(key);
 			showMainComponent = false;
 		}
