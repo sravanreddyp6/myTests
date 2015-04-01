@@ -160,7 +160,7 @@
 			height: 0px;
 			visibility: hidden;
 		}
-		[id$=serviceAssignmentTable] tr *:nth-child(5) {
+		[id$=serviceAssignmentTable] tr td:nth-child(5), [id$=serviceAssignmentTable] tr th:nth-child(5) {
 			/* This column is only used programmatically, so we don't need to
 			display it */
 			display: none;
@@ -229,7 +229,6 @@
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Packet" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Resident Assessment" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Action_Plans__r[0].Id}" itemLabel="Current Action Plan" rendered="{!serviceAssignment.Action_Plans__r.size > 0}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
