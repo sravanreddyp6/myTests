@@ -3,6 +3,7 @@
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
 
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <style type="text/css">
@@ -534,8 +535,7 @@
 
 
             </apex:pageBlock>
-                <apex:pageBlock >
-                
+            <apex:pageBlock rendered="{!vfVarIsCM}">                
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device"
                                            formId="{!$Component.FormID}"
@@ -554,9 +554,8 @@
                                                                                                         &quot;Side Rail Half&quot; : [&quotSide_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
                                                                                                         &quot;Side Rail Full&quot; : [&quotSide_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;]
                                                                                                         }}"
-                                           cols="1"
-                                            />  
-			 </apex:pageBlock>
+                                           cols="1" />  
+			</apex:pageBlock>
         <apex:pageBlock >
             <!--Task History Section-->
             <!--Open Tasks Section--->
