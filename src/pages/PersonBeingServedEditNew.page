@@ -513,7 +513,6 @@
                                            rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                            cols="1"
                                            rows="5"
-                                           requiredFields="{!ImmuneReqFields}"
                                            showDisregard="true"
                                            eSign="true"
                                            addEnabled="{!contact.Age__c < 18}"
@@ -529,13 +528,35 @@
                                            rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                            cols="1"
                                            rows="5"
-                                           requiredFields="{!ImmuneReqFields}"
                                            showDisregard="true"
                                            eSign="true" />
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Adult" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
 
 
             </apex:pageBlock>
+                <apex:pageBlock >
+                
+                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                                           type="Assistive Device"
+                                           formId="{!$Component.FormID}"
+                                           uniqueId="Assistive_Devices"
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],  
+                                                                                                        &quot;Glasses&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Glasses_Present__c&quot;],
+                                                                                                        &quot;Contacts&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Contacts_Type__c&quot; , &quot;Contacts_Present__c&quot;],
+                                                                                                        &quot;Jaw Wires&quot; : [&quot;JawWires_Present__c&quot;],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
+                                                                                                        &quot;UE&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;LE&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Seat Belt&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Lap Tray&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Trunk Supports&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Enclosure Bed&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Side Rail Half&quot; : [&quotSide_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Side Rail Full&quot; : [&quotSide_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;]
+                                                                                                        }}"
+                                           cols="1"
+                                            />  
+			 </apex:pageBlock>
         <apex:pageBlock >
             <!--Task History Section-->
             <!--Open Tasks Section--->
