@@ -1,0 +1,75 @@
+<apex:page controller="IdentityHomeController" sidebar="false" id="idDelegatePage" tabStyle="TMN_User__c">
+    
+    <apex:outputPanel id="msgPanel" >
+        <apex:outputLink value="/apex/identity_home"><h1>Back to Identity Home</h1></apex:outputLink>
+        <apex:pageMessages id="pageMsg"/>
+    </apex:outputPanel>
+    
+<apex:pageBlock title="Find a Delegate" id="fndDelBlock">  
+    <apex:form id="frmDelSrch" >
+        <apex:pageBlockSection columns="2" id="delBlkSec">  
+            <apex:inputText label="First Name" value="{!srchFName}"/>
+            <apex:inputText label="Manager First Name" value="{!srchMngFName}"/>
+            <apex:inputText label="Last Name" value="{!srchLName}"/>
+            <apex:inputText label="Manager Last Name" value="{!srchMngLName}"/>             
+            <apex:outputPanel />
+            <apex:outputPanel />
+            <apex:commandButton value="Search" action="{!delSearch}" id="srchBtn"/>    
+          </apex:pageBlockSection>
+    </apex:form>
+</apex:pageBlock>
+        
+    <apex:pageBlock title="Search Results" id="srchBlock" rendered="{!IF(searchDelegateResult=null,'false','true')}">
+        <apex:form id="srchForm">
+            <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" id="srchTable">
+                <apex:column headerValue="Action" >
+                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="delBlock,empBlock,pageMsg"> 
+                        <apex:param value="{!dr.Id}" assignTo="{!selectedID}" name="addSrchIdParam"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="First Name" value="{!dr.First_Name__c}"/>           
+                <apex:column headerValue="Last Name" value="{!dr.Last_Name__c}"/>
+                <apex:column headerValue="Email" value="{!dr.Email__c}"/>
+                <apex:column headerValue="Operating Group" value="{!dr.Operating_Group__c}"/>                        
+                <apex:column headerValue="Manager Name" value="{!dr.Manager_Name__c}"/>
+                <apex:column headerValue="Manager Email" value="{!dr.Manager_Email__c}"/>                        
+            </apex:pageBlockTable>
+        </apex:form>
+    </apex:pageBlock>
+          
+    <apex:pageBlock title="Current Delegates" id="delBlock">
+        <apex:form id="delForm" >
+            <apex:pageBlockTable value="{!myDelegates}" var="del" id="delTable">
+                <apex:column headerValue="Action">
+                    <apex:commandLink value="Remove Delegate" id="delCommand" action="{!removeDel}" reRender="delBlock,empBlock,pageMsg">
+                        <apex:param value="{!del.Id}" assignTo="{!selectedID}" name="delIdParam"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="First Name" value="{!del.First_Name__c}"/>           
+                <apex:column headerValue="Last Name" value="{!del.Last_Name__c}"/>
+                <apex:column headerValue="Email" value="{!del.Email__c}"/>
+                <apex:column headerValue="Operating Group" value="{!del.Operating_Group__c}"/>                        
+                <apex:column headerValue="Manager Name" value="{!del.Manager_Name__c}"/>
+                <apex:column headerValue="Manager Email" value="{!del.Manager_Email__c}"/>                        
+            </apex:pageBlockTable> 
+        </apex:form>        
+    </apex:pageBlock>        
+    
+    <apex:pageBlock title="My Available Delegates" id="empBlock">
+        <apex:form id="empForm" >
+            <apex:pageBlockTable value="{!myEmployees}" var="e" id="empTable">
+                <apex:column headerValue="Action" >
+                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rerender="delBlock,empBlock,pageMsg"> 
+                        <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Name" value="{!e.Name}"/>
+                <apex:column headerValue="Email" value="{!e.Email__c}"/>
+                <apex:column headerValue="Operating Group" value="{!e.Operating_Group__c}"/>                        
+                <apex:column headerValue="Manager Name" value="{!e.Manager_Name__c}"/>
+                <apex:column headerValue="Manager Email" value="{!e.Manager_Email__c}"/>           
+            </apex:pageBlockTable>
+        </apex:form>
+    </apex:pageBlock>
+
+</apex:page>

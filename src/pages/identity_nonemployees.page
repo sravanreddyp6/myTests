@@ -1,0 +1,53 @@
+<apex:page controller="IdentityHomeController" sidebar="false" id="idNoEmpPage" tabStyle="TMN_User__c">
+    <apex:outputPanel >
+        <apex:outputLink value="/apex/identity_home"><h1>Back to Identity Home</h1></apex:outputLink>
+        <apex:pageMessages />
+    </apex:outputPanel>
+
+    <apex:pageBlock title="Find a Person" >
+        <apex:form id="frmNonEmpSrch" >
+            <apex:pageBlockSection columns="2" id="blkSecNonEmpSrch">  
+                <apex:inputText label="First Name" value="{!srchFNameNonEmp}"/>
+                <apex:inputText label="Manager First Name" value="{!srchMngFNameNonEmp}"/>
+                <apex:inputText label="Last Name" value="{!srchLNameNonEmp}"/>
+                <apex:inputText label="Manager Last Name" value="{!srchMngLNameNonEmp}"/>             
+                <apex:outputPanel />
+                <apex:outputPanel />
+                <apex:commandButton value="Search" action="{!nonEmpSearch}" id="srchBtn"/>
+                <apex:commandButton value="Create New Non-Employee" disabled="{!btnDisable}" id="createBtn"/>    
+            </apex:pageBlockSection>
+        </apex:form>        
+    </apex:pageBlock>
+
+    <apex:pageBlock title="Search Results" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
+        <apex:form >
+            <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner">
+                <apex:column headerValue="Link" >
+                    <apex:outputLink value="/{!ner.Id}">View</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Name" value="{!ner.Name}"/>
+                <apex:column headerValue="Email" value="{!ner.Email__c}"/>
+                <apex:column headerValue="Operating Group" value="{!ner.Operating_Group__c}"/>                        
+                <apex:column headerValue="Manager Name" value="{!ner.Manager_Name__c}"/>
+                <apex:column headerValue="Manager Email" value="{!ner.Manager_Email__c}"/>           
+            </apex:pageBlockTable>
+        </apex:form>    
+    </apex:pageBlock>
+    
+    <apex:pageBlock title="My Non-Employees">
+        <apex:form >
+            <apex:pageBlockTable value="{!myNonEmployees}" var="ne">
+                <apex:column headerValue="Link" >
+                    <apex:outputLink value="/{!ne.Id}">View</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Name" value="{!ne.Name}"/>
+                <apex:column headerValue="Email" value="{!ne.Email__c}"/>
+                <apex:column headerValue="Operating Group" value="{!ne.Operating_Group__c}"/>                        
+                <apex:column headerValue="Manager Name" value="{!ne.Manager_Name__c}"/>
+                <apex:column headerValue="Manager Email" value="{!ne.Manager_Email__c}"/>           
+            </apex:pageBlockTable>
+        </apex:form>    
+    </apex:pageBlock>
+    
+    
+</apex:page>

@@ -38,7 +38,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Tab</actionName>
-        <type>Default</type>
+        <content>identity_home</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
@@ -212,6 +214,19 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Delegate_For__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Name of the person this user is a delegate for.</description>
+        <externalId>false</externalId>
+        <label>Delegate For</label>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipName>TMN_Users</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Email__c</fullName>
         <externalId>false</externalId>
         <label>Email</label>
@@ -353,6 +368,30 @@
         <externalId>false</externalId>
         <label>Manager Email</label>
         <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Manager_First_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>LEFT(Manager_Name__c,FIND(&quot; &quot;, Manager_Name__c )-1)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Manager First Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Manager_Last_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>RIGHT(Manager_Name__c,LEN( Manager_Name__c)-FIND(&quot; &quot;, Manager_Name__c))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Manager Last Name</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -564,6 +603,17 @@
         <unique>true</unique>
     </fields>
     <fields>
+        <fullName>Work_State_Code__c</fullName>
+        <externalId>false</externalId>
+        <formula>RIGHT( Work_State__c , 2)</formula>
+        <label>Work State Code</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Work_State__c</fullName>
         <externalId>false</externalId>
         <label>Work State</label>
@@ -575,6 +625,25 @@
         <unique>false</unique>
     </fields>
     <label>TMN User</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>Current_Person_Type__c</columns>
+        <columns>First_Name__c</columns>
+        <columns>Last_Name__c</columns>
+        <columns>NAME</columns>
+        <columns>Salesforce_User_Account__c</columns>
+        <columns>Email__c</columns>
+        <columns>Employee_Number__c</columns>
+        <columns>Job_Status__c</columns>
+        <columns>Job_Title__c</columns>
+        <columns>Operating_Group__c</columns>
+        <columns>Work_State__c</columns>
+        <columns>Hire_Date__c</columns>
+        <columns>Manager_Name__c</columns>
+        <columns>Manager_Email__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
     <listViews>
         <fullName>Camb</fullName>
         <columns>First_Name__c</columns>
@@ -637,6 +706,27 @@
             <value>Neuro</value>
         </filters>
         <label>Neuro</label>
+    </listViews>
+    <listViews>
+        <fullName>Redwood</fullName>
+        <columns>First_Name__c</columns>
+        <columns>Last_Name__c</columns>
+        <columns>NAME</columns>
+        <columns>Salesforce_User_Account__c</columns>
+        <columns>Email__c</columns>
+        <columns>Employee_Number__c</columns>
+        <columns>Job_Status__c</columns>
+        <columns>Job_Title__c</columns>
+        <columns>Operating_Group__c</columns>
+        <columns>Work_State__c</columns>
+        <columns>Hire_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Operating_Group__c</field>
+            <operation>startsWith</operation>
+            <value>Red</value>
+        </filters>
+        <label>RedWood</label>
     </listViews>
     <nameField>
         <label>User Name</label>
