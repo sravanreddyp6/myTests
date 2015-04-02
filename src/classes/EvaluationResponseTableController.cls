@@ -5,14 +5,16 @@ public with sharing class EvaluationResponseTableController {
     public string username {get; set;}
     public string password {get; set;}    
     public list<string> reqFields {get; set;}
-    //public Id saId { get;
-    //	set {
-    //		saId = value;
-    //		if(responseType != null) {
-    //			fetchResponsesFromServAssign(saId, responseType);
-    //		}
-    //	}
-    //}
+    public Id saId { get;
+        set {
+            saId = value;
+            if(String.isNotEmpty(saId)){
+                if(responseType != null) {
+                fetchResponsesFromServAssign(saId, responseType);
+                }
+            }
+        }
+    }
     public Id evaluationId { get;
         set {
             evaluationId = value;
@@ -173,19 +175,20 @@ public with sharing class EvaluationResponseTableController {
         String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c,' + getNecessaryColumns(responseType) +
             ' FROM Evaluation_Response__c WHERE Person_Being_Served__c = :pbsId' +
             ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
-            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate Limit ' + numRows;
+            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate Limit ' + numRows;    
         responses = Database.query(query);
         numberOfResponses = responses.size();
     }
 
-    //private void fetchResponsesFromServAssign(Id saId, String responseType) {
-    //    String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c,' + getNecessaryColumns(responseType) +
-    //        ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +
-    //        ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
-    //        '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate Limit ' + numRows;
-    //    responses = Database.query(query);
-    //    numberOfResponses = responses.size();
-    //}    
+    private void fetchResponsesFromServAssign(Id saId, String responseType) {
+        String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c,' + getNecessaryColumns(responseType) +
+            ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +
+            ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
+            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate Limit ' + numRows;
+        system.debug('Serv Assign Query: ' + query);    
+        responses = Database.query(query);
+        numberOfResponses = responses.size();
+    }    
 
     private String getNecessaryColumns(String recordType) {
         // Convention: Record Type and Fieldset have the exact same label
