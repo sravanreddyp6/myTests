@@ -447,11 +447,61 @@ public with sharing class referralConversion_Controller {
     // link agencies to new Person Being Served
     linkAgencies( accNew.PersonContactId );
 
+    // link assistive devices from the referral eval to the person being served.
+    linkAssistiveDevices(accNew.PersonContactId);
+     
     // return the contact id, not the account id
     return accNew.PersonContactId;
 
  }
 
+  private void linkAssistiveDevices(ID pbsID){
+   if(referralRecordType.startsWith('CareMeridian')){        
+        map<string, string> evalFieldMap = new map<string, string>();
+        evalFieldMap.put('Glasses_For_Reading__c', 'Glasses');
+        evalFieldMap.put('Glasses_For_Distance__c', 'Glasses');
+        evalFieldMap.put('Glasses_For_Multi_Focal_Use__c', 'Glasses');
+        evalFieldMap.put('Rehab_Cane__c', 'Cane');
+        evalFieldMap.put('Front_Wheeled_Walker__c', 'Front-Wheeled Walker');
+        evalFieldMap.put('Wheel_Chair__c', 'Wheelchair');
+        evalFieldMap.put('Bed_Alarm__c', 'Bed Alarm');
+        String evalRespQuery = 'Select ' + String.join((new list<String>(evalFieldMap.keySet())), ', ') + ' From Evaluation__c Where Referral__c = \'' + String.valueOf(referralRecord.id) + '\'';
+        list<Evaluation__c> refEvals = database.query(evalRespQuery);
+        if (!refEvals.isEmpty() ) {
+        	Evaluation__c refEval = refEvals.get(0);  
+            list<Evaluation_Response__c> evalRspns = new List<Evaluation_Response__c>();
+            Id rcdTypId = Utility.getEvaluationResponseRecordType('Assistive Device');
+            for (String s : evalFieldMap.keySet()) {
+                if (s == 'Glasses_For_Reading__c'){
+                    String[] vals = new list<String>();
+                    if (refEval.Glasses_For_Reading__c) vals.add('For Reading');
+                    if (refEval.Glasses_For_Distance__c) vals.add('For Distance');
+                    if (refEval.Glasses_For_Multi_Focal_Use__c) vals.add('Multifocal');
+                    if (!vals.isEmpty()) {
+	                    Evaluation_Response__c rsp = new Evaluation_Response__c();
+	                    rsp.RecordTypeID = rcdTypId;
+	                    rsp.person_being_served__c = pbsID;
+	                    rsp.Assistive_Device_Type__c = 'Glasses';
+	                    rsp.Assistive_Device_Start_Date__c = referralRecord.Anticipated_Admission_Date__c;
+	                    rsp.Glasses_Contacts_Purpose__c = String.join(vals, ';');
+	                    evalRspns.add(rsp);
+                    }
+                } else if (s == 'Rehab_Cane__c' || s == 'Front_Wheeled_Walker__c' || s == 'Wheel_Chair__c' || s == 'Bed_Alarm__c'){
+                	if (Boolean.valueOf(refEval.get(s))){
+	                    Evaluation_Response__c rsp = new Evaluation_Response__c();
+	                    rsp.RecordTypeID = rcdTypId;
+                        rsp.person_being_served__c = pbsID;
+	                    rsp.Assistive_Device_Type__c = evalFieldMap.get(s);
+	                    rsp.Assistive_Device_Start_Date__c = referralRecord.Anticipated_Admission_Date__c;
+	                    evalRspns.add(rsp);
+                	}
+                } 
+            }
+            insert evalRspns;
+        }
+    }
+  }
+  
  // get the contact id from an existing person account object
  private ID getPBSContactId ( ID pbsID )
  {
@@ -572,7 +622,6 @@ public with sharing class referralConversion_Controller {
         );
         insert newDiag;
     }
-
 
 /*
 This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
