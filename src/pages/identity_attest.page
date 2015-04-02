@@ -1,0 +1,22 @@
+<apex:page controller="IdentityHomeController" sidebar="false" id="identityPage" tabStyle="TMN_User__c">
+    <apex:outputPanel >
+        <apex:outputLink value="/apex/identity_home"><h1>Back to Identity Home</h1></apex:outputLink>
+        <apex:messages />
+    </apex:outputPanel>
+    <apex:form >
+        <apex:pageBlock title="Attest Non-Employees">
+            <apex:pageBlockTable value="{!attestNonEmployees}" var="e">
+                <apex:column headerValue="Link" >
+                    <apex:outputLink value="/{!e.Id}">View</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Name" value="{!e.Name}"/>
+                <apex:column headerValue="Email" value="{!e.Email__c}"/>
+                <apex:column headerValue="Operating Group" value="{!e.Operating_Group__c}"/>                        
+                <apex:column headerValue="Manager Name" value="{!e.Manager_Name__c}"/>
+                <apex:column headerValue="Manager Email" value="{!e.Manager_Email__c}"/>
+                <apex:column headerValue="Last Day" value="{!e.Last_Day__c}"/>           
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>
