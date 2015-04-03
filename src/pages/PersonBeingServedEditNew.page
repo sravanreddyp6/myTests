@@ -200,8 +200,24 @@
             <apex:pageBlockSection title="Person Being Served" showHeader="false" columns="2" collapsible="false" id="pbsOutPutsectionId">
                 <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Basic}" var="f">
 
-                    <apex:outputField value="{!Contact[f]}" rendered="{! NOT(pbsEditModeOn) && (f != 'Primary_Language__c')}" />
-                    <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && (f != 'Primary_Language__c') }" required="{!OR(f.required, f.dbrequired)}" />
+		 			<apex:pageBlockSectionItem rendered="{!f == 'Birthdate' && NOT(pbsEditModeOn)}" >
+		    				<apex:outputLabel value="Date of Birth" for="txtDOB" />
+		  					  <apex:outputPanel layout="block" >
+		   					   <apex:outputPanel layout="block" />
+		       					 <apex:outputField id="txtDOB"  value="{!Contact.Birthdate}"/>
+		   						 </apex:outputPanel>
+		    			</apex:pageBlockSectionItem>
+
+						<apex:pageBlockSectionItem rendered="{!f == 'Birthdate' && AND(pbsEditModeOn)}" >
+		    				<apex:outputLabel value="Date of Birth" for="txtDOB" />
+   								 <apex:outputPanel styleClass="requiredInput" layout="block" >
+    							  	<apex:outputPanel styleClass="requiredBlock" layout="block" />
+       								<apex:inputfield id="txtDOB" value="{!Contact.Birthdate}" label="Date of Birth" required="true" />
+    							</apex:outputPanel>
+		    			</apex:pageBlockSectionItem>
+		    			
+                    <apex:outputField value="{!Contact[f]}" rendered="{! NOT(pbsEditModeOn) && (f != 'Primary_Language__c') && ( f != 'Birthdate')}" />
+                    <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && (f != 'Primary_Language__c') && ( f != 'Birthdate') }" required="{!OR(f.required, f.dbrequired)}" />
                     <apex:pageBlockSectionItem rendered="{!  NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}">
 
                         <apex:outputText value="Primary Language" />
@@ -539,6 +555,7 @@
                                            visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],  
                                                                                                         &quot;Glasses&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Glasses_Present__c&quot;],
                                                                                                         &quot;Contacts&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Contacts_Type__c&quot; , &quot;Contacts_Present__c&quot;],
+                                                                                                        &quot;Jaw Wires&quot; : [&quot;JawWires_Present__c&quot;],
                                                                                                         &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
                                                                                                         &quot;UE&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
                                                                                                         &quot;LE&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
