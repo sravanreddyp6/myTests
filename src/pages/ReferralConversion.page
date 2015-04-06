@@ -16,18 +16,17 @@
                              columns="2"
                              collapsible="false"
                              id="PBSSection">
-                             
-          <apex:pageBlockSectionItem >
-          <apex:outputText value="Name"/>
-          <apex:outputPanel styleClass="nowrap">
-            <apex:outputText value="{!person.FirstName}" />&nbsp;
-            <apex:outputText value="{!person.MiddleInitial}" />&nbsp;
-            <apex:outputText value="{!person.LastName}" />
-          </apex:outputPanel>            
-          </apex:pageBlockSectionItem>
- 		<apex:outputText label="Date of Birth" value="{!person.DateOfBirth}" />          
- 		<apex:outputText label="Email" value="{!person.Email}" />         
- 		<apex:outputText label="Fax" value="{!person.Fax}" />         
+              <!-- Rearranged these filed for EPRIQM-117  -->               
+            <apex:outputText label="First Name" value="{!person.FirstName}" /> 
+            <apex:outputText label="Date of Birth" value="{!person.DateOfBirth}" />
+            <apex:outputText label="Middle Name" value="{!person.MiddleInitial}" /> 
+            <apex:outputText label="Age"  value="{!person.Age}" />
+            <apex:outputText label="Last Name" value="{!person.LastName}" />
+ 		          
+ 		<apex:outputText label="Email" value="{!person.Email}" />
+ 		 <!--  Fax is removed for   EPRIQM-115        
+ 		<apex:outputText label="Fax" value="{!person.Fax}" />    
+ 		     -->  
  		<apex:outputText label="Phone" value="{!person.Phone}" />         
  		<apex:outputText label="Street" value="{!person.Street1} {!person.Street2} " />         
  		<apex:outputText label="City" value="{!person.City}" />         

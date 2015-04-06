@@ -528,20 +528,18 @@
             </apex:pageblockButtons>
 				
             <apex:pageBlockSection title="Person Being Referred" showHeader="true" columns="2" collapsible="false" rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}" id="PBRSection">
-                <apex:pageBlockSectionItem >
-                    <apex:outputText value="Name" />
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:outputText label="" value="{!personBeingRefRecord.First_Name__c}" />&nbsp;&nbsp;
-                        <apex:outputText label="" value="{!personBeingRefRecord.Middle_Initial__c}" />&nbsp;&nbsp;
-                        <apex:outputText label="" value="{!personBeingRefRecord.Last_Name__c}" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
+                <!-- Rearranged these filed for EPRIQM-117  --> 
+                   <apex:outputText value="{!personBeingRefRecord.First_Name__c}" />
+                   <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" />
+                    <apex:outputText value="{!personBeingRefRecord.Middle_Initial__c}" />
+                     <apex:outputField value="{!personBeingRefRecord.Age__c}" id="pbrAge" />
+                    <apex:outputText value="{!personBeingRefRecord.Last_Name__c}" />
                 <apex:outputField value="{!personBeingRefRecord.Ethnicity__c}" />
 
-                <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" />
+                
                 <apex:outputField value="{!personBeingRefRecord.Race__c}" />
 
-                <apex:outputField value="{!personBeingRefRecord.Age__c}" id="pbrAge" />
+               
                 <apex:outputField value="{!personBeingRefRecord.Marital_Status__c}" />
 
                 <apex:outputField value="{!personBeingRefRecord.Gender__c}" />
@@ -578,7 +576,9 @@
                         <apex:outputText value="{!personBeingRefRecord.Zip_Code__c}" style="width: 42px;" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                 <!--  Fax is removed for   EPRIQM-115
                 <apex:outputField value="{!personBeingRefRecord.Fax__c}" />
+                 -->
                 <apex:outputField value="{!personBeingRefRecord.Home_County__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Person Being Served" showHeader="true" columns="2" collapsible="false" id="PBSSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
