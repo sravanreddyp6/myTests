@@ -4,7 +4,7 @@ public with sharing class EvaluationResponseTableController {
     public Boolean hasError {get; set;}
     public string username {get; set;}
     public string password {get; set;}    
-    public list<string> reqFields {get; set;}
+    public set<string> reqFields {get; set;}
     public Id saId { get;
         set {
             saId = value;
@@ -62,7 +62,7 @@ public with sharing class EvaluationResponseTableController {
         currentResponse = new Evaluation_Response__c();
         dialogShown = false;
         isEdit = false;
-        reqFields = new list<string>();
+        reqFields = new set<string>();
         hasError = false;
     }
 
@@ -151,12 +151,20 @@ public with sharing class EvaluationResponseTableController {
             // don't show the last mod details on the entry screen
             if ( column == 'LastModifiedDate' || column == 'LastModifiedByID')
                 continue;
-                
+            Component.Apex.PageBlockSectionItem PBSI = new Component.Apex.PageBlockSectionItem();
+            Component.Apex.OutputLabel lbl = new Component.Apex.OutputLabel();
+            lbl.value = columnsToHeadersMap.get(column);
+            if(reqFields.contains(column) ){lbl.styleClass = 'evalCompReqField';}
+            
             Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
             System.debug('col - '+ column);
             dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
             
-            dialog.childComponents.add(dialogInput);
+            
+            PBSI.childComponents.add(lbl);
+            PBSI.childComponents.add(dialogInput);
+
+            dialog.childComponents.add(PBSI);
         }
         return dialog;
     }
