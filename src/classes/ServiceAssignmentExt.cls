@@ -155,6 +155,7 @@ public without sharing class ServiceAssignmentExt {
             if (! psetFlags ) {
                 psetFlags = setShowFlags();
             }
+            system.debug('myshowLocation ' + showLocation);
             return pshowLocation;
     }}
 
@@ -663,7 +664,7 @@ public without sharing class ServiceAssignmentExt {
             }
             contractsForThisServAssignsState = [ SELECT Id, Name FROM TMN_Contract__c
                                                                                         WHERE State__c = :currentState
-                                                                                        AND Status__c IN ('Active','Renewed','Approved') ];
+                                                                                        AND Status__c IN ('Active','Renewed','Approved') ORDER BY Name ];
 
             System.debug('contractsForThisServAssignsState: ' + contractsForThisServAssignsState);
 
