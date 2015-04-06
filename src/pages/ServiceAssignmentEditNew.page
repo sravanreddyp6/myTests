@@ -117,6 +117,12 @@
 				j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
 			}
 		};
+        closeModalDialog = function (dialogId, tagType) {
+	        selector = tagType + '[id$=' + dialogId + ']';
+	        j$(selector).dialog('destroy');
+	        // Allow "background" to be scrollable when dialogs are closed.
+	        j$("body").css("overflow", "auto");
+	    };
 
 		fundingSourceSave = function (isClose) {
 			// We cant use Visualforce functions/variables in a Static Resource JS file, so we have to pass it in here.
