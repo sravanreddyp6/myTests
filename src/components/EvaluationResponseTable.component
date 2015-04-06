@@ -42,7 +42,7 @@
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
-
+<style>.evalCompReqField{padding-right: 3px; border-right: 3px solid red;}</style>
     <apex:pageBlockSection id="evalResponseBlock" columns="1" title="{!IF(showTitle,type,'')}" collapsible="{!collapsible}">
         <apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
         <apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();">
