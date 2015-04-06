@@ -132,8 +132,15 @@ function stopRKey(evt) {
                              id="pbsOutPutsectionId" >
 
     <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Basic}" var="f">
-    <apex:inputField value="{!Account[f]}"  rendered="{! AND(NOT(f = 'FirstName'), NOT(f = 'LastName'))}" required="{!OR(f.required, f.dbrequired)}"/>
+    <apex:inputField value="{!Account[f]}"  rendered="{! AND(NOT(f = 'FirstName'), NOT(f = 'LastName'), NOT(f = 'PersonBirthdate') )}" required="{!OR(f.required, f.dbrequired)}"/>
     <apex:inputtext label="First Name" value="{!fname}"  rendered="{!f = 'FirstName' }"/>
+    <apex:pageBlockSectionItem rendered="{!f = 'PersonBirthdate'}" >
+    <apex:outputLabel value="Date of Birth" for="txtDOB" />
+    <apex:outputPanel styleClass="requiredInput" layout="block" >
+      <apex:outputPanel styleClass="requiredBlock" layout="block" />
+        <apex:inputfield id="txtDOB"  value="{!personbeingserved.PersonBirthdate}" label="Date of Birth" required="true" />
+    </apex:outputPanel>
+    </apex:pageBlockSectionItem>
     <apex:pageBlockSectionItem rendered="{!f = 'LastName'}" >
     <apex:outputLabel value="Last Name" for="txtlast" />
     <apex:outputPanel styleClass="requiredInput" layout="block" >
