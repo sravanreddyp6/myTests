@@ -87,64 +87,78 @@
 	// If the element has a visibility-row-rules and it is true, the whole row
 	// containing the target will be shown/hidden, otherwise only the target
 	// will be shown/hidden.
-	window.applyShowHideRulesToField = function (element) {
-		var $element = $(element);
-		var shownTargets = [];
-		var rules = $element.data("visibility-rules");
-		rules && $.each(rules, function (key, value) {
-			var $targets = [];
-			if (value instanceof Array) {
-				$.each(value, function (_, selector) {
-					$targets.push($(document.getElementById(selector)));
-				});
-			} else {
-				$targets.push($(document.getElementById(value)));
-			}
-			var val = $element.realVal();
-			if (val == key || (val instanceof Array && $.inArray(key, val) != -1)) {
-				// Show fields
-				$.each($targets, function (_, $target) {
-					// If the target has a rule about show/hiding the whole row,
-					// we have to traverse up its ancestor to show/hide the whole row
-					if ($element.data("visibility-row-rules")) {
-						$target.parents("tr").eq(0).show();
-					} else {
-						$target.show();
-					}
-					shownTargets.push($target.get(0));
-				});
-			} else {
-				// Hide fields
-				$.each($targets, function (_, $target) {
-					// We also need to revert the field(s) to their original state
-					// One exception: if the field has been enabled by one of the
-					// earlier rules, then don't disable it!
-					if ($.inArray($target.get(0), shownTargets) != -1) {
-						return;
-					}
-					// If the target has a rule about show/hiding the whole row,
-					// we have to traverse up its ancestor to show/hide the whole row
-					if ($element.data("visibility-row-rules")) {
-						$target.parents("tr").eq(0).hide();
-					} else {
-						$target.hide();
-					}
-					// We also need to make sure the fields are blanked out, so
-					// that they could be updated on the backend
-					if ($target.is("input")) {
-						if ($target.attr("type") == "checkbox") {
-							$target.prop("checked", false).trigger("change");
-						} else {
-							$target.val("").trigger("change");
-						}
-					} else if ($target.is("select, textarea")) {
-						$target.val("").trigger("change");
-					}
-					$target.find("input[type!=checkbox], select, textarea").val("").trigger("change");
-					$target.find("input[type=checkbox]").prop("checked", false).trigger("change");
-					$target.trigger("change");
-				});
-			}
-		});
-	};
+    window.applyShowHideRulesToField = function(element) {
+        var $element = $(element);
+        var shownTargets = [];
+        var rules = $element.data("visibility-rules");
+    
+        var $allTargets = [];
+    
+        rules && $.each(rules, function(key, value) {
+            if (value instanceof Array) {
+                $.each(value, function(_, selector) {
+                    $allTargets.push($(document.getElementById(selector)));
+                });
+            } else {
+                $allTargets.push($(document.getElementById(value)));
+            }
+        });
+    
+        rules && $.each(rules, function(key, value) {
+            var $targets = [];
+            if (value instanceof Array) {
+                $.each(value, function(_, selector) {
+                    $targets.push($(document.getElementById(selector)));
+                });
+            } else {
+                $targets.push($(document.getElementById(value)));
+            }
+            var val = $element.realVal();
+            if (val == key || (val instanceof Array && $.inArray(key, val) != -1)) {
+                // Show fields
+                $.each($targets, function(_, $target) {
+                    // If the target has a rule about show/hiding the whole row,
+                    // we have to traverse up its ancestor to show/hide the whole row
+                    if ($element.data("visibility-row-rules")) {
+                        $target.parents("tr").eq(0).show();
+                    } else {
+                        $target.show();
+                    }
+                    shownTargets.push($target.get(0));
+                });
+            }
+        });
+    
+        // Hide fields
+        $.each($allTargets, function(_, $target) {
+            // We also need to revert the field(s) to their original state
+            // One exception: if the field has been enabled by one of the
+            // earlier rules, then don't disable it!
+            if ($.inArray($target.get(0), shownTargets) != -1) {
+                return;
+            }
+            // If the target has a rule about show/hiding the whole row,
+            // we have to traverse up its ancestor to show/hide the whole row
+            if ($element.data("visibility-row-rules")) {
+                $target.parents("tr").eq(0).hide();
+            } else {
+                $target.hide();
+            }
+            // We also need to make sure the fields are blanked out, so
+            // that they could be updated on the backend
+            if ($target.is("input")) {
+                if ($target.attr("type") == "checkbox") {
+                    $target.prop("checked", false).trigger("change");
+                } else {
+                    $target.val("").trigger("change");
+                }
+            } else if ($target.is("select, textarea")) {
+                $target.val("").trigger("change");
+            }
+            $target.find("input[type!=checkbox], select, textarea").val("").trigger("change");
+            $target.find("input[type=checkbox]").prop("checked", false).trigger("change");
+            $target.trigger("change");
+        });
+    
+    }
 })(jQuery.noConflict());
