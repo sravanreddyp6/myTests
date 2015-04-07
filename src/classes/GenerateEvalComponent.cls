@@ -290,6 +290,11 @@ public with sharing class GenerateEvalComponent {
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
                 	if ( e.Field_Sub_Type__c == 'Checkbox') {
                         newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;" id=' + e.htmlid__c + '>';
+                        if (e.Required__c) {                        
+	                        newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+	                        newHtmlLbl += reqfldHTML;
+	                        newHtmlLbl +=  '</div></td>';
+                        }
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
 		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
 	                        if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
