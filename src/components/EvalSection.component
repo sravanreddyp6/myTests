@@ -143,6 +143,22 @@
 					if ($target.val() == '')
 						errorMsg += '<li>' + $('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
 				});
+				
+				// This logic below looks for any multi checkboxes marked as required.
+				$(".requiredInput").prev().filter(":visible").each(function(_, target) {
+				    var $target = $(target);
+				    var multiCheckValid = false;
+				    $('[id^=' + $target.prop("for") +'] :input').each(function(_, multiCheckBox) {
+				        if (multiCheckBox.checked){
+                            multiCheckValid = true;
+                            return false;
+				        }
+				    });
+				    if (!multiCheckValid && $('[id^=' + $target.prop("for") +'] :input').length > 0 ) {
+				        errorMsg += '<li>At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
+				    }
+				});
+				
 				if (errorMsg != '') {
 					$('#IsValid').val("false").trigger('change');
 					$('#ErrorMsg').val(errorMsg).trigger('change');
