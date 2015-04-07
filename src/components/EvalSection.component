@@ -97,6 +97,7 @@
 
 
 		jQuery(document).ready(function($) {
+			
 			window.beforeEvaluationSave = function() {
 				// Temporarily enable all the disabled fields before saving the
 				// record, so that they are included in the POST to the server.
@@ -193,8 +194,48 @@
 				closeOnDateSelect: true
 			});
 			$('.datetimepicker').datetimepicker({});
+			
+			
+			<apex:outputPanel layout="none" rendered="{!subcategory == 'Current Pain'}">
+			
+			var options =  [0,1,2,3,4,5,6,7,8,9,10];
+			var initialValue = '0';
+			
+			var $initialValue = $(document.getElementById('painLevel'));
+			if ( $initialValue != null) {
+				if ($initialValue.val() != '') 
+					initialValue = $initialValue.val();
+			}
+						
+			$(document.getElementById('painSlider')).slider({
+            	min: 0,
+            	max: 10,
+            	step: 1,
+            	value: initialValue,
+            	disabled: false,
+            	change: function (event, ui) {
+                handleSliderChange('painLevel', options[ui.value]);
+            	}	
+        	});
+			
+			
+			handleSliderChange = function (inputIdToUpdate, value) {
+			
+				var $inputToUpdate = $(document.getElementById(inputIdToUpdate));
+				return ($inputToUpdate.val(value));
+			};
+			
+			getSliderInitial = function ( inputIdForInitial ) {
+			debugger;
+				var $initalValue = $(document.getElementById(inputIdForInitial));
+				if ($initialValue.val() == '')
+					return '0';
+				else
+					return $initialValue.val();
+				}
+			</apex:outputPanel>
 
-			<apex:outputPanel layout="none" rendered="{!subcategory == 'Body Map'}">
+			<apex:outputPanel layout="none" rendered="{!(subcategory == 'Body Map' || subcategory=='Current Pain')}">
 			anno.reset();
 			var el = $('#bodyMap{!evalSectionUuid}').get(0);
 			if (el) {

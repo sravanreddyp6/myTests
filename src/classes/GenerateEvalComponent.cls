@@ -125,7 +125,7 @@ public with sharing class GenerateEvalComponent {
             	newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
 				newHTMLfld = '';
 				strval = '';
-				
+				system.debug(' field type is ' + e.field_type__c);
 				if (e.Required__c) {
 				    reqfldHTML = '<div class="requiredInput" style="display: table-cell;"><div class="requiredBlock"></div>';
 				} else {
@@ -192,7 +192,7 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld +=  '</textarea></div></div></td>';
                         
                     }else{
-                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
+                        newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
 	                    newHTMLfld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 	                    if (mapEvalValues.ContainsKey( e.id )) {
@@ -210,7 +210,7 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld +=  '/></div></div></td>';
                 	} 
                 } else if (e.Field_Type__c == 'Double'){
-                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
+                    newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
                         newHTMLfld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 	                    if (mapEvalValues.ContainsKey( e.id )) {
@@ -225,7 +225,7 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld +=  '/></div></div></td>';
 						
 				} else if (e.Field_Type__c == 'Int'){
-                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
+                    newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
 	                    newHTMLfld += '<input  pattern="[0-9]+" title="Please enter a valid number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 	                    if (mapEvalValues.ContainsKey( e.id )) {
@@ -247,7 +247,7 @@ public with sharing class GenerateEvalComponent {
 
                     // get the options
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get( e.id);
-                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
+                    newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
                     newHTMLfld += '<option value="">-- None --</option>';
@@ -260,7 +260,7 @@ public with sharing class GenerateEvalComponent {
                     }
                     newHTMLfld += '</select></div></div></td>';
                 }  else if (e.Field_Type__c == 'Date') {
-                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
+                    newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input class="datepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
 					if (mapEvalValues.ContainsKey( e.id )) {
@@ -269,7 +269,7 @@ public with sharing class GenerateEvalComponent {
                     }
                     newHTMLfld +=  '/></div></div></td>';
 				} else if (e.Field_Type__c == 'Datetime') {
-                    newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
+                    newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
@@ -289,7 +289,7 @@ public with sharing class GenerateEvalComponent {
                     // get the options
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
                 	if ( e.Field_Sub_Type__c == 'Checkbox') {
-                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
+                        newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;" id=' + e.htmlid__c + '>';
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
 		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
 	                        if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
@@ -299,7 +299,7 @@ public with sharing class GenerateEvalComponent {
 	                    }
                         newHTMLfld +=  '</div></td>';
                 	}else{
-                        newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
+                        newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
 	                    newHTMLfld += '<select style="vertical-align: text-top" multiple="multiple" id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
 	                    for ( Eval_Drop_Down__c thisdd : dropdownopts) {
@@ -320,6 +320,19 @@ public with sharing class GenerateEvalComponent {
                     newHTMLfld += '<table id="annotations">';
                     newHTMLfld += '<tbody></tbody></table></div></td>';
                     
+                	
+                } else if ( e.field_type__c == 'Image') {
+                	
+                	newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
+                    newHTMLfld += '<img id="' + e.htmlid__c + '"  name="' + e.id + '"';
+                    newHTMLfld += ' src="' + GetResourceURL(e.field_sub_type__c) + '" />';
+                    newHTMLfld +=  '</td>';
+                	
+                } else if ( e.field_type__c == 'Slider') {
+                	newHTMLfld = '<td class="dataCol" style="vertical-align: top">';
+                	newHTMLfld += '<div id="' + e.htmlid__c + '" style="margin-left: 30px; margin-right: 40px;" name="' + e.id + '" />';
+                	newHTMLfld += '</td>';
+                	system.debug( newHTMLfld);
                 	
                 }
                 
