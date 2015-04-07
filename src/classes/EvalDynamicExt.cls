@@ -21,6 +21,13 @@ public with sharing class EvalDynamicExt {
 	public Boolean showshiftDone{get; set;}
 	public Boolean isUserOwner {get; set; }
 	
+	public String getEvalStatusDate(){
+		if (evalType == 'Head to Toe')
+            return thisEval.Shift_Start_Time__c.format('MM/dd/yyyy HH:mm:ss', UserInfo.getTimeZone().toString() );
+        else
+            return thisEval.CreatedDate.format('MM/dd/yyyy HH:mm:ss', UserInfo.getTimeZone().toString() );
+	}
+	
 	public EvalDynamicExt(){
 		// get the record
 		evalID =  ApexPages.currentPage().getParameters().get('evalID');
