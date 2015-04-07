@@ -4,6 +4,8 @@ public with sharing class EvalRepeaters {
 	public string operatingGroup{get; set;}
 	public boolean anyErrors { get { return (numErrors > 0);} set; }
 	public boolean anyEmpty{ get { return (numEmpty > 0);} set;}
+	public ID parentEvalOwnerId { get; set; }
+	public string parentEvalStatus { get; set; }
 	
 	private integer numEmpty;
 	private integer numErrors;
@@ -70,6 +72,19 @@ public with sharing class EvalRepeaters {
 	
 	
 	private void buildEvalDataList( List<EvalRepeaterWrapper> workingEvals ) {
+		
+		
+		system.debug( 'EVAL ID IS: ' + evaluationID);
+		Evaluation__c[] parentEval = [ select id, ownerid, status__c from evaluation__c where id = :evaluationID ];
+		if ( parentEval.size() == 1) {
+			parentEvalOwnerID = parentEval[0].OwnerId;
+			parentEvalStatus = parentEval[0].status__c;
+		} 
+		else {
+			parentEvalOwnerID = null;
+			parentEvalStatus = 'Completed'; // don't allow entry on anything
+		}	
+		
 		
 		numErrors = 0;
 		evalDataKeys = '';
@@ -149,7 +164,8 @@ public with sharing class EvalRepeaters {
 		numEmpty = 0;
 		numErrors = 0;
 		
-	}
+		
+		}
 
 
 	public class EvalValueWrapper {
