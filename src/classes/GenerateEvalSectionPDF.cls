@@ -1,0 +1,303 @@
+public with sharing class GenerateEvalSectionPDF {
+
+	public string cat {get; set;}
+	public string subcat{get; set;}
+	public string subsubcat{get; set;}
+	public string evalname{get; set;}
+	public string opGrp {get;set;}
+	public ID evaluationID { get; set;}
+	public ID pbsID { get; set;}
+    public string evalSectionId { get; set;}
+    public string evalSecType { get; set;}
+    public string uniqueID{ get; set; }
+
+	public static Map<ID, Eval__c> mapEvalItems;
+	public static Map<String, Map<ID, Eval_Value__c> > mapEntryValues;
+	public transient Map<String, EntryWrapper> mapEntries {get; set;}
+	public transient List<String> listEntries {get;set;}
+	public transient Map<String, List<string>> mapEntryHTML{ get; set;}
+	
+	public Evaluation_Response__c[] annotations { set;
+        get {
+            return [
+                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+                       Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
+                       Annotation_Shape__c, Annotation_Text__c
+                FROM Evaluation_Response__c WHERE Evaluation__c=:evaluationId
+                AND RecordType.Name='Annotation'
+            ];
+        }
+    }
+
+	public GenerateEvalSectionPDF( ) {
+		mapEvalItems = new Map<ID, Eval__c>();
+
+		mapEntryValues = new Map<String, Map<ID, Eval_Value__c> > ();
+		evaluationID = ApexPages.currentPage().getParameters().get('evalID');
+		evalname=ApexPages.currentPage().getParameters().get('evalname');
+		opGrp = ApexPages.currentPage().getParameters().get('opGrp');
+		cat=ApexPages.currentPage().getParameters().get('cat');
+		subcat = ApexPages.currentPage().getParameters().get('subCat');
+		listEntries = new List<string>();
+		mapEntries = new Map<String, EntryWrapper>();
+		mapEntryHTML = CreateFieldControls();
+	}
+
+	public Map<string, List<string>> CreateFieldControls () {
+
+		// get the list of controls for this eval
+		List<String> htmlcontrols = new List<String>();
+		String query = 'select id, htmlid__c, field_name__c, category__c, category_sequence__c, sub_category__c, sub_sub_category__c, eval_type__r.name, Field_Type__c, Field_Sub_Type__c, length__c '
+					 + ' from eval__c  ' 
+					 + ' where eval_type__r.name = :evalname '
+					 + ' and field_name__c != \'isValid\' and field_name__c != \'ErrorMsg\' and visible__c = true ';	// don't want sections with only errors in them
+		
+		if ( !String.isEmpty(cat))
+			query += ' and category__c =:cat';
+		
+		if ( !String.isEmpty(subcat))
+			   query += ' and sub_category__c = :subcat';
+		
+		query += ' order by cat_seq_text__c, subcat_seq_text__c, field_sequence__c';
+		List<Eval__c> listEvalItems = Database.Query( query ); 
+		
+		// create a map for easy access
+		mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
+
+		// also create a map of fields in a section by storing the field list by composite key of category~subcat~subcat
+		Map<String, List<Eval__c>>mapEvalItemsbyCat = new Map<string, List<Eval__c>>();
+		String compkey = '';
+		List<Eval__c> eitems;
+		List<String> listSections = new List<String>();
+		for ( Eval__c ei : listEvalItems) {
+			
+			compkey = ei.category__c + '~' + ei.sub_category__c + '~' + ei.sub_sub_category__c;
+			if ( mapEvalItemsbyCat.get(compkey) == null ) { 
+				eitems = new List<Eval__c>{ei};
+				mapEvalItemsbyCat.put( compkey, eitems);
+				listSections.add( compkey);
+			}
+			else 
+				mapEvalItemsbyCat.get(compkey).add( ei);
+			
+		}
+		//system.debug( 'EVAL ITEMS BY CATSUB:' + mapEvalItemsbyCat);
+
+        // get any populated values for this eval and section
+        List<Eval_Value__c> listEvalValues = [
+            select eval_section_id__c, id, boolean__c, currency__c, date_time__c, number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, owner.name, createddate, eval_section_type__c from eval_value__c
+             where eval__c in :listEvalItems
+               and what_id__c = :evaluationID
+               and what_id_object__c = 'Evaluation__c'
+               //and eval_Section_Id__c = :evalSectionId
+              order by eval__r.cat_seq_text__c, eval__r.subcat_seq_text__c, eval__r.subsubcat_seq_text__c, eval_section_id__c, createddate 
+        ];
+
+		system.debug( 'EVAL VALUES' + listEvalValues);
+        
+        // create a map by eval id
+        Map <ID, Eval_Value__c>mapEvalValues;
+        String entrycompkey='';
+        
+        // create a list of entries by composite key
+        Map<String, Set<string>> mapEntryIndex = new Map<string, Set<string>>();
+        
+        String curritem = '';
+        mapEvalValues = new Map<ID, Eval_Value__c>();
+        
+        for ( Eval_Value__c ev: listEvalValues ) {
+            
+            if ( ev.eval_section_id__c != curritem ) {
+				listEntries.add( ev.eval_section_id__c);	// add to list of entries
+				curritem = ev.eval_section_id__c;
+				mapEvalValues = new Map<ID, Eval_Value__c>();
+            } 
+
+            mapEvalValues.put( ev.eval__c, ev);
+            mapEntryValues.put( ev.eval_section_id__c, mapEvalValues);
+            
+            entrycompkey = ev.eval__r.category__c + '~' + ev.eval__r.sub_category__c + '~' + ev.eval__r.sub_sub_category__c;
+            
+            mapEntries.put( ev.eval_section_id__c, new EntryWrapper( entrycompkey, ev.eval_section_id__c, ev.owner.name, ev.createddate, ev.eval__r.category__c, ev.eval__r.sub_category__c, ev.eval_section_type__c));
+
+				            
+            // make a map of entries keyed by section/sub/sub key
+            if ( mapEntryIndex.get( entrycompkey ) == null ) {
+            	mapEntryIndex.put( entrycompkey, new Set<String>());
+            	
+            }
+            mapEntryIndex.get( entrycompkey ).add( ev.eval_section_id__c );
+            
+        }
+
+        //system.debug( 'By entry:' + mapEntryValues);
+        //system.debug( 'Entries by composite key:' + mapEntryIndex);
+		String newHTMLfld = '';
+		String strval = '';
+		
+		htmlControls = new List<String>();
+		Integer totalCounter = 0;
+		Integer listCounter = 0;
+		Map<string, LIst<string>> mapEvalEntryHTML = new Map<String, List<string>>();
+		
+		
+		// for each category/sub/subsub
+		for ( String sectionkey : listSections) {
+		
+			//system.debug( sectionkey );
+		
+				
+			// for each entry in this section
+			if ( mapEntryIndex.get(sectionkey) != null ) {
+			
+			
+			for ( String entryId : mapEntryIndex.get(sectionkey) ) {
+				htmlControls = new List<String>();
+				//system.debug( 'num fields entry in key ' + sectionkey + ':' + entryID + ', '+  mapevalitemsbycat.get(sectionkey).size());
+			
+				// for each field in this category/sub/sub
+				for( Eval__c e : mapEvalItemsbyCat.get(sectionkey) ){
+			
+			
+		
+			try {
+				
+				mapEvalValues = mapEntryValues.get(entryID);
+				newHTMLfld = '';
+				strval = '';
+				
+                if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
+                    if ( e.Field_Sub_Type__c == 'Checkbox') {
+                        newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                        // insert value
+                        if ( mapEvalValues.ContainsKey( e.id ))
+                            if ( mapEvalValues.get(e.id).boolean__c)
+                                newHTMLFld += 'Yes';
+                            else
+                            	newHTMLFld += 'No';
+                        newHTMLfld += '</div>';
+                    } else if (e.Field_Sub_Type__c == 'Dropdown') {
+                        // Boolean dropdown values = --None--, Yes, No
+                        newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                        if ( mapEvalValues.ContainsKey( e.id )) {
+                            strval = mapEvalValues.get( e.id).Text_Under_250__c;
+                        }
+                        if (strval == '1')
+                            newHTMLfld += 'Yes';
+                        else if (strval == '0')
+                        	newHTMLfld += 'No';
+						newHTMLfld += '</div>';
+                    } //TODO: output radio buttons for Radio type
+                } else if (e.Field_Type__c=='String') {
+                    newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    if (mapEvalValues.ContainsKey( e.id )) {
+                        if ( e.length__c > 250 )
+                            strVal = mapEvalValues.get(e.id).text_over_250__c;
+                        else
+                            strVal = mapEvalValues.get(e.id).text_under_250__c;
+
+                        if (strVal != null && strVal != '')
+                            newHTMLfld += strVal;
+                    }
+                    newHTMLfld +=  '</div>';
+                } else if (e.Field_Type__c == 'DropDown') {
+                    // get the value
+                    if ( mapEvalValues.ContainsKey( e.id ))
+                        strVal = mapEvalValues.get(e.id).text_under_250__c;
+                    newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+					newHTMLfld += strVal;
+					newHTMLfld += '</div>';
+                }  else if (e.Field_Type__c == 'Date') {
+					newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+					if (mapEvalValues.ContainsKey( e.id )) 
+                        newHTMLfld += mapEvalValues.get(e.id).date_time__c; // output date format 
+                    newHTMLfld +=  '</div>';
+				} else if (e.Field_Type__c == 'Datetime') {
+                    newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    if (mapEvalValues.ContainsKey( e.id )) 
+                        newHTMLfld += mapEvalValues.get(e.id).date_time__c; // output date format
+                    newHTMLfld +=  '</div>';
+                } else if (e.Field_Type__c == 'Multiselect') {
+                	
+                    if ( mapEvalValues.ContainsKey( e.id )){
+	                	if ( e.length__c > 250 )
+	                       strVal = mapEvalValues.get(e.id).Text_Over_250__c;
+	                    else
+	                       strval = mapEvalValues.get(e.id).Text_Under_250__c;
+                    }
+                    //system.debug( e.id + ' - multiselect -' + selectedVals);
+                	newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+	                newHTMLfld += strval;
+                    newHTMLfld +=  '</div>';
+                } else if (e.field_type__c == 'BodyMap') {
+       				newHTMLfld = '<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
+                	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL('WholeBodyNoGrid') + '?' + entryID + '" id="bodyMap' + entryID + '" />';
+                	newHTMLfld += '</div>';
+                    newHTMLfld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
+                    newHTMLfld += '<table id="annotations">';
+                    newHTMLfld += '<tbody></tbody></table></div>';
+                }
+                
+                
+               htmlControls.add(newHtmlFld);
+				mapEvalEntryHTML.put( entryId, htmlControls );
+				//system.debug( 'put control array onto : ' + entryid);
+				
+			}
+			catch( Exception ex)
+			{
+				System.Debug( ex);
+			}
+			
+			}
+			}
+			}
+			}
+		system.debug('HTML IS:' + mapEvalEntryHTML);
+		return mapEvalEntryHTML;
+	}
+	
+	public class FormKeyVal{
+		public Id name;
+		public String value; 
+	}
+
+    public static String GetResourceURL(String resourceName) {
+
+		List<StaticResource> resourceList = [
+		   SELECT Name, NamespacePrefix, SystemModStamp 
+		   FROM StaticResource 
+		   WHERE Name = :resourceName
+		];
+                    
+		if (resourceList.size() == 1) {
+		   String namespace = resourceList[0].NamespacePrefix;
+		   return '/resource/' 
+		      + resourceList[0].SystemModStamp.getTime() + '/' 
+		      + (namespace != null && namespace != '' ? namespace + '__' : '') 
+		      + resourceName; 
+		} else return '';
+
+	}
+	
+	public class EntryWrapper {
+		public string compositeKey { get; set;}
+		public string entryid{get;set;}
+		public string cat {get;set;}
+		public string subcat {get;set;}
+		public string owner { get; set;}
+		public datetime created {get;set;}
+		public string entryType { get; set;}
+		
+		public EntryWrapper( string key, string eid, string eown, datetime ecr, string ecat, string esubcat, string secType ) {
+			compositeKey = key;
+			entryid = eid;
+			cat = ecat;
+			subcat = esubcat;
+			owner = eown;
+			created = ecr;
+			entryType = secType;
+		}
+	}
+
+}
