@@ -428,7 +428,7 @@ public with sharing class GenerateEvalComponent {
 			// construct new eval_value object
 			if ( mapEvalValues.containsKey( (ID)f ))  {
 				// value exists - need to update value
-				ev = mapEvalValues.get((ID)f);
+				ev = (Eval_Value__c) mapEvalValues.remove((ID)f);
 			}	else {
 					ev = new Eval_Value__c();
 					ev.eval__c = (ID)f;
@@ -483,6 +483,11 @@ public with sharing class GenerateEvalComponent {
 			}
 
 		}
+		
+		for (ID evID : mapEvalValues.Keyset()){
+			delValues.add((Eval_Value__c) mapEvalValues.get(evID));
+		}
+		
 		delete delValues;
 		upsert newValues;
 	}
