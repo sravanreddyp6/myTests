@@ -38,7 +38,7 @@
 			if (key.indexOf('Head to Toe~Skin/Body~Wound Detail') > -1 || key.indexOf('Head to Toe~Skin/Body~Pressure Ulcer Details') > -1) {
         		jQuery("#panel-form").empty().append(jQuery("[id$='evalResponsesForm']"));
     		}
-    		else if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key == 'Residential~Skin/Body~Skin Assessment~Residential' || key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Review'){
+    		else if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key == 'Residential~Skin/Body~Skin Assessment~Residential'){
         		jQuery("#panel-form").empty().append(jQuery("[id$='assessmentForm']"));
     		}
     		else if(key.indexOf('Restraint Event~Reduction Review~Reduction Review~Restraint Event') > -1){
@@ -91,6 +91,10 @@
 				} else {
 					return null;
 				}
+			}
+			
+			if(evalType == 'Restraint Event'){
+				disregardAssessment();
 			}
 		}
 
@@ -200,10 +204,16 @@
 					<apex:outputPanel rendered="{!evalType == 'Restraint Event'}">
 						<p>
 						   Restraint Status:{!thisEval.Status__c}<br/>
-                           CreatedDate: <apex:outputText value="{!evalStatusDate}" /> <br/>
-						   Restrained By: {!thisEval.Owner.Name} <br/>
-						   Start Date/Time : Coming Soon<br/>
-						   End Date/Time : Coming Soon
+                           CreatedDate: <apex:outputText value=" {!thisEval.CreatedDate}" /> <br/>
+                           <apex:variable value="" var="a" rendered="{!thisEval.Owner.Name != null}" >
+						   		Restrained By: {!thisEval.Owner.Name} <br/>
+						   </apex:variable>
+						   <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_time__c != null}" >
+						   		Start Date/Time : {!thisEval.Shift_Start_time__c}<br/>
+						   </apex:variable>
+						   <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_time__c != null}" >
+						   		End Date/Time :{!thisEval.Shift_End_Time__c}
+						   </apex:variable>
 						</p>				
 					</apex:outputPanel>
 
