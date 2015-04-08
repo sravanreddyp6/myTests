@@ -101,10 +101,18 @@ public with sharing class EvalDynamicExt {
 
         if (listEvalValues.size() == 0 && (evalSecId == null || evalSecId == '') ){         // the initial entry 
 	        for (Eval__c e : evals){
-	        	  if (e.Field_Name__c=='IsValid' && (e.Sub_Category__c == 'Fall Assessment' || e.Sub_Category__c == 'Skin Assessment'))
+	        	  if (e.Field_Name__c=='IsValid' && (e.Sub_Category__c == 'Fall Assessment' || e.Sub_Category__c == 'Skin Assessment')){
                     isValidVal = !EvalDynamicExt.validateAssessmentError(evalId, e.Sub_Category__c == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain');
-                  else
-                    isValidVal = true;      
+	        	  }
+	        	  else if(e.Field_Name__c=='IsValid' && e.Sub_Category__c == 'Reduction Review'){
+	        	  		isValidVal = validateRestraintReductionError();
+	        	  	
+	        	  	
+	        	  }
+                  else{
+                    isValidVal = true;    
+                    
+                  }  
 	              vals.add(new eval_value__c(Eval__c = e.id, 
 	                                         Eval_Section_Id__c = sectionId,
 	                                         Eval_Section_Type__c = evalSecType,
@@ -142,9 +150,14 @@ public with sharing class EvalDynamicExt {
         return error;
     }
     
+    public static boolean validateRestraintReductionError(){
+    	//logic to validate Reduction Reviw erors go here - Sravan 
+    	return true;
+    }
+    
     public pageReference reviseAssessment() {
     
-    	//Roll back all the DML operations in case of any failure in the process of Cloning.
+    	//Roll back all the DML operations in case of any failure in the process of Cloning. 04/4/2015 8:00 PM 
     	Savepoint sp = Database.setSavepoint();
     		try{
     			Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian');
@@ -162,8 +175,6 @@ public with sharing class EvalDynamicExt {
 	
 	
 	public pageReference disregardAssessment() {
-		
-		
 		
 		if(evalType == 'Residential'){
 			thisEval.Status__c = 'Disregard';
@@ -204,6 +215,21 @@ public with sharing class EvalDynamicExt {
 			
 		}
 		
+		else if(evalType == 'Restraint Event'){
+			thisEval.Status__c = 'Disregard';
+			try{
+				update thisEval;
+				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
+				pageRef.setRedirect(true);
+				return pageRef;
+			}
+			catch(exception e){
+				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
+				return null;	
+			}
+			
+		}
+		
 		return null;
 	}
 	
@@ -221,7 +247,7 @@ public with sharing class EvalDynamicExt {
 			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
 			return null;	
 		}
-		
+
 	}
 	
 	//Generic Clone functionality to copy Eval Value records.
@@ -383,6 +409,27 @@ public with sharing class EvalDynamicExt {
 				
 			}
 				
+		}
+		
+		if(evalType == 'Restraint Event'){
+			showRevise = false;
+			
+			if(thisEval.Status__c == 'Draft') {
+				showDisregard = true;
+				showEsign = true;
+				showshiftDone = false;
+			}
+			else if(thisEval.Status__c == 'Disregard'){
+				showDisregard = false;
+				showEsign = false;
+				showshiftDone = false;
+				
+			}
+			else if(thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'){
+				showDisregard = true;
+				showEsign = false;
+				showshiftDone = true;
+			}
 		}
 			
 	}
