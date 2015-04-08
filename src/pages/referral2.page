@@ -1180,8 +1180,11 @@
 	                
                 	<apex:pageblockSection columns="1" id="admissionLocationEntry" >
                 		<apex:pageBlockSectionItem >
-                			<apex:outputLabel value="Anticipated Admission Date" />
-                			<apex:inputField value="{!referralRecord.Anticipated_Admission_Date__c}" id="antAdmDate"/>
+							<apex:outputLabel value="Anticipated Admission DateTime" />
+							<apex:outputPanel layout="none">
+								<c:MilitaryDatetime dateTimeVal="{!referralRecord.Anticipated_Admission_DateTime__c}" edit="true" hiddenFieldId="antAdmDate"/>
+								<apex:inputHidden id="antAdmDate" value="{!referralRecord.Anticipated_Admission_DateTime__c}" />
+							</apex:outputPanel>
                 		</apex:pageBlockSectionItem>
                 		<apex:pageBlockSectionItem id="admSectionItem" >
                 			<apex:outputLabel value="Alias" />
@@ -1512,7 +1515,11 @@
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
-                <apex:outputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
+                <apex:pageBlockSectionItem >
+	                <apex:outputLabel value="Anticipated Admission DateTime" />
+	                <c:MilitaryDatetime dateTimeVal="{!Referral__c.Anticipated_Admission_DateTime__c}" />
+                </apex:pageBlockSectionItem>
+                
                 <apex:outputField value="{!Referral__c.Service_Location__c}" />
                 <apex:outputField value="{!Referral__c.Service_Location_Service_Value__c}" />
                 <apex:outputField value="{!Referral__c.Service_Location_Setting__c}" />
