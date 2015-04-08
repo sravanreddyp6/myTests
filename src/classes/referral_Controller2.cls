@@ -682,8 +682,8 @@ public with sharing class referral_Controller2 {
 
 		// requirements for admission and service assignment: anticipated admission date, anticipated location
 		//Ec-110 Sravan 03/27/2014
-		if ( this.referralRecord.Anticipated_Admission_Date__c == null && OperatingGroup != 'CareMeridian') {
-			messages.Add( 'Anticipated Admission Date' );
+		if ( this.referralRecord.Anticipated_Admission_DateTime__c == null && OperatingGroup != 'CareMeridian') {
+			messages.Add( 'Anticipated Admission Date Time' );
 			hasReq = false;
 		}
 

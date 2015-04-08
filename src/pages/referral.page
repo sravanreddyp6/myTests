@@ -1918,7 +1918,13 @@
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo" rendered="{!ReferralRecordType != 'CareMeridian'}">
-                <apex:inputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Anticipated Admission DateTime" />
+                    <apex:outputPanel layout="none">
+                        <c:MilitaryDatetime dateTimeVal="{!referralRecord.Anticipated_Admission_DateTime__c}" edit="true" hiddenFieldId="antAdmDate"/>
+                        <apex:inputHidden id="antAdmDate" value="{!referralRecord.Anticipated_Admission_DateTime__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 <apex:inputHidden id="sl_lkid" value="{!Referral__c.Service_Location__c}" />
 
                 <apex:pageBlockSectionItem >
