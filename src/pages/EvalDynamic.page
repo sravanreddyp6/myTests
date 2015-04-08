@@ -205,8 +205,8 @@
 						<p>
 						   Restraint Status:{!thisEval.Status__c}<br/>
                            CreatedDate: <apex:outputText value=" {!thisEval.CreatedDate}" /> <br/>
-                           <apex:variable value="" var="a" rendered="{!thisEval.Owner.Name != null}" >
-						   		Restrained By: {!thisEval.Owner.Name} <br/>
+                           <apex:variable value="" var="a" rendered="{!thisEval.Restrained_by__c != null}" >
+						   		Restrained By: {!thisEval.Restrained_By__c} <br/>
 						   </apex:variable>
 						   <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_time__c != null}" >
 						   		Start Date/Time : {!thisEval.Shift_Start_time__c}<br/>
@@ -230,7 +230,7 @@
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!showshiftDone}">
-						<a id="btnDone" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">Finalize Shift</a>
+						<a id="btnDone" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">Finalize {!evalType}</a>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!showDisregard}">
