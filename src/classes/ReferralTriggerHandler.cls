@@ -19,7 +19,8 @@ public with sharing class ReferralTriggerHandler {
     
     private void updateAnticipatedAdmDate(Referral__c[] referrals){
         for(Referral__c ref: referrals){
-        	ref.Anticipated_Admission_Date__c = ref.Anticipated_Admission_DateTime__c.date();
+        	if ( ref.Anticipated_Admission_DateTime__c != null )
+        	   ref.Anticipated_Admission_Date__c = ref.Anticipated_Admission_DateTime__c.date();
         }
     }
 }
