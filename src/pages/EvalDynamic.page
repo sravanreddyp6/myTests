@@ -205,13 +205,13 @@
 						<p>
 						   Restraint Status:{!thisEval.Status__c}<br/>
                            CreatedDate: <apex:outputText value=" {!thisEval.CreatedDate}" /> <br/>
-                           <apex:variable value="" var="a" rendered="{!thisEval.Restrained_by__c != null}" >
+                           <apex:variable value="" var="a" rendered="{!thisEval.Restrained_By__c != null}" >
 						   		Restrained By: {!thisEval.Restrained_By__c} <br/>
 						   </apex:variable>
-						   <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_time__c != null}" >
-						   		Start Date/Time : {!thisEval.Shift_Start_time__c}<br/>
+						   <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
+						   		Start Date/Time : {!thisEval.Shift_Start_Time__c}<br/>
 						   </apex:variable>
-						   <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_time__c != null}" >
+						   <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null}" >
 						   		End Date/Time :{!thisEval.Shift_End_Time__c}
 						   </apex:variable>
 						</p>				
@@ -293,14 +293,14 @@
 			<input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />
 		</apex:form>
 	</apex:outputPanel>
-	<!-- 
+	 
 	<apex:outputPanel style="display: none" id="restraintReduction" >
 		<apex:form id="restraintForm" >
 			<c:restraintReductionComponent rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event' || key=='Restraint Event~Reduction Review~Reduction Review~Activity Log'}" AssessmentId="{!currentAssessId}"/>
 			<input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />
 		</apex:form>
 	</apex:outputPanel>
-  -->
+ 
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
 		<apex:form id="evalResponsesForm">
 			<apex:pageBlock >
