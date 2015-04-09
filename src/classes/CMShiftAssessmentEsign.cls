@@ -34,9 +34,9 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
 					if(value.Eval__r.Field_Name__c == 'Restraint Action'){
 						assessment.Status__c = value.Text_Under_250__c;
 					}
-					if(value.Eval__r.Field_Name__c == 'Restrained By'){
+					/*if(value.Eval__r.Field_Name__c == 'Restrained By'){
 						assessment.Restrained_By__c = value.Text_Under_250__c;
-					}
+					}*/
 					if(value.Eval__r.Field_Name__c == 'Start Date/Time' && value.Date_Time__c != null){
 						assessment.Shift_Start_time__c = value.Date_Time__c;
 					}
