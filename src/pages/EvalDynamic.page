@@ -41,7 +41,7 @@
     		else if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key == 'Residential~Skin/Body~Skin Assessment~Residential'){
         		jQuery("#panel-form").empty().append(jQuery("[id$='assessmentForm']"));
     		}
-    		else if(key.indexOf('Restraint Event~Reduction Review~Reduction Review~Restraint Event') > -1){
+    		else if(key.indexOf('Restraint Event~Reduction Review~Reduction Review') > -1){
     			jQuery("#panel-form").empty().append(jQuery("[id$='restraintForm']"));
     		}
     		else{
@@ -296,7 +296,7 @@
 	<!-- 
 	<apex:outputPanel style="display: none" id="restraintReduction" >
 		<apex:form id="restraintForm" >
-			<c:restraintReductionComponent rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event'}" AssessmentId="{!currentAssessId}"/>
+			<c:restraintReductionComponent rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event' || key=='Restraint Event~Reduction Review~Reduction Review~Activity Log'}" AssessmentId="{!currentAssessId}"/>
 			<input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />
 		</apex:form>
 	</apex:outputPanel>
