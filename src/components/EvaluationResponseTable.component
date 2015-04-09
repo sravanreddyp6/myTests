@@ -8,7 +8,7 @@
     <apex:attribute name="cols" description="Number of columns on the page block"
         type="Integer" assignTo="{!numCols}" /> 
     <apex:attribute name="rows" description="Number of rows on the page block"
-        type="Integer" assignTo="{!numRows}" />           
+        type="Integer" default="5" assignTo="{!numRows}" />           
     <apex:attribute name="type" description="The type of this table"
         type="String" required="true" assignTo="{!responseType}" />
     <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
@@ -185,6 +185,7 @@
                 </apex:pageblockButtons>
 
                 <apex:pageMessages id="responseDialogErrors" />
+
                 <apex:inputHidden value="{!currentResponse.Id}" rendered="{!isEdit}" />
                 <apex:dynamicComponent componentValue="{!dialog}" />
             </apex:pageBlock>

@@ -6,7 +6,6 @@
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
-	<apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 
 	<style>
@@ -26,9 +25,61 @@
 	</style>
 
 	<script>
-		jQuery.noConflict();
+		$j = jQuery.noConflict();
+		
+	 function closeModalDialogN (dialogId, tagType) {
+        selector = tagType + '[id$=' + dialogId + ']';
+        $j(selector).dialog('destroy');
+        // Allow "background" to be scrollable when dialogs are closed.
+        $j("body").css("overflow", "auto");
+    	};
+    
+    
+    function openModalDialogN (dialogId, tagType, titleString, dClass, width, formName, hideCloseButton) {
+       	console.log(' inside openModal');
+        if (!width) {
+            width = 800;
+        }
+        if (!dClass) {
+            dClass = 'fixed-dialog';
+        }
+        if (!formName) {
+            formName = 'referralForm';
+        }
+        if (hideCloseButton === undefined) {
+            hideCloseButton = true;
+        }
+        selector = tagType + '[id$=' + dialogId + ']';
+        console.log( selector );
+        if ($j(selector).dialog("isOpen")!==true) {
+            $j(selector).dialog({
+                dialogClass: dClass,
+                title:titleString,
+                modal:true,
+                width: width,
+                resizable: false,
+                minHeight: 0,
+                dialogClass: 'modalDialog',
+                closeOnEscape:false,
+                position: {
+                    my: "center top",
+                    at: "center top"
+                },
+                open: function () {
+                    // Don't allow "background" to be scrollable when dialogs
+                    // are open.
+                    $j("body").css("overflow", "hidden");
+                }
+            }).parent().appendTo($j('form[id$=' + formName + ']'));
+            if (hideCloseButton) {
+                $j(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+            }
+        }
+    	};
+    	
 		jQuery(document).ready(function( $ ) {
-			"use strict";
+		
+			//"use strict";
 
 			var $shiftStartTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.shiftDocEntry.shiftStartTimeEntry.shiftStartTime}'));
 			var $shiftEndTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.shiftDocEntry.shiftEndTimeEntry.shiftEndTime}'));
@@ -128,20 +179,23 @@
 					event.preventDefault();
 				});
 				$evalCancel.on('click', function (event) {
-					closeModalDialog('shiftDocModal', 'span');
+					closeModalDialogN('shiftDocModal', 'span');
 					clearDates();
 					event.preventDefault();
 				});
 			};
+			
+		
+    	
 			setUpButtons();
 		});
 	</script>
 
 	<apex:form id="shiftDocModalForm">
-		<apex:actionFunction name="showAddShiftDoc{!uniqueId}" action="{!showAddShiftDoc}" status="{!status}" oncomplete="openModalDialog('shiftDocModal', 'span', 'Add Nurses Shift Documentation', null, 1000, 'shiftDocModalForm'); jQuery('#shiftDocMessages').html('');" rerender="{!onShowRerender}" />
+		<apex:actionFunction name="showAddShiftDoc{!uniqueId}" action="{!showAddShiftDoc}" status="{!status}" oncomplete="openModalDialogN('shiftDocModal', 'span', 'Add Nurses Shift Documentation', null, 1000, 'shiftDocModalForm'); jQuery('#shiftDocMessages').html('');" rerender="{!onShowRerender}" />
 		<apex:actionFunction name="saveShiftDoc{!uniqueId}" action="{!saveShiftDoc}" status="{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.saveShiftDocStatus}" />
 
-		<apex:outputPanel id="shiftDocModal" style="display: none">
+		<apex:outputPanel id="shiftDocModal" style="display: none" >
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<div id='shiftDocMessages'></div>
 			<apex:pageBlock title="Add Nurses Shift Documentation" id="modalMainBlock">

@@ -4,7 +4,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-    <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
+<!--    <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" /> -->
     <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS" />
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
@@ -86,7 +86,7 @@
 			j$('input[id$=phaseToSave]').val(thePhase);
 		}
 
-		openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
+		openModalDialogSA = function (dialogId, tagType, titleString, dClass, width) {
 			if (!width) {
 				width = 800;
 			}
@@ -117,7 +117,7 @@
 				j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
 			}
 		};
-        closeModalDialog = function (dialogId, tagType) {
+        closeModalDialogSA = function (dialogId, tagType) {
 	        selector = tagType + '[id$=' + dialogId + ']';
 	        j$(selector).dialog('destroy');
 	        // Allow "background" to be scrollable when dialogs are closed.
@@ -262,11 +262,11 @@
 	</script>
 	<apex:pagemessages id="msgs" />
 	<br />
-	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations" status="{!$Component.myFRM.residentAssessmentShiftDocBlock.addShiftDocStatus}" />
+	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock.addShiftDocStatus}" />
 	<apex:form id="myFRM">
-		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
-		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
-		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
+		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
+		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
+		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
 			<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 		</apex:actionFunction>
 		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1" />
@@ -287,9 +287,9 @@
 		</apex:actionFunction>
 
         <!-- start seizure actions-->
-<!--         <apex:actionFunction name="showAddSeizure" status="AddEditSeizureStatus" action="{!showAddSeizure}" oncomplete="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry,seizureMessages" /> -->
-        <apex:actionFunction name="saveSeizure" action="{!saveSeizure}" status="saveSeizureStatus" oncomplete="seizureScrollToTop(true); if (closeSeizure && jQuery('.errorMsg').length == 0) closeModalDialog('seizureTrackingModal', 'div');" rerender="SeizureTrackingList,seizureEntry,seizureMessages" />
-        <apex:actionFunction name="showEditSeizure" action="{!showEditSeizure}" status="AddEditSeizureStatus" oncomplete="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600);seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry, seizureMessages">
+<!--         <apex:actionFunction name="showAddSeizure" status="AddEditSeizureStatus" action="{!showAddSeizure}" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry,seizureMessages" /> -->
+        <apex:actionFunction name="saveSeizure" action="{!saveSeizure}" status="saveSeizureStatus" oncomplete="seizureScrollToTop(true); if (closeSeizure && jQuery('.errorMsg').length == 0) closeModalDialogSA('seizureTrackingModal', 'div');" rerender="SeizureTrackingList,seizureEntry,seizureMessages" />
+        <apex:actionFunction name="showEditSeizure" action="{!showEditSeizure}" status="AddEditSeizureStatus" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600);seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry, seizureMessages">
             <apex:param name="seizureId" value="" />
         </apex:actionFunction>
         <!-- end seizure actions-->
@@ -931,7 +931,7 @@ END: Uncomment to have the element collapsed by default -->
 
         <!--  Seizure section -->
         <!-- Add Seizure Tracking modal. -->
-        <apex:outputPanel id="seizureTrackingModal" layout="block" style="display:none">
+        <apex:outputPanel id="seizureTrackingModal" layout="block" style="display:none" rendered="{!!newSA}">
             <span class="ui-helper-hidden-accessible"><input type="text"/></span>
             <div id='seizureMessages'></div>
             <apex:pageBlock >
@@ -958,7 +958,7 @@ END: Uncomment to have the element collapsed by default -->
 	                        <apex:outputPanel >
 			                    <apex:commandButton id="saveSeizure" value="Save" onclick="seizureSave(true);return false;" />
 			                    <apex:commandButton id="saveAndNewSeizure" value="Save & New" onclick="seizureSave(false); return false;" />
-			                    <apex:commandButton value="Cancel" onclick="closeModalDialog('seizureTrackingModal', 'div');j$('#seizureMessages').html('');return false;" />
+			                    <apex:commandButton value="Cancel" onclick="closeModalDialogSA('seizureTrackingModal', 'div');j$('#seizureMessages').html('');return false;" />
 	                        </apex:outputPanel>
                         </apex:facet>
                     </apex:actionStatus>
@@ -973,7 +973,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB}">
+        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA}">
             <div class="pbHeaderButton">
 <!--             <apex:actionStatus id="AddSeizureStatus"> -->
 <!--                 <apex:facet name="start"> -->
@@ -981,7 +981,7 @@ END: Uncomment to have the element collapsed by default -->
 <!--                 </apex:facet> -->
 <!--                 <apex:facet name="stop" > -->
 <!--                <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" /> -->
-                    <input type="button" class="btn" value="Add Seizure" onclick="openModalDialog('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
+                    <input type="button" class="btn" value="Add Seizure" onclick="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
 <!--                <input type="button" class="btn" value="Add Seizure" onclick="showAddSeizure(); return false;"/> -->
                     <input type="button" class="btn" value="Seizure Report" onclick="window.open('/apex/SeizureTrackingRpt?saId={!Service_Assignment__c.Id}', '_self'); return false;" />
 <!--                 </apex:facet> -->
@@ -1310,27 +1310,10 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 		<!-- end FAD Assessments -->
-<!-- 		<a name="Assessment_res" id="Assessment_res"></a> -->
-<!-- 		<apex:pageBlock id="Assessment_res" title="Restraint Reduction Assessment" rendered="{!Service_Assignment__c.id != null }"> -->
-<!-- 			<div class="pbHeaderButton"> -->
-<!-- 				<apex:commandButton value="New Restraint Reduction Assessment" onclick="window.open('/apex/Assess_Restraint_Form?saID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{!(Assessments_RestraintReduction.size=0)}" /> -->
-<!-- 			</div> -->
-<!-- 			<apex:outputText value="No Assessments to display" rendered="{!(Assessments_RestraintReduction.size=0)}" /> -->
-<!-- 			<apex:commandButton value="Summary Report" rendered="{!(Assessments_RestraintReduction.size>0)}" onclick="window.open('/apex/rptAssess_Restraint_PBS_Sum?PBS={!Service_Assignment__c.Person_Being_served__r.AccountID}', '_blank'); return false;" style="padding: 3px;" /> -->
-<!-- 			<apex:pageBlockTable value="{!Assessments_RestraintReduction}" var="assess" rendered="{!(Assessments_RestraintReduction.size!=0)}"> -->
-<!-- 				<apex:column headerValue="Name"> -->
-<!-- 					<a href="/apex/Assess_Restraint_Form?id={!assess.ID}">{!assess.name}</a> -->
-<!-- 				</apex:column> -->
-<!-- 				<apex:column value="{!Assess.Assessment_Date__c}" headerValue="Date of Admistration" /> -->
-<!-- 				<apex:column value="{!Assess.Score__c}" /> -->
-<!-- 				<apex:column value="{!Assess.Status__c}" /> -->
-<!-- 				<apex:column value="{!Assess.Disregard__c }" /> -->
-<!-- 			</apex:pageBlockTable> -->
-<!-- 		</apex:pageBlock> -->
 
 		<!-- Restraint Events Start -->
 		<a name="Assessment_res" id="Assessment_res"></a>
-		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}">
+		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && !editSA}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" />
 			</div>
@@ -1340,10 +1323,10 @@ END: Uncomment to have the element collapsed by default -->
 
         <!-- Isolation Events Start -->
         <a id="isolation"></a>
-        <apex:pageBlock title="Isolation Events" >
+        <apex:pageBlock title="Isolation Events" rendered="{!!editSA}" >
             <c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
                                        type="Isolation Event"
-                                       formId="{!$Component.FormID}"
+                                       formId="{!$Component.myFRM}"
                                        uniqueId="Isolation_Event"
                                        rules="{&quot;Isolation_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                        cols="1"
@@ -1619,7 +1602,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageblockButtons location="bottom">
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
-					<apex:commandButton value="Cancel" onclick="closeModalDialog('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
 					<apex:actionStatus id="saveFundingSourceStatus">
 						<apex:facet name="start">
 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1631,7 +1614,7 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:outputPanel>
 
 		<a id="Funding_Sources"></a>
-		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM}">
+		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM && !newSA}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" />
 				<apex:actionStatus id="AddFundingSourceStatus">
