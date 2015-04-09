@@ -18,7 +18,7 @@ public with sharing class EvaluationResponseTableController {
     public Id evaluationId { get;
         set {
             evaluationId = value;
-            if (responseType != null) {
+            if (responseType != null && String.isNotEmpty(evaluationId)) {
                 fetchResponses(evaluationId, responseType);
             }
         }
@@ -26,7 +26,7 @@ public with sharing class EvaluationResponseTableController {
     public Id pbsId { get;
         set {
             pbsId = value;
-            if (responseType != null) {
+            if (responseType != null && String.isNotEmpty(pbsID)) {
                 fetchResponsesFromPBS(pbsId, responseType);
             }
         }
@@ -71,7 +71,7 @@ public with sharing class EvaluationResponseTableController {
         currentResponse.RecordTypeId = Utility.getEvaluationResponseRecordType(responseType);
         currentResponse.Evaluation__c = evaluationId;
         currentResponse.Person_Being_Served__c = pbsId;
-        //currentResponse.Service_Assignment__c = saId;
+        currentResponse.Service_Assignment__c = saId;
         dialogShown = true;
         isEdit = false;
         return null;
@@ -88,6 +88,7 @@ public with sharing class EvaluationResponseTableController {
 
     public void saveResponse() {
         System.debug('saveResponse called, currentResponse: ' + currentResponse);
+        	
         try {
             hasError = false;
            // string tmp = getNecessaryColumns(responseType);
@@ -98,12 +99,14 @@ public with sharing class EvaluationResponseTableController {
                         hasError = true;}
                 }
             }
+               
             if( !hasError){upsert currentResponse;}
 
             
             
         } catch (DMLException ex) {
             hasError = true;
+            system.debug(ex);
             // SF will automatically create a PageMessage Error here, so we don't
             // have to do anything
         }
@@ -164,6 +167,7 @@ public with sharing class EvaluationResponseTableController {
             PBSI.childComponents.add(lbl);
             PBSI.childComponents.add(dialogInput);
 
+			system.debug( dialogInput.expressions.value);
             dialog.childComponents.add(PBSI);
         }
         return dialog;
@@ -183,7 +187,8 @@ public with sharing class EvaluationResponseTableController {
         String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c,' + getNecessaryColumns(responseType) +
             ' FROM Evaluation_Response__c WHERE Person_Being_Served__c = :pbsId' +
             ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
-            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate Limit ' + numRows;    
+            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate Limit ' + numRows;  
+            system.debug(query);  
         responses = Database.query(query);
         numberOfResponses = responses.size();
     }
