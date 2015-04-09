@@ -18,6 +18,15 @@ public with sharing class restraintReductionController {
 		}
 		
 		set;}
+		
+	public Assessment__c assessment{get{
+		if(assessment == null){
+			assessment = [SELECT Id, Name, Status__c, Disregard__c FROM Assessment__c WHERE Id=: assId];
+			
+		}
+		return assessment;
+		}
+		set;}
 	
 	//VF Args
 	public id questionID {get;set;}
@@ -90,5 +99,14 @@ public with sharing class restraintReductionController {
         return null;
 
     }
+    
+    public pageReference disregard(){
+    	assessment.Status__c = 'Disregard';
+    	assessment.Disregard__c = true;
+    	update assessment;
+    	return null;
+    }
+    
+    
 
 }
