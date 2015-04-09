@@ -327,10 +327,11 @@
 				<apex:outputField value="{!admission.name}" />
 				<apex:outputField value="{!admission.Status__c}" />
 				<apex:outputField value="{!admission.Network_Offering__c}" />
-
-				<apex:outputText label="Effective Date" value="{0, date, MM/dd/yyyy}">
-					<apex:param value="{!admission.Effective_Date__c}" />
-				</apex:outputText>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Effective Date" />
+                    <c:MilitaryDatetime dateTimeVal="{!admission.Admission_Effective_DateTime__c}" />
+                </apex:pageBlockSectionItem>
+                
 				<apex:outputField value="{!admission.State__c}" />
 
 				<apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}">

@@ -120,7 +120,7 @@ public Map<String, String> fieldMap { get; set; }
     //for EPRIQM-51
     private boolean setdisableAddAdm() {
     		if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood')) {
-    	  List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId];
+    	  List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId];
     	  if(admissionList.size()>0){
     	  	return false;
     	  } else {
@@ -167,7 +167,7 @@ public Map<String, String> fieldMap { get; set; }
         return ApexPages.currentPage().getUrl();
     }}
 
-    public List<Admission__c> admissions{get{return [select id,Name,Discharged_Date__c, Effective_Date__c, Status__c  from Admission__c where Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id') ];}set;}
+    public List<Admission__c> admissions{get{return [select id,Name, Admission_Effective_DateTime__c, Discharged_Date__c, Effective_Date__c, Status__c  from Admission__c where Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id') ];}set;}
     public Boolean showDiagnosis { get {
         if (TMNUser == null) {
             return false;
