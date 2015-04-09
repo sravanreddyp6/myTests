@@ -556,24 +556,24 @@
 
 
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="false" id="ContactSection" rendered="{!ISNULL(personBeingServedRecord.id)}">
-                <apex:inputField value="{!personBeingRefRecord.Street_1__c}" id="Perm_Street1" />
+                <apex:inputField value="{!personBeingRefRecord.Street_1__c}" id="Perm_Street1" label="Mailing Street 1" />
                 <apex:inputField value="{!personBeingRefRecord.Phone__c}" id="Perm_Phone" />
-                <apex:inputField value="{!personBeingRefRecord.Street_2__c}" id="Perm_Street2" />
-                <apex:inputField value="{!personBeingRefRecord.Email_Address__c}" id="Perm_Email" />
+                <apex:inputField value="{!personBeingRefRecord.Street_2__c}" id="Perm_Street2" label="Mailing Street 2" />
+                <apex:inputField value="{!personBeingRefRecord.Email_Address__c}" id="Perm_Email" label="Email" />
                 <apex:pageBlockSectionItem >
-                    <apex:outputText value="City" />
+                    <apex:outputText value="Mailing City"  label="Mailing County"/>
                     <apex:outputPanel styleClass="nowrap">
-                        <apex:inputText value="{!personBeingRefRecord.City__c}" id="Perm_City" />&nbsp;
-                        <apex:outputLabel value="State" />&nbsp;
-                        <apex:inputField value="{!personBeingRefRecord.State__c}" id="Perm_State" />&nbsp;
-                        <apex:outputLabel value="Zip" />&nbsp;
-                        <apex:inputText value="{!personBeingRefRecord.Zip_Code__c}" style="width: 42px;" id="Perm_Zip" />
+                        <apex:inputText value="{!personBeingRefRecord.City__c}" id="Perm_City"  label="Mailing City" />&nbsp;
+                        <apex:outputLabel value="Mailing State/Province Code" />&nbsp;
+                        <apex:inputField value="{!personBeingRefRecord.State__c}" id="Perm_State"  label="Mailing State/Province Code"/>&nbsp;
+                        <apex:outputLabel value="Mailing Zip/Postal Code" />&nbsp;
+                        <apex:inputText value="{!personBeingRefRecord.Zip_Code__c}" style="width: 42px;" id="Perm_Zip"  label="Mailing Zip/Postal Code"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <!--  Fax is removed for   EPRIQM-115
                 <apex:inputField value="{!personBeingRefRecord.Fax__c}" id="Perm_Fax" />
                  -->
-                <apex:inputField value="{!personBeingRefRecord.Home_County__c}" />
+                <apex:inputField value="{!personBeingRefRecord.Home_County__c}" label="Mailing County"/>
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Person Being Served" showHeader="true" columns="2" collapsible="false" id="readPBSSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
