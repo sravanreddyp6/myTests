@@ -42,7 +42,7 @@
         		jQuery("#panel-form").empty().append(jQuery("[id$='assessmentForm']"));
     		}
     		else if(key.indexOf('Restraint Event~Reduction Review~Reduction Review~Restraint Event') > -1){
-    			jQuery("#panel-form").empty().append(jQuery("[id$='restraintEventfrm']"));
+    			jQuery("#panel-form").empty().append(jQuery("[id$='restraintForm']"));
     		}
     		else{
         		jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
@@ -289,12 +289,16 @@
 		<apex:form id="assessmentForm">
 			<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain" rendered="{!key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential'}" AssessmentName="Fall Risk Assessment" lowerScore="1" medianScore="30" higherScore="31" />
 			<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential~Skin/Body~Skin Assessment~Residential'}" AssessmentName="Skin Assessment" lowerScore="1" medianScore="14" higherScore="14" />
+<!-- 			<c:fallAssessmentComponent Domain="Restraint Reduction" rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event'}" AssessmentName = "Restraint Reduction" /> -->
 			<input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />
 		</apex:form>
 	</apex:outputPanel>
 	
 	<apex:outputPanel style="display: none" id="restraintReduction" >
-			<c:AssessRestraint_RecordForm rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event'}"/>
+		<apex:form id="restraintForm" >
+			<c:restraintReductionComponent rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event'}" AssessmentId="{!currentAssessId}"/>
+			<input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />
+		</apex:form>
 	</apex:outputPanel>
 
 	<apex:outputPanel id="evalResponsesSection" style="display:none">

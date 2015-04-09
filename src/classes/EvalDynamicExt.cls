@@ -4,13 +4,15 @@ public with sharing class EvalDynamicExt {
 	public ID PBSID { get; set; }
 	public ID AdmID {get; set;}
 	public ID SAID {get; set;}
+	public ID accId{get; set;}
 	public Evaluation__c thisEval {get; set;}
 	public string evalType {get; set;}
 	public string subCat {get; set;}
 	public string cat {get; set;}
     public string evalSecId {get; set;}
     public string evalSecType {get; set;}
-    
+    public string restraintSecId;
+    public Id currentAssessId {get; set;}
 	public Boolean showMainComponent {get; set;}
 	public string key {get; set;}
 	
@@ -50,7 +52,7 @@ public with sharing class EvalDynamicExt {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
 			AdmID = thisEval.serviceassignment__r.admission__c;
 			SAID = thisEval.serviceassignment__c;
-		
+			accId = thisEval.serviceassignment__r.admission__r.person_being_served__r.AccountId;
 			if ( UserInfo.getUserId() == thisEval.OwnerID )	
 				isUserOwner = true;
 				
@@ -63,10 +65,28 @@ public with sharing class EvalDynamicExt {
 		string displayKey = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
 		key = displayKey;
 		
+		system.debug('sectionIdonclickofplus+++++++'+evalSecId);
 		if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key.contains('Head to Toe~Skin/Body~Wound Detail') || key.contains('Head to Toe~Skin/Body~Pressure Ulcer Details')
-			|| key == 'Residential~Skin/Body~Skin Assessment~Residential' || key.contains('Restraint Event~Reduction Review~Reduction Review')){
+			|| key == 'Residential~Skin/Body~Skin Assessment~Residential'){
 			createEvalValueRecord(key);
 			showMainComponent = false;
+		}
+		else if(key.contains('Restraint Event~Reduction Review~Reduction Review')){
+			
+			system.debug('I am in myaction+++++='+currentAssessId);
+			if(evalSecId == null || evalSecId==''){
+				createEvalValueRecord(key);
+				//creating Assessment
+				currentAssessId = EvalDynamicExt.createAssessmentforRestraint(restraintSecId, evalID, PBSID, SAID, AdmID, accId);
+				system.debug('current Id after Creation++++' +currentAssessId);
+				showMainComponent = false;
+				
+			}
+			else{
+				//Retreieving Assessment
+				currentAssessId = EvalDynamicExt.retrieveAssessmentforRestraint(evalSecId, evalID);
+				showMainComponent = false;
+			}
 		}
 		else{
 			showMainComponent = true;	
@@ -76,6 +96,7 @@ public with sharing class EvalDynamicExt {
 	
 	private void createEvalValueRecord(String key){
 		String sectionId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
+		restraintSecId = sectionId;
 		boolean isValidVal;
         List<Eval_Value__c> listEvalValues = [ select id from eval_value__c
                                                 where what_id__c = :evalId
@@ -106,8 +127,6 @@ public with sharing class EvalDynamicExt {
 	        	  }
 	        	  else if(e.Field_Name__c=='IsValid' && e.Sub_Category__c == 'Reduction Review'){
 	        	  		isValidVal = validateRestraintReductionError();
-	        	  	
-	        	  	
 	        	  }
                   else{
                     isValidVal = true;    
@@ -151,7 +170,7 @@ public with sharing class EvalDynamicExt {
     }
     
     public static boolean validateRestraintReductionError(){
-    	//logic to validate Reduction Reviw erors go here - Sravan 
+    	//logic to validate Reduction Review erors go here - Sravan - to do 
     	return true;
     }
     
@@ -455,6 +474,33 @@ public with sharing class EvalDynamicExt {
 			}
 		
 		return status;
+	}
+	
+	public static Id createAssessmentforRestraint(string sectionId, Id evalId, Id PBSId, Id saId, Id admId, Id accId){
+		
+		//Create a New Assessment With Type as Restraint Reduction
+			Assessment__c restraintReduction = new Assessment__c();
+			restraintReduction.Name = sectionId;
+			restraintReduction.Type__c = 'Restraint Reduction';
+			restraintReduction.Evaluation__c = evalId;
+			restraintReduction.Admission__c = admId;
+			restraintReduction.Service_Assignment__c = saId;
+			restraintReduction.AccountPerson__c = accId;
+			
+			insert restraintReduction; //THis will invoke the trigger on Assessment object will in turn invoke AssessmentSetup.cls to create domains, domain results and dummy response.
+										// Need to check if this is the best practice or write the whole AssessmentSetup logic in here - Sravan - 04/08/2015 2:00 PM					
+			return [SELECT Id FROM Assessment__c where Id=:restraintReduction.Id LIMIT 1].Id;
+	}
+	
+	public static id retrieveAssessmentforRestraint(string sectionId, Id evalId){
+		List<Assessment__c> existingAssess = [SELECT Id, Name, Evaluation__c FROM Assessment__c WHERE Name=: sectionId AND Evaluation__c = :evalId AND Type__c = 'Restraint Reduction' LIMIT 1];
+		if(existingAssess.size() > 0){
+			return existingAssess[0].Id;
+		}
+		else{
+			return null; // Which Should never happen -------Create a Custom Exception to do Sravan --------------
+		}
+		
 	}
     
 	
