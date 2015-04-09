@@ -145,7 +145,7 @@ public without sharing class AssessmentSetup {
                     }
                   
                 }                   
-                else if (a.Type__c=='Restraint Reduction') {}   
+               // else if (a.Type__c=='Restraint Reduction') {}   
                 else if (a.Assessment_Type__c == domainMap.get(assmtDomainLoopId).Assessment_Type__c){
                     dummyAdr = new Assessment_Domain_Result__c();
                     dummyAdr.Assessment__c = a.Id; 
