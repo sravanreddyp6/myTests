@@ -65,6 +65,12 @@ public with sharing class EvalRepeaters {
 		numEmpty = evalWraps.size();
 		system.debug( 'STARTING EMPTY: ' + numEmpty);	
 		buildEvalDataList( evalwraps );
+		
+		// for restraint assessment we need a special case to reduce the # of empties by 1 since you can't fill out the 2nd subcat
+		if ( evalname == 'Restraint Event' )
+			numEmpty -=1;  
+	
+		
 		system.debug( 'ANY EMPTY? ' + numEmpty);
 		system.debug( 'ANY ERRORS? ' + numErrors);
 		return evalWraps;
@@ -125,6 +131,7 @@ public with sharing class EvalRepeaters {
 				// create a new list and add entry
 				evalDataList.put( compositeKey, new List<EvalValueWrapper>{ evw });
 			}
+			
 				
 		}
 		system.debug('Data List keys ' +  evalDataList.keyset().size());
@@ -134,7 +141,6 @@ public with sharing class EvalRepeaters {
 			evalDataKeys += key + '||';
 		}
 		system.debug(evalDataKeys);
-	
 	
 		List<AggregateResult> evalErrors = [ select count(id), eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) created, owner.name, ownerid 
 												from eval_value__c
