@@ -486,6 +486,8 @@ public with sharing class EvalDynamicExt {
 			restraintReduction.Admission__c = admId;
 			restraintReduction.Service_Assignment__c = saId;
 			restraintReduction.AccountPerson__c = accId;
+			restraintReduction.Status__c = 'Open';
+			restraintReduction.Disregard__c = false;
 			
 			insert restraintReduction; //THis will invoke the trigger on Assessment object will in turn invoke AssessmentSetup.cls to create domains, domain results and dummy response.
 										// Need to check if this is the best practice or write the whole AssessmentSetup logic in here - Sravan - 04/08/2015 2:00 PM					
