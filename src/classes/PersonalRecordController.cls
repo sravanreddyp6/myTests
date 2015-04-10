@@ -118,6 +118,26 @@ public with sharing class PersonalRecordController {
 		}
 	}
 
+    public String isolationStatus{
+        get{
+            String isoStatus;
+            Evaluation_Response__c[] isolation = [select Isolation_Status__c from Evaluation_Response__c where Service_Assignment__r.Status__c = 'Active' AND Isolation_Status__c = 'Isolated' AND Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id ];
+            if(isolation.size() > 0){
+                isoStatus = 'Isolated';
+            } else {
+                isoStatus = 'Not Isolated';
+            }
+        return isoStatus;    
+        }
+    }
+
+    public String isolationType{
+        get{ Evaluation_Response__c isolation = [select Isolation_Type__c from Evaluation_Response__c where Service_Assignment__r.Status__c = 'Active' AND Isolation_Status__c = 'Isolated' AND Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id Limit 1];
+        String isoType = isolation.Isolation_Type__c;
+        return isoType;    
+        }
+    }
+
 	public void uploadPhoto(){
 		Attachment objA=new Attachment();
 		objA.body = photo;
