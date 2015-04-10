@@ -20,13 +20,24 @@ public with sharing class restraintReductionController {
 		set;}
 		
 	public Assessment__c assessment{get{
-		if(assessment == null){
+		
 			assessment = [SELECT Id, Name, Status__c, Disregard__c FROM Assessment__c WHERE Id=: assId];
-			
-		}
+		
 		return assessment;
+	}
+	set;}
+	
+	public Boolean getviewMode(){
+		Assessment__c assess = [SELECT Id, Status__c FROM Assessment__c WHERE Id=: assId LIMIT 1];
+		if(assess.Status__c == 'Disregard'){
+			return true;
 		}
-		set;}
+		else{
+			return false;
+		}
+		
+		
+	}
 	
 	//VF Args
 	public id questionID {get;set;}
@@ -50,7 +61,6 @@ public with sharing class restraintReductionController {
 	 set;}
 		 
 	public Map<id,Assessment_Question__c> questionsMap{get{
-		
 		Map<id,Assessment_Question__c> qMAp = new Map<id,Assessment_Question__c>();
 			for(Assessment_Question__c q: questions){
       			qMAp.put(q.Id,q);
@@ -101,9 +111,13 @@ public with sharing class restraintReductionController {
     }
     
     public pageReference disregard(){
-    	assessment.Status__c = 'Disregard';
-    	assessment.Disregard__c = true;
-    	update assessment;
+    	Assessment__c asmt = [SELECT Id, Name, Status__c, Disregard__c FROM Assessment__c WHERE Id=: assId];
+    	system.debug('I am in disregard');
+    	system.debug(asmt);
+    	asmt.Status__c = 'Disregard';
+    	asmt.Disregard__c = true;
+    	update asmt;
+    	system.debug('after Update++++++'+asmt);
     	return null;
     }
     

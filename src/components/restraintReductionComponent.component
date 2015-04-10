@@ -9,10 +9,12 @@
   		}
   		
   	</style>
+  	<apex:outputPanel id="fullPanel" >
   	<apex:outputPanel id="editPanel"  >
-	    <apex:pageBlock id="editBlock" rendered="{!!assessment.Disregard__c}" >	
+	    <apex:pageBlock id="editBlock" rendered="{!!viewMode}" >	
 			<apex:pageBlockSection columns="1" >
 				<apex:outputText Value="{!assessment.Status__c}" label="Status"/> 
+				<apex:outputText value="{!assessment.Name}" />
 				<apex:pageBlockTable value="{!questions}" var="q" >
 					<apex:column HeaderValue="Category" >
 						<apex:outputPanel layout="block">{!q.Question_Title__c}</apex:outputPanel>
@@ -57,14 +59,21 @@
 				</apex:pageBlockTable>
 			</apex:pageBlockSection>
 			<apex:pageblockbuttons location="top" >
-				<apex:commandbutton value="Disregard" action="{!disregard}" styleClass="disregard" reRender="viewPanel,editPanel"  />
+				<apex:commandbutton value="Disregard" action="{!disregard}" styleClass="disregard" reRender="fullPanel" status="disregardStatus" />
+				<apex:actionStatus id="disregardStatus" >
+					<apex:facet name="start" >
+						<apex:outputText value="Disregarding...Please wait..." />
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
 			</apex:pageblockbuttons>
 		</apex:pageBlock>
 	</apex:outputPanel>
 	<apex:outputPanel id="viewPanel"  >
-		<apex:pageBlock id="viewBlock" rendered="{!assessment.Disregard__c}">
+		<apex:pageBlock id="viewBlock" rendered="{!viewMode}">
 	   		<apex:pageBlockSection columns="1" >
 	   			<apex:outputText value="Disregard" label="Status" />
+	   			<apex:outputText value="{!assessment.Name}" />
 	           	<apex:pageBlockTable value="{!questions}" var="q" border="1px;" >
 	          			<apex:column HeaderValue="Category" width="150px;">
 	          				<apex:outputText >{!q.Question_Title__c}</apex:outputText>	
@@ -83,5 +92,6 @@
 	<!-- 			</apex:outputPanel> -->
 	            </apex:pageBlockSection>
 		</apex:pageBlock>
+	</apex:outputPanel>
 	</apex:outputPanel>
 </apex:component>
