@@ -156,6 +156,13 @@
                                         </td>
                                     </tr>
                                 </apex:outputPanel>
+                                <apex:outputPanel layout="none" rendered="{!(opGrp == 'Care Meridian' && servAssigns.size > 0 && isolationStatus == 'Isolated' )}">
+                                    <tr>
+                                        <td>
+                                            <b>Isolated</b>: {!isolationType}
+                                        </td>
+                                    </tr>
+                                </apex:outputPanel>                                
                             </table>
                         </td>
 
