@@ -1313,10 +1313,27 @@ public void loadProgramList() {
         }
         set;
    }
+   
+   public List<Evaluation__c> restraintEvents{
+			get{
+				if(restraintEvents == null) {
+					restraintEvents = [
+						SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c,
+						Shift_Start_time__c, Shift_end_time__c, Status__c, Owner.Name
+						        FROM Evaluation__c
+                 WHERE ServiceAssignment__c = :theServAssign.Id
+						        AND RecordType.Name = 'RestraintEvent'
+                 ORDER BY CreatedDate DESC NULLS LAST LIMIT 5
+            ];
+        }
+				return restraintEvents;
+    }
+    set;
+   }
 
-			public String getOperatingGroup() {
-				return pOpGroup;
-			}
+	public String getOperatingGroup() {
+		return pOpGroup;
+	}
 
 //Commented out by Sravan - 11/25/2014 as Users will not create Admission Assessment from Service Assignemnt page. It will carry over from Referral.
    public PageReference addResidentAssessment(){
@@ -1580,15 +1597,18 @@ public void loadProgramList() {
 			
 	
 	public PageReference addrestraintEvent(){
+		string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
+    	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
+		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
+		string resEventName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Event'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
 		
-		Savepoint sp = Database.setSavepoint(); 
-		
+		Savepoint sp = Database.setSavepoint();
 		Evaluation__c restraintEvent = new Evaluation__c(
 				ServiceAssignment__c = theServAssign.Id,
-				Status__c = 'Draft',
+				Name = resEventName,
+				Status__c = 'Not Restrained',
 				RecordtypeId = Utility.getEvaluationRecordType('RestraintEvent')
 				);
-
 		try{
 
 			insert restraintEvent;
@@ -1599,9 +1619,7 @@ public void loadProgramList() {
 			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,'There is an error in creating Restraint Event. Please Contact your Administrator');
 			ApexPages.addMessage(myMsg);
 			return null;
-
 		}
-		
 		return null;
 	}
 	

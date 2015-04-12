@@ -13,7 +13,9 @@ public with sharing class EvaluationViewController {
 			returnURL = new PageReference('/apex/EvalDynamic?evalId=' + evaluation.Id + '&opGrp=Care Meridian&evalType=Residential');
 		} else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('NeuroRestorative')) {
 			returnURL = new PageReference('/apex/NeuroEvaluationView?id='+evaluation.id);
-		} else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('CareMeridian')) {
+		}else if(evaluation.RecordTypeId == Utility.getEvaluationRecordType('RestraintEvent')){
+			returnURL = new PageReference('/apex/EvalDynamic?evalId=' + evaluation.Id + '&opGrp=Care Meridian&evalType=Restraint Event');
+		}else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('CareMeridian')) {
 			returnURL = new PageReference('/apex/CareMeridianEvaluationView?id='+evaluation.id);
 		} else if(evaluation.RecordTypeId == Utility.getEvaluationRecordType('CMShiftAssessment')) {
 			returnURL = new PageReference('/apex/EvalDynamic?evalId=' + evaluation.Id + '&opGrp=Care Meridian&evalType=Head to Toe');

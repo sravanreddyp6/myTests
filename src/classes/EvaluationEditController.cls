@@ -20,7 +20,9 @@ public with sharing class EvaluationEditController{
             returnURL = new PageReference('/apex/NeuroEvaluationEdit?id='+evaluation.id);
         } else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('CareMeridian')) {
             returnURL = new PageReference('/apex/CareMeridianEvaluationEdit?id='+evaluation.id);
-        } else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('CMShiftAssessment')) {
+        } else if(evaluation.RecordTypeId == Utility.getEvaluationRecordType('RestraintEvent')){
+        	returnURL = new PageReference('/apex/EvalDynamic?evalId='+evaluation.Id+'&evalType=Restraint Event&opGrp=Care+Meridian');
+        }else if (evaluation.RecordTypeId == Utility.getEvaluationRecordType('CMShiftAssessment')) {
         	if(evaluation.OwnerId == UserInfo.getUserId() && evaluation.Status__c == 'Draft') {
         	 returnURL = new PageReference('/apex/CMShiftAssessmentEdit?id='+evaluation.id);
         	} else if(evaluation.OwnerId != UserInfo.getUserId()){
