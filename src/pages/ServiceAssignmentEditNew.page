@@ -1317,7 +1317,27 @@ END: Uncomment to have the element collapsed by default -->
 			<div class="pbHeaderButton">
 				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" />
 			</div>
-			<apex:outputText value="No Assessments to display"  />
+			<apex:pageBlockTable value="{!restraintEvents}" var="event" >
+				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Name">
+					<apex:outputLink value="/apex/EvaluationView?id={!event.Id}">{!event.Name}</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Restraint Status">
+					<apex:outputText value="{!event.Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Restraint Start Time" >
+					<c:MilitaryDatetime dateTimeVal="{!event.Shift_Start_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Restraint End Time" >
+					<c:MilitaryDatetime dateTimeVal="{!event.Shift_End_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Signed At">
+					<apex:outputfield value=" {!event.Signed_At__c}" />
+				</apex:column>
+			</apex:pageBlockTable>
+			<apex:outputText value="No Restraint Events to display" rendered="{!restraintEvents.size=0 || restraintEvents == null}" />
+			<apex:outputPanel rendered="{!restraintEvents.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=RestraintEvent" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 		</apex:pageBlock>
 <!-- 		End -->
 

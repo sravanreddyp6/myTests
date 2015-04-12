@@ -28,7 +28,7 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
 			assessment.Signed_At__c = system.Now();
 		}
 		else if(assessment.RecordType.name == 'RestraintEvent' && assessment.Status__c == 'Draft') {
-			List<Eval_value__c> restraintAction = [SELECT Id, Text_Under_250__c,Eval__r.Field_Name__c, Date_Time__c FROM Eval_Value__c WHERE What_Id__c = :recId AND What_Id_Object__c = 'Evaluation__c' AND (Eval__r.Field_Name__c = 'Restraint Action' OR Eval__r.Field_Name__c ='Start Date/Time' OR Eval__r.Field_name__c = 'Restrained By')];
+			List<Eval_value__c> restraintAction = [SELECT Id, Text_Under_250__c,Eval__r.Field_Name__c, Date_Time__c FROM Eval_Value__c WHERE What_Id__c = :recId AND What_Id_Object__c = 'Evaluation__c' AND (Eval__r.Field_Name__c = 'Restraint Action' OR Eval__r.Field_Name__c ='Start Date/Time')];
 			if(restraintAction.size() > 0){
 				for(Eval_Value__c value: restraintAction){
 					if(value.Eval__r.Field_Name__c == 'Restraint Action'){
