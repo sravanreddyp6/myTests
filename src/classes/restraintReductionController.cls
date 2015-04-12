@@ -21,14 +21,14 @@ public with sharing class restraintReductionController {
 		
 	public Assessment__c assessment{get{
 		
-			assessment = [SELECT Id, Name, Status__c, Disregard__c FROM Assessment__c WHERE Id=: assId];
+			assessment = [SELECT Id, Name, Status__c, Evaluation__C, Disregard__c FROM Assessment__c WHERE Id=: assId];
 		
 		return assessment;
 	}
 	set;}
 	
 	public Boolean getviewMode(){
-		Assessment__c assess = [SELECT Id, Status__c FROM Assessment__c WHERE Id=: assId LIMIT 1];
+		Assessment__c assess = [SELECT Id,Name, Status__c FROM Assessment__c WHERE Id=: assId LIMIT 1];
 		if(assess.Status__c == 'Disregard'){
 			return true;
 		}
@@ -99,7 +99,7 @@ public with sharing class restraintReductionController {
             }
             try{
                     upsert ar;
-                    //updateevalValue(this.domainName);
+                    validateRestraintErrors(assessment.Id, assessment.Name ); // The name of the Assessment is same as the section id in this case
                     
             }
             catch(DMLException e){
@@ -121,6 +121,24 @@ public with sharing class restraintReductionController {
     	return null;
     }
     
+    public static void validateRestraintErrors(Id AssessmentId, string sectionId){
+    	system.debug('Assessment Id in Validate++++++'+AssessmentId);
+    	system.debug('Section Id in validate ++++++++'+sectionId);
+        Boolean error = false;
+        List<Assessment_Response__c> currentResponses = [SELECT Id, Rating__c FROM Assessment_Response__c Where Assessment__c = :AssessmentId AND Assessment_Domain_Result__r.Assessment_Domain__r.Name = 'Restraint Questions'];
+        for(Assessment_Response__c resp: currentResponses){
+            if(resp.Rating__c == null){
+                error = true;
+                break;
+            }
+            
+        }
+        //Below query is not costly as Eval_Section_Id__c is marked as external Id and is automatically indexed by Salesforce - Sravan- 04/12/2015 6:35 PM 
+        Eval_Value__c evalValue = [SELECT Id, Boolean__c FROM Eval_Value__C WHERE Eval_Section_Id__c = :sectionId AND Eval__r.Field_Name__c = 'IsValid' AND Eval__r.Category__c = 'Reduction Review' AND Eval__r.Sub_Category__c = 'Reduction Review'];
+        evalValue.Boolean__C = !error;
+        update evalValue;
+       
+    }
     
 
 }

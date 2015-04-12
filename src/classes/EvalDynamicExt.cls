@@ -126,7 +126,7 @@ public with sharing class EvalDynamicExt {
                     isValidVal = !EvalDynamicExt.validateAssessmentError(evalId, e.Sub_Category__c == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain');
 	        	  }
 	        	  else if(e.Field_Name__c=='IsValid' && e.Sub_Category__c == 'Reduction Review'){
-	        	  		isValidVal = validateRestraintReductionError();
+	        	  		isValidVal = false; //Nothing will be filled during the initial Click.
 	        	  }
                   else{
                     isValidVal = true;    
