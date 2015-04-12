@@ -195,6 +195,8 @@ public with sharing class EvalDynamicExt {
 	
 	public pageReference disregardAssessment() {
 		
+		Savepoint sp2 = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
+		
 		if(evalType == 'Residential'){
 			thisEval.Status__c = 'Disregard';
 			try{
@@ -204,6 +206,7 @@ public with sharing class EvalDynamicExt {
 				return pageRef;
 			}
 			catch(exception e){
+				Database.rollback(sp2);
 				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
 				return null;	
 			}
@@ -211,9 +214,7 @@ public with sharing class EvalDynamicExt {
 		}
 		
 		else if(evalType == 'Head to Toe'){
-			
-			Savepoint sp2 = Database.setSavepoint();
-			
+			//Savepoint sp2 = Database.setSavepoint();
 			thisEval.Status__c = 'Disregard';
 			thisEval.Head_to_toe_Status__c = 'Disregard';
 			
@@ -238,11 +239,20 @@ public with sharing class EvalDynamicExt {
 			thisEval.Status__c = 'Disregard';
 			try{
 				update thisEval;
+				List<Assessment__c> relatedAssessments = [SELECT Id, Status__C FROM Assessment__c WHERE EValuation__c = :thisEval.id];
+				if(relatedAssessments.size() > 0){
+					for(Assessment__c asmt : relatedAssessments){
+						asmt.Status__C = 'Disregard';
+						
+					}
+					update relatedAssessments;
+				}
 				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
 				pageRef.setRedirect(true);
 				return pageRef;
 			}
 			catch(exception e){
+				Database.rollback(sp2);
 				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
 				return null;	
 			}
