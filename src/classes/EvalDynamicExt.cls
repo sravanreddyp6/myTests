@@ -254,7 +254,12 @@ public with sharing class EvalDynamicExt {
 	
 	public pageReference completeShift() {
 		
-		thisEval.Status__c = 'Completed';
+		if(evalType == 'Restraint Event'){
+			thisEval.Status__c = 'Restraint Event Ended';
+		}else{
+			thisEval.Status__c = 'Completed';
+		}
+		//Common for all types
 		thisEval.Shift_End_time__c = system.Now();
 		try{
 			update thisEval;
@@ -433,7 +438,7 @@ public with sharing class EvalDynamicExt {
 		if(evalType == 'Restraint Event'){
 			showRevise = false;
 			
-			if(thisEval.Status__c == 'Draft') {
+			if(thisEval.Status__c == 'Not Restrained') {
 				showDisregard = true;
 				showEsign = true;
 				showshiftDone = false;
