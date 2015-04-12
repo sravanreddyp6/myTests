@@ -1318,8 +1318,8 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" />
 			</div>
 			<apex:pageBlockTable value="{!restraintEvents}" var="event" >
-				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink>
-				</apex:column>
+<!-- 				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
+<!-- 				</apex:column> -->
 				<apex:column headerValue="Name">
 					<apex:outputLink value="/apex/EvaluationView?id={!event.Id}">{!event.Name}</apex:outputLink>
 				</apex:column>
