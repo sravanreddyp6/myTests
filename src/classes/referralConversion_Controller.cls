@@ -179,6 +179,7 @@ public with sharing class referralConversion_Controller {
                         r.Axis_II__c,
                         r.Axis_III__c,
                         r.Anticipated_Admission_Date__c,
+                        r.Anticipated_Admission_DateTime__c,
                         r.Agency_Name__c,
                         r.Payer_Medical_Record_Number__c ,
                         r.Payer_Medical_Record_Number_Description__c
@@ -529,7 +530,7 @@ public with sharing class referralConversion_Controller {
             // no current admission - create one
             currAdm = new Admission__c(
                 Person_Being_Served__c = idPBS,
-                Effective_date__c = refCurr.Anticipated_Admission_Date__c,
+                Admission_Effective_DateTime__c = refCurr.Anticipated_Admission_DateTime__c,
                 Network_Offering__c = NetworkOffering,
                 Program__c = refCurr.Service_Location_Program__c,
                 Referral_Date__c = refCurr.Referral_Date__c,
@@ -571,7 +572,7 @@ public with sharing class referralConversion_Controller {
                                             RecordTypeId = idSAtype,
                                             Admission__c = idAdm,
                                             Person_Being_Served__c = idPBS,
-                                            Start_Date__c = refCurr.Anticipated_Admission_Date__c,
+                                            SA_Start_DateTime__c = refCurr.Anticipated_Admission_DateTime__c,
                                             Status__c = 'Active',
                                             Program_Detail__c = refCurr.Service_Location_Program__c,
                                             Service_Location__c = refCurr.Service_Location__c,
@@ -615,7 +616,7 @@ public with sharing class referralConversion_Controller {
                                         Axis_III__c = refCurr.Axis_III__c,
                                         Axis_IV__c = refCurr.Axis_IV__c,
                                         Axis_V__c = refCurr.Axis_V__c,
-                                        Effective_Date__c = DateTime.newInstance(refCurr.Anticipated_Admission_Date__c, Time.newInstance(0, 0, 0, 0)),
+                                        Effective_Date__c = refCurr.Anticipated_Admission_DateTime__c,
                                         Primary_Diagnosis__c = refCurr.Primary_Diagnosis__c,
                                         Secondary_Diagnosis__c = refCurr.Secondary_Diagnosis__c,
                                         Level_of_Disability__c = refCurr.Level_of_Disability__c,
