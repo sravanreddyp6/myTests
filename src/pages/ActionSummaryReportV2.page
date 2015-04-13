@@ -73,7 +73,10 @@
 											<th>Description</th>
 											<th>Revised</th>
 											<th>Attribute</th>
-											<th>Progress</th>
+											<th>
+												<apex:outputText value="Progress" rendered="{!OR(objectiveType == 'Skill', objectiveType == 'Behavior - Count')}" />
+												<apex:outputText value="Narrative Notes" rendered="{!objectiveType == 'Narrative'}" />
+											</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -83,7 +86,7 @@
 													{!objective.objectiveSObject.Description__c}
 												</td>
 												<td class="dataCell">
-													{!objective.objectiveSObject.CreatedDate}
+													<apex:outputText rendered="{!parentId != objective.objectiveSObject.Id}" value="{0, date, M/d/yyyy}"><apex:param value="{!objective.objectiveSObject.CreatedDate}" /></apex:outputText>
 												</td>
 												<td class="dataCell">
 													Status - {!Objective.objectiveSObject.Status__c}<br />
@@ -91,6 +94,83 @@
 													Target Date - <apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!Objective.objectiveSObject.Target_End_Date__c}" /></apex:outputText>
 												</td>
 												<td class="dataCell">
+													<apex:outputPanel rendered="{!objectiveType == 'Skill'}">
+														<table>
+															<thead>
+																<tr>
+																	<th>Time Period</th>
+																	<th>Met Obj.</th>
+																	<th>Did Not Meet Obj.</th>
+																	<th>% Obj. Met</th>
+																</tr>
+															</thead>
+															<tbody>
+																<apex:repeat value="{!objective.skillResults.startDates}" var="startDate">
+																	<tr>
+																		<td>
+																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!startDate}" /></apex:outputText>
+																		</td>
+																		<td>{!objective.skillResults.metObjectiveMap[startDate]}</td>
+																		<td>{!objective.skillResults.notMetObjectiveMap[startDate]}</td>
+																		<td>{!objective.skillResults.percentMetObjectiveMap[startDate]}</td>
+																	</tr>
+																</apex:repeat>
+																<apex:outputPanel layout="none" rendered="{!objective.skillResults.startDates.size == 0}">
+																	<tr>
+																		<td colspan="4">No data recorded</td>
+																	</tr>
+																</apex:outputPanel>
+															</tbody>
+														</table>
+													</apex:outputPanel>
+													<apex:outputPanel rendered="{!objectiveType == 'Behavior - Count'}">
+														<table>
+															<thead>
+																<tr>
+																	<th>Time Period</th>
+																	<th>Occurrences</th>
+																</tr>
+															</thead>
+															<tbody>
+																<apex:repeat value="{!objective.countResults.startDates}" var="startDate">
+																	<tr>
+																		<td>
+																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!startDate}" /></apex:outputText>
+																		</td>
+																		<td>{!objective.countResults.occurrenceMap[startDate]}</td>
+																	</tr>
+																</apex:repeat>
+																<apex:outputPanel layout="none" rendered="{!objective.countResults.startDates.size == 0}">
+																	<tr>
+																		<td colspan="2">No data recorded</td>
+																	</tr>
+																</apex:outputPanel>
+															</tbody>
+														</table>
+													</apex:outputPanel>
+													<apex:outputPanel rendered="{!objectiveType == 'Narrative'}">
+														<div style="height: 200px; overflow: auto; ">
+															<table>
+																<tbody>
+																	<apex:repeat value="{!objective.objectiveSObject.Action_Narrative_Results__r}" var="result">
+																		<tr>
+																			<td>
+																				<!-- TODO: Date here -->
+																			</td>
+																			<td>
+																				{!result.Description__c}
+																			</td>
+																		</tr>
+																	</apex:repeat>
+																	<apex:outputPanel layout="none" rendered="{!objective.objectiveSObject.Action_Narrative_Results__r.size == 0}">
+																		<tr>
+																			<td colspan="2">No data recorded</td>
+																		</tr>
+																	</apex:outputPanel>
+																</tbody>
+															</table>
+														</div>
+													</apex:outputPanel>
 												</td>
 											</tr>
 										</apex:repeat>

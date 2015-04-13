@@ -51,6 +51,8 @@ public with sharing class ActionSummaryReportV2 {
 				          FROM Action_Behavior_results__r
 				         WHERE Day_time__c <= :summary.End_Date__c
 				           AND Day_time__c >= :summary.Start_Date__c),
+				       (SELECT Description__c
+				          FROM Action_Narrative_results__r),
 				       (SELECT comment__c, recommendation__c, met_objective_count__c, not_met_count__c, occurrences__c
 				          FROM Objective_Summary_Comments__r
 				         WHERE Action_Summary__c = :summary.Id)
@@ -147,140 +149,99 @@ public with sharing class ActionSummaryReportV2 {
 	//////////////////////
 	public abstract class ObjectiveResult {
 		public Action_plan_objective__c objective { get; set; }
-		public Objective_Summary_Comment__c Objective_Comment { get; set; }
-		public List<Objective_Summary_Comment__c> OtherSummaryComments { get; set; }
-		public ObjectiveSkillResult AsSkillResult {
-			get {
-				return (ObjectiveSkillResult) this;
-			}
-		}
-		public ObjectiveBehaviorResult AsBehaviorResult {
-			get {
-				return (ObjectiveBehaviorResult) this;
-			}
-		}
 
-		public boolean OtherSummaryCommentsExist {
-			get {
-				return OtherSummaryComments != null && !(OtherSummaryComments.isEmpty());
-			}
-		}
-
-		public ObjectiveResult(Action_plan_objective__c objective, Action_Summary__c summary) {
+		public ObjectiveResult(Action_plan_objective__c objective) {
 			this.objective = objective;
-			if (!objective.Objective_Summary_Comments__r.isEmpty()) {
-				Objective_Comment = objective.Objective_Summary_Comments__r[0];
-			} else {
-				Objective_Comment = new Objective_Summary_Comment__c();
-				Objective_Comment.Action_Plan_Objective__c = objective.Id;
-				Objective_Comment.Action_summary__c = summary.Id;
-
-			}
-		}
-		public virtual boolean getIsSkill() {
-			return objective.Type__c == 'Skill';
-		}
-		public virtual boolean getIsOccurrenceBehavior() {
-			return objective.Type__c == 'Behavior - Count';
-		}
-		public virtual boolean getIsTimeBehavior() {
-			return objective.Type__c == 'Behavior - Duration';
-		}
-
-		public virtual void Finalize() {
 		}
 	}
 
-	public class ObjectiveSkillResult extends ObjectiveResult{
-		public integer MetCount { get; private set; }
-		public integer NotMetCount { get; private set; }
-		public integer TrialCount {
-			get {
-				return MetCount + NotMetCount;
-			}
-		}
-		public integer PercentMet {
-			get {
-				return (MetCount * 100)/TrialCount;
-			}
-		}
+	public class ObjectiveSkillResults {
+		public Action_plan_objective__c objective { get; set; }
 
-		public ObjectiveSkillResult(Action_plan_objective__c objective, Action_Summary__c summary) {
-			super(objective, summary);
-			MetCount = 0;
-			NotMetCount = 0;
+		public transient List<Date> startDates { get; set; }
+		public transient Map<Date, Integer> metObjectiveMap { get; set; }
+		public transient Map<Date, Integer> notMetObjectiveMap { get; set; }
+		public transient Map<Date, Integer> percentMetObjectiveMap { get; set; }
+
+
+		public ObjectiveSkillResults(Action_plan_objective__c objective) {
+			this.objective = objective;
+			metObjectiveMap = new Map<Date, Integer>();
+			notMetObjectiveMap = new Map<Date, Integer>();
+			percentMetObjectiveMap = new Map<Date, Integer>();
+			startDates = new List<Date>();
+			Set<Date> startDateSet = new Set<Date>();
+
 			for(Action_skill_result__c result: objective.Action_skill_results__r) {
+				Date startMonth = Date.newInstance(result.Day__c.year(), result.Day__c.month(), 1);
+				if (!startDateSet.contains(startMonth)) {
+					startDateSet.add(startMonth);
+				}
+				if (!metObjectiveMap.containsKey(startMonth)) {
+					metObjectiveMap.put(startMonth, 0);
+				}
+				if (!notMetObjectiveMap.containsKey(startMonth)) {
+					notMetObjectiveMap.put(startMonth, 0);
+				}
+				if (!percentMetObjectiveMap.containsKey(startMonth)) {
+					percentMetObjectiveMap.put(startMonth, 0);
+				}
 				if (result.Met_Objective__c == 'y') {
-					MetCount++;
+					metObjectiveMap.put(startMonth, metObjectiveMap.get(startMonth) + 1);
 				}
 				if (result.Met_Objective__c == 'n') {
-					NotMetCount++;
+					notMetObjectiveMap.put(startMonth, notMetObjectiveMap.get(startMonth) + 1);
 				}
+				percentMetObjectiveMap.put(startMonth,
+					(metObjectiveMap.get(startMonth) * 100)/(metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth))
+				);
 			}
-		}
-
-		public override void Finalize() {
-			Objective_Comment.Met_Objective_count__c = Metcount;
-			Objective_Comment.Not_Met_count__c = NotMetCount;
+			startDates.addAll(startDateSet);
+			startDates.sort();
 		}
 	}
 
-	public class ObjectiveBehaviorResult extends ObjectiveResult {
-		public ObjectiveBehaviorResult(Action_plan_objective__c objective, Action_Summary__c summary) {
-			super(objective, summary);
-			Occurrences = 0;
+	public class ObjectiveBehaviorCountResults {
+		public Action_Plan_Objective__c objective { get; set; }
+
+		public transient List<Date> startDates { get; set; }
+		public transient Map<Date, Integer> occurrenceMap { get; set; }
+
+		public ObjectiveBehaviorCountResults(Action_plan_objective__c objective) {
+			this.objective = objective;
+
+			occurrenceMap = new Map<Date, Integer>();
+			startDates = new List<Date>();
+			Set<Date> startDateSet = new Set<Date>();
+
 			for(Action_behavior_result__c result: objective.Action_Behavior_results__r) {
-				system.debug(result.Occurrences__c);
-				Occurrences += result.Occurrences__c == null ? 0 : result.Occurrences__c.intValue();
+				Date startMonth = Date.newInstance(result.Day_time__c.yearGmt(), result.Day_time__c.monthGmt(), 1);
+				if (!startDateSet.contains(startMonth)) {
+					startDateSet.add(startMonth);
+				}
+				if (!occurrenceMap.containsKey(startMonth)) {
+					occurrenceMap.put(startMonth, 0);
+				}
+				occurrenceMap.put(startMonth,
+					occurrenceMap.get(startMonth) + (result.Occurrences__c == null ? 0 : result.Occurrences__c.intValue())
+				);
 			}
-		}
-
-		public integer Occurrences {get;set;}
-
-		public override void Finalize() {
-			Objective_Comment.Occurrences__c = Occurrences;
-		}
-	}
-
-	public class ActionPlan {
-		public Action_Plan__c ActionPlan { get; set; }
-		public List<ActionPlanGoal> ActionPlanGoals { get; set; }
-
-		public string FormattedEffectiveDate {
-			get {
-				return DateTime.newInstance(ActionPlan.Effective_Date__c, Time.newInstance(0,0,0,0)).format('MM/dd/yyyy');
-			}
-		}
-
-		public string FormattedTargetDate {
-			get {
-				return DateTime.newInstance(ActionPlan.Target_Date__c, Time.newInstance(0,0,0,0)).format('MM/dd/yyyy');
-			}
-		}
-
-		public ActionPlan(Action_Plan__c plan) {
-			ActionPlan = plan;
-			ActionPlanGoals = new List<ActionPlanGoal>();
-		}
-	}
-
-	public class ActionPlanGoal {
-		public Action_Plan_Goal__c ActionPlanGoal {get;set;}
-		public List<ObjectiveResult> ActionPlanObjectives {get;set;}
-
-		public ActionPlanGoal(Action_Plan_Goal__c goal) {
-			ActionPlanGoal = goal;
-			ActionPlanObjectives = new List<ObjectiveResult>();
+			startDates.addAll(startDateSet);
+			startDates.sort();
 		}
 	}
 
 	public class Objective implements Comparable {
 		public Action_Plan_Objective__c objectiveSObject { get; set; }
 		public Boolean highlight { get; set; }
+		public ObjectiveSkillResults skillResults { get; set; }
+		public ObjectiveBehaviorCountResults countResults { get; set; }
 
 		public Objective(Action_Plan_Objective__c objectiveSObject) {
 			this.objectiveSObject = objectiveSObject;
 			this.highlight = false;
+			this.skillResults = new ObjectiveSkillResults(objectiveSObject);
+			this.countResults = new ObjectiveBehaviorCountResults(objectiveSObject);
 		}
 
 		public Integer compareTo(Object anotherObjective) {
