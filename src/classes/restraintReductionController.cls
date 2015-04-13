@@ -21,7 +21,7 @@ public with sharing class restraintReductionController {
 		
 	public Assessment__c assessment{get{
 		
-			assessment = [SELECT Id, Name, Status__c, Evaluation__C, Disregard__c FROM Assessment__c WHERE Id=: assId];
+			assessment = [SELECT Id, Name, Status__c, Evaluation__C, Disregard__c, Owner.Name, CreatedDate FROM Assessment__c WHERE Id=: assId];
 		
 		return assessment;
 	}
@@ -93,7 +93,7 @@ public with sharing class restraintReductionController {
                  ar.Score__c = MyScore;
             }
             
-            if(aq.Is_MultiSelect__c && ar.Rating__c.Contains('None')){
+            if(aq.Is_MultiSelect__c && (ar.Rating__c.Contains('None')|| ar.Rating__c.Contains('Not Applicable'))){
                 ar.Rating__c = MyRating;
                  ar.Score__c = MyScore; 
             }
