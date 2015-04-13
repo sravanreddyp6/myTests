@@ -9,7 +9,7 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
         string recId = string.valueOf(recordId);
         Evaluation__c assessment = [SELECT Id, Status__c,Head_to_toe_Status__c,Is_Being_Signed__c, Is_Signed__c,Shift_Start_time__c, Shift_End_time__c, Restrained_By__c, Recordtype.Name, ServiceAssignment__c FROM Evaluation__c WHERE id=: recordId];
         list<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r Where Status__c != 'Disregard' AND Recordtype.Name ='NursesAssessment' order by createdDate asc) FROM Service_Assignment__c WHERE Id=: assessment.ServiceAssignment__c LIMIT 1];
-        
+        List<Assessment__c> asmtsforRestraints = new List<Assessment__c>();
         if(assessment.Recordtype.name == 'CMShiftAssessment' && assessment.Head_to_toe_Status__c == 'Draft'){
         	assessment.Head_to_Toe_Status__c = 'Final'; // Whe finalize head to toe button is clicked
         	assessment.Head_to_Toe_Signed_At__c = System.Now();
@@ -48,10 +48,22 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
 		else if(assessment.RecordType.name == 'RestraintEvent' && (assessment.Status__c == 'Applied Alternative to Restraint' || assessment.Status__c == 'Applied Restraint')){
 				assessment.Status__c = 'Restraint Event Ended';
 				assessment.Shift_End_time__c = system.now();
+				List<Assessment__c> asmts = [SELECT Id, Status__c FROM Assessment__c WHERE Evaluation__c = :assessment.Id];
+				if(asmts.size() > 0){
+					for(Assessment__c a: asmts){
+						if(a.Status__c == 'Open'){
+							a.Status__c = 'Completed';
+							asmtsforRestraints.add(a);
+						}
+					}
+				}
 			
 		}
 	//	assessment.Is_Signed__c = true;
 		update assessment;
+		if(asmtsforRestraints.size() > 0){
+			update asmtsforRestraints; // Change the STatus of the assessments to complete when the Restraint Event Ends.
+		}
 		
 		return null;
      /*   Evaluation__c assessment = new Evaluation__c(
