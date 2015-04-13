@@ -87,8 +87,25 @@ public with sharing class EvaluationResponseTableController {
     }
 
     public void saveResponse() {
-        System.debug('saveResponse called, currentResponse: ' + currentResponse);
-        	
+        System.debug('saveResponse called, currentResponse: ' + currentResponse);   
+//      Start EC-116            
+//      Added for date validation and to disable edit on Isolation Events EC-116        
+        ID rtId = null;
+        List<RecordType> rt = [select id from RecordType where DeveloperName = 'Isolation_Event' and sObjectType = 'Evaluation_Response__c' limit 1];
+        if(rt.size() < 1){
+            return;
+        } else {
+            rtId = rt[0].ID;
+        }                  
+        if(currentResponse.RecordTypeId == rtId){
+            if(currentResponse.Isolation_Event_Start_Date__c > currentResponse.Isolation_Event_End_Date__c){
+                currentResponse.addError( 'Isolation end date must be after the isolation start date!' );
+                hasError = true;           
+            }
+        }
+
+//      End EC-116
+             
         try {
             hasError = false;
            // string tmp = getNecessaryColumns(responseType);
@@ -167,7 +184,7 @@ public with sharing class EvaluationResponseTableController {
             PBSI.childComponents.add(lbl);
             PBSI.childComponents.add(dialogInput);
 
-			system.debug( dialogInput.expressions.value);
+            system.debug( dialogInput.expressions.value);
             dialog.childComponents.add(PBSI);
         }
         return dialog;
