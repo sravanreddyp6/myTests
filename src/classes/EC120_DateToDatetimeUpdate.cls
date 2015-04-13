@@ -1,8 +1,8 @@
-global class DateToDatetimeUpdateForReferral implements Database.Batchable<sObject> {
+global class EC120_DateToDatetimeUpdate implements Database.Batchable<sObject> {
     global final String query;
     global final String targetSobj;
 
-    global DateToDatetimeUpdateForReferral(String q, String target){
+    global EC120_DateToDatetimeUpdate(String q, String target){
             query=q;
             targetSobj = target;
     }
