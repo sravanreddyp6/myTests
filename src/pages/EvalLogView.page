@@ -9,7 +9,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
     
     
-    <apex:form>
+    <apex:form >
     
     <apex:repeat value="{!listEntries}" var="entry" >
     <apex:variable var="list" value="{!mapEntryHTML[entry]}" />
@@ -28,10 +28,9 @@
     	<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"  rendered="{!mapEntries[entry].compositeKey == 'Fall Risk Assessment~Fall Assessment~null'}" AssessmentName="Fall Risk Assessment" lowerScore="1" medianScore="30" higherScore="31" isPDF="true"/>
 		<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!mapEntries[entry].compositeKey == 'Skin/Body~Skin Assessment~null'}" AssessmentName="Skin Assessment" lowerScore="1" medianScore="14" higherScore="14" isPDF="true"/>
     </apex:pageblocksectionitem>
-   <apex:pageBlockSectionItem  rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null' || mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assesssment'}" >
+   <apex:pageBlockSectionItem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null' || mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assesssment'}" >
    <apex:outputText value=""  />
     </apex:pageBlockSectionItem>
-    
     
     <apex:repeat value="{!mapEntryHTML[entry]}" var="fld" >
    		<apex:pageBlockSectionItem >
@@ -43,7 +42,14 @@
     </apex:pageBlock>
  	</apex:repeat>
    
-    </apex:form>	
+    </apex:form>
+    
+<!--     Section to display Restraint Reductions -->
+    <apex:repeat value="{!assessments}" var="asmt" rendered="{!subcat == 'Reduction Review'}">
+    	<apex:form>
+ 			<c:restraintReductionComponent AssessmentId="{!asmt.Id}" isPDF="true" />
+ 		</apex:form>
+   	</apex:repeat>	
  		
  	<script>
  	

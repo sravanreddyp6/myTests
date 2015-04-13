@@ -28,12 +28,29 @@ public with sharing class GenerateEvalSectionPDF {
             ];
         }
     }
-
+    
+    public Assessment__c[] assessments {set;
+    	get{
+    		if(subcat == 'Reduction Review'){
+	    		return [
+	    			SELECT Id, Name FROM Assessment__c WHERE Evaluation__c =:evaluationID AND Status__c != 'Disregard'
+	    		];
+    		
+    		}
+    		else{
+    			return null;
+    		}
+    	}
+    }
+    
+   // public List<Assessment__c> assessments {get; set;}
+    
 	public GenerateEvalSectionPDF( ) {
 		mapEvalItems = new Map<ID, Eval__c>();
 
 		mapEntryValues = new Map<String, Map<ID, Eval_Value__c> > ();
 		evaluationID = ApexPages.currentPage().getParameters().get('evalID');
+	//	assessments = [SELECT Id FROM Assessment__c WHERE Evaluation__c=:evaluationID];
 		evalname=ApexPages.currentPage().getParameters().get('evalname');
 		opGrp = ApexPages.currentPage().getParameters().get('opGrp');
 		cat=ApexPages.currentPage().getParameters().get('cat');
