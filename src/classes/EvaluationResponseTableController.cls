@@ -101,7 +101,11 @@ public with sharing class EvaluationResponseTableController {
             if(currentResponse.Isolation_Event_Start_Date__c > currentResponse.Isolation_Event_End_Date__c){
                 currentResponse.addError( 'Isolation end date must be after the isolation start date!' );
                 hasError = true;           
-            }
+        }
+        if(currentResponse.Isolation_Event_End_Date__c != null && currentResponse.Isolation_Event_Start_Date__c < currentResponse.Isolation_Event_End_Date__c){
+            currentResponse.eSigned_By__c = userInfo.getUserId();
+            currentResponse.eSigned_On__c = Date.today();
+        }          
         }
 
 //      End EC-116
