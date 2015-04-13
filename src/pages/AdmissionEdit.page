@@ -15,17 +15,16 @@ var addmissionDateTime = {
                 jQuery('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css("top", "+=10");
             }
         });
+        if ($target.length === 1){
+                  jQuery($target).val((moment($target.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($target.val().toString()).format('L HH:mm')).toString());
+        }
     },
     updateDateTime: function($target) {
         jQuery($target).val((moment($target.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($target.val().toString()).format('L LT')));
-    },
-    formatAdmissionDate: function($target) {
-        jQuery($target).val((moment($target.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($target.val().toString()).format('L HH:mm')).toString());
     }
 }
 jQuery(function($) {
     addmissionDateTime.intializeDateTimePicker($('input[id$=admissionEffectiveDateTime]'));
-    addmissionDateTime.formatAdmissionDate($('input[id$=admissionEffectiveDateTime]'));
 });
 </script>
     
@@ -35,14 +34,14 @@ jQuery(function($) {
     <apex:pageMessages id="msgs"/>
         <apex:pageBlock title="Admission Edit" id="detail" mode="edit">
             <div class="pbHeaderButton" id="buttons">
-				<apex:commandButton value="Save" id="btnSave" action="{!save}" status="mySaveStatus" onClick="addmissionDateTime.updateDateTime(jQuery('input[id$=admissionEffectiveDateTime]'))" rerender="msgs, detail" onComplete="addmissionDateTime.formatAdmissionDate($('input[id$=admissionEffectiveDateTime]'));addmissionDateTime.intializeDateTimePicker(jQuery('input[id$=admissionEffectiveDateTime]'));"/>
+				<apex:commandButton value="Save" id="btnSave" action="{!save}" status="mySaveStatus" onClick="addmissionDateTime.updateDateTime(jQuery('input[id$=admissionEffectiveDateTime]'))" rerender="msgs, detail" onComplete="addmissionDateTime.intializeDateTimePicker(jQuery('input[id$=admissionEffectiveDateTime]'));"/>
 			    <apex:commandButton action="{!cancel}" value="Cancel"/>
             </div>
             <apex:pageBlockSection title="Information" columns="2">
                 <apex:outputField value="{!admission.Name}" />
                 <apex:inputField value="{!admission.Status__c}" />
                 <apex:outputField value="{!admission.Person_Being_Served__c}" />
-                <apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Effective Date" />
                     <apex:outputPanel >
                         <div class="requiredInput">

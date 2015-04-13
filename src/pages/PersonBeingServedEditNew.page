@@ -511,7 +511,9 @@
                     </apex:column>
                     <apex:column headerValue="Admission Name"><a href="/apex/AdmissionView?id={!admsns.ID}">{!admsns.Name}</a>
                     </apex:column>
-                    <apex:column value="{!admsns.Admission_Effective_DateTime__c}" headerValue="Effective Date" />
+                    <apex:column headerValue="Effective Date">
+                        <c:MilitaryDatetime dateTimeVal="{!admsns.Admission_Effective_DateTime__c}" />           
+                    </apex:column>
                     <apex:column value="{!admsns.Discharged_Date__c}" headerValue="Discharge Date" />
                     <apex:column value="{!admsns.Status__c}" headerValue="Status" />
                 </apex:pageblockTable>

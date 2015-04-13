@@ -5,6 +5,10 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 <!--    <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" /> -->
+	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+
     <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS" />
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
@@ -302,7 +306,8 @@
 				<apex:actionStatus id="SaveStatus1">
 					<apex:facet name="stop">
 						<apex:outputPanel id="buttons">
-							<apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}" /> &nbsp;
+							<apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"  
+							                     onComplete="saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/> &nbsp;
 							<apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" /> &nbsp;
 							<apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
 
@@ -323,8 +328,20 @@
 				<apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}" />
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
-				<apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Start_Date__c}" required="true" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
+                <apex:pageBlockSectionItem rendered="{!!editSA}">
+                    <apex:outputLabel value="Start Date" />
+                    <apex:outputText value="{!saStrStartDateTime}" />
+                </apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!editSA}">
+                    <apex:outputLabel value="Start Date" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputText id="startdate" value="{!saStrStartDateTime}" onblur="changeEffectiveDates();"/>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+				
 				<apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
 				<apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}" />
 				<apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}" />
@@ -402,9 +419,17 @@
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
 
-				<apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Start_Date__c}" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
-
+                <apex:pageBlockSectionItem rendered="{!!editSA}">
+                    <apex:outputLabel value="Start Date" />
+                    <apex:outputText value="{!saStrStartDateTime}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!editSA}">
+                    <apex:outputLabel value="Start Date" />
+                    <apex:outputPanel >
+                            <apex:inputText id="startdate" value="{!saStrStartDateTime}" onblur="changeEffectiveDates();"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
 				<apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
 
 				<apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}" />
@@ -965,7 +990,7 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:pageblockButtons>
             </apex:pageBlock>
         </apex:outputPanel>
-        <apex:outputPanel id="seizure-dialog-confirm" title="Confirm save" layout="block">
+        <apex:outputPanel id="seizure-dialog-confirm" title="Confirm save" layout="block" style="display:none">
 		    <apex:outputPanel layout="inline">
             <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />
 		        There is already an existing Seizure for the overlapping time, this could be a duplicate entry. Do you still want to Save?
@@ -1984,7 +2009,8 @@ END: Uncomment to have the element collapsed by default -->
 			if (j$('input[id$=lookupElement_lkid]'))
 				j$('input[id$=lookupElement_lkid]').change(function () {
 					saveLocation();
-				});
+				});			
+            saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));
 		});
 
 
@@ -2017,11 +2043,23 @@ END: Uncomment to have the element collapsed by default -->
 
 
 		function changeEffectiveDates() {
-			var sd = j$('input[id$=startdate]').val();
+			var sd = j$('input[id$=startdate]').val().substring(0,10);
 			var ed = j$('input[id$=enddate]').val();
 
 			setEffectiveDate(sd, ed);
 
+		}
+		
+		var saStartDateTime = {
+		    intializeDateTimePicker: function($target) {
+		        j$($target).datetimepicker({
+		            format: 'm/d/Y H:i',
+		            closeOnDateSelect: true,
+		            onGenerate: function(dp, $input) {
+		                j$('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css("top", "+=10");
+		            }
+		        });
+		    }
 		}
 	</script>
 

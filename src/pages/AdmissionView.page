@@ -646,9 +646,7 @@
 				</apex:column>
 				<apex:column value="{!item.Status__c}" />
 				<apex:column headerValue="Start Date">
-					<apex:outputText value="{0, date, MM/dd/yyyy}">
-						<apex:param value="{!item.Start_Date__c}" />
-					</apex:outputText>
+                    <c:MilitaryDatetime dateTimeVal="{!item.SA_Start_DateTime__c}" />			
 				</apex:column>
 				<apex:column headerValue="End Date">
 					<apex:outputText value="{0, date, MM/dd/yyyy}">

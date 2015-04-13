@@ -312,6 +312,17 @@ public without sharing class ServiceAssignmentExt {
 // END:  Parent level properties with get/set methods.
 
 
+    public String getSaStrStartDateTime(){
+    	String strstartDt = '';
+    	if (theServAssign.SA_Start_DateTime__c != null)
+            strstartDt = theServAssign.SA_Start_DateTime__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString() );
+        return strstartDt;
+    }
+    public void setSaStrStartDateTime(String val){
+        if (val != null && val != '')
+            theServAssign.SA_Start_DateTime__c = getDateTimeFromString(val +':00');
+    }
+        
 // START: CONSTRUCTOR
     public ServiceAssignmentExt(ApexPages.StandardController controller) {
 
@@ -358,7 +369,7 @@ public without sharing class ServiceAssignmentExt {
                 theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                             End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName,Admission__r.Person_Being_Served__r.FirstName, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
-                            Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
+                            Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
 					                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
                                 FROM Service_Assignment__c
@@ -366,7 +377,7 @@ public without sharing class ServiceAssignmentExt {
                 initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,Admission__r.Person_Being_Served__r.LastName,
                             End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
-                            Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
+                            Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
                                 FROM Service_Assignment__c
@@ -727,7 +738,7 @@ public without sharing class ServiceAssignmentExt {
     public void LoadData(Service_Assignment__c localRecord){
        currentID = localRecord.Id;
        if(newSA==false) {
-            currentRecord = [Select start_date__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c,Status__c  From Service_Assignment__c Where Id = :currentID Limit 1];
+            currentRecord = [Select start_date__c, SA_Start_DateTime__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c,Status__c  From Service_Assignment__c Where Id = :currentID Limit 1];
             currentState = currentRecord.Admission__r.State__c;
        }
        else {
@@ -1085,6 +1096,9 @@ public void loadProgramList() {
         if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
             ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
             return null;
+        }else if (!AssessmentOnly && theServAssign.SA_Start_DateTime__c == null) {
+            ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Start date: You must enter a value.'));
+            return null;
         }
 
       Savepoint servAssignSaveSp = Database.setSavepoint();
@@ -1172,7 +1186,7 @@ public void loadProgramList() {
 							SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                             End_Date__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c, Phase__c, Phase_of_Treatment__c, Program__c,
                             Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
-                            Start_Date__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
+                            Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
                                 FROM Service_Assignment__c
