@@ -264,24 +264,44 @@ public with sharing class EvalDynamicExt {
 	
 	public pageReference completeShift() {
 		
+		//Commented by Sravan - 04/13/2015 as the whole logic is handled in CMShiftAssessmentEsign.cls -- CLciking the Complete button invokes Authentication Component but not this method.
+		
+		/*savepoint completeShiftSavepoint = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
+		
 		if(evalType == 'Restraint Event'){
 			thisEval.Status__c = 'Restraint Event Ended';
+			try{
+				update thisEval;
+				List<Assessment__c> completedAsmts = [SELECT Id, Status__c FROM Assessment__c WHERE Evaluation__c =:thisEval.Id];
+				if(completedAsmts.size() > 0){
+					for(Assessment__c asmt : completedAsmts){
+						asmt.Status__C = 'Completed';
+					}
+					update completedAsmts;
+				}
+			}
+			catch (exception e){
+				Database.rollback(completeShiftSavepoint);
+				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
+				return null;
+			}
 		}else{
 			thisEval.Status__c = 'Completed';
-		}
-		//Common for all types
-		thisEval.Shift_End_time__c = system.Now();
-		try{
-			update thisEval;
-			PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
-			pageRef.setRedirect(true);
-			return pageRef;
-		}
-		catch(exception e){
-			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
-			return null;	
-		}
-
+			thisEval.Shift_End_time__c = system.Now();
+			try{
+				update thisEval;
+				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
+				pageRef.setRedirect(true);
+				return pageRef;
+			}
+			catch(exception e){
+				Database.rollback(completeShiftSavepoint);
+				Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,e.getMessage()));
+				return null;	
+			}
+			
+		}*/
+		return null;
 	}
 	
 	//Generic Clone functionality to copy Eval Value records.

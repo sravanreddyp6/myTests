@@ -29,15 +29,20 @@ public with sharing class restraintReductionController {
 	
 	public Boolean getviewMode(){
 		Assessment__c assess = [SELECT Id,Name, Status__c FROM Assessment__c WHERE Id=: assId LIMIT 1];
-		if(assess.Status__c == 'Disregard'){
+		if(assess.Status__c == 'Disregard' || assess.Status__c == 'Completed'){
 			return true;
 		}
 		else{
 			return false;
 		}
-		
-		
 	}
+	
+	public List<Assessment_Domain_Result__c> getThisRecordsDomains() {
+                    return 
+                            [Select Name, ID, Sort_Order__c, Assessment_Domain__c, Title__c, Total_Questions__c, Answered_Questions__c, Score__c
+                                    From Assessment_Domain_Result__c 
+                                    Where Assessment__c = :assId AND Assessment_Domain__r.Name = 'Restraint Questions'];
+    }
 	
 	//VF Args
 	public id questionID {get;set;}
