@@ -652,8 +652,13 @@
 
             </apex:pageBlockSection>
         </apex:pageBlock>
+         </apex:form>
+         	
+              <c:SObjectNotesAndAttachments parentId="{!Contact.id}" showAction="true" parentPage="PBS"></c:SObjectNotesAndAttachments> 
+    
+    <!--
         <apex:pageBlock >
-            <!--Notes & Attachments-->
+            <!--Notes & Attachments
             <apex:pageBlockSection columns="1" title="Attachments" showHeader="true" collapsible="true">
                 <apex:pageBlockSectionItem >
                     <a href="/apex/uploader?parentid={!Contact.id}">Add/Remove</a>
@@ -664,7 +669,7 @@
                 </apex:pageBlockTable>
                 <apex:outputText value="No Attachments to display" rendered="{!(attachments.size=0)}" />
             </apex:pageBlockSection>
-        </apex:pageBlock>
+        </apex:pageBlock> -->
         <apex:pageBlock >
             <!--PersonBeing Served History Section-->
             <apex:pageBlockSection title="Person Being Served History" showHeader="true" columns="1" collapsible="false">
@@ -682,5 +687,5 @@
 
             </apex:pageBlockSection>
         </apex:pageBlock>
-    </apex:form>
+   
 </apex:page>

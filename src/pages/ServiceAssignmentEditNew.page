@@ -1816,9 +1816,8 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:outputPanel>
 	</apex:form>
 	<apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
-	<c:SObjectNotesAndAttachments parentId="{!Service_Assignment__c.id}" showAction="false" rendered="{!!editSA && newSA==false}"></c:SObjectNotesAndAttachments>
+	<c:SObjectNotesAndAttachments parentPage="ServAssign" parentId="{!Service_Assignment__c.id}" showAction="false" rendered="{!!editSA && newSA==false}"   pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
 	<c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
-
 
 	<script type="text/javascript">
 		j$(setFocus);

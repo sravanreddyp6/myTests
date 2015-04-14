@@ -774,8 +774,8 @@ background-color: cornsilk;
     
 </apex:form> 
 <br/>
-
-<c:SObjectNotesAndAttachments parentId="{!Action_Plan__c.id}" showAction="false" rendered="{! !editMode}"></c:SObjectNotesAndAttachments> 
+ 
+<c:SObjectNotesAndAttachments parentPage="ActionPlan" parentId="{!Action_Plan__c.id}" showAction="false" rendered="{! !editMode}"  pbsId="{!Action_Plan__c.Service_Assignment__r.Person_Being_Served__c}" apId="{!Action_Plan__c.Id}" servAssignId="{!Action_Plan__c.Service_Assignment__c}" admId="{!Action_Plan__c.Service_Assignment__r.Admission__c}"></c:SObjectNotesAndAttachments> 
 </apex:outputPanel>
 <div id="ackfrom"  style="display: none;">
 <div class="hbbg">  </div>
