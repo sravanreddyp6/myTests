@@ -52,12 +52,20 @@ global with sharing class uploaderController
 			showPersonalRecord = false;
 			showPlanOfCareSelection = false;
 		}
+		System.debug('fileUpload :::' + fileUpload);
+		if (fileUpload!=null ){
+		showHeadShotSelection = false;
+		}
 	}}
-
+	public String fileUpload { get; set; }
 	public Boolean showHeadShotSelection { get; set; }
 	public Boolean showPlanOfCareSelection { get; set; }
 	public String headShotPhotoIndex { get; set; }
-
+	public Boolean hideAddMoreButton { get; set; }
+	public String loginUserId { 
+    get {
+        return UserInfo.getUserId();
+    }}
 	// list of existing attachments - populated on demand
 	public List<Attachment> attachments;
 
@@ -76,7 +84,7 @@ global with sharing class uploaderController
 	// retrieve the existing attachments
 	public List<Attachment> getAttachments()
 	{
-		attachments=[select Id, ParentId, Name, Description from Attachment where parentId=:sobjId];
+		attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:sobjId];
 		return attachments;
 	}
 
@@ -91,6 +99,7 @@ global with sharing class uploaderController
 		{
 			newAttachments.add(new ProxyAttachment(new Attachment()));
 		}
+		hideAddMoreButton = true;
 		return null;
 	}
 

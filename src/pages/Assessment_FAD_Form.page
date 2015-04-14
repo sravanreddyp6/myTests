@@ -915,7 +915,7 @@
 
 
 
-<c:SObjectNotesAndAttachments rendered="{! mode='view'}" parentId="{!Assessment__c.id}" showAction="false" ></c:SObjectNotesAndAttachments>
+<c:SObjectNotesAndAttachments rendered="{! mode='view'}" parentId="{!Assessment__c.id}" showAction="false" servAssignId="{!Assessment__c.Service_Assignment__c}" pbsId="{!Assessment__c.Admission__r.Person_Being_Served__c}" parentPage="Assessment" admId="{!Assessment__c.Admission__c}" asmtType="{!Assessment__c.Type__c}" asmtId="{!Assessment__c.Id}"   />
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">
@@ -983,10 +983,8 @@ function toggleInialFinalPrimaryFields(  ) {
 }
 };
 function toggleInialFinalSecondaryFields(  ) {
-    if ( j$('.phasefield').val()=='Initial' || j$('.phasefield').val()== 'Final' ){   
-        if(j$('.SC_Emp').val().indexOf('Employed') == 0){    
-            j$('.Int_Final_field_Secondary' ).prop( "disabled", false);     
-        }
+    if ( j$('.phasefield').val()=='Initial' || j$('.phasefield').val()== 'Final' ){       
+        j$('.Int_Final_field_Secondary' ).prop( "disabled", false);     
       }
     else{    
         j$('.Int_Final_field_Secondary' ).prop( "disabled", true);  

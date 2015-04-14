@@ -1,11 +1,13 @@
 <apex:component controller="uploaderController" allowDML="true" id="component">
     <apex:attribute name="objId" type="String" description="The id of the object to manage attachments for" required="true" assignTo="{!sobjId}"/>
+    <apex:attribute name="fileUploadVal" type="String" description="fileUpload is used to hide HeadShotSelection non photo file upload"  assignTo="{!fileUpload}"/>
     <apex:attribute name="showExisting" type="String" description="Show attachments related list?" required="false" default="false"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
-    <apex:includeScript value="{!URLFOR($Resource.jQueryFileStyle, '0.1.3/js/jquery-filestyle.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/js/jquery-filestyle.min.js')}"/>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/redmond/jquery-ui.css">
-    <apex:stylesheet value="{!URLFOR($Resource.jQueryFileStyle, '0.1.3/css/jquery-filestyle.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/css/jquery-filestyle.min.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     </link>
     <style>
         .deleteLink {
@@ -58,10 +60,15 @@
             })
         });
     </script>
-    <c:PersonalRecord rendered="{!showPersonalRecord}" pbsId="{!sobjId}" parentPage="Uploader" />
+    <c:PersonalRecord rendered="{!showPersonalRecord}" pbsId="{!sobjId}" parentPage="Upload Attachments" />
     <br />
     <apex:form id="attForm">
         <apex:pageBlock title="Upload Attachments">
+                	    <div id="textId" >
+        <p><h2> 1. Select the file</h2><br/>
+		Type the path of the file to choose File button to find the file. You may also include a description.<br/>
+		Click "Add More" to attach up to 5 files at once,or proceed to step 2.</p>
+    </div>
             <apex:repeat value="{!newAttachments}" var="newAtt">
                 <apex:pageBlockSection columns="4" id="files">
                     <apex:pageBlockSectionItem labelStyle="width: 10%">
@@ -86,9 +93,13 @@
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
             </apex:repeat>
-            <apex:commandButton value="Add More" action="{!addMore}" />
+            <apex:commandButton value="Add More" action="{!addMore}" rendered="{!NOT(hideAddMoreButton)}" />
+                      <div id="textId">
+        <p><h2> 2. Click the "Upload" button </h2><br/>
+		When the upload is complete the file information will appear below. Click cancel to exit without uploading.</p>
+            </div>
             <apex:commandButton value="Upload" action="{!save}"/>
-            <apex:commandButton value="Done" action="{!done}"/>
+            <apex:commandButton value="Cancel" action="{!done}"/>
         </apex:pageBlock>
     </apex:form>
     <apex:form id="form">
@@ -101,10 +112,10 @@
         <apex:outputPanel id="datePanelContainer">
             <apex:pageBlock title="Existing Attachments" rendered="{!showExisting}" >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
-                    <apex:column headerValue="Action">
-                        <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.Id)}" target="_blank">View</apex:outputLink>
+                    <apex:column headerValue="Edit">
+                        <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.Id)}" target="_blank">Edit</apex:outputLink>
                         |
-                        <apex:outputText rendered="{!$Profile.Name == 'System Administrator'}" >
+                        <apex:outputText rendered="{!$Profile.Name == 'System Administrator' || loginUserId == attachment.OwnerID}" >
                             <a id="{!attachment.id}" class="deleteLink">Del</a>
                         </apex:outputText>
                         <apex:outputPanel rendered="{!showHeadShotSelection}">
@@ -115,8 +126,16 @@
                             </apex:commandLink>
                         </apex:outputPanel>
                     </apex:column>
-                    <apex:column value="{!attachment.Name}"/>
-                    <apex:column value="{!attachment.Description}"/>
+                    <apex:column style="padding-right: 9px;" headerValue="Title">
+                    <apex:outputLink value="/apex/ViewAttachment?docId={!attachment.Id}">{!attachment.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Description">{!attachment.Description}</apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
+                    <apex:outputText value="{!attachment.CreatedDate}" />
+                </apex:column>
+				 <apex:column style="padding-right: 9px;" headerValue="Created By">
+                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
+                </apex:column>
                 </apex:pageBlockTable>
             </apex:pageBlock>
         </apex:outputPanel>
