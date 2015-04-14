@@ -65,6 +65,50 @@
 				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Action_Summary__c.CreatedDate}" />
 			</apex:pageBlockSection>
+			<apex:pageBlockSection title="Seizure Activity" columns="1">
+				<apex:outputPanel layout="block" style="width: 70%">
+					<apex:pageBlockTable value="{!seizures}" var="seizure">
+						<apex:column headerValue="Start Date/Time">
+							<apex:outputText value="{0, date, M/d/yyyy h:mm:ss a}"><apex:param value="{!seizure.startTime}" /></apex:outputText>
+						</apex:column>
+						<apex:column headerValue="End Date/Time">
+							<apex:outputText value="{0, date, M/d/yyyy h:mm:ss a}"><apex:param value="{!seizure.endTime}" /></apex:outputText>
+						</apex:column>
+						<apex:column headerValue="Duration" value="{!seizure.duration} seconds" />
+						<apex:column headerValue="Observed By">
+							<a href="/{!seizure.observedById}">{!seizure.observedByName}</a>
+						</apex:column>
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection title="Isolation Events" columns="1">
+				<apex:outputPanel layout="block" style="width: 70%">
+					<apex:pageBlockTable value="{!isolationEvents}" var="event">
+						<apex:column headerValue="Start Date/Time">
+							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
+						</apex:column>
+						<apex:column headerValue="End Date/Time">
+							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.endTime}" /></apex:outputText>
+						</apex:column>
+						<apex:column headerValue="Status" value="{!event.status}" />
+						<apex:column headerValue="Type" value="{!event.type}" />
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection title="Restraint Events" columns="1">
+				<apex:outputPanel layout="block" style="width: 70%">
+					<apex:pageBlockTable value="{!restraintEvents}" var="event">
+						<apex:column headerValue="Start Date/Time">
+							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
+						</apex:column>
+						<apex:column headerValue="End Date/Time">
+							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.endTime}" /></apex:outputText>
+						</apex:column>
+						<apex:column headerValue="Status" value="{!event.status}" />
+						<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Systems" columns="1">
 				<apex:outputPanel layout="block" style="width: 70%; ">
 					<table class="list" cellspacing="0" cellpadding="0" border="0">
