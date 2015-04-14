@@ -218,7 +218,7 @@ public with sharing class EvaluationResponseTableController {
         String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c,' + getNecessaryColumns(responseType) +
             ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +
             ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
-            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate Limit ' + numRows;
+            '\' ORDER BY Isolation_Event_Start_Date__c DESC NULLS LAST, CreatedDate Limit ' + numRows;
         system.debug('Serv Assign Query: ' + query);    
         responses = Database.query(query);
         numberOfResponses = responses.size();
