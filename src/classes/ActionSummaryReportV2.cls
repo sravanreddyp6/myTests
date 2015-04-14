@@ -8,7 +8,9 @@ public with sharing class ActionSummaryReportV2 {
 	// of separations). The list also contains the parent objective itself
 	public Map<String, Map<Id, List<Objective>>> objectiveMap { get; set; }
 
-	public Map<Id, OtherSummaryResult> otherSummaryResultMap { get; set; }
+	public Map<Id, RecommendationSummaryResult> recommendationSummaryResultMap { get; set; }
+	public List<String> systemSummaryResultDomain { get; set; }
+	public Map<String, SystemSummaryResult> systemSummaryResultMap { get; set; }
 
 	public List<SelectOption> recommendationOptions {
 		get {
@@ -26,6 +28,16 @@ public with sharing class ActionSummaryReportV2 {
 			return recommendationOptions;
 		}
 		set;
+	}
+
+	public List<SelectOption> systemStatusOptions {
+		get {
+			return new List<SelectOption> {
+				new SelectOption('No Notable Changes', 'No Notable Changes'),
+				new SelectOption('Improved', 'Improved'),
+				new SelectOption('Declined', 'Declined')
+			};
+		}
 	}
 
 	public ActionSummaryReportV2(ApexPages.standardController controller) {
@@ -96,24 +108,42 @@ public with sharing class ActionSummaryReportV2 {
 				}
 			}
 		}
-		otherSummaryResultMap = new Map<Id, OtherSummaryResult>();
+		recommendationSummaryResultMap = new Map<Id, RecommendationSummaryResult>();
+		systemSummaryResultMap = new Map<String, SystemSummaryResult>();
+		// Initialize system summary results
+		systemSummaryResultDomain = new List<String> {
+			'Diagnostics', 'Cardiopulmonary', 'GU/GI/Nutrition',
+			'Skin/Body', 'Neurological', 'Muscle-Skeletal',
+			'Psychosocial', 'Therapy/Rehab', 'Discharge Planning'
+		};
+
 		Action_Plan_Summary_Result__c[] results = [
-			SELECT Id, Type__c, Data__c, Action_Plan_Objective__c
+			SELECT Id, Type__c, Data__c, Action_Plan_Summary__c
 			  FROM Action_Plan_Summary_Result__c
-			 WHERE Action_Plan_Objective__c IN :allTopLevelObjectives
+			 WHERE Action_Plan_Summary__c = :summary.Id
 		];
 		for (Action_Plan_Summary_Result__c result: results) {
 			if (result.Type__c == 'Recommendation') {
-				otherSummaryResultMap.put(result.Action_Plan_Objective__c,
-					new OtherSummaryResult(result));
+				RecommendationSummaryResult r = new RecommendationSummaryResult(result);
+				recommendationSummaryResultMap.put(r.objectiveId, r);
+			} else if (result.Type__c == 'System') {
+				SystemSummaryResult r = new SystemSummaryResult(result);
+				systemSummaryResultMap.put(r.domain, r);
 			}
 		}
 		for (Id topLevelObjective: allTopLevelObjectives) {
-			if (!otherSummaryResultMap.containsKey(topLevelObjective)) {
-				otherSummaryResultMap.put(topLevelObjective,
-					new OtherSummaryResult(topLevelObjective));
+			if (!recommendationSummaryResultMap.containsKey(topLevelObjective)) {
+				recommendationSummaryResultMap.put(topLevelObjective,
+					new RecommendationSummaryResult(summary.Id, topLevelObjective));
 			}
 		}
+
+		for (String domain: systemSummaryResultDomain) {
+			if (!systemSummaryResultMap.containsKey(domain)) {
+				systemSummaryResultMap.put(domain, new SystemSummaryResult(summary.Id, domain));
+			}
+		}
+		System.debug('systemSummaryResultMap: ' + systemSummaryResultMap);
 	}
 
 	private Id findParentObjective(Action_Plan_Objective__c objective, Map<Id, Action_Plan_Objective__c> objectives) {
@@ -135,9 +165,16 @@ public with sharing class ActionSummaryReportV2 {
 			return null;
 		}
 		List<Action_Plan_Summary_Result__c> resultsToUpdate = new List<Action_Plan_Summary_Result__c>();
-		for (Id topLevelObjectiveId: otherSummaryResultMap.keySet()) {
-			OtherSummaryResult result = otherSummaryResultMap.get(topLevelObjectiveId);
+		for (Id topLevelObjectiveId: recommendationSummaryResultMap.keySet()) {
+			RecommendationSummaryResult result = recommendationSummaryResultMap.get(topLevelObjectiveId);
 			if ((result.recommendation != null && result.recommendation != '') || (result.comment != null && result.comment != '')) {
+				result.updateData();
+				resultsToUpdate.add(result.resultSObject);
+			}
+		}
+		for (String domain: systemSummaryResultMap.keySet()) {
+			SystemSummaryResult result = systemSummaryResultMap.get(domain);
+			if ((result.status != null && result.status != '') || (result.comment != null && result.comment != '')) {
 				result.updateData();
 				resultsToUpdate.add(result.resultSObject);
 			}
@@ -268,36 +305,78 @@ public with sharing class ActionSummaryReportV2 {
 		}
 	}
 
-	public class OtherSummaryResult {
+	public class RecommendationSummaryResult {
 		public Action_Plan_Summary_Result__c resultSObject { get; set; }
 		public String recommendation { get; set; }
 		public String comment { get; set; }
+		public Id objectiveId { get; set; }
 
-		public OtherSummaryResult(String recommendation, String comment) {
+		public RecommendationSummaryResult(String recommendation, String comment, Id objectiveId) {
 			// This constructor is only used for JSON (de-)serializing. Don't
 			// use it for any other purpose
 			this.recommendation = recommendation;
 			this.comment = comment;
+			this.objectiveId = objectiveId;
 		}
 
-		public OtherSummaryResult(Id objectiveId) {
+		public RecommendationSummaryResult(Id summaryId, Id objectiveId) {
 			this.resultSObject = new Action_Plan_Summary_Result__c(
-				Action_Plan_Objective__c = objectiveId,
+				Action_Plan_Summary__c = summaryId,
 				Type__c = 'Recommendation'
 			);
+			this.objectiveId = objectiveId;
 		}
-		public OtherSummaryResult(Action_Plan_Summary_Result__c resultSObject) {
+		public RecommendationSummaryResult(Action_Plan_Summary_Result__c resultSObject) {
 			this.resultSObject = resultSObject;
-			OtherSummaryResult r = (OtherSummaryResult) JSON.deserialize(
-				resultSObject.Data__c, OtherSummaryResult.class
+			RecommendationSummaryResult r = (RecommendationSummaryResult) JSON.deserialize(
+				resultSObject.Data__c, RecommendationSummaryResult.class
 			);
 			this.recommendation = r.recommendation;
+			this.comment = r.comment;
+			this.objectiveId = r.objectiveId;
+		}
+		public void updateData() {
+			// Update the data field for the underlying Summary Result object
+			this.resultSObject.Data__c = JSON.serialize(new RecommendationSummaryResult(
+				this.recommendation, this.comment, this.objectiveId
+			));
+		}
+	}
+
+	public class SystemSummaryResult {
+		public Action_Plan_Summary_Result__c resultSObject { get; set; }
+		public String domain { get; set; }
+		public String status { get; set; }
+		public String comment { get; set; }
+
+		public SystemSummaryResult(String domain, String status, String comment) {
+			// This constructor is only used for JSON (de-)serializing. Don't
+			// use it for any other purpose
+			this.domain = domain;
+			this.status = status;
+			this.comment = comment;
+		}
+
+		public SystemSummaryResult(Id summaryId, String domain) {
+			this.resultSObject = new Action_Plan_Summary_Result__c(
+				Action_Plan_Summary__c = summaryId,
+				Type__c = 'System'
+			);
+			this.domain = domain;
+		}
+		public SystemSummaryResult(Action_Plan_Summary_Result__c resultSObject) {
+			this.resultSObject = resultSObject;
+			SystemSummaryResult r = (SystemSummaryResult) JSON.deserialize(
+				resultSObject.Data__c, SystemSummaryResult.class
+			);
+			this.domain = r.domain;
+			this.status = r.status;
 			this.comment = r.comment;
 		}
 		public void updateData() {
 			// Update the data field for the underlying Summary Result object
-			this.resultSObject.Data__c = JSON.serialize(new OtherSummaryResult(
-				this.recommendation, this.comment
+			this.resultSObject.Data__c = JSON.serialize(new SystemSummaryResult(
+				this.domain, this.status, this.comment
 			));
 		}
 	}
