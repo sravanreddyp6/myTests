@@ -12,9 +12,9 @@ public with sharing class ActionSummaryReportV2 {
 	public List<String> systemSummaryResultDomain { get; set; }
 	public Map<String, SystemSummaryResult> systemSummaryResultMap { get; set; }
 
-	public List<Seizure> seizures { get; set; }
-	public List<IsolationEvent> isolationEvents { get; set; }
-	public List<RestraintEvent> restraintEvents { get; set; }
+	public transient List<Seizure> seizures { get; set; }
+	public transient List<IsolationEvent> isolationEvents { get; set; }
+	public transient List<RestraintEvent> restraintEvents { get; set; }
 
 	public List<SelectOption> recommendationOptions {
 		get {
@@ -87,63 +87,9 @@ public with sharing class ActionSummaryReportV2 {
 				         action_plan_goal__r.sort_order__c, action_plan_goal__c,
 				         sort_order__c
 			]);
-			seizures = new List<Seizure>();
-			for (Seizure__c seizure: [
-					SELECT Id, Start_DateTime__c, End_DateTime__c, Observed_By__c,
-					       Observed_By__r.Name
-					  FROM Seizure__c
-					 WHERE Service_Assignment__c = :summary.Service_Assignment__r.Id
-					ORDER BY CreatedDate ASC
-					 LIMIT 10
-				]) {
-				seizures.add(new Seizure(seizure));
-			}
-			isolationEvents = new List<IsolationEvent>();
-			for (Evaluation_Response__c event: [
-					SELECT Id, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c,
-					       Isolation_Status__c, Isolation_Type__c
-					  FROM Evaluation_Response__c
-					 WHERE RecordType.Name = 'Isolation Event'
-					   AND Service_Assignment__c = :summary.Service_Assignment__r.Id
-					ORDER BY CreatedDate ASC
-					 LIMIT 10
-				]) {
-				isolationEvents.add(new IsolationEvent(event));
-			}
-			restraintEvents = new List<RestraintEvent>();
-			Evaluation__c[] tmpRestraintEvents = [
-				SELECT Id, Shift_Start_Time__c, Shift_End_Time__c, Status__c,
-				       (SELECT Id FROM Assessments__r
-				         WHERE Status__c != 'Disregard'
-				         ORDER BY CreatedDate DESC)
-				  FROM Evaluation__c
-				 WHERE ServiceAssignment__c = :summary.Service_Assignment__r.Id
- 				   AND RecordType.Name = 'RestraintEvent'
-				ORDER BY CreatedDate ASC
-				 LIMIT 10
-			];
-			Map<Id, Id> assessmentEvaluationMap = new Map<Id, Id>();
-			Map<Id, Decimal> evaluationScoreMap = new Map<Id, Decimal>();
-			Set<Id> assessmentIds = new Set<Id>();
-			for (Evaluation__c event: tmpRestraintEvents) {
-				evaluationScoreMap.put(event.Id, null);
-				if (event.Assessments__r.size() == 0) {
-					continue;
-				}
-				assessmentIds.add(event.Assessments__r[0].Id);
-				assessmentEvaluationMap.put(event.Assessments__r[0].Id, event.Id);
-			}
-			for (Assessment_Domain_Result__c result: [
-					SELECT ID, Score__c, Assessment__c
-					  FROM Assessment_Domain_Result__c
-					 WHERE Assessment__c IN :assessmentIds
-					   AND Assessment_Domain__r.Name = 'Restraint Questions'
-				]) {
-				evaluationScoreMap.put(assessmentEvaluationMap.get(result.Assessment__c), result.Score__c);
-			}
-			for (Evaluation__c event: tmpRestraintEvents) {
-				restraintEvents.add(new RestraintEvent(event, evaluationScoreMap.get(event.Id)));
-			}
+			seizures = getSeizures(10, summary);
+			isolationEvents = getIsolationEvents(10, summary);
+			restraintEvents = getRestraintEvents(10, summary);
 		}
 		Set<Id> allTopLevelObjectives = new Set<Id>();
 		for (Id objectiveId: objectives.keySet()) {
@@ -243,6 +189,86 @@ public with sharing class ActionSummaryReportV2 {
 		upsert resultsToUpdate;
 		update summary;
 		return null;
+	}
+	/////////////////////////
+	// Private helper methods
+	/////////////////////////
+	private List<Seizure> getSeizures(Integer numRecords, Action_Summary__c summary) {
+		List<Seizure> tmpSeizures = new List<Seizure>();
+		Id saId = summary.Service_Assignment__r.Id;
+		String query =
+			'SELECT Id, Start_DateTime__c, End_DateTime__c, Observed_By__c, ' +
+			        'Observed_By__r.Name ' +
+			'  FROM Seizure__c ' +
+			' WHERE Service_Assignment__c = :saId ' +
+			'ORDER BY CreatedDate ASC ';
+		if (numRecords != null) {
+			query += 'LIMIT ' + numRecords;
+		}
+		for (Seizure__c seizure: Database.query(query)) {
+			tmpSeizures.add(new Seizure(seizure));
+		}
+		return tmpSeizures;
+	}
+
+	private List<IsolationEvent> getIsolationEvents(Integer numRecords, Action_Summary__c summary) {
+		List<IsolationEvent> tmpIsolationEvents = new List<IsolationEvent>();
+		Id saId = summary.Service_Assignment__r.Id;
+		String query =
+			'SELECT Id, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' +
+			'       Isolation_Status__c, Isolation_Type__c ' +
+			'  FROM Evaluation_Response__c ' +
+			' WHERE RecordType.Name = \'Isolation Event\' ' +
+			'   AND Service_Assignment__c = :saId ' +
+			'ORDER BY CreatedDate ASC ';
+		if (numRecords != null) {
+			query += 'LIMIT ' + numRecords;
+		}
+		for (Evaluation_Response__c event: Database.query(query)) {
+			tmpIsolationEvents.add(new IsolationEvent(event));
+		}
+		return tmpIsolationEvents;
+	}
+
+	private List<RestraintEvent> getRestraintEvents(Integer numRecords, Action_Summary__c summary) {
+		List<RestraintEvent> restraintEvents = new List<RestraintEvent>();
+		Id saId = summary.Service_Assignment__r.Id;
+		String query =
+			'SELECT Id, Shift_Start_Time__c, Shift_End_Time__c, Status__c, ' +
+			'       (SELECT Id FROM Assessments__r ' +
+			'         WHERE Status__c != \'Disregard\' ' +
+			'         ORDER BY CreatedDate DESC) ' +
+			'  FROM Evaluation__c ' +
+			' WHERE ServiceAssignment__c = :saId' +
+			'   AND RecordType.Name = \'RestraintEvent\' ' +
+			'ORDER BY CreatedDate ASC ';
+		if (numRecords != null) {
+			query += 'LIMIT ' + numRecords;
+		}
+		Evaluation__c[] tmpRestraintEvents = Database.query(query);
+		Map<Id, Id> assessmentEvaluationMap = new Map<Id, Id>();
+		Map<Id, Decimal> evaluationScoreMap = new Map<Id, Decimal>();
+		Set<Id> assessmentIds = new Set<Id>();
+		for (Evaluation__c event: tmpRestraintEvents) {
+			evaluationScoreMap.put(event.Id, null);
+			if (event.Assessments__r.size() == 0) {
+				continue;
+			}
+			assessmentIds.add(event.Assessments__r[0].Id);
+			assessmentEvaluationMap.put(event.Assessments__r[0].Id, event.Id);
+		}
+		for (Assessment_Domain_Result__c result: [
+				SELECT ID, Score__c, Assessment__c
+				  FROM Assessment_Domain_Result__c
+				 WHERE Assessment__c IN :assessmentIds
+				   AND Assessment_Domain__r.Name = 'Restraint Questions'
+			]) {
+			evaluationScoreMap.put(assessmentEvaluationMap.get(result.Assessment__c), result.Score__c);
+		}
+		for (Evaluation__c event: tmpRestraintEvents) {
+			restraintEvents.add(new RestraintEvent(event, evaluationScoreMap.get(event.Id)));
+		}
+		return restraintEvents;
 	}
 
 	//////////////////////
