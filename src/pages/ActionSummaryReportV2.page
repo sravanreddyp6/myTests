@@ -34,7 +34,10 @@
 		}
 		tr.dataRow:hover {
 			background-color: #e3f3ff;
-		};
+		}
+		table.alignTop td {
+			vertical-align: top !important;
+		}
 	</style>
 
 	<c:PersonalRecord pbsId="{!Action_Summary__c.Service_Assignment__r.Admission__r.Person_Being_Served__r.Id}"
@@ -67,13 +70,13 @@
 					<apex:outputPanel layout="block" id="objectivePanel" style="clear: both; ">
 						<apex:repeat value="{!objectiveMap[objectiveType]}" var="objectiveParentToChildrenMap">
 							<apex:repeat value="{!objectiveParentToChildrenMap}" var="parentId">
-								<table class="list" style="clear: both; margin-bottom: 20px; " cellspacing="0" cellpadding="0" border="0">
+								<table class="list alignTop" style="clear: both; margin-bottom: 20px; " cellspacing="0" cellpadding="0" border="0">
 									<thead>
 										<tr class="headerRow">
-											<th>Description</th>
-											<th>Revised</th>
-											<th>Attribute</th>
-											<th>
+											<th style="width: 40%; ">Description</th>
+											<th style="width: 15%; ">Revised</th>
+											<th style="width: 15%; ">Attribute</th>
+											<th style="width: 30%; ">
 												<apex:outputText value="Progress" rendered="{!OR(objectiveType == 'Skill', objectiveType == 'Behavior - Count')}" />
 												<apex:outputText value="Narrative Notes" rendered="{!objectiveType == 'Narrative'}" />
 											</th>
@@ -82,18 +85,18 @@
 									<tbody>
 										<apex:repeat value="{!objectiveMap[objectiveType][parentId]}" var="objective">
 											<tr class="dataRow {!IF(objective.highlight, 'changed', '')}">
-												<td class="dataCell">
+												<td class="dataCell" style="padding-top: 10px; padding-left: 5px; ">
 													{!objective.objectiveSObject.Description__c}
 												</td>
-												<td class="dataCell">
+												<td class="dataCell" style="padding-top: 10px; padding-left: 5px; ">
 													<apex:outputText rendered="{!parentId != objective.objectiveSObject.Id}" value="{0, date, M/d/yyyy}"><apex:param value="{!objective.objectiveSObject.CreatedDate}" /></apex:outputText>
 												</td>
-												<td class="dataCell">
+												<td class="dataCell" style="padding-top: 10px; padding-left: 5px; ">
 													Status - {!Objective.objectiveSObject.Status__c}<br />
 													Effective Date - <apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!Objective.objectiveSObject.Effective_Date__c}" /></apex:outputText> <br />
 													Target Date - <apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!Objective.objectiveSObject.Target_End_Date__c}" /></apex:outputText>
 												</td>
-												<td class="dataCell">
+												<td class="dataCell" style="padding-top: 5px; padding-left: 5px; ">
 													<apex:outputPanel rendered="{!objectiveType == 'Skill'}">
 														<table>
 															<thead>
@@ -148,28 +151,26 @@
 															</tbody>
 														</table>
 													</apex:outputPanel>
-													<apex:outputPanel rendered="{!objectiveType == 'Narrative'}">
-														<div style="height: 200px; overflow: auto; ">
-															<table>
-																<tbody>
-																	<apex:repeat value="{!objective.objectiveSObject.Action_Narrative_Results__r}" var="result">
-																		<tr>
-																			<td>
-																				<!-- TODO: Date here -->
-																			</td>
-																			<td>
-																				{!result.Description__c}
-																			</td>
-																		</tr>
-																	</apex:repeat>
-																	<apex:outputPanel layout="none" rendered="{!objective.objectiveSObject.Action_Narrative_Results__r.size == 0}">
-																		<tr>
-																			<td colspan="2">No data recorded</td>
-																		</tr>
-																	</apex:outputPanel>
-																</tbody>
-															</table>
-														</div>
+													<apex:outputPanel rendered="{!objectiveType == 'Narrative'}" layout="block" style="max-height: 200px; overflow: auto;">
+														<table>
+															<tbody>
+																<apex:repeat value="{!objective.objectiveSObject.Action_Narrative_Results__r}" var="result">
+																	<tr>
+																		<td>
+																			<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!result.CreatedDate}" /></apex:outputText>
+																		</td>
+																		<td>
+																			{!result.Description__c}
+																		</td>
+																	</tr>
+																</apex:repeat>
+																<apex:outputPanel layout="none" rendered="{!objective.objectiveSObject.Action_Narrative_Results__r.size == 0}">
+																	<tr>
+																		<td colspan="2">No data recorded</td>
+																	</tr>
+																</apex:outputPanel>
+															</tbody>
+														</table>
 													</apex:outputPanel>
 												</td>
 											</tr>
@@ -200,6 +201,6 @@
 
 	<script>
 		jQuery.noConflict();
-		jQuery(document).ready(function ($));
+		jQuery(document).ready(function ($) {});
 	</script>
 </apex:page>
