@@ -51,8 +51,11 @@ public with sharing class ActionSummaryReportV2 {
 				          FROM Action_Behavior_results__r
 				         WHERE Day_time__c <= :summary.End_Date__c
 				           AND Day_time__c >= :summary.Start_Date__c),
-				       (SELECT Description__c
-				          FROM Action_Narrative_results__r),
+				       (SELECT Description__c, CreatedDate
+				          FROM Action_Narrative_results__r
+				         WHERE CreatedDate <= :summary.End_Date__c
+				           AND CreatedDate >= :summary.Start_Date__c
+				        ORDER BY CreatedDate),
 				       (SELECT comment__c, recommendation__c, met_objective_count__c, not_met_count__c, occurrences__c
 				          FROM Objective_Summary_Comments__r
 				         WHERE Action_Summary__c = :summary.Id)
