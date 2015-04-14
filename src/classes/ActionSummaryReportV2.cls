@@ -12,6 +12,10 @@ public with sharing class ActionSummaryReportV2 {
 	public List<String> systemSummaryResultDomain { get; set; }
 	public Map<String, SystemSummaryResult> systemSummaryResultMap { get; set; }
 
+	public List<Seizure> seizures { get; set; }
+	public List<IsolationEvent> isolationEvents { get; set; }
+	public List<RestraintEvent> restraintEvents { get; set; }
+
 	public List<SelectOption> recommendationOptions {
 		get {
 			if (recommendationOptions != null) {
@@ -83,6 +87,63 @@ public with sharing class ActionSummaryReportV2 {
 				         action_plan_goal__r.sort_order__c, action_plan_goal__c,
 				         sort_order__c
 			]);
+			seizures = new List<Seizure>();
+			for (Seizure__c seizure: [
+					SELECT Id, Start_DateTime__c, End_DateTime__c, Observed_By__c,
+					       Observed_By__r.Name
+					  FROM Seizure__c
+					 WHERE Service_Assignment__c = :summary.Service_Assignment__r.Id
+					ORDER BY CreatedDate ASC
+					 LIMIT 10
+				]) {
+				seizures.add(new Seizure(seizure));
+			}
+			isolationEvents = new List<IsolationEvent>();
+			for (Evaluation_Response__c event: [
+					SELECT Id, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c,
+					       Isolation_Status__c, Isolation_Type__c
+					  FROM Evaluation_Response__c
+					 WHERE RecordType.Name = 'Isolation Event'
+					   AND Service_Assignment__c = :summary.Service_Assignment__r.Id
+					ORDER BY CreatedDate ASC
+					 LIMIT 10
+				]) {
+				isolationEvents.add(new IsolationEvent(event));
+			}
+			restraintEvents = new List<RestraintEvent>();
+			Evaluation__c[] tmpRestraintEvents = [
+				SELECT Id, Shift_Start_Time__c, Shift_End_Time__c, Status__c,
+				       (SELECT Id FROM Assessments__r
+				         WHERE Status__c != 'Disregard'
+				         ORDER BY CreatedDate DESC)
+				  FROM Evaluation__c
+				 WHERE ServiceAssignment__c = :summary.Service_Assignment__r.Id
+ 				   AND RecordType.Name = 'RestraintEvent'
+				ORDER BY CreatedDate ASC
+				 LIMIT 10
+			];
+			Map<Id, Id> assessmentEvaluationMap = new Map<Id, Id>();
+			Map<Id, Decimal> evaluationScoreMap = new Map<Id, Decimal>();
+			Set<Id> assessmentIds = new Set<Id>();
+			for (Evaluation__c event: tmpRestraintEvents) {
+				evaluationScoreMap.put(event.Id, null);
+				if (event.Assessments__r.size() == 0) {
+					continue;
+				}
+				assessmentIds.add(event.Assessments__r[0].Id);
+				assessmentEvaluationMap.put(event.Assessments__r[0].Id, event.Id);
+			}
+			for (Assessment_Domain_Result__c result: [
+					SELECT ID, Score__c, Assessment__c
+					  FROM Assessment_Domain_Result__c
+					 WHERE Assessment__c IN :assessmentIds
+					   AND Assessment_Domain__r.Name = 'Restraint Questions'
+				]) {
+				evaluationScoreMap.put(assessmentEvaluationMap.get(result.Assessment__c), result.Score__c);
+			}
+			for (Evaluation__c event: tmpRestraintEvents) {
+				restraintEvents.add(new RestraintEvent(event, evaluationScoreMap.get(event.Id)));
+			}
 		}
 		Set<Id> allTopLevelObjectives = new Set<Id>();
 		for (Id objectiveId: objectives.keySet()) {
@@ -378,6 +439,50 @@ public with sharing class ActionSummaryReportV2 {
 			this.resultSObject.Data__c = JSON.serialize(new SystemSummaryResult(
 				this.domain, this.status, this.comment
 			));
+		}
+	}
+
+	public class Seizure {
+		public DateTime startTime { get; set; }
+		public DateTime endTime { get; set; }
+		public Long duration { get; set; }
+		public Id observedById { get; set; }
+		public String observedByName { get; set; }
+
+		public Seizure(Seizure__c seizure) {
+			this.startTime = seizure.Start_DateTime__c;
+			this.endTime = seizure.End_DateTime__c;
+			this.duration = (seizure.End_DateTime__c.getTime() - seizure.Start_DateTime__c.getTime()) / 1000;
+			this.observedById = seizure.Observed_By__c;
+			this.observedByName = seizure.Observed_By__r.Name;
+		}
+	}
+
+	public class IsolationEvent {
+		public DateTime startTime { get; set; }
+		public DateTime endTime { get; set; }
+		public String status { get; set; }
+		public String type { get; set; }
+
+		public IsolationEvent(Evaluation_Response__c event) {
+			this.startTime = event.Isolation_Event_Start_Date__c;
+			this.endTime = event.Isolation_Event_End_Date__c;
+			this.status = event.Isolation_Status__c;
+			this.type = event.Isolation_Type__c;
+		}
+	}
+
+	public class RestraintEvent {
+		public DateTime startTime { get; set; }
+		public DateTime endTime { get; set; }
+		public String status { get; set; }
+		public Decimal score { get; set; }
+
+		public RestraintEvent(Evaluation__c event, Decimal score) {
+			this.startTime = event.Shift_Start_Time__c;
+			this.endTime = event.Shift_End_Time__c;
+			this.status = event.Status__c;
+			this.score = score;
 		}
 	}
 }
