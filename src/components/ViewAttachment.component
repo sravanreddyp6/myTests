@@ -10,7 +10,6 @@
 <apex:attribute name="asmtType" type="string" description="Assessment Type" default="false"  assignTo="{!asmtTypeName}" />
 <apex:attribute name="asmtId" type="string" description="Assessment Id" default="false"  assignTo="{!asmtIdNum}" />
 <apex:variable value="{!if(retURL != null, retURL ,$CurrentPage.URL)}" var="theRetUrl"/>  
-<apex:inputHidden value="{!inputValue}" id="theHiddenInput"/>
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
    <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!parentId}" parentPage="PBS" viewAttachment="viewAttachment" />
    <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}"  />
