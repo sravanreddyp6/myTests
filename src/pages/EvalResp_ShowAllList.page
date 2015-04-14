@@ -1,0 +1,22 @@
+<apex:page sidebar="false" docType="HTML-5.0" controller="EvalResp_ShowAllList">
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+  <c:PersonalRecord pbsId="{!$CurrentPage.parameters.PBS}" parentPage="" />
+  <br/>
+  <apex:form id="frm">
+  <apex:pageBlock >
+      <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                               type="{!$CurrentPage.parameters.FS}"
+                               formId="{!$Component.frm}"
+                               uniqueId="Immunization"
+                               rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
+                               cols="1"
+                               showDisregard="true" 
+                               eSign="true"   />  
+		</apex:pageBlock>
+   </apex:form> 
+</apex:page>
