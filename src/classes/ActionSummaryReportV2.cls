@@ -1,7 +1,7 @@
 public with sharing class ActionSummaryReportV2 {
 	public Action_Summary__c summary { get; set; }
 	public ApexPages.standardController controller { get; set; }
-	public String action { get; set; }
+	public String mode { get; set; }
 
 	// This map contains the link between the type of the objective, the parent
 	// objective and all of its revised descendents (no matter how many degree
@@ -16,6 +16,8 @@ public with sharing class ActionSummaryReportV2 {
 	public List<IsolationEvent> isolationEvents { get; set; }
 	public List<RestraintEvent> restraintEvents { get; set; }
 	public List<VitalsDetail> vitalsDetails { get; set; }
+
+	public List<Action_Summary__c> summaries { get; set; }
 
 	// Some constants for config purpose
 	public Integer LIST_LIMIT { get { return 1; } }
@@ -49,6 +51,15 @@ public with sharing class ActionSummaryReportV2 {
 		}
 	}
 
+	/*
+	 * Do not let the user edit finalized summaries
+	 */
+	public PageReference checkFinalizedEdit() {
+		if (this.summary.Status__c == 'Final' && mode == 'edit') {
+			return new PageReference('/' + this.summary.Id);
+		}
+		return null;
+	}
 	public ActionSummaryReportV2(ApexPages.standardController controller) {
 		this.controller = controller;
 
@@ -56,12 +67,48 @@ public with sharing class ActionSummaryReportV2 {
 
 		objectiveMap = new Map<String, Map<Id, List<Objective>>>();
 
-		action = ApexPages.currentPage().getParameters().get('action');
-		if (action == '' || action == null) {
-			action = 'edit';
+		mode = ApexPages.currentPage().getParameters().get('mode');
+		if (mode == '' || mode == null) {
+			mode = 'view';
 		}
 		Map<Id, Action_Plan_Objective__c> objectives;
 		if (summary.Status__c != 'Final') {
+			objectives = new Map<Id, Action_Plan_Objective__c>([
+				SELECT Id, Former_Id__c, Type__c, Status__c, Description__c,
+				       CreatedDate, Effective_Date__c, Target_End_Date__c,
+				       (SELECT met_objective__c , Day__c, attempts__c
+				          FROM Action_skill_results__r
+				         WHERE Day__c <= :summary.End_Date__c
+				           AND Day__c >= :summary.Start_Date__c),
+				       (SELECT Day_time__c , Occurrences__c, Occurred__c
+				          FROM Action_Behavior_results__r
+				         WHERE Day_time__c <= :summary.End_Date__c
+				           AND Day_time__c >= :summary.Start_Date__c),
+				       (SELECT Description__c, CreatedDate
+				          FROM Action_Narrative_results__r
+				         WHERE CreatedDate <= :summary.End_Date__c
+				           AND CreatedDate >= :summary.Start_Date__c
+				        ORDER BY CreatedDate),
+				       (SELECT comment__c, recommendation__c, met_objective_count__c, not_met_count__c, occurrences__c
+				          FROM Objective_Summary_Comments__r
+				         WHERE Action_Summary__c = :summary.Id)
+				  FROM Action_Plan_Objective__c
+				 WHERE Effective_Date__c <= :summary.End_Date__c
+				   AND Target_End_Date__c >= :summary.Start_Date__c
+				   AND action_plan_goal__r.action_plan__r.Service_Assignment__c = :summary.Service_Assignment__c
+				   AND (action_plan_goal__r.action_plan__r.Status__c = 'Inactive Final'
+				    OR action_plan_goal__r.action_plan__r.Status__c = 'Active Final')
+				   AND action_plan_goal__r.action_plan__r.Effective_Date__c < :summary.End_Date__c
+				   AND action_plan_goal__r.action_plan__r.Target_Date__c >= :summary.Start_Date__c
+				ORDER BY action_plan_goal__r.action_plan__c,
+				         action_plan_goal__r.sort_order__c, action_plan_goal__c,
+				         sort_order__c
+			]);
+			seizures = getSeizures(summary);
+			isolationEvents = getIsolationEvents(summary);
+			restraintEvents = getRestraintEvents(summary);
+			vitalsDetails = getVitalsDetails(summary);
+		} else {
 			objectives = new Map<Id, Action_Plan_Objective__c>([
 				SELECT Id, Former_Id__c, Type__c, Status__c, Description__c,
 				       CreatedDate, Effective_Date__c, Target_End_Date__c,
@@ -157,7 +204,13 @@ public with sharing class ActionSummaryReportV2 {
 				systemSummaryResultMap.put(domain, new SystemSummaryResult(summary.Id, domain));
 			}
 		}
-		System.debug('systemSummaryResultMap: ' + systemSummaryResultMap);
+		summaries = [
+			SELECT Id, Name, Start_Date__c, End_Date__c, Status__c
+			  FROM Action_Summary__c
+			 WHERE Service_Assignment__c = :summary.Service_Assignment__c
+			   AND Id != :summary.Id
+			ORDER BY CreatedDate ASC
+		];
 	}
 
 	private Id findParentObjective(Action_Plan_Objective__c objective, Map<Id, Action_Plan_Objective__c> objectives) {
@@ -173,6 +226,11 @@ public with sharing class ActionSummaryReportV2 {
 		return objective.Id;
 	}
 
+	public PageReference disregard() {
+		summary.Status__c = 'Disregard';
+		upsert summary;
+		return new PageReference('/' + summary.Id);
+	}
 	public PageReference save() {
 		if (summary.Status__c == 'Final') {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Cannot update a final summary.'));
@@ -195,7 +253,7 @@ public with sharing class ActionSummaryReportV2 {
 		}
 		upsert resultsToUpdate;
 		update summary;
-		return null;
+		return new PageReference('/' + summary.Id);
 	}
 	/////////////////////////
 	// Private helper methods

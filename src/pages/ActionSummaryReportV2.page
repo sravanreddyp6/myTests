@@ -1,4 +1,4 @@
-<apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportV2">
+<apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportV2" renderAs="{!IF(mode='pdf', 'pdf', '')}" action="{!checkFinalizedEdit}">
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
 	<apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
@@ -79,9 +79,13 @@
 	<apex:form id="mainForm">
 		<apex:pageBlock title="Action Plan Summary">
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Go To Prior Summaries" id="priorSummariesButton" rendered="{!action == 'edit'}"/>
-				<apex:commandButton value="Save" action="{!save}" id="saveButton" status="pageProcessingStatus"  rendered="{!action == 'edit'}"/>
-				<apex:commandButton value="Cancel" action="{!cancel}" id="cancelButton" rendered="{!action == 'edit'}"/>
+				<apex:commandButton value="Go To Prior Summaries" id="priorSummariesButton" rendered="{!mode == 'edit'}" onclick="openPastSummariesDialog(); return false; " />
+				<apex:commandButton value="Save" action="{!save}" id="saveButton" status="pageProcessingStatus" rendered="{!mode == 'edit'}" />
+				<apex:commandButton value="Cancel" action="{!cancel}" id="cancelButton" rendered="{!mode == 'edit'}" />
+				<apex:commandButton value="Edit" id="editButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=edit'; return false;" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
+				<apex:commandButton value="Finalize" id="finalizeButton" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
+				<apex:commandButton value="Disregard" id="disregardButton" onclick="if (confirm('Are you sure you want to disregard this summary?')) { disregard(); } return false; " rendered="{!AND(mode == 'view', Action_Summary__c.Status__c = 'Final')}" />
+				<apex:commandButton value="Print" id="printButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=pdf'; return false;" rendered="{!mode == 'view'}" />
 			</div>
 			<apex:pageBlockSection title="Summary Details" columns="2">
 				<apex:outputField value="{!Action_Summary__c.Name}" label="Summary Name" />
@@ -172,12 +176,14 @@
 								<tr class="dataRow">
 									<td class="dataCell">{!domain}</td>
 									<td class="dataCell">
-										<apex:selectRadio layout="pageDirection" value="{!systemSummaryResultMap[domain].status}">
+										<apex:selectRadio layout="pageDirection" value="{!systemSummaryResultMap[domain].status}" rendered="{!mode = 'edit'}">
 											<apex:selectOptions value="{!systemStatusOptions}" />
 										</apex:selectRadio>
+										<apex:outputText value="{!systemSummaryResultMap[domain].status}" rendered="{!mode != 'edit'}" />
 									</td>
 									<td class="dataCell">
-										<apex:inputTextArea style="width: 95%;" rows="4" value="{!systemSummaryResultMap[domain].comment}" />
+										<apex:inputTextArea style="width: 95%;" rows="4" value="{!systemSummaryResultMap[domain].comment}" rendered="{!mode = 'edit'}" />
+										<apex:outputText value="{!systemSummaryResultMap[domain].comment}" rendered="{!mode != 'edit'}" />
 									</td>
 								</tr>
 							</apex:repeat>
@@ -300,15 +306,15 @@
 								<apex:outputPanel layout="block" styleClass="leftAndTheRest">
 									<apex:outputPanel layout="block" styleClass="commentBlock">
 										<div style="font-weight:bold">Objective Comment</div>
-										<apex:inputTextArea styleClass="objectiveCommentInput" value="{!recommendationSummaryResultMap[parentId].comment}" rows="6" rendered="{!action='edit'}" />
-										<apex:outputText value="{!recommendationSummaryResultMap[parentId].comment}" rendered="{!action!='edit'}" />
+										<apex:inputTextArea styleClass="objectiveCommentInput" value="{!recommendationSummaryResultMap[parentId].comment}" rows="6" rendered="{!mode='edit'}" />
+										<apex:outputText value="{!recommendationSummaryResultMap[parentId].comment}" rendered="{!mode!='edit'}" />
 									</apex:outputPanel>
 									<apex:outputPanel layout="block" styleClass="recommendationBlock">
 										<div style="color:#cc6600;font-weight:bold;">Recommendation</div>
-										<apex:selectRadio value="{!recommendationSummaryResultMap[parentId].recommendation}"  layout="pageDirection" rendered="{!action='edit'}">
+										<apex:selectRadio value="{!recommendationSummaryResultMap[parentId].recommendation}"  layout="pageDirection" rendered="{!mode='edit'}">
 											<apex:selectoptions value="{!recommendationOptions}"></apex:selectoptions>
 										</apex:selectRadio>
-										<apex:outputText value="{!recommendationSummaryResultMap[parentId].recommendation}" rendered="{!action!='edit'}"/>
+										<apex:outputText value="{!recommendationSummaryResultMap[parentId].recommendation}" rendered="{!mode!='edit'}"/>
 									</apex:outputPanel>
 								</apex:outputPanel>
 							</apex:repeat>
@@ -317,6 +323,7 @@
 				</apex:pageBlockSection>
 			</apex:repeat>
 		</apex:pageBlock>
+		<apex:actionFunction name="disregard" action="{!disregard}" status="pageProcessingStatus" />
 	</apex:form>
 	<apex:outputPanel id="allVitalsDialog" style="display: none; ">
 		<apex:pageBlock>
@@ -375,6 +382,22 @@
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 	</apex:outputPanel>
+	<apex:outputPanel id="pastSummariesDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!summaries}" var="s">
+				<apex:column headerValue="Name">
+					<apex:outputLink value="/{!s.Id}" target="_blank">{!s.Name}</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Start Date">
+					<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!s.Start_Date__c}" /></apex:outputText>
+				</apex:column>
+				<apex:column headerValue="End Date">
+					<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!s.End_Date__c}" /></apex:outputText>
+				</apex:column>
+				<apex:column headerValue="Status" value="{!s.Status__c}" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
 	<apex:actionStatus id="pageProcessingStatus">
 		<apex:facet name="start">
 			<div class="thinking">
@@ -406,6 +429,10 @@
 				openModalDialog('allRestraintEventsDialog', 'span', 'Restraint Events', 'fixed-dialog', 800, 'mainForm', false);
 				setUpCloseButtons();
 			};
+			window.openPastSummariesDialog = function () {
+				openModalDialog('pastSummariesDialog', 'span', 'Past Summaries', 'fixed-dialog', 800, 'mainForm', false);
+				setUpCloseButtons();
+			};
 			var setUpCloseButtons = function () {
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
@@ -413,6 +440,7 @@
 					closeModalDialog('allSeizuresDialog', 'span');
 					closeModalDialog('allIsolationEventsDialog', 'span');
 					closeModalDialog('allRestraintEventsDialog', 'span');
+					closeModalDialog('pastSummariesDialog', 'span');
 					event.preventDefault();
 				});
 			};
