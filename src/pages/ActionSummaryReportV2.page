@@ -38,6 +38,11 @@
 		table.alignTop td {
 			vertical-align: top !important;
 		}
+		a.viewAllLink {
+			display: inline-block;
+			margin-top: 5px;
+			margin-left: 5px;
+		}
 	</style>
 
 	<c:PersonalRecord pbsId="{!Action_Summary__c.Service_Assignment__r.Admission__r.Person_Being_Served__r.Id}"
@@ -65,9 +70,23 @@
 				</apex:pageBlockSectionItem>
 				<apex:outputField value="{!Action_Summary__c.CreatedDate}" />
 			</apex:pageBlockSection>
+			<apex:pageBlockSection title="Vitals Detail Summary" columns="1">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
+					<apex:pageBlockTable value="{!vitalsDetails}" var="vital" rows="{!LIST_LIMIT}">
+						<apex:column headerValue="Date">
+							<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!vital.dateTaken}" /></apex:outputText>
+						</apex:column>
+						<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
+						<apex:column headerValue="Blood Pressure" value="{!vital.bloodPressure}" />
+						<apex:column headerValue="O2" value="{!vital.o2}" />
+						<apex:column headerValue="Temperature" value="{!vital.temperature}" />
+					</apex:pageBlockTable>
+					<apex:commandLink styleClass="viewAllLink" value="View All" rendered="{!vitalsDetails.size > LIST_LIMIT}" />
+				</apex:outputPanel>
+			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Seizure Activity" columns="1">
-				<apex:outputPanel layout="block" style="width: 70%">
-					<apex:pageBlockTable value="{!seizures}" var="seizure">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
+					<apex:pageBlockTable value="{!seizures}" var="seizure" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
 							<apex:outputText value="{0, date, M/d/yyyy h:mm:ss a}"><apex:param value="{!seizure.startTime}" /></apex:outputText>
 						</apex:column>
@@ -79,11 +98,12 @@
 							<a href="/{!seizure.observedById}">{!seizure.observedByName}</a>
 						</apex:column>
 					</apex:pageBlockTable>
+					<apex:commandLink styleClass="viewAllLink" value="View All" rendered="{!seizures.size > LIST_LIMIT}" />
 				</apex:outputPanel>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Isolation Events" columns="1">
-				<apex:outputPanel layout="block" style="width: 70%">
-					<apex:pageBlockTable value="{!isolationEvents}" var="event">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}">
+					<apex:pageBlockTable value="{!isolationEvents}" var="event" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
 							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
 						</apex:column>
@@ -93,11 +113,12 @@
 						<apex:column headerValue="Status" value="{!event.status}" />
 						<apex:column headerValue="Type" value="{!event.type}" />
 					</apex:pageBlockTable>
+					<apex:commandLink styleClass="viewAllLink" value="View All" rendered="{!isolationEvents.size > LIST_LIMIT}" />
 				</apex:outputPanel>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Restraint Events" columns="1">
-				<apex:outputPanel layout="block" style="width: 70%">
-					<apex:pageBlockTable value="{!restraintEvents}" var="event">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
+					<apex:pageBlockTable value="{!restraintEvents}" var="event" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
 							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
 						</apex:column>
@@ -107,10 +128,11 @@
 						<apex:column headerValue="Status" value="{!event.status}" />
 						<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
 					</apex:pageBlockTable>
+					<apex:commandLink styleClass="viewAllLink" value="View All" rendered="{!restraintEvents.size > LIST_LIMIT}" />
 				</apex:outputPanel>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Systems" columns="1">
-				<apex:outputPanel layout="block" style="width: 70%; ">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
 					<table class="list" cellspacing="0" cellpadding="0" border="0">
 						<thead>
 							<tr class="headerRow">

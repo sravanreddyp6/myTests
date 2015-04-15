@@ -12,9 +12,14 @@ public with sharing class ActionSummaryReportV2 {
 	public List<String> systemSummaryResultDomain { get; set; }
 	public Map<String, SystemSummaryResult> systemSummaryResultMap { get; set; }
 
-	public transient List<Seizure> seizures { get; set; }
-	public transient List<IsolationEvent> isolationEvents { get; set; }
-	public transient List<RestraintEvent> restraintEvents { get; set; }
+	public List<Seizure> seizures { get; set; }
+	public List<IsolationEvent> isolationEvents { get; set; }
+	public List<RestraintEvent> restraintEvents { get; set; }
+	public List<VitalsDetail> vitalsDetails { get; set; }
+
+	// Some constants for config purpose
+	public Integer LIST_LIMIT { get { return 10; } }
+	public String TABLE_WIDTH { get { return '80%'; } }
 
 	public List<SelectOption> recommendationOptions {
 		get {
@@ -87,9 +92,10 @@ public with sharing class ActionSummaryReportV2 {
 				         action_plan_goal__r.sort_order__c, action_plan_goal__c,
 				         sort_order__c
 			]);
-			seizures = getSeizures(10, summary);
-			isolationEvents = getIsolationEvents(10, summary);
-			restraintEvents = getRestraintEvents(10, summary);
+			seizures = getSeizures(summary);
+			isolationEvents = getIsolationEvents(summary);
+			restraintEvents = getRestraintEvents(summary);
+			vitalsDetails = getVitalsDetails(summary);
 		}
 		Set<Id> allTopLevelObjectives = new Set<Id>();
 		for (Id objectiveId: objectives.keySet()) {
@@ -193,7 +199,7 @@ public with sharing class ActionSummaryReportV2 {
 	/////////////////////////
 	// Private helper methods
 	/////////////////////////
-	private List<Seizure> getSeizures(Integer numRecords, Action_Summary__c summary) {
+	private List<Seizure> getSeizures(Action_Summary__c summary) {
 		List<Seizure> tmpSeizures = new List<Seizure>();
 		Id saId = summary.Service_Assignment__r.Id;
 		String query =
@@ -202,16 +208,13 @@ public with sharing class ActionSummaryReportV2 {
 			'  FROM Seizure__c ' +
 			' WHERE Service_Assignment__c = :saId ' +
 			'ORDER BY CreatedDate ASC ';
-		if (numRecords != null) {
-			query += 'LIMIT ' + numRecords;
-		}
 		for (Seizure__c seizure: Database.query(query)) {
 			tmpSeizures.add(new Seizure(seizure));
 		}
 		return tmpSeizures;
 	}
 
-	private List<IsolationEvent> getIsolationEvents(Integer numRecords, Action_Summary__c summary) {
+	private List<IsolationEvent> getIsolationEvents(Action_Summary__c summary) {
 		List<IsolationEvent> tmpIsolationEvents = new List<IsolationEvent>();
 		Id saId = summary.Service_Assignment__r.Id;
 		String query =
@@ -221,16 +224,13 @@ public with sharing class ActionSummaryReportV2 {
 			' WHERE RecordType.Name = \'Isolation Event\' ' +
 			'   AND Service_Assignment__c = :saId ' +
 			'ORDER BY CreatedDate ASC ';
-		if (numRecords != null) {
-			query += 'LIMIT ' + numRecords;
-		}
 		for (Evaluation_Response__c event: Database.query(query)) {
 			tmpIsolationEvents.add(new IsolationEvent(event));
 		}
 		return tmpIsolationEvents;
 	}
 
-	private List<RestraintEvent> getRestraintEvents(Integer numRecords, Action_Summary__c summary) {
+	private List<RestraintEvent> getRestraintEvents(Action_Summary__c summary) {
 		List<RestraintEvent> restraintEvents = new List<RestraintEvent>();
 		Id saId = summary.Service_Assignment__r.Id;
 		String query =
@@ -242,9 +242,6 @@ public with sharing class ActionSummaryReportV2 {
 			' WHERE ServiceAssignment__c = :saId' +
 			'   AND RecordType.Name = \'RestraintEvent\' ' +
 			'ORDER BY CreatedDate ASC ';
-		if (numRecords != null) {
-			query += 'LIMIT ' + numRecords;
-		}
 		Evaluation__c[] tmpRestraintEvents = Database.query(query);
 		Map<Id, Id> assessmentEvaluationMap = new Map<Id, Id>();
 		Map<Id, Decimal> evaluationScoreMap = new Map<Id, Decimal>();
@@ -269,6 +266,39 @@ public with sharing class ActionSummaryReportV2 {
 			restraintEvents.add(new RestraintEvent(event, evaluationScoreMap.get(event.Id)));
 		}
 		return restraintEvents;
+	}
+
+	private List<VitalsDetail> getVitalsDetails(Action_Summary__c summary) {
+		Map<String, List<Eval_Value__c>> entryValuesMap = new Map<String, List<Eval_Value__c>>();
+
+		// Because Eval_Value__c is not directly related to Evaluation__c (it
+		// has a field called What_Id__c but it's not a look up field), we can't
+		// use that relationship directly in a SOQL query. So this is a
+		// workaround for that
+		// Get all the Evaluation__c records for this service assignment
+		Map<Id, Evaluation__c> evaluations = new Map<Id, Evaluation__c>([
+			SELECT Id FROM Evaluation__c
+			 WHERE ServiceAssignment__c = :summary.Service_Assignment__c
+		]);
+		for (Eval_Value__c value: [
+				SELECT Id, Text_Under_250__c, Number_No_Decimal__c, Date_Time__c,
+				       Eval_Section_Id__c, Eval__r.Field_Name__c
+				  FROM Eval_Value__c
+				 WHERE What_Id__c IN :evaluations.keySet()
+				   AND Eval__r.Category__c = 'Diagnostics'
+				   AND Eval__r.Sub_Category__c = 'Vitals Signs'
+			]) {
+			if (!entryValuesMap.containsKey(value.Eval_Section_Id__c)) {
+				entryValuesMap.put(value.Eval_Section_Id__c, new List<Eval_Value__c>());
+			}
+			entryValuesMap.get(value.Eval_Section_Id__c).add(value);
+		}
+		List<VitalsDetail> vitalsDetails = new List<VitalsDetail>();
+		for (String evalSectionId: entryValuesMap.keySet()) {
+			vitalsDetails.add(new VitalsDetail(entryValuesMap.get(evalSectionId)));
+		}
+		vitalsDetails.sort();
+		return vitalsDetails;
 	}
 
 	//////////////////////
@@ -509,6 +539,43 @@ public with sharing class ActionSummaryReportV2 {
 			this.endTime = event.Shift_End_Time__c;
 			this.status = event.Status__c;
 			this.score = score;
+		}
+	}
+
+	public class VitalsDetail implements Comparable {
+		public DateTime dateTaken { get; set; }
+		public Decimal heartRate { get; set; }
+		public String bloodPressure { get; set; }
+		public Decimal o2 { get; set; }
+		public String temperature { get; set; }
+
+		public VitalsDetail(Eval_Value__c[] results) {
+			// This constructor takes in a list of Eval_Value__c with the
+			// assumption that they all have the same Eval_Section_Id__c
+			for (Eval_Value__c result: results) {
+				if (result.Eval__r.Field_Name__c == 'Blood Pressure') {
+					this.bloodPressure = result.Text_Under_250__c;
+				} else if (result.Eval__r.Field_Name__c == 'Heart Rate') {
+					this.heartRate = result.Number_No_Decimal__c;
+				} else if (result.Eval__r.Field_Name__c == 'O2 Saturation' || result.Eval__r.Field_Name__c == 'O2 Sat') {
+					this.o2 = result.Number_No_Decimal__c;
+				} else if (result.Eval__r.Field_Name__c == 'Temperature') {
+					this.temperature = result.Text_Under_250__c;
+				} else if (result.Eval__r.Field_Name__c == 'Date' || result.Eval__r.Field_Name__c == 'Date/Time') {
+					this.dateTaken = result.Date_Time__c;
+				}
+			}
+		}
+
+		public Integer compareTo(Object anotherDetailObject) {
+			VitalsDetail anotherDetail = (VitalsDetail) anotherDetailObject;
+			if (this.dateTaken < anotherDetail.dateTaken) {
+				return -1;
+			} else if (this.dateTaken == anotherDetail.dateTaken) {
+				return 0;
+			} else {
+				return 1;
+			}
 		}
 	}
 }
