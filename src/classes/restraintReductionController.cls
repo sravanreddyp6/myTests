@@ -104,7 +104,7 @@ public with sharing class restraintReductionController {
             }
             try{
                     upsert ar;
-                    validateRestraintErrors(assessment.Id, assessment.Name ); // The name of the Assessment is same as the section id in this case
+                 //   validateRestraintErrors(assessment.Id, assessment.Name, true ); // The name of the Assessment is same as the section id in this case
                     
             }
             catch(DMLException e){
@@ -116,17 +116,72 @@ public with sharing class restraintReductionController {
     }
     
     public pageReference disregard(){
-    	Assessment__c asmt = [SELECT Id, Name, Status__c, Disregard__c FROM Assessment__c WHERE Id=: assId];
-    	system.debug('I am in disregard');
-    	system.debug(asmt);
+    	
+    	Assessment__c asmt = [SELECT Id, Name, Status__c, Evaluation__c, Disregard__c FROM Assessment__c WHERE Id=: assId];
+    	Evaluation__c eval = [SELECT Has_Open_Assessment__c, Id FROM Evaluation__c WHERE Id=: asmt.Evaluation__c];
+    	List<Assessment__c> thisEvalAsmts = [SELECT Id,Name,Status__c, Disregard__c, CreatedDate FROM Assessment__c WHERE Evaluation__c =:eval.Id AND Id!= :assId];
+    	
+    	if(thisEvalAsmts.size() == 0) {
+    		updateEvalValue(string.ValueOf(eval.Id), false);
+    	}
+    	
+    	if(thisEvalAsmts.size() > 0){
+    		Boolean foundOnecompleted = false;
+    		
+    		for(Assessment__c a:  thisEvalAsmts){
+    			
+    			if(a.Status__c == 'Completed'){
+    				foundOnecompleted = true;
+    				//updateEvalValue(string.ValueOf(eval.Id), true);
+    				break;
+    			}
+    			
+    		}
+    		
+    		if(foundOnecompleted){
+    			updateEvalValue(string.ValueOf(eval.Id), true);
+    		}
+    		else{
+    			updateEvalValue(string.ValueOf(eval.Id), false);
+    		}
+    	}
     	asmt.Status__c = 'Disregard';
     	asmt.Disregard__c = true;
+    	
+    	eval.Has_Open_Assessment__c = false;
+    	
     	update asmt;
-    	system.debug('after Update++++++'+asmt);
+    	update eval;
+    	
     	return null;
     }
     
-    public static void validateRestraintErrors(Id AssessmentId, string sectionId){
+    public pageReference complete(){
+    	
+    	Assessment__c asmt = [SELECT Id, Status__c, Evaluation__c FROM Assessment__c WHERE Id=:assId];
+    	Evaluation__c eval = [SELECT Has_Open_Assessment__c, Id FROM Evaluation__c WHERE Id=: asmt.Evaluation__c];
+    	/*List<Assessment__c> thisEvalAsmts = [SELECT Id,Name,Status__c, Disregard__c, CreatedDate FROM Assessment__c WHERE Evaluation__c =:eval.Id AND Id != :assId];
+    	if(thisEvalAsmts.size() == 0){
+    		
+    	}*/
+    	updateEvalValue(string.valueOf(eval.Id), true);
+    	asmt.Status__c = 'Completed';
+    	eval.Has_Open_Assessment__c = false;
+    	
+    	update asmt;
+    	update eval;
+    	
+    	return null;
+    }
+    
+    public boolean getshowComplete(){
+    	Boolean show;
+    	Assessment__c assess = [SELECT Id,Name, Status__c FROM Assessment__c WHERE Id=: assId LIMIT 1];
+    	show =  !validateRestraintErrors(assess.Id, assess.Name, false ); // The name of the Assessment is same as the section id in this case
+    	return show;
+    }
+    
+    public static Boolean validateRestraintErrors(Id AssessmentId, string sectionId, Boolean updateEvalValue){
     	system.debug('Assessment Id in Validate++++++'+AssessmentId);
     	system.debug('Section Id in validate ++++++++'+sectionId);
         Boolean error = false;
@@ -138,12 +193,21 @@ public with sharing class restraintReductionController {
             }
             
         }
-        //Below query is not costly as Eval_Section_Id__c is marked as external Id and is automatically indexed by Salesforce - Sravan- 04/12/2015 6:35 PM 
-        Eval_Value__c evalValue = [SELECT Id, Boolean__c FROM Eval_Value__C WHERE Eval_Section_Id__c = :sectionId AND Eval__r.Field_Name__c = 'IsValid' AND Eval__r.Category__c = 'Reduction Review' AND Eval__r.Sub_Category__c = 'Reduction Review'];
-        evalValue.Boolean__C = !error;
-        update evalValue;
-       
+        if(updateEvalValue){
+	        //Below query is not costly as Eval_Section_Id__c is marked as external Id and is automatically indexed by Salesforce - Sravan- 04/12/2015 6:35 PM 
+	        Eval_Value__c evalValue = [SELECT Id, Boolean__c FROM Eval_Value__C WHERE Eval_Section_Id__c = :sectionId AND Eval__r.Field_Name__c = 'IsValid' AND Eval__r.Category__c = 'Reduction Review' AND Eval__r.Sub_Category__c = 'Reduction Review'];
+	        evalValue.Boolean__C = !error;
+	        update evalValue;
+        }
+        
+       	return error;
     }
     
+    public static void updateEvalValue(string whatId, Boolean value){
+    	Eval_Value__c evalValue = [SELECT Id, Boolean__c FROM Eval_Value__C WHERE What_id__c= :whatId AND Eval__r.Field_Name__c = 'IsValid' AND Eval__r.Category__c = 'Reduction Review' AND Eval__r.Sub_Category__c = 'Reduction Review'];
+	    evalValue.Boolean__c = value;
+	    update evalValue;
+    	
+    }
 
 }
