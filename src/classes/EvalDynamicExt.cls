@@ -46,7 +46,7 @@ public with sharing class EvalDynamicExt {
 		showshiftDone = false;
 		isUserOwner = false;
 		
-		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Restrained_By__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId from Evaluation__c where ID = :evalID LIMIT 1];
+		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c from Evaluation__c where ID = :evalID LIMIT 1];
 		
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
@@ -97,7 +97,7 @@ public with sharing class EvalDynamicExt {
 	private void createEvalValueRecord(String key){
 		String sectionId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
 		restraintSecId = sectionId;
-		boolean isValidVal;
+		boolean isValidVal = false;
         List<Eval_Value__c> listEvalValues = [ select id from eval_value__c
                                                 where what_id__c = :evalId
                                                   and what_id_object__c = 'Evaluation__c'
@@ -141,15 +141,25 @@ public with sharing class EvalDynamicExt {
 	        }
         } else if ( repeatableEval.size() > 0 && (evalSecId == null || evalSecId == '') ){   // Activity log Entry - evalSecId will be empty only when Adding in a new entry. 
             for (Eval__c e : evals){
-            	if (e.Field_Name__c=='IsValid')
-            	       isValidVal = true;
-            	             
-                vals.add(new eval_value__c(Eval__c = e.id, 
-                                             Eval_Section_Id__c = sectionId,
-                                             Eval_Section_Type__c = evalSecType,
-                                             Boolean__c = isValidVal,
-                                             what_id__c = evalID,
-                                             what_id_object__c = 'Evaluation__c'));
+            	
+            	if(!(e.Field_name__c == 'IsValid' && e.Sub_Category__c == 'Reduction Review')){ //Skip the Eval Value creation for isValid from the Second entry
+            		
+	            	if (e.Field_Name__c=='IsValid'){
+	            		isValidVal = true;
+	            	}
+	            	
+	            	/*if(e.Field_Name__c == 'IsValid' && e.Sub_Category__c == 'Reduction Review'){
+	            		isValidVal = false;// never true first time as users have to answer all the questions
+	            	}*/
+	            	         
+	                vals.add(new eval_value__c(Eval__c = e.id, 
+	                                             Eval_Section_Id__c = sectionId,
+	                                             Eval_Section_Type__c = evalSecType,
+	                                             Boolean__c = isValidVal,
+	                                             what_id__c = evalID,
+	                                             what_id_object__c = 'Evaluation__c'));
+	            }
+            
             }
         }        
 		insert vals;
@@ -525,7 +535,21 @@ public with sharing class EvalDynamicExt {
 			restraintReduction.Disregard__c = false;
 			
 			insert restraintReduction; //THis will invoke the trigger on Assessment object will in turn invoke AssessmentSetup.cls to create domains, domain results and dummy response.
-										// Need to check if this is the best practice or write the whole AssessmentSetup logic in here - Sravan - 04/08/2015 2:00 PM					
+										// Need to check if this is the best practice or write the whole AssessmentSetup logic in here - Sravan - 04/08/2015 2:00 PM	
+			Evaluation__c currentEval = [SELECT Id, Has_Open_Assessment__c FROM EValuation__c WHERE Id=: evalId];
+			currentEval.Has_Open_Assessment__c = true;
+			update currentEval;	// Update the Evaluation record's boolean flag to true when an open assessment Exists.
+			
+			string whatId = string.valueOf(evalId);
+			
+			//Update the Eval_Value__c as False as an Open Assessment record is created.
+			List<Eval_Value__c> eVs = [SELECT Id, Boolean__c FROM Eval_Value__C WHERE What_id__c= :whatId AND Eval__r.Field_Name__c = 'IsValid' AND Eval__r.Category__c = 'Reduction Review' AND Eval__r.Sub_Category__c = 'Reduction Review'];
+			if(eVs.size() > 0){
+				Eval_Value__c v = eVs[0];
+				v.Boolean__c = false;
+				update v;
+			}	
+				
 			return [SELECT Id FROM Assessment__c where Id=:restraintReduction.Id LIMIT 1].Id;
 	}
 	

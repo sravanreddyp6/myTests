@@ -58,11 +58,13 @@
                 jQuery("#btnESign").removeClass('btn-success').addClass('btn-danger');
                 jQuery("#btnESign").removeAttr('onclick');
 				jQuery("#btnEsign").removeAttr('href');
+			
                 }
 			else {
                 jQuery("#btnESign").removeClass('btn-danger').addClass('btn-success');
                 jQuery("#btnESign").attr('onclick','authenticate();');
                 jQuery("#btnESign").attr('href','#');
+                
                 }
             jQuery("#btnESign").prop('disabled', disableFlag);
                
@@ -205,6 +207,7 @@
 						<p>
 						   Restraint Status:{!thisEval.Status__c}<br/>
                            CreatedDate: <apex:outputText value=" {!thisEval.CreatedDate}" /> <br/>
+                           {!thisEval.Has_Open_Assessment__c}
                            <apex:variable value="" var="a" rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__C == 'Applied Restraint'}" >
 						   		Restrained By: {!thisEval.Owner.Name} <br/>
 						   </apex:variable>

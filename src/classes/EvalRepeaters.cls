@@ -6,6 +6,7 @@ public with sharing class EvalRepeaters {
 	public boolean anyEmpty{ get { return (numEmpty > 0);} set;}
 	public ID parentEvalOwnerId { get; set; }
 	public string parentEvalStatus { get; set; }
+	public Boolean parentHasOpenAsmt{get; set;} //Used for restraints 
 	
 	private integer numEmpty;
 	private integer numErrors;
@@ -81,14 +82,16 @@ public with sharing class EvalRepeaters {
 		
 		
 		system.debug( 'EVAL ID IS: ' + evaluationID);
-		Evaluation__c[] parentEval = [ select id, ownerid, status__c from evaluation__c where id = :evaluationID ];
+		Evaluation__c[] parentEval = [ select id, ownerid, status__c, Has_Open_Assessment__c from evaluation__c where id = :evaluationID ];
 		if ( parentEval.size() == 1) {
 			parentEvalOwnerID = parentEval[0].OwnerId;
 			parentEvalStatus = parentEval[0].status__c;
+			parentHasOpenAsmt = parentEval[0].Has_Open_Assessment__c;
 		} 
 		else {
 			parentEvalOwnerID = null;
 			parentEvalStatus = 'Completed'; // don't allow entry on anything
+			parentHasOpenAsmt = false;
 		}	
 		
 		

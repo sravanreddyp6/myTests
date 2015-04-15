@@ -7,7 +7,7 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
         currentResponse.Evaluation__c = recordId;
         insert currentResponse;*/
         string recId = string.valueOf(recordId);
-        Evaluation__c assessment = [SELECT Id, Status__c,Head_to_toe_Status__c,Is_Being_Signed__c, Is_Signed__c,Shift_Start_time__c, Shift_End_time__c, Restrained_By__c, Recordtype.Name, ServiceAssignment__c FROM Evaluation__c WHERE id=: recordId];
+        Evaluation__c assessment = [SELECT Id, Status__c,Head_to_toe_Status__c,Is_Being_Signed__c, Is_Signed__c,Shift_Start_time__c, Shift_End_time__c, Recordtype.Name, ServiceAssignment__c FROM Evaluation__c WHERE id=: recordId];
         list<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r Where Status__c != 'Disregard' AND Recordtype.Name ='NursesAssessment' order by createdDate asc) FROM Service_Assignment__c WHERE Id=: assessment.ServiceAssignment__c LIMIT 1];
         List<Assessment__c> asmtsforRestraints = new List<Assessment__c>();
         if(assessment.Recordtype.name == 'CMShiftAssessment' && assessment.Head_to_toe_Status__c == 'Draft'){
