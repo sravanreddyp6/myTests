@@ -18,7 +18,7 @@ public with sharing class ActionSummaryReportV2 {
 	public List<VitalsDetail> vitalsDetails { get; set; }
 
 	// Some constants for config purpose
-	public Integer LIST_LIMIT { get { return 10; } }
+	public Integer LIST_LIMIT { get { return 1; } }
 	public String TABLE_WIDTH { get { return '80%'; } }
 
 	public List<SelectOption> recommendationOptions {
@@ -51,6 +51,7 @@ public with sharing class ActionSummaryReportV2 {
 
 	public ActionSummaryReportV2(ApexPages.standardController controller) {
 		this.controller = controller;
+
 		summary = (Action_Summary__c) controller.getRecord();
 
 		objectiveMap = new Map<String, Map<Id, List<Objective>>>();
@@ -241,6 +242,7 @@ public with sharing class ActionSummaryReportV2 {
 			'  FROM Evaluation__c ' +
 			' WHERE ServiceAssignment__c = :saId' +
 			'   AND RecordType.Name = \'RestraintEvent\' ' +
+			'   AND (Shift_Start_Time__c != null OR Shift_End_Time__c != null) ' +
 			'ORDER BY CreatedDate ASC ';
 		Evaluation__c[] tmpRestraintEvents = Database.query(query);
 		Map<Id, Id> assessmentEvaluationMap = new Map<Id, Id>();
