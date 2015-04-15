@@ -1,6 +1,9 @@
 <apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportV2">
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 	<style>
 		#pbsBlueCard {
 			margin-bottom: 15px;
@@ -43,6 +46,24 @@
 			margin-top: 5px;
 			margin-left: 5px;
 		}
+		.thinking {
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 1000;
+		}
+		.thinkingwheel {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
 	</style>
 
 	<c:PersonalRecord pbsId="{!Action_Summary__c.Service_Assignment__r.Admission__r.Person_Being_Served__r.Id}"
@@ -51,10 +72,10 @@
 
 	<apex:pageMessages id="pageMessages" />
 	<apex:form id="mainForm">
-		<apex:pageBlock title="Action Plan Summary" >
+		<apex:pageBlock title="Action Plan Summary">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Go To Prior Summaries" id="priorSummariesButton" rendered="{!action == 'edit'}"/>
-				<apex:commandButton value="Save" action="{!save}" id="saveButton" status="pageProcessing"  rendered="{!action == 'edit'}"/>
+				<apex:commandButton value="Save" action="{!save}" id="saveButton" status="pageProcessingStatus"  rendered="{!action == 'edit'}"/>
 				<apex:commandButton value="Cancel" action="{!cancel}" id="cancelButton" rendered="{!action == 'edit'}"/>
 			</div>
 			<apex:pageBlockSection title="Summary Details" columns="2">
@@ -81,7 +102,7 @@
 						<apex:column headerValue="O2" value="{!vital.o2}" />
 						<apex:column headerValue="Temperature" value="{!vital.temperature}" />
 					</apex:pageBlockTable>
-					<apex:commandLink styleClass="viewAllLink" value="View All" rendered="{!vitalsDetails.size > LIST_LIMIT}" />
+					<apex:commandLink styleClass="viewAllLink" onclick="openAllVitalsDialog(); return false;" value="View All" rendered="{!vitalsDetails.size > LIST_LIMIT}" />
 				</apex:outputPanel>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Seizure Activity" columns="1">
@@ -98,7 +119,7 @@
 							<a href="/{!seizure.observedById}">{!seizure.observedByName}</a>
 						</apex:column>
 					</apex:pageBlockTable>
-					<apex:commandLink styleClass="viewAllLink" value="View All" rendered="{!seizures.size > LIST_LIMIT}" />
+					<apex:commandLink styleClass="viewAllLink" onclick="openAllSeizuresDialog(); return false;" value="View All" rendered="{!seizures.size > LIST_LIMIT}" />
 				</apex:outputPanel>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Isolation Events" columns="1">
@@ -113,7 +134,7 @@
 						<apex:column headerValue="Status" value="{!event.status}" />
 						<apex:column headerValue="Type" value="{!event.type}" />
 					</apex:pageBlockTable>
-					<apex:commandLink styleClass="viewAllLink" value="View All" rendered="{!isolationEvents.size > LIST_LIMIT}" />
+					<apex:commandLink styleClass="viewAllLink" onclick="openAllIsolationEventsDialog(); return false;" value="View All" rendered="{!isolationEvents.size > LIST_LIMIT}" />
 				</apex:outputPanel>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Restraint Events" columns="1">
@@ -128,7 +149,7 @@
 						<apex:column headerValue="Status" value="{!event.status}" />
 						<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
 					</apex:pageBlockTable>
-					<apex:commandLink styleClass="viewAllLink" value="View All" rendered="{!restraintEvents.size > LIST_LIMIT}" />
+					<apex:commandLink styleClass="viewAllLink" onclick="openAllRestraintEventsDialog(); return false;" value="View All" rendered="{!restraintEvents.size > LIST_LIMIT}" />
 				</apex:outputPanel>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Systems" columns="1">
@@ -292,9 +313,104 @@
 			</apex:repeat>
 		</apex:pageBlock>
 	</apex:form>
-
+	<apex:outputPanel id="allVitalsDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!vitalsDetails}" var="vital">
+				<apex:column headerValue="Date">
+					<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!vital.dateTaken}" /></apex:outputText>
+				</apex:column>
+				<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
+				<apex:column headerValue="Blood Pressure" value="{!vital.bloodPressure}" />
+				<apex:column headerValue="O2" value="{!vital.o2}" />
+				<apex:column headerValue="Temperature" value="{!vital.temperature}" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	<apex:outputPanel id="allSeizuresDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!seizures}" var="seizure">
+				<apex:column headerValue="Start Date/Time">
+					<apex:outputText value="{0, date, M/d/yyyy h:mm:ss a}"><apex:param value="{!seizure.startTime}" /></apex:outputText>
+				</apex:column>
+				<apex:column headerValue="End Date/Time">
+					<apex:outputText value="{0, date, M/d/yyyy h:mm:ss a}"><apex:param value="{!seizure.endTime}" /></apex:outputText>
+				</apex:column>
+				<apex:column headerValue="Duration" value="{!seizure.duration} seconds" />
+				<apex:column headerValue="Observed By">
+					<a href="/{!seizure.observedById}">{!seizure.observedByName}</a>
+				</apex:column>
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	<apex:outputPanel id="allIsolationEventsDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!isolationEvents}" var="event">
+				<apex:column headerValue="Start Date/Time">
+					<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
+				</apex:column>
+				<apex:column headerValue="End Date/Time">
+					<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.endTime}" /></apex:outputText>
+				</apex:column>
+				<apex:column headerValue="Status" value="{!event.status}" />
+				<apex:column headerValue="Type" value="{!event.type}" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	<apex:outputPanel id="allRestraintEventsDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!restraintEvents}" var="event">
+				<apex:column headerValue="Start Date/Time">
+					<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
+				</apex:column>
+				<apex:column headerValue="End Date/Time">
+					<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.endTime}" /></apex:outputText>
+				</apex:column>
+				<apex:column headerValue="Status" value="{!event.status}" />
+				<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	<apex:actionStatus id="pageProcessingStatus">
+		<apex:facet name="start">
+			<div class="thinking">
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop"> </apex:facet>
+	</apex:actionStatus>
 	<script>
 		jQuery.noConflict();
-		jQuery(document).ready(function ($) {});
+		jQuery(document).ready(function ($) {
+			'use strict';
+
+			window.openAllVitalsDialog = function () {
+				openModalDialog('allVitalsDialog', 'span', 'Vitals Details', 'fixed-dialog', 800, 'mainForm', false);
+				setUpCloseButtons();
+			};
+			window.openAllSeizuresDialog = function () {
+				openModalDialog('allSeizuresDialog', 'span', 'Seizure Activities', 'fixed-dialog', 800, 'mainForm', false);
+				setUpCloseButtons();
+			};
+			window.openAllIsolationEventsDialog = function () {
+				openModalDialog('allIsolationEventsDialog', 'span', 'Isolation Events', 'fixed-dialog', 800, 'mainForm', false);
+				setUpCloseButtons();
+			};
+			window.openAllRestraintEventsDialog = function () {
+				openModalDialog('allRestraintEventsDialog', 'span', 'Restraint Events', 'fixed-dialog', 800, 'mainForm', false);
+				setUpCloseButtons();
+			};
+			var setUpCloseButtons = function () {
+				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
+				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
+					closeModalDialog('allVitalsDialog', 'span');
+					closeModalDialog('allSeizuresDialog', 'span');
+					closeModalDialog('allIsolationEventsDialog', 'span');
+					closeModalDialog('allRestraintEventsDialog', 'span');
+					event.preventDefault();
+				});
+			};
+		});
 	</script>
 </apex:page>
