@@ -34,7 +34,9 @@
     <apex:attribute name="showDisregard" description="show disregard options?"
         type="Boolean" required="false" default="false" /> 
     <apex:attribute name="eSign" description="show e-sign options"        
-        type="boolean" required="false" default="false" />                   
+        type="boolean" required="false" default="false" />
+    <apex:attribute name="showAddNew" description="show add and new button"
+        type="boolean" required="false" default="true"/>                   
         
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
@@ -171,7 +173,7 @@
                         <apex:facet name="stop">
                             <apex:outputPanel id="buttons">
                                 <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />                                
-                                <apex:commandButton value="Save & New" onClick="saveResponse{!uniqueId}(true); return false;" />
+                                <apex:commandButton value="Save & New" rendered="{!showAddNew}" onClick="saveResponse{!uniqueId}(true); return false;" />
                                 &nbsp;
                                 <apex:commandButton value="Disregard" rendered="{! showDisregard}" onClick="disregardResponse{!uniqueId}(false); return false;" />
                                 <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
