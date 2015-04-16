@@ -5,13 +5,15 @@ public boolean UnderAgePageMsg{get;set;}
 public boolean pbsEditModeOn{get;set;}
 public ApexPages.StandardController PBSController{get;set;}
 public String PageMessage{get;set;}
-public Contact currentContact{ get ; set; }
+public Contact currentContact{ get { return [ select id, accountid, ownerid from contact where id = :pbsId]; }
+                                    set; }
 public ID PBSId{get;set;}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }
 public boolean disableAddAdm { get; set; }
 public Agency_Involved_With_Individual__c agency { get; set; }
+public string loadThisAgency {get; set;}
 
 public boolean canViewFamilyInfo { 
     get {
@@ -91,19 +93,7 @@ public string dontShowFields {
     }
 }
 //save
-public PageReference Save(){
-  PBSController.save();
-  for(Agency_Involved_With_Individual__c ag : relAgencies){
-    if(ag.Person_Being_Served__c == null){
-      ag.Person_Being_Served__c = currentContact.id;
-     // ar.Referral__c = currentContact.Person_Being_Referred__r.Referral__c;
-    }
-  }
-  upsert relAgencies;
-  pageReference ref = new pageReference('/apex/PersonBeingServedEditNew?id=' + currentContact.id);
-  ref.setRedirect(true);
-  return ref;
-}
+
 
 
 // In order to show field labels instead of API names for history
@@ -136,20 +126,19 @@ public Map<String, String> fieldMap { get; set; }
     
     //for EPRIQM-51
     private boolean setdisableAddAdm() {
-    		if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood')) {
-    	  List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId];
-    	  if(admissionList.size()>0){
-    	  	return false;
-    	  } else {
-    	       return true;
-    	  }
+        if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood')) {
+        List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId];
+        if(admissionList.size()>0){
+          return false;
+        } else {
+             return true;
+        }
     }
     return true;
     }
     
     public PBSedit_controller(ApexPages.StandardController controller) {
 
-        this.currentContact=(Contact)controller.getRecord();
         PBSController = controller;
         pbsEditModeOn=false;
         PBSId=Apexpages.currentPage().getParameters().get('Id');
@@ -239,7 +228,7 @@ public Map<String, String> fieldMap { get; set; }
     private void populateRelParties() {
     try {
         this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c,
-                                Person_Being_Served__c
+                                Person_Being_Served__c, Status__c
                          from Related_Party__c
                          where Person_Being_Served__c = :pbsId order by Type__c, Name
                          ];
@@ -264,9 +253,23 @@ public Map<String, String> fieldMap { get; set; }
     agency = new Agency_Involved_With_Individual__c();
   }  
   public void saveAgency() {
-    this.relAgencies.add(this.agency);
+    agency.Person_Being_Served__c = currentContact.id;
+    for(Referral__c r : [select id from referral__c where Person_Being_Served__c = :currentContact.id]){
+        agency.Referral__c = r.id;
+    }    
+    upsert agency;
+    //this.relAgencies.add(this.agency);
+    populateAgencies();
     agency = new Agency_Involved_With_Individual__c();
-  }    
+  }   
+  public PageReference loadAgency(){
+    for(Agency_Involved_With_Individual__c agy : relAgencies){
+      if(agy.id == loadThisAgency){
+        agency = agy;
+      }
+    }
+    return null;
+  }
 public void showAddRelParty() {
     relParty = new Related_Party__c();
   }
@@ -299,11 +302,11 @@ public void showAddRelParty() {
     }
     // END: CTEAE-39
 
-public pageReference cancelPBSController(){
-    
-    pbsEditModeOn=false;
-    return null;
+  public pageReference cancelPBSController(){
+      
+      pbsEditModeOn=false;
+      return null;
 
-}
+  }
 
 }
