@@ -556,7 +556,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:outputField value="{!personBeingRefRecord.SSN__c}" />
+
                 <apex:outputField value="{!personBeingRefRecord.Level_of_Education__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}">
@@ -596,8 +596,8 @@
                 <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />                
 
                 <apex:outputField label="Date of Birth" value="{!personBeingServedRecord.BirthDate}" />
-                <apex:pageBlockSectionItem>
-                    <apex:outputLabel>Primary Language </apex:outputLabel>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Primary Language </apex:outputLabel>
                     <apex:outputPanel styleClass="nowrap">
                         <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />&nbsp;&nbsp;
                         <apex:outputLabel value="Non-Verbal" />&nbsp;
