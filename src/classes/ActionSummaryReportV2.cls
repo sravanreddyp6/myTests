@@ -20,7 +20,7 @@ public with sharing class ActionSummaryReportV2 {
 	public List<Action_Summary__c> summaries { get; set; }
 
 	// Some constants for config purpose
-	public Integer LIST_LIMIT { get { return 1; } }
+	public Integer LIST_LIMIT { get { return 10; } }
 	public String TABLE_WIDTH { get { return '80%'; } }
 
 	public List<SelectOption> recommendationOptions {
@@ -71,8 +71,46 @@ public with sharing class ActionSummaryReportV2 {
 		if (mode == '' || mode == null) {
 			mode = 'view';
 		}
+
+		recommendationSummaryResultMap = new Map<Id, RecommendationSummaryResult>();
+		systemSummaryResultMap = new Map<String, SystemSummaryResult>();
+		Action_Plan_Summary_Result__c[] results = [
+			SELECT Id, Type__c, Data__c, Action_Plan_Summary__c
+			  FROM Action_Plan_Summary_Result__c
+			 WHERE Action_Plan_Summary__c = :summary.Id
+		];
+		for (Action_Plan_Summary_Result__c result: results) {
+			if (result.Type__c == 'Recommendation') {
+				RecommendationSummaryResult r = new RecommendationSummaryResult(result);
+				recommendationSummaryResultMap.put(r.objectiveId, r);
+			} else if (result.Type__c == 'System') {
+				SystemSummaryResult r = new SystemSummaryResult(result);
+				systemSummaryResultMap.put(r.domain, r);
+			} else if (result.Type__c == 'Seizure') {
+				if (seizures == null) {
+					seizures = new List<Seizure>();
+				}
+				seizures.add(new Seizure(result.Data__c));
+			} else if (result.Type__c == 'Isolation') {
+				if (isolationEvents == null) {
+					isolationEvents = new List<IsolationEvent>();
+				}
+				isolationEvents.add(new IsolationEvent(result.Data__c));
+			} else if (result.Type__c == 'Restraint') {
+				if (restraintEvents == null) {
+					restraintEvents = new List<RestraintEvent>();
+				}
+				restraintEvents.add(new RestraintEvent(result.Data__c));
+			} else if (result.Type__c == 'Vitals') {
+				if (vitalsDetails == null) {
+					vitalsDetails = new List<VitalsDetail>();
+				}
+				vitalsDetails.add(new VitalsDetail(result.Data__c));
+			}
+		}
+
 		Map<Id, Action_Plan_Objective__c> objectives;
-		if (summary.Status__c != 'Final') {
+		if (summary.Status__c != 'Final' && summary.Status__c != 'Disregard') {
 			objectives = new Map<Id, Action_Plan_Objective__c>([
 				SELECT Id, Former_Id__c, Type__c, Status__c, Description__c,
 				       CreatedDate, Effective_Date__c, Target_End_Date__c,
@@ -140,11 +178,12 @@ public with sharing class ActionSummaryReportV2 {
 				         action_plan_goal__r.sort_order__c, action_plan_goal__c,
 				         sort_order__c
 			]);
-			seizures = getSeizures(summary);
-			isolationEvents = getIsolationEvents(summary);
-			restraintEvents = getRestraintEvents(summary);
-			vitalsDetails = getVitalsDetails(summary);
 		}
+		seizures.sort();
+		isolationEvents.sort();
+		restraintEvents.sort();
+		vitalsDetails.sort();
+
 		Set<Id> allTopLevelObjectives = new Set<Id>();
 		for (Id objectiveId: objectives.keySet()) {
 			if (!objectiveMap.containsKey(objectives.get(objectiveId).Type__c)) {
@@ -169,8 +208,7 @@ public with sharing class ActionSummaryReportV2 {
 				}
 			}
 		}
-		recommendationSummaryResultMap = new Map<Id, RecommendationSummaryResult>();
-		systemSummaryResultMap = new Map<String, SystemSummaryResult>();
+
 		// Initialize system summary results
 		systemSummaryResultDomain = new List<String> {
 			'Diagnostics', 'Cardiopulmonary', 'GU/GI/Nutrition',
@@ -178,20 +216,6 @@ public with sharing class ActionSummaryReportV2 {
 			'Psychosocial', 'Therapy/Rehab', 'Discharge Planning'
 		};
 
-		Action_Plan_Summary_Result__c[] results = [
-			SELECT Id, Type__c, Data__c, Action_Plan_Summary__c
-			  FROM Action_Plan_Summary_Result__c
-			 WHERE Action_Plan_Summary__c = :summary.Id
-		];
-		for (Action_Plan_Summary_Result__c result: results) {
-			if (result.Type__c == 'Recommendation') {
-				RecommendationSummaryResult r = new RecommendationSummaryResult(result);
-				recommendationSummaryResultMap.put(r.objectiveId, r);
-			} else if (result.Type__c == 'System') {
-				SystemSummaryResult r = new SystemSummaryResult(result);
-				systemSummaryResultMap.put(r.domain, r);
-			}
-		}
 		for (Id topLevelObjective: allTopLevelObjectives) {
 			if (!recommendationSummaryResultMap.containsKey(topLevelObjective)) {
 				recommendationSummaryResultMap.put(topLevelObjective,
@@ -255,6 +279,44 @@ public with sharing class ActionSummaryReportV2 {
 		update summary;
 		return new PageReference('/' + summary.Id);
 	}
+
+	public PageReference finalize() {
+		summary.Status__c = 'Final';
+		summary.Finalized_Date__c = DateTime.now();
+
+		List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();
+		for (Seizure seizure: this.seizures) {
+			toInsert.add(new Action_Plan_Summary_Result__c(
+				Action_Plan_Summary__c = this.summary.Id,
+				Type__c = 'Seizure',
+				Data__c = seizure.serialize()
+			));
+		}
+		for (IsolationEvent event: this.isolationEvents) {
+			toInsert.add(new Action_Plan_Summary_Result__c(
+				Action_Plan_Summary__c = this.summary.Id,
+				Type__c = 'Isolation',
+				Data__c = event.serialize()
+			));
+		}
+		for (RestraintEvent event: this.restraintEvents) {
+			toInsert.add(new Action_Plan_Summary_Result__c(
+				Action_Plan_Summary__c = this.summary.Id,
+				Type__c = 'Restraint',
+				Data__c = event.serialize()
+			));
+		}
+		for (VitalsDetail vital: this.vitalsDetails) {
+			toInsert.add(new Action_Plan_Summary_Result__c(
+				Action_Plan_Summary__c = this.summary.Id,
+				Type__c = 'Vitals',
+				Data__c = vital.serialize()
+			));
+		}
+		insert toInsert;
+		update summary;
+		return new PageReference('/' + summary.Id);
+	}
 	/////////////////////////
 	// Private helper methods
 	/////////////////////////
@@ -262,7 +324,7 @@ public with sharing class ActionSummaryReportV2 {
 		List<Seizure> tmpSeizures = new List<Seizure>();
 		Id saId = summary.Service_Assignment__r.Id;
 		String query =
-			'SELECT Id, Start_DateTime__c, End_DateTime__c, Observed_By__c, ' +
+			'SELECT Id, Start_DateTime__c, End_DateTime__c, Observed_By__c, CreatedDate, ' +
 			        'Observed_By__r.Name ' +
 			'  FROM Seizure__c ' +
 			' WHERE Service_Assignment__c = :saId ' +
@@ -277,7 +339,7 @@ public with sharing class ActionSummaryReportV2 {
 		List<IsolationEvent> tmpIsolationEvents = new List<IsolationEvent>();
 		Id saId = summary.Service_Assignment__r.Id;
 		String query =
-			'SELECT Id, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' +
+			'SELECT Id, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, CreatedDate, ' +
 			'       Isolation_Status__c, Isolation_Type__c ' +
 			'  FROM Evaluation_Response__c ' +
 			' WHERE RecordType.Name = \'Isolation Event\' ' +
@@ -293,7 +355,7 @@ public with sharing class ActionSummaryReportV2 {
 		List<RestraintEvent> restraintEvents = new List<RestraintEvent>();
 		Id saId = summary.Service_Assignment__r.Id;
 		String query =
-			'SELECT Id, Shift_Start_Time__c, Shift_End_Time__c, Status__c, ' +
+			'SELECT Id, Shift_Start_Time__c, Shift_End_Time__c, Status__c, CreatedDate, ' +
 			'       (SELECT Id FROM Assessments__r ' +
 			'         WHERE Status__c != \'Disregard\' ' +
 			'         ORDER BY CreatedDate DESC) ' +
@@ -342,7 +404,7 @@ public with sharing class ActionSummaryReportV2 {
 		]);
 		for (Eval_Value__c value: [
 				SELECT Id, Text_Under_250__c, Number_No_Decimal__c, Date_Time__c,
-				       Eval_Section_Id__c, Eval__r.Field_Name__c
+				       Eval_Section_Id__c, Eval__r.Field_Name__c, CreatedDate
 				  FROM Eval_Value__c
 				 WHERE What_Id__c IN :evaluations.keySet()
 				   AND Eval__r.Category__c = 'Diagnostics'
@@ -364,14 +426,6 @@ public with sharing class ActionSummaryReportV2 {
 	//////////////////////
 	// The wrapper classes
 	//////////////////////
-	public abstract class ObjectiveResult {
-		public Action_plan_objective__c objective { get; set; }
-
-		public ObjectiveResult(Action_plan_objective__c objective) {
-			this.objective = objective;
-		}
-	}
-
 	public class ObjectiveSkillResults {
 		public Action_plan_objective__c objective { get; set; }
 
@@ -558,51 +612,126 @@ public with sharing class ActionSummaryReportV2 {
 		}
 	}
 
-	public class Seizure {
+	public class Seizure implements Comparable {
+		public DateTime createdDate { get; set; }
 		public DateTime startTime { get; set; }
 		public DateTime endTime { get; set; }
 		public Long duration { get; set; }
 		public Id observedById { get; set; }
 		public String observedByName { get; set; }
+		public Seizure__c seizureSObject { get; set; }
 
 		public Seizure(Seizure__c seizure) {
+			this.seizureSObject = seizure;
+			this.createdDate = seizure.CreatedDate;
 			this.startTime = seizure.Start_DateTime__c;
 			this.endTime = seizure.End_DateTime__c;
 			this.duration = (seizure.End_DateTime__c.getTime() - seizure.Start_DateTime__c.getTime()) / 1000;
 			this.observedById = seizure.Observed_By__c;
 			this.observedByName = seizure.Observed_By__r.Name;
 		}
+
+		public Seizure(String jsonString) {
+			this((Seizure__c) JSON.deserialize(jsonString, Seizure__c.class));
+		}
+
+		public String serialize() {
+			return JSON.serialize(this.seizureSObject);
+		}
+
+		public Integer compareTo(Object anotherSeizureObject) {
+			Seizure anotherSeizure = (Seizure) anotherSeizureObject;
+			if (this.createdDate < anotherSeizure.createdDate) {
+				return -1;
+			} else if (this.createdDate == anotherSeizure.createdDate) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
 	}
 
-	public class IsolationEvent {
+	public class IsolationEvent implements Comparable {
+		public DateTime createdDate { get; set; }
 		public DateTime startTime { get; set; }
 		public DateTime endTime { get; set; }
 		public String status { get; set; }
 		public String type { get; set; }
+		public Evaluation_Response__c eventSObject { get; set; }
 
 		public IsolationEvent(Evaluation_Response__c event) {
+			this.eventSObject = event;
+			this.createdDate = event.CreatedDate;
 			this.startTime = event.Isolation_Event_Start_Date__c;
 			this.endTime = event.Isolation_Event_End_Date__c;
 			this.status = event.Isolation_Status__c;
 			this.type = event.Isolation_Type__c;
 		}
+
+		public IsolationEvent(String jsonString) {
+			this((Evaluation_Response__c) JSON.deserialize(jsonString,
+				Evaluation_Response__c.class));
+		}
+
+		public String serialize() {
+			return JSON.serialize(this.eventSObject);
+		}
+
+		public Integer compareTo(Object anotherEventObject) {
+			IsolationEvent anotherEvent = (IsolationEvent) anotherEventObject;
+			if (this.createdDate < anotherEvent.createdDate) {
+				return -1;
+			} else if (this.createdDate == anotherEvent.createdDate) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
 	}
 
-	public class RestraintEvent {
+	public class RestraintEvent implements Comparable {
+		public DateTime createdDate { get; set; }
 		public DateTime startTime { get; set; }
 		public DateTime endTime { get; set; }
 		public String status { get; set; }
 		public Decimal score { get; set; }
 
 		public RestraintEvent(Evaluation__c event, Decimal score) {
+			this.createdDate = event.CreatedDate;
 			this.startTime = event.Shift_Start_Time__c;
 			this.endTime = event.Shift_End_Time__c;
 			this.status = event.Status__c;
 			this.score = score;
 		}
+
+		public RestraintEvent(String jsonString) {
+			RestraintEvent event = (RestraintEvent) JSON.deserialize(jsonString,
+				RestraintEvent.class);
+			this.createdDate = event.createdDate;
+			this.startTime = event.startTime;
+			this.endTime = event.endTime;
+			this.status = event.status;
+			this.score = event.score;
+		}
+
+		public String serialize() {
+			return JSON.serialize(this);
+		}
+
+		public Integer compareTo(Object anotherEventObject) {
+			RestraintEvent anotherEvent = (RestraintEvent) anotherEventObject;
+			if (this.createdDate < anotherEvent.createdDate) {
+				return -1;
+			} else if (this.createdDate == anotherEvent.createdDate) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
 	}
 
 	public class VitalsDetail implements Comparable {
+		public DateTime createdDate { get; set; }
 		public DateTime dateTaken { get; set; }
 		public Decimal heartRate { get; set; }
 		public String bloodPressure { get; set; }
@@ -624,7 +753,25 @@ public with sharing class ActionSummaryReportV2 {
 				} else if (result.Eval__r.Field_Name__c == 'Date' || result.Eval__r.Field_Name__c == 'Date/Time') {
 					this.dateTaken = result.Date_Time__c;
 				}
+				if (this.createdDate == null || result.CreatedDate < this.createdDate) {
+					this.createdDate = result.CreatedDate;
+				}
 			}
+		}
+
+		public VitalsDetail(String jsonString) {
+			VitalsDetail detail = (VitalsDetail) JSON.deserialize(jsonString,
+				VitalsDetail.class);
+			this.createdDate = detail.createdDate;
+			this.dateTaken = detail.dateTaken;
+			this.heartRate = detail.heartRate;
+			this.bloodPressure = detail.bloodPressure;
+			this.temperature = detail.temperature;
+			this.o2 = detail.o2;
+		}
+
+		public String serialize() {
+			return JSON.serialize(this);
 		}
 
 		public Integer compareTo(Object anotherDetailObject) {

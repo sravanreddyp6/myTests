@@ -83,7 +83,7 @@
 				<apex:commandButton value="Save" action="{!save}" id="saveButton" status="pageProcessingStatus" rendered="{!mode == 'edit'}" />
 				<apex:commandButton value="Cancel" action="{!cancel}" id="cancelButton" rendered="{!mode == 'edit'}" />
 				<apex:commandButton value="Edit" id="editButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=edit'; return false;" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
-				<apex:commandButton value="Finalize" id="finalizeButton" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
+				<apex:commandButton value="Finalize" action="{!finalize}" id="finalizeButton" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
 				<apex:commandButton value="Disregard" id="disregardButton" onclick="if (confirm('Are you sure you want to disregard this summary?')) { disregard(); } return false; " rendered="{!AND(mode == 'view', Action_Summary__c.Status__c = 'Final')}" />
 				<apex:commandButton value="Print" id="printButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=pdf'; return false;" rendered="{!mode == 'view'}" />
 			</div>
