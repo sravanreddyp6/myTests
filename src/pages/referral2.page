@@ -583,26 +583,34 @@
                  -->
                 <apex:outputField value="{!personBeingRefRecord.Home_County__c}" />
             </apex:pageBlockSection>
-            <apex:pageBlockSection title="Person Being Served" showHeader="true" columns="2" collapsible="false" id="PBSSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
-                <apex:pageBlockSectionItem >
-                    <apex:outputText value="Name" />
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:outputText label="" value="{!personBeingServedRecord.FirstName}" />&nbsp;&nbsp;
-                        <apex:outputText label="" value="{!personBeingServedRecord.Middle_Name__c}" />&nbsp;&nbsp;
-                        <apex:outputText label="" value="{!personBeingServedRecord.LastName}" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
+            <apex:pageBlockSection title="Person Being Served" showHeader="true" columns="2" collapsible="false" id="readPBSSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
+
+
+                <apex:outputText label="First Name" value="{!personBeingServedRecord.FirstName}" />
+                <apex:outputField value="{!personBeingServedRecord.Race__c}" />
+
+                <apex:outputText label="Middle Name" value="{!personBeingServedRecord.Middle_Name__c}" />
                 <apex:outputField value="{!personBeingServedRecord.Ethnicity_Picklist__c}" />
 
-                <apex:outputField value="{!personBeingServedRecord.BirthDate}" />
+                <apex:outputText label="Last Name" value="{!personBeingServedRecord.LastName}" />
+                <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />                
+
+                <apex:outputField label="Date of Birth" value="{!personBeingServedRecord.BirthDate}" />
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel>Primary Language </apex:outputLabel>
+                    <apex:outputPanel styleClass="nowrap">
+                        <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />&nbsp;&nbsp;
+                        <apex:outputLabel value="Non-Verbal" />&nbsp;
+                        <apex:outputField value="{!personBeingServedRecord.Non_Verbal__c}" />&nbsp;
+                        <apex:outputLabel value="Sign Language" />&nbsp;
+                        <apex:outputField value="{!personBeingServedRecord.Sign_Language__c}"  />
+                    </apex:outputPanel>                       
+                </apex:pageBlockSectionItem>   
 
                 <apex:outputField value="{!personBeingServedRecord.Age__c}" />
-                <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />&nbsp;
-                <apex:outputField value="{!personBeingServedRecord.Gender__c}" />
-                <apex:outputField value="{!personBeingServedRecord.SSN__c}" />
-                <apex:pageBlockSectionItem />
                 <apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" />
 
+                <apex:outputField value="{!personBeingServedRecord.Gender__c}" />
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="false" id="readContactSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
