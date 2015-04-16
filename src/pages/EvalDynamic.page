@@ -216,16 +216,16 @@
 					<apex:outputPanel rendered="{!evalType == 'Restraint Event'}">
 						<p>
 						   Restraint Status:{!thisEval.Status__c}<br/>
-                           CreatedDate: <apex:outputText value=" {!thisEval.CreatedDate}" /> <br/>
+                           CreatedDate: <apex:outputText value=" {!shiftCreatedDate}" /> <br/>
                            {!thisEval.Has_Open_Assessment__c}
                            <apex:variable value="" var="a" rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__C == 'Applied Restraint'}" >
 						   		Restrained By: {!thisEval.Owner.Name} <br/>
 						   </apex:variable>
 						   <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
-						   		Start Date/Time : {!thisEval.Shift_Start_Time__c}<br/>
+						   		Start Date/Time : {!shiftStartTime}<br/>
 						   </apex:variable>
 						   <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null}" >
-						   		End Date/Time :{!thisEval.Shift_End_Time__c}
+						   		End Date/Time :{!shiftEndTime}
 						   </apex:variable>
 						</p>				
 					</apex:outputPanel>
