@@ -40,19 +40,20 @@
 //	            });
 //       });
 
+        var booleanStick = true;
         jQuery(document).ready(function(){
            pinPbs();
         });
 
         function pinPbs(){
             var s1 = jQuery("#pbsBlueCard");
-            var pos1 = s1.position();
-
+            booleanStick = true;
             jQuery('.stickPbs').css({"display":"none"});
             jQuery('.unstickPbs').css({"display":"inherit"});
             jQuery(window).scroll(function() {
                 var windowpos = jQuery(window).scrollTop();
-                if (windowpos - 168 >= pos1.top) {
+                var div_top = jQuery("#pbsBlueCard").offset().top;                    
+                if (windowpos > 0 && windowpos > div_top && booleanStick) {
                     s1.addClass("stickBlueCard");
                 } else {
                     s1.removeClass("stickBlueCard");
@@ -65,9 +66,7 @@
             s2.removeClass("stickBlueCard");
             jQuery('.unstickPbs').css({"display":"none"});
             jQuery('.stickPbs').css({"display":"inherit"});
-            jQuery(window).scroll(function() {
-                s2.removeClass("stickBlueCard");
-            });
+            booleanStick = false;
         }
     </script>
 
