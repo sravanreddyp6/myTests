@@ -346,6 +346,10 @@ public without sharing class Utility {
         return 'SELECT ' + selects + ' FROM ' + objectName + ' WHERE ' + whereClause;
          
     }
+    
+    public static string getMilitarytime(Datetime dt){
+    	return dt.format('MM/dd/yyyy HH:mm:ss', UserInfo.getTimeZone().toString() );
+    }
  
  
 }
