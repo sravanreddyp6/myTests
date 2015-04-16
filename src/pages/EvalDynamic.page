@@ -58,6 +58,10 @@
                 jQuery("#btnESign").removeClass('btn-success').addClass('btn-danger');
                 jQuery("#btnESign").removeAttr('onclick');
 				jQuery("#btnEsign").removeAttr('href');
+				
+				jQuery("#btnDone").removeClass('btn-success').addClass('btn-danger');
+                jQuery("#btnDone").removeAttr('onclick');
+				jQuery("#btnDone").removeAttr('href');
 			
                 }
 			else {
@@ -65,8 +69,14 @@
                 jQuery("#btnESign").attr('onclick','authenticate();');
                 jQuery("#btnESign").attr('href','#');
                 
+                jQuery("#btnDone").removeClass('btn-danger').addClass('btn-success');
+                jQuery("#btnDone").attr('onclick','authenticate();');
+                jQuery("#btnDone").attr('href','#');
+                
                 }
             jQuery("#btnESign").prop('disabled', disableFlag);
+            
+            jQuery("#btnDone").prop('disabled', disableFlag);
                
 		}
 
