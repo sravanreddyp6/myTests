@@ -63,8 +63,8 @@
         <apex:outputPanel id="responseTableWrapper">
             <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}">
                 <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled}">
-                    <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && !response.Disregard__c && (response.eSigned_By__c == null)}" />
-                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && !response.Disregard__c && (response.eSigned_By__c == null)}" />
+                    <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null)}" />
+                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null)}" />
 &nbsp;
                     <apex:commandLink onclick="showEsign{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />                     
                 </apex:column>
@@ -172,8 +172,8 @@
                     <apex:actionStatus id="saveResponseStatus">
                         <apex:facet name="stop">
                             <apex:outputPanel id="buttons">
-                                <apex:commandButton value="Save" onClick="saveResponse{!uniqueId}(false); return false;" />                                
-                                <apex:commandButton value="Save & New" rendered="{!showAddNew}" onClick="saveResponse{!uniqueId}(true); return false;" />
+                                <apex:commandButton value="Save" rendered="{! !currentResponse.Disregard__c}" onClick="saveResponse{!uniqueId}(false); return false;" />                                
+                                <apex:commandButton value="Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c}" onClick="saveResponse{!uniqueId}(true); return false;" />
                                 &nbsp;
                                 <apex:commandButton value="Disregard" rendered="{! showDisregard}" onClick="disregardResponse{!uniqueId}(false); return false;" />
                                 <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
