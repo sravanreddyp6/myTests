@@ -218,8 +218,9 @@
                 var partyPhone2Type = j$('select[id$=relatedPartyEntry_Phone_2_Type]').val();
                 var partyComments = j$('textarea[id$=relatedPartyEntry_Comments]').val();
                 var pbrID = '{!Referral__c.Person_Being_Referred__c}';
+                var partyStatus = j$('select[id$=relatedPartyEntry_Status]').val();
                 referral_Controller_Helper.saveRelatedParty(partyID, partyName, partyType, partyPhone1, partyEmail,
-                    partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments, pbrID,
+                    partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments, pbrID, partyStatus, 
                     function(result, event) {
                         saveRelParty();
                         if (isDialogClose) {
@@ -340,6 +341,7 @@
                         j$('select[id$=relatedPartyEntry_Phone_1_Type]').val(result.Phone_1_Type__c);
                         j$('select[id$=relatedPartyEntry_Phone_2_Type]').val(result.Phone_2_Type__c);
                         j$('textarea[id$=relatedPartyEntry_Comments]').val(result.Comments__c);
+                        j$('select[id$=relatedPartyEntry_Status]').val(result.Status__c);
 
                         openModalDialog('relatedPartyModal', 'span', 'Add Related Party');
                     }
@@ -637,6 +639,7 @@
                     <apex:column value="{!relParty.Phone_1_Type__c}" />
                     <apex:column value="{!relParty.Phone_2__c}" />
                     <apex:column value="{!relParty.Phone_2_Type__c}" />
+                    <apex:column value="{!relParty.Status__c}" />
                     <apex:column value="{!relParty.Comments__c}" />
                 </apex:pageBlockTable>
 
@@ -680,6 +683,7 @@
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="1" id="relatedPartyEntry2">
                     <apex:inputField value="{!relParty.Comments__c}" style="width: 90%;" id="relatedPartyEntry_Comments" />
+                    <apex:inputField value="{!relParty.Status__c}" id="relatedPartyEntry_Status" />
                     <apex:outputPanel style="display:none">
                         <apex:inputHidden value="{!relParty.Id}" id="relatedPartyEntry_Id" />
                     </apex:outputPanel>
@@ -2958,7 +2962,7 @@
             </apex:pageBlockSection>		
        </apex:pageBlock>
          </apex:form>
-        <c:SObjectNotesAndAttachments  parentId="{!Referral__c.id}" showAction="false" parentPage="referral" />     
+        <c:SObjectNotesAndAttachments parentId="{!Referral__c.id}" showAction="false" parentPage="referral" />     
        	<apex:actionstatus id="convertStatus" >
          	<apex:facet name="start" >
 				<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;" />

@@ -5,13 +5,14 @@ public boolean UnderAgePageMsg{get;set;}
 public boolean pbsEditModeOn{get;set;}
 public ApexPages.StandardController PBSController{get;set;}
 public String PageMessage{get;set;}
-public Contact currentContact{ get { return [ select id, accountid, ownerid from contact where id = :pbsId]; }
-                                    set; }
+public Contact currentContact{ get ; set; }
 public ID PBSId{get;set;}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }
 public boolean disableAddAdm { get; set; }
+public Agency_Involved_With_Individual__c agency { get; set; }
+
 public boolean canViewFamilyInfo { 
     get {
         return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
@@ -89,6 +90,22 @@ public string dontShowFields {
         return ' ' + String.Join(dontshow, ',');
     }
 }
+//save
+public PageReference Save(){
+  PBSController.save();
+  for(Agency_Involved_With_Individual__c ag : relAgencies){
+    if(ag.Person_Being_Served__c == null){
+      ag.Person_Being_Served__c = currentContact.id;
+     // ar.Referral__c = currentContact.Person_Being_Referred__r.Referral__c;
+    }
+  }
+  upsert relAgencies;
+  pageReference ref = new pageReference('/apex/PersonBeingServedEditNew?id=' + currentContact.id);
+  ref.setRedirect(true);
+  return ref;
+}
+
+
 // In order to show field labels instead of API names for history
 public Map<String, String> fieldMap { get; set; }
 
@@ -133,6 +150,7 @@ public Map<String, String> fieldMap { get; set; }
     public PBSedit_controller(ApexPages.StandardController controller) {
 
         this.currentContact=(Contact)controller.getRecord();
+        PBSController = controller;
         pbsEditModeOn=false;
         PBSId=Apexpages.currentPage().getParameters().get('Id');
         this.relParties = new List<Related_Party__c>();
@@ -242,7 +260,13 @@ public Map<String, String> fieldMap { get; set; }
         'An error occurred retrieving Related Parties. ' + e.getMessage()));
     }
   }
-    
+  public void showAddAgency() {
+    agency = new Agency_Involved_With_Individual__c();
+  }  
+  public void saveAgency() {
+    this.relAgencies.add(this.agency);
+    agency = new Agency_Involved_With_Individual__c();
+  }    
 public void showAddRelParty() {
     relParty = new Related_Party__c();
   }
