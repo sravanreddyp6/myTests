@@ -42,6 +42,16 @@ public with sharing class PersonalRecordController {
 
 	public String parentPageName {get; set { System.Debug('parentPage: ' + value); }
 	}
+	
+	public string getevalType(){
+		if( ApexPages.currentPage().getParameters().get('evalType') != null){
+			return ApexPages.currentPage().getParameters().get('evalType');
+		}
+		else{
+			return null;
+		}
+		
+	}
 
 	public String admissionId { get {
 		if ( String.isEmpty(admissionId))  {
