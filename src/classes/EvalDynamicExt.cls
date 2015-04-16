@@ -30,6 +30,18 @@ public with sharing class EvalDynamicExt {
             return thisEval.CreatedDate.format('MM/dd/yyyy HH:mm:ss', UserInfo.getTimeZone().toString() );
 	}
 	
+	public string getshiftStartTime(){
+		return Utility.getMilitarytime(thisEval.Shift_Start_Time__c);
+	}
+	
+	public string getshiftEndTime(){
+		return Utility.getMilitarytime(thisEval.Shift_End_Time__c);
+	}
+	
+	public string getshiftCreatedDate(){
+		return Utility.getMilitarytime(thisEval.CreatedDate);
+	}
+	
 	public EvalDynamicExt(){
 		// get the record
 		evalID =  ApexPages.currentPage().getParameters().get('evalID');
