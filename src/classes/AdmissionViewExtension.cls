@@ -12,6 +12,8 @@ public with sharing class AdmissionViewExtension {
     public boolean canCreateSvc{ get; set;}
     public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
+     public TMN_User__c TMNUser { set;get { return [Select t.OwnerId, t.Name, t.Last_Name__c, t.Id,t.Operating_Group__c From TMN_User__c t  where t.OwnerId =: UserInfo.getUserId() limit 1];} }
+    
     private void setisEditor() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                 FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id ];
@@ -31,6 +33,14 @@ public with sharing class AdmissionViewExtension {
     private void setcanCreateAdm() {
         Schema.DescribeSObjectResult oSchema  = Admission__c.sObjectType.getDescribe();
         canCreateAdm = oSchema.IsCreateable();
+        	if(canCreateAdm && (TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  
+        	|| TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood')) ){
+           List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c 
+        		        from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: admission.Person_Being_Served__c];
+        		if(admissionList.size()>0) {
+        	canCreateAdm = false;
+        	}
+        	}
     }
     
     private void setcanCreateSvc() {
