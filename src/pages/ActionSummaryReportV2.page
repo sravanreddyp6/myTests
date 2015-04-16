@@ -98,13 +98,19 @@
 					<apex:outputLabel for="summaryCreatedBy" value="Created By" />
 					<apex:outputLink id="summaryCreatedBy" value="/{!Action_Summary__c.CreatedBy.Id}">{!Action_Summary__c.CreatedBy.Name}</apex:outputLink>
 				</apex:pageBlockSectionItem>
-				<apex:outputField value="{!Action_Summary__c.CreatedDate}" />
+				<apex:outputText label="Created Date">
+					<c:MilitaryDateTime dateTimeVal="{!Action_Summary__c.CreatedDate}" />
+				</apex:outputText>
+				<apex:outputText label="Finalized Date">
+					<c:MilitaryDateTime dateTimeVal="{!Action_Summary__c.Finalized_Date__c}" />
+				</apex:outputText>
+				<apex:outputField value="{!Action_Summary__c.Finalized_By__c}" rendered="{!Action_Summary__c.Status__c = 'Final'}" />
 			</apex:pageBlockSection>
 			<apex:pageBlockSection title="Vitals Detail Summary" columns="1">
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
 					<apex:pageBlockTable value="{!vitalsDetails}" var="vital" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Date">
-							<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!vital.dateTaken}" /></apex:outputText>
+							<c:MilitaryDateTime dateTimeVal="{!vital.dateTaken}" />
 						</apex:column>
 						<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
 						<apex:column headerValue="Blood Pressure" value="{!vital.bloodPressure}" />
@@ -118,10 +124,10 @@
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
 					<apex:pageBlockTable value="{!seizures}" var="seizure" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
-							<apex:outputText value="{0, date, M/d/yyyy h:mm:ss a}"><apex:param value="{!seizure.startTime}" /></apex:outputText>
+							<c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.startTime}" />
 						</apex:column>
 						<apex:column headerValue="End Date/Time">
-							<apex:outputText value="{0, date, M/d/yyyy h:mm:ss a}"><apex:param value="{!seizure.endTime}" /></apex:outputText>
+							<c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.endTime}" />
 						</apex:column>
 						<apex:column headerValue="Duration" value="{!seizure.duration} seconds" />
 						<apex:column headerValue="Observed By">
@@ -135,12 +141,11 @@
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}">
 					<apex:pageBlockTable value="{!isolationEvents}" var="event" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
-							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
+							<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
 						</apex:column>
 						<apex:column headerValue="End Date/Time">
-							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.endTime}" /></apex:outputText>
+							<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
 						</apex:column>
-						<apex:column headerValue="Status" value="{!event.status}" />
 						<apex:column headerValue="Type" value="{!event.type}" />
 					</apex:pageBlockTable>
 					<apex:commandLink styleClass="viewAllLink" onclick="openAllIsolationEventsDialog(); return false;" value="View All" rendered="{!isolationEvents.size > LIST_LIMIT}" />
@@ -150,10 +155,10 @@
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
 					<apex:pageBlockTable value="{!restraintEvents}" var="event" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
-							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
+							<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
 						</apex:column>
 						<apex:column headerValue="End Date/Time">
-							<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.endTime}" /></apex:outputText>
+							<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
 						</apex:column>
 						<apex:column headerValue="Status" value="{!event.status}" />
 						<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
@@ -305,7 +310,7 @@
 								</table>
 								<apex:outputPanel layout="block" styleClass="leftAndTheRest">
 									<apex:outputPanel layout="block" styleClass="commentBlock">
-										<div style="font-weight:bold">Objective Comment</div>
+										<div style="font-weight:bold">Comment</div>
 										<apex:inputTextArea styleClass="objectiveCommentInput" value="{!recommendationSummaryResultMap[parentId].comment}" rows="6" rendered="{!mode='edit'}" />
 										<apex:outputText value="{!recommendationSummaryResultMap[parentId].comment}" rendered="{!mode!='edit'}" />
 									</apex:outputPanel>
@@ -326,10 +331,10 @@
 		<apex:actionFunction name="disregard" action="{!disregard}" status="pageProcessingStatus" />
 	</apex:form>
 	<apex:outputPanel id="allVitalsDialog" style="display: none; ">
-		<apex:pageBlock>
+		<apex:pageBlock >
 			<apex:pageBlockTable value="{!vitalsDetails}" var="vital">
 				<apex:column headerValue="Date">
-					<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!vital.dateTaken}" /></apex:outputText>
+					<c:MilitaryDateTime dateTimeVal="{!vital.dateTaken}" />
 				</apex:column>
 				<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
 				<apex:column headerValue="Blood Pressure" value="{!vital.bloodPressure}" />
@@ -339,13 +344,13 @@
 		</apex:pageBlock>
 	</apex:outputPanel>
 	<apex:outputPanel id="allSeizuresDialog" style="display: none; ">
-		<apex:pageBlock>
+		<apex:pageBlock >
 			<apex:pageBlockTable value="{!seizures}" var="seizure">
 				<apex:column headerValue="Start Date/Time">
-					<apex:outputText value="{0, date, M/d/yyyy h:mm:ss a}"><apex:param value="{!seizure.startTime}" /></apex:outputText>
+					<c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.startTime}" />
 				</apex:column>
 				<apex:column headerValue="End Date/Time">
-					<apex:outputText value="{0, date, M/d/yyyy h:mm:ss a}"><apex:param value="{!seizure.endTime}" /></apex:outputText>
+					<c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.endTime}" />
 				</apex:column>
 				<apex:column headerValue="Duration" value="{!seizure.duration} seconds" />
 				<apex:column headerValue="Observed By">
@@ -355,27 +360,26 @@
 		</apex:pageBlock>
 	</apex:outputPanel>
 	<apex:outputPanel id="allIsolationEventsDialog" style="display: none; ">
-		<apex:pageBlock>
+		<apex:pageBlock >
 			<apex:pageBlockTable value="{!isolationEvents}" var="event">
 				<apex:column headerValue="Start Date/Time">
-					<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
+					<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
 				</apex:column>
 				<apex:column headerValue="End Date/Time">
-					<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.endTime}" /></apex:outputText>
+					<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
 				</apex:column>
-				<apex:column headerValue="Status" value="{!event.status}" />
 				<apex:column headerValue="Type" value="{!event.type}" />
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 	</apex:outputPanel>
 	<apex:outputPanel id="allRestraintEventsDialog" style="display: none; ">
-		<apex:pageBlock>
+		<apex:pageBlock >
 			<apex:pageBlockTable value="{!restraintEvents}" var="event">
 				<apex:column headerValue="Start Date/Time">
-					<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.startTime}" /></apex:outputText>
+					<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
 				</apex:column>
 				<apex:column headerValue="End Date/Time">
-					<apex:outputText value="{0, date, M/d/yyyy h:mm a}"><apex:param value="{!event.endTime}" /></apex:outputText>
+					<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
 				</apex:column>
 				<apex:column headerValue="Status" value="{!event.status}" />
 				<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
@@ -383,7 +387,7 @@
 		</apex:pageBlock>
 	</apex:outputPanel>
 	<apex:outputPanel id="pastSummariesDialog" style="display: none; ">
-		<apex:pageBlock>
+		<apex:pageBlock >
 			<apex:pageBlockTable value="{!summaries}" var="s">
 				<apex:column headerValue="Name">
 					<apex:outputLink value="/{!s.Id}" target="_blank">{!s.Name}</apex:outputLink>
