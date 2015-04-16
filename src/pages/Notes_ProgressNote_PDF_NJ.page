@@ -1,0 +1,306 @@
+<apex:page standardController="Progress_Note__c" renderAs="pdf"  >
+<html>
+<head>
+<style>
+.fStyle{
+font-size: 10pt; color: black;
+}
+.myField2{font-size: 10pt; color: black; padding-top: 7px; padding-left: 14px;}
+.fStyle2{font-size: 10pt; color: black;}
+.fStyle3{font-size: 9pt; color: black; padding-left:15px;}
+.myLabelRight{color: black; font-size: 10pt; font-weight: bold; text-align: right;}
+.myLabelLeft{color: black; font-size: 10pt; font-weight: bold; text-align: left;}
+.myLabel2{color: black; font-size: 10pt; padding-top: 3px}
+.myHeader{color: black; fonst-size:11pt; font-weight: bold; text-align: left;}
+.myTbLabel{width: 150px;}
+.myTbField{padding-left: 15px;}
+.myTrTop{vertical-align: top;}
+.myTable{width:100%;}
+
+</style>
+</head>
+
+<div class="wrapper" style="page-break-after: auto">
+
+<!--Header -->
+        <table  class="myTable">
+        <tr>
+            <td > <apex:image url="{!URLFOR($Resource.ESD_Images,'NJ-Logo.png')}"  /></td>
+            <td><div style="float: right; color:#0082c3; font-size: 20pt;"> PROGRESS NOTE </div></td>
+            
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td class="myclass" colspan="2"><center><i>“2012 - The MENTOR Network - Confidential and Proprietary”</i></center></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        </table>
+<!-- end of table 1-->
+        
+<!-- Details -->
+    <table  class="myTable" >
+    <tr >
+        <td colspan="4" ><div class="fStyle"><b>Care Coordination Agency:</b> &nbsp; <apex:outputField value="{!Progress_Note__c.Care_Coordination_Agency__c}"/></div></td>
+            
+        <td  ><div class="fStyle"><b>Family Phone: </b>{!Progress_Note__c.Person_Being_Served__r.Guardian_Phone_Number__c}</div></td>  
+          
+    </tr>
+    <tr>
+        <td colspan="3"  ><div class="fStyle"><b>Child’s Name: </b>{!Progress_Note__c.Person_Being_Served__r.Name} </div></td>
+       
+         <td colspan="3"  ><div class="fStyle"><b>Service Type:  </b>&nbsp; <apex:outputField value="{!Progress_Note__c.Service_Assignment__r.Service_Line__c}" /></div></td>
+
+</tr>
+<tr>
+                <td colspan="3" ><div class="fStyle"><b> Date of Service: </b>&nbsp; <apex:outputField value="{!Progress_Note__c.Date_of_Service__c}" /></div></td>
+                <td colspan="3" ><div class="fStyle"><b>Duration:  </b>&nbsp; <apex:outputField value="{!Progress_Note__c.Total_Time__c}" /></div></td>
+
+    </tr>
+    <tr>
+  
+  <td colspan="3"   ><div class="fStyle"><b>Age</b>&nbsp; <apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Age__c}"/> </div></td>
+  <td colspan="3"   ><div class="fStyle"><b>IIC-LIC Staff : </b> &nbsp; <apex:outputField value="{!Progress_Note__c.IIC_LIC_Staff__c}"/></div></td>
+
+  
+  </tr>    
+  <tr> 
+                
+    
+        <td colspan="4" ><div class="fStyle"><b>Total Time Spent with Child:</b>&nbsp; <apex:outputField value="{!Progress_Note__c.Duration__c}"/></div></td>     
+        <td  ><div class="fStyle"><b>DYFS/CM:</b> &nbsp; <apex:outputField value="{!Progress_Note__c.DYFS_CM__c}"/></div></td>
+    </tr>
+    <tr>
+        <td  class="fStyle">Authorized From</td> 
+       
+</tr>
+         
+        
+    <tr>
+    <tr class="myTrTop">    
+        <td colspan="5"  class="myTbLabel" >
+            <div class="fStyle"><b>Start Time &nbsp;</b>
+            <apex:outputField value="{!Progress_Note__c.Start_Time__c}" /></div>
+        </td>
+    </tr>
+    <tr class="myTrTop">
+        <td colspan="5"  class="myTbLabel" >
+            <div class="fStyle"><b>End Time &nbsp;</b>
+            <apex:outputField value="{!Progress_Note__c.End_Time__c}" /></div>
+        </td>
+    </tr>
+ 
+        <td colspan="5">&nbsp;</td>
+    </tr>
+    </table>
+<!-- 
+////////////////////
+second table close
+////////////////////
+-->
+
+<!--
+//////////////////
+/////////////
+////////////////
+Mental Assesment Table
+//////////////////
+//////////////////
+//////////////////////
+-->
+<table cellpadding="0" cellspacing="0"  class="myTable"  >
+
+<tr class="myTrTop">
+    <td class="myTbLabel" colspan="2" ><div class="myHeader">Mental Status Assessment:</div></td>
+
+</tr>
+<tr class="myTrTop">
+    <td class="myTbLabel" ><div class="myLabelRight">Mood</div></td>
+    <td class="myTbField">
+        <div >
+            <apex:outputField value="{!Progress_Note__c.Mood__c}" />
+            &nbsp;
+            <apex:outputField value="{!Progress_Note__c.Mood_Other__c}" rendered="{!Progress_Note__c.Mood__c='Other'}" />
+        </div>
+    </td>     
+
+<tr style="{myTrTop}">
+    <td class="myTbLabel" ><div class="myLabelRight">Communication(Other)</div></td>
+    <td class="myTbField"><div ><apex:outputField value="{!Progress_Note__c.Communication_Other__c}" /></div></td>
+ 
+      </tr>
+<tr class="myTrTop">
+    <td class="myTbLabel" ><div class="myLabelRight">Appearance</div></td>
+    <td class="myTbField"><div ><apex:outputField value="{!Progress_Note__c.Appearance__c}" /></div></td>
+</tr>
+
+<tr class="myTrTop">
+    <td class="myTbLabel" ><div class="myLabelRight">Thought Process</div></td>
+    <td class="myTbField"><div ><apex:outputField value="{!Progress_Note__c.Thought_Process__c}" /></div></td>
+</tr>
+
+<tr class="myTrTop">
+    <td class="myTbLabel" ><div class="myLabelRight">Behavior</div></td>
+    <td class="myTbField"><div ><apex:outputField value="{!Progress_Note__c.Behavior__c}" /></div></td>
+</tr>
+
+<tr class="myTrTop">
+    <td class="myTbLabel" ><div class="myLabelRight">Eye Contact</div></td>
+    <td class="myTbField"><div ><apex:outputField value="{!Progress_Note__c.Eye_Contact__c}" /></div></td>
+</tr>
+
+<tr class="myTrTop">
+    <td class="myTbLabel" ><div class="myLabelRight">Communication</div></td>
+    <td class="myTbField"><div ><apex:outputField value="{!Progress_Note__c.Communication__c}" /></div> </td>
+</tr>
+
+<tr class="myTrTop">
+    <td class="myTbLabel" ><div class="myLabelRight">Level of Participation</div> </td>
+    <td class="myTbField"><div ><apex:outputField value="{!Progress_Note__c.Level_of_Participation__c}" /></div></td>
+</tr>
+
+<tr class="myTrTop">
+    <td class="myTbLabel" ><div class="myLabelRight">Other Concerns</div></td>
+    <td class="myTbField"><div ><apex:outputField value="{!Progress_Note__c.Other_Concerns__c}" /></div><br/><br/></td>
+</tr>
+
+<tr class="myTrTop" >
+    <td class="myTbLabel" ><div class="myLabelRight">Current Risk Factors</div></td>
+    <td class="myTbField">
+<!--
+///////////
+table open
+/////////
+-->    
+        <table style="width:100%; vertical-align: top;" >
+        <tr class="myTrTop" >
+            <td ><div class="fStyle2"><apex:outputField value="{!Progress_Note__c.S_I__c}" />S/I</div></td>
+            <td><div class="fStyle2"><apex:outputField value="{!Progress_Note__c.H_I__c}" />H/I</div></td>
+            <td><div class="fStyle2"><apex:outputField value="{!Progress_Note__c.Crisis_Screen__c}" />Crisis Screen</div></td>
+            <td><div class="fStyle2"><apex:outputField value="{!Progress_Note__c.Police_Contacted__c}" />Police Contacted</div></td>
+            <td><div class="fStyle2"><apex:outputField value="{!Progress_Note__c.School_Suspension__c}" />School Suspension</div></td>
+        </tr>
+        <tr class="myTrTop">
+            <td><div class="fStyle2"><apex:outputField value="{!Progress_Note__c.Cutting_Bx__c}" />Cutting Bx</div></td>
+            <td><div class="fStyle2"><apex:outputField value="{!Progress_Note__c.Ran_Away__c}" />Ran Away</div></td>
+            <td colspan="3"><div class="fStyle2"><apex:outputField value="{!Progress_Note__c.Substance_Use_Abuse__c}" />Substance Use/Abuse</div></td>
+        </tr>
+        <tr class="myTrTop">
+            <td colspan="2">
+                <div class="fStyle2"><apex:outputField value="{!Progress_Note__c.Abuse_Disclosure__c}" />Abuse Disclosure </div>
+                <div class="fStyle3">(Type:<apex:outputField value="{!Progress_Note__c.Abuse_Disclosure_Type__c}" />) </div>
+                            
+            </td>
+            <td colspan="2"><div class="fStyle2">
+                <apex:outputField value="{!Progress_Note__c.Violent_Bx__c}" />Violent Bx </div>            
+                <div class="fStyle3">(Type:<apex:outputField value="{!Progress_Note__c.Violent_Bx_Type__c}" />) </div>
+            </td>
+        </tr>
+        </table>
+<!--
+//////////////
+table close
+///////////////
+-->    
+    </td>
+</tr>
+
+<tr class="myTrTop" >
+    <td class="myTbLabel" ><div class="myLabelRight">DYFS Contacted</div></td>
+    <td class="myTbField">
+    <div class="fStyle"><apex:outputField value="{!Progress_Note__c.DYFS_Contacted__c}" />
+    <br/>
+        <div class="fStyle3">(Date: &nbsp; <apex:outputField value="{!Progress_Note__c.DYFS_Contacted_Date__c}" />)</div>
+    </div></td>
+</tr>
+
+<tr class="myTrTop">
+    <td class="myTbLabel" ><div class="myLabelRight">Risk Factors</div></td>
+    <td class="myTbField"><div class="fStyle"><apex:outputField value="{!Progress_Note__c.Risk_Factors__c}" /></div></td>
+</tr>
+
+<tr class="myTrTop">
+    <td colspan="2" class="myTbLabel" ><div class="fStyle3"><br/><b>Goal(s)</b>&nbsp; – For this visit; must be directly related to Tx Plan:<br/><br/></div></td>
+ 
+</tr>
+
+
+</tr>
+</table>
+<!--/////////////////////////////
+end of table 3
+//////////////////////
+//////////////////////
+Prgress note
+/////////////////
+-->
+<table  class="myTable">
+<tr class="myTrTop">
+    <td class="myTbLabel" >
+    <div class="myLabel2">
+        <b>D - Description</b>&nbsp; 
+        <i>of situation and child/family (what is going on now and since your last visit, who is present, location, your interventions and child’s responses to interventions, was the child transported, please explain). </i>
+    </div>   
+    </td>    
+</tr>
+<tr class="myTrTop">
+    <td class="myTbLabel" >
+    <div class="fStyle2">
+   <!-- Child Transported Today:-->
+    </div>   
+    </td>    
+</tr>
+<tr class="myTrTop">
+    <td class="myTbLabel" >
+    <div class="myField2">
+        <apex:outputField value="{!Progress_Note__c.Interventions__c}"/>
+    </div>   
+    </td>    
+</tr>
+<!--<tr class="myTrTop">-->
+<tr >
+
+    <td class="myTbLabel" >
+    <div class="myLabel2">
+        <b>A - Assessment </b>&nbsp;
+        <i>of current state of child (include concerns indicated in the Mental Status above), effect of interventions and progress or barriers toward achievement of goal(s).  Level of FAMILY INVOLVEMENT. 
+        </i>        
+    </div> 
+    <div class="myField2">
+        <apex:outputField value="{!Progress_Note__c.Progress__c}"/>
+    </div>        
+    </td>    
+</tr>
+<tr class="myTrTop">
+    <td class="myTbLabel" >
+ 
+    </td>    
+</tr>
+
+<tr class="myTrTop">
+    <td class="myTbLabel" >
+    <div class="myLabel2">
+        <b>P - Plan</b> &nbsp; 
+        <i>of current state of child (include concerns indicated in the Mental Status above), effect of interventions and progress or barriers toward achievement of goal(s).  Level of FAMILY INVOLVEMENT. 
+        </i>
+    </div>   
+    </td>    
+</tr>
+<tr class="myTrTop">
+    <td class="myTbLabel" >
+    <div class="myField2">
+        <apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}"/>
+    </div>   
+    </td>    
+</tr>
+</table>
+
+
+
+</div>
+
+</html>
+</apex:page>
