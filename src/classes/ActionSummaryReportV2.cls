@@ -283,6 +283,7 @@ public with sharing class ActionSummaryReportV2 {
 	public PageReference finalize() {
 		summary.Status__c = 'Final';
 		summary.Finalized_Date__c = DateTime.now();
+		summary.Finalized_By__c = UserInfo.getUserId();
 
 		List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();
 		for (Seizure seizure: this.seizures) {
