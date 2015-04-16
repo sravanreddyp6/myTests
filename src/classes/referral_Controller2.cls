@@ -273,14 +273,14 @@ public with sharing class referral_Controller2 {
 		try {
 			if(this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null){
 				this.relParties = [
-					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c, Person_Being_Referred__c
+					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c, Status__c, Person_Being_Referred__c
 					from Related_Party__c
 					where Person_Being_Referred__c = :this.personBeingRefRecord.Id order by Type__c, Name
 					limit 150
 				];
 			} else if (this.personBeingServedRecord != null && this.personBeingServedRecord.Id != null){
 				this.relParties = [
-					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Person_Being_Referred__c, Person_Being_Served__c
+					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c, Person_Being_Referred__c, Person_Being_Served__c
 					from Related_Party__c
 					where Person_Being_Served__c = :this.personBeingServedRecord.Id order by Type__c, Name
 					limit 150

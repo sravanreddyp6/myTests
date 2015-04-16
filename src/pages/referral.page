@@ -230,6 +230,7 @@
             if (validateRelatedParty()) {
                 j$('input[id$=relatedPartyName]').val(j$('input[id$=relatedPartyEntry_Name]').val());
                 j$('input[id$=relatedPartyType]').val(j$('select[id$=relatedPartyEntry_Type]').val());
+                j$('input[id$=relatedPartyStatus]').val(j$('select[id$=relatedPartyEntry_Status]').val());
                 j$('input[id$=relatedPartyEmail]').val(j$('input[id$=relatedPartyEntry_Email]').val());
                 j$('input[id$=relatedPartyPhone]').val(j$('input[id$=relatedPartyEntry_Phone]').val());
                 j$('input[id$=relatedPartyAddress]').val(j$('textarea[id$=relatedPartyEntry_Address]').val());
@@ -647,6 +648,7 @@
                     <apex:column value="{!relParty.Phone_1_Type__c}" />
                     <apex:column value="{!relParty.Phone_2__c}" />
                     <apex:column value="{!relParty.Phone_2_Type__c}" />
+                    <apex:column value="{!relParty.Status__c}" />
                     <apex:column value="{!relParty.Comments__c}" />
                 </apex:pageBlockTable>
                 <apex:outputpanel style="display:none">
@@ -658,6 +660,7 @@
                     <apex:inputHidden value="{!relParty.Phone_1_Type_String__c}" id="relatedPartyPhone_1_Type" />
                     <apex:inputHidden value="{!relParty.Phone_2__c}" id="relatedPartyPhone_2" />
                     <apex:inputHidden value="{!relParty.Phone_2_Type_String__c}" id="relatedPartyPhone_2_Type" />
+                    <apex:inputHidden value="{!relParty.Status__c}" id="relatedPartyStatus" />
                     <apex:inputHidden value="{!relParty.Comments__c}" id="relatedPartyComments" />
                 </apex:outputpanel>
                 <script type="text/javascript">
@@ -704,6 +707,7 @@
 
                     <apex:pageBlockSection columns="1" id="relatedPartyEntry2">
                         <apex:inputField value="{!relParty.Comments__c}" style="width: 90%;" id="relatedPartyEntry_Comments" />
+                        <apex:inputField value="{!relParty.Status__c}" id="relatedPartyEntry_Status" />
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:outputPanel>
