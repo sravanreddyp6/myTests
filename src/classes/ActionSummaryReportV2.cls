@@ -168,6 +168,7 @@ public with sharing class ActionSummaryReportV2 {
 				         WHERE Action_Summary__c = :summary.Id)
 				  FROM Action_Plan_Objective__c
 				 WHERE Effective_Date__c <= :summary.End_Date__c
+				   AND CreatedDate < :summary.Finalized_Date__c
 				   AND Target_End_Date__c >= :summary.Start_Date__c
 				   AND action_plan_goal__r.action_plan__r.Service_Assignment__c = :summary.Service_Assignment__c
 				   AND (action_plan_goal__r.action_plan__r.Status__c = 'Inactive Final'
@@ -430,11 +431,10 @@ public with sharing class ActionSummaryReportV2 {
 	public class ObjectiveSkillResults {
 		public Action_plan_objective__c objective { get; set; }
 
-		public transient List<Date> startDates { get; set; }
-		public transient Map<Date, Integer> metObjectiveMap { get; set; }
-		public transient Map<Date, Integer> notMetObjectiveMap { get; set; }
-		public transient Map<Date, Integer> percentMetObjectiveMap { get; set; }
-
+		public List<Date> startDates { get; set; }
+		public Map<Date, Integer> metObjectiveMap { get; set; }
+		public Map<Date, Integer> notMetObjectiveMap { get; set; }
+		public Map<Date, Integer> percentMetObjectiveMap { get; set; }
 
 		public ObjectiveSkillResults(Action_plan_objective__c objective) {
 			this.objective = objective;
@@ -471,6 +471,7 @@ public with sharing class ActionSummaryReportV2 {
 			startDates.addAll(startDateSet);
 			startDates.sort();
 		}
+
 	}
 
 	public class ObjectiveBehaviorCountResults {
