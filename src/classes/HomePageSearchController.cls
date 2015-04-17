@@ -120,9 +120,13 @@ public with sharing class HomePageSearchController{
 
 		if (lastname!=null && lastname!='') {
 			if (lastname.contains('*')) {
-				lNameSearch+=' ('+lastnamefield +' like \''+lastname.replace('*','%')+'\')';
+				lNameSearch+=' ('+lastnamefield +' like \''+
+					String.escapeSingleQuotes(lastname.replace('*','%'))+'\')';
 			} else {
-				lNameSearch+=' ('+lastnamefield +' like \''+lastname+'%\''+ ' or last_name_soundex_key__c =\''+SoundEx.ToSoundEx(lastname)+'\') ';
+				lNameSearch+=' ('+lastnamefield +' like \''+
+					String.escapeSingleQuotes(lastname)+'%\''+
+					' or last_name_soundex_key__c =\''+
+					String.escapeSingleQuotes(SoundEx.ToSoundEx(lastname))+'\') ';
 			}
 			criteria += lNameSearch;
 		}
@@ -131,9 +135,13 @@ public with sharing class HomePageSearchController{
 				criteria+= ' and ';
 			}
 			if (firstname.contains('*')) {
-				fNameSearch+=' ('+firstnamefield+' like \''+firstname.replace('*','%')+'\')';
+				fNameSearch+=' ('+firstnamefield+' like \''+
+					String.escapeSingleQuotes(firstname.replace('*','%'))+'\')';
 			}else{
-				fNameSearch+=' ('+firstnamefield+' like \''+firstname+'%\''+ ' or first_name_soundex_key__c =\''+SoundEx.ToSoundEx(firstname)+'\')';
+				fNameSearch+=' ('+firstnamefield+' like \''+
+					String.escapeSingleQuotes(firstname)+'%\''+
+					' or first_name_soundex_key__c =\''+
+					String.escapeSingleQuotes(SoundEx.ToSoundEx(firstname))+'\')';
 			}
 			criteria += fNameSearch;
 		}
