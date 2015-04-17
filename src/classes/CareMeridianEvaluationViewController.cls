@@ -7,7 +7,7 @@ public with sharing class CareMeridianEvaluationViewController {
         get {
             return [
                 SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
-                       Phone_2__c, Phone_2_Type__c, Comments__c
+                       Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
                 FROM Related_Party__c WHERE Person_Being_Referred__c=:evaluation.Referral__r.Person_Being_Referred__c
             ];
         }
@@ -74,7 +74,7 @@ public with sharing class CareMeridianEvaluationViewController {
     public void showEditRelatedParty() {
         this.currentRelatedParty = [
             SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
-                   Phone_2__c, Phone_2_Type__c, Comments__c
+                   Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
             FROM Related_Party__c WHERE ID=:currentRelatedPartyId
         ];
     }

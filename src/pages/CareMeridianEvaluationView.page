@@ -131,6 +131,7 @@
 							<apex:column value="{!relatedParty.Phone_1_Type__c}"/>
 							<apex:column value="{!relatedParty.Phone_2__c}"/>
 							<apex:column value="{!relatedParty.Phone_2_Type__c}"/>
+							<apex:column value="{!relatedParty.Status__c}"/>
 							<apex:column value="{!relatedParty.Comments__c}"/>
 						</apex:pageBlockTable>
 					</apex:pageBlockSection>
@@ -969,6 +970,7 @@
 					<apex:outputField value="{!currentRelatedParty.Phone_2_Type__c}" />
 				</apex:pageBlockSection>
 				<apex:pageBlockSection columns="1">
+					<apex:outputField value="{!currentRelatedParty.Status__c}"  />
 					<apex:outputField value="{!currentRelatedParty.Comments__c}" style="width: 90%;" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
