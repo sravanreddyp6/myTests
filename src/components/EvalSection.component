@@ -43,7 +43,7 @@
 			<label class="labelCol">Created By:</label>{!evalSectionOwner}
 			<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" rendered="{!editEnabled}">
 				<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false;" />
-				<input class="btn" type="button" value="Cancel" onclick="isModified=false; evalForm.reset(); setUpFields();" />
+				<input class="btn" type="button" value="Cancel" onclick="clearPanel();" />
 			</apex:outputPanel>
 			<apex:outputPanel rendered="{!htmlTable != '' && hasErros}"><span id="evalSecValMsgs" style="color: red;"></span></apex:outputPanel>
 			<apex:outputText value="{!htmlTable}" escape="false" />
