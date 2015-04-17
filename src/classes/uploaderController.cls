@@ -137,6 +137,7 @@ global with sharing class uploaderController
 
 		// null the list of existing attachments - this will be rebuilt when the page is refreshed
 		attachments=null;
+		hideAddMoreButton = false;
 		return null;
 	}
 

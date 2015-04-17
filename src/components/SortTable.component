@@ -150,11 +150,11 @@
 	});
 		
 	</script>	
- 	<c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!parentId}" parentPage="PBS"  viewall="viewall"/>
-   <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" viewall="viewall"/>
-   <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" viewall="viewall"/>
-   <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}"  viewall="viewall"/>
-    <c:PersonalRecord rendered="{!parentPage='Admission'}" pbsId="{!pbsId}" parentPage="Admission" admId="{!admId}" viewall="viewall"/>
+ 	<c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!parentId}" parentPage="PBS"  viewall="true"/>
+   <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" viewall="true"/>
+   <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" viewall="true"/>
+   <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}"  viewall="true"/>
+    <c:PersonalRecord rendered="{!parentPage='Admission'}" pbsId="{!pbsId}" parentPage="Admission" admId="{!admId}" viewall="true"/>
  			 <br/>
     		<apex:pageBlock title="View All Attachments">
   			 <apex:pageBlockTable style="width: 100%;" id="NotesAndAttachments" value="{!entries}" var="entry" styleClass="dataTable" rendered="{!entries.size>0}">
