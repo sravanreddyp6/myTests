@@ -5,7 +5,7 @@
 
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
-    
+
     <!--<p>{!$Component.referralForm.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}</p>-->
     <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
     <style type="text/css">
@@ -220,7 +220,7 @@
                 var pbrID = '{!Referral__c.Person_Being_Referred__c}';
                 var partyStatus = j$('select[id$=relatedPartyEntry_Status]').val();
                 referral_Controller_Helper.saveRelatedParty(partyID, partyName, partyType, partyPhone1, partyEmail,
-                    partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments, pbrID, partyStatus, 
+                    partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments, pbrID, partyStatus,
                     function(result, event) {
                         saveRelParty();
                         if (isDialogClose) {
@@ -436,59 +436,59 @@
                 }
             );
         }
-        
+
         function cmPopup() {
         	var v = j$('input[id$=popupHidden]').val();
         	if(v == 'open') {
-        		
+
         		if('{!referralRecord.Service_Location__c}'.length > 0){
-        		
+
         		 var lookupName = '{!$Component.referralForm:ReferralAdmissionLocationModalBlock:admissionLocationEntry:admSectionItem:al:comp:LookupElement}';
         		 lookupName = lookupName.replace(/:/g, '\\:');
             	 lookupName = '#'+ lookupName;
         		 j$(lookupName).val({!admissionLocationName});
-        	
+
         		}
         		openModalDialog('ReferralAdmissionLocationModal', 'span', 'Add Admission Location');
-        	
+
         	}else {
        			return null;
        		}
         }
-        
+
         function validateadmissionLocation(){
         	var errors=[];
         	j$('#admissionLocationErrors').html(errors);
         	var lookupId = '{!$Component.referralForm:ReferralAdmissionLocationModalBlock:admissionLocationEntry:admSectionItem:al:comp:lookupElement_lkid}';
             lookupId = lookupId.replace(/:/g, '\\:');
             lookupId = '#' +lookupId;
-         
+
         	var admDate = j$('input[id$=antAdmDate]').val();
         	var aliasId = j$(lookupId).val();
-        	
-        	
+
+
         	if(admDate.length == 0){
         		errors.push('Please Choose an Admission Date');
         	}
-        	
+
         	if(aliasId.length == 0){
         		errors.push('Please Choose an Admission Location');
         	}
-        	
+
         	if(errors.length > 0 ){
         		j$.each(errors, function(index, error) {
-						
+
 						j$('#admissionLocationErrors').html('<li>' +error+ '</li>');
 					});
         	}else{
-        	
+
         		saveAdmissionLocation();
         	}
-        	
-        
+
+
         }
-        
-        
+
+
     </script>
 
     <apex:form id="referralForm">
@@ -508,7 +508,7 @@
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,referralLocationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location'); " status="AddLocationStatus" />
         <apex:actionFunction name="openlocationPopup" action="{!redirectToConversion}" rerender="popupDiv,msgs" oncomplete="cmPopup();" status="convertStatus" />
 		<apex:actionFunction name="saveAdmissionLocation" action="{!saveAdmissionLocation}" reRender="msgs" status="convertStatus2"/>
-		
+
         <apex:pageMessages id="msgs" />
 
         <apex:inputhidden value="{!Referral__c.Person_Being_Referred__c}" />
@@ -519,16 +519,16 @@
         <!--<apex:outputpanel style="display:none">
         <apex:inputField value="{!Referral__c.RecordType.Name}" />
     </apex:outputpanel>-->
-		
+
         <apex:pageBlock mode="view">
             <apex:pageblockButtons location="Top" rendered="{!isEditor}">
                 <apex:commandButton value="Edit" action="{!redirectToEdit}" rendered="{!editable}" />
                 <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}" />
-                <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert }"  />  	
+                <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert }"  />
             </apex:pageblockButtons>
-				
+
             <apex:pageBlockSection title="Person Being Referred" showHeader="true" columns="2" collapsible="false" rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}" id="PBRSection">
 
 
@@ -539,7 +539,7 @@
                 <apex:outputField value="{!personBeingServedRecord.Ethnicity_Picklist__c}" />
 
                 <apex:outputText label="Last Name" value="{!personBeingServedRecord.LastName}" />
-                <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />                
+                <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />
 
                 <apex:outputField label="Date of Birth" value="{!personBeingServedRecord.BirthDate}" />
                 <apex:pageBlockSectionItem>
@@ -550,8 +550,8 @@
                         <apex:outputField value="{!personBeingServedRecord.Non_Verbal__c}" />&nbsp;
                         <apex:outputLabel value="Sign Language" />&nbsp;
                         <apex:outputField value="{!personBeingServedRecord.Sign_Language__c}"  />
-                    </apex:outputPanel>                       
-                </apex:pageBlockSectionItem>   
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
 
                 <apex:outputField value="{!personBeingServedRecord.Age__c}" />
                 <apex:inputField value="{!personBeingRefRecord.SSN__c}" />
@@ -593,7 +593,7 @@
                 <apex:outputField value="{!personBeingServedRecord.Ethnicity_Picklist__c}" />
 
                 <apex:outputText label="Last Name" value="{!personBeingServedRecord.LastName}" />
-                <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />                
+                <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />
 
                 <apex:outputField label="Date of Birth" value="{!personBeingServedRecord.BirthDate}" />
                 <apex:pageBlockSectionItem >
@@ -604,8 +604,8 @@
                         <apex:outputField value="{!personBeingServedRecord.Non_Verbal__c}" />&nbsp;
                         <apex:outputLabel value="Sign Language" />&nbsp;
                         <apex:outputField value="{!personBeingServedRecord.Sign_Language__c}"  />
-                    </apex:outputPanel>                       
-                </apex:pageBlockSectionItem>   
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
 
                 <apex:outputField value="{!personBeingServedRecord.Age__c}" />
                 <apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" />
@@ -1187,9 +1187,9 @@
 	                        <strong>Add Admission Location:</strong>
 	                    </p>
 	                </apex:facet>
-	                
+
 	                <div id="admissionLocationErrors" style='color:red' ></div>
-	                
+
                 	<apex:pageblockSection columns="1" id="admissionLocationEntry" >
                 		<apex:pageBlockSectionItem >
 							<apex:outputLabel value="Anticipated Admission DateTime" />
@@ -1205,11 +1205,11 @@
                 	</apex:pageblockSection>
 				</apex:pageBlock>
 			</apex:outputPanel>
-			
-		<apex:outputPanel id="popupDiv"> 
+
+		<apex:outputPanel id="popupDiv">
 			<apex:inputhidden value="{!openLocationPopup}" id="popupHidden" />
 		</apex:outputPanel>
-		
+
 		<!-- Activity Modal -->
         <apex:outputpanel style="display:none" id="ActivityModal">
             <apex:pageBlock title="Add Task">
@@ -1531,7 +1531,7 @@
 	                <apex:outputLabel value="Anticipated Admission DateTime" />
 	                <c:MilitaryDatetime dateTimeVal="{!Referral__c.Anticipated_Admission_DateTime__c}" />
                 </apex:pageBlockSectionItem>
-                
+
                 <apex:outputField value="{!Referral__c.Service_Location__c}" />
                 <apex:outputField value="{!Referral__c.Service_Location_Service_Value__c}" />
                 <apex:outputField value="{!Referral__c.Service_Location_Setting__c}" />
@@ -1904,9 +1904,9 @@
                 <apex:pageBlockSectionItem >
                     <apex:outputPanel >
                         <input type="button" class="btn" value="Add Referral Tracking Task" onclick="showAddActivity(); return false;" />
-                        <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
-                        <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
-                        <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" required="false" />
+                        <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
+                        <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
+                        <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" required="false" />
                         <apex:actionStatus id="taskAssignStatus">
                             <apex:facet name="start">
                                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -2945,9 +2945,9 @@
         <apex:outputField value="{!Referral__c.Programming_Considerations_Comments__c}" rendered="{!isCambridge || ReferralRecordType = 'NeuroRestorative'}" />
         </apex:pageBlockSection>
     </span>
-       
+
             <!-- Added by Kossi -->
-            <!--  
+            <!--
             <apex:pageBlockSection columns="1" title="Attachments" showHeader="true" collapsible="false">
                 <apex:pageBlockSectionItem >
                     <a href="/apex/uploader?parentid={!Referral__c.id}">Add/Remove</a>
@@ -2967,19 +2967,19 @@
                     </apex:column>
                     <apex:column value="{!r.Referral_Status__c}" />
                 </apex:pageBlockTable>
-            </apex:pageBlockSection>		
+            </apex:pageBlockSection>
        </apex:pageBlock>
          </apex:form>
-        <c:SObjectNotesAndAttachments parentId="{!Referral__c.id}" showAction="false" parentPage="referral" />     
+        <c:SObjectNotesAndAttachments parentId="{!Referral__c.id}" showAction="false" parentPage="referral" />
        	<apex:actionstatus id="convertStatus" >
          	<apex:facet name="start" >
 				<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;" />
-	     			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">    
+	     			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
          				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
         			</div>
       		</apex:facet>
     	</apex:actionstatus>
- 
+
     <div style="text-align:right; width:100%" class="whitenoise">{!referralRecordType}</div>
     <div style="text-align:right; width:100%" class="whitenoise">{!admissionLocationName}</div>
 

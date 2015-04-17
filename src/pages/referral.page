@@ -5,7 +5,7 @@
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-    
+
     <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && !isErrorDisplayed && Referral__c.Close_Reason__c != 'Admitted' && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning" ></apex:pageMessage>
     <style type="text/css">
         .dialogLoadingSpinner {
@@ -310,7 +310,7 @@
                 j$('input[id$=locationStatus]').val(j$('select[id$=locationEntry_Status]').val());
                 j$('input[id$=locationRank]').val(j$('select[id$=locationEntry_Rank]').val());
                 saveLocation();
-                
+
                 if (isClose) {
                     closeModalDialog('ReferralLocationModal', 'span');
                 }
@@ -522,7 +522,7 @@
             </apex:pageblockButtons>
 
             <apex:pageBlockSection title="Person Being Referred" showHeader="true" columns="2" collapsible="false" id="PBRSection" rendered="{!ISNULL(personBeingServedRecord.id)}">
-                <!-- Rearranged these filed for EPRIQM-117  --> 
+                <!-- Rearranged these filed for EPRIQM-117  -->
                         <apex:inputText value="{!personBeingRefRecord.First_Name__c}" required="{!ReferralRecordType =='NeuroRestorative'}" />
                          <apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}" />
                         <apex:inputText value="{!personBeingRefRecord.Middle_Initial__c}"  />
@@ -530,10 +530,10 @@
                         <apex:inputText value="{!personBeingRefRecord.Last_Name__c}" required="{!ReferralRecordType =='NeuroRestorative'}" />
                 <apex:inputField value="{!personBeingRefRecord.Ethnicity__c}" />
 
-               
+
                 <apex:inputField value="{!personBeingRefRecord.Race__c}" />
 
-              
+
                 <apex:inputField value="{!personBeingRefRecord.Marital_Status__c}" />
 
                 <apex:inputField value="{!personBeingRefRecord.Gender__c}" />
@@ -587,7 +587,7 @@
                 <apex:outputField value="{!personBeingServedRecord.Ethnicity_Picklist__c}" />
 
                 <apex:outputText label="Last Name" value="{!personBeingServedRecord.LastName}" />
-                <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />                
+                <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />
 
                 <apex:outputField label="Date of Birth" value="{!personBeingServedRecord.BirthDate}" />
                 <apex:pageBlockSectionItem>
@@ -598,8 +598,8 @@
                         <apex:outputField value="{!personBeingServedRecord.Non_Verbal__c}" />&nbsp;
                         <apex:outputLabel value="Sign Language" />&nbsp;
                         <apex:outputField value="{!personBeingServedRecord.Sign_Language__c}"  />
-                    </apex:outputPanel>                       
-                </apex:pageBlockSectionItem>   
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
 
                 <apex:outputField value="{!personBeingServedRecord.Age__c}" />
                 <apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" />
@@ -1192,7 +1192,7 @@
                                 </a>
                             </apex:pageBlockSectionItem>
                         </apex:pageBlockSectionItem>
-                        
+
                        	<apex:inputHidden id="locationEntry_ServiceLocation_lkid" value="{!searchedServiceLocationId}" />
 
                         <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{! referralRecordType != 'CareMeridian'}" />
@@ -2343,9 +2343,9 @@
                     <apex:outputPanel >
                         <apex:commandButton value="Add Referral Tracking Task" onclick="showAddActivity(); openModalDialog('ActivityModal', 'span', 'Add Task','none'); return false;" />
                         <apex:actionRegion >
-                            <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
-                            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
-                            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c!='Closed')}" required="false" />
+                            <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
+                            <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
+                            <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c!='Closed')}" required="false" />
                             <apex:actionFunction name="addAdmissionSteps" action="{!addAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
                         </apex:actionRegion>
                         <apex:actionStatus id="taskAssignStatus">
