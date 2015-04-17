@@ -524,19 +524,14 @@
             <apex:pageBlockSection title="Person Being Referred" showHeader="true" columns="2" collapsible="false" id="PBRSection" rendered="{!ISNULL(personBeingServedRecord.id)}">
                 <!-- Rearranged these filed for EPRIQM-117  --> 
                         <apex:inputText value="{!personBeingRefRecord.First_Name__c}" required="{!ReferralRecordType =='NeuroRestorative'}" />
-                         <apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}" />
+                         <apex:inputField value="{!personBeingRefRecord.Race__c}" />
+                        
                         <apex:inputText value="{!personBeingRefRecord.Middle_Initial__c}"  />
-                          <apex:inputField value="{!personBeingRefRecord.Age__c}" id="pbrAge" />
+                          <apex:inputField value="{!personBeingRefRecord.Ethnicity__c}" />
+                         
                         <apex:inputText value="{!personBeingRefRecord.Last_Name__c}" required="{!ReferralRecordType =='NeuroRestorative'}" />
-                <apex:inputField value="{!personBeingRefRecord.Ethnicity__c}" />
-
-               
-                <apex:inputField value="{!personBeingRefRecord.Race__c}" />
-
-              
-                <apex:inputField value="{!personBeingRefRecord.Marital_Status__c}" />
-
-                <apex:inputField value="{!personBeingRefRecord.Gender__c}" />
+                 <apex:inputField value="{!personBeingRefRecord.Marital_Status__c}" />
+				 <apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}" />
                 <apex:pageBlockSectionItem helpText="{!$ObjectType.Person_Being_Referred__c.fields.Non_Verbal__c.inlineHelpText}">
                     <apex:outputText value="Primary Language" />
                     <apex:outputPanel styleClass="nowrap">
@@ -547,9 +542,11 @@
                         <apex:inputField value="{!personBeingRefRecord.Sign_Language__c}" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:inputField value="{!personBeingRefRecord.SSN__c}" />
+                 <apex:inputField value="{!personBeingRefRecord.Age__c}" id="pbrAge" />
                 <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
-            </apex:pageBlockSection>
+                <apex:inputField value="{!personBeingRefRecord.Gender__c}" />
+                <apex:inputField value="{!personBeingRefRecord.SSN__c}" />
+             </apex:pageBlockSection>
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" rendered="{!ISNULL(personBeingServedRecord.id)}">
                 <apex:inputField value="{!personBeingRefRecord.Additional_Information_Comments__c}" style="width: 90%;" />
             </apex:pageBlockSection>
@@ -590,8 +587,8 @@
                 <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />                
 
                 <apex:outputField label="Date of Birth" value="{!personBeingServedRecord.BirthDate}" />
-                <apex:pageBlockSectionItem>
-                    <apex:outputLabel>Primary Language </apex:outputLabel>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Primary Language </apex:outputLabel>
                     <apex:outputPanel styleClass="nowrap">
                         <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />&nbsp;&nbsp;
                         <apex:outputLabel value="Non-Verbal" />&nbsp;
