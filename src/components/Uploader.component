@@ -2,6 +2,15 @@
     <apex:attribute name="objId" type="String" description="The id of the object to manage attachments for" required="true" assignTo="{!sobjId}"/>
     <apex:attribute name="fileUploadVal" type="String" description="fileUpload is used to hide HeadShotSelection non photo file upload"  assignTo="{!fileUpload}"/>
     <apex:attribute name="showExisting" type="String" description="Show attachments related list?" required="false" default="false"/>
+     <apex:attribute name="url"  type="String" description="Return url" required="false" default="false"   />
+      <apex:attribute name="parentId"  type="String" description="ObjectId" required="false" default="false"  />
+     <apex:attribute name="parentPage" type="string" description="This id used for personal Record component"/>
+	<apex:attribute name="pbsId" type="string" description="PBS Id" required="false" default="false"  />
+	<apex:attribute name="apId" type="string" description="Action Plan Id" default="false"   />
+	<apex:attribute name="servAssignId" type="string" description="Service Assignment Id" default="false"   />
+	<apex:attribute name="admId" type="string" description="Admission Id" default="false"   />
+	<apex:attribute name="asmtType" type="string" description="Assessment Type" default="false"   />
+	<apex:attribute name="asmtId" type="string" description="Assessment Id" default="false"   />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/js/jquery-filestyle.min.js')}"/>
@@ -60,7 +69,12 @@
             })
         });
     </script>
-    <c:PersonalRecord rendered="{!showPersonalRecord}" pbsId="{!sobjId}" parentPage="Upload Attachments" />
+     <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!objId}" parentPage="PBS" upload="true" />
+   <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" upload="true"  />
+   <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" upload="true" />
+   <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}" upload="true" />
+    <c:PersonalRecord rendered="{!parentPage='Admission'}" pbsId="{!pbsId}" parentPage="Admission" admId="{!admId}" upload="true" />
+
     <br />
     <apex:form id="attForm">
         <apex:pageBlock title="Upload Attachments">
@@ -113,7 +127,7 @@
             <apex:pageBlock title="Existing Attachments" rendered="{!showExisting}" >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Edit">
-                        <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attachment.Id)}" target="_blank">Edit</apex:outputLink>
+                    <apex:outputLink value="/apex/UpdateAttachment?docId={!attachment.ID}&retURL={!url}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}" >Edit</apex:outputLink>
                         |
                         <apex:outputText rendered="{!$Profile.Name == 'System Administrator' || loginUserId == attachment.OwnerID}" >
                             <a id="{!attachment.id}" class="deleteLink">Del</a>
@@ -127,7 +141,7 @@
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column style="padding-right: 9px;" headerValue="Title">
-                    <apex:outputLink value="/apex/ViewAttachment?docId={!attachment.Id}">{!attachment.Name}</apex:outputLink>
+                    <apex:outputLink value="/apex/ViewAttachment?docId={!attachment.ID}&retURL={!url}&parentId={!parentId}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}">{!attachment.Name}</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Description">{!attachment.Description}</apex:column>
                 <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
