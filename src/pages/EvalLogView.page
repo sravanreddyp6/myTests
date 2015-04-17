@@ -45,11 +45,13 @@
     </apex:form>
     
 <!--     Section to display Restraint Reductions -->
-    <apex:repeat value="{!assessments}" var="asmt" rendered="{!subcat == 'Reduction Review'}">
+	
+    <apex:repeat value="{!assessments}" var="asmt" rendered="{!(evalname == 'Restraint Event' && subcat == 'Reduction Review') || (evalName == 'Restraint Event' && subcat == null) }">
     	<apex:form>
  			<c:restraintReductionComponent AssessmentId="{!asmt.Id}" isPDF="true" />
  		</apex:form>
    	</apex:repeat>	
+   
  		
  	<script>
  	

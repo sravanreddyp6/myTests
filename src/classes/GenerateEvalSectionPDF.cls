@@ -31,26 +31,20 @@ public with sharing class GenerateEvalSectionPDF {
     
     public Assessment__c[] assessments {set;
     	get{
-    		if(subcat == 'Reduction Review'){
-	    		return [
-	    			SELECT Id, Name FROM Assessment__c WHERE Evaluation__c =:evaluationID AND Status__c != 'Disregard'
-	    		];
-    		
-    		}
-    		else{
-    			return null;
-    		}
+    		return [
+    			SELECT Id, Name FROM Assessment__c WHERE Evaluation__c =:evaluationID AND Status__c != 'Disregard'
+    		];
     	}
     }
     
-   // public List<Assessment__c> assessments {get; set;}
+  //  public List<Assessment__c> assessments {get; set;}
     
 	public GenerateEvalSectionPDF( ) {
 		mapEvalItems = new Map<ID, Eval__c>();
 
 		mapEntryValues = new Map<String, Map<ID, Eval_Value__c> > ();
 		evaluationID = ApexPages.currentPage().getParameters().get('evalID');
-	//	assessments = [SELECT Id FROM Assessment__c WHERE Evaluation__c=:evaluationID];
+		//assessments = [SELECT Id FROM Assessment__c WHERE Evaluation__c=:evaluationID];
 		evalname=ApexPages.currentPage().getParameters().get('evalname');
 		opGrp = ApexPages.currentPage().getParameters().get('opGrp');
 		cat=ApexPages.currentPage().getParameters().get('cat');
@@ -106,6 +100,7 @@ public with sharing class GenerateEvalSectionPDF {
              where eval__c in :listEvalItems
                and what_id__c = :evaluationID
                and what_id_object__c = 'Evaluation__c'
+               and eval__r.Field_name__c != 'Dummy Value' //Exclude Restraint Reduction fields - Confirm With Bridget - Sravan 04/17/2015
                //and eval_Section_Id__c = :evalSectionId
               order by eval__r.cat_seq_text__c, eval__r.subcat_seq_text__c, eval__r.subsubcat_seq_text__c, eval_section_id__c, createddate 
         ];
