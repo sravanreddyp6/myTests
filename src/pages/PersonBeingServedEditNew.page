@@ -233,7 +233,7 @@
                                     <apex:inputfield id="txtDOB" value="{!Contact.Birthdate}" label="Date of Birth" required="true" />
                                 </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        
+
                     <apex:outputField value="{!Contact[f]}" rendered="{! NOT(pbsEditModeOn) && (f != 'Primary_Language__c') && ( f != 'Birthdate')}" />
                     <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && (f != 'Primary_Language__c') && ( f != 'Birthdate') }" required="{!OR(f.required, f.dbrequired)}" />
                     <apex:pageBlockSectionItem rendered="{!  NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}">
@@ -275,12 +275,10 @@
             </apex:pageBlockSection>
 
             <!--Contact Information Section-->
-            <a name="AI" id="AI" />
-            <!-- Using Additional info anchor here as a hack as the blue card will cover the top portion of the page. Sravan EC-43 10/14/2014 1:00 PM-->
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputContactInfo">
 
                 <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Contactinfo}" var="f">
-     
+
      <apex:pageBlockSectionItem rendered="{! (f = 'MailingStreet')  && NOT(pbsEditModeOn) }" >
     <apex:outputLabel value="Mailing Street 1" for="Ma" />
       <apex:outputField id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
@@ -289,7 +287,7 @@
     <apex:outputLabel value="Mailing Street 1" for="Ma" />
       <apex:inputText id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
     </apex:pageBlockSectionItem>
-    
+
  <apex:pageBlockSectionItem rendered="{! (f = 'OtherStreet')  && NOT(pbsEditModeOn) }" >
     <apex:outputLabel value="Other Street 1" for="os" />
       <apex:outputField id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
@@ -298,7 +296,7 @@
     <apex:outputLabel value="Other Street 1" for="os" />
       <apex:inputText id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
     </apex:pageBlockSectionItem>
-    
+
                     <apex:outputField value="{!Contact[f]}" rendered="{!(!pbsEditModeOn) && (f != 'HomePhone' ) && (f != 'MailingStreet' )  && (f != 'OtherStreet' ) }" />
                     <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && (f != 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) }" required="{!OR(f.required, f.dbrequired)  }" />
 
@@ -321,6 +319,7 @@
 
             <!--Additional Information Section-->
 
+            <a name="AI" id="AI" />
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo">
                 <apex:repeat value="{!$ObjectType.Contact.FieldSets.Additional_Information}" var="f">
                     <apex:outputField value="{!Contact[f]}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath)}" />
@@ -387,10 +386,10 @@
                     </apex:actionRegion>
                 </apex:pageBlockSectionItem>
                 <apex:outputfield value="{!Contact.Family_Native_American_Ancestry__c}" rendered="{!!pbsEditModeOn}" />
-                
+
                 <apex:inputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!pbsEditModeOn}" />
                 <apex:outputfield value="{!Contact.Family_Military_Involvement_Branch__c}" rendered="{!!pbsEditModeOn && Contact.Family_Military_Involvement__c != 'None'}" />
-                
+
                  <apex:PageBlockSectionitem rendered="{!pbsEditModeOn}" >
                     <apex:outputLabel Value="Family Native American Tribe" for="nativetribe" />
                     <apex:outputpanel id="familynativeamericantribe" >
@@ -482,10 +481,10 @@
                 <div style="float: right;">
                     <apex:actionRegion >
                         <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
-                    </apex:actionRegion>        
+                    </apex:actionRegion>
                     <apex:commandButton rendered="{!AND(isEditor, canEdit)}" value="Add Agency Involved With Individual" id="addAgency" onclick="showAddAgency(); openDialog('agencyModal', 'span', 'Add Agency','none'); return false;" />
-  
-                </div>                 
+
+                </div>
             <apex:pageBlockSection columns="1" title="Agencies Involved With Individual" id="relatedAgencies" collapsible="false">
                 <apex:pageBlockSectionItem >
                 </apex:pageBlockSectionItem>
@@ -555,7 +554,7 @@
             <apex:inputHidden value="{!agency.Address__c}" id="agencyAddress" />
             <apex:inputHidden value="{!agency.Phone__c}" id="agencyPhone" />
             <apex:inputHidden value="{!agency.Reason_for_Involvement__c}" id="agencyReason" />
-        </apex:outputpanel>         
+        </apex:outputpanel>
         <!--Diagnosis Section -->
         <a name="Diag" id="Diag" />
         <apex:pageBlock id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">
@@ -591,7 +590,7 @@
                     <apex:column headerValue="Admission Name"><a href="/apex/AdmissionView?id={!admsns.ID}">{!admsns.Name}</a>
                     </apex:column>
                     <apex:column headerValue="Effective Date">
-                        <c:MilitaryDatetime dateTimeVal="{!admsns.Admission_Effective_DateTime__c}" />           
+                        <c:MilitaryDatetime dateTimeVal="{!admsns.Admission_Effective_DateTime__c}" />
                     </apex:column>
                     <apex:column value="{!admsns.Discharged_Date__c}" headerValue="Discharge Date" />
                     <apex:column value="{!admsns.Status__c}" headerValue="Status" />
@@ -647,12 +646,12 @@
 
 
             </apex:pageBlock>
-            <apex:pageBlock rendered="{!vfVarIsCM}">                
+            <apex:pageBlock rendered="{!vfVarIsCM}">
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device"
                                            formId="{!$Component.FormID}"
                                            uniqueId="Assistive_Devices"
-                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],  
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],
                                                                                                         &quot;Glasses&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Glasses_Present__c&quot;],
                                                                                                         &quot;Contacts&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Contacts_Type__c&quot; , &quot;Contacts_Present__c&quot;],
                                                                                                         &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
@@ -665,7 +664,7 @@
                                                                                                         &quot;Side Rail Half&quot; : [&quot;Side_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
                                                                                                         &quot;Side Rail Full&quot; : [&quot;Side_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;]
                                                                                                         }}"
-                                           cols="1" />  
+                                           cols="1" />
             </apex:pageBlock>
         <apex:pageBlock >
             <!--Task History Section-->
@@ -732,9 +731,9 @@
             </apex:pageBlockSection>
         </apex:pageBlock>
          </apex:form>
-            
-              <c:SObjectNotesAndAttachments parentId="{!Contact.id}" showAction="true" parentPage="PBS"></c:SObjectNotesAndAttachments> 
-    
+
+              <c:SObjectNotesAndAttachments parentId="{!Contact.id}" showAction="true" parentPage="PBS"></c:SObjectNotesAndAttachments>
+
     <!--
         <apex:pageBlock >
             <!--Notes & Attachments
@@ -766,5 +765,5 @@
 
             </apex:pageBlockSection>
         </apex:pageBlock>
-   
+
 </apex:page>
