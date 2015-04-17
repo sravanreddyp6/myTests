@@ -13,12 +13,12 @@
 	 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
 	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	  <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
-   <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!parentId}" parentPage="Update Attachment" editAttachemnt="editAttachemnt" viewAttachmentUrl="{!viewAttachmentUrl}"/>
-   <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" editAttachemnt="editAttachemnt"  viewAttachmentUrl="{!viewAttachmentUrl}"/>
-   <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" editAttachemnt="editAttachemnt" viewAttachmentUrl="{!viewAttachmentUrl}"/>
-   <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}" editAttachemnt="editAttachemnt" viewAttachmentUrl="{!viewAttachmentUrl}"/>
-    <c:PersonalRecord rendered="{!parentPage='Admission'}" pbsId="{!pbsId}" parentPage="Admission" admId="{!admId}" editAttachemnt="editAttachemnt" viewAttachmentUrl="{!viewAttachmentUrl}"/>
-	   <BR/>
+   <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!parentId}" parentPage="PBS" editAttachemnt="true" viewAttachmentUrl="{!viewAttachmentUrl}"/>
+   <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" editAttachemnt="true"  viewAttachmentUrl="{!viewAttachmentUrl}"/>
+   <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" editAttachemnt="true" viewAttachmentUrl="{!viewAttachmentUrl}"/>
+   <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}" editAttachemnt="true" viewAttachmentUrl="{!viewAttachmentUrl}"/>
+    <c:PersonalRecord rendered="{!parentPage='Admission'}" pbsId="{!pbsId}" parentPage="Admission" admId="{!admId}" editAttachemnt="true" viewAttachmentUrl="{!viewAttachmentUrl}"/>
+	   <BR/> 
 <apex:form id="attchmentUpdateForm">
 
 <div class="bPageBlock brandSecondaryBrd bEditBlock secondaryPalette"
