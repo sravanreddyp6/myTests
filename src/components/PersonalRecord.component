@@ -21,10 +21,6 @@
 		var booleanStick = true;
 		jQuery(document).ready(function() {
 			pinPbs();
-			// After we pin the blue card, the anchor point position is not
-			// the same as it was before, so we have to jump to the anchor
-			// point again.
-			j$(window).scrollTop(j$(window.location.hash).offset().top).trigger('scroll');
 
 			// Workaround so that the blue card doesn't stay in the way when
 			// jumping to an anchor point
@@ -46,7 +42,13 @@
 					}
 				}, 100);
 			}
-			j$(window).trigger('hashchange');
+			if (window.location.hash) {
+				// After we pin the blue card, the anchor point position is not
+				// the same as it was before, so we have to jump to the anchor
+				// point again.
+				j$(window).scrollTop(j$(window.location.hash).offset().top).trigger('scroll');
+				j$(window).trigger('hashchange');
+			}
 		});
 
 		function pinPbs() {
