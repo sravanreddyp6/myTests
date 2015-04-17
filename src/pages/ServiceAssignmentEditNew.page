@@ -306,7 +306,7 @@
 				<apex:actionStatus id="SaveStatus1">
 					<apex:facet name="stop">
 						<apex:outputPanel id="buttons">
-							<apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"  
+							<apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"
 							                     onComplete="saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/> &nbsp;
 							<apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" /> &nbsp;
 							<apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
@@ -341,7 +341,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-				
+
 				<apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
 				<apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}" />
 				<apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}" />
@@ -429,7 +429,7 @@
                             <apex:inputText id="startdate" value="{!saStrStartDateTime}" onblur="changeEffectiveDates();"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                
+
 				<apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
 
 				<apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}" />
@@ -1383,9 +1383,9 @@ END: Uncomment to have the element collapsed by default -->
                                        collapsible="false"/>
         <!-- <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> -->
 
-        </apex:pageBlock>      
-        <!-- Isolation Events End -->	
-        	
+        </apex:pageBlock>
+        <!-- Isolation Events End -->
+
 		<!--  Funding Sources section -->
 		<!-- Add Funding Source modal. -->
 		<apex:outputPanel id="FundingSourceModal" style="display:none">
@@ -2008,7 +2008,7 @@ END: Uncomment to have the element collapsed by default -->
 			if (j$('input[id$=lookupElement_lkid]'))
 				j$('input[id$=lookupElement_lkid]').change(function () {
 					saveLocation();
-				});			
+				});
             saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));
 		});
 
@@ -2048,7 +2048,7 @@ END: Uncomment to have the element collapsed by default -->
 			setEffectiveDate(sd, ed);
 
 		}
-		
+
 		var saStartDateTime = {
 		    intializeDateTimePicker: function($target) {
 		        j$($target).datetimepicker({
