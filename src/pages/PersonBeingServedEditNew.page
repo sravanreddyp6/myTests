@@ -671,8 +671,8 @@
         <apex:pageBlock >
             <!--Task History Section-->
             <!--Open Tasks Section -->
-            <apex:outputPanel >
-                <apex:commandButton onclick="window.open('/apex/PBS_AddTask_Page?PBS={!Contact.Id}&accID={!currentContact.AccountID}', '_self'); return false;" value="Add Task"/>
+            <apex:outputPanel style="display: block; width: 100%;">
+                <apex:commandButton style="float: right;" onclick="window.open('/apex/PBS_AddTask_Page?PBS={!Contact.Id}&accID={!currentContact.AccountID}', '_self'); return false;" value="Add Task"/>
             </apex:outputPanel>
             <apex:pageBlockSection title="Open Tasks" showHeader="true" columns="1" collapsible="true">
                 <apex:pageBlockTable value="{!taskOnCurrentPBSAccount}" var="OpenActivity" rendered="{!(taskOnCurrentPBSAccount.size>0)}">
