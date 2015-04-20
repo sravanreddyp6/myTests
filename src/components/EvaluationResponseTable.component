@@ -202,11 +202,11 @@
     </apex:pageBlockSection>
     <hr />
 <apex:outputPanel rendered="{! eSign}" id="authenticationDialog" style="display: none; z-index: 200; color: red;">
-        <apex:actionRegion >
+<!--         <apex:actionRegion > Removed by Sravan as the E-sign button is unable to invoke the eSignrecord method on the controller. Reason: Unknown as of now - Will have to figure out -->
             <apex:pageBlock title="Please enter your Username and Password" id="responseDialogMainBlock">
                 <apex:pageMessages id="authenticationMessages" />
                 <apex:pageBlockButtons location="bottom">
-                    <apex:commandButton value="E-Sign" action="{!eSignRecord}" rerender="{!$Component.evalResponseBlock.responseTableWrapper},responseDialogMainBlock,responseDialogErrors, authenticationMessages" status="authenticationStatus" oncomplete="if (jQuery('[id$=authenticationMessages]').find('.message').eq(0).attr('class').indexOf('confirm') != -1) { closeModalDialog( '{!$Component.authenticationDialog}' ); alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');  }" />
+                    <apex:commandButton value="E-Sign" action="{!eSignRecord}" rerender="{!$Component.evalResponseBlock.responseTableWrapper},responseDialogMainBlock,responseDialogErrors,authenticationMessages" status="authenticationStatus" oncomplete="if (jQuery('[id$=authenticationMessages]').find('.message').eq(0).attr('class').indexOf('confirm') != -1) { closeModalDialog( '{!$Component.authenticationDialog}' ); alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');  }" />
                     <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.authenticationDialog}'); return false;" />
                     <apex:actionStatus id="authenticationStatus">
                         <apex:facet name="start">
@@ -230,6 +230,6 @@
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
             </apex:pageBlock>
-        </apex:actionRegion>
+<!--         </apex:actionRegion> -->
     </apex:outputPanel>        
 </apex:component>
