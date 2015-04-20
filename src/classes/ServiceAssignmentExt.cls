@@ -1594,7 +1594,7 @@ public void loadProgramList() {
 										value.Boolean__c = false;
 								}
 								else if (eval.Field_Sub_Type__c == 'Dropdown')
-									value.Text_Under_250__c = (String)existingEval.get(fieldName);
+									value.Text_Under_250__c = existingEval.get(fieldName)== true? '1':'0';
 							}
 
 							else if (eval.Field_Type__c == 'Int'){
