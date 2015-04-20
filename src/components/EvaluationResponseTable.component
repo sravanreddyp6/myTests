@@ -45,7 +45,11 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>    
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+        
 <style>.evalCompReqField{padding-right: 3px; border-right: 3px solid red;}</style>
     <apex:pageBlockSection id="evalResponseBlock" columns="1" title="{!IF(showTitle,type,'')}" collapsible="{!collapsible}">
         <apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
@@ -161,6 +165,18 @@
                                 applyRulesToField(target);
                             });
                         }
+                        
+                        $('.militaryDateTime').datetimepicker({
+                            format: 'm/d/Y H:i',
+                            closeOnDateSelect: true,
+                            onChangeDateTime: function(dp, $input) {
+                            //    $('.militaryDateTime').val((moment($input.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($input.val().toString()).format('L LT')));
+                            },
+                            onGenerate: function(dp, $input) {
+                                $('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css("top", "+=15");
+                            }
+
+                        });
                     };
                 });
             </script>
