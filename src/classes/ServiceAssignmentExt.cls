@@ -1472,6 +1472,8 @@ public void loadProgramList() {
 					string query = 'SELECT ';
 					FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment; // Calling the Field set where the about to be cloned fieldvalue paths are stored
 					FieldSet behavior = SObjectType.Evaluation__c.FieldSets.Behavior;
+					FieldSet respondsTo = SObjectType.Evaluation__c.FieldSets.RespondsTo;
+					FieldSet glasses = SObjectType.Evaluation__c.FieldSets.Glasses;
 
 					set<String> getEvals = new set<String>(); //Collection to store the API names of the Fields which will be used in Query (API_Name_Flag__c)
 					for(Schema.FieldSetMember f: copyFields.getFields()) {
@@ -1488,9 +1490,11 @@ public void loadProgramList() {
 						}
 					}
 					getEvals.add('Behavior'); //Make Sure Behavior ApI_Flag_Name__c is also included
+					getEvals.add('RespondsTo');
+					getEvals.add('Glasses');
 
-					system.debug('Checking the set for null values+++++++++'+getEvals);
-					system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
+				//	system.debug('Checking the set for null values+++++++++'+getEvals);
+					//system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
 
 					Map<id,Eval__c> evalMap = new Map<id,Eval__c>([SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals]);
 
@@ -1504,32 +1508,63 @@ public void loadProgramList() {
 
 					string timeString =  Userinfo.getUserId()+'-'+DateTime.now().getTime();
 					integer n = 0;
-					system.debug('Strings+++++++++++++++++++++++'+catSubcat);
+					//system.debug('Strings+++++++++++++++++++++++'+catSubcat);
 					for(String s: catSubcat){
 						n = n+1;
 						uniqueTimeMap.put(s,timeString+string.valueOf(n));
 					}
 
-					system.debug('timeMap+++++++++++=='+uniqueTimeMap);
+					//system.debug('timeMap+++++++++++=='+uniqueTimeMap);
 
 					//Create Corresponding Eval Value Records
 					List<Eval_Value__c> values = new List<Eval_value__c>();
 					Eval_Value__c value;
 
 					string behaviorString = '';
+					string respondstoString = '';
+					string glassesString = '';
 
 					for(Schema.FieldSetMember f: behavior.getFields()){
-
-						system.debug('behvaiorset+++++++'+behavior.getFields());
-						system.debug('fieldValue+++++'+existingEval.get(f.getFieldPath()));
-
-						if(string.isNotBlank(string.valueOF(existingEval.get(f.getFieldPath())))) {
+						//system.debug('behvaiorset+++++++'+behavior.getFields());
+						//system.debug('fieldValue+++++'+existingEval.get(f.getFieldPath()));
+						//if(string.isNotBlank(string.valueOf(existingEval.get(f.getFieldPath())))) {
+						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
 							behaviorString += f.getLabel();
 							behaviorString += '; ';
 						}
 
 					}
+					
+					for(Schema.FieldSetMember f: respondsTo.getFields()){ 
+						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
+							respondstoString += f.getLabel();
+							respondstoString += '; ';
+						}
 
+					}
+					
+					for(Schema.FieldSetMember f: glasses.getFields()){
+						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
+							if(f.getLabel().Contains('Reading')){
+								glassesString += 'For Reading';
+								glassesString += '; ';
+							}
+							if(f.getLabel().Contains('Distance')){
+								glassesString += 'For Distance';
+								glassesString += '; ';
+							}
+							if(f.getLabel().Contains('Focal')){
+								glassesString += 'For Multifocal Use';
+								glassesString += '; ';
+							}
+							if(f.getLabel().Contains('Other')){
+								glassesString += 'Other';
+								glassesString += '; ';
+							}
+						}
+
+					}
+					
 					for(Eval__c eval: evalMap.values()){
 
 						string fieldName = eval.API_Name_Flag__c;
@@ -1543,12 +1578,12 @@ public void loadProgramList() {
 						string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
 
 						if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
-							system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
+							//system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
 							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
 
 						}
 
-						if(fieldName != 'Behavior') {
+						if(fieldName != 'Behavior' && fieldName != 'RespondsTo' && fieldName != 'Glasses') { //Move to set and use contains if more values are requested in future - Sravan - 04/19/2015 9:30PM
 
 							//Handle All Data Types
 							if ( eval.Field_Type__c == 'Boolean'){
@@ -1582,9 +1617,17 @@ public void loadProgramList() {
 
 						}
 
-						if(string.isNotBlank(behaviorString) && eval.Field_Name__c == 'Behavior' ){
+						 if(string.isNotBlank(behaviorString) && eval.Field_Name__c == 'Behavior' ){
 
 							value.Text_Under_250__c = behaviorString;
+						}
+						
+						 if(string.isNotBlank(respondstoString) && eval.Field_Name__c == 'Responds To'){
+							value.Text_Under_250__c = respondstoString;
+						}
+						
+						 if(string.isNotBlank(glassesString) && eval.Field_Name__c == 'Glasses/Contacts'){
+							value.Text_Under_250__c = glassesString;
 						}
 
 						values.add(value);
