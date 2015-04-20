@@ -1338,7 +1338,7 @@ END: Uncomment to have the element collapsed by default -->
 
 		<!-- Restraint Events Start -->
 		<a name="Assessment_res" id="Assessment_res"></a>
-		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && !editSA && vfVarIsCM}">
+		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && !editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" />
 			</div>
@@ -1351,13 +1351,13 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Restraint Status">
 					<apex:outputText value="{!event.Status__c}" />
 				</apex:column>
-				<apex:column headerValue="Restraint Start Time" >
+				<apex:column headerValue="Restraint Event Start Time" >
 					<c:MilitaryDatetime dateTimeVal="{!event.Shift_Start_Time__c}" />
 				</apex:column>
-				<apex:column headerValue="Restraint End Time" >
+				<apex:column headerValue="Restraint Event End Time" >
 					<c:MilitaryDatetime dateTimeVal="{!event.Shift_End_Time__c}" />
 				</apex:column>
-				<apex:column headerValue="Signed At">
+				<apex:column headerValue="Event End At">
 					<apex:outputfield value=" {!event.Signed_At__c}" />
 				</apex:column>
 			</apex:pageBlockTable>
