@@ -153,7 +153,9 @@ public with sharing class GoalObjRepeaters {
 		
 		public objWrapper( ID id, String description, datetime effdate, datetime targetdate, string otype, string status) {
 			this.id = id;
-			this.shortdesc = description.left(Math.min(description.length(), 20));
+			this.shortdesc = description.left(Math.min(description.length(), 47));
+			if ( description.length() > 47)
+				this.shortdesc += '...';
 			this.fullDesc = description;
 			this.dtstart = effdate;
 			this.dtend = targetdate;

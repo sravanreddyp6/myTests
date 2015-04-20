@@ -2,6 +2,7 @@ public with sharing class GoalObjReporting {
 
 	public ID objID { get; set { init( value); } }
 	public ID saID { get; set; }
+	public string effdates { get; set; }
 	public ID currRespID { get; set; }
 	public string objType { get; set ; }
 	public Integer numRows { get; set; }
@@ -30,11 +31,12 @@ public with sharing class GoalObjReporting {
 	
 	
 	public void init ( ID thisID ) {	//get the type of objective this is
-		List<Action_Plan_Objective__c> apo = [ select id, description__c, type__c from action_plan_objective__c where id = :thisID];
+		List<Action_Plan_Objective__c> apo = [ select id, description__c, type__c, effective_date__c, target_end_date__c from action_plan_objective__c where id = :thisID];
 		
 		if (apo.size() > 0) {
 			thisObj = apo[0];
 			objType = apo[0].type__c;	
+			effdates = apo[0].effective_date__c.format() + ' to ' + apo[0].target_end_date__c.format();
 		}					
 	}
 	
@@ -97,7 +99,7 @@ public with sharing class GoalObjReporting {
         		query += ' from action_narrative_result__c where Id = :currRespId';
         		newresp  = Database.query(query);
         		system.debug( newresp);
-        		currResult = new objResultWrapper ( newresp.id, 'Narrative', newresp.description__c, null, null, null, null, null, null, null, null );
+        		currResult = new objResultWrapper ( newresp.id, 'Narrative', newresp.description__c, null, null, null, null, null, null, null, null, newresp.action_plan_objective__r.effective_date__c, newresp.action_plan_objective__r.target_end_date__c );
         		system.debug('retrieving current result of ' +  currResult); 
         }
         		
@@ -192,7 +194,7 @@ public with sharing class GoalObjReporting {
 		}
 		
 		
-		public objResultWrapper( ID id, string rt, string descr, datetime dt, boolean o, integer os, integer atts, date d, string i, string m, string s ) {
+		public objResultWrapper( ID id, string rt, string descr, datetime dt, boolean o, integer os, integer atts, date d, string i, string m, string s, date sd, date ed ) {
 			respid = id;
 			resultType = rt;
 			description = descr;
@@ -204,7 +206,6 @@ public with sharing class GoalObjReporting {
 			initials = i;
 			metobj = m;
 			status = s;
-			
 		}
 		
 	}
