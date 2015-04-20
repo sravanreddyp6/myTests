@@ -18,14 +18,23 @@
                              id="PBSSection">
              <!-- Rearranged these filed for EPRIQM-117  -->               
             <apex:outputText label="First Name" value="{!person.FirstName}" /> 
-             <apex:outputText label="Race" value="{!person.race}" />
+            <apex:outputText label="Date of Birth" value="{!person.DateOfBirth}" /> 
+           
             
             <apex:outputText label="Middle Name" value="{!person.MiddleInitial}" /> 
-            <apex:outputText label="Ethnicity" value="{!person.Ethnicity}" />  
+            <apex:outputText label="Age"  value="{!person.Age}" />
+            
             
             <apex:outputText label="Last Name" value="{!person.LastName}" />
+             <apex:outputText label="Gender" value="{!person.Gender}" />   
+              <apex:outputText label="Mailing Street 1" value="{!person.Street1}" />  
+               <apex:outputText label="Race" value="{!person.race}" />
+             <apex:outputText label="Mailing Street 2" value="{!person.Street2} " />
+              <apex:outputText label="Ethnicity" value="{!person.Ethnicity}" /> 
+             
+             <apex:outputText label="Mailing City" value="{!person.City}" />    
  		     <apex:outputText label="Marital Status" value="{!person.MaritalStatus}" />   
- 		     <apex:outputText label="Date of Birth" value="{!person.DateOfBirth}" /> 
+ 		     <apex:outputText label="Mailing State/Province Code" value="{!person.State}" />
  		     		<apex:pageBlockSectionItem >         
  		<apex:outputText value="Primary Language"  />
  		<apex:outputPanel styleclass="nowrap">
@@ -34,24 +43,25 @@
  		<apex:outputText value="Sign Language" rendered="{!person.SignLanguage}" />
  		</apex:outputPanel>
  		</apex:pageBlockSectionItem>
- 		 <apex:outputText label="Age"  value="{!person.Age}" />
+ 		 <apex:outputText label="Mailing Zip/Postal Code" value="{!person.ZipCode}" />         
  		 <apex:outputText label="Highest Level of Education" value="{!person.Education}" />
- 		 <apex:outputText label="Gender" value="{!person.Gender}" />        
- 		<apex:outputText label="Email" value="{!person.Email}" />
+ 		     <apex:outputText label="Mailing County"  value="{!person.County}" />
+ 		     <apex:outputText label="Legal/Guardianship Status" value="{!person.LegalGuardianship}" />    
+ 		
  		 <!--  Fax is removed for   EPRIQM-115        
  		<apex:outputText label="Fax" value="{!person.Fax}" />    
  		     -->  
- 		 <apex:outputText label="Mailing Street 1" value="{!person.Street1}" />    
+ 		  
  		<apex:outputText label="Phone" value="{!person.Phone}" />         
- 		<apex:outputText label="Mailing Street 2" value="{!person.Street2} " />
- 		<apex:outputText label="Mailing City" value="{!person.City}" />    
- 		<apex:outputText label="Mailing County"  value="{!person.County}" />     
- 		<apex:outputText label="Mailing State/Province Code" value="{!person.State}" />
- 		<apex:outputText label="Mailing Zip/Postal Code" value="{!person.ZipCode}" />         
+ 		
+ 		<apex:outputText label="Email" value="{!person.Email}" />
+ 		 
+ 		
+ 		
 		<!-- 
  		<apex:outputText label="SSN" value="{!person.SSN}" />         
 		 -->
- 		<apex:outputText label="Legal/Guardianship Status" value="{!person.LegalGuardianship}" />
+ 		
  		</apex:pageBlockSection>
 
 <apex:pageBlockSection title="Admission"
