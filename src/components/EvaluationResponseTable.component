@@ -8,7 +8,7 @@
     <apex:attribute name="cols" description="Number of columns on the page block"
         type="Integer" assignTo="{!numCols}" /> 
     <apex:attribute name="rows" description="Number of rows on the page block"
-        type="Integer" default="5" assignTo="{!numRows}" />           
+        type="Integer" default="1000" assignTo="{!numRows}" />           
     <apex:attribute name="type" description="The type of this table"
         type="String" required="true" assignTo="{!responseType}" />
     <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
@@ -70,9 +70,10 @@
             <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}">
                 <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled}">
                     <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null)}" />
-                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null)}" />
+                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null) && !response.Disregard__c}" />
 &nbsp;
-                    <apex:commandLink onclick="showEsign{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />                     
+                    <apex:commandLink onclick="showEsign{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />  
+                     <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Disregard" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c != null) && !response.Disregard__c }" />
                 </apex:column>
                 <apex:repeat value="{!columnsToFetch}" var="column">
                     <apex:column value="{!response[column]}"  rendered="{! NOT CONTAINS('Hearing_Aid_Type__c,Hearing_Aid_Present__c,Glasses_Contacts_Purpose__c,
@@ -178,8 +179,8 @@
                     <apex:actionStatus id="saveResponseStatus">
                         <apex:facet name="stop">
                             <apex:outputPanel id="buttons">
-                                <apex:commandButton value="Save" rendered="{! !currentResponse.Disregard__c}" onClick="saveResponse{!uniqueId}(false); return false;" />                                
-                                <apex:commandButton value="Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c}" onClick="saveResponse{!uniqueId}(true); return false;" />
+                                <apex:commandButton value="Save" rendered="{! !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null}" onClick="saveResponse{!uniqueId}(false); return false;" />                                
+                                <apex:commandButton value="Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null}" onClick="saveResponse{!uniqueId}(true); return false;" />
                                 &nbsp;
                                 <apex:commandButton value="Disregard" rendered="{! showDisregard}" onClick="disregardResponse{!uniqueId}(false); return false;" />
                                 <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
