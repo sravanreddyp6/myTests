@@ -239,17 +239,17 @@
 																</tr>
 															</thead>
 															<tbody>
-																<apex:repeat value="{!objective.skillResults.startDates}" var="startDate">
+																<apex:repeat value="{!objective.skillResults}" var="result">
 																	<tr>
 																		<td>
-																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!startDate}" /></apex:outputText>
+																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!result.resultDate}" /></apex:outputText>
 																		</td>
-																		<td>{!objective.skillResults.metObjectiveMap[startDate]}</td>
-																		<td>{!objective.skillResults.notMetObjectiveMap[startDate]}</td>
-																		<td>{!objective.skillResults.percentMetObjectiveMap[startDate]}</td>
+																		<td>{!result.met}</td>
+																		<td>{!result.notMet}</td>
+																		<td>{!result.percentMet}</td>
 																	</tr>
 																</apex:repeat>
-																<apex:outputPanel layout="none" rendered="{!objective.skillResults.startDates.size == 0}">
+																<apex:outputPanel layout="none" rendered="{!objective.skillResults.size == 0}">
 																	<tr>
 																		<td colspan="4">No data recorded</td>
 																	</tr>
@@ -266,15 +266,15 @@
 																</tr>
 															</thead>
 															<tbody>
-																<apex:repeat value="{!objective.countResults.startDates}" var="startDate">
+																<apex:repeat value="{!objective.countResults}" var="result">
 																	<tr>
 																		<td>
-																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!startDate}" /></apex:outputText>
+																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!result.resultDate}" /></apex:outputText>
 																		</td>
-																		<td>{!objective.countResults.occurrenceMap[startDate]}</td>
+																		<td>{!result.occurrences}</td>
 																	</tr>
 																</apex:repeat>
-																<apex:outputPanel layout="none" rendered="{!objective.countResults.startDates.size == 0}">
+																<apex:outputPanel layout="none" rendered="{!objective.countResults.size == 0}">
 																	<tr>
 																		<td colspan="2">No data recorded</td>
 																	</tr>
@@ -285,17 +285,17 @@
 													<apex:outputPanel rendered="{!objectiveType == 'Narrative'}" layout="block" style="max-height: 200px; overflow: auto;">
 														<table>
 															<tbody>
-																<apex:repeat value="{!objective.objectiveSObject.Action_Narrative_Results__r}" var="result">
+																<apex:repeat value="{!objective.narrativeResults}" var="result">
 																	<tr>
 																		<td>
-																			<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!result.CreatedDate}" /></apex:outputText>
+																			<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!result.resultDate}" /></apex:outputText>
 																		</td>
 																		<td>
-																			{!result.Description__c}
+																			{!result.description}
 																		</td>
 																	</tr>
 																</apex:repeat>
-																<apex:outputPanel layout="none" rendered="{!objective.objectiveSObject.Action_Narrative_Results__r.size == 0}">
+																<apex:outputPanel layout="none" rendered="{!objective.narrativeResults.size == 0}">
 																	<tr>
 																		<td colspan="2">No data recorded</td>
 																	</tr>
