@@ -3,33 +3,39 @@
     <apex:attribute name="oId" description="Id of the objective reporting on record" type="Id" assignTo="{!objId}" />
     <apex:attribute name="rows" description="Number of rows on the page block" type="Integer" default="5" assignTo="{!numRows}" />           
     <apex:attribute name="type" description="The type of this objective" type="String" required="false" assignTo="{!objType}" />
-    
 
 <!--  input panel -->
 
 <apex:form id="goalobjreportform">
 <apex:pageblock >
+<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" >
+	<apex:commandbutton styleclass="btn" value="Save" action="{!saveResult}" rerender="resultTableWrappers, description"/>
+	<input class="btn" type="button" value="Cancel" onclick="clearPanel();"  />
+</apex:outputPanel>
+<apex:pageblockSection columns="1" rendered="{!thisobj.Type__c == 'Narrative'}">
+
 <apex:outputText value="{!thisObj.Description__c}" />
 
-<apex:pageblockSection columns="2" rendered="{!thisobj.Type__c == 'Narrative'}">
-<Apex:pageblocksectionitem >
-<apex:outputlabel for="description" value="Description" />
-<apex:inputtextarea id="description" value="{!currResult.description}" cols="100" rows="10"/>
-</Apex:pageblocksectionitem>
+<apex:pageBlockSectionItem>
+<apex:outputlabel for="timespan" value="Effective Dates" />
+<apex:outputText id="timespan" value="{! effdates  }" />
+</apex:pageBlockSectionItem> 
+
+<apex:pageblocksectionitem>
+<apex:outputlabel for="description" value="Narrative Note" />
+<apex:inputtextarea id="description" value="{!thisObj.description__c}" cols="100" rows="10"/>
+</apex:pageblocksectionitem>
 
 </apex:pageblockSection>
 
-<apex:pageblockbuttons location="top">
-	<apex:commandbutton styleclass="btn" value="Save" action="{!saveResult}" rerender="resultTableWrappers, description"/>
-	<input class="btn" type="button" value="Cancel" onclick="closeGoalForm(); return false;"  />
-</apex:pageblockbuttons>
+
 </apex:pageblock>
 
 
 
 <!--  response panel  -->
 
-<Apex:pageblock >
+<Apex:pageblock title="Previous Results">
 <apex:actionFunction name="showEditResponse" action="{!showEditResponse}" status="loadingResponse" rerender="goalobjreportform" >
 	<apex:param name="currentResponseId" assignTo="{!currRespID}" value="" />
 	<apex:param name="currobjType" assignTo="{!objType}" value="" />
