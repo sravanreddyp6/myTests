@@ -134,7 +134,7 @@ global with sharing class uploaderController
 		insert toInsert;
 		newAttachments.clear();
 		newAttachments.add(new ProxyAttachment(new Attachment()));
-
+		hideAddMoreButton = false;
 		// null the list of existing attachments - this will be rebuilt when the page is refreshed
 		attachments=null;
 		return null;

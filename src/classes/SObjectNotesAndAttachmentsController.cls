@@ -8,7 +8,7 @@ public with sharing class SObjectNotesAndAttachmentsController {
         for (Note note: [SELECT ID, Title, LastModifiedDate,CreatedDate,Owner.Name, OwnerID FROM Note WHERE ParentId=:parent]) {
              entries.add(new NoteAttachment(note));
         }
-        for (Attachment attachment: [SELECT ID, Name, LastModifiedDate,CreatedDate, Description,Owner.Name, OwnerID FROM Attachment WHERE ParentId=:parent]) {
+        for (Attachment attachment: [SELECT ID, Name, LastModifiedDate,CreatedDate, Description,Owner.Name, OwnerID FROM Attachment WHERE ParentId=:parent order by createddate desc limit 10]) {
             entries.add(new NoteAttachment(attachment));
         }
         entries.sort();
