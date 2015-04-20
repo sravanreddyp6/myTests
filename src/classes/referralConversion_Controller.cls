@@ -893,6 +893,7 @@ public class personRecord {
     public string LegalGuardianship { get {return legalstat;} set; }
     public string Education { get {return educ;} set; }
 	public String age { get {return age;} set; }
+	public String race { get {return race;} set; }
 	
     public personRecord( Person_Being_Referred__c pbr ) {
         System.Debug('calling person record with referred: ' + pbr);
@@ -919,6 +920,7 @@ public class personRecord {
         signlang = pbr.Sign_Language__c;
         educ = pbr.Level_of_Education__c;
 		age = String.valueOf(pbr.Age__c);	
+		race =  pbr.Race__c;
     }
 
 
@@ -946,6 +948,7 @@ public class personRecord {
         medid = pbs.Medicaid_Id__c;
         educ = pbs.Level_of_Education__c;
         age = String.valueOf(pbs.Age__c);
+        race =  pbs.Race__c;
     }
 
 
