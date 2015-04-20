@@ -1,4 +1,4 @@
-<apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportV2" renderAs="{!IF(mode='pdf', 'pdf', '')}" action="{!checkFinalizedEdit}">
+<apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportV2" action="{!checkFinalizedEdit}">
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
 	<apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
@@ -85,7 +85,7 @@
 				<apex:commandButton value="Edit" id="editButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=edit'; return false;" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
 				<apex:commandButton value="Finalize" action="{!finalize}" id="finalizeButton" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
 				<apex:commandButton value="Disregard" id="disregardButton" onclick="if (confirm('Are you sure you want to disregard this summary?')) { disregard(); } return false; " rendered="{!AND(mode == 'view', Action_Summary__c.Status__c = 'Final')}" />
-				<apex:commandButton value="Print" id="printButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=pdf'; return false;" rendered="{!mode == 'view'}" />
+				<apex:commandButton value="Print" id="printButton" onclick="window.location='/apex/ActionSummaryReportPDFV2?id={!Action_Summary__c.Id}'; return false;" rendered="{!mode == 'view'}" />
 			</div>
 			<apex:pageBlockSection title="Summary Details" columns="2">
 				<apex:outputField value="{!Action_Summary__c.Name}" label="Summary Name" />
@@ -101,7 +101,7 @@
 				<apex:outputText label="Created Date">
 					<c:MilitaryDateTime dateTimeVal="{!Action_Summary__c.CreatedDate}" />
 				</apex:outputText>
-				<apex:outputText label="Finalized Date">
+				<apex:outputText label="Finalized Date" rendered="{!Action_Summary__c.Status__c = 'Final'}">
 					<c:MilitaryDateTime dateTimeVal="{!Action_Summary__c.Finalized_Date__c}" />
 				</apex:outputText>
 				<apex:outputField value="{!Action_Summary__c.Finalized_By__c}" rendered="{!Action_Summary__c.Status__c = 'Final'}" />
