@@ -5,7 +5,7 @@
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 
-  <c:PersonalRecord pbsId="{!$CurrentPage.parameters.PBS}" parentPage="" />
+  <c:PersonalRecord pbsId="{!$CurrentPage.parameters.PBS}" parentPage="" servAssignId="{!$CurrentPage.parameters.SA}"/>
   <br/>
   <apex:form id="frm">
   <apex:pageBlock >
@@ -16,7 +16,19 @@
                                rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                cols="1"
                                showDisregard="true" 
-                               eSign="true"   />  
+                               eSign="true"
+                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' }" />
+
+        <c:EvaluationResponseTable  saParentId="{!$CurrentPage.parameters.SA}"
+                                    type="{!$CurrentPage.parameters.FS}"
+                                    formId="{!$Component.frm}"
+                                    uniqueId="Isolation"
+                                    rules="{&quot;Other_Isolation_Type__c&quot;: {&quot;1&quot;: [&quot;Other__c&quot;]}}"  
+                                    cols="1"
+                                    showDisregard="false"
+                                    eSign="false"
+                                    rendered="{!$CurrentPage.parameters.SA != null && $CurrentPage.parameters.FS == 'Isolation Event' }" />
+  
 		</apex:pageBlock>
    </apex:form> 
 </apex:page>
