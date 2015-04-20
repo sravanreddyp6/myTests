@@ -1,0 +1,31 @@
+<apex:component controller="GoalObjRepeaters">
+    <apex:attribute name="parentID" description="Id of the parent service Assignment" type="Id" assignTo="{!saId}" required="true" />
+    <apex:attribute name="opGrp" description="Operating group for eval" type="string" required="false" />
+    <apex:attribute name="onComplete" description="JavaScript function to call when rendered" type="string" required="false" />
+    <apex:attribute name="start" description="start datetime of shift" type="date" assignTo="{!shiftStart}" required="true" />
+    
+    
+	<apex:repeat value="{!objtypes}" var="objType">
+        <apex:variable var="counter" value="{!0}" />
+            
+       <div id="{! objType }" class="panel panel-success">
+			<div class="panel-heading">
+                <h3 class="panel-title">{! objType }</h3>
+            </div>
+            <div class="panel-body">
+            
+            <apex:repeat value="{!objsbytype[objType]}" var="obj">
+            	
+            	<apex:outputtext value="<br />" escape="false" rendered="{!counter > 0}" />
+            	
+             	<a href="#" onClick="rerenderGoalObRpt( '{!obj.objtype}', 'Goal Reporting', 'Objective', '{!obj.id}', '{!obj.objtype}'); return false;" style="color:#781d7d;" data-toggle="tooltip" data-placement="top" title="{!obj.fullDesc}">
+             		<apex:outputText value="{!obj.shortDesc}" /> - <apex:outputText value=" {! obj.dtstart }" />
+             	</a>
+ 				<apex:variable var="counter" value="{!counter + 1}" />
+			</apex:repeat>	
+            </div>
+        </div>
+
+    </apex:repeat>
+
+</apex:component>

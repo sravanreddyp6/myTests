@@ -1,0 +1,137 @@
+<apex:page controller="Report_CANS_OverdueAssessments">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
+
+	<script>
+		function setFocusOnLoad() {}
+		jQuery.noConflict();
+		jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+			"datetime-us-flex-pre": function(a) {
+				// If there's no slash, then it's not an actual date, so return zero for sorting
+				if (a.indexOf('/') === -1) {
+					return '0';
+				} else {
+					// Set optional items to zero
+					var hour = 0,
+						min = 0,
+						ap = 0;
+					// Execute match. Requires month, day, year. Can be mm/dd or m/d. Can be yy or yyyy
+					// Time is optional. am/pm is optional
+					// TODO - remove extra time column from array
+					var b = a.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})( (\d{1,2}):(\d{1,2}))? ?(am|pm|AM|PM|Am|Pm)?/),
+						month = b[1],
+						day = b[2],
+						year = b[3];
+					// If time exists then output hours and minutes
+					if (b[4] != undefined) {
+						hour = b[5];
+						min = b[6];
+					}
+					// if using am/pm then change the hour to 24 hour format for sorting
+					if (b[7] != undefined) {
+						ap = b[7];
+						if (hour == '12') hour = '0';
+						if (ap == 'pm') hour = parseInt(hour, 10) + 12;
+					}
+
+					// for 2 digit years, changes to 20__ if less than 70
+					if (year.length == 2) {
+						if (parseInt(year, 10) < 70) year = '20' + year;
+						else year = '19' + year;
+					}
+					// Converts single digits
+					if (month.length == 1) month = '0' + month;
+					if (day.length == 1) day = '0' + day;
+					if (hour.length == 1) hour = '0' + hour;
+					if (min.length == 1) min = '0' + min;
+					var tt = year + month + day + hour + min;
+					return tt;
+				}
+			},
+			"datetime-us-flex-asc": function(a, b) {
+				return a - b;
+			},
+			"datetime-us-flex-desc": function(a, b) {
+				return b - a;
+			}
+		});
+		jQuery(document).ready(function($) {
+			$('#assessmentTable').dataTable({
+				columnDefs: [
+					{ type: 'datetime-us-flex', targets: 3 }
+				]
+			});
+		});
+		window.tableToExcel = function () {
+			window.open("/apex/Report_CANS_OverdueAssessmentsExcel", "_blank");
+		};
+	</script>
+	<style>
+		.pbTitle {
+			width: 300px !important;
+		}
+		.header{
+			font-size: 20px;
+			font-weight: bold;
+			padding: 12px;
+		}
+		tr.dataRow {
+			background-color:white;
+		}
+		tr.dataRow:hover {
+			background-color: #e3f3ff;
+		};
+	</style>
+	<div class="header">CANS Overdue Assessments</div>
+	<apex:pageBlock id="mainBlock" title="Results">
+		<apex:pageBlockButtons location="both">
+			<apex:form >
+				<apex:commandButton onclick="tableToExcel(); return false;" value="Export To Excel" style="float: right; " />
+			</apex:form>
+		</apex:pageBlockButtons>
+		<apex:outputPanel id="assessmentTablePanel">
+			<table id="assessmentTable" class="list">
+				<thead>
+					<tr class="headerRow">
+						<th>Person Being Served</th>
+						<th>Person Being Served Owner</th>
+						<th>Last Assessment Name</th>
+						<th>Last Assessment Date</th>
+						<th>Last Assessment Owner</th>
+						<th>Last Assessment Status</th>
+						<th>Last Assessment Disregarded?</th>
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!listWrapper}" var="partial_list" id="listWrapper">
+						<apex:repeat value="{!partial_list}" var="assessment">
+							<tr class="dataRow">
+								<td class="dataCell">
+									<a href="/{!assessment.Admission__r.Person_Being_Served__r.Id}">{!assessment.Admission__r.Person_Being_Served__r.Name}</a>
+								</td>
+								<td class="dataCell">
+									<a href="/{!assessment.Admission__r.Person_Being_Served__r.Owner.Id}">{!assessment.Admission__r.Person_Being_Served__r.Owner.Name}</a>
+								</td>
+								<td class="dataCell">
+									<a href="/{!assessment.Id}">{!assessment.Name}</a>
+								</td>
+								<td class="dataCell">
+									<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+										<apex:param value="{!assessment.Assessment_Date__c}" />
+									</apex:outputText>
+								</td>
+								<td class="dataCell">
+									<a href="/{!assessment.Owner.Id}">{!assessment.Owner.Name}</a>
+								</td>
+								<td class="dataCell">{!assessment.Status__c}</td>
+								<td class="dataCell">{!IF(assessment.Disregard__c, 'Yes', 'No')}</td>
+							</tr>
+						</apex:repeat>
+					</apex:repeat>
+				</tbody>
+			</table>
+		</apex:outputPanel>
+	</apex:pageBlock>
+</apex:page>
