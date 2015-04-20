@@ -86,6 +86,11 @@ public with sharing class EvaluationResponseTableController {
         return null;
     }
 
+    public String isolationEventStartDate {get { return currentResponse.Isolation_Event_Start_Date__c == null ? null : Utility.getMilitarytimeNoSeconds(currentResponse.Isolation_Event_Start_Date__c);}
+    	set {currentResponse.Isolation_Event_Start_Date__c = Utility.getDateTimeFromString(value+':00');} }
+    public String isolationEventEndDate {get { return currentResponse.Isolation_Event_End_Date__c == null ? null : Utility.getMilitarytimeNoSeconds(currentResponse.Isolation_Event_End_Date__c);}
+        set {currentResponse.Isolation_Event_End_Date__c = Utility.getDateTimeFromString(value+':00');} }
+
     public void saveResponse() {
         System.debug('saveResponse called, currentResponse: ' + currentResponse);   
 //      Start EC-116            
@@ -101,11 +106,15 @@ public with sharing class EvaluationResponseTableController {
             if(currentResponse.Isolation_Event_Start_Date__c > currentResponse.Isolation_Event_End_Date__c){
                 currentResponse.addError( 'Isolation end date must be after the isolation start date!' );
                 hasError = true;           
-        }
-        if(currentResponse.Isolation_Event_End_Date__c != null && currentResponse.Isolation_Event_Start_Date__c < currentResponse.Isolation_Event_End_Date__c){
-            currentResponse.eSigned_By__c = userInfo.getUserId();
-            currentResponse.eSigned_On__c = Date.today();
-        }          
+            }
+            if(currentResponse.Isolation_Event_End_Date__c > DateTime.newInstance(Date.Today().addDays(1), Time.newInstance(0,0,0,0) )){
+                currentResponse.addError( 'Isolation end date cannot be in future!' );
+                hasError = true;           
+            }            
+        //if(currentResponse.Isolation_Event_End_Date__c != null && currentResponse.Isolation_Event_Start_Date__c < currentResponse.Isolation_Event_End_Date__c){
+        //    currentResponse.eSigned_By__c = userInfo.getUserId();
+        //    currentResponse.eSigned_On__c = Date.today();
+        //}          
         }
 
 //      End EC-116
@@ -179,15 +188,20 @@ public with sharing class EvaluationResponseTableController {
             lbl.value = columnsToHeadersMap.get(column);
             if(reqFields.contains(column) ){lbl.styleClass = 'evalCompReqField';}
             
-            Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
-            System.debug('col - '+ column);
-            dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
-            
-            
-            PBSI.childComponents.add(lbl);
-            PBSI.childComponents.add(dialogInput);
+            if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c'){
+                Component.Apex.InputText dialogInput = new Component.Apex.InputText(id=column);
+                dialogInput.styleClass = 'militaryDateTime';
+                if (column == 'Isolation_Event_Start_Date__c' ) dialogInput.expressions.value = '{!isolationEventStartDate}';
+                else if (column == 'Isolation_Event_End_Date__c' ) dialogInput.expressions.value = '{!isolationEventEndDate}';
+	            PBSI.childComponents.add(lbl);
+	            PBSI.childComponents.add(dialogInput);
+            }else{
+                Component.Apex.InputField dialogInput = new Component.Apex.Inputfield(id=column);
+                dialogInput.expressions.value = '{!currentResponse[\'' + column + '\']}';
+	            PBSI.childComponents.add(lbl);
+	            PBSI.childComponents.add(dialogInput);                
+            }
 
-            system.debug( dialogInput.expressions.value);
             dialog.childComponents.add(PBSI);
         }
         return dialog;

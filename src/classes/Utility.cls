@@ -350,6 +350,18 @@ public without sharing class Utility {
     public static string getMilitarytime(Datetime dt){
     	return dt.format('MM/dd/yyyy HH:mm:ss', UserInfo.getTimeZone().toString() );
     }
- 
+    public static string getMilitarytimeNoSeconds(Datetime dt){
+        return dt.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString() );
+    } 
+    public static Datetime getDateTimeFromString(String dateTimeStr) {
+        string stringDate='';
+        try {
+            stringDate = dateTimeStr.substring(6,10) + '-' +dateTimeStr.substring(0,2) + '-' + dateTimeStr.substring(3,5) + ' ' + dateTimeStr.substring(11);
+            return Datetime.valueOf(stringDate);
+        } catch (Exception e) {
+            system.debug(e);
+        }
+        return null;
+    }
  
 }
