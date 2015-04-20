@@ -142,6 +142,7 @@ public with sharing class NeuroEvaluationEditController {
         this.currentRelatedParty = new Related_Party__c();
         this.currentRelatedParty.Person_Being_Referred__c = this.evaluation.Referral__r.Person_Being_Referred__c;
         this.currentRelatedParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(new Referral__c(Id=this.evaluation.Referral__c));
+    	this.currentRelatedParty.Status__c = 'Active';
     }
 
     public void showEditRelatedParty() {

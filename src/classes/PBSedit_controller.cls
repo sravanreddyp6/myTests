@@ -251,6 +251,7 @@ public Map<String, String> fieldMap { get; set; }
   }
   public void showAddAgency() {
     agency = new Agency_Involved_With_Individual__c();
+    
   }  
   public void saveAgency() {
     agency.Person_Being_Served__c = currentContact.id;
@@ -272,6 +273,7 @@ public Map<String, String> fieldMap { get; set; }
   }
 public void showAddRelParty() {
     relParty = new Related_Party__c();
+    relParty.Status__c = 'Active';
   }
 
   public void saveRelParty() {

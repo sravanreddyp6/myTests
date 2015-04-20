@@ -93,6 +93,9 @@
             if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
                 errors += '<li>Party Name is a required field.</li>';
             }
+            if (j$('select[id$=relatedPartyEntry_Status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }              
             var partyType = j$('select[id$=relatedPartyEntry_Type]').val();
             if (partyType == '') {
                 errors += '<li>Type is a required field.</li>';
