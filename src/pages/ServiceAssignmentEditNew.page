@@ -1376,7 +1376,7 @@ END: Uncomment to have the element collapsed by default -->
                                        uniqueId="Isolation_Event"
                                        rules="{&quot;Other_Isolation_Type__c&quot;: {&quot;1&quot;: [&quot;Other__c&quot;]}}"                                       
                                        cols="1"
-                                       rows="10"
+                                       rows="5"
                                        showDisregard="false"
                                        eSign="false"
                                        addEnabled="true"
@@ -1384,7 +1384,7 @@ END: Uncomment to have the element collapsed by default -->
                                        showAddNew="false"
                                        collapsible="false"
                                        addBtnRightAlign="true" />
-        <!-- <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> -->
+            <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?SA={!Service_Assignment__c.Id}&PBS={!admission.Person_Being_Served__c}&FS=Isolation Event" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
 
         </apex:pageBlock>
         <!-- Isolation Events End -->
