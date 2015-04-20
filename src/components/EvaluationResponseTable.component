@@ -8,7 +8,7 @@
     <apex:attribute name="cols" description="Number of columns on the page block"
         type="Integer" assignTo="{!numCols}" /> 
     <apex:attribute name="rows" description="Number of rows on the page block"
-        type="Integer" default="1000" assignTo="{!numRows}" />           
+        type="Integer" default="5" assignTo="{!numRows}" />           
     <apex:attribute name="type" description="The type of this table"
         type="String" required="true" assignTo="{!responseType}" />
     <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
@@ -36,7 +36,9 @@
     <apex:attribute name="eSign" description="show e-sign options"        
         type="boolean" required="false" default="false" />
     <apex:attribute name="showAddNew" description="show add and new button"
-        type="boolean" required="false" default="true"/>               
+        type="boolean" required="false" default="true"/>                   
+    <apex:attribute name="addBtnRightAlign" description="To right align the Add button"
+        type="boolean" required="false" default="false"/>
         
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
@@ -52,7 +54,11 @@
         </apex:actionFunction>
 
         <apex:outputPanel layout="none" rendered="{!addEnabled}">
-            <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" />
+            <apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:-70px" rendered="{!addBtnRightAlign}">
+                <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" />
+            </apex:outputPanel>
+            <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{! !addBtnRightAlign}" />
+            
             <apex:actionStatus id="loadingStatus">
                 <apex:facet name="start">
                   <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -63,12 +69,10 @@
         <apex:outputPanel id="responseTableWrapper">
             <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}">
                 <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled}">
-                    <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null) }" />
-                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null) && !response.Disregard__c}" />
+                    <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null)}" />
+                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null)}" />
 &nbsp;
-                    <apex:commandLink onclick="showEsign{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" /> 
-&nbsp;
-                     <apex:commandLink value="Disregard" rendered="{! showDisregard && response.esigned_by__c != null && !response.Disregard__c}" onClick="disregardResponse{!uniqueId}(false); return false;" />                    
+                    <apex:commandLink onclick="showEsign{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />                     
                 </apex:column>
                 <apex:repeat value="{!columnsToFetch}" var="column">
                     <apex:column value="{!response[column]}"  rendered="{! NOT CONTAINS('Hearing_Aid_Type__c,Hearing_Aid_Present__c,Glasses_Contacts_Purpose__c,
@@ -196,12 +200,12 @@
         </apex:outputPanel>
     </apex:pageBlockSection>
     <hr />
-<apex:outputPanel rendered="{!eSign}" id="authenticationDialog" style="display: none; z-index: 200; color: red;">
+<apex:outputPanel rendered="{! eSign}" id="authenticationDialog" style="display: none; z-index: 200; color: red;">
         <apex:actionRegion >
             <apex:pageBlock title="Please enter your Username and Password" id="responseDialogMainBlock">
                 <apex:pageMessages id="authenticationMessages" />
                 <apex:pageBlockButtons location="bottom">
-                    <apex:commandButton value="E-Sign" action="{!eSignRecord}" rerender="{!$Component.evalResponseBlock.responseTableWrapper},responseDialogMainBlock,responseDialogErrors,authenticationMessages" status="authenticationStatus" oncomplete="if (jQuery('[id$=authenticationMessages]').find('.message').eq(0).attr('class').indexOf('confirm') != -1) { closeModalDialog( '{!$Component.authenticationDialog}' ); alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');  }" />
+                    <apex:commandButton value="E-Sign" action="{!eSignRecord}" rerender="{!$Component.evalResponseBlock.responseTableWrapper},responseDialogMainBlock,responseDialogErrors, authenticationMessages" status="authenticationStatus" oncomplete="if (jQuery('[id$=authenticationMessages]').find('.message').eq(0).attr('class').indexOf('confirm') != -1) { closeModalDialog( '{!$Component.authenticationDialog}' ); alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');  }" />
                     <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.authenticationDialog}'); return false;" />
                     <apex:actionStatus id="authenticationStatus">
                         <apex:facet name="start">
