@@ -19,7 +19,7 @@
         <apex:pageBlock id="AttachmentsBlock">
         <div class="pbSubHeadButton">
                  <apex:commandButton value="Attach File" onclick="window.location='/apex/uploader?parentid={!parentId}&fileUploadVal=true&retURL={!theRetUrl}&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}';return false;" /> &nbsp;&nbsp;
-                <apex:commandButton rendered="{!entries.size>0}" onclick="window.location='/apex/SortTable?id={!LEFT(parentID, 15)}&retURL={!theRetUrl}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}'; return false;" value="View All" />
+                <apex:commandButton rendered="{!entries.size>0}" onclick="window.location='/apex/AttachmentListView?id={!LEFT(parentID, 15)}&retURL={!theRetUrl}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}'; return false;" value="View All" />
        </div> 
        <apex:pageBlockSection title="Attachments" columns="1" collapsible="false" id="AttachmentsId">
             <apex:outputText rendered="{!entries.size=0}" value="No records to display" />
