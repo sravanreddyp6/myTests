@@ -1167,7 +1167,7 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:pageBlock>
 
 		<a id="residentAssessment"></a>
-		<apex:pageBlock title="Resident Assessment" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
+		<apex:pageBlock title="Resident Assessment" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
 			<div class="pbHeaderButton">
 				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
 					<apex:actionStatus id="AddOldResidentAssessmentStatus" >
@@ -1227,9 +1227,9 @@ END: Uncomment to have the element collapsed by default -->
 
 		<a name="ShiftAssessments" id="ShiftAssessments"></a>
 
-		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
+		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none"/>
+				<apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}" />
 				<apex:actionStatus id="AddShiftDocStatus">
 					<apex:facet name="start">
 						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
@@ -1338,11 +1338,11 @@ END: Uncomment to have the element collapsed by default -->
 
 		<!-- Restraint Events Start -->
 		<a name="Assessment_res" id="Assessment_res"></a>
-		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && !editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
+		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
 			<div class="pbHeaderButton">
-				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" />
+				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}"/>
 			</div>
-			<apex:pageBlockTable value="{!restraintEvents}" var="event" >
+			<apex:pageBlockTable value="{!restraintEvents}" var="event" rendered="{!restraintEvents.size > 0}">
 <!-- 				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
 <!-- 				</apex:column> -->
 				<apex:column headerValue="Name">
