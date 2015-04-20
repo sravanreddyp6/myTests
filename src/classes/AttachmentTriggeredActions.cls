@@ -58,6 +58,12 @@ public with sharing class AttachmentTriggeredActions {
 
     public void OnAfterDelete(Attachment[] deletedObjects, Map<Id,Attachment> oldObjMap){
         // AFTER DELETE LOGIC
+		List<String> attchmentOwners = new List<String>();
+		 for (Attachment a : deletedObjects) {
+		 			if(a.OwnerID == UserInfo.getUserId()) {
+		 			attchmentOwners.add(a.OwnerID);
+		 			}
+		 }
 
         // Get the current user's profile name
         Profile prof = [
@@ -82,7 +88,8 @@ public with sharing class AttachmentTriggeredActions {
 
         System.Debug( 'LIST OF CONTRACT OBJECT PREFIXES: ' + contractObjPrefixes);
         // If current user is not a System Administrator, do not allow Attachments to be deleted
-        if (!'System Administrator'.equalsIgnoreCase(prof.Name) && !'System Administrator (Custom)'.equalsIgnoreCase(Prof.Name)) {
+        // As per PRI-81 owner of the attachment can delete there own attachment.
+        if ((!'System Administrator'.equalsIgnoreCase(prof.Name) && !'System Administrator (Custom)'.equalsIgnoreCase(Prof.Name))  || attchmentOwners.size() > 0 ) {
             for (Attachment a : deletedObjects) {
                 // ECDN-11 - 2014-05-09 - allow deletion of contract attachments
                 if (!(contractObjPrefixes.Contains(String.ValueOf(a.parentId).substring(0, 3)))) {
