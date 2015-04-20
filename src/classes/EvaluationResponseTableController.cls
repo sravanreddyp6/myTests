@@ -199,7 +199,7 @@ public with sharing class EvaluationResponseTableController {
         String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, ' + getNecessaryColumns(responseType) +
             ' FROM Evaluation_Response__c WHERE Evaluation__c = :evaluationId' +
             ' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
-            '\' ORDER BY Date__c ASC NULLS LAST, CreatedDate' ;
+            '\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc' ;
         responses = Database.query(query);
         numberOfResponses = responses.size();
     }
