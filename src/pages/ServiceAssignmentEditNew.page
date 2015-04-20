@@ -1368,11 +1368,13 @@ END: Uncomment to have the element collapsed by default -->
 
         <!-- Isolation Events Start -->
         <a id="isolation"></a>
-        <apex:pageBlock title="" rendered="{!!editSA && vfVarIsCM}" >
+        <apex:pageBlock title="Isolation Events" rendered="{!!editSA && vfVarIsCM}" >
             <c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
                                        type="Isolation Event"
+                                       showTitle="false"
                                        formId="{!$Component.myFRM}"
                                        uniqueId="Isolation_Event"
+                                       rules="{&quot;Other_Isolation_Type__c&quot;: {&quot;1&quot;: [&quot;Other__c&quot;]}}"                                       
                                        cols="1"
                                        rows="10"
                                        showDisregard="false"
@@ -1380,7 +1382,8 @@ END: Uncomment to have the element collapsed by default -->
                                        addEnabled="true"
                                        editEnabled="true"
                                        showAddNew="false"
-                                       collapsible="false"/>
+                                       collapsible="false"
+                                       addBtnRightAlign="true" />
         <!-- <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel> -->
 
         </apex:pageBlock>
