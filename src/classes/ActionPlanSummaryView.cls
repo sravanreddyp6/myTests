@@ -23,4 +23,19 @@ public with sharing class ActionPlanSummaryView {
 		}
 		return returnURL;
 	}
+
+	public PageReference redirectEdit() {
+		Map<String, String> parameters = ApexPages.currentPage().getParameters();
+		PageReference returnURL;
+		if (summary.New_Version__c) {
+			returnURL = new PageReference('/apex/ActionSummaryReportV2');
+			returnUrl.getParameters().put('mode', 'edit');
+		} else {
+			returnURL = new PageReference('/apex/ActionSummaryReport');
+		}
+		for (String key: parameters.keySet()) {
+			returnUrl.getParameters().put(key, parameters.get(key));
+		}
+		return returnURL;
+	}
 }
