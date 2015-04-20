@@ -135,7 +135,6 @@ public with sharing class EvaluationResponseTableController {
     public PageReference eSignRecord(){
         try {
             hasError = false;
-
             if(password != null){ 
                 AuthenticationController.auth( username, password, 'EvaluationResponseTable_Esign', currentResponseId ); 
             } 
