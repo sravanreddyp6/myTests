@@ -1,0 +1,9 @@
+<apex:page standardController="Document__c" recordSetVar="d" standardStylesheets="true" sidebar="false"  
+    tabStyle="Documents__tab" readOnly="true">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
+    <apex:stylesheet value="{!$Resource.mentoresdcss}" />
+    <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
+    <apex:listViews type="Document__c" />
+</apex:page>

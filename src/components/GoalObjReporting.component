@@ -1,0 +1,113 @@
+<apex:component controller="GoalObjReporting" allowDML="true">
+    <apex:attribute name="sId" description="Id of the objective reporting on record" type="Id" assignTo="{!saId}" />
+    <apex:attribute name="oId" description="Id of the objective reporting on record" type="Id" assignTo="{!objId}" />
+    <apex:attribute name="rows" description="Number of rows on the page block" type="Integer" default="5" assignTo="{!numRows}" />           
+    <apex:attribute name="type" description="The type of this objective" type="String" required="false" assignTo="{!objType}" />
+
+<!--  input panel -->
+
+<apex:form id="goalobjreportform">
+<apex:pageblock >
+<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" >
+	<apex:commandbutton styleclass="btn" value="Save" action="{!saveResult}" rerender="resultTableWrappers, description"/>
+	<input class="btn" type="button" value="Cancel" onclick="clearPanel();"  />
+</apex:outputPanel>
+<apex:pageblockSection columns="1" rendered="{!thisobj.Type__c == 'Narrative'}">
+
+<apex:outputText value="{!thisObj.Description__c}" />
+
+<apex:pageBlockSectionItem>
+<apex:outputlabel for="timespan" value="Effective Dates" />
+<apex:outputText id="timespan" value="{! effdates  }" />
+</apex:pageBlockSectionItem> 
+
+<apex:pageblocksectionitem>
+<apex:outputlabel for="description" value="Narrative Note" />
+<apex:inputtextarea id="description" value="{!thisObj.description__c}" cols="100" rows="10"/>
+</apex:pageblocksectionitem>
+
+</apex:pageblockSection>
+
+
+</apex:pageblock>
+
+
+
+<!--  response panel  -->
+
+<Apex:pageblock title="Previous Results">
+<apex:actionFunction name="showEditResponse" action="{!showEditResponse}" status="loadingResponse" rerender="goalobjreportform" >
+	<apex:param name="currentResponseId" assignTo="{!currRespID}" value="" />
+	<apex:param name="currobjType" assignTo="{!objType}" value="" />
+</apex:actionFunction>
+<apex:outputPanel id="resultTableWrappers" >
+<apex:actionStatus id="loadingResponse">
+	<apex:facet name="start">
+	<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+	</apex:facet>
+	<apex:facet name="stop" />
+</apex:actionStatus>
+<apex:outputPanel id="resultTableWrapper1" rendered="{!thisobj.Type__c == 'Narrative'}">
+            <apex:pageBlockTable value="{!narrativeresults}" var="result" id="resultTable1" rendered="{! narrativeresults.size>0}">
+                <apex:column headerValue="Action" width="80px" >
+                    <apex:commandlink onclick="showEditResponse('{!result.Id}', '{!type}'); return false;" rendered="{! result.createdbyid == $User.Id}" value="Edit" />
+                </apex:column>
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!result[column]}" >  
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel id="resultTableWrapper2" rendered="{!type == 'Skill'}">
+            <apex:pageBlockTable value="{!skillresults}" var="result" id="resultTable2" rendered="{! skillresults.size>0}">
+                <apex:column headerValue="Action" width="80px" >
+                    <apex:outputLink onclick="showEditResponse('{!result.Id}', '{!type}'); return false;" value="Edit" rendered="{! result.createdbyid == $User.ID}" />
+                </apex:column>
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!result[column]}" >  
+                        <!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
+                        in the PBS page they come up empty, so we must manually show them. 
+                        <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                        -->
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="resultTableWrapper3" rendered="{! CONTAINS(type,'Behavior - Count')}">
+            <apex:pageBlockTable value="{!behaviorcresults}" var="result" id="resultTable3" rendered="{! behaviorcresults.size>0}">
+                <apex:column headerValue="Action" width="80px" >
+                    <apex:outputLink onclick="showEditResponse('{!result.Id}', '{!type}'); return false;" value="Edit" rendered="{! result.createdbyid == $User.ID}" />
+                </apex:column>
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!result[column]}" >  
+                        <!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
+                        in the PBS page they come up empty, so we must manually show them. 
+                        <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                        -->
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="resultTableWrapper4" rendered="{! CONTAINS(type,'Behavior - Duration')}">
+            <apex:pageBlockTable value="{!behaviordresults}" var="result" id="resultTable4" rendered="{! behaviordresults.size>0}">
+                <apex:column headerValue="Action" width="80px" >
+                    <apex:outputLink onclick="showEditResponse('{!result.Id}', '{!type}'); return false;" value="Edit" rendered="{! result.createdbyid == $User.ID}" />
+                </apex:column>
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!result[column]}" >  
+                        <!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
+                        in the PBS page they come up empty, so we must manually show them. 
+                        <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                        -->
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+</apex:outputPanel>    
+</Apex:pageblock>
+</apex:form>
+</apex:component>
