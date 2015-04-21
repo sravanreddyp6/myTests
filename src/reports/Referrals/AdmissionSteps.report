@@ -21,8 +21,9 @@
     <columns>
         <field>ASSIGNED</field>
     </columns>
-    <description>This report shows the status of the auto generated activity items - the Admission Steps - on open Referrals for Redwood IL. (*Unless n/a.)</description>
+    <description>This report shows the status of the auto generated activity items - the Admission Steps - on open Referrals (*Unless n/a.)</description>
     <filter>
+        <booleanFilter>(1 OR 4 OR 5) AND 2 AND 3</booleanFilter>
         <criteriaItems>
             <column>CUST_RECORDTYPE</column>
             <operator>equals</operator>
@@ -37,6 +38,16 @@
             <column>STATUS</column>
             <operator>notContain</operator>
             <value>N/A</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CUST_RECORDTYPE</column>
+            <operator>equals</operator>
+            <value>Referral__c.NeuroRestorative</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>CUST_RECORDTYPE</column>
+            <operator>equals</operator>
+            <value>Referral__c.Wisconsin</value>
         </criteriaItems>
     </filter>
     <format>Summary</format>
