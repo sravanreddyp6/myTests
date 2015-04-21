@@ -1350,7 +1350,8 @@ public void loadProgramList() {
 	}
 
 //Commented out by Sravan - 11/25/2014 as Users will not create Admission Assessment from Service Assignemnt page. It will carry over from Referral.
-   public PageReference addResidentAssessment(){
+//Re-commented out by Sravan - 04/21/2015 as Users will be using the new Dynamic Eval Screens .
+ /*  public PageReference addResidentAssessment(){
    		string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
     	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
 		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
@@ -1426,7 +1427,7 @@ public void loadProgramList() {
     	} 
     	
     	return null;
-  	}
+  	}*/
     
 			public pageReference addResAsmt(){
 				string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
