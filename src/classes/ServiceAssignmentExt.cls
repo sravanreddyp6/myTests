@@ -1500,26 +1500,28 @@ public void loadProgramList() {
 					Map<id,Eval__c> evalMap = new Map<id,Eval__c>([SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals]);
 
 					//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
-					set<string> catSubcat = new set<string>();
+				/*	set<string> catSubcat = new set<string>();
 					Map<string, string> uniqueTimeMap = new Map<string, string>();
 
 					for(Eval__c ee: evalMap.values()){
 						catSubcat.add(ee.Category__c+'~'+ee.sub_category__c);
-					}
+					}*/
 
-					string timeString =  Userinfo.getUserId()+'-'+DateTime.now().getTime();
-					integer n = 0;
+					
+					
+				/*	integer n = 0;
 					//system.debug('Strings+++++++++++++++++++++++'+catSubcat);
 					for(String s: catSubcat){
 						n = n+1;
 						uniqueTimeMap.put(s,timeString+string.valueOf(n));
-					}
+					}*/
 
 					//system.debug('timeMap+++++++++++=='+uniqueTimeMap);
 
 					//Create Corresponding Eval Value Records
 					List<Eval_Value__c> values = new List<Eval_value__c>();
 					Eval_Value__c value;
+					string timeString =  Userinfo.getUserId()+'-'+DateTime.now().getTime();
 
 					string behaviorString = '';
 					string respondstoString = '';
@@ -1575,14 +1577,15 @@ public void loadProgramList() {
 						value.Eval_Section_Type__c = 'Residential';
 						value.what_id__c = resAsmt.Id;
 						value.what_id_object__c = 'Evaluation__c';
+						value.eval_Section_Id__c = timeString;
 
-						string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
+					//	string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
 
-						if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
+						/*if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
 							//system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
 							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
 
-						}
+						}*/
 
 						if(fieldName != 'Behavior' && fieldName != 'RespondsTo' && fieldName != 'Glasses') { //Move to set and use contains if more values are requested in future - Sravan - 04/19/2015 9:30PM
 
