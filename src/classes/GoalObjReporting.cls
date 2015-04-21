@@ -44,7 +44,7 @@ public with sharing class GoalObjReporting {
 		if (numrows == null)
 			numrows = 1000;
 		system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c);	
-		narrativeResults = [ select id, description__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from action_narrative_result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc LIMIT :numrows];
+		narrativeResults = [ select id, description__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from action_narrative_result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
 		columnsToFetch = new List<String>{'description__c','lastmodifiedbyid', 'lastmodifieddate'};
 		inputcolumns = new List<String>{'description'};
 		currResult.resultType = thisObj.type__c;
@@ -58,7 +58,7 @@ public with sharing class GoalObjReporting {
 			numrows = 1000;
 		system.debug( 'GETTING: ' + objID + ',' + objType );	
 		
-			behaviorResults = [select id, day_time__c, occurrences__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :objID order by lastmodifieddate desc LIMIT :numrows];
+			behaviorResults = [select id, day_time__c, occurrences__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :objID order by lastmodifieddate desc ];
 			columnsToFetch = new List<string>{'day_time__c','occurences__c','createdbyid', 'createddate','lastmodifiedbyid', 'lastmodifieddate'};
 			inputcolumns= new List<String>{'daytime','occurrences'};
 			return behaviorResults;
@@ -69,7 +69,7 @@ public with sharing class GoalObjReporting {
 			numrows = 1000;
 		system.debug( 'GETTING: ' + objID + ',' + objType );	
 		
-			behaviorResults = [select id, day_time__c, occurred__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :objID order by lastmodifieddate desc LIMIT :numrows];
+			behaviorResults = [select id, day_time__c, occurred__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :objID order by lastmodifieddate desc ];
 			columnsToFetch = new List<string>{'day_time__c','occurred__c','createdbyid', 'createddate','lastmodifiedbyid', 'lastmodifieddate'};
 			inputcolumns = new List<String>{'daytime','occurred'};
 			return behaviorResults;
@@ -80,7 +80,7 @@ public with sharing class GoalObjReporting {
 			numrows = 1000;
 		system.debug( 'GETTING: ' + objID + ',' + objType );	
 	
-			skillResults = [ select id, attempts__c, day__c, initials__c, met_objective__c, status__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Skill_Result__c where action_plan_objective__c = :objID order by lastmodifieddate desc LIMIT :numrows];
+			skillResults = [ select id, attempts__c, day__c, initials__c, met_objective__c, status__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Skill_Result__c where action_plan_objective__c = :objID order by lastmodifieddate desc ];
 			columnsToFetch = new List<String>{'attempts__c','day__c','initials__c','met_objective__c','status__c','createdbyid','createddate','lastmodifiedbyid', 'lastmodifieddate'};
 			inputcolumns = new List<String>{'attempts','day','initials','metobj','status'};
 			return skillResults;
@@ -99,7 +99,7 @@ public with sharing class GoalObjReporting {
         		query += ' from action_narrative_result__c where Id = :currRespId';
         		newresp  = Database.query(query);
         		system.debug( newresp);
-        		currResult = new objResultWrapper ( newresp.id, 'Narrative', newresp.description__c, null, null, null, null, null, null, null, null, newresp.action_plan_objective__r.effective_date__c, newresp.action_plan_objective__r.target_end_date__c );
+        		currResult = new objResultWrapper ( newresp.id, 'Narrative', newresp.description__c, null, null, null, null, null, null, null, null );
         		system.debug('retrieving current result of ' +  currResult); 
         }
         		
@@ -194,7 +194,7 @@ public with sharing class GoalObjReporting {
 		}
 		
 		
-		public objResultWrapper( ID id, string rt, string descr, datetime dt, boolean o, integer os, integer atts, date d, string i, string m, string s, date sd, date ed ) {
+		public objResultWrapper( ID id, string rt, string descr, datetime dt, boolean o, integer os, integer atts, date d, string i, string m, string s ) {
 			respid = id;
 			resultType = rt;
 			description = descr;
