@@ -224,7 +224,7 @@
 						   Restraint Status:{!thisEval.Status__c}<br/>
                            CreatedDate: <apex:outputText value=" {!shiftCreatedDate}" /> <br/>
                            {!thisEval.Has_Open_Assessment__c}
-                           <apex:variable value="" var="a" rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__C == 'Applied Restraint'}" >
+                           <apex:variable value="" var="a" rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'}" >
 						   		Restrained By: {!thisEval.Owner.Name} <br/>
 						   </apex:variable>
 						   <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
@@ -264,7 +264,7 @@
 					</apex:outputPanel>
 				</div>
 				</apex:outputPanel>
-                <label for="filter" >Section :&nbsp;</label><select id="filter" size="1" class="chosenSelect" value=""><option value="--None--">--None--</option></select>
+                <label for="filter" >Section :&nbsp;</label><select id="filter" size="1" class="chosenSelect" value=""><option value="--None--">--All--</option></select>
 				<div class="sidebar-module sidebar-module-inset">
 					<apex:outputPanel id="evalRepeaters" layout="none">
 						<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
@@ -336,7 +336,7 @@
 	</apex:outputPanel>
  
  	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
-			<c:goalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}"/> 
+			<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}"/> 
 	</apex:outputPanel>
 	
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
