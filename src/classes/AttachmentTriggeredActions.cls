@@ -89,7 +89,7 @@ public with sharing class AttachmentTriggeredActions {
         System.Debug( 'LIST OF CONTRACT OBJECT PREFIXES: ' + contractObjPrefixes);
         // If current user is not a System Administrator, do not allow Attachments to be deleted
         // As per PRI-81 owner of the attachment can delete there own attachment.
-        if ((!'System Administrator'.equalsIgnoreCase(prof.Name) && !'System Administrator (Custom)'.equalsIgnoreCase(Prof.Name))  || attchmentOwners.size() == 0 ) {
+        if ((!'System Administrator'.equalsIgnoreCase(prof.Name) && !'System Administrator (Custom)'.equalsIgnoreCase(Prof.Name))  && attchmentOwners.size() == 0 ) {
             for (Attachment a : deletedObjects) {
                 // ECDN-11 - 2014-05-09 - allow deletion of contract attachments
                 if (!(contractObjPrefixes.Contains(String.ValueOf(a.parentId).substring(0, 3)))) {
