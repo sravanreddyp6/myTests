@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>TMN_Contract__c.LN_ContractTermNoNotice__c</field>
+    </columns>
+    <columns>
+        <field>TMN_Contract__c.LN_LiabilityInsuranceExceedLimits__c</field>
+    </columns>
+    <columns>
+        <field>TMN_Contract__c.LN_ManageCareRiskSharing__c</field>
+    </columns>
+    <columns>
+        <field>TMN_Contract__c.LN_new_payor_or_a_new_service__c</field>
+    </columns>
+    <columns>
+        <field>TMN_Contract__c.ValueBucket__c</field>
+    </columns>
+    <columns>
+        <field>TMN_Contract__c.ValueAnnual__c</field>
+    </columns>
+    <description>#cdb This report shows Contracts pending Legal review and the Bucket they are in.</description>
+    <filter>
+        <criteriaItems>
+            <column>TMN_Contract__c.ApprovalStage__c</column>
+            <operator>equals</operator>
+            <value>1</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>TMN_Contract__c.LegalReviewRequired__c</column>
+            <operator>equals</operator>
+            <value>1</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Legal Review Pending</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$TMN_Contract__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>TMN_Contract__c.App1NextReviewDate__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
