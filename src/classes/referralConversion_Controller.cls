@@ -576,6 +576,7 @@ public with sharing class referralConversion_Controller {
                                             Status__c = 'Active',
                                             Program_Detail__c = refCurr.Service_Location_Program__c,
                                             Service_Location__c = refCurr.Service_Location__c,
+                                            service_line__c = getServiceLine(),
                                             Location_Region__c = getLocation(),
                                             Program_Code__c = getProgram(),
                                             Program__c = getProgram(),
