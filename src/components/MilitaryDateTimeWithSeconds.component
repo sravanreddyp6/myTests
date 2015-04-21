@@ -16,7 +16,6 @@
             jQuery('input[id$={!datetimepickerid}]').datetimepicker(
                                             { 
                                             format:'m/d/Y H:i:s',
-                                              closeOnDateSelect:true,
                                               onChangeDateTime:function(dp,$input){
                                                                 jQuery('input:hidden[id$={!hiddenFieldId}]').val( moment($input.val().toString()).isValid() ? $input.val().toString() : '' );
                                                                 },
