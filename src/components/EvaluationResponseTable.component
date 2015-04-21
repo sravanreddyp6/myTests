@@ -1,0 +1,257 @@
+<apex:component controller="EvaluationResponseTableController" allowDML="true">
+    <apex:attribute name="parentId" description="Id of the parent Evaluation record"
+        type="Id" assignTo="{!evaluationId}" />
+    <apex:attribute name="pbsParentId" description="Id of the parent PBS record"
+        type="Id" assignTo="{!pbsId}" />
+    <apex:attribute name="saParentId" description="Id of the Service Assignment record"
+        type="Id" assignTo="{!saId}" />                    
+    <apex:attribute name="cols" description="Number of columns on the page block"
+        type="Integer" assignTo="{!numCols}" /> 
+    <apex:attribute name="rows" description="Number of rows on the page block"
+        type="Integer" default="1000" assignTo="{!numRows}" />           
+    <apex:attribute name="type" description="The type of this table"
+        type="String" required="true" assignTo="{!responseType}" />
+    <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled"
+        type="Boolean" default="true" />
+    <apex:attribute name="addEnabled" description="Whether Add functionality is enabled"
+        type="Boolean" default="true" />
+    <apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked"
+        type="String" />
+    <apex:attribute name="formId" description="Id of the form element that includes this component"
+        type="String" />
+    <apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions"
+        type="String" required="true" />
+    <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering"
+        type="Boolean" required="false" default="false" />
+    <apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
+        type="String" required="false" default=""/>
+    <apex:attribute name="visiblityRowRules" description="The visibility rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
+        type="String" required="false" default=""/>           
+    <apex:attribute name="collapsible" description="Boolean describing whether or not the section is collapsible"
+        type="Boolean" required="false" default="true" />
+    <apex:attribute name="showTitle" description="Boolean describing whether or not the section title is displayed"
+        type="Boolean" required="false" default="true" />
+    <apex:attribute name="showDisregard" description="show disregard options?"
+        type="Boolean" required="false" default="false" /> 
+    <apex:attribute name="eSign" description="show e-sign options"        
+        type="boolean" required="false" default="false" />
+    <apex:attribute name="showAddNew" description="show add and new button"
+        type="boolean" required="false" default="true"/>                   
+    <apex:attribute name="addBtnRightAlign" description="To right align the Add button"
+        type="boolean" required="false" default="false"/>
+        
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>    
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+        
+<style>.evalCompReqField{padding-right: 3px; border-right: 3px solid red;}</style>
+    <apex:pageBlockSection id="evalResponseBlock" columns="1" title="{!IF(showTitle,type,'')}" collapsible="{!collapsible}">
+        <apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
+        <apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();">
+            <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
+        </apex:actionFunction>
+
+        <apex:outputPanel layout="none" rendered="{!addEnabled}">
+            <apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:-70px" rendered="{!addBtnRightAlign}">
+                <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" />
+            </apex:outputPanel>
+            <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{! !addBtnRightAlign}" />
+            
+            <apex:actionStatus id="loadingStatus">
+                <apex:facet name="start">
+                  <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                </apex:facet>
+                <apex:facet name="stop" />
+            </apex:actionStatus>
+        </apex:outputPanel>
+        <apex:outputPanel id="responseTableWrapper">
+            <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}">
+                <apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled}">
+                    <apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null)}" />
+                    <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null) && !response.Disregard__c}" />
+&nbsp;
+                    <apex:commandLink onclick="showEsign{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />  
+                     <apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Disregard" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c != null) && !response.Disregard__c }" />
+                </apex:column>
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!response[column]}"  rendered="{! NOT CONTAINS('Hearing_Aid_Type__c,Hearing_Aid_Present__c,Glasses_Contacts_Purpose__c,
+                                                                         Glasses_Present__c,Contacts_Type__c,Contacts_Present__c,JawWires_Present__c,Denture_Type__c,
+                                                                         Side_Rail_Position__c,Assistive_Device_Removable__c,Assistive_Device_Restricts_Movement__c,
+                                                                         Isolation_Event_Start_Date__c,Isolation_Event_End_Date__c', column)}">
+                        <!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
+                        in the PBS page they come up empty, so we must manually show them. -->
+                        <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                    </apex:column>
+                    
+                    <apex:column rendered="{! CONTAINS('Isolation_Event_Start_Date__c,Isolation_Event_End_Date__c', column)}">
+                        <c:MilitaryDatetime dateTimeVal="{!response[column]}" />
+                        <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                    </apex:column>
+                </apex:repeat>
+                <apex:column headerValue="Disregard" rendered="{!showDisregard}">  <apex:outputField value="{!response.Disregard__c}" /> </apex:column>
+                <apex:column headerValue="E-Sign Info" rendered="{!eSign}">
+                     <apex:outputText styleClass="view" value="{0, date, MM'/'dd'/'yyyy}">
+                        <apex:param value="{!response.eSigned_On__c}" />
+                    </apex:outputText> 
+                    &nbsp;<apex:outputField value="{!response.eSigned_By__c}"  />
+                </apex:column>                
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+
+        <!-- Dialog Modal -->
+        <apex:outputPanel id="responseDialog" style="display: none;" rendered="{!!isPdf}">
+            <script>
+                jQuery.noConflict();
+
+                var desanitize = function (str) {
+                    var tempDOMEl = document.createElement('div');
+                    tempDOMEl.innerHTML = str;
+                    return tempDOMEl.firstChild.nodeValue;
+                }
+
+                jQuery(document).ready(function ($) {
+                    attachRules{!uniqueId} = function () {
+                        if ('{!rules}' === "" && '{!visiblityRowRules}' === "") {
+                            return;
+                        }
+
+                        if ('{!visiblityRowRules}' != "") {
+                            var allFieldVisiblityRowRules = JSON.parse(desanitize('{!visiblityRowRules}'));                        
+                            $.each(allFieldVisiblityRowRules, function (controllingField, fieldRules) {
+                                $.each(fieldRules, function (controllingValue, controlledFields) {
+                                    $.each(controlledFields, function (index, controlledField) {
+                                        // Swap out the field names and put in the actual field ids.
+                                        fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
+                                    });        
+                                });                            
+                                $('[id$='+controllingField+']').data("visibility-rules", fieldRules);
+                                $('[id$='+controllingField+']').data("visibility-row-rules", true);
+                            });                        
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
+                                applyShowHideRulesToField(event.target);
+                            });
+                             $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
+                                applyShowHideRulesToField(event.target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
+                                applyShowHideRulesToField(target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
+                                applyShowHideRulesToField(target);
+                            });
+                        }
+
+                        if ('{!rules}' != "") {
+                            var allFieldRules = JSON.parse(desanitize('{!rules}'));
+                            $.each(allFieldRules, function (controllingField, fieldRules) {
+                                $.each(fieldRules, function (controllingValue, controlledFields) {
+                                    $.each(controlledFields, function (index, controlledField) {
+                                        // Swap out the field names and put in the actual field ids.
+                                        fieldRules[controllingValue][index] = $('[id$='+controlledField+']').get(0).id;
+                                    });
+                                });
+                                $('[id$='+controllingField+']').data("rules", fieldRules);
+                            });                        
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').on("change", function (event) {
+                                applyRulesToField(event.target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('select').on("change", function (event) {
+                                applyRulesToField(event.target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('input').each(function (_, target) {
+                                applyRulesToField(target);
+                            });
+                            $(document.getElementById('{!$Component.responseDialog}')).find('select').each(function (_, target) {
+                                applyRulesToField(target);
+                            });
+                        }
+                        
+                        $('.militaryDateTime').datetimepicker({
+                            format: 'm/d/Y H:i',
+                            closeOnDateSelect: true,
+                            onChangeDateTime: function(dp, $input) {
+                            //    $('.militaryDateTime').val((moment($input.val().toString()).format('L LT') == 'Invalid date' ? '' : moment($input.val().toString()).format('L LT')));
+                            },
+                            onGenerate: function(dp, $input) {
+                                $('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css("top", "+=15");
+                            }
+
+                        });
+                    };
+                });
+            </script>
+            <span class="ui-helper-hidden-accessible"><input type="text"/></span>  <!-- Just so Jquery UI doesn't auto focus on the 1st field -->
+            <apex:pageBlock title="{!type}" id="responseDialogMainBlock">
+                <apex:pageblockButtons location="bottom">
+                    <apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTableWrapper,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>
+                    <apex:actionFunction name="disregardResponse{!uniqueId}" action="{!disregardResponse}" rerender="responseTableWrapper,responseDialogMainBlock,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
+                        <apex:param name="keepDialogOpen" value="" />
+                    </apex:actionFunction>                      
+                    <apex:actionFunction rendered="{!eSign}" name="showEsign{!uniqueId}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.authenticationDialog}', 'eSign {!type}', '{!formId}'); ">
+                        <apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
+                    </apex:actionFunction>                     
+                    <apex:actionStatus id="saveResponseStatus">
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="buttons">
+                                <apex:commandButton value="Save" rendered="{! !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null}" onClick="saveResponse{!uniqueId}(false); return false;" />                                
+                                <apex:commandButton value="Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null}" onClick="saveResponse{!uniqueId}(true); return false;" />
+                                &nbsp;
+                                <apex:commandButton value="Disregard" rendered="{! showDisregard}" onClick="disregardResponse{!uniqueId}(false); return false;" />
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+
+                <apex:pageMessages id="responseDialogErrors" />
+
+                <apex:inputHidden value="{!currentResponse.Id}" rendered="{!isEdit}" />
+                <apex:dynamicComponent componentValue="{!dialog}" />
+            </apex:pageBlock>
+        </apex:outputPanel>
+    </apex:pageBlockSection>
+    <hr />
+<apex:outputPanel rendered="{! eSign}" id="authenticationDialog" style="display: none; z-index: 200; color: red;">
+<!--         <apex:actionRegion > Removed by Sravan as the E-sign button is unable to invoke the eSignrecord method on the controller. Reason: Unknown as of now - Will have to figure out -->
+            <apex:pageBlock title="Please enter your Username and Password" id="responseDialogMainBlock">
+                <apex:pageMessages id="authenticationMessages" />
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="E-Sign" action="{!eSignRecord}" rerender="{!$Component.evalResponseBlock.responseTableWrapper},responseDialogMainBlock,responseDialogErrors,authenticationMessages" status="authenticationStatus" oncomplete="if (jQuery('[id$=authenticationMessages]').find('.message').eq(0).attr('class').indexOf('confirm') != -1) { closeModalDialog( '{!$Component.authenticationDialog}' ); alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');  }" />
+                    <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.authenticationDialog}'); return false;" />
+                    <apex:actionStatus id="authenticationStatus">
+                        <apex:facet name="start">
+                            <div class="thinking">
+                                <div class="thinkingwheel">
+                                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                                </div>
+                            </div>
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </apex:pageBlockButtons>
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Username" />
+                        <apex:inputText value="{!username}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Password" />
+                        <apex:inputSecret value="{!password}" />
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+<!--         </apex:actionRegion> -->
+    </apex:outputPanel>        
+</apex:component>
