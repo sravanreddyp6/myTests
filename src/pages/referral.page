@@ -585,8 +585,8 @@
                 <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />
 
                 <apex:outputField label="Date of Birth" value="{!personBeingServedRecord.BirthDate}" />
-                <apex:pageBlockSectionItem>
-                    <apex:outputLabel>Primary Language </apex:outputLabel>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Primary Language </apex:outputLabel>
                     <apex:outputPanel styleClass="nowrap">
                         <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />&nbsp;&nbsp;
                         <apex:outputLabel value="Non-Verbal" />&nbsp;
@@ -1486,77 +1486,80 @@
 
 
                 <!--  START NEURO EvalBy and RefBy SECTION -->
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}">
-                    <apex:actionRegion >
-                        <apex:outputLabel for="evaluatedbySource" value="Evaluated By Source" styleClass="labelCol" style="margin-left: 5%;" />
-                        <apex:inputField value="{!Referral__c.Evaluated_By_Source__c}" id="evaluatedbySource">
-                            <apex:actionStatus id="statusEvalBy">
-                                <apex:facet name="start">
-                                    <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                                    </div>
-                                </apex:facet>
-                                <apex:facet name="stop"></apex:facet>
-                            </apex:actionStatus>
-                            <apex:actionSupport event="onchange" rerender="refevaluatedsource" status="statusEvalBy" />
-                        </apex:inputField>
-                    </apex:actionRegion>
-                </apex:pageBlockSectionItem>
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}"> -->
+<!--                     <apex:actionRegion > -->
+<!--                         <apex:outputLabel for="evaluatedbySource" value="Evaluated By Source" styleClass="labelCol" style="margin-left: 5%;" /> -->
+<!--                         <apex:inputField value="{!Referral__c.Evaluated_By_Source__c}" id="evaluatedbySource"> -->
+<!--                             <apex:actionStatus id="statusEvalBy"> -->
+<!--                                 <apex:facet name="start"> -->
+<!--                                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;"> -->
+<!--                                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span> -->
+<!--                                     </div> -->
+<!--                                 </apex:facet> -->
+<!--                                 <apex:facet name="stop"></apex:facet> -->
+<!--                             </apex:actionStatus> -->
+<!--                             <apex:actionSupport event="onchange" rerender="refevaluatedsource" status="statusEvalBy" /> -->
+<!--                         </apex:inputField> -->
+<!--                     </apex:actionRegion> -->
+<!--                 </apex:pageBlockSectionItem> -->
 
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSection id="refevaluatedsource" rendered="{!referralRecordType=='NeuroRestorative'}">
-                    <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" html-disabled="true" rendered="{!Referral__c.Evaluated_By_Source__c != 'Internal'}" />
-                    <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!Referral__c.Evaluated_By_Source__c == 'Internal'}" />
-                    <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" html-disabled="true" rendered="{!Referral__c.Evaluated_By_Source__c != 'External'}" />
-                    <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!Referral__c.Evaluated_By_Source__c == 'External'}" />
-                    <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" html-disabled="true" rendered="{!Referral__c.Evaluated_By_Source__c != 'Internal'}" />
-                    <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!Referral__c.Evaluated_By_Source__c == 'Internal'}" />
-                </apex:pageBlockSection>
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSection id="refevaluatedsource" rendered="{!referralRecordType=='NeuroRestorative'}"> -->
+<!--                     <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" html-disabled="true" rendered="{!Referral__c.Evaluated_By_Source__c != 'Internal'}" /> -->
+<!--                     <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!Referral__c.Evaluated_By_Source__c == 'Internal'}" /> -->
+<!--                     <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" html-disabled="true" rendered="{!Referral__c.Evaluated_By_Source__c != 'External'}" /> -->
+<!--                     <apex:inputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!Referral__c.Evaluated_By_Source__c == 'External'}" /> -->
+<!--                     <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" html-disabled="true" rendered="{!Referral__c.Evaluated_By_Source__c != 'Internal'}" /> -->
+<!--                     <apex:inputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!Referral__c.Evaluated_By_Source__c == 'Internal'}" /> -->
+<!--                 </apex:pageBlockSection> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
 
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}">
-                    <apex:actionRegion >
-                        <apex:outputLabel value="Referral Provided By Source" styleClass="labelCol" />
-                        <apex:inputField value="{!referralRecord.Referral_Provided_By_Source__c}">
-                            <apex:actionStatus id="statusRefBy">
-                                <apex:facet name="start">
-                                    <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                                    </div>
-                                </apex:facet>
-                                <apex:facet name="stop"></apex:facet>
-                            </apex:actionStatus>
-                            <apex:actionSupport event="onchange" rerender="refprovidedsource" status="statusRefBy" />
-                        </apex:inputField>
-                    </apex:actionRegion>
-                </apex:pageBlockSectionItem>
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}"> -->
+<!--                     <apex:actionRegion > -->
+<!--                         <apex:outputLabel value="Referral Provided By Source" styleClass="labelCol" /> -->
+<!--                         <apex:inputField value="{!referralRecord.Referral_Provided_By_Source__c}"> -->
+<!--                             <apex:actionStatus id="statusRefBy"> -->
+<!--                                 <apex:facet name="start"> -->
+<!--                                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;"> -->
+<!--                                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span> -->
+<!--                                     </div> -->
+<!--                                 </apex:facet> -->
+<!--                                 <apex:facet name="stop"></apex:facet> -->
+<!--                             </apex:actionStatus> -->
+<!--                             <apex:actionSupport event="onchange" rerender="refprovidedsource" status="statusRefBy" /> -->
+<!--                         </apex:inputField> -->
+<!--                     </apex:actionRegion> -->
+<!--                 </apex:pageBlockSectionItem> -->
 
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlocksection rendered="{!referralRecordType=='NeuroRestorative'}" id="refprovidedsource">
-                    <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" html-disabled="true" rendered="{!Referral__c.Referral_Provided_By_Source__c != 'Internal'}" />
-                    <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" rendered="{!Referral__c.Referral_Provided_By_Source__c == 'Internal'}" />
-                    <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" html-disabled="true" rendered="{!Referral__c.Referral_Provided_By_Source__c != 'External'}" />
-                    <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" rendered="{!Referral__c.Referral_Provided_By_Source__c == 'External'}" />
-                </apex:pageBlocksection>
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlocksection rendered="{!referralRecordType=='NeuroRestorative'}" id="refprovidedsource"> -->
+<!--                     <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" html-disabled="true" rendered="{!Referral__c.Referral_Provided_By_Source__c != 'Internal'}" /> -->
+<!--                     <apex:inputField value="{!Referral__c.Referral_Provided_By__c}" rendered="{!Referral__c.Referral_Provided_By_Source__c == 'Internal'}" /> -->
+<!--                     <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" html-disabled="true" rendered="{!Referral__c.Referral_Provided_By_Source__c != 'External'}" /> -->
+<!--                     <apex:inputField value="{!Referral__c.Referral_Provided_By_External__c}" rendered="{!Referral__c.Referral_Provided_By_Source__c == 'External'}" /> -->
+<!--                 </apex:pageBlocksection> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
 
                 <!--  END NEURO EvalBy and RefBy SECTION -->
 
 
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
-                <apex:inputField label="Evaluated By" value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='CareMeridian'}" />
+                <apex:inputField label="Evaluated By" value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType == 'CareMeridian'}" />
 
                 <apex:inputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}" />
 
                 <apex:inputField value="{!Referral__c.Legal_Guardian_Status__c}" />
+                
+                <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType == 'NeuroRestorative'}" />
+                
                 <apex:inputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge}" />
                 <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:inputField value="{!Referral__c.CYBER_ID_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
