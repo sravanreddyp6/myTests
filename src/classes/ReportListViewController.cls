@@ -1,7 +1,7 @@
 public with sharing class ReportListViewController {
-	
+
 	SystemSettings__c OS = SystemSettings__c.getOrgDefaults();
-	
+
 	public List<Report> refrportlst{get;set;}
 	public List<Report> PBSrportlst{get;set;}
 	public List<Report> contractrportlst{get;set;}
@@ -9,7 +9,7 @@ public with sharing class ReportListViewController {
 	public List<Report> docrportlst{get;set;}
 	public List<VF_Reports__c> VFReportlst{get;set;}
 	public String objectName{get;set;}
-	
+
 	//report folders
 	public String RefId;
 	public String ESDbillingId;
@@ -17,9 +17,9 @@ public with sharing class ReportListViewController {
 	public String ESDSupyId;
 	public String CntrctId;
 	public String CredId;
-	
+
 	public final String OperatingGroup = [select operating_group__c from user where id=:UserInfo.getUserId() limit 1].operating_group__c;
-	
+
 	public boolean showNeuroFeatures{
 		get {
 			if (showNeuroFeatures == null) {
@@ -29,18 +29,18 @@ public with sharing class ReportListViewController {
 		}
 		set;
 	}
-	
-	
+
+
 	//Constructor
 	public ReportListViewController(){
-		
+
 	}
-	
+
 	public void getReportList() {
 		reports();
 	}
-	
-	
+
+
 	public List<Report> reports() {
 		String ESDAct='',ref,Care,ESDbill,ESDsup,Red;
 		VF_Reports__c vf = VF_Reports__c.getInstance();
@@ -153,7 +153,7 @@ public with sharing class ReportListViewController {
 		List<Report> tempreport = database.query(query);
 		return tempreport;
 	}
-	
+
 	public set<string> getReportsToShow(string og){
 		set<string> items = new set<string>();
 
@@ -182,7 +182,7 @@ public with sharing class ReportListViewController {
 			items.add('Daily_Referrals');
 			items.add('Red_Flagged_Referrals');
 			items.add('Weekly_Referrals');
-			items.add('IL_AdmissionSteps');
+			items.add('AdmissionSteps');
 		}
 		if(og == 'Care Meridian'){
 			// EC-57 - added
@@ -192,11 +192,11 @@ public with sharing class ReportListViewController {
 			items.add('Daily_Referrals');
 			items.add('Weekly_Referrals');
 			if(showNeuroFeatures){
-				items.add('NR_AdmissionSteps');
+				items.add('AdmissionSteps');
 			}
 		}
 		return items;
 	}
-	
+
 
 }
