@@ -226,11 +226,12 @@
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
+                        <apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" />
                         <apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Action_Plans__r[0].Id}" itemLabel="Current Action Plan" rendered="{!serviceAssignment.Action_Plans__r.size > 0}" />
+<!-- 						<apex:selectOption itemValue="/{!serviceAssignment.Action_Plans__r[0].Id}" itemLabel="Current Action Plan" rendered="{!serviceAssignment.Action_Plans__r.size > 0}" /> -->
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" />
