@@ -269,7 +269,7 @@ public with sharing class ActionSummaryReportV2 {
 		// if it's a revised objective, and take the form zo*** if it's not a
 		// revised objective
 		Boolean isValidId = (parentObjectiveId instanceOf ID) ? true : false;
-		if (parentObjectiveId != null && isValidId && objectives.get(parentObjectiveId).Type__c == objective.Type__c) {
+		if (parentObjectiveId != null && isValidId && objectives.containsKey(parentObjectiveId) && objectives.get(parentObjectiveId).Type__c == objective.Type__c) {
 			return findParentObjective(objectives.get(parentObjectiveId), objectives);
 		}
 		// Return own id if this is not a revised objective
@@ -559,7 +559,7 @@ public with sharing class ActionSummaryReportV2 {
 			this.narrativeResults = new List<ObjectiveNarrativeResult>();
 		}
 
-		private void populateSkillResults() {
+		public void populateSkillResults() {
 			Map<Date, Integer> metObjectiveMap = new Map<Date, Integer>();
 			Map<Date, Integer> notMetObjectiveMap = new Map<Date, Integer>();
 			Map<Date, Integer> percentMetObjectiveMap = new Map<Date, Integer>();
@@ -603,7 +603,7 @@ public with sharing class ActionSummaryReportV2 {
 			skillResults.sort();
 		}
 
-		private void populateBehaviorCountResults() {
+		public void populateBehaviorCountResults() {
 			Map<Date, Integer> occurrenceMap = new Map<Date, Integer>();
 			Set<Date> startDateSet = new Set<Date>();
 
@@ -631,7 +631,7 @@ public with sharing class ActionSummaryReportV2 {
 			countResults.sort();
 		}
 
-		private void populateNarrativeResults() {
+		public void populateNarrativeResults() {
 			for(Action_Narrative_result__c result: objectiveSObject.Action_Narrative_results__r) {
 				narrativeResults.add(
 					new ObjectiveNarrativeResult(
