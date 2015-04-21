@@ -1247,26 +1247,29 @@
                 <apex:outputField value="{!Referral__c.How_did_referral_come_in__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.State_for_Preferred_Service__c}" rendered="{!referralRecordType!='NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
                 <apex:outputField value="{!Referral__c.Referral_Date__c}" />
                 <apex:outputField value="{!Referral__c.UCI_Number__c}" rendered="{!ReferralRecordType=='California'}" />
                 <apex:outputField value="{!Referral__c.Referral_Status__c}" id="referralStatus">
                     <apex:actionSupport event="onchange" rerender="ReferralStatus" />
                 </apex:outputField>
+                <apex:pageBlockSectionItem rendered="{!referralRecordType == 'NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.Referral_Source_Type__c}" />
                 <apex:outputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" />
-                <apex:outputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:outputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" /> -->
                 <!-- ERC-97: Start -->
                 <!-- <apex:outputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" /> -->
                 <apex:pageBlockSectionItem helpText="{!$ObjectType.Referral__c.fields.Agency_Name__c.InlineHelpText}">
                     <apex:outputlabel for="referralSource" value="Referral Source" />
                     <apex:outputField id="referralSource" value="{!Referral__c.Agency_Name__c}" />
                 </apex:pageBlockSectionItem>
+                <apex:outputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
                 <!-- ERC-97: End -->
                 <apex:outputField value="{!Referral__c.Referral_Name__c}" />
                 <apex:outputField value="{!Referral__c.Referral_Phone_Number__c}" />
                 <apex:outputField value="{!Referral__c.Financial_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.Clinical_Evaluation_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}">
                     <apex:outputText value="Location" />
                     <apex:outputPanel styleClass="nowrap@">
@@ -1313,30 +1316,28 @@
                 <apex:outputField value="{!Referral__c.Evaluated_By__c}" rendered="{!referralRecordType=='CareMeridian'}" />
 
                 <!--  START NEURO EvalBy and RefBy SECTION -->
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Evaluated_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Evaluated_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
 
-                <apex:outputField value="{!Referral__c.Referral_Provided_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Referral_Provided_By__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Referral_Provided_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:outputField value="{!Referral__c.Referral_Provided_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Referral_Provided_By__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Referral_Provided_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
                 <!--  END NEURO EvalBy and RefBy SECTION -->
 
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
-
                 <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}" />
-
-
                 <apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" />
+                <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge}" />
                 <apex:outputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.CYBER_ID_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
