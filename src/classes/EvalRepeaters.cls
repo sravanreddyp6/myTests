@@ -68,8 +68,10 @@ public with sharing class EvalRepeaters {
 		buildEvalDataList( evalwraps );
 		
 		// for restraint assessment we need a special case to reduce the # of empties by 1 since you can't fill out the 2nd subcat
-		if ( evalname == 'Restraint Event' )
-			numEmpty -=1;  
+		//&& condition addded by Sravan as Restraint Event Should behave normally when the first section is filled out especially disabling the Complete button when Second section is empty
+		if ( evalname == 'Restraint Event' && parentEvalStatus == 'Not Restrained')
+			numEmpty -=1; 
+		
 	
 		
 		system.debug( 'ANY EMPTY? ' + numEmpty);
