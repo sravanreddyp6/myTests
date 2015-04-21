@@ -1256,7 +1256,7 @@ public void loadProgramList() {
     }
 
     //Added to show Nurses Assessments from Evaluation__c object
-    public List<Evaluation__c> evaluations{
+  /*  public List<Evaluation__c> evaluations{
         get{
             if(evaluations == null) {
                 evaluations = [
@@ -1274,18 +1274,14 @@ public void loadProgramList() {
 					return evaluations;
 				}
 				set;
-			}
+			}*/
 
 			public List<Evaluation__c> residentAssessments{
 				get{
 					if(residentAssessments == null) {
 						residentAssessments = [
 							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c,
-							       Status__c,Owner.Name,
-							       (SELECT Id, CreatedDate, Owner.Name, Owner.Id
-							          FROM Evaluation_Responses__r
-							         WHERE RecordType.Name = 'E-Signature'
-							        ORDER BY CreatedDate DESC)
+							       Status__c,Owner.Name
 							FROM Evaluation__c
 							WHERE ServiceAssignment__c = :theServAssign.Id
 							AND Recordtype.Name = 'NursesAssessment'
@@ -1312,13 +1308,9 @@ public void loadProgramList() {
 					if(shiftAssessments == null) {
 						shiftAssessments = [
 							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c, Head_to_Toe_Signed_At__c,
-							Shift_Start_time__c, Shift_end_time__c, Status__c, Head_to_Toe_Status__c, Owner.Name,
-							(SELECT Id, CreatedDate, Owner.Name, Owner.Id
-							        FROM Evaluation_Responses__r
-							        WHERE RecordType.Name = 'E-Signature'
-							        ORDER BY CreatedDate DESC)
-							        FROM Evaluation__c
-                     WHERE ServiceAssignment__c = :theServAssign.Id
+							Shift_Start_time__c, Shift_end_time__c, Status__c, Head_to_Toe_Status__c, Owner.Name
+							        FROM Evaluation__c 
+							        WHERE ServiceAssignment__c = :theServAssign.Id
 							        AND RecordType.Name = 'CMShiftAssessment'
                      ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
                 ];
@@ -1598,7 +1590,7 @@ public void loadProgramList() {
 										value.Boolean__c = false;
 								}
 								else if (eval.Field_Sub_Type__c == 'Dropdown')
-									value.Text_Under_250__c = existingEval.get(fieldName)== true? '1':'0';
+									value.Text_Under_250__c = existingEval.get(fieldName)== true ? '1':'0';
 							}
 
 							else if (eval.Field_Type__c == 'Int'){
