@@ -18,7 +18,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<script type="text/javascript">
 		var booleanStick = true;
-		jQuery(document).ready(function() {
+		jQuery(window).load(function() {
 			pinPbs();
 
 			// Workaround so that the blue card doesn't stay in the way when
@@ -45,8 +45,9 @@
 				// After we pin the blue card, the anchor point position is not
 				// the same as it was before, so we have to jump to the anchor
 				// point again.
-				j$(window).scrollTop(j$(window.location.hash).offset().top).trigger('scroll');
 				j$(window).trigger('hashchange');
+				j$(window).scrollTop(j$(window.location.hash).offset().top - j$("#pbsBlueCard").height());
+				
 			}
 		});
 
