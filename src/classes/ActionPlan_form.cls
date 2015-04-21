@@ -639,21 +639,13 @@ public pagereference mySave(){
                 mapAllPrgs.put(item.ProgramID__c, item.Program_Name__c );
             }
         }        
-        List<Clinical_Catalog_Program__c> ctlgWithPrgms = [select Clinical_Catalog__r.id, Clinical_Catalog__r.Catalog_Name__c, Program_Custom_Setting__c from Clinical_Catalog_Program__c Where Program_Custom_setting__c in :mapAllPrgs.keySet()];
+        List<Clinical_Catalog_Program__c> ctlgWithPrgms = [select Clinical_Catalog__r.id, Clinical_Catalog__r.Catalog_Name__c, Program_Custom_Setting__c from Clinical_Catalog_Program__c Where Program_Custom_setting__c in :mapAllPrgs.keySet() ORDER BY Clinical_Catalog__r.Catalog_Name__c];
         map<id, string> finalBuild = new Map<id, string>();
         for(Clinical_Catalog_Program__c item: ctlgWithPrgms ){
-            finalBuild.put(item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c);        
+            finalBuild.put(item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c);   
+            ctlgs.add( new SelectOption( item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c ) );     
         }
-        for(id item: finalBuild.keySet()){
-            ctlgs.add(new SelectOption(item, finalBuild.get(item)));
-        }
-        
-        /*
-        for (Clinical_Catalog__c c : [select id, Catalog_Name__c from Clinical_Catalog__c]){
-                ctlgs.add(new SelectOption(c.id,c.Catalog_Name__c));
-            }  
-            
-            */            
+         
              
                                   
     }
