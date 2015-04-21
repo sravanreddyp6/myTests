@@ -1169,16 +1169,16 @@ END: Uncomment to have the element collapsed by default -->
 		<a id="residentAssessment"></a>
 		<apex:pageBlock title="Resident Assessment" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
 			<div class="pbHeaderButton">
-				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
-					<apex:actionStatus id="AddOldResidentAssessmentStatus" >
-						<apex:facet name="start">
-							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
-							<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
-								<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
-							</div>
-						</apex:facet>
-						<apex:facet name="stop" />
-					</apex:actionStatus>
+<!-- 				<apex:CommandButton value="Add Resident Assessment (old for review)" rendered="{!Service_Assignment__c.Status__c!='Inactive'}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" /> -->
+<!-- 					<apex:actionStatus id="AddOldResidentAssessmentStatus" > -->
+<!-- 						<apex:facet name="start"> -->
+<!-- 							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/> -->
+<!-- 							<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;"> -->
+<!-- 								<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span> -->
+<!-- 							</div> -->
+<!-- 						</apex:facet> -->
+<!-- 						<apex:facet name="stop" /> -->
+<!-- 					</apex:actionStatus> -->
 
 				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && showResAsmt}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" id="residentAsmtButton" />
 					<apex:actionStatus id="AddResidentAssessmentStatus" >
