@@ -82,9 +82,15 @@
                 <apex:repeat value="{!columnsToFetch}" var="column">
                     <apex:column value="{!response[column]}"  rendered="{! NOT CONTAINS('Hearing_Aid_Type__c,Hearing_Aid_Present__c,Glasses_Contacts_Purpose__c,
                                                                          Glasses_Present__c,Contacts_Type__c,Contacts_Present__c,JawWires_Present__c,Denture_Type__c,
-                                                                         Side_Rail_Position__c,Assistive_Device_Removable__c,Assistive_Device_Restricts_Movement__c', column)}">  
+                                                                         Side_Rail_Position__c,Assistive_Device_Removable__c,Assistive_Device_Restricts_Movement__c,
+                                                                         Isolation_Event_Start_Date__c,Isolation_Event_End_Date__c', column)}">
                         <!-- Normally these header facets are not necessary (as they should be display based on the column values, but for some reason
                         in the PBS page they come up empty, so we must manually show them. -->
+                        <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                    </apex:column>
+                    
+                    <apex:column rendered="{! CONTAINS('Isolation_Event_Start_Date__c,Isolation_Event_End_Date__c', column)}">
+                        <c:MilitaryDatetime dateTimeVal="{!response[column]}" />
                         <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
                     </apex:column>
                 </apex:repeat>
