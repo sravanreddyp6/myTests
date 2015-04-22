@@ -7,6 +7,8 @@ public with sharing class GoalObjReporting {
 	public string objType { get; set ; }
 	public Integer numRows { get; set; }
 	public Action_Plan_objective__c thisObj {get ;set;}
+	public datetime shiftStart { get; set; }
+	
 	private Boolean hasError;
 		
 	public objResultWrapper currResult { get; set; }
@@ -18,7 +20,8 @@ public with sharing class GoalObjReporting {
 	public transient List<String> columnsToFetch { get; private set ;}
 	public transient List<String> inputcolumns { get; private set ;}
 	
-	private Action_Narrative_Result__c newresp;
+	private SObject newresp;
+	
 	
 	public GoalObjReporting() {
 		narrativeResults = new List<Action_Narrative_Result__c>();
@@ -32,12 +35,19 @@ public with sharing class GoalObjReporting {
 	
 	public void init ( ID thisID ) {	//get the type of objective this is
 		List<Action_Plan_Objective__c> apo = [ select id, description__c, type__c, effective_date__c, target_end_date__c from action_plan_objective__c where id = :thisID];
-		
+		system.debug( 'APO is' + apo);
 		if (apo.size() > 0) {
 			thisObj = apo[0];
 			objType = apo[0].type__c;	
 			effdates = apo[0].effective_date__c.format() + ' to ' + apo[0].target_end_date__c.format();
-		}					
+			
+			if (objType == 'Behavior - Count' || objType == 'Behavior - Duration' ) 
+				currResult.currResultB = new Action_Behavior_Result__c( action_plan_objective__c = thisObj.Id );
+			else if ( objType == 'Skill')
+				currResult.currResultS = new Action_Skill_Result__c ( action_plan_objective__c = thisObj.Id);
+			else if ( objType == 'Narrative')
+				currResult.currResultN = new Action_Narrative_Result__c ( action_plan_objective__c = thisObj.id);
+		} 
 	}
 	
 	public List<Action_Narrative_Result__c> getnarrativeResults() {	
@@ -56,33 +66,39 @@ public with sharing class GoalObjReporting {
 	public List<Action_Behavior_Result__c> getbehaviorCResults() {	
 		if (numrows == null)
 			numrows = 1000;
-		system.debug( 'GETTING: ' + objID + ',' + objType );	
+		system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c );	
 		
-			behaviorResults = [select id, day_time__c, occurrences__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :objID order by lastmodifieddate desc ];
+			behaviorResults = [select id, day_time__c, occurrences__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
 			columnsToFetch = new List<string>{'day_time__c','occurences__c','createdbyid', 'createddate','lastmodifiedbyid', 'lastmodifieddate'};
 			inputcolumns= new List<String>{'daytime','occurrences'};
+			currResult.resultType = thisObj.type__c;
+			currResult.objID = thisObj.Id;
 			return behaviorResults;
 	}
 	
 	public List<Action_Behavior_Result__c> getbehaviorDResults() {	
 		if (numrows == null)
 			numrows = 1000;
-		system.debug( 'GETTING: ' + objID + ',' + objType );	
+			system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c);	
 		
-			behaviorResults = [select id, day_time__c, occurred__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :objID order by lastmodifieddate desc ];
+			behaviorResults = [select id, day_time__c, occurred__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
 			columnsToFetch = new List<string>{'day_time__c','occurred__c','createdbyid', 'createddate','lastmodifiedbyid', 'lastmodifieddate'};
 			inputcolumns = new List<String>{'daytime','occurred'};
+			currResult.resultType = thisObj.type__c;
+			currResult.objID = thisObj.Id;
 			return behaviorResults;
 	}
 	
 	public List<Action_Skill_Result__c> getskillResults() {	
 		if (numrows == null)
 			numrows = 1000;
-		system.debug( 'GETTING: ' + objID + ',' + objType );	
+		system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c );	
 	
-			skillResults = [ select id, attempts__c, day__c, initials__c, met_objective__c, status__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Skill_Result__c where action_plan_objective__c = :objID order by lastmodifieddate desc ];
+			skillResults = [ select id, attempts__c, day__c, initials__c, met_objective__c, status__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Skill_Result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
 			columnsToFetch = new List<String>{'attempts__c','day__c','initials__c','met_objective__c','status__c','createdbyid','createddate','lastmodifiedbyid', 'lastmodifieddate'};
 			inputcolumns = new List<String>{'attempts','day','initials','metobj','status'};
+			currResult.resultType = thisObj.type__c;
+			currResult.objID = thisObj.Id;
 			return skillResults;
 	}
 	
@@ -99,10 +115,26 @@ public with sharing class GoalObjReporting {
         		query += ' from action_narrative_result__c where Id = :currRespId';
         		newresp  = Database.query(query);
         		system.debug( newresp);
-        		currResult = new objResultWrapper ( newresp.id, 'Narrative', newresp.description__c, null, null, null, null, null, null, null, null );
+        		currResult = new objResultWrapper ( newresp.id, 'Narrative', newresp);
         		system.debug('retrieving current result of ' +  currResult); 
         }
-        		
+
+        if ( objType == 'Skill' )  {
+        		query += ' from action_skill_result__c where Id = :currRespId';
+        		newresp  = Database.query(query);
+        		system.debug( newresp);
+        		currResult = new objResultWrapper ( newresp.id, 'Skill', newresp);
+        		system.debug('retrieving current result of ' +  currResult); 
+        }
+        if ( objType.contains('Behavior' ))  {
+        		query += ' from action_behavior_result__c where Id = :currRespId';
+        		newresp  = Database.query(query);
+        		system.debug( newresp);
+        		currResult = new objResultWrapper ( newresp.id, objType, newresp);
+        		system.debug('retrieving current result of ' +  currResult); 
+        }
+        
+                		
         return null;
 	}
 	
@@ -115,34 +147,17 @@ public with sharing class GoalObjReporting {
             hasError = false;
             
             if (resulttype == 'Narrative') {
-            	Action_Narrative_Result__c resultNarr;
-            	if ( currResult.respId != null ) {
-            		resultNarr = newresp;
-            		resultNarr.description__c = currResult.description ; 
-            	} else 
-            		resultNarr = new Action_Narrative_Result__c ( action_plan_objective__c = currResult.objID, description__c = currResult.description );
-            	 
-            	upsert( resultNarr );
+            	upsert( currResult.currResultN );
             }
             
-            
             if (resulttype.startswith('Behavior') ) {
-            	Action_Behavior_Result__c resultBeh = new Action_Behavior_Result__c( action_plan_objective__c = currResult.objID, 
-            																		day_time__c = currResult.daytime, 
-            																		occurred__c =currResult.occurred, 
-       		   																		occurrences__c = currResult.occurrences);
-       		    upsert( resultBeh );
+       		    upsert( currResult.currResultB);
             }
             
             if (resulttype.startswith('Skill') ) {
-            	Action_Skill_Result__c resultSkill = new Action_Skill_Result__c( action_plan_objective__c = currResult.objID, 
-            																		day__c = currResult.day, 
-            																		initials__c =currResult.initials, 
-            																		met_objective__c = currResult.metobj,
-            																		status__c = currResult.status);
-            	upsert( resultSkill);
+            	upsert( currResult.currResultS);
             }
-		    currResult = new objResultWrapper();         
+		    currResult = new objResultWrapper(resulttype, thisObj.id);         
             
         } catch (DMLException ex) {
             hasError = true;
@@ -154,61 +169,45 @@ public with sharing class GoalObjReporting {
 
 
 	public class objResultWrapper {
-		// this is a combination of all the types of results
 		public string resultType { get; set; } 
-		public string description {get; set;}
-		public datetime daytime { get; set; }
-		public boolean occurred { get; set; }
-		public integer occurrences { get; set; }
-		public integer attempts { get; set;}
-		public date day { get; set; }
-		public string initials { get; set; }
-		public string metobj { get; set;}
-		public string status { get; set;}
 		public ID objId { get; set; }
 		public ID respid { get; set; }
-		
+		public String lastModMilitary { get; set; }
+		public Action_Behavior_Result__c currResultB { get; set; }
+		public Action_Skill_Result__c currResultS { get; set; }
+		public Action_Narrative_Result__c currResultN { get; set; }
+	
 		public objResultWrapper() {
 			
 		}
 		
-		public objResultWrapper( string resultType ) {
+		public objResultWrapper( string resultType, ID objID ) {
 			if ( resultType == 'Narrative') {
-				description = '';
+				currResultN = new Action_Narrative_Result__c ( action_plan_objective__c = objID );
 			}
 			if ( resultType == 'Skill' ) {
-				day = datetime.now().date();
-				attempts = 0;
-				initials = '';
-				metobj = '';
-				status = '';
+				currResultS = new Action_Skill_Result__c (action_plan_objective__c = objID, 
+														day__c = datetime.now().date());
+														
 			}
-			if ( resultType == 'Behavior - Count') {
-				daytime = datetime.now();
-				occurrences = 0;
-			}
-			if ( resultType == 'Behavior - Duration') {
-				daytime = datetime.now();
-				occurred = false;
+			if ( resultType.Contains('Behavior')) {
+				currResultB = new Action_Behavior_Result__c ( action_plan_objective__c = objID);
 			}
 		}
 		
 		
-		public objResultWrapper( ID id, string rt, string descr, datetime dt, boolean o, integer os, integer atts, date d, string i, string m, string s ) {
+		public objResultWrapper( ID id, string rt, SObject obj) {
 			respid = id;
 			resultType = rt;
-			description = descr;
-			daytime = dt;
-			occurred = o;
-			occurrences = os;
-			attempts = atts;
-			day = d;
-			initials = i;
-			metobj = m;
-			status = s;
-		}
-		
-	}
+			lastModMilitary = Utility.getMilitaryTime( (datetime)obj.get('lastmodifieddate'));
 
+			if ( rt == 'Narrative' ) 
+				currResultN = (Action_Narrative_Result__c)obj;
+			if ( rt == 'Skill')
+				currResultS = (Action_Skill_Result__c)obj;
+			if ( rt.Contains('Behavior'))
+				currResultB = (Action_Behavior_Result__c)obj;
+		}
+	}
 
 }
