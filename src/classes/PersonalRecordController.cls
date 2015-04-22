@@ -143,16 +143,17 @@ public with sharing class PersonalRecordController {
 
     public String isolationType{
         get{set<String> isolation = new set<String>();
-        	list<Evaluation_Response__c> isolations = [select Isolation_Type__c,Other_Isolation_Type__c,Other__c  from Evaluation_Response__c
+        	list<Evaluation_Response__c> isolations = [select Isolation_Type__c,Other__c  from Evaluation_Response__c
         	                                        where Service_Assignment__r.Status__c = 'Active' 
         	                                        AND Isolation_Status__c = 'Isolated' 
         	                                        AND Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id
-        	                                        AND Isolation_Event_End_Date__c = null ];
+        	                                        AND Isolation_Event_End_Date__c = null 
+        	                                        order by Isolation_Event_Start_Date__c desc];
 	        for(Evaluation_Response__c evlRes : isolations){
 	        	for (String s : evlRes.Isolation_Type__c.split(';') ){
+	        		  if (s == 'Other') s = evlRes.Other__c;
 	        	      isolation.add(s);
 	        	}
-	        	if (evlRes.Other_Isolation_Type__c) isolation.add(evlRes.Other__c);	        	
 	        } 
 	        return String.join(new list<String>(isolation), ', ');    
         }
