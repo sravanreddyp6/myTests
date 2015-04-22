@@ -495,15 +495,15 @@
 
 			var setSize = function() { //define a function with the code you want to call
 				// resize all boxes to same height
+				console.log("setSize called");
 				var maxheight = 0;
 				$(".panel").each(function(index, element) {
-					if (this.clientHeight > maxheight)
-						maxheight = this.clientHeight;
+					$(this).css("height", "");
+					var panelHeight = $(this).height();
+					if (panelHeight > maxheight)
+						maxheight = panelHeight;
 				});
-
 				$(".panel").css("height", maxheight);
-				$(".panel").clientHeight = maxheight;
-
 			};
 
 			$(window).resize(setSize);
