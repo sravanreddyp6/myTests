@@ -245,7 +245,7 @@ public with sharing class HomePageController{
 				orderStatement += ' nulls last';
 			}
 		} else {
-			orderStatement = ' order by ActivityDate desc, Priority';
+			orderStatement = ' order by ActivityDate desc, Priority, CreatedDate';
 		}
 		System.debug('Order statement: ' + orderStatement);
 		if(viewstsk==null || viewstsk=='All Open'){
