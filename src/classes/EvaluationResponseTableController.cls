@@ -160,8 +160,11 @@ public with sharing class EvaluationResponseTableController {
 
         try {
             hasError = false;
-            currentResponse.Disregard__c = true;
-            upsert currentResponse;
+            Evaluation_response__c disregardResponse = [SELECT Id, DIsregard__c FROM Evaluation_Response__C WHERE id=: currentResponseId]; // Using Explicit query here instead of 'currentResponse' because Kate SJ suggested that changes made to the fields should not be saved while disregarding - Sravan 04/22/2014
+            disregardResponse.Disregard__c = true;
+            update disregardResponse;
+           // currentResponse.Disregard__c = true;
+          //  upsert currentResponse;
         } catch (DMLException ex) {
             hasError = true;
 

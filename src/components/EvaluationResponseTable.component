@@ -38,7 +38,7 @@
     <apex:attribute name="showAddNew" description="show add and new button"
         type="boolean" required="false" default="true"/>                   
     <apex:attribute name="addBtnRightAlign" description="To right align the Add button"
-        type="boolean" required="false" default="false"/>
+        type="boolean" required="false" default="true"/>
         
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}"/>
@@ -58,11 +58,10 @@
         </apex:actionFunction>
 
         <apex:outputPanel layout="none" rendered="{!addEnabled}">
-            <apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:-70px" rendered="{!addBtnRightAlign}">
-                <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" />
+            <apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:-50px" >
+                <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;"  rendered="{!addBtnRightAlign}" />
             </apex:outputPanel>
-            <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{! !addBtnRightAlign}" />
-            
+            <apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign}" />
             <apex:actionStatus id="loadingStatus">
                 <apex:facet name="start">
                   <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -203,7 +202,7 @@
                                 <apex:commandButton value="Save" rendered="{! !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null}" onClick="saveResponse{!uniqueId}(false); return false;" />                                
                                 <apex:commandButton value="Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null}" onClick="saveResponse{!uniqueId}(true); return false;" />
                                 &nbsp;
-                                <apex:commandButton value="Disregard" rendered="{! showDisregard}" onClick="disregardResponse{!uniqueId}(false); return false;" />
+                                <apex:commandButton value="Disregard" rendered="{! showDisregard && currentResponse.Id != null}" onClick="disregardResponse{!uniqueId}(false); return false;" />
                                 <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
                             </apex:outputPanel>
                         </apex:facet>
