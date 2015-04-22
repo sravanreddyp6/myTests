@@ -1279,7 +1279,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>
 			<apex:outputText value="No Records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
-			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Shift" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Nurses Shift Documentation" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 		</apex:pageBlock>
 
 		<!--  Notes section -->
@@ -1357,12 +1357,18 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Restraint Event End Time" >
 					<c:MilitaryDatetime dateTimeVal="{!event.Shift_End_Time__c}" />
 				</apex:column>
-				<apex:column headerValue="Event End At">
-					<apex:outputfield value=" {!event.Signed_At__c}" />
+				<apex:column headerValue="Owner Name">
+					<apex:outputText value="{!event.Owner.Name}" />
 				</apex:column>
+				<apex:column headerValue="Last Modified">
+					<apex:outputText value=" {!event.LastModifiedDate}" />
+				</apex:column>
+<!-- 				<apex:column headerValue="Event End At"> -->
+<!-- 					<apex:outputfield value=" {!event.Signed_At__c}" /> -->
+<!-- 				</apex:column> -->
 			</apex:pageBlockTable>
 			<apex:outputText value="No Restraint Events to display" rendered="{!restraintEvents.size=0 || restraintEvents == null}" />
-			<apex:outputPanel rendered="{!restraintEvents.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=RestraintEvent" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+			<apex:outputPanel rendered="{!restraintEvents.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Restraint Event" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
 		</apex:pageBlock>
 <!-- 		End -->
 

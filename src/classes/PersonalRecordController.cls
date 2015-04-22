@@ -52,6 +52,16 @@ public with sharing class PersonalRecordController {
 		}
 		
 	}
+	
+	public string getrecType(){
+		if( ApexPages.currentPage().getParameters().get('recType') != null){
+			return ApexPages.currentPage().getParameters().get('recType');
+		}
+		else{
+			return null;
+		}
+		
+	}
 
 	public String admissionId { get {
 		if ( String.isEmpty(admissionId))  {
