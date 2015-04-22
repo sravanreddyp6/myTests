@@ -29,6 +29,24 @@
 		var evalSectionType = null;
 		var canEdit = null;
 
+
+		jQuery(function ($) {
+        	$('.collapsearrow').on("click", function (e) {
+            if ($(this).hasClass('panel-collapsed')) {
+                // expand the panel
+                $(this).parents('.inset').find('.panelshrink').slideDown();
+                $(this).removeClass('panel-collapsed');
+                $(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+            }
+            else {
+                // collapse the panel
+                $(this).parents('.inset').find('.panelshrink').slideUp();
+                $(this).addClass('panel-collapsed');
+                $(this).find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+            }
+        	});
+    		});
+    
 		function clearPanel() {
    			jQuery("[id$='panel-panel-info']").empty();
 			isModified = false;
@@ -255,16 +273,22 @@
 						<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="disregard('{!evalType}'); return false;">Disregard {!evalType}</a>
 					</apex:outputPanel>
 				</div>
+
+               <label for="filter" >Section :&nbsp;</label><select id="filter" size="1" class="chosenSelect" value=""><option value="--None--">--All--</option></select>
+
 				<apex:outputPanel rendered="{!evalType != 'Residential'}">
-				<div class="sidebar-module sidebar-module-inset" style="height:400px" >
+				<div class="sidebar-module-inset sidebar-module-sm-no-scroll" style="height:auto;text-align:left" >
+				<div id="objreportingpanel" class="inset">
 				<h4>Plan Reporting</h4>
-					<apex:outputPanel id="goalObjRepeaters" layout="none">
+				<span class="pull-right collapsearrow"><i class="glyphicon glyphicon-chevron-up"></i></span>
+					<apex:outputPanel id="goalObjRepeaters" layout="block" styleclass="panelshrink">
 						<c:GoalObjRepeaters parentID="{!SAID}"  opGrp="{!$CurrentPage.parameters.opGrp}" start="{!thisEval.Shift_Start_Time__c}" />
 					</apex:outputPanel>
+					</div>
 				</div>
+				
 				</apex:outputPanel>
-                <label for="filter" >Section :&nbsp;</label><select id="filter" size="1" class="chosenSelect" value=""><option value="--None--">--All--</option></select>
-				<div class="sidebar-module sidebar-module-inset">
+ 				<div class="sidebar-module sidebar-module-inset">
 					<apex:outputPanel id="evalRepeaters" layout="none">
 						<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
 					</apex:outputPanel>
