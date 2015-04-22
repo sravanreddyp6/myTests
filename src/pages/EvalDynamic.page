@@ -1,4 +1,9 @@
 <apex:page title="Shift Notes" Controller="EvalDynamicExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+	<style> <!-- Move this to the top of the page so the user doesn't see a flash -->
+		#tabContainer {
+			display: none;
+		}
+	</style>
 	<!-- Bootstrap core CSS -->
 	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
 	<!-- Custom styles for this template -->
@@ -9,7 +14,7 @@
 	-->
 
 	<!-- Bootstrap core JavaScript-->
-<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/jquery.min.js')}" /> -->        
+<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/jquery.min.js')}" /> -->
 <!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/bootstrap.min.js')}" /> -->
 <!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/docs.min.js')}" /> -->
 
@@ -46,7 +51,7 @@
             }
         	});
     		});
-    
+
 		function clearPanel() {
    			jQuery("[id$='panel-panel-info']").empty();
 			isModified = false;
@@ -57,7 +62,7 @@
 			// hide the old panel
 			jQuery("#panel-form").empty().append(jQuery("[id$='goalobjreportform']"));
 			}
-			
+
 		function showForm(key) {
 			if (key.indexOf('Head to Toe~Skin/Body~Wound Detail') > -1 || key.indexOf('Head to Toe~Skin/Body~Pressure Ulcer Details') > -1 || key.indexOf('Residential~Skin/Body~Pressure Ulcer Detail') > -1 || key.indexOf('Residential~Skin/Body~Wound Detail') > -1 ) {
         		jQuery("#panel-form").empty().append(jQuery("[id$='evalResponsesForm']"));
@@ -82,26 +87,26 @@
                 jQuery("#btnESign").removeClass('btn-success').addClass('btn-danger');
                 jQuery("#btnESign").removeAttr('onclick');
 				jQuery("#btnEsign").removeAttr('href');
-				
+
 				jQuery("#btnDone").removeClass('btn-success').addClass('btn-danger');
                 jQuery("#btnDone").removeAttr('onclick');
 				jQuery("#btnDone").removeAttr('href');
-			
+
                 }
 			else {
                 jQuery("#btnESign").removeClass('btn-danger').addClass('btn-success');
                 jQuery("#btnESign").attr('onclick','authenticate();');
                 jQuery("#btnESign").attr('href','#');
-                
+
                 jQuery("#btnDone").removeClass('btn-danger').addClass('btn-success');
                 jQuery("#btnDone").attr('onclick','authenticate();');
                 jQuery("#btnDone").attr('href','#');
-                
+
                 }
             jQuery("#btnESign").prop('disabled', disableFlag);
-            
+
             jQuery("#btnDone").prop('disabled', disableFlag);
-               
+
 		}
 
 		function revise() {
@@ -128,7 +133,7 @@
 					return null;
 				}
 			}
-			
+
 			if(evalType == 'Restraint Event'){
 				disregardAssessment();
 			}
@@ -139,13 +144,13 @@
 		    jQuery('.sidebar-module.sidebar-module-inset > span > div').each(function() {
 			    var _this = jQuery(this);
 			    var title = _this.find('.panel-title').prop("innerHTML").split(" --")[0].toLowerCase();
-			
+
 			    if (title.indexOf(filter) < 0 && filter != '--none--') {
 			        _this.hide();
 			    } else {
 			        _this.show();
 			    }
-		    });    
+		    });
 		}
 
 		jQuery(document).ready(function($) {
@@ -164,7 +169,7 @@
 		        $('#filter')
 		          .append($("<option></option>")
 		          .attr("value",this)
-		          .text(this)); 
+		          .text(this));
 		    });
 		    $('#filter').chosen().change(filterNavigation);
 
@@ -231,12 +236,12 @@
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
                         <p>Head to Toe Status: {!thisEval.Head_to_Toe_Status__c}<br/> Shift Status:{!thisEval.Status__c} {!evalStatusDate} </p>
 					</apex:outputPanel>
-					
+
 					<apex:outputPanel rendered="{!evalType == 'Residential'}">
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
                         <p>Status:{!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
 					</apex:outputPanel>
-					
+
 					<apex:outputPanel rendered="{!evalType == 'Restraint Event'}">
 						<p>
 						   Restraint Status:{!thisEval.Status__c}<br/>
@@ -250,7 +255,7 @@
 						   <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null}" >
 						   		End Date/Time :{!shiftEndTime}
 						   </apex:variable>
-						</p>				
+						</p>
 					</apex:outputPanel>
 
 					<apex:outputPanel >
@@ -286,7 +291,7 @@
 					</apex:outputPanel>
 					</div>
 				</div>
-				
+
 				</apex:outputPanel>
  				<div class="sidebar-module sidebar-module-inset">
 					<apex:outputPanel id="evalRepeaters" layout="none">
@@ -307,7 +312,7 @@
 
 						</div>
 					</apex:outputPanel>
-					
+
 				</apex:outputPanel>
 				<!-- /.blog-post -->
 			</div>
@@ -349,19 +354,19 @@
 			<input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />
 		</apex:form>
 	</apex:outputPanel>
-	 
+
 	<apex:outputPanel style="display: none" id="restraintReduction" >
 		<apex:form id="restraintForm" >
 			<c:restraintReductionComponent rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event' || key=='Restraint Event~Reduction Review~Reduction Review~Activity Log'}" AssessmentId="{!currentAssessId}"/>
 			<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel();" />
-			
+
 		</apex:form>
 	</apex:outputPanel>
- 
+
  	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
-			<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}"/> 
+			<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}"/>
 	</apex:outputPanel>
-	
+
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
 		<apex:form id="evalResponsesForm">
 			<apex:pageBlock >
@@ -418,10 +423,4 @@
 		</apex:facet>
 		<apex:facet name="stop"> </apex:facet>
 	</apex:actionStatus>
-
-	<style>
-		#tabContainer {
-			display: none;
-		}
-	</style>
 </apex:page>
