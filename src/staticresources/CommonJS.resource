@@ -30,27 +30,21 @@
 			// populated automagically by Salesforce when items are moved from
 			// the selected and unselected lists. By default, this never gets
 			// the change event when its value changed, because their values
-			// are changed programmatically by SF. Therefore, we have to trigger
-			// those ourselves by attaching to the left and right arrow buttons.
+			// are changed programmatically by SF (and those don't trigger change
+			// event. Therefore, we have to monitor these values.
 			// However, this method is called both when the page is initialized
-			// and when a value is changed, so we need to make sure to not attach
-			// more handlers to the arrow than necessary (i.e. in the latter
-			// case)
-			var $arrows = $element.parent().find("a");
-			if (!$arrows.hasClass("handler-attached")) {
-				$arrows.click(function (event) {
-					// SF attaches their handler function on the arrows' href,
-					// so we capture that here, then trigger the change event
-					// ourselves. Note: original an attempt to use window.location
-					// was made instead of eval(); however in the former case,
-					// it turns out that the browser does that asynchronously,
-					// and thus the change event was fired prematurely. Calling
-					// eval() makes sure that doesn't happen.
-					eval(decodeURIComponent(this.href));
-					$element.trigger("change");
-					event.preventDefault();
-				});
-				$arrows.addClass("handler-attached");
+			// and when a value is changed, so we need to make sure to not use
+			// more timeout handler than necessary (i.e. in the latter case)
+			if (!$element.hasClass("timer-attached")) {
+				var originalValue = $element.realVal();
+				setInterval(function() {
+					var currentValue = $element.realVal();
+					if (currentValue != originalValue) {
+						originalValue = currentValue;
+						$element.addClass("timer-attached");
+						$element.trigger("change");
+					}
+				}, 100)
 			}
 		}
 		// For multi-picklist, apparently the data- passthrough also
