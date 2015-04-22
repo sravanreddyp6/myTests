@@ -223,7 +223,6 @@
 						<p>
 						   Restraint Status:{!thisEval.Status__c}<br/>
                            CreatedDate: <apex:outputText value=" {!shiftCreatedDate}" /> <br/>
-                           {!thisEval.Has_Open_Assessment__c}
                            <apex:variable value="" var="a" rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'}" >
 						   		Restrained By: {!thisEval.Owner.Name} <br/>
 						   </apex:variable>
@@ -336,7 +335,7 @@
 	</apex:outputPanel>
  
  	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
-			<c:goalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}"/> 
+			<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}"/> 
 	</apex:outputPanel>
 	
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
