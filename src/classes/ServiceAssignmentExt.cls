@@ -1459,7 +1459,7 @@ public void loadProgramList() {
 				//	return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
 
 
-				if(referral.Has_Evaluation__c) {
+				if(referral != null && referral.Has_Evaluation__c) { //Prevent null pointer exception
 					Id evalOnReferralId = referral.Evaluations__r[0].Id; //Grab the Id of the Existing evaluation record on referral
 					//FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses; //Calling the Field set
 					string query = 'SELECT ';
