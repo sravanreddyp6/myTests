@@ -71,7 +71,6 @@
 				$targets.push($(document.getElementById(value)));
 			}
 			var val = $element.realVal();
-			console.debug("Val: " + val);
 			if (val == key || (val instanceof Array && $.inArray(key, val) != -1)) {
 				// Enable fields
 				$.each($targets, function (_, $target) {
