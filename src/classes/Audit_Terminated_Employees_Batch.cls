@@ -3,8 +3,8 @@ global class Audit_Terminated_Employees_Batch implements Database.Batchable<sObj
 	global final list<TMN_User__c> query ;
 	global string devMsg;
 	global datetime dayMonday = system.now().addDays(-7).addHours(-8);
-	global datetime dayFriday = system.now().addDays(-3).addHours(-8);
-
+	//global datetime dayFriday = system.now().addDays(-3).addHours(-8);
+	global datetime dayNextMonday = system.now().addHours(-8);
 	global Audit_Terminated_Employees_Batch(List<TMN_User__c> q, string msg) {
 		system.debug('starting construct');
 		query=q; devMsg = msg;
