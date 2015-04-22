@@ -29,7 +29,7 @@ global class Audit_Terminated_Employees_Batch implements Database.Batchable<sObj
 			mail.setBccSender(false);
 			//mail.setccAddresses(new string[] {'_TMN_Dev_Team@thementornetwork.com'});
 			mail.setUseSignature(false);
-			mail.setHtmlBody('Audit termination batch for week '+ dayMonday + 'to' + dayFriday);
+			mail.setHtmlBody('Audit termination batch for week '+ dayMonday + 'to' + dayNextMonday);
 			mail.setSaveAsActivity(false);
 			List<Messaging.SingleEmailMessage> errorEmail = new List<Messaging.SingleEmailMessage>();
 			errorEmail.add(mail);
@@ -50,7 +50,7 @@ global class Audit_Terminated_Employees_Batch implements Database.Batchable<sObj
 			mail.setBccSender(false);
 			///mail.setccAddresses(new string[] {'_TMN_Dev_Team@thementornetwork.com'});
 			mail.setUseSignature(false);
-			mail.setHtmlBody('These are the names of employees terminated from days ' + dayMonday + ' to ' + dayFriday 
+			mail.setHtmlBody('These are the names of employees terminated from days ' + dayMonday + ' to ' + dayNextMonday 
 				+ ': ' + devMsg);
 			mail.setSaveAsActivity(false);
 			List<Messaging.SingleEmailMessage> devEmail = new List<Messaging.SingleEmailMessage>();
