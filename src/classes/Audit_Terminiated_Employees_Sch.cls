@@ -8,7 +8,7 @@ global class Audit_Terminiated_Employees_Sch implements Schedulable {
 				operating_group__c, hire_date__c,  lastModifiedDate
 					from tmn_user__c
 					where job_status__c = 'Inactive'
-					and LastModifiedDate > :dayMonday and LastModifiedDate < :dayFriday ];
+					and LastModifiedDate > :dayMonday and LastModifiedDate < :dayNextMonday ];
 	   			
 				system.debug('starting requires email');
 				system.debug(Users);
