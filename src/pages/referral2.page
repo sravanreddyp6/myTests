@@ -134,9 +134,14 @@
         function validateLocation() {
             var errors = '';
             j$('#locationErrors').html(errors);
+            
+            var aliId = '{!$Component.referralForm:ReferralLocationModalBlock:referralLocationEntry:sectionItem:sl:comp:lookupElement_lkid}';
+            aliId = aliId.replace(/:/g, '\\:');
+            aliId = '#' +aliId;
+            
             if (j$('input[id$=locationEntry_ServiceLocation]').val() == '') {
-                errors += '<li>Alias is a required field.</li>';
-            } else if (j$('input[id$=lookupElement_lkid]').val() == '') {
+                errors += '<li>Alias is a required field.</li>';  
+            } else if (j$(aliId).val() == '') {
                 errors += '<li>You must lookup the Alias</li>';
             }
 
