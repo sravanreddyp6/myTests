@@ -25,6 +25,34 @@
 	// This doesn't support the use case when 2 fields try to control 1 field.
 	window.applyRulesToField = function (element) {
 		var $element = $(element);
+		if ($element.attr('multiple') == 'multiple' && !$element.attr('id').endsWith('_selected') & !$element.attr('id').endsWith('_unselected')) {
+			// This is the hidden select field for multi-picklist that gets
+			// populated automagically by Salesforce when items are moved from
+			// the selected and unselected lists. By default, this never gets
+			// the change event when its value changed, because their values
+			// are changed programmatically by SF. Therefore, we have to trigger
+			// those ourselves by attaching to the left and right arrow buttons.
+			// However, this method is called both when the page is initialized
+			// and when a value is changed, so we need to make sure to not attach
+			// more handlers to the arrow than necessary (i.e. in the latter
+			// case)
+			var $arrows = $element.parent().find("a");
+			if (!$arrows.hasClass("handler-attached")) {
+				$arrows.click(function (event) {
+					// SF attaches their handler function on the arrows' href,
+					// so we capture that here, then trigger the change event
+					// ourselves. Note: original an attempt to use window.location
+					// was made instead of eval(); however in the former case,
+					// it turns out that the browser does that asynchronously,
+					// and thus the change event was fired prematurely. Calling
+					// eval() makes sure that doesn't happen.
+					eval(decodeURIComponent(this.href));
+					$element.trigger("change");
+					event.preventDefault();
+				});
+				$arrows.addClass("handler-attached");
+			}
+		}
 		// For multi-picklist, apparently the data- passthrough also
 		// exist in the selected and unselected checkboxes, which confuse
 		// the script, so we check for their existence here.
@@ -43,6 +71,7 @@
 				$targets.push($(document.getElementById(value)));
 			}
 			var val = $element.realVal();
+			console.debug("Val: " + val);
 			if (val == key || (val instanceof Array && $.inArray(key, val) != -1)) {
 				// Enable fields
 				$.each($targets, function (_, $target) {
@@ -91,9 +120,9 @@
         var $element = $(element);
         var shownTargets = [];
         var rules = $element.data("visibility-rules");
-    
+
         var $allTargets = [];
-    
+
         rules && $.each(rules, function(key, value) {
             if (value instanceof Array) {
                 $.each(value, function(_, selector) {
@@ -103,7 +132,7 @@
                 $allTargets.push($(document.getElementById(value)));
             }
         });
-    
+
         rules && $.each(rules, function(key, value) {
             var $targets = [];
             if (value instanceof Array) {
@@ -128,7 +157,7 @@
                 });
             }
         });
-    
+
         // Hide fields
         $.each($allTargets, function(_, $target) {
             // We also need to revert the field(s) to their original state
@@ -159,6 +188,6 @@
             $target.find("input[type=checkbox]").prop("checked", false).trigger("change");
             $target.trigger("change");
         });
-    
+
     }
 })(jQuery.noConflict());
