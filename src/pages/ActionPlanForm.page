@@ -425,7 +425,11 @@ background-color: cornsilk;
 <td id="catalog-cell">
     <div id="catalog-bg"/>
     <div id="catalog-wrapper">
-        <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" rendered="{!$Setup.SystemSettings__c.ActionPlan_CatalogSelectorEnabled__c}" >
+        <apex:outputPanel layout="block" style="display: {!if(editMode, 'block','none')}" rendered="{!
+                            ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_CM__c && userOpGrp == 'Care Meridian')
+                            || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_Cambridge__c && userOpGrp == 'Cambridge')
+                            || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_NR__c && userOpGrp == 'NeuroRestorative')
+                            || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood') }" >
             <div id="catalog_filler" style="display: none; width: 400px;"> &nbsp;</div>
             <div style="width: 45px;"> &nbsp;</div>
             <div id="catalog_sticky">

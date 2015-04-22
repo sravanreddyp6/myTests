@@ -45,8 +45,8 @@ public with sharing class ActionPlan_form {
     public list<Progress_Note__c> getNotes(){
         return [select id, name, Start_Time__c, End_Time__c, createddate, createdby.name from Progress_Note__c where Action_plan__c = :actionplan.id order by createddate DESC limit 10 ];
 
-    }      
-
+    }
+    public string userOpGrp {get; private set;}
 
     public boolean canEditPlan { get {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
@@ -608,7 +608,8 @@ public pagereference mySave(){
         isRedwood = false;
         tmp = string.valueof(system.now()).remove(' ').remove(':').remove('-');
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
-            if (TU.Operating_Group__c == 'Redwood'){isRedwood = true;} 
+            if (TU.Operating_Group__c == 'Redwood'){isRedwood = true;}
+            userOpGrp = TU.Operating_Group__c;
         }
         refreshPlan(); 
         aliasChildrenTitles();
@@ -656,7 +657,10 @@ public pagereference mySave(){
         ActAlias = 'Action';
         
         SystemSettings__c mc = SystemSettings__c.getInstance(UserInfo.getUserId());
-        boolean showThis = mc.ActionPlan_CatalogSelectorEnabled__c;
+        boolean showThis = (mc.ActnPln_CtlgEnabledFor_CM__c && userOpGrp == 'Care Meridian')
+                            || (mc.ActnPln_CtlgEnabledFor_Cambridge__c && userOpGrp == 'Cambridge')
+                            || (mc.ActnPln_CtlgEnabledFor_NR__c && userOpGrp == 'NeuroRestorative')
+                            || (mc.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood');
         system.debug('catalog enabled - ' + showThis);
         system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
         if(showThis){
