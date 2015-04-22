@@ -948,10 +948,10 @@ public with sharing class referrals_Controller{
 		// ERNS-8 - when trying to close/admit Neuro referral, check for required fields
 		if ( referralRecordType == 'NeuroRestorative') {
 			
-			Boolean chkEvaluatedBy = checkforBlankFields ( referralRecord, 'Referral__c', new list<string>{'Evaluated_By_Internal__c'}, 'A value for {0} is required to Save the Referral'); //For EB-399 - Sravan
+			/*Boolean chkEvaluatedBy = checkforBlankFields ( referralRecord, 'Referral__c', new list<string>{'Evaluated_By_Internal__c'}, 'A value for {0} is required to Save the Referral'); //For EB-399 - Sravan
 			if(chkEvaluatedBy){
 				return null;
-			}
+			}*/ //Not needed as the field is made required in the page itself
 			
 			
 			if (referralRecord.Diagnosis_I__c != 'Encephalopathy'){ //Added by Sravan for ERNS-21 ticket.07/02/2014 1:02 PM

@@ -1561,7 +1561,9 @@
 
                 <apex:inputField value="{!Referral__c.Legal_Guardian_Status__c}" />
                 
-                <apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType == 'NeuroRestorative'}" />
+
+             	<apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}"  rendered="{!referralRecordType == 'NeuroRestorative'}" required="true" />
+
                 
                 <apex:inputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge}" />
                 <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
