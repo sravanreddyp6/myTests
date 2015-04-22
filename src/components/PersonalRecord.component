@@ -100,7 +100,7 @@
     	<apex:outputLink id="planlinkplanAtt" rendered="{!parentPage == 'ActionPlan' &&   (upload || viewall ||editAttachemnt ||viewAttachment)}" > <a href="/{!apId}"> > Action Plan</a></apex:outputLink>
 	    <apex:outputText id="planlinkplan"  rendered="{!parentPage == 'ActionPlan'  &&   NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value =" >Action Plan " />
 		<apex:outputText id="evalText" rendered="{!parentPage == 'NursesShiftDocument'}" value=" > Nurses Shift Documentation" />
-		<apex:outputText id="evalListView" rendered="{!parentPage = 'ShiftAssessmentListView'}" value=" > Nurses Shift Documentation" />
+		<apex:outputText id="evalListView" rendered="{!parentPage = 'ShiftAssessmentListView'}" value=" > {!recType}" />
 		<apex:outputText id="evalType" rendered="{!parentPage == 'Evaluation'}"> > {!evalType} </apex:outputText>
 		<apex:outputText id="goalobj" rendered="{!parentPage == 'GoalObjRpt'}" value=" > Goal/Objective Documentation Report" />
 		<apex:outputPanel id="skillslink" rendered="{! parentPage =='SkillsTracking'}">&nbsp;>&nbsp;Skills Worksheet</apex:outputPanel>
