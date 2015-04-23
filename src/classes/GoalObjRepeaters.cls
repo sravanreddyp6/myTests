@@ -24,13 +24,16 @@ public with sharing class GoalObjRepeaters {
 					
 		SelectOption so;
 		for ( Action_Plan_objective__c o : ReportableBehaviorCObjectives( shiftStart.Date())) {
-			
+		
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
 		}
 		// store all the items for this type
-		system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
-		ot.put( objw.objtype, objs);
+		if ( objw != null ) {
+			system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
+			ot.put( objw.objtype, objs);
+		}
+		
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableBehaviorDObjectives( shiftStart.Date())) {
@@ -39,8 +42,10 @@ public with sharing class GoalObjRepeaters {
 			objs.Add( objw );
 		}
 		// store all the items for this type
-		system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
-		ot.put( objw.objtype, objs);
+		if ( objw != null ) {
+			system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
+			ot.put( objw.objtype, objs);
+		}
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableSkillObjectives( shiftStart.Date())) {
@@ -49,8 +54,11 @@ public with sharing class GoalObjRepeaters {
 			objs.Add( objw );
 		}
 		// store all the items for this type
-		system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
-		ot.put( objw.objtype, objs);
+		if ( objw != null ) {
+		
+			system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
+			ot.put( objw.objtype, objs);
+		}
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableNarrativeObjectives( shiftStart.Date())) {
@@ -59,8 +67,11 @@ public with sharing class GoalObjRepeaters {
 			objs.Add( objw );
 		}
 		// store all the items for this type
+		if ( objw != null ) {
+		
 		system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
 		ot.put( objw.objtype, objs);
+		}
 		
 		system.debug( 'Objectives by type: ' + ot);
 		return ot;
