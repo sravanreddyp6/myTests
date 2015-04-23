@@ -84,17 +84,17 @@
 			booleanStick = false;
 		}
 	</script>
-
 	<!--  breadcrumb -->
 	<div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;
 		<a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
 	   <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
     	<apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" />
     	<apex:outputLink rendered="{!parentPage = 'PBS' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
-    	<apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS' }">&nbsp;>&nbsp;<apex:outputLink rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'   }" value="/{!admId}"> Admission</apex:outputLink>
-    	<apex:outputText rendered="{!parentPage == 'Admission' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value="Admission" /></apex:outputPanel>
+    	<apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS' }"><apex:outputLink rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'   }"> &nbsp;>&nbsp; <a href="/{!admId}"> Admission </a> </apex:outputLink>
+    	<apex:outputText rendered="{!parentPage == 'Admission' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value="> Admission" /></apex:outputPanel>
     	<apex:outputLink rendered="{!parentPage == 'Admission' &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" >&nbsp;>&nbsp;<a href="/apex/AdmissionView?id={!admId}">Admission</a></apex:outputLink>
-		<apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' )}" value=" > {!asmtType} Assessment" />
+		<apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' ) &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value=" > {!asmtType} Assessment" />
+		<apex:outputLink id="asmtlinkatt" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' )  &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" >&nbsp;>&nbsp; <a href="/{!asmtId}">{!asmtType} Assessment </a> </apex:outputLink>
 		<apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'NursesShiftDocument' || parentPage = 'ShiftAssessmentListView' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage='GoalObjRpt' || parentPage='ServAssignClose' || parentPage='ServAssignCloseApproval' || ( parentPage=='Assessment' && BEGINS(asmtType, 'FAD')) || parentPage='SeizureListView' || parentPage='Evaluation'}">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
 		<apex:outputText id="asmtlink2" rendered="{!parentPage == 'Assessment' &&  BEGINS(asmtType, 'FAD') }" value=" > {! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')}" />
     	<apex:outputLink id="planlinkplanAtt" rendered="{!parentPage == 'ActionPlan' &&   (upload || viewall ||editAttachemnt ||viewAttachment)}" > <a href="/{!apId}"> > Action Plan</a></apex:outputLink>
@@ -105,9 +105,10 @@
 		<apex:outputText id="goalobj" rendered="{!parentPage == 'GoalObjRpt'}" value=" > Goal/Objective Documentation Report" />
 		<apex:outputPanel id="skillslink" rendered="{! parentPage =='SkillsTracking'}">&nbsp;>&nbsp;Skills Worksheet</apex:outputPanel>
 		<apex:outputPanel id="behaviorlink" rendered="{! parentPage == 'BehaviorTracking'}">&nbsp;>&nbsp;Behavior Worksheet</apex:outputPanel>
-		<apex:outputText id="summaryRept" rendered="{!parentPage == 'ActionSummaryReport'}" value=" > Action Plan Summary" />
+		<apex:outputText id="summaryRept" rendered="{!parentPage == 'ActionSummaryReport' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" value=" > Action Plan Summary" />
+		<apex:outputLink id="summaryReptatt" rendered="{!parentPage == 'ActionSummaryReport'  &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" >&nbsp;>&nbsp; <a href="/apex/ActionSummaryReport?id={!apId}">Action Plan Summary </a> </apex:outputLink>
 		<apex:outputPanel id="notelink" rendered="{! parentPage = 'ShiftNote'}">&nbsp;>&nbsp;Notes</apex:outputPanel>
-    	<apex:outputPanel id="servAssignText" rendered="{!parentPage == 'ServAssign' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">>&nbsp;Service Assignment</apex:outputPanel>
+    	<apex:outputPanel id="servAssignText" rendered="{!parentPage == 'ServAssign' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Service Assignment</apex:outputPanel>
 	    <apex:outputLink id="servAssignTextAtt" rendered="{!parentPage == 'ServAssign' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
 		<apex:outputPanel id="servAssignLink" rendered="{!parentPage == 'CaseDocs' || parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputPanel>
 		<apex:outputPanel id="caseDocsText" rendered="{!parentPage == 'CaseDocs'}">&nbsp;>&nbsp;Case Docs</apex:outputPanel>
@@ -240,7 +241,7 @@
 									<td style="vertical-align:top; text-align:left;line-height:20px">
 										<a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#RP" class="servicelink">View Related Parties</a>
 										<br />
-										<a href="/apex/uploader?parentid={!con.Id}" class="servicelink">Add/Edit Picture</a>
+										<a href="/apex/uploader?parentid={!con.id}&fileUploadVal=false&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}" class="servicelink">Add/Edit Picture</a>
 										<br />
 
 										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && servAssigns.size > 0 }">

@@ -84,7 +84,7 @@ global with sharing class uploaderController
 	// retrieve the existing attachments
 	public List<Attachment> getAttachments()
 	{
-		attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:sobjId];
+		attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:sobjId order by createddate desc ];
 		return attachments;
 	}
 
