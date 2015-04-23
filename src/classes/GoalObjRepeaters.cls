@@ -80,8 +80,11 @@ public with sharing class GoalObjRepeaters {
 
 	public List<String> getObjTypes() {
 		
+		Date firstday = shiftStart.Date();
 		List<AggregateResult> ag = [ select type__c, count(id) from action_plan_objective__c 
 									where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
+									and ((effective_date__c < :firstDay) or (effective_date__c = null))
+									and ((target_end_date__c >= :firstDay) or (target_end_date__c = null))
 									and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
 									and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
 									group by type__c

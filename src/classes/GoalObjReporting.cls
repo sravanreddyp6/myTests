@@ -15,22 +15,17 @@ public with sharing class GoalObjReporting {
 	public objResultWrapper currResult { get; set; }
 	
 	public transient List<Action_Narrative_Result__c> narrativeResults;
-	public transient List<Action_Behavior_Result__c> behaviorResults;
 	public transient List<Action_Skill_Result__c> skillResults; 
 	
 	public transient List<String> columnsToFetch { get; private set ;}
-	public transient List<String> inputcolumns { get; private set ;}
 	
 	private SObject newresp;
 	
 	
 	public GoalObjReporting() {
 		narrativeResults = new List<Action_Narrative_Result__c>();
-		behaviorResults = new List<Action_Behavior_Result__c>();
 		skillResults = new List<Action_Skill_Result__c>();
-		
 		currResult = new objResultWrapper();
-
 	}
 	
 	
@@ -41,11 +36,13 @@ public with sharing class GoalObjReporting {
 			thisObj = apo[0];
 			objType = apo[0].type__c;	
 			effdates = apo[0].effective_date__c.format() + ' to ' + apo[0].target_end_date__c.format();
+			if (objType.startsWith('Behavior')) {
+				privateTables = null;
+				currResult = null;
+			}
+			else
+				currResult = new objResultWrapper( objType, thisObj.id);
 			
-			if ( objType == 'Skill')
-				currResult.currResultS = new Action_Skill_Result__c ( action_plan_objective__c = thisObj.Id);
-			else if ( objType == 'Narrative')
-				currResult.currResultN = new Action_Narrative_Result__c ( action_plan_objective__c = thisObj.id);
 		} 
 	}
 	
@@ -55,7 +52,6 @@ public with sharing class GoalObjReporting {
 		system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c);	
 		narrativeResults = [ select id, description__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from action_narrative_result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
 		columnsToFetch = new List<String>{'description__c','lastmodifiedbyid', 'lastmodifieddate'};
-		inputcolumns = new List<String>{'description'};
 		currResult.resultType = thisObj.type__c;
 		currResult.objID = thisObj.Id;
 		return narrativeResults;
@@ -68,8 +64,7 @@ public with sharing class GoalObjReporting {
 		system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c );	
 	
 			skillResults = [ select id, attempts__c, day__c, initials__c, met_objective__c, status__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Skill_Result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
-			columnsToFetch = new List<String>{'attempts__c','day__c','initials__c','met_objective__c','status__c','createdbyid','createddate','lastmodifiedbyid', 'lastmodifieddate'};
-			inputcolumns = new List<String>{'attempts','day','initials','metobj','status'};
+			columnsToFetch = new List<String>{'attempts__c','day__c','initials__c','met_objective__c','status__c', 'lastmodifiedbyid', 'lastmodifieddate'};
 			currResult.resultType = thisObj.type__c;
 			currResult.objID = thisObj.Id;
 			return skillResults;
@@ -88,7 +83,7 @@ public with sharing class GoalObjReporting {
         		query += ' from action_narrative_result__c where Id = :currRespId';
         		newresp  = Database.query(query);
         		system.debug( newresp);
-        		currResult = new objResultWrapper ( newresp.id, 'Narrative', newresp);
+        		currResult = new objResultWrapper ( thisobj.id, newresp.id, 'Narrative', newresp);
         		system.debug('retrieving current result of ' +  currResult); 
         }
 
@@ -96,7 +91,7 @@ public with sharing class GoalObjReporting {
         		query += ' from action_skill_result__c where Id = :currRespId';
         		newresp  = Database.query(query);
         		system.debug( newresp);
-        		currResult = new objResultWrapper ( newresp.id, 'Skill', newresp);
+        		currResult = new objResultWrapper (thisobj.id, newresp.id, 'Skill', newresp);
         		system.debug('retrieving current result of ' +  currResult); 
         }
        
@@ -125,7 +120,8 @@ public with sharing class GoalObjReporting {
             if (resulttype.startswith('Skill') ) {
             	upsert( currResult.currResultS);
             }
-		    currResult = new objResultWrapper(resulttype, thisObj.id);         
+		    currResult = new objResultWrapper();
+      
             
         } catch (DMLException ex) {
             hasError = true;
@@ -140,30 +136,36 @@ public with sharing class GoalObjReporting {
 		public string resultType { get; set; } 
 		public ID objId { get; set; }
 		public ID respid { get; set; }
-		public String lastModMilitary { get; set; }
 		public Action_Skill_Result__c currResultS { get; set; }
 		public Action_Narrative_Result__c currResultN { get; set; }
 	
-		public objResultWrapper() {
-			
+		public objResultWrapper( ) {
+			objID = null;			
+			respId = null;
+			currResultS = null;
+			currResultN = null;
 		}
 		
-		public objResultWrapper( string resultType, ID objID ) {
+		public objResultWrapper( string resultType, ID oID ) {
+	
+			objID = oID;
+			respid = null;
 			if ( resultType == 'Narrative') {
 				currResultN = new Action_Narrative_Result__c ( action_plan_objective__c = objID );
+				currResultS = null;
 			}
 			if ( resultType == 'Skill' ) {
 				currResultS = new Action_Skill_Result__c (action_plan_objective__c = objID, 
 														day__c = datetime.now().date());
+				currResultN = null;
 			}
 		}
 		
 		
-		public objResultWrapper( ID id, string rt, SObject obj) {
+		public objResultWrapper( ID oid, ID id, string rt, SObject obj) {
+			objID = oid;
 			respid = id;
 			resultType = rt;
-			lastModMilitary = Utility.getMilitaryTime( (datetime)obj.get('lastmodifieddate'));
-
 			if ( rt == 'Narrative' ) 
 				currResultN = (Action_Narrative_Result__c)obj;
 			if ( rt == 'Skill')
@@ -448,6 +450,7 @@ public with sharing class GoalObjReporting {
 		}
 		system.debug( toUpdate);
 		upsert toUpdate;
+
 		return null;
 	}
 	

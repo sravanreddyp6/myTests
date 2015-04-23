@@ -65,9 +65,9 @@
 <!--  input panel -->
 
 <apex:form id="goalobjreportform">
-<apex:pageMessages id="msgs" />
+<apex:pageMessages id="goalobjmsgs" />
 <apex:pageblock >
-<apex:actionFunction name="saveResult" action="{!saveResult}" status="savestatus" rerender="resultTableWrappers, description, msgs">
+<apex:actionFunction name="saveResult" action="{!saveResult}" status="savestatus" rerender="resultTableWrappers, goalobjmsgs, narrdesc, skillday, attempts, initials, status, metobj">
 	<apex:param name="currentResponseId" assignTo="{!currRespID}" value="" />
 	<apex:param name="currobjType" assignTo="{!objType}" value="" />
 </apex:actionFunction>
@@ -92,8 +92,8 @@
 <apex:outputText id="timespan" value="{! effdates  }" />
 </apex:pageBlockSectionItem> 
 <apex:pageblocksectionitem >
-<apex:outputlabel for="description" value="Narrative Note" />
-<apex:inputtextarea id="description" rows="10" cols="80" value="{!currResult.currResultN.Description__c}"/>
+<apex:outputlabel for="narrdesc" value="Narrative Note" />
+<apex:inputtextarea id="narrdesc" rows="10" cols="80" value="{!currResult.currResultN.Description__c}"/>
 </apex:pageblocksectionitem>
 </apex:pageblockSection>
 
@@ -105,8 +105,8 @@
 </apex:pageBlockSectionItem> 
 
 <apex:pageblocksectionitem >
-<apex:outputlabel for="day" value="Day" />
-<apex:inputfield id="day" value="{!currResult.currResultS.Day__c}" />
+<apex:outputlabel for="skillday" value="Day" />
+<apex:inputfield id="skillday" value="{!currResult.currResultS.Day__c}" />
 </apex:pageblocksectionitem>
 <apex:pageblocksectionitem >
 <apex:outputlabel for="attempts" value="Attempts" />
@@ -125,6 +125,7 @@
 <apex:inputfield id="metobj" value="{!currResult.currResultS.Met_Objective__c}" />
 </apex:pageblocksectionitem>
 </apex:pageblockSection>
+
 
 <apex:pageblockSection columns="1" rendered="{! thisobj.Type__c == 'Behavior - Count' || thisobj.type__c == 'Behavior - Duration' }">
 <apex:outputText value="{!thisObj.Description__c}" />
@@ -189,18 +190,9 @@
      
   </apex:repeat>
 </apex:pageBlockSectionItem>
-<apex:actionStatus id="waitStatus" >
-    <apex:facet name="start">
-        <div  class="thinking">
-            <div class="thinkingwheel">
-                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
-            </div>
-        </div>
-    </apex:facet>
-    <apex:facet name="stop"> </apex:facet>
-</apex:actionStatus>
 
 </apex:pageblockSection>
+
 </apex:actionregion>
 </apex:pageblock>
 
@@ -209,7 +201,7 @@
 <!--  response panel  -->
 
 <Apex:pageblock title="Previous Results" rendered="{! NOT(BEGINS(thisobj.Type__c, 'Behavior'))}">
-<apex:actionFunction name="showEditResponse" action="{!showEditResponse}" immediate="true" status="loadingResponse" rerender="goalobjreportform, msgs" >
+<apex:actionFunction name="showEditResponse" action="{!showEditResponse}" immediate="true" status="loadingResponse" rerender="goalobjmsgs, description, skillday, attempts, initials, status, metobj" >
 	<apex:param name="currentResponseId" assignTo="{!currRespID}" value="" />
 	<apex:param name="currobjType" assignTo="{!objType}" value="" />
 </apex:actionFunction>
@@ -231,14 +223,15 @@
                     <apex:commandlink onclick="showEditResponse('{!result.Id}', 'Narrative'); return false;" rendered="{! AND (result.createdbyid == $User.Id, result.lastmodifieddate >= shiftStart) }" value="Edit" />
                 </apex:column>
                 <apex:repeat value="{!columnsToFetch}" var="column">
-                    <apex:column value="{!result[column]}" rendered="{! column != 'lastmodifieddate'}" />  
+                    <apex:column value="{!result[column]}" rendered="{! column != 'lastmodifieddate' }" />  
 
                     <apex:column headerValue="Last Modified Date" rendered="{! column == 'lastmodifieddate'}">
                     	<nobr>
 	                	<c:MilitaryDatetime dateTimeVal="{!result[column]}" /> 
 	                	</nobr>
-	                	<apex:facet name="header">Last Modified Date</apex:facet>
+	                	<apex:facet name="header">Last Modified</apex:facet>
                 </apex:column>
+                
                 </apex:repeat>
              
             </apex:pageBlockTable>
