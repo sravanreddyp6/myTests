@@ -124,6 +124,26 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>IDofPBR_FromPBS__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Person_Being_Referred__r.Id</formula>
+        <label>IDofPBR_FromPBS</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>IDofPBS_FromPBR__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Referred__r.Person_Being_Served__r.Id</formula>
+        <label>IDofPBS_FromPBR</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Paper_Id__c</fullName>
         <caseSensitive>true</caseSensitive>
         <description>This is used to determine the record to upsert in the paper form.</description>
