@@ -8,6 +8,7 @@ public with sharing class GoalObjReporting {
 	public Integer numRows { get; set; }
 	public Action_Plan_objective__c thisObj {get ;set;}
 	public datetime shiftStart { get; set; }
+	public boolean editable { get { return true; }} //!worksheet.Action_plan__r.Status__c.contains('Inactive');}}
 	
 	private Boolean hasError;
 		
@@ -41,9 +42,7 @@ public with sharing class GoalObjReporting {
 			objType = apo[0].type__c;	
 			effdates = apo[0].effective_date__c.format() + ' to ' + apo[0].target_end_date__c.format();
 			
-			if (objType == 'Behavior - Count' || objType == 'Behavior - Duration' ) 
-				currResult.currResultB = new Action_Behavior_Result__c( action_plan_objective__c = thisObj.Id );
-			else if ( objType == 'Skill')
+			if ( objType == 'Skill')
 				currResult.currResultS = new Action_Skill_Result__c ( action_plan_objective__c = thisObj.Id);
 			else if ( objType == 'Narrative')
 				currResult.currResultN = new Action_Narrative_Result__c ( action_plan_objective__c = thisObj.id);
@@ -61,32 +60,6 @@ public with sharing class GoalObjReporting {
 		currResult.objID = thisObj.Id;
 		return narrativeResults;
 		
-	}
-	
-	public List<Action_Behavior_Result__c> getbehaviorCResults() {	
-		if (numrows == null)
-			numrows = 1000;
-		system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c );	
-		
-			behaviorResults = [select id, day_time__c, occurrences__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
-			columnsToFetch = new List<string>{'day_time__c','occurences__c','createdbyid', 'createddate','lastmodifiedbyid', 'lastmodifieddate'};
-			inputcolumns= new List<String>{'daytime','occurrences'};
-			currResult.resultType = thisObj.type__c;
-			currResult.objID = thisObj.Id;
-			return behaviorResults;
-	}
-	
-	public List<Action_Behavior_Result__c> getbehaviorDResults() {	
-		if (numrows == null)
-			numrows = 1000;
-			system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c);	
-		
-			behaviorResults = [select id, day_time__c, occurred__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Behavior_Result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
-			columnsToFetch = new List<string>{'day_time__c','occurred__c','createdbyid', 'createddate','lastmodifiedbyid', 'lastmodifieddate'};
-			inputcolumns = new List<String>{'daytime','occurred'};
-			currResult.resultType = thisObj.type__c;
-			currResult.objID = thisObj.Id;
-			return behaviorResults;
 	}
 	
 	public List<Action_Skill_Result__c> getskillResults() {	
@@ -126,19 +99,18 @@ public with sharing class GoalObjReporting {
         		currResult = new objResultWrapper ( newresp.id, 'Skill', newresp);
         		system.debug('retrieving current result of ' +  currResult); 
         }
-        if ( objType.contains('Behavior' ))  {
-        		query += ' from action_behavior_result__c where Id = :currRespId';
-        		newresp  = Database.query(query);
-        		system.debug( newresp);
-        		currResult = new objResultWrapper ( newresp.id, objType, newresp);
-        		system.debug('retrieving current result of ' +  currResult); 
-        }
-        
+       
                 		
         return null;
 	}
 	
 	public void saveResult() {
+		
+		if ( thisObj.type__c.startsWith('Behavior')) {
+			saveBehavior();
+			return;
+		}
+		
         System.debug('saveresult called');
         system.debug('currresult is:' + currresult);
         String resultType = currResult.resulttype;
@@ -148,10 +120,6 @@ public with sharing class GoalObjReporting {
             
             if (resulttype == 'Narrative') {
             	upsert( currResult.currResultN );
-            }
-            
-            if (resulttype.startswith('Behavior') ) {
-       		    upsert( currResult.currResultB);
             }
             
             if (resulttype.startswith('Skill') ) {
@@ -173,7 +141,6 @@ public with sharing class GoalObjReporting {
 		public ID objId { get; set; }
 		public ID respid { get; set; }
 		public String lastModMilitary { get; set; }
-		public Action_Behavior_Result__c currResultB { get; set; }
 		public Action_Skill_Result__c currResultS { get; set; }
 		public Action_Narrative_Result__c currResultN { get; set; }
 	
@@ -188,10 +155,6 @@ public with sharing class GoalObjReporting {
 			if ( resultType == 'Skill' ) {
 				currResultS = new Action_Skill_Result__c (action_plan_objective__c = objID, 
 														day__c = datetime.now().date());
-														
-			}
-			if ( resultType.Contains('Behavior')) {
-				currResultB = new Action_Behavior_Result__c ( action_plan_objective__c = objID);
 			}
 		}
 		
@@ -205,9 +168,289 @@ public with sharing class GoalObjReporting {
 				currResultN = (Action_Narrative_Result__c)obj;
 			if ( rt == 'Skill')
 				currResultS = (Action_Skill_Result__c)obj;
-			if ( rt.Contains('Behavior'))
-				currResultB = (Action_Behavior_Result__c)obj;
 		}
 	}
+	
+	// Behavior tracking elements
+	// taken largely from BehaviorTracking.cls
+	private List<Table> privateTables;
+	public List<Table> Tables {
+	get {
+		if (privateTables == null) {
+			privateTables = calcTables();
+		}
+		return privateTables;
+	}}
+	
+	private List<Action_Plan_Objective__c > privateobjectives;
+	private Action_Plan_Objective__c currentobjective; 
+	private List<Table>  calcTables(){
+		Date firstDay = shiftStart.Date();
+		privateobjectives = new List<Action_Plan_Objective__c>{ thisObj };
+		
+		List<Table> out = new List<Table>();
+		currentobjective = thisObj; 
+		
+		if (currentObjective == null){
+			if (privateObjectives.size() == 0){
+				return out;
+			}
+			currentObjective = privateObjectives[0];
+		}
+
+		out.Add(GenerateObjectiveTable(currentObjective, firstDay));
+		return out;
+	}
+
+	private Table GenerateObjectiveTable(Action_Plan_Objective__c objective, Date firstDay){
+		Table t1 = new Table(getHoursOfDay(), getDaysToDisplay());
+		system.debug( 'OBJECTIVE INSIDE GENERATE TABLE:' + objective);
+		t1.ObjectiveDescription = objective.Description__c;
+		t1.ObjectiveId = objective.Id;
+		system.debug('this objective type is:' + objective.type__c);
+		t1.IsTimeBased = IsTimeBased(objective);
+		system.debug(logginglevel.warn, objective.Action_Behavior_Results__r.size());
+		for(Action_Behavior_Result__c result: ResultsForObjective(objective, firstday)){
+			t1.Put(result.Day_time__c.Time().hour(),result.Day_time__c.Date(), result);
+		}
+		for( integer timeofday : t1.FirstKeys){
+			for(Date day: getdaysofmonth()){
+				if ((!t1.Active(timeofday, day)) && TimeValidForObjectiveAndPlanAndShift(day, timeofday, objective)){
+					Action_Behavior_Result__c blankResult = new Action_Behavior_Result__c();
+					blankResult.Action_Plan_Objective__c = objective.Id;
+					blankresult.Day_time__c = DateTime.newinstance(day, Time.newInstance(timeofday,0,0,0));
+//					system.debug( blankresult.Day_time__c);
+					t1.Put(timeofday, day, blankResult);
+				}
+			}
+		}
+		return t1;
+	}
+
+	public boolean DateValidForObjectiveAndPlan(Date day, Action_Plan_Objective__c objective){
+		return ((objective.Effective_Date__c == null) || (day >= objective.Effective_Date__c)) &&
+				((objective.Target_End_Date__c == null) || (day <= objective.Target_End_Date__c));
+	}
+	
+	public boolean TimeValidForObjectiveAndPlanAndShift (Date day, Integer tofd, Action_Plan_Objective__c objective){
+		
+		Datetime thisdt = DateTime.newinstance(day, Time.newInstance(tofd,0,0,0));
+		Datetime startdt = DateTime.newinstance(shiftstart.date(), Time.newInstance(shiftstart.hour(), 0,0,0));
+		//system.debug('Shift start date for validity compare: ' + startdt);
+		//System.Debug('checking for validity of: ' + thisdt);
+		return ( ((objective.Effective_Date__c == null) || ( day >= objective.Effective_date__c )) &&
+				( thisdt >= startdt ) &&
+				((objective.Target_End_Date__c == null) || (day <= objective.Target_End_Date__c)) &&
+				( thisdt <= DateTime.now())
+				);
+	}
+	
+	private List<Action_Behavior_Result__c> ResultsForObjective(Action_Plan_Objective__c objective, Date firstDay){
+		return [select Day_time__c, Occurrences__c, Occurred__c, LastModifiedById, LastModifiedDate
+						from Action_Behavior_Result__c
+						where Action_Plan_Objective__c = :thisobj.id
+							and Day_time__c >= :shiftStart.Date()
+//							and Day_time__c < :firstDay.addmonths(1)
+						order by Day_time__c];
+	}
+
+	private Map<id, Action_Behavior_Result__c> ResultMap(Date firstDay){
+		Map<id, Action_Behavior_Result__c> origData = new Map<id, Action_Behavior_Result__c>();
+			for(Action_Behavior_Result__c result: ResultsForObjective(thisObj, firstDay)){
+				origData.Put(result.id, result);
+			}
+		return origData;
+	}
+	
+	public List<Date> getDaysToDisplay() {
+		List<Date> month = new List<Date>();
+		Date startDate = shiftStart.Date();
+		Date endDate = Date.Today();
+		for(Date dateiter = StartDate; dateiter <= endDate; dateiter = dateiter+1){
+			month.Add(dateiter);
+		}
+		return month;
+	}
+
+	public List<Date> getDaysOfMonth() {
+		List<Date> month = new List<Date>();
+		Date endDate = Date.Today();
+		system.debug(shiftStart.Date().addmonths(1));
+		system.debug(shiftStart.Date().addmonths(1).toStartofMonth());
+		for(Date dateiter = shiftStart.Date(); dateiter <= endDate; dateiter = dateiter+1){
+			month.Add(dateiter);
+		}
+		return month;
+	}
+
+	public List<integer> getHoursOfDay() {
+		List<integer> hours = new List<integer>();
+		integer maxhours = 0;
+		integer istart=0; 
+		integer iend=23;
+		Datetime dtnow = datetime.now();
+		integer starthr = shiftStart.hour();
+		integer nowhr = dtnow.hour();
+		
+		// if we're in the same day as the shift, start on shift start hour, end on current hour
+		if ( shiftStart.isSameDay(dtnow)) {
+			istart = starthr;
+			iend = nowhr;
+		} else {
+			// we've crossed over midnight - need to output hours from earliest hour through midnight
+			istart = 0;
+			iend = 23;
+		}
+				
+		for(integer ii = istart; ii <= iend; ii++){
+				hours.Add(ii);
+			}		
+		
+		return hours;
+	}
+
+	private boolean IsTimeBased(Action_Plan_Objective__c objective){
+		return objective.Type__c == 'Behavior - Duration';
+	}
+	
+	public class Table {
+		public List<integer> FirstKeys {get;set;}
+		public List<Date> PartOneSecondKeys {get;set;}
+		public List<Date> PartTwoSecondKeys {get;set;}
+		public List<Date> AllSecondKeys {get;set;}
+		private Map<integer, Row> myRows;
+		public string ObjectiveDescription {get;set;}
+		public string ObjectiveId {get;set;}
+		public boolean IsTimeBased {get;set;}
+
+		public Map<integer, Row> getRows(){
+			return myRows;
+		}
+
+		public Table(List<integer> keys1, List<Date> keys2) {
+			myRows = new Map<integer, Row>();
+			FirstKeys = keys1;
+			PartOneSecondKeys = new List<Date>();
+			PartTwoSecondKeys = new List<Date>();
+			AllSecondKeys = keys2;
+			integer jj = 0;
+			for(Date day: keys2){
+				system.debug('Table Key:' + day);
+				if (jj < 21){
+					PartOneSecondKeys.Add(day);
+				} else {
+					PartTwoSecondKeys.Add(day);
+				}
+				jj++;
+			}
+			for(integer ii: keys1){
+				Row newRow = new Row(ii, keys2);
+				myRows.put(ii, newRow);
+			}
+		}
+
+		public void Put(integer tofd, Date day, Action_Behavior_Result__c value){
+			myRows.get(tofd).put(day, value);
+		}
+
+		public Action_Behavior_Result__c Get(integer tofd, Date day){
+			return myRows.get(tofd).get(day);
+		}
+
+		public boolean Active(integer tofd, Date day) {
+			system.debug('Table Access:' + day);
+			return myRows.get(tofd).getItems().get(day).Active;
+		}
+	}
+
+	public class Row {
+		private Map<Date, Action_Behavior_Wrapper> myItems {get;set;}
+		private string myhour;
+
+		public Map<Date, Action_Behavior_Wrapper> getItems(){
+			return myItems;
+		}
+
+		public Row(integer hour, List<Date> alldays){
+			myItems = new Map<Date, Action_Behavior_Wrapper>();
+			myhour = DateTime.newInstance(Date.Today(), Time.newInstance(hour, 0,0,0)).format('HH:mm');
+			for(Date day: alldays){
+				myItems.Put(day, new Action_Behavior_Wrapper(hour, day, null));
+			}
+		}
+
+		public string getHeader(){
+			return myhour;
+		}
+		public void Put(Date day, Action_Behavior_Result__c item){
+			Action_Behavior_Wrapper wrap = myItems.get(day);
+			wrap.DataObject = item;
+		}
+
+		public Action_Behavior_Result__c Get(Date day){
+			Action_Behavior_Wrapper wrap = myItems.get(day);
+			return wrap.DataObject;
+		}
+
+	}
+
+	public class Action_Behavior_Wrapper {
+		public Action_Behavior_Result__c myObject;
+		public integer mytime;
+		public Date myDate;
+		public boolean Active {get{ return myObject <> null;}}
+
+		/*****
+		** Needed if the timezone ever springs forward causing 2am to become 3am
+		**        public boolean Active {get{ return myObject <> null && !missinghour;}}
+		**        private boolean missinghour;
+		******/
+		public Action_Behavior_Wrapper(integer tofd, Date day, Action_Behavior_Result__c obj){
+			myobject = obj;
+			mytime = tofd;
+			myDate = day;
+		}
+
+		public Action_Behavior_Result__c DataObject{
+			get { return myObject;}
+			set { myObject = value;}
+		}
+
+		public string getDayOfWeek(){
+			return DateTime.newInstanceGMT(myDate, Time.newInstance(0,0,0,0)).formatGMT('E');
+		}
+	}
+	
+	public PageReference saveBehavior(){
+		List<Action_Behavior_Result__c> toUpDate = new List<Action_Behavior_Result__c>();
+		Map<id, Action_Behavior_Result__c> origData = ResultMap(shiftStart.Date());
+		for(Table table: Tables){
+			for(integer hour:table.Firstkeys){
+				for(Date day : table.AllSecondKeys){
+					Action_Behavior_Result__c cellObj = table.get(hour,day);
+					if (cellObj == null){
+						continue;
+					}
+					if (origData.containsKey(cellObj.Id)){
+						Action_Behavior_Result__c origObj = origData.get(cellObj.Id);
+						if (cellObj.Occurrences__c != origObj.Occurrences__c ||
+							cellObj.Occurred__c != origObj.Occurred__c){
+							toUpDate.Add(cellObj);
+						}
+					} else {
+						if (cellObj.Occurrences__c != null ||
+							cellObj.Occurred__c != false){
+							toUpDate.Add(cellobj);
+						}
+					}
+				}
+			}
+		}
+		system.debug( toUpdate);
+		upsert toUpdate;
+		return null;
+	}
+	
+	
 
 }
