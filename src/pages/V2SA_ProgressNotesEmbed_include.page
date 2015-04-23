@@ -1,0 +1,107 @@
+<!-- 
+    9/27/2012 14:00 Maros Sitko : created
+used in PP_ProgressNote_MA_IFCS as include page
+-->
+<apex:page showHeader="false" sidebar="false" standardcontroller="Progress_Note__c" extensions="V2SA_ProgressNotesEmbed">
+
+<apex:form >
+    
+<apex:outputPanel id="cGoals" styleClass="customGoals">
+  
+ <!-- <apex:outputText style="color:#359988; font-weight:bold;" value="ERROR: You cannot edit Progress Notes when they are locked (no changes will be saved)." rendered="{!displayErrorMsg}"></apex:outputText> -->   
+        <!-- <apex:pageBlockSection columns="1" collapsible="false" id="goalPageblock"> -->
+            <table border="0" width="100%" cellpadding="3" cellspacing="3">
+                <tr>
+                    <td width="50%">
+                        <apex:outputPanel >
+                            <strong>Goal Description</strong>
+                        </apex:outputPanel>
+                    </td>
+                    <td width="50%">
+                        <apex:outputPanel >
+                            <strong>Frequency and Duration</strong>
+                        </apex:outputPanel>
+                    </td>
+                    <td width="40%">
+                        <apex:outputPanel >
+                            <strong>Status</strong>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+            </table>
+            <!-- <apex:outputPanel >
+                <strong>Action</strong>
+            </apex:outputPanel> -->
+            <apex:repeat value="{!lstInnObjectives}" var="innObjective">
+                <apex:outputPanel rendered="{!innObjective.belongsToNote}">
+                    <!-- <apex:outputField value="{!innObjective.objective.Name}" rendered="{!innObjective.isEditable=false}"/>
+                    <apex:inputField value="{!innObjective.objective.Name}" rendered="{!innObjective.isEditable}"/>
+                    &nbsp;
+                    <apex:outputField value="{!innObjective.objective.Objective_Name__c}" rendered="{!innObjective.isEditable=false}"/>
+                    <apex:inputField value="{!innObjective.objective.Objective_Name__c}" rendered="{!innObjective.isEditable}"/>
+                    &nbsp; -->
+                    <table border="0" width="100%" cellpadding="3" cellspacing="3">
+                        <tr>
+                            <td width="40%">
+                                <apex:inputCheckbox value="{!innObjective.belongsToNote}">
+                                    <apex:actionSupport event="onchange" action="{!saveObjectives}" status="Performing" rerender="cGoals"/>
+                                </apex:inputCheckbox>&nbsp;
+                                <apex:outputField value="{!innObjective.objective.Short_Term_Goal_Description__c}" rendered="{!innObjective.isEditable=false}"/>
+                                <apex:inputField value="{!innObjective.objective.Short_Term_Goal_Description__c}" rendered="{!innObjective.isEditable}"/>
+                            </td>
+                            <td width="40%">
+                                <apex:outputField value="{!innObjective.objective.Frequency_and_Duration__c}" rendered="{!innObjective.isEditable=false}"/>
+                                <apex:inputField value="{!innObjective.objective.Frequency_and_Duration__c}" rendered="{!innObjective.isEditable}"/>
+                            </td>
+                            <td width="20%">
+                                <apex:outputField value="{!innObjective.objective.Status__c}" rendered="{!innObjective.isEditable=false}"/>
+                                <apex:inputField value="{!innObjective.objective.Status__c}" rendered="{!innObjective.isEditable}"/>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <apex:outputPanel rendered="{!AND(innObjective.belongsToNote, innObjective.lstInnPO.size>0)}" layout="block" styleClass="plannObjPanel">
+                        <apex:outputPanel style="padding-left: 27px"><i><b>Plan Objectives</b></i></apex:outputPanel>
+                        
+                        <apex:repeat value="{!innObjective.lstInnPO}" var="innPO">
+                            <apex:outputPanel rendered="{!innPO.belongsToNote}">
+                            <!-- <apex:outputField value="{!innPO.planObjective.Name}"/>&nbsp;
+                            <apex:outputField value="{!innPO.planObjective.Objective_Name__c}" />&nbsp; -->
+                            <table border="0" width="100%" cellpadding="3" cellspacing="3">
+                                <tr>
+                                    <td width="40%" style="padding-left:20px;">
+                                        <apex:inputCheckbox value="{!innPO.belongsToNote}">
+                                            <apex:actionSupport event="onchange" action="{!innPO.updateMe}" status="Performing" rerender="cGoals"/>
+                                        </apex:inputCheckbox>&nbsp;
+                                        <apex:outputField value="{!innPO.planObjective.Objective_Description__c}" />
+                                    </td>
+                                    <td width="20%"><apex:outputField value="{!innPO.planObjective.Frequency_and_Duration__c}" /></td>
+                                    <td width="20%"><apex:outputField value="{!innPO.planObjective.Status__c}" /></td>
+                                </tr>
+                            </table>
+                            <apex:outputPanel rendered="{!AND(innPO.belongsToNote, innPO.lstInnInt.size>0)}" layout="block" styleClass="interventionPanel"  style="padding-left: 40px">
+                                <apex:outputPanel style="padding-left: 5px"><i><b>Interventions</b></i></apex:outputPanel><br/>
+                                <apex:repeat value="{!innPO.lstInnInt}" var="innInt">
+                                    <apex:outputPanel rendered="{!innInt.belongsToNote}">
+                                        <apex:inputCheckbox value="{!innInt.belongsToNote}">
+                                            <apex:actionSupport event="onchange" action="{!innInt.updateMe}" status="Performing" rerender="cGoals"/>
+                                        </apex:inputCheckbox>&nbsp;
+                                        <!-- <apex:outputField value="{!innInt.intervention.Name}" />&nbsp;
+                                        <apex:outputField value="{!innInt.intervention.Intervention_Name__c}" />&nbsp; -->
+                                        <apex:outputField value="{!innInt.intervention.Intervention_Description__c}" />
+                                        <br/>
+                                    </apex:outputPanel>
+                                </apex:repeat>                               
+                            </apex:outputPanel> 
+                          </apex:outputPanel>
+                        </apex:repeat>
+                    </apex:outputPanel>
+                    <hr class="cLine" />
+                </apex:outputPanel> 
+
+                
+            </apex:repeat>
+  
+</apex:outputPanel>
+</apex:form>
+</apex:page>

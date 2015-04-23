@@ -1,0 +1,91 @@
+public with sharing class SObjectViewAttachmentController {
+	public static final String VIEW_ATTACHMENT_URL = '/apex/ViewAttachment?docId=';
+	public static final String UPDATE_ATTACHMENT_URL = '/apex/UpdateAttachment?docId=';
+public String parentPage {get{return apexpages.currentpage().getparameters().get('parentPage');}set;}	
+public String parentId {get{return apexpages.currentpage().getparameters().get('parentId');}set;}	
+public String pbsId {get{return apexpages.currentpage().getparameters().get('pbsId');}set;}
+public String retURL {get{return apexpages.currentpage().getparameters().get('retURL');}set;}	
+public String servAssignId {get{return apexpages.currentpage().getparameters().get('servAssignId');}set;}	
+public String apId {get{return apexpages.currentpage().getparameters().get('apId');}set;}	
+public String admId {get{return apexpages.currentpage().getparameters().get('admId');}set;}	
+public String asmtId {get{return apexpages.currentpage().getparameters().get('asmtId');}set;}	
+public String asmtType {get{return apexpages.currentpage().getparameters().get('asmtType');}set;}
+public String ReferralName {get{return apexpages.currentpage().getparameters().get('ReferralName');}set;}
+public String viewAttachmentUrl {get;set;}
+public AttachmentView attachmentView {get;set;}
+public Attachment attachment {get;set;}
+public String docId {get{return apexpages.currentpage().getparameters().get('docId');}set;}
+public SObjectViewAttachmentController() {
+	if (attachment == null) {
+		attachment =[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name  from Attachment where Id=:docId];
+		attachmentView = (new AttachmentView(attachment));
+	}
+}
+
+
+public PageReference editAttachment() {
+	if (this.attachment != null) {
+				update this.attachment;
+		}
+		return redirectToViewAttachment();
+}
+
+public PageReference redirectToViewAttachment() {
+	PageReference pg= null;
+		if (retURL != null) {
+			 pg = new PageReference(retURL);
+			 pg.setRedirect(true);
+		} else{
+		 pg = new PageReference(VIEW_ATTACHMENT_URL +docId + '&retURL='+retURL+'&parentPage='+parentPage +'&parentId='+parentId+'&pbsId='+pbsId+'&servAssignId='+servAssignId+'&apId='+apId+'&admId='+admId+'&asmtType='+asmtType+'&asmtId='+asmtId+'&ReferralName='+ReferralName);
+		pg.setRedirect(true);
+		}
+		return pg;
+	}
+	
+	public PageReference redirectToLastView() {
+		PageReference pg = new PageReference(retURL);
+		return pg;
+	}
+	
+	public PageReference redirectToUpdate() {
+		PageReference pg = new PageReference(UPDATE_ATTACHMENT_URL +docId + '&retURL='+retURL +'&parentPage='+parentPage +'&parentId='+parentId+'&pbsId='+pbsId+'&servAssignId='+servAssignId+'&apId='+apId+'&admId='+admId+'&asmtType='+asmtType+'&asmtId='+asmtId+'&viewAttachmentUrl='+viewAttachmentUrl+'&ReferralName='+ReferralName);
+		return pg;
+	}
+
+  class AttachmentView  {
+        public Attachment attachment { get; set; }
+        public String Name {set; get {
+            return this.attachment.Name;
+        }}
+        public String OwnerName { get {
+            return this.attachment.Owner.Name;
+        }}
+        public String OwnerId { get {
+        	 return this.attachment.OwnerId;
+        }}
+        public ID ID { get {
+            return attachment.Id;
+        }}
+        public String LastModifiedDate { get {
+            return attachment.LastModifiedDate.format('M/d/yyyy h:m a');
+        }}
+         public String CreatedDate { get {
+            return attachment.CreatedDate.format('M/d/yyyy h:m a');
+        }}
+        public String Description { set;get {
+            return attachment.Description;
+        }}
+        public String LastModifiedBy { get {
+            return attachment.LastModifiedBy.name;
+        }}public String CreatedBy { get {
+            return attachment.CreatedBy.Name;
+        }}public String BodyLength { get {
+            return attachment.BodyLength/1024+' KB';
+        }}public Boolean  IsPrivate {set; get {
+            return attachment.IsPrivate;
+        }}
+        public AttachmentView(Attachment attachment) {
+            this.attachment = attachment;
+        }
+    }
+}
