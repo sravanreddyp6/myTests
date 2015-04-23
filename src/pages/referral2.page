@@ -1535,7 +1535,7 @@
                 <apex:outputField value="{!Referral__c.Review_On__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}" />
             </apex:pageBlockSection>
 
-            <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo" rendered="{!Referral__c.Anticipated_Admission_DateTime__c != null}" >
+            <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo" rendered="{!(referralRecordType=='CareMeridian' && Referral__c.Anticipated_Admission_DateTime__c != null) || referralRecordType != 'CareMeridian'}" >
                 <apex:pageBlockSectionItem >
 	                <apex:outputLabel value="Anticipated Admission DateTime" />
 	                <c:MilitaryDatetime dateTimeVal="{!Referral__c.Anticipated_Admission_DateTime__c}" />

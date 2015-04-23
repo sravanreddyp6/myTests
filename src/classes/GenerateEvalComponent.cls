@@ -108,6 +108,8 @@ public with sharing class GenerateEvalComponent {
                and what_id__c = :evaluationID
                and what_id_object__c = 'Evaluation__c'
                and eval_Section_Id__c = :evalSectionId
+               and Eval__r.Category__c = :cat
+               and Eval__r.Sub_Category__c = :subcat
         ];
 
         // create a map by eval id
@@ -398,6 +400,8 @@ public with sharing class GenerateEvalComponent {
 			 where eval_Section_Id__c = :evalSectionId
 			   and what_id__c = :evalId
 			   and what_id_object__c = 'Evaluation__c'
+			    and Eval__r.Category__c = :cat
+               and Eval__r.Sub_Category__c = :subcat
 		];
 
 		// create a map by eval id
