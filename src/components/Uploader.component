@@ -138,7 +138,7 @@
             <apex:pageBlock title="Existing Attachments" rendered="{!showExisting}" >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Edit">
-                    <apex:outputLink value="/apex/UpdateAttachment?docId={!attachment.ID}&retURL={!url}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}" >Edit</apex:outputLink>
+                    <apex:outputLink value="/apex/UpdateAttachment?docId={!attachment.ID}&retURL={!url}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" >Edit</apex:outputLink>
                         |
                         <apex:outputText rendered="{!$Profile.Name == 'System Administrator' || loginUserId == attachment.OwnerID}" >
                             <a id="{!attachment.id}" class="deleteLink">Del</a>
@@ -152,7 +152,7 @@
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column style="padding-right: 9px;" headerValue="Title">
-                    <apex:outputLink value="/apex/ViewAttachment?docId={!attachment.ID}&retURL={!url}&parentId={!parentId}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}">{!attachment.Name}</apex:outputLink>
+                    <apex:outputLink value="/apex/ViewAttachment?docId={!attachment.ID}&retURL={!url}&parentId={!parentId}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}">{!attachment.Name}</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Description">{!attachment.Description}</apex:column>
                 <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
