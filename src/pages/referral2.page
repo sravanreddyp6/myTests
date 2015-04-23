@@ -618,21 +618,20 @@
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="false" id="readContactSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
-                <apex:outputField value="{!personBeingServedRecord.MailingStreet}" id="PermStreet1" />
-                <apex:outputField value="{!personBeingServedRecord.Phone}" id="PermPhone" />
-                <apex:outputField value="{!personBeingServedRecord.OtherStreet}" id="PermStreet2" />
-                <apex:outputField value="{!personBeingServedRecord.Email}" id="PermEmail" />
-                <apex:pageBlockSectionItem >
-                    <apex:outputText value="City" />
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:outputText value="{!personBeingServedRecord.MailingCity}" id="PermCity" />&nbsp;
-                        <apex:outputLabel value="State" />&nbsp;
-                        <apex:outputField value="{!personBeingServedRecord.MailingState}" id="PermState" />&nbsp;
-                        <apex:outputLabel value="Zip" />&nbsp;
-                        <apex:outputText value="{!personBeingServedRecord.MailingPostalCode}" style="width: 42px;" id="PermZip" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                <apex:outputField value="{!personBeingServedRecord.Fax}" id="PermFax" />
+                 <apex:outputField value="{!personBeingServedRecord.MailingStreet}"  label="Mailing Street 1" />
+                <apex:outputField value="{!personBeingServedRecord.Phone}"   />
+                <apex:outputField value="{!personBeingServedRecord.Mailing_Street_2__c}" label="Mailing Street 2" />
+                <apex:outputField value="{!personBeingServedRecord.Email}"  label="Email"  />
+                 <apex:outputField label="Mailing City" value="{!personBeingServedRecord.MailingCity}" />
+                 <apex:outputText value=""/>
+                 <apex:outputField value="{!personBeingServedRecord.MailingState}" label="Mailing State/Province" />
+                 <apex:outputText value=""/>
+                 <apex:outputField label="Mailing Zip/Postal" value="{!personBeingServedRecord.MailingPostalCode}"  />
+                 <apex:outputText value=""/>
+                 <!--  Fax is removed for   EPRIQM-115
+                <apex:outputField value="{!personBeingRefRecord.Fax__c}" />
+                 -->
+                <apex:outputField value="{!personBeingServedRecord.MailingCountryCode}" label="Mailing County"/>
             </apex:pageBlockSection>
 
             <apex:pageBlockSection columns="1" title="Related Parties" id="relatedParties" collapsible="false">
