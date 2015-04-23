@@ -157,6 +157,7 @@
    <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}"  viewall="true"/>
     <c:PersonalRecord rendered="{!parentPage='Admission'}" pbsId="{!pbsId}" parentPage="Admission" admId="{!admId}" viewall="true"/>
     <c:PersonalRecord rendered="{!parentPage='ActionSummaryReport'}" pbsId="{!pbsId}" parentPage="ActionSummaryReport" admId="{!admId}" apId="{!apId}" servAssignId="{!servAssignId}"  viewall="true"/>
+    <c:PersonalRecord rendered="{!parentPage='ShiftNote'}" pbsId="{!pbsId}" parentPage="ShiftNote" admId="{!admId}" apId="{!apId}" servAssignId="{!servAssignId}"  viewall="true"/>
     <apex:variable var="v" value="val"   rendered="{!parentPage = 'referral'}">
     <div class="breadcrumb" >
         <a href="/">Home</a> > <a href="/{!parentId}">Referral: {!ReferralName}</a> > View All Attachments
@@ -165,7 +166,7 @@
  			 <br/>
     		<apex:pageBlock title="View All Attachments">
   			 <apex:pageBlockTable style="width: 100%;" id="NotesAndAttachments" value="{!entries}" var="entry" styleClass="dataTable" rendered="{!entries.size>0}">
-                <apex:column style="padding-right: 9px;" headerValue="Action" styleClass="actionColumn" >
+                <apex:column style="padding-right: 9px;" headerValue="Action"  >
                        <apex:outputPanel layout="none" rendered="{!!entry.isNote}">
                         <apex:outputLink value="/apex/UpdateAttachment?docId={!entry.ID}&retURL={!theRetUrl}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" styleClass="actionLink" >Edit</apex:outputLink>
                     </apex:outputPanel>
