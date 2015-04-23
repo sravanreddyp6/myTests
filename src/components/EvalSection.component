@@ -215,7 +215,7 @@
 			$('.datetimepicker').datetimepicker({});
 			
 			
-			<apex:outputPanel layout="none" rendered="{!subcategory == 'Current Pain'}">
+			<apex:outputPanel layout="none" rendered="{!subcategory == 'Current Pain' || subcategory == 'Pain'}">
 			
 			var options =  [0,1,2,3,4,5,6,7,8,9,10];
 			var initialValue = '0';
@@ -254,7 +254,7 @@
 				}
 			</apex:outputPanel>
 
-			<apex:outputPanel layout="none" rendered="{!(subcategory == 'Body Map' || subcategory=='Current Pain')}">
+			<apex:outputPanel layout="none" rendered="{!(subcategory == 'Body Map' || subcategory=='Current Pain' || subcategory == 'Pain')}">
 			anno.reset();
 			var el = $('#bodyMap{!evalSectionUuid}').get(0);
 			if (el) {
