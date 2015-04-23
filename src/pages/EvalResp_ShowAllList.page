@@ -9,7 +9,7 @@
   <br/>
   <apex:form id="frm">
   <apex:pageBlock >
-      <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+        <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
                                type="{!$CurrentPage.parameters.FS}"
                                formId="{!$Component.frm}"
                                uniqueId="Immunization"
@@ -17,16 +17,34 @@
                                cols="1"
                                showDisregard="true" 
                                eSign="true"
-                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' }" />
+                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device'}" />
 
+        <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                               type="{!$CurrentPage.parameters.FS}"
+                               formId="{!$Component.frm}"
+                               uniqueId="Assistive_Devices"
+                               visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],  
+                                                                                                        &quot;Glasses&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Glasses_Present__c&quot;],
+                                                                                                        &quot;Contacts&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Contacts_Type__c&quot; , &quot;Contacts_Present__c&quot;],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
+                                                                                                        &quot;UE&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;LE&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Seat Belt&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Lap Tray&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Trunk Supports&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Enclosure Bed&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Side Rail Half&quot; : [&quot;Side_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Side Rail Full&quot; : [&quot;Side_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;]
+                                                                                                        }}"
+                               cols="1"
+                               rendered="{!$CurrentPage.parameters.FS == 'Assistive Device'}" />
+                               
         <c:EvaluationResponseTable saParentId="{!$CurrentPage.parameters.SA}"
                                     type="{!$CurrentPage.parameters.FS}"
                                     formId="{!$Component.frm}"
                                     uniqueId="Isolation"
                                     rules="{&quot;Other_Isolation_Type__c&quot;: {&quot;1&quot;: [&quot;Other__c&quot;]}}"  
                                     cols="1"
-                                    showDisregard="false"
-                                    eSign="false"
                                     rendered="{!$CurrentPage.parameters.SA != null && $CurrentPage.parameters.FS == 'Isolation Event' }" />
   
 		</apex:pageBlock>
