@@ -1,0 +1,48 @@
+<apex:page standardController="Action_Summary__c" extensions="ActionSummaryCreateFormV2">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<style>
+		.skillSummary table {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+
+		.skillSummary .sstable tbody tr th {
+			border-width: 1px;
+			border-style: dashed;
+			border-color: black;
+		}
+
+		.skillSummary .sstable tbody tr td {
+			border: 1px dashed black;
+		}
+	</style>
+	<br />
+	<c:PersonalRecord pbsId="{!pbsId}" parentPage="ActionSummaryReport" servAssignId="{!Action_Summary__c.Service_Assignment__c}" admId="{!Action_Summary__c.Service_Assignment__r.Admission__c}" />
+	<apex:form id="mainForm">
+		<apex:pagemessages id="pageMessages" />
+		<apex:PageBlock title="Action Plan Summary">
+			<div class="pbHeaderButton">
+				<apex:commandButton value="Add" action="{!save}" id="formSave" status="pageProcessing" />
+				<apex:commandButton value="Cancel" action="{!cancel}" />
+			</div>
+			<apex:pageBlockSection title="Summary Details" columns="2">
+				<apex:inputField value="{!Action_Summary__c.Start_Date__c}" />
+				<apex:inputField value="{!Action_Summary__c.End_Date__c}" />
+
+				<apex:outputField value="{!Action_Summary__c.Service_Assignment__c}" />
+				<apex:outputField value="{!serviceAssignment.Admission__c}" />
+				<apex:outputField value="{!Action_Summary__c.Status__c}" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div class="thinking">
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+</apex:page>
