@@ -5,8 +5,14 @@
 	<apex:attribute name="cols" description="Number of columns on the page block" type="Integer" assignTo="{!numCols}" />
 	<apex:attribute name="rows" description="Number of rows on the page block" type="Integer" default="1000" assignTo="{!numRows}" />
 	<apex:attribute name="type" description="The type of this table" type="String" required="true" assignTo="{!responseType}" />
+
 	<apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
 	<apex:attribute name="addEnabled" description="Whether Add functionality is enabled" type="Boolean" default="true" />
+	<apex:attribute name="eSign" description="show e-sign options" type="boolean" required="false" default="false" assignTo="{!eSignable}" />
+	<apex:attribute name="showDisregard" description="show disregard options?" type="Boolean" required="false" default="false" />
+	<apex:attribute name="showAddNew" description="show add and new button" type="boolean" required="false" default="true" />
+	<apex:attribute name="showTitle" description="Boolean describing whether or not the section title is displayed" type="Boolean" required="false" default="true" />
+
 	<apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked" type="String" />
 	<apex:attribute name="formId" description="Id of the form element that includes this component" type="String" />
 	<apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
@@ -14,11 +20,8 @@
 	<apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs." type="String" required="false" default="" />
 	<apex:attribute name="visiblityRowRules" description="The visibility rules for the fields in the dialog. Use the field names in the rules instead of field IDs." type="String" required="false" default="" />
 	<apex:attribute name="collapsible" description="Boolean describing whether or not the section is collapsible" type="Boolean" required="false" default="true" />
-	<apex:attribute name="showTitle" description="Boolean describing whether or not the section title is displayed" type="Boolean" required="false" default="true" />
-	<apex:attribute name="showDisregard" description="show disregard options?" type="Boolean" required="false" default="false" />
-	<apex:attribute name="eSign" description="show e-sign options" type="boolean" required="false" default="false" />
-	<apex:attribute name="showAddNew" description="show add and new button" type="boolean" required="false" default="true" />
 	<apex:attribute name="addBtnRightAlign" description="To right align the Add button" type="boolean" required="false" default="true" />
+
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
@@ -35,31 +38,50 @@
 			padding-right: 3px;
 			border-right: 3px solid red;
 		}
+		.thinking{!uniqueId} {
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 100000;
+		}
+		.thinkingwheel{!uniqueId} {
+			position: absolute;
+			left: 40%;
+			top: 48%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
 	</style>
 	<apex:pageBlockSection id="evalResponseBlock" columns="1" title="{!IF(showTitle,type,'')}" collapsible="{!collapsible}">
-		<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
-		<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="loadingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();">
-			<apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
-		</apex:actionFunction>
+		<apex:outputPanel style="display: none; ">
+			<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
+			<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();">
+				<apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
+			</apex:actionFunction>
+			<!-- We need to use this actionFunction rather than calling authenticateWithId straight up because of a bug in SF, see the comment in the controller's getAuthentication() -->
+			<apex:actionFunction name="auth{!uniqueId}" rerender="authenticationPanel" immediate="true" status="pageProcessingStatus" oncomplete="window.authenticateWithId{!uniqueId}(request.options.parameters.currentResponseId); ">
+				<apex:param name="currentResponseId" value="" />
+			</apex:actionFunction>
+		</apex:outputPanel>
 
 		<apex:outputPanel layout="none" rendered="{!addEnabled}">
-			<apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top:-50px">
+			<apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top: -40px; ">
 				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign}" />
 			</apex:outputPanel>
 			<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign}" />
-			<apex:actionStatus id="loadingStatus">
-				<apex:facet name="start">
-					<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-				</apex:facet>
-				<apex:facet name="stop" />
-			</apex:actionStatus>
 		</apex:outputPanel>
 		<apex:outputPanel id="responseTableWrapper">
+
 			<apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}">
 				<apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled}">
 					<apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null)}" />
 					<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null) && !response.Disregard__c}" /> &nbsp;
-					<apex:commandLink onclick="authenticateWithId{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />
+					<apex:commandLink onclick="auth{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />
 					<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Disregard" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c != null) && !response.Disregard__c }" />
 				</apex:column>
 				<apex:repeat value="{!columnsToFetch}" var="column">
@@ -204,8 +226,17 @@
 		</apex:outputPanel>
 	</apex:pageBlockSection>
 	<hr />
-	<c:Authentication rendered="{!eSign}" formStyle="z-index: 200; color: red; "
-		formId="{!formId}" handler="EvaluationResponseTable_Esign" uniqueId="{!uniqueId}"
-		rerender="{!$Component.evalResponseBlock.responseTableWrapper},responseDialogMainBlock,responseDialogErrors"
-		oncomplete="closeAuthenticationDialog{!uniqueId}(); alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');" />
+	<apex:outputPanel layout="block" id="authenticationPanel" rendered="{!eSign}" style="display: none; ">
+		<apex:dynamicComponent componentValue="{!authentication}" />
+	</apex:outputPanel>
+	<apex:actionStatus id="pageProcessingStatus">
+		<apex:facet name="start">
+			<div class="thinking{!uniqueId}">
+				<div class="thinkingwheel{!uniqueId}">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
 </apex:component>
