@@ -81,9 +81,9 @@ public with sharing class GoalObjRepeaters {
 	public List<String> getObjTypes() {
 		
 		Date firstday = shiftStart.Date();
-		Date lastday = Date.Today() + 1;
+		Date lastday = Date.Today();
 		if ( shiftEnd != null)
-			lastday = shiftEnd.Date() + 1;
+			lastday = shiftEnd.Date();
 			
 		List<AggregateResult> ag = [ select type__c, count(id) from action_plan_objective__c 
 									where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
