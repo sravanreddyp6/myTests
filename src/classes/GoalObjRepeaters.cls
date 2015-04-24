@@ -23,7 +23,7 @@ public with sharing class GoalObjRepeaters {
 		List<objWrapper> objs = new List<objWrapper>();
 					
 		SelectOption so;
-		for ( Action_Plan_objective__c o : ReportableBehaviorCObjectives( shiftStart.Date())) {
+		for ( Action_Plan_objective__c o : ReportableBehaviorCObjectives( shiftStart.Date(), shiftEnd.Date())) {
 		
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
@@ -36,7 +36,7 @@ public with sharing class GoalObjRepeaters {
 		
 		objs = new List<objWrapper>();
 		
-		for ( Action_Plan_objective__c o : ReportableBehaviorDObjectives( shiftStart.Date())) {
+		for ( Action_Plan_objective__c o : ReportableBehaviorDObjectives( shiftStart.Date(), shiftEnd.Date())) {
 			
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
@@ -48,7 +48,7 @@ public with sharing class GoalObjRepeaters {
 		}
 		objs = new List<objWrapper>();
 		
-		for ( Action_Plan_objective__c o : ReportableSkillObjectives( shiftStart.Date())) {
+		for ( Action_Plan_objective__c o : ReportableSkillObjectives( shiftStart.Date(), shiftEnd.Date())) {
 			
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
@@ -61,7 +61,7 @@ public with sharing class GoalObjRepeaters {
 		}
 		objs = new List<objWrapper>();
 		
-		for ( Action_Plan_objective__c o : ReportableNarrativeObjectives( shiftStart.Date())) {
+		for ( Action_Plan_objective__c o : ReportableNarrativeObjectives( shiftStart.Date(), shiftEnd.Date())) {
 			
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
@@ -81,10 +81,17 @@ public with sharing class GoalObjRepeaters {
 	public List<String> getObjTypes() {
 		
 		Date firstday = shiftStart.Date();
+		Date lastday = Date.Today() + 1;
+		if ( shiftEnd != null)
+			lastday = shiftEnd.Date() + 1;
+			
 		List<AggregateResult> ag = [ select type__c, count(id) from action_plan_objective__c 
 									where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
-									and ((effective_date__c < :firstDay) or (effective_date__c = null))
-									and ((target_end_date__c >= :firstDay) or (target_end_date__c = null))
+									and (
+										 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
+										  or
+										 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+									)
 									and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
 									and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
 									group by type__c
@@ -101,54 +108,65 @@ public with sharing class GoalObjRepeaters {
 		return objective.Type__c == 'Behavior - Duration';
 	}
 	
-	private List<Action_Plan_Objective__c> ReportableBehaviorCObjectives(Date firstDay){
+	private List<Action_Plan_Objective__c> ReportableBehaviorCObjectives(Date firstDay, Date lastDay){
 		return [ select id, Description__c, effective_Date__c, Target_end_date__c, Type__c, status__c
 				from  Action_Plan_Objective__c
 				where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
-					and ((effective_date__c < :firstDay) or (effective_date__c = null))
-					and ((target_end_date__c >= :firstDay) or (target_end_date__c = null))
-					and Type__c = 'Behavior - Count'
-					and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
-					and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
+				and (
+					 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
+					  or
+					 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+				)					
+				and Type__c = 'Behavior - Count'
+				and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
+				and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
 				order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
 	}
 	
-	private List<Action_Plan_Objective__c> ReportableBehaviorDObjectives(Date firstDay){
+	private List<Action_Plan_Objective__c> ReportableBehaviorDObjectives(Date firstDay, Date lastDay){
 		return [ select id, Description__c, effective_Date__c, Target_end_date__c, Type__c, status__c
 				from  Action_Plan_Objective__c
 				where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
-					and ((effective_date__c < :firstDay) or (effective_date__c = null))
-					and ((target_end_date__c >= :firstDay) or (target_end_date__c = null))
+					and (
+					 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
+					  or
+					 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+					)	
 					and Type__c = 'Behavior - Duration'
 					and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
 					and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
 				order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
 	}
 
-	private List<Action_Plan_Objective__c> ReportableSkillObjectives(Date firstDay){
+	private List<Action_Plan_Objective__c> ReportableSkillObjectives(Date firstDay, Date lastDay){
         return [ select id, Description__c, effective_Date__c, Target_end_date__c, type__c, status__c,
                         (select Day__c, Attempts__c, Initials__c, Met_Objective__c, Status__c
                            from Action_Skill_Results__r
                           where Day__c >= :firstDay 
-                            and Day__c < :firstDay + 7
                           order by Day__c)
                    from  Action_Plan_Objective__c
                   where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
-                    and ((effective_date__c < :firstDay + 7) or (effective_date__c = null))
-                    and ((target_end_date__c >= :firstDay) or (target_end_date__c = null))
-                    and Type__c = 'Skill'
+					and (
+					 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
+					  or
+					 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+					)	                    
+					and Type__c = 'Skill'
                     and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
                     and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
                   order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
     }
     
 
-	private List<Action_Plan_Objective__c> ReportableNarrativeObjectives(Date firstDay){
+	private List<Action_Plan_Objective__c> ReportableNarrativeObjectives(Date firstDay, Date lastDay){
 		return [ select id, Description__c, effective_Date__c, Target_end_date__c, Type__c, status__c
 				from  Action_Plan_Objective__c
 				where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
-					and ((effective_date__c < :firstDay) or (effective_date__c = null))
-					and ((target_end_date__c >= :firstDay) or (target_end_date__c = null))
+					and (
+					 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
+					  or
+					 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+					)						
 					and (Type__c = 'Narrative' )
 					and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
 					and action_plan_goal__r.action_plan__r.status__c = 'Active Final'

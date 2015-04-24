@@ -2,7 +2,8 @@
     <apex:attribute name="parentID" description="Id of the parent service Assignment" type="Id" assignTo="{!saId}" required="true" />
     <apex:attribute name="opGrp" description="Operating group for eval" type="string" required="false" />
     <apex:attribute name="onComplete" description="JavaScript function to call when rendered" type="string" required="false" />
-    <apex:attribute name="start" description="start datetime of shift" type="date" assignTo="{!shiftStart}" required="true" />
+    <apex:attribute name="start" description="start datetime of shift" type="datetime" assignTo="{!shiftStart}" required="true" />
+    <apex:attribute name="end" description="end datetime of shift" type="datetime" assignTo="{!shiftEnd}" required="false" />
     
     <apex:repeat value="{!objtypes}" var="objType">
         <apex:variable var="counter" value="{!0}" />
