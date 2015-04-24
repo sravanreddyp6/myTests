@@ -11,7 +11,10 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
 	<style>
-		.thinking {
+		.modalDialog {
+			overflow: visible;
+		}
+		.thinking{!uniqueId} {
 			opacity: 0.8;
 			background-color: #ccc;
 			position: fixed;
@@ -21,7 +24,7 @@
 			left: 0px;
 			z-index: 100000;
 		}
-		.thinkingwheel {
+		.thinkingwheel{!uniqueId} {
 			position: absolute;
 			left: 40%;
 			top: 48%;
@@ -64,16 +67,6 @@
 			<apex:pageBlockButtons location="bottom">
 				<apex:commandButton value="E-Sign" onClick="_auth{!uniqueId}(window.objectIdToEsign); return false;" />
 				<apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.authenticationDialog}'); return false;" />
-				<apex:actionStatus id="authenticationStatus">
-					<apex:facet name="start">
-						<div class="thinking">
-							<div class="thinkingwheel">
-								<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
-							</div>
-						</div>
-					</apex:facet>
-					<apex:facet name="stop" />
-				</apex:actionStatus>
 				<apex:actionFunction name="_auth{!uniqueId}" action="{!authenticate}" rerender="authenticationMessages, {!rerender}" status="authenticationStatus" oncomplete="if (jQuery('[id$=authenticationMessages]').find('.message').eq(0).attr('class').indexOf('confirm') != -1) { {!oncomplete} }">
 					<apex:param name="objectId" assignTo="{!parentId}" value="" />
 				</apex:actionFunction>
@@ -89,5 +82,15 @@
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 		</apex:pageBlock>
+		<apex:actionStatus id="authenticationStatus">
+			<apex:facet name="start">
+				<div class="thinking{!uniqueId}">
+					<div class="thinkingwheel{!uniqueId}">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+					</div>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop" />
+		</apex:actionStatus>
 	</apex:outputPanel>
 </apex:component>
