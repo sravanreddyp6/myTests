@@ -336,13 +336,15 @@
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
-		<apex:actionfunction name="rerenderGoalObRpt" rerender="evalFormBody, pnlgoalobjReporting" onComplete="showReporting();">
+		<apex:actionregion>
+		<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
 			<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
 			<apex:param name="Category" value="" AssignTo="{!cat}" />
 			<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
 			<apex:param name="currobjID" value="" />
 			<apex:param name="currobjType" value="" />
  		</apex:actionfunction>
+ 		</apex:actionregion>
 	</apex:form>
 
 	<c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}" evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" rendered="{!showMainComponent}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters(); " />
