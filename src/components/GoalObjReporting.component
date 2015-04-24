@@ -67,7 +67,7 @@
 <apex:form id="goalobjreportform">
 <apex:pageMessages id="goalobjmsgs" />
 <apex:pageblock >
-<apex:actionFunction name="saveResult" action="{!saveResult}" status="savestatus" rerender="resultTableWrappers, goalobjmsgs, narrdesc, skillday, attempts, initials, status, metobj">
+<apex:actionFunction name="saveResult" action="{!saveResult}" status="savestatus" rerender="resultTableWrappers, goalobjmsgs, goalobjreportform">
 	<apex:param name="currentResponseId" assignTo="{!currRespID}" value="" />
 	<apex:param name="currobjType" assignTo="{!objType}" value="" />
 </apex:actionFunction>
@@ -93,7 +93,7 @@
 </apex:pageBlockSectionItem> 
 <apex:pageblocksectionitem >
 <apex:outputlabel for="narrdesc" value="Narrative Note" />
-<apex:inputtextarea id="narrdesc" rows="10" cols="80" value="{!currResult.currResultN.Description__c}"/>
+<apex:inputfield id="narrdesc" html-cols="80" value="{!currResult.currResultN.Description__c}"/>
 </apex:pageblocksectionitem>
 </apex:pageblockSection>
 
@@ -133,6 +133,7 @@
 <apex:outputlabel for="timespan" value="Effective Dates" />
 <apex:outputText id="timespan" value="{! effdates  }" />
 </apex:pageBlockSectionItem> 
+<apex:outputPanel id="behavior" layout="none">
 
 <apex:pageBlockSectionItem >
 <apex:repeat value="{!Tables}" var="table">
@@ -190,6 +191,7 @@
      
   </apex:repeat>
 </apex:pageBlockSectionItem>
+  </apex:outputPanel>
 
 </apex:pageblockSection>
 
@@ -201,11 +203,10 @@
 <!--  response panel  -->
 
 <Apex:pageblock title="Previous Results" rendered="{! NOT(BEGINS(thisobj.Type__c, 'Behavior'))}">
-<apex:actionFunction name="showEditResponse" action="{!showEditResponse}" immediate="true" status="loadingResponse" rerender="goalobjmsgs, description, skillday, attempts, initials, status, metobj" >
+<apex:actionFunction name="showEditResponse" action="{!showEditResponse}" immediate="true" status="loadingResponse" rerender="goalobjmsgs, narrdesc, skillday, attempts, initials, status, metobj" >
 	<apex:param name="currentResponseId" assignTo="{!currRespID}" value="" />
 	<apex:param name="currobjType" assignTo="{!objType}" value="" />
 </apex:actionFunction>
-
 <apex:outputPanel id="resultTableWrappers" >
 <apex:actionStatus id="loadingResponse">
 	<apex:facet name="start">
@@ -217,6 +218,7 @@
 
 <apex:outputPanel id="resultTableWrapper1" rendered="{!thisobj.Type__c == 'Narrative'}">
 <apex:actionregion >
+
             <apex:pageBlockTable value="{!narrativeresults}" var="result" id="resultTable1" rendered="{! narrativeresults.size>0}">
             
                 <apex:column headerValue="Action" width="80px" >
