@@ -223,7 +223,7 @@ public with sharing class referralConversion_Controller {
   private Contact getPBSRec() {
     Contact pBSRec;
     try {
-      pBSRec = [select MailingCity, BirthDate, Email,
+      pBSRec = [select MailingCity, BirthDate, Email, Age__c,
                        Ethnicity_Picklist__c, Fax, FirstName, Gender__c,
                        Mailing_County__c, LastName,
                        Middle_Name__c, Phone, Primary_Language__c, Race__c, SSN__c,
