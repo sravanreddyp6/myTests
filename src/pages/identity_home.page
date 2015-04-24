@@ -28,6 +28,7 @@
     }                               
     </style>
 
+    <apex:variable var="returnURL" value="{!$CurrentPage}" />
 
     <apex:panelGrid >                
         <apex:panelGroup >
@@ -61,7 +62,7 @@
             <apex:pageBlock title="Search Results" rendered="{!IF(tmnUserList=null,'false','true')}">
                 <apex:pageBlockTable value="{!tmnUserList}" var="sr">
                     <apex:column headerValue="Link">
-                        <apex:outputLink value="/{!sr.Id}">View</apex:outputLink>
+                        <apex:outputLink value="{!URLFOR($Page.identity_view, '',[id=sr.id])}">View</apex:outputLink>
                     </apex:column>
                     <apex:column headerValue="First Name" value="{!sr.First_Name__c}"/>           
                     <apex:column headerValue="Last Name" value="{!sr.Last_Name__c}"/>
@@ -76,7 +77,7 @@
         <apex:pageBlock title="My Recently Viewed People">
             <apex:pageBlockTable value="{!Records}" var="r">
                 <apex:column headerValue="Link" >
-                    <apex:outputLink value="/{!r.Id}">View</apex:outputLink>
+                    <apex:outputLink value="{!URLFOR($Page.identity_view, '', [id=r.id])}">View</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Name" value="{!r.Name}"/>
                 <apex:column headerValue="Email" value="{!r.Email__c}"/>

@@ -1,0 +1,121 @@
+public class identityEditNew {
+
+    String[] operatingGroups = new String[]{};
+    public TMN_User__c TMNUser { get; private set; }
+    User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
+    String userId = u.id;
+    TMN_User__c myTMN = [SELECT Id, Name, Operating_Group__c, Delegate_For__c, Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];   
+    public String myManager {
+        get{return (myTMN.Manager_Name__c);}
+        set{myTMN.Manager_Name__c = value;}
+    }   
+    public String myOpGroup {
+        get{return (myTMN.Operating_Group__c);}
+        set{myTMN.Operating_Group__c = value;}
+    }
+    
+    public identityEditNew() {
+        Id id = ApexPages.currentPage().getParameters().get('id');
+        TMNUser = (id == null) ? new TMN_User__c() : 
+            [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
+            Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Delegate_For__c,Email__c,Employee_Number__c,
+            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Identity_ID__c,Job_Level__c,Job_Status__c,Job_Title__c,
+            Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
+            Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
+            Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
+            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,
+            Unique_Id__c,Work_State_Code__c,Work_State__c 
+            FROM TMN_User__c 
+            WHERE Id = :id];
+    
+    if(TMNUser.Id == null){
+        TMNUser.Manager_Name__c = aliasUser.Name;
+        TMNUser.Work_State__c = aliasUser.Work_State__c;
+        TMNUser.Alias__c = aliasUser.Alias__c;
+        TMNUser.Manager_Email__c = aliasUser.Email__c;
+        TMNUser.Operating_Group__c = aliasUser.Operating_Group__c;
+        TMNUser.Office_Location__c = aliasUser.Office_Location__c;
+    }
+        
+    }
+    
+    TMN_User__c t = [SELECT Id, Name, Operating_Group__c,Delegate_For__c,Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];
+    public String tmnName = t.Name;
+    public String tmnId = t.Id;
+    public String tmnOG = t.Operating_Group__c;
+    public String tmnDelegateFor = t.Delegate_For__c;
+
+    String aliasName = getaliasName();
+    String getaliasName(){
+        if (String.isEmpty(tmnDelegateFor)){
+            aliasName=tmnName;
+        }else{
+            TMN_User__c alias = [SELECT Id, Name, Operating_Group__c,Delegate_For__c,Manager_Name__c FROM TMN_User__c WHERE Id=:tmnDelegateFor LIMIT 1];
+            aliasName = alias.Name;        
+        }
+        return aliasName;    
+    }
+    
+    TMN_User__c aliasUser = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
+            Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Delegate_For__c,Email__c,Employee_Number__c,
+            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Identity_ID__c,Job_Level__c,Job_Status__c,Job_Title__c,
+            Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
+            Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
+            Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
+            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,
+            Unique_Id__c,Work_State_Code__c,Work_State__c 
+            FROM TMN_User__c 
+            WHERE Name = :aliasName];
+    
+    
+    public PageReference save() {
+        if(TMNUser.Name == null){
+            TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
+        }
+        if(TMNUser.Id == null){
+            TMNUser.Current_Person_Type__c = 'Contractor';
+        } 
+        try {
+            upsert(TMNUser);
+        } catch(System.DMLException e) {
+            ApexPages.addMessages(e);
+            return null;
+        }
+        //  After Save, navigate to the default view page:        
+        //Id id = ApexPages.currentPage().getParameters().get('id');
+        Id id = TMNUser.Id;
+        PageReference viewPage = new PageReference('/apex/identity_view?id=' + id);
+        viewPage.setRedirect(true);
+        return viewPage;
+    }
+    
+    public PageReference goBack() {
+        Id id = ApexPages.currentPage().getParameters().get('id');
+        if(id == null){
+            PageReference backPage = new PageReference('/apex/identity_home');
+            backPage.setRedirect(true);   
+            return backPage;
+        }
+        PageReference backPage = new PageReference('/apex/identity_view?id=' + id);
+        backPage.setRedirect(true);   
+        return backPage;
+    }
+    
+    public List<SelectOption> getItems() {
+        List<SelectOption> options = new List<SelectOption>();
+            options.add(new SelectOption('Care Meridian','Care Meridian'));
+            options.add(new SelectOption('Corporate','Corporate'));
+            options.add(new SelectOption('Cambridge','Hastings'));
+            options.add(new SelectOption('NeuroRestorative','NeuroRestorative'));
+            options.add(new SelectOption('Redwood','Redwood'));
+            return options;
+    }
+    
+    public String[] getoperatingGroups() {
+        return operatingGroups;
+    }
+    
+    public void setoperatingGroups(String[] operatingGroups) {
+        this.operatingGroups = operatingGroups;
+    }    
+}

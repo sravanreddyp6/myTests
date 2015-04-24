@@ -1,0 +1,26 @@
+<apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c">   
+        <apex:form >
+            <apex:pageBlock title="TMN User" mode="view" >
+                <apex:pageMessages />
+                <apex:pageblockButtons location="Bottom" >    
+                    <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>
+                    <apex:commandButton value="Back" action="{!URLFOR($Page.identity_home, '')}" immediate="true" html-formnovalidate="formnovalidate"/>
+                    <apex:commandButton value="Log a Request" />
+                </apex:pageblockButtons>            
+                <apex:pageBlockSection columns="2">
+                    <apex:outputField label="Name" value="{!TMNUser.Name}" />
+                    <apex:outputField value="{!TMNUser.Identity_ID__c}" />
+                    <apex:outputField value="{!TMNUser.Hire_Date__c}" />
+                    <apex:outputField value="{!TMNUser.Last_Day__c}" />
+                    <apex:outputField value="{!TMNUser.Manager_Name__c}" />
+                    <apex:outputField value="{!TMNUser.Manager_Email__c}" />
+                    <apex:outputField value="{!TMNUser.Job_Title__c}" />
+                    <apex:outputField value="{!TMNUser.Pay_Basis__c}" />
+                    <apex:outputField value="{!TMNUser.Operating_Group__c}" />
+                    <apex:outputField value="{!TMNUser.Work_State__c}" />
+                    <apex:outputField value="{!TMNUser.Office_Location__c}" />
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:form>
+        
+</apex:page>

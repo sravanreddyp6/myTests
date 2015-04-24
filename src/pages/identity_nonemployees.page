@@ -14,7 +14,7 @@
                 <apex:outputPanel />
                 <apex:outputPanel />
                 <apex:commandButton value="Search" action="{!nonEmpSearch}" id="srchBtn"/>
-                <apex:commandButton value="Create New Non-Employee" disabled="{!btnDisable}" id="createBtn"/>    
+                <apex:commandButton value="Create New Non-Employee" action="/apex/identity_editnew" disabled="{!btnDisable}" id="createBtn"/>    
             </apex:pageBlockSection>
         </apex:form>        
     </apex:pageBlock>
@@ -23,7 +23,7 @@
         <apex:form >
             <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner">
                 <apex:column headerValue="Link" >
-                    <apex:outputLink value="/{!ner.Id}">View</apex:outputLink>
+                    <apex:outputLink value="{!URLFOR($Page.identity_view, '', [id=ner.id])}">View</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Name" value="{!ner.Name}"/>
                 <apex:column headerValue="Email" value="{!ner.Email__c}"/>
@@ -38,13 +38,13 @@
         <apex:form >
             <apex:pageBlockTable value="{!myNonEmployees}" var="ne">
                 <apex:column headerValue="Link" >
-                    <apex:outputLink value="/{!ne.Id}">View</apex:outputLink>
+                    <apex:outputLink value="{!URLFOR($Page.identity_view, '', [id=ne.id])}">View</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Name" value="{!ne.Name}"/>
                 <apex:column headerValue="Email" value="{!ne.Email__c}"/>
                 <apex:column headerValue="Operating Group" value="{!ne.Operating_Group__c}"/>                        
-                <apex:column headerValue="Manager Name" value="{!ne.Manager_Name__c}"/>
-                <apex:column headerValue="Manager Email" value="{!ne.Manager_Email__c}"/>           
+                <apex:column headerValue="Manager Name" value="{!ne.Manager_Name__c}" />
+                <apex:column headerValue="Manager Email" value="{!ne.Manager_Email__c}" />           
             </apex:pageBlockTable>
         </apex:form>    
     </apex:pageBlock>
