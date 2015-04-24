@@ -3,7 +3,8 @@
     <apex:attribute name="oId" description="Id of the objective reporting on record" type="Id" assignTo="{!objId}" />
     <apex:attribute name="rows" description="Number of rows on the page block" type="Integer" default="5" assignTo="{!numRows}" />           
     <apex:attribute name="type" description="The type of this objective" type="String" required="false" assignTo="{!objType}" />
-	<apex:attribute name="startdate" description="The start date/time of this shift" type="datetime" required="false" assignTo="{!shiftStart}" />
+	<apex:attribute name="startdate" description="The start date/time of this shift" type="datetime" required="true" assignTo="{!shiftStart}" />
+	<apex:attribute name="enddate" description="The end date/time of this shift" type="datetime" required="true" assignTo="{!shiftEnd}" />
 
 
 <style>
