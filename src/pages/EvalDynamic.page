@@ -281,13 +281,13 @@
 
                <label for="filter" >Section :&nbsp;</label><select id="filter" size="1" class="chosenSelect" value=""><option value="--None--">--All--</option></select>
 
-				<apex:outputPanel rendered="{!evalType != 'Residential'}">
+				<apex:outputPanel rendered="{!evalType == 'Head to Toe' || evalType == 'CNA Workbook'}">
 				<div class="sidebar-module-inset sidebar-module-sm-no-scroll" style="height:auto;text-align:left" >
 				<div id="objreportingpanel" class="inset">
 				<h4>Plan Reporting</h4>
 				<span class="pull-right collapsearrow"><i class="glyphicon glyphicon-chevron-up"></i></span>
 					<apex:outputPanel id="goalObjRepeaters" layout="block" styleclass="panelshrink">
-						<c:GoalObjRepeaters parentID="{!SAID}"  opGrp="{!$CurrentPage.parameters.opGrp}" start="{!thisEval.Shift_Start_Time__c}" />
+						<c:GoalObjRepeaters parentID="{!SAID}"  opGrp="{!$CurrentPage.parameters.opGrp}" start="{!thisEval.Shift_Start_Time__c}" end="{!thisEval.Shift_End_Time__c}" />
 					</apex:outputPanel>
 					</div>
 				</div>
