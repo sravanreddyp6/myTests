@@ -30,6 +30,8 @@ public with sharing class GoalObjReporting {
 	
 	
 	public void init ( ID thisID ) {	//get the type of objective this is
+		
+		if ( thisObj == null ||  thisID != thisObj.id ) {
 		List<Action_Plan_Objective__c> apo = [ select id, description__c, type__c, effective_date__c, target_end_date__c from action_plan_objective__c where id = :thisID];
 		system.debug( 'APO is' + apo);
 		if (apo.size() > 0) {
@@ -40,10 +42,11 @@ public with sharing class GoalObjReporting {
 				privateTables = null;
 				currResult = null;
 			}
-			else
+			else {
 				currResult = new objResultWrapper( objType, thisObj.id);
-			
+			}
 		} 
+		}
 	}
 	
 	public List<Action_Narrative_Result__c> getnarrativeResults() {	
@@ -52,8 +55,6 @@ public with sharing class GoalObjReporting {
 		system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c);	
 		narrativeResults = [ select id, description__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from action_narrative_result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
 		columnsToFetch = new List<String>{'description__c','lastmodifiedbyid', 'lastmodifieddate'};
-		currResult.resultType = thisObj.type__c;
-		currResult.objID = thisObj.Id;
 		return narrativeResults;
 		
 	}
@@ -63,11 +64,9 @@ public with sharing class GoalObjReporting {
 			numrows = 1000;
 		system.debug( 'GETTING: ' + thisObj.ID + ',' + thisObj.type__c );	
 	
-			skillResults = [ select id, attempts__c, day__c, initials__c, met_objective__c, status__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Skill_Result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
-			columnsToFetch = new List<String>{'attempts__c','day__c','initials__c','met_objective__c','status__c', 'lastmodifiedbyid', 'lastmodifieddate'};
-			currResult.resultType = thisObj.type__c;
-			currResult.objID = thisObj.Id;
-			return skillResults;
+		skillResults = [ select id, attempts__c, day__c, initials__c, met_objective__c, status__c, createdbyid, createddate, lastmodifiedbyid, lastmodifieddate from Action_Skill_Result__c where action_plan_objective__c = :thisObj.ID order by lastmodifieddate desc ];
+		columnsToFetch = new List<String>{'attempts__c','day__c','initials__c','met_objective__c','status__c', 'lastmodifiedbyid', 'lastmodifieddate'};
+		return skillResults;
 	}
 	
 	public pageReference showEditResponse() {
@@ -95,7 +94,6 @@ public with sharing class GoalObjReporting {
         		system.debug('retrieving current result of ' +  currResult); 
         }
        
-                		
         return null;
 	}
 	
@@ -120,14 +118,14 @@ public with sharing class GoalObjReporting {
             if (resulttype.startswith('Skill') ) {
             	upsert( currResult.currResultS);
             }
-		    currResult = new objResultWrapper();
-      
-            
+		    currResult = new objResultWrapper( thisObj.type__c, thisobj.id);
+		    system.debug( currResult);
         } catch (DMLException ex) {
             hasError = true;
             system.debug(ex);
-            // SF will automatically create a PageMessage Error here, so we don't
-            // have to do anything
+        } catch (Exception e) {
+        	hasError = true;
+        	system.debug(e);
         }
     }
 
@@ -140,16 +138,18 @@ public with sharing class GoalObjReporting {
 		public Action_Narrative_Result__c currResultN { get; set; }
 	
 		public objResultWrapper( ) {
+			resultType = null;
 			objID = null;			
 			respId = null;
 			currResultS = null;
 			currResultN = null;
 		}
 		
-		public objResultWrapper( string resultType, ID oID ) {
+		public objResultWrapper( string resType, ID oID ) {
 	
 			objID = oID;
 			respid = null;
+			resultType = resType;
 			if ( resultType == 'Narrative') {
 				currResultN = new Action_Narrative_Result__c ( action_plan_objective__c = objID );
 				currResultS = null;
@@ -238,8 +238,8 @@ public with sharing class GoalObjReporting {
 		
 		Datetime thisdt = DateTime.newinstance(day, Time.newInstance(tofd,0,0,0));
 		Datetime startdt = DateTime.newinstance(shiftstart.date(), Time.newInstance(shiftstart.hour(), 0,0,0));
-		//system.debug('Shift start date for validity compare: ' + startdt);
-		//System.Debug('checking for validity of: ' + thisdt);
+		
+		// check if this element is available for editing during the shift
 		return ( ((objective.Effective_Date__c == null) || ( day >= objective.Effective_date__c )) &&
 				( thisdt >= startdt ) &&
 				((objective.Target_End_Date__c == null) || (day <= objective.Target_End_Date__c)) &&
@@ -252,7 +252,6 @@ public with sharing class GoalObjReporting {
 						from Action_Behavior_Result__c
 						where Action_Plan_Objective__c = :thisobj.id
 							and Day_time__c >= :shiftStart.Date()
-//							and Day_time__c < :firstDay.addmonths(1)
 						order by Day_time__c];
 	}
 
@@ -450,6 +449,12 @@ public with sharing class GoalObjReporting {
 		}
 		system.debug( toUpdate);
 		upsert toUpdate;
+		
+		for (Table table: Tables ) {
+			for(Action_Behavior_Result__c result: ResultsForObjective(thisObj, shiftStart.Date())){
+				table.Put(result.Day_time__c.Time().hour(),result.Day_time__c.Date(), result);
+			}
+		}
 
 		return null;
 	}
