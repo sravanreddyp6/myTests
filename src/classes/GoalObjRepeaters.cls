@@ -139,11 +139,7 @@ public with sharing class GoalObjRepeaters {
 	}
 
 	private List<Action_Plan_Objective__c> ReportableSkillObjectives(Date firstDay, Date lastDay){
-        return [ select id, Description__c, effective_Date__c, Target_end_date__c, type__c, status__c,
-                        (select Day__c, Attempts__c, Initials__c, Met_Objective__c, Status__c
-                           from Action_Skill_Results__r
-                          where Day__c >= :firstDay 
-                          order by Day__c)
+        return [ select id, Description__c, effective_Date__c, Target_end_date__c, type__c, status__c
                    from  Action_Plan_Objective__c
                   where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
 					and (
