@@ -312,7 +312,7 @@ public with sharing class GoalObjReporting {
 		integer istart=0; 
 		integer iend=23;
 		Datetime dtnow = datetime.now();
-		Datetime dtEnd = getminDateTime( shiftEnd, dtNow ).date();
+		Datetime dtEnd = getminDateTime( shiftEnd, dtNow );
 		integer starthr = shiftStart.hour();
 		integer endhr = dtEnd.hour();
 		
