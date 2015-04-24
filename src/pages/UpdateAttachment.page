@@ -33,7 +33,7 @@
 						<td class="pbButton" id="topButtonRow">
 						<apex:commandButton value="Save" action="{!editAttachment}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           				 <apex:commandButton value="Cancel" action="{!redirectToViewAttachment}" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								 <apex:commandButton id="deletefileId1" value="Delete"  rendered="{! $Profile.Name == 'System Administrator' ||enableDelete}" onclick="deleteattachment();" />	
+								 <apex:commandButton id="deletefileId1" value="Delete"  rendered="{! $Profile.Name == 'System Administrator' ||enableDelete}" onclick="deleteattachment();  return false;" />	
 							</td>
 					</tr>
 				</tbody>
