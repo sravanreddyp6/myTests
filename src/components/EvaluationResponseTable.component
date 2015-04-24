@@ -58,6 +58,7 @@
 		}
 	</style>
 	<apex:pageBlockSection id="evalResponseBlock" columns="1" title="{!IF(showTitle,type,'')}" collapsible="{!collapsible}">
+        <apex:pageBlockSectionItem dataStyle="display:none;" labelStyle="display:none;">
 		<apex:outputPanel style="display: none; ">
 			<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
 			<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();">
@@ -68,9 +69,10 @@
 				<apex:param name="currentResponseId" value="" />
 			</apex:actionFunction>
 		</apex:outputPanel>
-
+        </apex:pageBlockSectionItem>
+        
 		<apex:outputPanel layout="none" rendered="{!addEnabled}">
-			<apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top: -40px; ">
+			<apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top: -30px; ">
 				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign}" />
 			</apex:outputPanel>
 			<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign}" />
@@ -109,6 +111,10 @@
 					<apex:outputField value="{!response.eSigned_By__c}" />
 				</apex:column>
 			</apex:pageBlockTable>
+            <apex:outputPanel layout="none" rendered="{!type == 'Isolation Event'}">
+                <apex:outputText value="No Isolation Events to display" rendered="{! responses.size==0 || responses == null}" />
+                <apex:outputText rendered="{! responses != null && responses.size == 5 }">Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?SA={!saId}&PBS={!responses[0].Service_Assignment__r.Person_Being_Served__c}&FS=Isolation Event" >here</apex:outputLink>&nbsp;to view all</apex:outputText>
+            </apex:outputPanel>			
 		</apex:outputPanel>
 
 		<!-- Dialog Modal -->
