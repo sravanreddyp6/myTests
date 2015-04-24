@@ -53,7 +53,7 @@ global with sharing class uploaderController
 			showPlanOfCareSelection = false;
 		}
 		System.debug('fileUpload :::' + fileUpload);
-		if (fileUpload!=null& fileUpload.equals('true')){
+		if ( fileUpload != null  && fileUpload.equals('true')){
 		showHeadShotSelection = false;
 		}
 	}}
