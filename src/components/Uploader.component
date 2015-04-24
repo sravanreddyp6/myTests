@@ -137,15 +137,10 @@
         <apex:outputPanel id="datePanelContainer">
             <apex:pageBlock title="Existing Attachments" rendered="{!showExisting}" >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
-                    <apex:column headerValue="Edit">
+                    <apex:column headerValue="Action">
                     <apex:outputLink value="/apex/UpdateAttachment?docId={!attachment.ID}&retURL={!url}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" >Edit</apex:outputLink>
-                        |
-                        <apex:outputText rendered="{!$Profile.Name == 'System Administrator' || loginUserId == attachment.OwnerID}" >
-                            <a id="{!attachment.id}" class="deleteLink">Del</a>
-                        </apex:outputText>
                         <apex:outputPanel rendered="{!showHeadShotSelection}">
-                            <apex:outputText value=" | " />
-                            <apex:commandLink action="{!chooseHeadShot}" value="Choose as Head Shot">
+                            <apex:commandLink action="{!chooseHeadShot}" value="  | Choose as Head Shot">
                                 <apex:param name="aId" value="{!attachment.ID}" />
                                 <apex:param name="aName" value="{!attachment.Name}" />
                             </apex:commandLink>
