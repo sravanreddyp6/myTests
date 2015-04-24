@@ -1,0 +1,36 @@
+<apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c">
+    
+        <apex:form >
+            <apex:pageBlock title="TMN User" mode="edit" >
+                <apex:pageMessages />
+                <apex:pageblockButtons location="Bottom" >    
+                    <apex:commandButton value="Save" action="{!Save}"/>
+                    <apex:commandButton value="Cancel" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
+                </apex:pageblockButtons>            
+                <apex:pageBlockSection columns="2">
+                    <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true"/>
+                    <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true"/>
+                    <apex:inputField label="Hire Date" value="{!TMNUser.Hire_Date__c}" required="true"/>
+                    <apex:inputField label="Last Day" value="{!TMNUser.Last_Day__c}"/>
+                    <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Name__c}" required="true"/>
+                    <apex:inputField label="Manager Email" value="{!TMNUser.Manager_Email__c}" required="true"/>
+                    <apex:inputField label="Alias" value="{!TMNUser.Alias__c}" required="true" />
+                    <apex:selectList label="Pay Basis" value="{!TMNUser.Pay_Basis__c}" size="1" required="true">
+                        <apex:selectOption itemValue="Hourly" itemLabel="Hourly"/>
+                        <apex:selectOption itemValue="Salaried" itemLabel="Salaried"/>
+                    </apex:selectList>
+                    <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true">
+                        <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
+                        <apex:selectOption itemValue="Corporate" itemLabel="Corporate"/>
+                        <apex:selectOption itemValue="Cambridge" itemLabel="Hastings"/>
+                        <apex:selectOption itemValue="NeuroRestorative" itemLabel="NeuroRestorative"/>
+                        <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
+                    </apex:selectList>
+                    <apex:inputField label="Work State" value="{!TMNUser.Work_State__c}" required="true"/>
+                    <apex:inputField label="Office Location" value="{!TMNUser.Office_Location__c}" />
+                <!--    <apex:inputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}" required="true"/> -->
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:form>
+        
+</apex:page>

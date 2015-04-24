@@ -84,7 +84,7 @@ public with sharing class IdentityHomeController {
                     Hire_Date__c,Id,Job_Status__c,Job_Title__c,Last_Name__c,Manager_Email__c,
                     Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,
                     Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c,Delegate_For__c 
-                    FROM TMN_User__c WHERE (Manager_Name__c=:tmnName OR Manager_Name__c=:aliasName) AND Current_Person_Type__c='Employee' AND Delegate_For__c = null];
+                    FROM TMN_User__c WHERE (Manager_Name__c=:tmnName OR Manager_Name__c=:aliasName) AND Current_Person_Type__c='Employee'];
                     return myEmployees;    
     }
     
@@ -186,7 +186,7 @@ public with sharing class IdentityHomeController {
         } else if (srchFName.length()<3 && srchLName.length()<3 && srchMngFName.length()<3 && srchMngLName.length()<3) {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least three characters in one of the search boxes to complete the search.'));
         } else {
-            String searchDel='SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id FROM TMN_User__c WHERE First_Name__c LIKE \'%'+srchFName+'%\' AND Last_Name__c LIKE \'%'+srchLName+'%\' AND Manager_Last_Name__c LIKE \'%'+srchMngLName+'%\' AND Manager_First_Name__c LIKE \'%'+srchMngFName+'%\' AND Operating_Group__c = \''+tmnOG+'\' ORDER BY Last_Name__c ASC LIMIT 200';
+            String searchDel='SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id FROM TMN_User__c WHERE First_Name__c LIKE \'%'+srchFName+'%\' AND Last_Name__c LIKE \'%'+srchLName+'%\' AND Manager_Last_Name__c LIKE \'%'+srchMngLName+'%\' AND Manager_First_Name__c LIKE \'%'+srchMngFName+'%\' AND Operating_Group__c =\''+tmnOG+'\' ORDER BY Last_Name__c ASC LIMIT 200';
             searchDelegateResult = Database.query(searchDel);
                 if(searchDelegateResult.isEmpty()) {
                     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'The search did not find any possible matches! Please check the name and try again.')); 
@@ -203,7 +203,7 @@ public with sharing class IdentityHomeController {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least three characters in one of the search boxes to complete the search.'));
             btnDisable = true;
         } else {
-            String searchNonEmp='SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id,Name FROM TMN_User__c WHERE First_Name__c LIKE \'%'+srchFNameNonEmp+'%\' AND Last_Name__c LIKE \'%'+srchLNameNonEmp+'%\' AND Manager_Last_Name__c LIKE \'%'+srchMngLNameNonEmp+'%\' AND Manager_First_Name__c LIKE \'%'+srchMngFNameNonEmp+'%\' AND Operating_Group__c = \''+tmnOG+'\' AND Current_Person_Type__c IN (\'Alliance\',\'Contractor\',\'Other\',\'Potential Employee\') ORDER BY Last_Name__c ASC LIMIT 200';
+            String searchNonEmp='SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id,Name FROM TMN_User__c WHERE First_Name__c LIKE \'%'+srchFNameNonEmp+'%\' AND Last_Name__c LIKE \'%'+srchLNameNonEmp+'%\' AND Manager_Last_Name__c LIKE \'%'+srchMngLNameNonEmp+'%\' AND Manager_First_Name__c LIKE \'%'+srchMngFNameNonEmp+'%\' ORDER BY Last_Name__c ASC LIMIT 200';
             searchNonEmpResult = Database.query(searchNonEmp);
             btnDisable = false;
                 if(searchNonEmpResult.isEmpty()) {

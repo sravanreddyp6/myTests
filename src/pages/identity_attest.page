@@ -7,7 +7,7 @@
         <apex:pageBlock title="Attest Non-Employees">
             <apex:pageBlockTable value="{!attestNonEmployees}" var="e">
                 <apex:column headerValue="Link" >
-                    <apex:outputLink value="/{!e.Id}">View</apex:outputLink>
+                    <apex:outputLink value="{!URLFOR($Page.identity_view, '', [id=e.id])}">View</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Name" value="{!e.Name}"/>
                 <apex:column headerValue="Email" value="{!e.Email__c}"/>
