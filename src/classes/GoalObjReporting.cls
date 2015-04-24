@@ -8,6 +8,7 @@ public with sharing class GoalObjReporting {
 	public Integer numRows { get; set; }
 	public Action_Plan_objective__c thisObj {get ;set;}
 	public datetime shiftStart { get; set; }
+	public datetime shiftEnd { get; set; }
 	public boolean editable { get { return true; }} //!worksheet.Action_plan__r.Status__c.contains('Inactive');}}
 	
 	private Boolean hasError;
@@ -184,10 +185,31 @@ public with sharing class GoalObjReporting {
 		return privateTables;
 	}}
 	
+	private DateTime getMinDateTime( datetime dt1, datetime dt2) {
+		
+		DateTime mindt;
+		
+		if ( dt1 == null ) {
+			return ( dt2 == null ? DateTime.now() : dt2);
+		}
+		else {
+			if (dt2 == null )
+				return dt1;
+				
+			Long ms1 = dt1.getTime();
+			Long ms2 = dt2.getTime();
+		
+			mindt = DateTime.valueOf( Math.Min( ms1, ms2));
+		
+			return mindt;
+		}		
+	}
+	
 	private List<Action_Plan_Objective__c > privateobjectives;
 	private Action_Plan_Objective__c currentobjective; 
 	private List<Table>  calcTables(){
 		Date firstDay = shiftStart.Date();
+		Date lastDay = getMinDateTime(shiftEnd, DateTime.Now()).date();
 		privateobjectives = new List<Action_Plan_Objective__c>{ thisObj };
 		
 		List<Table> out = new List<Table>();
@@ -200,11 +222,11 @@ public with sharing class GoalObjReporting {
 			currentObjective = privateObjectives[0];
 		}
 
-		out.Add(GenerateObjectiveTable(currentObjective, firstDay));
+		out.Add(GenerateObjectiveTable(currentObjective, firstDay, lastDay));
 		return out;
 	}
 
-	private Table GenerateObjectiveTable(Action_Plan_Objective__c objective, Date firstDay){
+	private Table GenerateObjectiveTable(Action_Plan_Objective__c objective, Date firstDay, Date lastDay){
 		Table t1 = new Table(getHoursOfDay(), getDaysToDisplay());
 		system.debug( 'OBJECTIVE INSIDE GENERATE TABLE:' + objective);
 		t1.ObjectiveDescription = objective.Description__c;
@@ -266,7 +288,7 @@ public with sharing class GoalObjReporting {
 	public List<Date> getDaysToDisplay() {
 		List<Date> month = new List<Date>();
 		Date startDate = shiftStart.Date();
-		Date endDate = Date.Today();
+		Date endDate = getMinDateTime(shiftEnd, DateTime.now()).Date();
 		for(Date dateiter = StartDate; dateiter <= endDate; dateiter = dateiter+1){
 			month.Add(dateiter);
 		}
@@ -275,7 +297,7 @@ public with sharing class GoalObjReporting {
 
 	public List<Date> getDaysOfMonth() {
 		List<Date> month = new List<Date>();
-		Date endDate = Date.Today();
+		Date endDate = getMinDateTime(shiftEnd, Datetime.now()).date();
 		system.debug(shiftStart.Date().addmonths(1));
 		system.debug(shiftStart.Date().addmonths(1).toStartofMonth());
 		for(Date dateiter = shiftStart.Date(); dateiter <= endDate; dateiter = dateiter+1){
@@ -290,13 +312,14 @@ public with sharing class GoalObjReporting {
 		integer istart=0; 
 		integer iend=23;
 		Datetime dtnow = datetime.now();
+		Datetime dtEnd = getminDateTime( shiftEnd, dtNow ).date();
 		integer starthr = shiftStart.hour();
-		integer nowhr = dtnow.hour();
+		integer endhr = dtEnd.hour();
 		
 		// if we're in the same day as the shift, start on shift start hour, end on current hour
-		if ( shiftStart.isSameDay(dtnow)) {
+		if ( shiftStart.isSameDay(dtEnd)) {
 			istart = starthr;
-			iend = nowhr;
+			iend = endhr;
 		} else {
 			// we've crossed over midnight - need to output hours from earliest hour through midnight
 			istart = 0;

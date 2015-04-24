@@ -366,7 +366,7 @@
 	</apex:outputPanel>
 
  	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
-			<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}"/>
+			<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}" enddate="{!thisEval.Shift_End_Time__c}"/>
 	</apex:outputPanel>
 
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
