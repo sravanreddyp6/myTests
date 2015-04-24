@@ -1241,7 +1241,7 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:actionStatus>
 			</div>
 			<apex:pageBlockTable styleclass="pcBody-list" value="{!shiftAssessments}" var="evs" rendered="{!shiftAssessments.size > 0}" id="evaluations2">
-				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}&tab=demographicsTab" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
+				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
 				</apex:column>
 				<apex:column headerValue="Name">
 					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
