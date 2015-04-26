@@ -241,6 +241,11 @@
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
                         <p>Status:{!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
 					</apex:outputPanel>
+					
+					<apex:outputPanel rendered="{!evalType == 'CNA Workbook'}">
+						<h4>CNA: {!thisEval.Owner.Name}</h4>
+						<p>Status: {!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
+					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!evalType == 'Restraint Event'}">
 						<p>
@@ -332,7 +337,7 @@
 			<apex:param name="canEdit" value="" />
 		</apex:actionFunction>
         <apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();"/>
-		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
+		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (evalType=='CNA Workbook','completeShift();', 'location.reload(true);')} return false;" />
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
@@ -382,7 +387,17 @@
 			</apex:pageBlock>
 		</apex:form>
 	</apex:outputPanel>
-
+	
+	<apex:pageBlock >
+	<Apex:pageblocksection columns="1" title="Approval History" rendered="{! AND(evalType == 'CNA Workbook', thisEval.status__c != 'Draft')}">
+	<apex:datatable style="width: 100%;"  value="{!approvalHistory}" var="a">
+	<apex:column value="{!a.actorid}" headervalue="By"/>
+	<apex:column value="{!a.stepstatus}" headervalue="Status"/>
+	<apex:column value="{!a.comments}" headervalue="Comments"/>
+	<apex:column value="{!a.createddate}" headervalue="Date" />
+	</apex:datatable>
+	</Apex:pageblocksection>
+	</apex:pageBlock>
 
 	<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block">
 		<apex:outputPanel layout="inline">
