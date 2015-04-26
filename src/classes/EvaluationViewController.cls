@@ -19,6 +19,8 @@ public with sharing class EvaluationViewController {
 			returnURL = new PageReference('/apex/CareMeridianEvaluationView?id='+evaluation.id);
 		} else if(evaluation.RecordTypeId == Utility.getEvaluationRecordType('CMShiftAssessment')) {
 			returnURL = new PageReference('/apex/EvalDynamic?evalId=' + evaluation.Id + '&opGrp=Care Meridian&evalType=Head to Toe');
+		} else if(evaluation.RecordTypeId == Utility.getEvaluationRecordType('CNA Workbook')) {
+			returnURL = new PageReference('/apex/EvalDynamic?evalId=' + evaluation.Id + '&opGrp=Care Meridian&evalType=CNA+Workbook');
 		}
 		return returnURL;
 	}

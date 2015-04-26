@@ -17,11 +17,14 @@ public with sharing class EvalDynamicExt {
 	public string key {get; set;}
 	
 	
+	
 	public Boolean showDisregard {get; set;}
 	public Boolean showRevise {get; set;}
 	public Boolean showEsign{get; set;}
 	public Boolean showshiftDone{get; set;}
+	public Boolean showApprove {get; set;}
 	public Boolean isUserOwner {get; set; }
+	public Boolean isApprover { get; set; }
 	
 	public String getEvalStatusDate(){
 		if (evalType == 'Head to Toe')
@@ -49,7 +52,7 @@ public with sharing class EvalDynamicExt {
 		cat = ApexPages.currentPage().getParameters().get('Category');
 		subCat = ApexPages.currentPage().getParameters().get('SubCategory');
 		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
-		
+		approvalHIstory = new List<ProcessInstanceHistory>();
 		
 		showMainComponent = true;
 		showDisregard = false;
@@ -67,6 +70,9 @@ public with sharing class EvalDynamicExt {
 			accId = thisEval.serviceassignment__r.admission__r.person_being_served__r.AccountId;
 			if ( UserInfo.getUserId() == thisEval.OwnerID )	
 				isUserOwner = true;
+			
+			if ( UserInfo.getUserId() == getApprovalUserID( thisEval.Id))
+				isApprover = true;
 				
 			controlButtons();
 		}
@@ -286,6 +292,9 @@ public with sharing class EvalDynamicExt {
 	
 	public pageReference completeShift() {
 		
+		if ( evalType == 'CNA Workbook') 
+			return FinalizeCNA();
+			
 		//Commented by Sravan - 04/13/2015 as the whole logic is handled in CMShiftAssessmentEsign.cls -- CLciking the Complete button invokes Authentication Component but not this method.
 		
 		/*savepoint completeShiftSavepoint = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
@@ -409,14 +418,17 @@ public with sharing class EvalDynamicExt {
 	//Start - Control the visibility of buttons
 	public void controlButtons() {
 		
+		showApprove = false;
+		
 		if (!isUserOwner ) {
 			showEsign=false;
 			showRevise = false;
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
 			showDisregard = false;
-			
+			showApprove = false;
 			return;
 		}
+		
 			
 		if(evalType == 'Residential'){
 			showshiftDone = false;
@@ -507,6 +519,17 @@ public with sharing class EvalDynamicExt {
 				showshiftDone = true;
 			}
 		}
+		
+		if (evalType == 'CNA Workbook') {
+			showRevise = false;
+			showShiftDone = false;
+			
+			if ( thiseval.status__c == 'Draft')
+				showEsign = true;
+			
+			if ( thiseval.status__c == 'Pending Approval' && isApprover)
+				showApprove = true;
+		}
 			
 	}
 	//End - Control the Visibility of Buttons
@@ -576,5 +599,32 @@ public with sharing class EvalDynamicExt {
 		
 	}
     
+    
+    public PageReference FinalizeCNA(){
+        return new PageReference('/apex/EvaluationApproval?id=' + evalID);
+    }
+    
+    public List<ProcessInstanceHistory> approvalHistory;
+    public List<ProcessInstanceHistory> getApprovalHistory () {
+    	List<ProcessInstance> pi = [SELECT Id, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate  FROM StepsAndWorkitems order by createddate desc)
+									FROM ProcessInstance where  targetobjectid = :evalID ];
+		
+		for ( ProcessInstance p : pi ) {
+			approvalHistory.addAll ( p.stepsandworkitems);
+		}
+		return approvalHistory;
+    	
+    }
+    
+    public ID getApprovalUserID( ID theID ) {
+    	
+    	List<ProcessInstanceWorkItem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :theID];
+    	
+    	if ( pwi.size() > 0) {
+    		return pwi[0].actorId;
+    	} else {
+    		return null;
+    	}
+    }
 	
 }
