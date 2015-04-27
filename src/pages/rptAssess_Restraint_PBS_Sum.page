@@ -1,0 +1,145 @@
+<apex:page sidebar="false" docType="HTML-5.0" controller="rptAssess_Restraint_PBS_Sum">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.better_picklist, '/chosen.jquery.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.better_picklist, '/chosen.min.css')}"/>
+
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/custom-green/jquery-ui.min.css')}"/>	
+<style>
+	td.details-control{
+		//cursor: pointer;
+	}
+	td.details-control-img {
+	    //background: url('{!URLFOR($Resource.dataTables, '/dataTables/examples/resources/details_open.png')}') no-repeat center center;
+	    
+	}
+	tr.shown td.details-control-img {
+	    //background: url('{!URLFOR($Resource.dataTables, '/dataTables/examples/resources/details_close.png')}') no-repeat center center;
+	}
+	.question{width: 250px;}
+	.answer{width: 150px;}
+</style>
+<h1 style="font-size: 25px; padding: 9px; display: block;">Restraint Reduction Summary</h1>
+<apex:pageMessages id="msg"></apex:pageMessages>
+	<apex:form >
+	<apex:pageBlock title="Filters">
+		<apex:pageBlockSection columns="1">
+			<apex:selectList required="True" label="Person Being Served" value="{!PBSID}" size="1"><apex:selectOptions value="{!optPBS}"/> </apex:selectList>
+			<apex:input label="Start Date" type="auto" value="{!sDate}"/>
+			<apex:input label="End Date" type="auto" value="{!eDate}"/>
+			<apex:commandButton action="{!runRPT}" value="Run" reRender="results, msg" status="myStatus"/>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+	</apex:form>
+	<apex:outputPanel id="results" >
+	<apex:pageBlock title="Results" rendered="{!mapAllAssess != null}">
+<apex:pageBlockButtons >
+	<div style="float: right"><input class="btn" type="button" onclick="tableToExcel('rptDataTbl', '')" value="Export to Excel" /></div>
+</apex:pageBlockButtons>	
+		<h1>Restraint Reduction Summary {! PBS.LastName + ', ' + PBS.FirstName + ' - ' + PBS.PBS_Identifier__pc }</h1>
+		<br/>
+		<table id="rptDataTbl">
+			<thead>
+			    <tr>			    	
+			        <th>Assessment Category</th>
+			        <apex:repeat value="{!colIndex}" var="col">
+			            <th style="cursor: pointer" onclick="window.open('/{!mapAllAssess[col].id}', '_blank'); return false;">
+							<apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
+							    <apex:param value="{!mapAllAssess[col].Assessment_Date__c}" />
+							</apex:outputText>			            
+			    		</th>
+			        </apex:repeat>
+			        <th></th>
+			    </tr>
+			</thead>
+			<tbody>
+				<apex:repeat value="{!allQuestions}" var="qu">
+					<tr>						
+						<td class="question">{!qu.Question_Title__c}</td>
+						<apex:repeat value="{!colIndex}" var="col">
+							<td class="answer">
+								<apex:variable value="{!col + qu.id }" var="theID"/>
+								{! Round(mapAllData[theID].score__c, 0)}
+							</td>
+						</apex:repeat>
+						<td class="details-control details-control-img"></td>
+					</tr>
+				</apex:repeat>
+			</tbody>
+	        <tfoot>
+			    <tr>			    	
+			        <th>Total</th>
+			        <apex:repeat value="{!colIndex}" var="col">
+			            <th >
+		            		{! Round(mapAllAssess[col].score__c,0) }
+			    		</th>
+			        </apex:repeat>
+			        <th></th>
+			    </tr>
+			    <tr>			    	
+			        <th>Guidelines</th>
+			        <apex:repeat value="{!colIndex}" var="col">
+			            <th >
+			            	{!mapAllAssess[col].Guidelines__c}		            		
+			    		</th>
+			        </apex:repeat>
+			        <th></th>
+			    </tr>			    
+	        </tfoot>
+		</table>
+
+
+
+	</apex:pageBlock>
+		<script>
+		
+			jQuery.noConflict();
+			//$ = jQuery.noConflict();
+			jQuery(document).ready(function() {
+				console.log('started');
+			    var table = jQuery('#rptDataTbl').DataTable({
+		            "bPaginate": false,
+		            /*"order": [[ 1, "asc" ]],*/
+		            "ordering": false, 
+		            "bFilter": false, 
+		            "bInfo" : false,     
+	        	}  );
+				console.log('finished');		        			
+			});
+		</script>
+	</apex:outputPanel>	
+<script>
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=jQuery('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+
+
+</script>	
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <style>
+            .fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+        </style>
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>	
+</apex:page>
