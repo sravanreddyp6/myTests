@@ -303,7 +303,7 @@
 				<apex:column headerValue="Created By"><a href="/{!app.MostRecent}">{!app.LMName}</a>
 				</apex:column>
 				<apex:column headerValue="Date Submitted">
-					<apex:outputText Value="{!app.cDate}"></apex:outputText>
+					<apex:outputText value="{0, date, M/d/yyyy hh:mm aaa}"><apex:param value="{!app.cDate}" /></apex:outputText>
 				</apex:column>
 			</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
