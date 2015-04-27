@@ -1466,13 +1466,12 @@ public void loadProgramList() {
 					FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment; // Calling the Field set where the about to be cloned fieldvalue paths are stored
 					FieldSet behavior = SObjectType.Evaluation__c.FieldSets.Behavior;
 					FieldSet respondsTo = SObjectType.Evaluation__c.FieldSets.RespondsTo;
-					FieldSet glasses = SObjectType.Evaluation__c.FieldSets.Glasses;
+					//FieldSet glasses = SObjectType.Evaluation__c.FieldSets.Glasses;
 
 					set<String> getEvals = new set<String>(); //Collection to store the API names of the Fields which will be used in Query (API_Name_Flag__c)
 					for(Schema.FieldSetMember f: copyFields.getFields()) {
 						query += f.getFieldPath() + ', ';
 					}
-
 					query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
 					sObject existingEval = Database.Query(query);
 
@@ -1484,45 +1483,43 @@ public void loadProgramList() {
 					}
 					getEvals.add('Behavior'); //Make Sure Behavior ApI_Flag_Name__c is also included
 					getEvals.add('RespondsTo');
-					getEvals.add('Glasses');
+			
 
 				//	system.debug('Checking the set for null values+++++++++'+getEvals);
 					//system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
 
-					Map<id,Eval__c> evalMap = new Map<id,Eval__c>([SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals]);
-
+					List<Eval__c> evalList = [SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals];
+					
+					Map<string, List<Eval__c>> evalMap = new Map<string, List<Eval__c>>();
 					//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
-				/*	set<string> catSubcat = new set<string>();
+					set<string> cats = new set<string>();
+					set<string> subCats = new set<string>();
+					
+					set<string> catSubcat = new set<string>();
 					Map<string, string> uniqueTimeMap = new Map<string, string>();
 
-					for(Eval__c ee: evalMap.values()){
+					for(Eval__c ee: evalList){
+						cats.add(ee.category__c);
+						subCats.add(ee.Sub_Category__c);
 						catSubcat.add(ee.Category__c+'~'+ee.sub_category__c);
-					}*/
+						string catSubcatCheck = ee.Category__c+'~'+ee.sub_category__c;
+						
+						if(string.valueOf(ee.Category__c+'~'+ee.Sub_Category__c) == catSubcatCheck){
+							List<Eval__c> evs = new List<Eval__c>();
+							evs.add(ee);
+							evalMap.put(catSubcatCheck, evs);
+						}
+					}
 
 					
-					
-				/*	integer n = 0;
-					//system.debug('Strings+++++++++++++++++++++++'+catSubcat);
 					for(String s: catSubcat){
-						n = n+1;
-						uniqueTimeMap.put(s,timeString+string.valueOf(n));
-					}*/
-
-					//system.debug('timeMap+++++++++++=='+uniqueTimeMap);
-
-					//Create Corresponding Eval Value Records
-					List<Eval_Value__c> values = new List<Eval_value__c>();
-					Eval_Value__c value;
-					string timeString =  Userinfo.getUserId()+'-'+DateTime.now().getTime();
+						uniqueTimeMap.put(s,Userinfo.getUserId()+'-'+DateTime.now().addSeconds(1).getTime());
+					}
 
 					string behaviorString = '';
 					string respondstoString = '';
-					string glassesString = '';
 
 					for(Schema.FieldSetMember f: behavior.getFields()){
-						//system.debug('behvaiorset+++++++'+behavior.getFields());
-						//system.debug('fieldValue+++++'+existingEval.get(f.getFieldPath()));
-						//if(string.isNotBlank(string.valueOf(existingEval.get(f.getFieldPath())))) {
 						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
 							behaviorString += f.getLabel();
 							behaviorString += '; ';
@@ -1537,51 +1534,107 @@ public void loadProgramList() {
 						}
 
 					}
+
+					//Create Corresponding Eval Value Records
+					List<Eval_Value__c> values = new List<Eval_value__c>();
+					Eval_Value__c value;
 					
-					for(Schema.FieldSetMember f: glasses.getFields()){
-						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
-							if(f.getLabel().Contains('Reading')){
-								glassesString += 'For Reading';
-								glassesString += '; ';
+					for(Eval__c eval: evalList) {
+						
+						string fieldName = eval.API_Name_Flag__c;
+						value = new Eval_Value__c();
+						value.Eval__c = eval.Id;
+						value.Eval_Section_Type__c = 'Residential';
+						value.what_id__c = resAsmt.Id;
+						value.what_id_object__c = 'Evaluation__c';
+						
+						string catSubcatCheck = eval.Category__c+'~'+eval.Sub_Category__c;
+						if(uniqueTimeMap.keySet().contains(catSubCatCheck)){
+							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
+						}
+							
+						if ( eval.Field_Type__c == 'Boolean'){
+							
+								if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
+									if ( (Boolean)existingEval.get(fieldName) == true)
+										value.Boolean__c = true;
+									else
+										value.Boolean__c = false;
+								}
+								else if (eval.Field_Sub_Type__c == 'Dropdown')
+									value.Text_Under_250__c = existingEval.get(fieldName)== true ? '1':'0';
+								}
+	
+						else if (eval.Field_Type__c == 'Int'){
+							value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
+						}
+						else if (eval.Field_Type__c == 'Date'){
+							value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
+						}
+						else if (eval.Field_Type__c == 'Datetime' ){
+							value.Date_Time__c = (Datetime)existingEval.get(fieldName);
+						}
+						
+						else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' 
+								 || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
+								eval.Field_Type__c == 'Currency'){
+									
+							if ( eval.length__c > 250 ){
+								value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
 							}
-							if(f.getLabel().Contains('Distance')){
-								glassesString += 'For Distance';
-								glassesString += '; ';
-							}
-							if(f.getLabel().Contains('Focal')){
-								glassesString += 'For Multifocal Use';
-								glassesString += '; ';
-							}
-							if(f.getLabel().Contains('Other')){
-								glassesString += 'Other';
-								glassesString += '; ';
+							else{
+								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
 							}
 						}
-
+						
+						else if(eval.Field_Type__c == 'Multiselect'){
+							if(eval.field_Name__c == 'Behavior' && string.isNotBlank(behaviorString) && behaviorString != ''){
+								value.Text_Over_250__c = behaviorString;
+							}
+							if(eval.field_Name__c == 'RespondsTo' && string.isNotBlank(respondstoString) && respondstoString != ''){
+								value.Text_Over_250__c = respondstoString;
+							}
+						}
+							values.add(value);
+						
 					}
 					
-					for(Eval__c eval: evalMap.values()){
-
-						string fieldName = eval.API_Name_Flag__c;
+					List<Eval__c> isValidEvals = [SELECT Id, Category__c, Sub_Category__c FROM  Eval__c WHERE Field_name__c = 'IsValid' AND Category__c IN: cats AND Sub_Category__c IN: subCats];
+					for(Eval__c val: isValidEvals){
+						Eval_Value__c isVal = new Eval_value__c();
+						String keyCheck = val.Category__c+'~'+val.Sub_category__c;
+						if(uniqueTimeMap.keySet().contains(keyCheck) && val.Field_name__c == 'IsValid'){
+							isVal.Eval__c = val.Id;
+							isVal.Eval_Section_Type__c = 'Residential';
+							isVal.what_id__c = resAsmt.Id;
+							isVal.what_id_object__c = 'Evaluation__c'; 
+							isVal.eval_Section_Id__c = uniqueTimeMap.get(keyCheck);
+							isval.Boolean__c = false;
+							
+							values.add(isVal);
+						}
+					}
 						
-						if(fieldName != 'Behavior' && fieldName != 'RespondsTo' && fieldName != 'Glasses' ) {
+				
+				/*	for(Eval__c eval: evalList){
+						
+						string fieldName = eval.API_Name_Flag__c;
+						if(fieldName != 'Behavior' && fieldName != 'RespondsTo') {
 
 							value = new Eval_Value__c();
 							value.Eval__c = eval.Id;
 							value.Eval_Section_Type__c = 'Residential';
 							value.what_id__c = resAsmt.Id;
 							value.what_id_object__c = 'Evaluation__c';
-							value.eval_Section_Id__c = timeString;
+						//	value.eval_Section_Id__c = timeString;
 	
 						//	string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
 	
-							/*if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
+							if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
 								//system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
 								value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
 	
-							}*/
-	
-						//	if(fieldName != 'Behavior' && fieldName != 'RespondsTo' && fieldName != 'Glasses') { //Move to set and use contains if more values are requested in future - Sravan - 04/19/2015 9:30PM
+							}
 	
 								//Handle All Data Types
 								if ( eval.Field_Type__c == 'Boolean'){
@@ -1615,7 +1668,7 @@ public void loadProgramList() {
 
 					//	}
 								values.add(value);
-							}
+							} 
 							
 						 if(string.isNotBlank(behaviorString) && eval.Field_Name__c == 'Behavior' && behaviorString != ''){
 							 	value = new Eval_Value__c();
@@ -1623,7 +1676,7 @@ public void loadProgramList() {
 								value.Eval_Section_Type__c = 'Residential';
 								value.what_id__c = resAsmt.Id;
 								value.what_id_object__c = 'Evaluation__c';
-								value.eval_Section_Id__c = timeString;
+								//value.eval_Section_Id__c = timeString;
 								value.Text_Under_250__c = behaviorString;
 								values.add(value);
 						}
@@ -1634,7 +1687,7 @@ public void loadProgramList() {
 								value.Eval_Section_Type__c = 'Residential';
 								value.what_id__c = resAsmt.Id;
 								value.what_id_object__c = 'Evaluation__c';
-								value.eval_Section_Id__c = timeString;
+							//	value.eval_Section_Id__c = timeString;
 								value.Text_Under_250__c = respondstoString;
 								values.add(value);
 						}
@@ -1651,12 +1704,14 @@ public void loadProgramList() {
 						}
 
 				
-					}
+					}*/
 					
 
 					try{
-
-						insert values;
+						
+						if(values.size() > 0 ){
+							insert values;
+						}
 					}
 					catch (DMLException e){
 
