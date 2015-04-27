@@ -111,7 +111,6 @@ public with sharing class EvaluationResponseTableController {
 	public void saveResponse() {
 		System.debug('saveResponse called, currentResponse: ' + currentResponse);
 		//      Start EC-116
-		//      Added for date validation and to disable edit on Isolation Events EC-116
 		ID rtId = null;
 		List<RecordType> rt = [select id from RecordType where DeveloperName = 'Isolation_Event' and sObjectType = 'Evaluation_Response__c' limit 1];
 		if(rt.size() < 1){
@@ -128,12 +127,7 @@ public with sharing class EvaluationResponseTableController {
 				currentResponse.addError( 'Isolation end date cannot be in future!' );
 				hasError = true;
 			}
-			//if(currentResponse.Isolation_Event_End_Date__c != null && currentResponse.Isolation_Event_Start_Date__c < currentResponse.Isolation_Event_End_Date__c){
-			//    currentResponse.eSigned_By__c = userInfo.getUserId();
-			//    currentResponse.eSigned_On__c = Date.today();
-			//}
 		}
-
 		//      End EC-116
 
 		try {
@@ -257,7 +251,7 @@ public with sharing class EvaluationResponseTableController {
 
 	private void fetchResponses(Id evaluationId, String responseType) {
 		if(numRows == null){numRows = 1000;}
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Evaluation__c = :evaluationId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
 				'\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc' ;
@@ -266,7 +260,7 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	private void fetchResponsesFromPBS(Id pbsId, String responseType) {
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c,' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Person_Being_Served__c = :pbsId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
 				'\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc Limit ' + numRows;
