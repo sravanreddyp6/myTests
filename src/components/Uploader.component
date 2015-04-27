@@ -128,12 +128,6 @@
         </apex:pageBlock>
     </apex:form>
     <apex:form id="form">
-        <apex:actionFunction action="{!deleteFile}" name="removeAttachment" reRender="attachmentsTable" status="working">
-            <apex:param name="aId" value="" />
-        </apex:actionFunction>
-        <apex:actionstatus id="working">
-            Deleting....
-        </apex:actionstatus>
         <apex:outputPanel id="datePanelContainer">
             <apex:pageBlock title="Existing Attachments" rendered="{!showExisting}" >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
@@ -151,11 +145,11 @@
                 </apex:column>
                 <apex:column headerValue="Description">{!attachment.Description}</apex:column>
                 <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
-                    <!-- <apex:outputText value="{!attachment.CreatedDate}" /> -->
-                    <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>
+                     <apex:outputText value="{!attachment.CreatedDate}" /> 
+                  <!--  <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>-->
                 </apex:column>
 				 <apex:column style="padding-right: 9px;" headerValue="Created By">
-                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
+                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.OwnerName}</apex:outputLink>
                 </apex:column>
                 </apex:pageBlockTable>
             </apex:pageBlock>
