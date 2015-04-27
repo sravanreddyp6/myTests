@@ -1593,7 +1593,7 @@ public void loadProgramList() {
 								system.debug('behaviorString+++++'+behaviorString);
 								value.Text_Under_250__c = behaviorString;
 							}
-							if(fieldName == 'Responds To' && string.isNotBlank(respondstoString)){
+							if(fieldName == 'RespondsTo' && string.isNotBlank(respondstoString)){
 								system.debug('respondstoString++++++'+respondstoString);
 								value.Text_Under_250__c = respondstoString;
 							}
