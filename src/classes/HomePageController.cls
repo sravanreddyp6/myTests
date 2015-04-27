@@ -53,6 +53,8 @@ public with sharing class HomePageController{
 
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
+	//PBS object
+	public Boolean canSeePBS { get; private set; }
 
 	public Map<Id, Evaluation__c> shiftDocMap { get; set; }
 	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
@@ -61,6 +63,11 @@ public with sharing class HomePageController{
 
 	//Constructor
 	public HomePageController(){
+		
+		//PBS object
+		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
+		canSeePBS = oSchema.isAccessible();
+
 		pbsOnlyShowActiveServiceAssignment = true;
 		searchResultList = new List<HomePageSearchController.SearchResult>();
 		programsList = new list<SelectOption>();
