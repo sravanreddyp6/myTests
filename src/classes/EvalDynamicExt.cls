@@ -61,6 +61,7 @@ public with sharing class EvalDynamicExt {
 		showEsign = false;
 		showshiftDone = false;
 		isUserOwner = false;
+		isApprover = false;
 		
 		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c from Evaluation__c where ID = :evalID LIMIT 1];
 		
@@ -658,6 +659,7 @@ public with sharing class EvalDynamicExt {
     	List<ProcessInstanceWorkitem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :theID];
     	
     	if ( pwi.size() > 0) {
+    		system.debug('Approver is:' + pwi[0].actorID);
     		return pwi[0].actorId;
     	} else {
     		return null;
