@@ -1588,10 +1588,12 @@ public void loadProgramList() {
 						}
 						
 						else if(eval.Field_Type__c == 'Multiselect'){
-							if(eval.field_Name__c == 'Behavior' && string.isNotBlank(behaviorString) && behaviorString != ''){
+							if(fieldName == 'Behavior' && string.isNotBlank(behaviorString)){
+								system.debug('behaviorString+++++'+behaviorString);
 								value.Text_Over_250__c = behaviorString;
 							}
-							if(eval.field_Name__c == 'RespondsTo' && string.isNotBlank(respondstoString) && respondstoString != ''){
+							if(fieldName == 'Responds To' && string.isNotBlank(respondstoString)){
+								system.debug('respondstoString++++++'+respondstoString);
 								value.Text_Over_250__c = respondstoString;
 							}
 						}
@@ -1600,6 +1602,7 @@ public void loadProgramList() {
 					}
 					
 					List<Eval__c> isValidEvals = [SELECT Id, Category__c, Sub_Category__c FROM  Eval__c WHERE Field_name__c = 'IsValid' AND Category__c IN: cats AND Sub_Category__c IN: subCats];
+					system.debug('The size of isValids +++++' +isValidEvals.size());
 					for(Eval__c val: isValidEvals){
 						Eval_Value__c isVal = new Eval_value__c();
 						String keyCheck = val.Category__c+'~'+val.Sub_category__c;
@@ -1615,7 +1618,33 @@ public void loadProgramList() {
 						}
 					}
 						
-				
+					system.debug('Time-CatMap+++++'+uniqueTimeMap);
+					
+					
+					//logic to carryover Evaluation Responses from Referral Evaluation to Residential Assessment
+					list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail'};
+   					FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+   					list<Evaluation_Response__c> clonedResponses = new List<Evaluation_Response__c>();
+   					
+   					String respQuery ='SELECT ';
+		   			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
+		                    respQuery +=f.getFieldPath() + ', ';
+		            }
+            
+            		respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalOnReferralId AND RecordType.Name IN:responseRectypes';
+            		list<Evaluation_Response__c> evalResponses = database.query(respQuery);
+            		
+            		if(evalResponses!=null){
+	                	for(Evaluation_Response__c erp : evalResponses){
+		                    Evaluation_Response__c newRecord = erp.clone(false);
+		                    newRecord.Evaluation__c = resAsmt.Id;
+		                    if (newRecord.RecordType.Name == 'Allergy') {
+		                        newRecord.Person_Being_Served__c = theServAssign.Admission__r.Person_Being_Served__c;
+	                    	}
+	                    	clonedResponses.add(newRecord);
+               		 	}
+            		}
+					
 				/*	for(Eval__c eval: evalList){
 						
 						string fieldName = eval.API_Name_Flag__c;
@@ -1711,6 +1740,9 @@ public void loadProgramList() {
 						
 						if(values.size() > 0 ){
 							insert values;
+						}
+						if(clonedResponses.size() > 0){
+							insert clonedResponses;
 						}
 					}
 					catch (DMLException e){

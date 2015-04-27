@@ -90,7 +90,7 @@
 	   <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
     	<apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" />
     	<apex:outputLink rendered="{!parentPage = 'PBS' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
-    	<apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS' }"> &nbsp;>&nbsp; <apex:outputLink rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'}">  <a href="/{!admId}">Admission </a> </apex:outputLink>
+    	<apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS' }"> <apex:outputText rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'}">  &nbsp;>&nbsp; <a href="/{!admId}">Admission </a> </apex:outputText>
     	<apex:outputText rendered="{!parentPage == 'Admission' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value="> Admission" /></apex:outputPanel>
     	<apex:outputLink rendered="{!parentPage == 'Admission' &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" > &nbsp;>&nbsp; <a href="/apex/AdmissionView?id={!admId}">Admission</a></apex:outputLink>
 		<apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' ) &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value=" > {!asmtType} Assessment" />
