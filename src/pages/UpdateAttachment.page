@@ -1,7 +1,12 @@
 <apex:page id="UpdateAttachment" controller="SObjectViewAttachmentController" tabStyle="Persons_Being_Served_New__tab">
-	 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
-	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-	  <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/js/jquery-filestyle.min.js')}"/>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/redmond/jquery-ui.css">
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/css/jquery-filestyle.min.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+      <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+    </link>
    <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!parentId}" parentPage="PBS" editAttachemnt="true" />
    <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" editAttachemnt="true" />
    <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" editAttachemnt="true" />
@@ -16,7 +21,7 @@
    </apex:variable>
 	   <BR/>
 <apex:form id="attchmentUpdateForm">
-
+ <apex:actionFunction action="{!deleteFile}" name="deleteFile"  status="LoadingStatus"/>
 <div class="bPageBlock brandSecondaryBrd bEditBlock secondaryPalette"
 		id="ep">
 		<div class="pbHeader">
@@ -27,7 +32,8 @@
 						<h2 class="mainTitle">Edit Attachment</h2></td>
 						<td class="pbButton" id="topButtonRow">
 						<apex:commandButton value="Save" action="{!editAttachment}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          				 <apex:commandButton value="Cancel" action="{!redirectToViewAttachment}" />
+          				 <apex:commandButton value="Cancel" action="{!redirectToViewAttachment}" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								 <apex:commandButton id="deletefileId1" value="Delete"  rendered="{! $Profile.Name == 'System Administrator' ||enableDelete}" onclick="deleteattachment();  return false;" />	
 							</td>
 					</tr>
 				</tbody>
@@ -36,11 +42,7 @@
 		 
 		<div class="pbBody">
 			<div class="pbSubheader brandTertiaryBgr first tertiaryPalette" id="head_1_ep">
-				<span class="pbSubExtra">
-				<span class="requiredLegend brandTertiaryFgr">
-				<span class="requiredExampleOuter">
-				<span class="requiredExample">&nbsp;</span></span>
-				<span class="requiredMark">*</span><span class="requiredText"> = Required Information</span></span></span>
+	
 				<h3>
 					Attachment Information<span class="titleSeparatingColon">:</span>
 				</h3>
@@ -96,7 +98,8 @@
 						<td class="pbTitle">&nbsp;</td>
 						<td class="pbButtonb" id="bottomButtonRow">
 						<apex:commandButton value="Save" action="{!editAttachment}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          				<apex:commandButton value="Cancel" action="{!redirectToViewAttachment}" />							
+          				<apex:commandButton value="Cancel" action="{!redirectToViewAttachment}" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<apex:commandButton id="deletefileId" value="Delete" rendered="{! $Profile.Name == 'System Administrator' || enableDelete}" onclick="deleteattachment();  return false;" />				
           				 </td>
 					</tr>
 				</tbody>
@@ -107,5 +110,36 @@
 
 
 </apex:form>
+   <div id="dialog-confirm" class="dialog" title="Delete Attachment?"  style="display:none">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Are you sure you want to delete this attachment?</p>
+    </div>
+ <script type="text/javascript">
+ $ = jQuery.noConflict();
+ 
+ function deleteattachment(){
+        $('[id*=dialog-confirm]').dialog( "open" );
+ }
+ 
+ $(function() {
+    $('[id*=dialog-confirm]').dialog({
+      resizable: false,
+      height:180,
+      modal: true,
+      autoOpen: false,
+      buttons: {
+        Yes: function() {
+            $( this ).dialog( "close" );
+           deleteFile();   
+        },
+        No: function() {
+            $( this ).dialog( "close" );
+        }
+      }
+    });
+});
 
+
+ 
+ </script>   
+    
 </apex:page>

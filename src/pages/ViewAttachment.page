@@ -1,6 +1,14 @@
 <apex:page id="ViewAttachment" controller="SObjectViewAttachmentController" tabStyle="Persons_Being_Served_New__tab">
 <apex:variable value="{!if(retURL != null, retURL ,$CurrentPage.URL)}" var="theRetUrl"/>  
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/js/jquery-filestyle.min.js')}"/>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/redmond/jquery-ui.css" />
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/css/jquery-filestyle.min.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+      <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
+
    <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!parentId}" parentPage="PBS" viewAttachment="true" />
    <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" viewAttachment="true" />
    <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" viewAttachment="true" />
@@ -15,7 +23,7 @@
    </apex:variable>
    <br/>
 <apex:form id="attchmentViewForm">
-
+<apex:actionFunction action="{!deleteFile}" name="deleteFile"  status="LoadingStatus"/>
 
 <apex:pageBlock >
 					<div class="pbHeader">
@@ -26,7 +34,8 @@
 							<h2 class="mainTitle">Attachment Detail</h2></td>
 							<td class="pbButton" id="topButtonRow">
 							<apex:commandButton value="Edit" action="{!redirectToUpdate}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          				 <apex:commandButton value="Cancel" action="{!redirectToLastView}" />
+          				 <apex:commandButton value="Cancel" action="{!redirectToLastView}" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<apex:commandButton id="deletefileId1" value="Delete" rendered="{!$Profile.Name == 'System Administrator' || enableDelete}" onclick="deleteattachment();return false;" />		
 							</td>
 						</tr>
 					</tbody>
@@ -76,7 +85,9 @@
 								height="1" class="minWidth" title=""
 								style="margin-right: 0.25em;" />&nbsp;</td>
 							<td><apex:commandButton value="Edit" action="{!redirectToUpdate}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<apex:commandButton value="Cancel" action="{!redirectToLastView}" /></td>
+								<apex:commandButton value="Cancel" action="{!redirectToLastView}" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<apex:commandButton id="deletefileId" value="Delete" rendered="{!$Profile.Name == 'System Administrator' || enableDelete}" onclick="deleteattachment();return false;" />		
+								</td>
 						</tr>
 					</tbody>
 				</table>
@@ -84,4 +95,33 @@
 		</apex:pageBlock>
 
  </apex:form>
+   <div id="dialog-confirm" class="dialog" title="Delete Attachment?"  style="display:none">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Are you sure you want to delete this attachment?</p>
+    </div>
+ <script type="text/javascript">
+ $ = jQuery.noConflict();
+ 
+ function deleteattachment(){
+        $('[id*=dialog-confirm]').dialog("open");
+ }
+ 
+ $(function() {
+    $('[id*=dialog-confirm]').dialog({
+      resizable: false,
+      height:180,
+      modal: true,
+      autoOpen: false,
+      buttons: {
+        Yes: function() {
+            $( this ).dialog( "close" );
+          deleteFile();           
+        },
+        No: function() {
+            $( this ).dialog( "close" );
+        }
+      }
+    });
+});
+ 
+ </script>  
  </apex:page>

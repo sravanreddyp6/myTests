@@ -14,12 +14,19 @@ public String ReferralName {get{return apexpages.currentpage().getparameters().g
 public String viewAttachmentUrl {get;set;}
 public AttachmentView attachmentView {get;set;}
 public Attachment attachment {get;set;}
+public boolean enableDelete {get;set;}
 public String docId {get{return apexpages.currentpage().getparameters().get('docId');}set;}
 public SObjectViewAttachmentController() {
 	if (attachment == null) {
 		attachment =[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name  from Attachment where Id=:docId];
 		attachmentView = (new AttachmentView(attachment));
 	}
+		if(attachment.OwnerID.equals(UserInfo.getUserId())){
+		enableDelete = true;
+		}else {
+		enableDelete = false;
+		}
+	
 }
 
 
@@ -49,6 +56,14 @@ public PageReference redirectToViewAttachment() {
 	
 	public PageReference redirectToUpdate() {
 		PageReference pg = new PageReference(UPDATE_ATTACHMENT_URL +docId + '&retURL='+retURL +'&parentPage='+parentPage +'&parentId='+parentId+'&pbsId='+pbsId+'&servAssignId='+servAssignId+'&apId='+apId+'&admId='+admId+'&asmtType='+asmtType+'&asmtId='+asmtId+'&viewAttachmentUrl='+viewAttachmentUrl+'&ReferralName='+ReferralName);
+		return pg;
+	}
+	
+	public  PageReference deleteFile()
+	{
+		delete attachment;
+		PageReference pg = new PageReference(retURL);
+		pg.setRedirect(true);
 		return pg;
 	}
 
