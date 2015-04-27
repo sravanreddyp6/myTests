@@ -196,7 +196,7 @@
 			<c:HomePageComponents objectName="Contract Management" />
 			<c:HomePageComponents objectName="Documents" />
 		</apex:outputPanel>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!OperatingGroup == 'Care Meridian'}">
+		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!AND(OperatingGroup == 'Care Meridian', canSeePBS)}">
 			<apex:pageBlockSection columns="2">
 				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
@@ -221,7 +221,7 @@
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
 					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}" />
+						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="pbsActionButton" />
 				</apex:column>
@@ -303,7 +303,7 @@
 				<apex:column headerValue="Created By"><a href="/{!app.MostRecent}">{!app.LMName}</a>
 				</apex:column>
 				<apex:column headerValue="Date Submitted">
-					<apex:outputText value="{0, date, M/d/yyyy hh:mm aaa}"><apex:param value="{!app.cDate}" /></apex:outputText>
+					<apex:outputText value=" {!app.cDate}" />
 				</apex:column>
 			</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
