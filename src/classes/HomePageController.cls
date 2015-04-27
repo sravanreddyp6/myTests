@@ -53,6 +53,8 @@ public with sharing class HomePageController{
 
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
+	//PBS object
+	public Boolean canSeePBS { get; private set; }
 
 	public Map<Id, Evaluation__c> shiftDocMap { get; set; }
 	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
@@ -61,6 +63,11 @@ public with sharing class HomePageController{
 
 	//Constructor
 	public HomePageController(){
+		
+		//PBS object
+		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
+		canSeePBS = oSchema.isAccessible();
+
 		pbsOnlyShowActiveServiceAssignment = true;
 		searchResultList = new List<HomePageSearchController.SearchResult>();
 		programsList = new list<SelectOption>();
@@ -147,7 +154,7 @@ public with sharing class HomePageController{
 			'       (SELECT Id, Name, Status__c, RecordType.Name FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
 			'WHERE Service_Location__c = :selectedProgram ' +
-			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\'': '') +
+			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\' ': '') +
 			'ORDER BY Person_Being_Served__r.Name';
 		serviceAssignments = Database.query(query);
 		Map<Id, Id> evaluationToServiceAssignmentMap = new Map<Id, Id>();
