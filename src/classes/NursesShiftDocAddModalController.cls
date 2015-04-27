@@ -1,7 +1,7 @@
 public with sharing class NursesShiftDocAddModalController {
 	public Service_Assignment__c serviceAssignment { get; set; }
 	public String evalType { get; set; }
-	
+
 	public Id serviceAssignmentId {
 		get;
 		set {
@@ -42,8 +42,9 @@ public with sharing class NursesShiftDocAddModalController {
 
 	public pageReference saveShiftDoc() {
 		String ownerfirstInitial = UserInfo.getFirstName() != null ? UserInfo.getFirstName().Substring(0,1) : '';
-		
-		shiftDoc.Name = this.shiftDoc.Name + ' - ' + shiftDoc.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString()) + ' - NSD - ' + ownerfirstInitial + '. ' + UserInfo.getLastName();
+
+		String docType = evalType == 'CMShiftAssessment' ? 'NSD' : 'CNA';
+		shiftDoc.Name = this.shiftDoc.Name + ' - ' + shiftDoc.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString()) + ' - ' + docType + ' - ' + ownerfirstInitial + '. ' + UserInfo.getLastName();
 		insert shiftDoc;
 		return new PageReference('/apex/EvaluationView?id=' + shiftDoc.Id);
 	}
@@ -52,7 +53,7 @@ public with sharing class NursesShiftDocAddModalController {
 	public static boolean findDupeEval(string shiftStart, string shiftEnd, Id saId, string evalType) {
 		DateTime st = Datetime.parse(shiftStart);
 		DateTime en = Datetime.parse(shiftEnd);
-		
+
 		List<Evaluation__c> dupeEval = [
 			SELECT Id, Name, Shift_Start_time__c, Shift_end_time__c
 			FROM Evaluation__c

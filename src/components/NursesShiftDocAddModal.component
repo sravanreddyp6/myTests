@@ -3,7 +3,7 @@
 	<apex:attribute name="onShowRerender" description="Which elements will be rerendered when the form is shown" type="String" required="false" />
 	<apex:attribute name="status" description="The status widget for this component" type="String" required="false" />
 	<apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
-	<apex:attribute name="shiftType" description="Recordtype for this shift" type="string" required="false" default="CMShiftAssessment"  assignTo="{!evalType}"/>
+	<apex:attribute name="shiftType" description="Recordtype for this shift" type="string" required="false" default="CMShiftAssessment" assignTo="{!evalType}" />
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -14,80 +14,65 @@
 			max-height: 500px;
 			overflow: auto;
 		}
+
 		.modalDialog .modalSubheader {
 			font-weight: bold;
 		}
+
 		.modalDialog .pbHeader {
 			font-size: 0.9em;
 		}
-		#shiftDocMessages .error {
+
+		#shiftDocMessages{!uniqueId} .error {
+			color: red;
+		}
+
+		#dupeFound{!uniqueId} .warning {
 			color: red;
 		}
 	</style>
 
 	<script>
 		$j = jQuery.noConflict();
-		
-	 function closeModalDialogN (dialogId, tagType) {
-        selector = tagType + '[id$=' + dialogId + ']';
-        $j(selector).dialog('destroy');
-        // Allow "background" to be scrollable when dialogs are closed.
-        $j("body").css("overflow", "auto");
-    	};
-    
-    
-    function openModalDialogN (dialogId, tagType, titleString, dClass, width, formName, hideCloseButton) {
-       	console.log(' inside openModal');
-        if (!width) {
-            width = 800;
-        }
-        if (!dClass) {
-            dClass = 'fixed-dialog';
-        }
-        if (!formName) {
-            formName = 'referralForm';
-        }
-        if (hideCloseButton === undefined) {
-            hideCloseButton = true;
-        }
-        selector = tagType + '[id$=' + dialogId + ']';
-        console.log( selector );
-        if ($j(selector).dialog("isOpen")!==true) {
-            $j(selector).dialog({
-                dialogClass: dClass,
-                title:titleString,
-                modal:true,
-                width: width,
-                resizable: false,
-                minHeight: 0,
-                dialogClass: 'modalDialog',
-                closeOnEscape:false,
-                position: {
-                    my: "center top",
-                    at: "center top"
-                },
-                open: function () {
-                    // Don't allow "background" to be scrollable when dialogs
-                    // are open.
-                    $j("body").css("overflow", "hidden");
-                }
-            }).parent().appendTo($j('form[id$=' + formName + ']'));
-            if (hideCloseButton) {
-                $j(selector).parent().find('a.ui-dialog-titlebar-close').remove();
-            }
-        }
-    	};
-    	
-		jQuery(document).ready(function( $ ) {
-		
+		jQuery(document).ready(function($) {
 			//"use strict";
-
+			window.openModalDialogN = function(dialogId, titleString, formId) {
+				var $element = $(document.getElementById(dialogId));
+				if ($element.dialog("isOpen") !== true) {
+					$element.dialog({
+						title: titleString,
+						modal: true,
+						width: 800,
+						resizable: false,
+						minHeight: 0,
+						dialogClass: 'modalDialog',
+						closeOnEscape: false,
+						zIndex: 9, // so that datepickers appear on top of the dialogs
+						position: {
+							my: "center top",
+							at: "center top"
+						},
+						open: function() {
+							// Don't allow "background" to be scrollable when dialogs
+							// are open.
+							$("body").css("overflow", "hidden");
+						}
+					}).parent().appendTo($(document.getElementById(formId)));
+					$element.parent().find('a.ui-dialog-titlebar-close').remove();
+				}
+			};
+			window.closeModalDialogN = function(dialogId) {
+				var $element = $(document.getElementById(dialogId));
+				$element.dialog('destroy');
+				// Allow "background" to be scrollable when dialogs are closed.
+				$("body").css("overflow", "auto");
+			};
 			var $shiftStartTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.shiftDocEntry.shiftStartTimeEntry.shiftStartTime}'));
 			var $shiftEndTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.shiftDocEntry.shiftEndTimeEntry.shiftEndTime}'));
-			var $shiftStartDate = $('#shiftStartDate');
-			var $shiftEndDate = $('#shiftEndDate');
-			var $shiftDocMessages = $('#shiftDocMessages');
-			var $dupeFound = $('#dupeFound');
+			var $shiftStartDate = $('#shiftStartDate{!uniqueId}');
+			var $shiftEndDate = $('#shiftEndDate{!uniqueId}');
+			var $shiftDocMessages = $('#shiftDocMessages{!uniqueId}');
+			var $dupeFound = $('#dupeFound{!uniqueId}');
 			var $evalSave = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.evalSave}'));
 			var $evalProceed = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.evalProceed}'));
 			var $evalEnterNewTime = $(document.getElementById('{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.evalEnterNewTime}'));
@@ -122,7 +107,7 @@
 				} else {
 					Visualforce.remoting.Manager.invokeAction(
 						'{!$RemoteAction.NursesShiftDocAddModalController.findDupeEval}',
-						startValue, endValue, '{!serviceAssignmentId}', '{!shiftType}'
+						startValue, endValue, '{!serviceAssignmentId}', '{!shiftType}',
 						function(result, event) {
 							if (event.status) {
 								console.log(result);
@@ -163,60 +148,58 @@
 				$evalEnterNewTime.hide();
 			}
 
-			var setUpButtons = function () {
+			var setUpButtons = function() {
 				$evalProceed.hide();
 				$evalEnterNewTime.hide();
-				$evalSave.on('click', function (event) {
+				$evalSave.on('click', function(event) {
 					validateShiftDoc();
 					event.preventDefault();
 				});
-				$evalProceed.on('click', function (event) {
+				$evalProceed.on('click', function(event) {
 					saveShiftDoc{!uniqueId}();
 					event.preventDefault();
 				});
-				$evalEnterNewTime.on('click', function (event) {
+				$evalEnterNewTime.on('click', function(event) {
 					clearDates();
 					$dupeFound.html('');
 					event.preventDefault();
 				});
-				$evalCancel.on('click', function (event) {
-					closeModalDialogN('shiftDocModal', 'span');
+				$evalCancel.on('click', function(event) {
+					closeModalDialogN('{!$Component.shiftDocModalForm.shiftDocModal}');
 					clearDates();
 					event.preventDefault();
 				});
 			};
-			
-		
-    	
+
 			setUpButtons();
 		});
 	</script>
 
 	<apex:form id="shiftDocModalForm">
-		<apex:actionFunction name="showAddShiftDoc{!uniqueId}" action="{!showAddShiftDoc}" status="{!status}" oncomplete="openModalDialogN('shiftDocModal', 'span', 'Add Nurses Shift Documentation', null, 1000, 'shiftDocModalForm'); jQuery('#shiftDocMessages').html('');" rerender="{!onShowRerender}" />
+		<apex:actionFunction name="showAddShiftDoc{!uniqueId}" action="{!showAddShiftDoc}" status="{!status}" oncomplete="openModalDialogN('{!$Component.shiftDocModal}', 'Add Nurses Shift Documentation', '{!$Component.shiftDocModalForm}'); jQuery('#shiftDocMessages{!uniqueId}').html('');" rerender="{!onShowRerender}" />
 		<apex:actionFunction name="saveShiftDoc{!uniqueId}" action="{!saveShiftDoc}" status="{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.saveShiftDocStatus}" />
 
-		<apex:outputPanel id="shiftDocModal" style="display: none" >
+		<apex:outputPanel id="shiftDocModal" style="display: none">
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
-			<div id='shiftDocMessages'></div>
+			<div id='shiftDocMessages{!uniqueId}'></div>
 			<apex:pageBlock title="Add Nurses Shift Documentation" id="modalMainBlock">
 				<apex:pageBlockSection columns="2" id="shiftDocEntry">
 					<apex:pageBlockSectionItem id="shiftStartTimeEntry">
 						<apex:outputPanel id="shiftStartTimeEntryPanel">
 							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol" />
-							<c:MilitaryDatetime edit="true" hiddenFieldId="shiftStartTime" dateTimeVal="{!shiftDoc.Shift_Start_Time__c}" datetimepickerid="shiftStartDate" shiftTop="20" />
+							<c:MilitaryDatetime edit="true" hiddenFieldId="shiftStartTime" dateTimeVal="{!shiftDoc.Shift_Start_Time__c}" datetimepickerid="shiftStartDate{!uniqueId}" shiftTop="20" />
 							<apex:inputhidden value="{!shiftDoc.Shift_Start_Time__c}" id="shiftStartTime" />
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
 					<apex:pageBlockSectionItem id="shiftEndTimeEntry">
-						<apex:outputpanel >
+						<apex:outputpanel>
 							<apex:outputLabel Value="Shift End Time" styleClass="labelCol" />
-							<c:MilitaryDatetime edit="true" hiddenFieldId="shiftEndTime" dateTimeVal="{!shiftDoc.Shift_End_Time__c}" datetimepickerid="shiftEndDate" shiftTop="20" />
+							<c:MilitaryDatetime edit="true" hiddenFieldId="shiftEndTime" dateTimeVal="{!shiftDoc.Shift_End_Time__c}" datetimepickerid="shiftEndDate{!uniqueId}" shiftTop="20" />
 							<apex:inputhidden value="{!shiftDoc.Shift_End_Time__c}" id="shiftEndTime" />
 						</apex:outputpanel>
 					</apex:pageBlockSectionItem>
 				</apex:pageBlockSection>
-				<div id="dupeFound"></div>
+				<div id="dupeFound{!uniqueId}"></div>
 				<apex:pageBlockButtons location="bottom" id="modalButtons">
 					<apex:commandButton value="Save" id="evalSave" />
 					<apex:commandbutton value="Proceed" id="evalProceed" />

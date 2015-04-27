@@ -220,8 +220,7 @@
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
-					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft'), serviceAssignment.Evaluations__r[0].Id, '')}">
-						<!-- <apex:selectOption itemValue="createShiftDoc" itemLabel="Create New Shift Doc" /> -->
+					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
 						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="pbsActionButton" />
@@ -229,11 +228,11 @@
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-                        <apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" />
-                        <apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" />
 <!-- 						<apex:selectOption itemValue="/{!serviceAssignment.Action_Plans__r[0].Id}" itemLabel="Current Action Plan" rendered="{!serviceAssignment.Action_Plans__r.size > 0}" /> -->
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
@@ -317,6 +316,9 @@
 		<apex:actionFunction status="pageProcessing" name="showAddShiftDocModal" rerender="shiftDocAddModal" oncomplete="showAddShiftDoc1(); return false;">
 			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
 		</apex:actionFunction>
+		<apex:actionFunction status="pageProcessing" name="showAddCNAWorkbookModal" rerender="cnaWorkbookAddModal" oncomplete="showAddShiftDoc2(); return false;">
+			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
+		</apex:actionFunction>
 		<apex:actionFunction name="createPanel" rerender="{!$Component.evalSection}" oncomplete="showEvalForm();" status="pageProcessing">
 			<apex:param name="evaltype" value="" />
 			<apex:param name="Category" value="" />
@@ -330,6 +332,7 @@
 	<div id="shiftDocActionDialog"></div>
 	<div id="searchResultDialog"></div>
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
+	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!serviceAssignmentIdForAction}" status="" shiftType="CNA Workbook" id="cnaWorkbookAddModal" />
 	<c:EvalSection id="evalSection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}"
 		subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
 		evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}"
@@ -485,6 +488,7 @@
 				var $selected = $selectElement.find('option:selected');
 				var serviceAssignmentId = $selectElement.data('service-assignment-id');
 				var latestShiftDocId = $selectElement.data('latest-shift-doc-id');
+				var latestCNAWorkbookId = $selectElement.data('latest-cna-workbook-id');
 				var selectedValue = $selected.val();
 				if (selectedValue == 'createShiftDoc') {
 					showAddShiftDocModal(serviceAssignmentId);
@@ -492,13 +496,18 @@
 					var category = selectedValue.replace('shiftDocAction-', '').split('~')[0];
 					var subcategory = selectedValue.replace('shiftDocAction-', '').split('~')[1];
 					createPanel('Head to Toe', category, subcategory, null, 'Activity Log', true, latestShiftDocId);
+				} else if (selectedValue == 'createCNAWorkbook') {
+					showAddCNAWorkbookModal(serviceAssignmentId);
+				} else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
+					var category = selectedValue.replace('cnaWorkbookAction-', '').split('~')[0];
+					var subcategory = selectedValue.replace('cnaWorkbookAction-', '').split('~')[1];
+					createPanel('CNA Workbook', category, subcategory, null, 'Activity Log', true, latestCNAWorkbookId);
 				}
 				event.preventDefault();
 			});
 
 			var setSize = function() { //define a function with the code you want to call
 				// resize all boxes to same height
-				console.log("setSize called");
 				var maxheight = 0;
 				$(".panel").each(function(index, element) {
 					$(this).css("height", "");
