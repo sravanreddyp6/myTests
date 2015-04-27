@@ -221,7 +221,7 @@
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
 					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}" />
+						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="pbsActionButton" />
 				</apex:column>
