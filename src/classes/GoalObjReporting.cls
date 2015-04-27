@@ -235,6 +235,7 @@ public with sharing class GoalObjReporting {
 		t1.IsTimeBased = IsTimeBased(objective);
 		system.debug(logginglevel.warn, objective.Action_Behavior_Results__r.size());
 		for(Action_Behavior_Result__c result: ResultsForObjective(objective, firstday)){
+			system.debug( result);
 			t1.Put(result.Day_time__c.Time().hour(),result.Day_time__c.Date(), result);
 		}
 		for( integer timeofday : t1.FirstKeys){
@@ -374,16 +375,25 @@ public with sharing class GoalObjReporting {
 		}
 
 		public void Put(integer tofd, Date day, Action_Behavior_Result__c value){
-			myRows.get(tofd).put(day, value);
+			if ( myRows.get(tofd) != null)
+				myRows.get(tofd).put(day, value);
 		}
 
 		public Action_Behavior_Result__c Get(integer tofd, Date day){
-			return myRows.get(tofd).get(day);
+			try {
+				return myRows.get(tofd).get(day);
+			} catch (Exception e) {
+				return null;
+			}
 		}
 
 		public boolean Active(integer tofd, Date day) {
 			system.debug('Table Access:' + day);
-			return myRows.get(tofd).getItems().get(day).Active;
+			try {
+				return myRows.get(tofd).getItems().get(day).Active;
+			} catch( Exception e ) {
+				return false;
+			}
 		}
 	}
 
@@ -408,12 +418,17 @@ public with sharing class GoalObjReporting {
 		}
 		public void Put(Date day, Action_Behavior_Result__c item){
 			Action_Behavior_Wrapper wrap = myItems.get(day);
-			wrap.DataObject = item;
+			if ( wrap != null )
+				wrap.DataObject = item;
+		
 		}
 
 		public Action_Behavior_Result__c Get(Date day){
 			Action_Behavior_Wrapper wrap = myItems.get(day);
-			return wrap.DataObject;
+			if ( wrap != null)
+				return wrap.DataObject;
+			else
+				return null;
 		}
 
 	}
