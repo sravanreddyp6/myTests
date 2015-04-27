@@ -87,7 +87,7 @@ public static Id getAccountRecordType(){
                                Program_City__c, Program_State__c, Program_Zip_Code__c, Accessible_Vehicle_Needed__c, Name_PBR__c, Review_On__c,
                                RecordCount__c, Days_To_Convert_Referral__c, OldPBR__c, Assigned_Users__c, Service_Location_City__c,
                                Service_Location_State__c, Service_Location_Zip__c, Service_Location_Street__c, Service_Location_Program__c,
-                               Service_Location__r.Alias__c, Person_Being_Served__c
+                               Service_Location__r.Alias__c, Service_Location__r.Name, Person_Being_Served__c
                                from referral__c where Id = :ref.Id];
         return testRef;
     }

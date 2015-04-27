@@ -212,13 +212,16 @@
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
 				<apex:column headerValue="View Current Shift">
-					<apex:outputPanel rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}">
-						<a href="/{!serviceAssignment.Evaluations__r[0].Id}">{!serviceAssignment.Evaluations__r[0].Name}</a>
+					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
+						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
+						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
 					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft'), serviceAssignment.Evaluations__r[0].Id, '')}">
-						<apex:selectOption itemValue="createShiftDoc" itemLabel="Create New Shift Doc" />
+						<!-- <apex:selectOption itemValue="createShiftDoc" itemLabel="Create New Shift Doc" /> -->
 						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="pbsActionButton" />

@@ -172,7 +172,7 @@
                     </apex:outputPanel>
                 </apex:column>
  				<apex:column style="padding-right: 9px;" headerValue="Title">
-                    <apex:outputLink value="/servlet/servlet.FileDownload?file={!entry.Id}" target="_blank">{!entry.Title}</apex:outputLink>
+                    <apex:outputLink value="/apex/viewAttachment?docId={!entry.ID}&retURL={!theRetUrl}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" >{!entry.Title}</apex:outputLink>
                 </apex:column>
 				<apex:column headerValue="Description">{!entry.Description}</apex:column>
 				<apex:column style="padding-right: 9px;" headerValue="Created Date/Time">

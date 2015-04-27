@@ -104,7 +104,6 @@
 
                 }
             jQuery("#btnESign").prop('disabled', disableFlag);
-
             jQuery("#btnDone").prop('disabled', disableFlag);
 
 		}
@@ -227,6 +226,7 @@
 	</style>
 
 	<c:PersonalRecord pbsId="{!PBSID}" servAssignId="{!SAID}" parentPage="Evaluation" servAssignNew="false" admId="{!AdmId}" />
+	
 	<div class="container">
 		<div class="blog-header"></div>
 		<div class="row">
@@ -240,6 +240,11 @@
 					<apex:outputPanel rendered="{!evalType == 'Residential'}">
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
                         <p>Status:{!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
+					</apex:outputPanel>
+					
+					<apex:outputPanel rendered="{!evalType == 'CNA Workbook'}">
+						<h4>CNA: {!thisEval.Owner.Name}</h4>
+						<p>Status: {!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!evalType == 'Restraint Event'}">
@@ -276,6 +281,12 @@
 
 					<apex:outputPanel rendered="{!showDisregard}">
 						<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="disregard('{!evalType}'); return false;">Disregard {!evalType}</a>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!showApprove}">
+						<a id="btnApprove" class="btn-success btn-sm pull-left" href="#" role="button" onClick="approve(); return false;">Approve</a>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!showReject}">
+						<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="reject(); return false;">Reject</a>
 					</apex:outputPanel>
 				</div>
 
@@ -332,10 +343,12 @@
 			<apex:param name="canEdit" value="" />
 		</apex:actionFunction>
         <apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();"/>
-		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
+		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (evalType=='CNA Workbook','completeShift();', 'location.reload(true);')} return false;" />
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
+		<apex:actionfunction name="approve" action="{!approve}" status="myStatus" reRender="msgs" />
+		<apex:actionfunction name="reject" action="{!reject}" status="myStatus" reRender="msgs" />
 		<apex:actionregion >
 		<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
 			<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
@@ -366,7 +379,7 @@
 	</apex:outputPanel>
 
  	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
-			<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}"/>
+			<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}" enddate="{!thisEval.Shift_End_Time__c}"/>
 	</apex:outputPanel>
 
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
@@ -382,7 +395,17 @@
 			</apex:pageBlock>
 		</apex:form>
 	</apex:outputPanel>
-
+	
+	<apex:pageBlock rendered="{! evalType == 'CNA Workbook'}">
+	<Apex:pageblocksection columns="1" title="Approval History" >
+	<apex:datatable style="width: 100%;"  value="{!approvalHistory}" var="a">
+	<apex:column value="{!a.actorid}" headervalue="By"/>
+	<apex:column value="{!a.stepstatus}" headervalue="Status"/>
+	<apex:column value="{!a.comments}" headervalue="Comments"/>
+	<apex:column value="{!a.createddate}" headervalue="Date" />
+	</apex:datatable>
+	</Apex:pageblocksection>
+	</apex:pageBlock>
 
 	<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block">
 		<apex:outputPanel layout="inline">

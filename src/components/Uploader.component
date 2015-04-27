@@ -128,24 +128,13 @@
         </apex:pageBlock>
     </apex:form>
     <apex:form id="form">
-        <apex:actionFunction action="{!deleteFile}" name="removeAttachment" reRender="attachmentsTable" status="working">
-            <apex:param name="aId" value="" />
-        </apex:actionFunction>
-        <apex:actionstatus id="working">
-            Deleting....
-        </apex:actionstatus>
         <apex:outputPanel id="datePanelContainer">
             <apex:pageBlock title="Existing Attachments" rendered="{!showExisting}" >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
-                    <apex:column headerValue="Edit">
+                    <apex:column headerValue="Action">
                     <apex:outputLink value="/apex/UpdateAttachment?docId={!attachment.ID}&retURL={!url}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" >Edit</apex:outputLink>
-                        |
-                        <apex:outputText rendered="{!$Profile.Name == 'System Administrator' || loginUserId == attachment.OwnerID}" >
-                            <a id="{!attachment.id}" class="deleteLink">Del</a>
-                        </apex:outputText>
                         <apex:outputPanel rendered="{!showHeadShotSelection}">
-                            <apex:outputText value=" | " />
-                            <apex:commandLink action="{!chooseHeadShot}" value="Choose as Head Shot">
+                            <apex:commandLink action="{!chooseHeadShot}" value="  | Choose as Head Shot">
                                 <apex:param name="aId" value="{!attachment.ID}" />
                                 <apex:param name="aName" value="{!attachment.Name}" />
                             </apex:commandLink>
@@ -156,11 +145,11 @@
                 </apex:column>
                 <apex:column headerValue="Description">{!attachment.Description}</apex:column>
                 <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
-                    <!-- <apex:outputText value="{!attachment.CreatedDate}" /> -->
-                    <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>
+                     <apex:outputText value="{!attachment.CreatedDate}" /> 
+                  <!--  <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>-->
                 </apex:column>
 				 <apex:column style="padding-right: 9px;" headerValue="Created By">
-                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
+                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.OwnerName}</apex:outputLink>
                 </apex:column>
                 </apex:pageBlockTable>
             </apex:pageBlock>
