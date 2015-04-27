@@ -1601,6 +1601,10 @@ public void loadProgramList() {
 								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
 								
 							}
+							if(fieldName == 'Prior_Living_Situation__c'){
+								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
+								
+							}
 						}
 							values.add(value);
 						

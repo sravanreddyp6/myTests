@@ -23,24 +23,24 @@
     </apex:pageBlock>   
 </apex:form>  
 <br/>   
-<apex:pageBlock  >
+<apex:pageBlock >
 <apex:pageBlockSection columns="1" >
-	<apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
 	<apex:outputLabel for="evalname" value="Name (Type)" />
     <apex:outputText value="{!Evaluation__c.name & ' (' & Evaluation__c.recordtype.name & ')' }" />
     </apex:pageBlockSectionItem>
-    <apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
     <apex:outputLabel for="pbs" value="Person Being Served" />
     <apex:outputField id="pbs" value="{!Evaluation__c.ServiceAssignment__r.Person_being_served__r.name}" />
     </apex:pageBlockSectionItem>
-    <apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
     <apex:outputLabel for="start" value="Shift Start" /><c:MilitaryDatetime id="start" datetimeval="{!Evaluation__c.Shift_Start_Time__c}" />
     </apex:pageBlockSectionItem>
-    <apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
     <apex:outputLabel for="start" value="Shift End" /><c:MilitaryDatetime id="end" datetimeval="{!Evaluation__c.Shift_End_Time__c}" />
     </apex:pageBlockSectionItem>
     <apex:outputField value="{!Evaluation__c.CreatedById}" />
-    <apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
     <apex:outputLabel for="created" value="Created" /><c:MilitaryDatetime id="created" datetimeval="{!Evaluation__c.CreatedDate}" />
     </apex:pageBlockSectionItem>
 </apex:pageBlockSection>
