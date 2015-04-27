@@ -189,9 +189,21 @@ public with sharing class ActionSummaryReportV2 {
 				         sort_order__c
 			]);
 		}
+		if (seizures == null) {
+			seizures = new List<Seizure>();
+		}
 		seizures.sort();
+		if (isolationEvents == null) {
+			isolationEvents = new List<IsolationEvent>();
+		}
 		isolationEvents.sort();
+		if (restraintEvents == null) {
+			restraintEvents = new List<RestraintEvent>();
+		}
 		restraintEvents.sort();
+		if (vitalsDetails == null) {
+			vitalsDetails = new List<VitalsDetail>();
+		}
 		vitalsDetails.sort();
 
 		Set<Id> allTopLevelObjectives = new Set<Id>();
