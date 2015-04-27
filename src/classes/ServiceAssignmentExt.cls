@@ -1602,7 +1602,7 @@ public void loadProgramList() {
 						
 					}
 					
-					List<Eval__c> isValidEvals = [SELECT Id, Category__c, Sub_Category__c FROM  Eval__c WHERE Field_name__c = 'IsValid' AND Category__c IN: cats AND Sub_Category__c IN: subCats];
+					List<Eval__c> isValidEvals = [SELECT Id, Field_Name__c, Category__c, Sub_Category__c FROM  Eval__c WHERE Field_name__c = 'IsValid' AND Category__c IN: cats AND Sub_Category__c IN: subCats];
 					system.debug('The size of isValids +++++' +isValidEvals.size());
 					for(Eval__c val: isValidEvals){
 						Eval_Value__c isVal = new Eval_value__c();
