@@ -1591,11 +1591,15 @@ public void loadProgramList() {
 						else if(eval.Field_Type__c == 'Multiselect'){
 							if(fieldName == 'Behavior' && string.isNotBlank(behaviorString)){
 								system.debug('behaviorString+++++'+behaviorString);
-								value.Text_Over_250__c = behaviorString;
+								value.Text_Under_250__c = behaviorString;
 							}
 							if(fieldName == 'Responds To' && string.isNotBlank(respondstoString)){
 								system.debug('respondstoString++++++'+respondstoString);
-								value.Text_Over_250__c = respondstoString;
+								value.Text_Under_250__c = respondstoString;
+							}
+							if(fieldName == 'Nutrition_Route__c'){
+								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
+								
 							}
 						}
 							values.add(value);
