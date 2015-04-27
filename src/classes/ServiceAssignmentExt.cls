@@ -1511,9 +1511,10 @@ public void loadProgramList() {
 						}
 					}
 
-					
+					integer i = 1;
 					for(String s: catSubcat){
-						uniqueTimeMap.put(s,Userinfo.getUserId()+'-'+DateTime.now().addSeconds(1).getTime());
+						uniqueTimeMap.put(s,Userinfo.getUserId()+'-'+DateTime.now().addSeconds(i).getTime());
+						i++;
 					}
 
 					string behaviorString = '';
