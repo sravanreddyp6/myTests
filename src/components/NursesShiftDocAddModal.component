@@ -3,6 +3,7 @@
 	<apex:attribute name="onShowRerender" description="Which elements will be rerendered when the form is shown" type="String" required="false" />
 	<apex:attribute name="status" description="The status widget for this component" type="String" required="false" />
 	<apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
+	<apex:attribute name="shiftType" description="Recordtype for this shift" type="string" required="false" default="CMShiftAssessment"  assignTo="{!evalType}"/>
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -121,7 +122,7 @@
 				} else {
 					Visualforce.remoting.Manager.invokeAction(
 						'{!$RemoteAction.NursesShiftDocAddModalController.findDupeEval}',
-						startValue, endValue, '{!serviceAssignmentId}',
+						startValue, endValue, '{!serviceAssignmentId}', '{!shiftType}'
 						function(result, event) {
 							if (event.status) {
 								console.log(result);
