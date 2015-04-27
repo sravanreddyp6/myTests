@@ -104,7 +104,6 @@
 
                 }
             jQuery("#btnESign").prop('disabled', disableFlag);
-
             jQuery("#btnDone").prop('disabled', disableFlag);
 
 		}
@@ -227,6 +226,7 @@
 	</style>
 
 	<c:PersonalRecord pbsId="{!PBSID}" servAssignId="{!SAID}" parentPage="Evaluation" servAssignNew="false" admId="{!AdmId}" />
+	
 	<div class="container">
 		<div class="blog-header"></div>
 		<div class="row">
@@ -281,6 +281,12 @@
 
 					<apex:outputPanel rendered="{!showDisregard}">
 						<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="disregard('{!evalType}'); return false;">Disregard {!evalType}</a>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!showApprove}">
+						<a id="btnApprove" class="btn-success btn-sm pull-left" href="#" role="button" onClick="approve(); return false;">Approve</a>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!showReject}">
+						<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="reject(); return false;">Reject</a>
 					</apex:outputPanel>
 				</div>
 
@@ -341,6 +347,8 @@
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
+		<apex:actionfunction name="approve" action="{!approve}" status="myStatus" reRender="msgs" />
+		<apex:actionfunction name="reject" action="{!reject}" status="myStatus" reRender="msgs" />
 		<apex:actionregion >
 		<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
 			<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
@@ -388,8 +396,8 @@
 		</apex:form>
 	</apex:outputPanel>
 	
-	<apex:pageBlock >
-	<Apex:pageblocksection columns="1" title="Approval History" rendered="{! AND(evalType == 'CNA Workbook', thisEval.status__c != 'Draft')}">
+	<apex:pageBlock rendered="{! evalType == 'CNA Workbook'}">
+	<Apex:pageblocksection columns="1" title="Approval History" >
 	<apex:datatable style="width: 100%;"  value="{!approvalHistory}" var="a">
 	<apex:column value="{!a.actorid}" headervalue="By"/>
 	<apex:column value="{!a.stepstatus}" headervalue="Status"/>
