@@ -1622,7 +1622,7 @@ public void loadProgramList() {
 					
 					
 					//logic to carryover Evaluation Responses from Referral Evaluation to Residential Assessment
-					list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail'};
+					list<string> responseRectypes = new List<string>{'Pressure Ulcer Detail','Wound Detail'};
    					FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
    					list<Evaluation_Response__c> clonedResponses = new List<Evaluation_Response__c>();
    					
@@ -1638,9 +1638,6 @@ public void loadProgramList() {
 	                	for(Evaluation_Response__c erp : evalResponses){
 		                    Evaluation_Response__c newRecord = erp.clone(false);
 		                    newRecord.Evaluation__c = resAsmt.Id;
-		                    if (newRecord.RecordType.Name == 'Allergy') {
-		                        newRecord.Person_Being_Served__c = theServAssign.Admission__r.Person_Being_Served__c;
-	                    	}
 	                    	clonedResponses.add(newRecord);
                		 	}
             		}
