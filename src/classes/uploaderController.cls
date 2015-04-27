@@ -79,13 +79,17 @@ global with sharing class uploaderController
 	{
 		// instantiate the list with a single attachment
 		newAttachments=new List<ProxyAttachment>{new ProxyAttachment(new Attachment())};
+		
 	}
 
 	// retrieve the existing attachments
-	public List<Attachment> getAttachments()
-	{
-		attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:sobjId order by createddate desc ];
-		return attachments;
+	public List<AttachmentView> getAttachments()
+	{    List<AttachmentView> attchmentList = new List<AttachmentView>();
+		attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:sobjId order by createddate desc limit 10];
+			for(Attachment att : attachments){
+			attchmentList.add( new AttachmentView(att));
+			}
+		return attchmentList;
 	}
 
 	// Add more attachments action method
@@ -181,13 +185,42 @@ global with sharing class uploaderController
 	}
 
 
-	public  PageReference deleteFile()
-	{
-		string attachmentId = Apexpages.currentPage().getParameters().get('aId');
-		Attachment thisAttachment = new Attachment(id=attachmentId);
-		delete thisAttachment;
-		Attachments = null;
-		Attachments = getAttachments();
-		return null;
-	}
+		
+	    class AttachmentView implements Comparable {
+        public Attachment attachment { get; set; }
+        public String Name { get {
+            return this.attachment.Name;
+        }}
+        public String OwnerName { get {
+            return this.attachment.Owner.Name;
+        }}
+        public String OwnerId { get {
+            return this.attachment.OwnerId;
+        }}
+        public ID ID { get {
+            return attachment.Id;
+        }}
+        public String LastModifiedDate { get {
+            return attachment.LastModifiedDate.format('M/d/yyyy h:m a');
+        }}
+       public String CreatedDate { get {
+            return attachment.CreatedDate.format('M/d/yyyy h:m a');
+        }}
+        public String Description { get {
+            return attachment.Description;
+        }}
+        public AttachmentView(Attachment attachment) {
+            this.attachment = attachment;
+        }
+        public Integer compareTo(Object objToCompare) {
+            AttachmentView obj = (AttachmentView) objToCompare;
+            if (this.CreatedDate == obj.CreatedDate) return 0;
+            if (this.CreatedDate > obj.CreatedDate) return -1;
+            return 1;
+        }
+    }
+	
+	
+	
+	
 }
