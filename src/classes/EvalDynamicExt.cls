@@ -23,6 +23,7 @@ public with sharing class EvalDynamicExt {
 	public Boolean showEsign{get; set;}
 	public Boolean showshiftDone{get; set;}
 	public Boolean showApprove {get; set;}
+	public Boolean showReject { get; set; }
 	public Boolean isUserOwner {get; set; }
 	public Boolean isApprover { get; set; }
 	
@@ -419,13 +420,12 @@ public with sharing class EvalDynamicExt {
 	public void controlButtons() {
 		
 		showApprove = false;
-		
+		showReject = false;
 		if (!isUserOwner ) {
 			showEsign=false;
 			showRevise = false;
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
 			showDisregard = false;
-			showApprove = false;
 			return;
 		}
 		
@@ -527,8 +527,10 @@ public with sharing class EvalDynamicExt {
 			if ( thiseval.status__c == 'Draft')
 				showEsign = true;
 			
-			if ( thiseval.status__c == 'Pending Approval' && isApprover)
+			if ( thiseval.status__c == 'Pending Approval' && isApprover) {
 				showApprove = true;
+				showReject = true;
+			}
 		}
 			
 	}
@@ -601,24 +603,59 @@ public with sharing class EvalDynamicExt {
     
     
     public PageReference FinalizeCNA(){
-        return new PageReference('/apex/EvaluationApproval?id=' + evalID);
+        return new PageReference('/apex/EvalApproval?id=' + evalID);
     }
     
     public List<ProcessInstanceHistory> approvalHistory;
     public List<ProcessInstanceHistory> getApprovalHistory () {
     	List<ProcessInstance> pi = [SELECT Id, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate  FROM StepsAndWorkitems order by createddate desc)
-									FROM ProcessInstance where  targetobjectid = :evalID ];
+									FROM ProcessInstance where  targetobjectid = :evalID 
+									order by createddate desc];
 		
 		for ( ProcessInstance p : pi ) {
-			approvalHistory.addAll ( p.stepsandworkitems);
+			approvalHistory.addAll (p.stepsandworkitems);
 		}
 		return approvalHistory;
     	
     }
     
+    public PageReference Approve() {
+    	
+    	executeNextApprovalStep('Approve','Approved');
+    	return new PageReference('/' + evalId);
+    }
+
+    public PageReference Reject() {
+    	
+    	executeNextApprovalStep('Reject','Rejected');
+    	return new PageReference('/' + thiseval.serviceassignment__c);
+    }
+
+    
+    private void executeNextApprovalStep( string approvalAction, string comment) {
+    	
+    	Approval.ProcessWorkitemRequest req =  new Approval.ProcessWorkitemRequest();
+        req.setAction(approvalAction);
+        req.setComments( comment);
+        req.setNextApproverIds(null);
+        
+        // get the current work item
+        List<ProcessInstanceWorkitem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :evalID];
+    	
+        if ( pwi.size() == 0) {
+        	Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,'Error approving item'));
+        	return;
+        }
+       	req.setWorkitemId(pwi[0].id);
+        
+        // Submit the request for approval
+        Approval.ProcessResult result =  Approval.process(req);
+    }
+    
+    
     public ID getApprovalUserID( ID theID ) {
     	
-    	List<ProcessInstanceWorkItem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :theID];
+    	List<ProcessInstanceWorkitem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :theID];
     	
     	if ( pwi.size() > 0) {
     		return pwi[0].actorId;
