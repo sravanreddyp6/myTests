@@ -85,7 +85,7 @@ public with sharing class EvalDynamicExt {
 		key = displayKey;
 		
 		system.debug('sectionIdonclickofplus+++++++'+evalSecId);
-		if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key.contains('Head to Toe~Skin/Body~Wound Detail') || key == 'Residential~Skin/Body~Skin Assessment~Residential'){
+		if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key.contains('Head to Toe~Skin/Body~Wound Detail') || key.contains('Head to Toe~Skin/Body~Pressure Ulcer Detail') || key == 'Residential~Skin/Body~Skin Assessment~Residential'){
 			
 			createEvalValueRecord(key);
 			showMainComponent = false;
@@ -562,28 +562,6 @@ public with sharing class EvalDynamicExt {
 			
 	}
 	//End - Control the Visibility of Buttons
-	
-	Public static string determineEvalStatus(id evalId){
-		string status='';
-		Evaluation__c currentEval = [SELECT Id,Recordtype.Name, ServiceAssignment__c FROM Evaluation__c WHERE Id=: evalId LIMIT 1];
-		
-			List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r Where Status__c != 'Disregard' order by createdDate asc) FROM Service_Assignment__c WHERE Id=: currentEval.ServiceAssignment__c LIMIT 1];
-			
-			if(currentEval.RecordType.Name == 'CMShiftAssessment' ){
-				status = 'Final';
-			}
-			else if(currentEval.Recordtype.Name == 'NursesAssessment' && currentEval.Id == servAssign[0].Evaluations__r[0].Id){
-				status = 'Final Admission';
-			}
-			else if(currentEval.Recordtype.Name == 'NursesAssessment' && currentEval.Id != servAssign[0].Evaluations__r[0].Id){
-				status = 'Final Revision';
-			}
-			else{
-				status = 'Final';
-			}
-		
-		return status;
-	}
 	
 	public static Id createAssessmentforRestraint(string sectionId, Id evalId, Id PBSId, Id saId, Id admId, Id accId){
 		
