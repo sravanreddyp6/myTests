@@ -14,13 +14,14 @@ public with sharing class SObjectNotesAndAttachmentsController {
         entries.sort();
     }}
     
-    public List<NoteAttachment> getAllAttachments () {
+    public List<NoteAttachment> getAllAttachments {set; get  {
      List<NoteAttachment> attList = new List<NoteAttachment>();
         for (Attachment attachment: [SELECT ID, Name, LastModifiedDate,CreatedDate, Description,Owner.Name, OwnerID FROM Attachment WHERE ParentId=:parent order by createddate desc ]) {
             attList.add(new NoteAttachment(attachment));
         }
         attList.sort();
         return attList;
+    }
     }
     public void del() {
         System.debug('Delete called');
