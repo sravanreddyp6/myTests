@@ -196,7 +196,6 @@ public with sharing class EvalDynamicExt {
 	
 	private void updateEvalValueRecord(string key){
 		List<Eval_value__c> isValid = [SELECT Id, Boolean__c FROM Eval_Value__c WHERE what_id__c = :evalId AND Eval__r.category__c = :cat AND Eval__r.sub_category__c = :subcat AND Eval__r.Field_Name__c = 'IsValid' AND Eval_Section_Id__c = :evalSecId LIMIT 1];
-		system.debug('isValid for update'+isValid[0]);
 		if(isValid.size() > 0 && isValid[0].Boolean__c == false){
 			isValid[0].Boolean__c = true;
 			update isValid[0];
