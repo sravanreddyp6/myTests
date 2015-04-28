@@ -1,0 +1,38 @@
+<apex:page standardController="Plan__c" extensions="Notes_Plan_Approval" showHeader="true" >
+<!-- hide detail buttons -->
+<style>
+    #topButtonRow{display: none;}
+    #bottomButtonRow{display: none;}
+</style>
+   <apex:form >
+       <apex:pageMessages /> 
+    <apex:pageBlock title="Change Status" >
+        <apex:pageBlockButtons >
+                <apex:commandButton action="{!MarkApproved}" value="Save Changes"  style="font-size: 10pt;" />
+                <apex:commandButton action="{!$page.V2SA_ConstructSTG}?id={!thePlan.id}" value="Construct Short Term Goals for this Plan" style="font-size: 10pt;" /> 
+                <apex:commandButton action="{!cancel}" value="Cancel" style="font-size: 10pt;" />        
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="1" >
+            <apex:inputField value="{!thePlan.Status__c}"/>
+            <apex:inputField value="{!thePlan.Approval_Status__c}"/>
+            <apex:pageBlockSectionItem >    
+            <apex:outputPanel layout="block" id="mee">
+
+            </apex:outputPanel>                     
+            <apex:outputPanel id="mee2" >  
+                
+            </apex:outputPanel>      
+            </apex:pageBlockSectionItem>
+ 
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    </apex:form>
+    <apex:detail relatedList="false" />
+   <!-- disabled="{!Plan__c.Status__c = 'Active'}"
+   <apex:detail relatedList="false"/>
+            <apex:outputPanel rendered="{!Plan__c.Status__c = 'Active'}"> 
+                Active Plans can not be changed
+            </apex:outputPanel>    
+   
+   -->
+</apex:page>
