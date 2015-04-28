@@ -248,7 +248,7 @@ public with sharing class EvalDynamicExt {
 		
 		Savepoint sp2 = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
 		
-		if(evalType == 'Residential'){
+		if(evalType == 'Residential' || evalType == 'CNA Workbook'){
 			thisEval.Status__c = 'Disregard';
 			try{
 				update thisEval;
