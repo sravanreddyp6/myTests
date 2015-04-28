@@ -32,10 +32,10 @@ public with sharing class Assessment_RiskForm_Redirect {
             ref = new PageReference('/apex/Assessment_IssaForm?id=' + assessment.id);
             return ref;       
         }      
-        if (assessment.type__c == 'Restraint Reduction' || assessment.type__c == 'Resident Assessment') {
-            ref = new PageReference('/apex/EvalDynamic?evalId='+eval.Id+'&opGrp=Care Meridian&evalType=Residential');
+        if (assessment.type__c == 'Resident Assessment' || assessment.type__c == 'Restraint Reduction') {
+            ref = new PageReference('/'+eval.Id); // To include all Types of Evaluations - Evaluation View Controller will decide the redirection
             return ref;       
-        }        
+        }         
         return null;
     } 
     //this is if the user clicked the edit link
