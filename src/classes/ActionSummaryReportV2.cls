@@ -189,9 +189,21 @@ public with sharing class ActionSummaryReportV2 {
 				         sort_order__c
 			]);
 		}
+		if (seizures == null) {
+			seizures = new List<Seizure>();
+		}
 		seizures.sort();
+		if (isolationEvents == null) {
+			isolationEvents = new List<IsolationEvent>();
+		}
 		isolationEvents.sort();
+		if (restraintEvents == null) {
+			restraintEvents = new List<RestraintEvent>();
+		}
 		restraintEvents.sort();
+		if (vitalsDetails == null) {
+			vitalsDetails = new List<VitalsDetail>();
+		}
 		vitalsDetails.sort();
 
 		Set<Id> allTopLevelObjectives = new Set<Id>();
@@ -388,7 +400,7 @@ public with sharing class ActionSummaryReportV2 {
 	/////////////////////////
 	private List<Seizure> getSeizures(Action_Summary__c summary) {
 		List<Seizure> tmpSeizures = new List<Seizure>();
-		Id saId = summary.Service_Assignment__r.Id;
+		Id saId = summary.Service_Assignment__c;
 		String query =
 			'SELECT Id, Start_DateTime__c, End_DateTime__c, Observed_By__c, CreatedDate, ' +
 			        'Observed_By__r.Name ' +
@@ -403,7 +415,7 @@ public with sharing class ActionSummaryReportV2 {
 
 	private List<IsolationEvent> getIsolationEvents(Action_Summary__c summary) {
 		List<IsolationEvent> tmpIsolationEvents = new List<IsolationEvent>();
-		Id saId = summary.Service_Assignment__r.Id;
+		Id saId = summary.Service_Assignment__c;
 		String query =
 			'SELECT Id, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, CreatedDate, ' +
 			'       Isolation_Status__c, Isolation_Type__c ' +
@@ -419,7 +431,7 @@ public with sharing class ActionSummaryReportV2 {
 
 	private List<RestraintEvent> getRestraintEvents(Action_Summary__c summary) {
 		List<RestraintEvent> restraintEvents = new List<RestraintEvent>();
-		Id saId = summary.Service_Assignment__r.Id;
+		Id saId = summary.Service_Assignment__c;
 		String query =
 			'SELECT Id, Shift_Start_Time__c, Shift_End_Time__c, Status__c, CreatedDate, ' +
 			'       (SELECT Id FROM Assessments__r ' +

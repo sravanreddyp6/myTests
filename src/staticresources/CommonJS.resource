@@ -39,7 +39,7 @@
 				var originalValue = $element.realVal();
 				setInterval(function() {
 					var currentValue = $element.realVal();
-					if (currentValue != originalValue) {
+					if (JSON.stringify(currentValue) != JSON.stringify(originalValue)) { // Normal comparison do NOT work with list, so we use this workaround
 						originalValue = currentValue;
 						$element.addClass("timer-attached");
 						$element.trigger("change");
