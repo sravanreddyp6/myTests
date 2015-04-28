@@ -267,6 +267,7 @@
 	<apex:pagemessages id="msgs" />
 	<br />
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock.addShiftDocStatus}" />
+	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!theServAssign.Id}" shiftType="CNA Workbook" onShowRerender="msgs, evaluationscna" status="{!$Component.myFRM.residentAssessmentShiftDocBlock.AddCNAStatus}" />
 	<apex:form id="myFRM">
 		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
 		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
@@ -1059,6 +1060,62 @@ END: Uncomment to have the element collapsed by default -->
         </apex:actionStatus>
         <!-- end Seizures section-->
 
+	<!-- Restraint Events Start -->
+		<a name="Assessment_res" id="Assessment_res"></a>
+		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
+			<div class="pbHeaderButton">
+				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}"/>
+			</div>
+			<apex:pageBlockTable value="{!restraintEvents}" var="event" rendered="{!restraintEvents.size > 0}">
+<!-- 				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
+<!-- 				</apex:column> -->
+				<apex:column headerValue="Name">
+					<apex:outputLink value="/apex/EvaluationView?id={!event.Id}">{!event.Name}</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Restraint Status">
+					<apex:outputText value="{!event.Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Restraint Event Start Time" >
+					<c:MilitaryDatetime dateTimeVal="{!event.Shift_Start_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Restraint Event End Time" >
+					<c:MilitaryDatetime dateTimeVal="{!event.Shift_End_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Owner Name">
+					<apex:outputText value="{!event.Owner.Name}" />
+				</apex:column>
+				<apex:column headerValue="Last Modified">
+					<apex:outputText value=" {!event.LastModifiedDate}" />
+				</apex:column>
+<!-- 				<apex:column headerValue="Event End At"> -->
+<!-- 					<apex:outputfield value=" {!event.Signed_At__c}" /> -->
+<!-- 				</apex:column> -->
+			</apex:pageBlockTable>
+			<apex:outputText value="No Restraint Events to display" rendered="{!restraintEvents.size=0 || restraintEvents == null}" />
+			<apex:outputPanel rendered="{!restraintEvents.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Restraint Event" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+		</apex:pageBlock>
+<!-- 		End -->
+
+        <!-- Isolation Events Start -->
+        <a id="isolation"></a>
+        <apex:pageBlock title="Isolation Events" rendered="{!!editSA && vfVarIsCM}" >
+            <c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
+                                       type="Isolation Event"
+                                       showTitle="false"
+                                       formId="{!$Component.myFRM}"
+                                       uniqueId="Isolation_Event"
+                                       rules="{&quot;Isolation_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"                                       
+                                       cols="1"
+                                       rows="5"
+                                       showDisregard="false"
+                                       eSign="false"
+                                       addEnabled="true"
+                                       editEnabled="true"
+                                       showAddNew="false"
+                                       collapsible="false"
+                                       addBtnRightAlign="true" />
+        </apex:pageBlock>
+        <!-- Isolation Events End -->
 
 		<!--  Plan section -->
 		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="planstatus" />
@@ -1207,29 +1264,17 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:column headerValue="Signed At" >
 						<apex:outputfield value=" {!evs.Signed_At__c}" />
 					</apex:column>
-<!-- 					<apex:column value="{!evs.Is_Signed__c}" /> -->
-<!-- 					<apex:column headerValue="Signed By"> -->
-<!-- 						 <apex:outputText  escape="false"  rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
-<!-- 							<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a> -->
-<!-- 						</apex:outputText> -->
-<!-- 					</apex:column> -->
-<!-- 					<apex:column headerValue="Signed At"> -->
-<!-- 						<apex:outputText  rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
-<!-- 							<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" /> -->
-<!-- 						</apex:outputText> -->
-<!-- 					</apex:column> -->
 					<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
 					<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>
-			<apex:outputText value="No Records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
-			<apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+			<apex:outputText value="No records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
+			<apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
 		</apex:pageBlock>
 
 		<a name="ShiftAssessments" id="ShiftAssessments"></a>
-
 		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}" />
+				<apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddShiftDoc) }" />
 				<apex:actionStatus id="AddShiftDocStatus">
 					<apex:facet name="start">
 						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
@@ -1264,27 +1309,55 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Signed At">
 					<apex:outputfield value=" {!evs.Signed_At__c}" />
 				</apex:column>
-<!-- 				<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" /> -->
-<!-- 				<apex:column headerValue="Signed By"> -->
-<!-- 					 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false"> -->
-<!-- 						<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a> -->
-<!-- 					</apex:outputText> -->
-<!-- 				</apex:column> -->
-<!-- 				<apex:column headerValue="Signed At"> -->
-<!-- 					<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}"> -->
-<!-- 						<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" /> -->
-<!-- 					</apex:outputText> -->
-<!-- 				</apex:column> -->
 				<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
 				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>
-			<apex:outputText value="No Records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
-			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Nurses Shift Documentation" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+			<apex:outputText value="No records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
+			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Nurses Shift Documentation" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
+		</apex:pageBlock>
+		<apex:pageBlock title="CNA Workbooks" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
+			<div class="pbHeaderButton">
+				<apex:commandButton value="Add CNA Workbook" onclick="showAddShiftDoc2(); return false;" status="AddCNAStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddCNA)}" />
+				<apex:actionStatus id="AddCNAStatus">
+					<apex:facet name="start">
+						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+						<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+							<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+						</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
+			</div>
+
+			<apex:pageBlockTable styleclass="pcBody-list" value="{!cnaWorkbooks}" var="evs" rendered="{!cnaWorkbooks.size > 0}" id="evaluationscna">
+				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Name">
+					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Shift Start Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Shift End Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Status">
+					<apex:outputText value="{!evs.Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Signed At" >
+					<apex:outputfield value=" {!evs.Signed_At__c}" />
+				</apex:column>
+				<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+			</apex:pageBlockTable>
+			<apex:outputText value="No records to display" rendered="{!cnaWorkbooks== null || cnaWorkbooks.size=0 }" />
+			<apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
+
 		</apex:pageBlock>
 
 		<!--  Notes section -->
 		<a name="Notes" id="Notes"></a>
-		<apex:pageBlock id="Notes" title="{!if(vfVarIsCM,'Shift Notes','Notes')}" rendered="{! !editSA}">
+		<apex:pageBlock id="Notes" title="Notes" rendered="{! AND(!editSA, !vfVarIsCM)}">
 			<div class="pbHeaderButton">
 				<!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
 				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !vfVarIsCB}" value="Goal/Objective Documentation" />
@@ -1336,63 +1409,7 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:pageBlock>
 		<!-- end FAD Assessments -->
 
-		<!-- Restraint Events Start -->
-		<a name="Assessment_res" id="Assessment_res"></a>
-		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
-			<div class="pbHeaderButton">
-				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}"/>
-			</div>
-			<apex:pageBlockTable value="{!restraintEvents}" var="event" rendered="{!restraintEvents.size > 0}">
-<!-- 				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
-<!-- 				</apex:column> -->
-				<apex:column headerValue="Name">
-					<apex:outputLink value="/apex/EvaluationView?id={!event.Id}">{!event.Name}</apex:outputLink>
-				</apex:column>
-				<apex:column headerValue="Restraint Status">
-					<apex:outputText value="{!event.Status__c}" />
-				</apex:column>
-				<apex:column headerValue="Restraint Event Start Time" >
-					<c:MilitaryDatetime dateTimeVal="{!event.Shift_Start_Time__c}" />
-				</apex:column>
-				<apex:column headerValue="Restraint Event End Time" >
-					<c:MilitaryDatetime dateTimeVal="{!event.Shift_End_Time__c}" />
-				</apex:column>
-				<apex:column headerValue="Owner Name">
-					<apex:outputText value="{!event.Owner.Name}" />
-				</apex:column>
-				<apex:column headerValue="Last Modified">
-					<apex:outputText value=" {!event.LastModifiedDate}" />
-				</apex:column>
-<!-- 				<apex:column headerValue="Event End At"> -->
-<!-- 					<apex:outputfield value=" {!event.Signed_At__c}" /> -->
-<!-- 				</apex:column> -->
-			</apex:pageBlockTable>
-			<apex:outputText value="No Restraint Events to display" rendered="{!restraintEvents.size=0 || restraintEvents == null}" />
-			<apex:outputPanel rendered="{!restraintEvents.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Restraint Event" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
-		</apex:pageBlock>
-<!-- 		End -->
-
-        <!-- Isolation Events Start -->
-        <a id="isolation"></a>
-        <apex:pageBlock title="Isolation Events" rendered="{!!editSA && vfVarIsCM}" >
-            <c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
-                                       type="Isolation Event"
-                                       showTitle="false"
-                                       formId="{!$Component.myFRM}"
-                                       uniqueId="Isolation_Event"
-                                       rules="{&quot;Isolation_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"                                       
-                                       cols="1"
-                                       rows="5"
-                                       showDisregard="false"
-                                       eSign="false"
-                                       addEnabled="true"
-                                       editEnabled="true"
-                                       showAddNew="false"
-                                       collapsible="false"
-                                       addBtnRightAlign="true" />
-        </apex:pageBlock>
-        <!-- Isolation Events End -->
-
+	
 		<!--  Funding Sources section -->
 		<!-- Add Funding Source modal. -->
 		<apex:outputPanel id="FundingSourceModal" style="display:none">
@@ -1761,13 +1778,6 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockSection>
 
 		</apex:pageBlock>
-
-		<!--  Shift Summaries section -->
-		<a name="ShiftSummaries" id="shiftSummaries"></a>
-		<apex:pageBlock title="Shift Summaries" rendered="{!!editSA && vfVarIsCM}">
-			<apex:outputText value="No Records to Display" />
-		</apex:pageBlock>
-		<!-- End Shift Summaries -->
 
 		<!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
 		<apex:pageBlock id="pbServAssignClose" title="Service Assignment Closure" rendered="{!showServAssignClose}">
