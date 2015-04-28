@@ -422,11 +422,30 @@ public with sharing class EvalDynamicExt {
 		
 		showApprove = false;
 		showReject = false;
+		showEsign = false;
+			
+		// do this first because the approval buttons happen regardless of record ownership
+		if (evalType == 'CNA Workbook') {
+			showRevise = false;
+			showShiftDone = false;
+			
+			if ( thiseval.status__c == 'Draft' && isUserOwner) {
+				showEsign = true;
+				showDisregard = true;
+			}
+			
+			if ( thiseval.status__c == 'Pending Approval' && isApprover) {
+				showApprove = true;
+				showReject = true;
+			}
+		}
+			
 		if (!isUserOwner ) {
 			showEsign=false;
 			showRevise = false;
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
 			showDisregard = false;
+
 			return;
 		}
 		
@@ -521,18 +540,6 @@ public with sharing class EvalDynamicExt {
 			}
 		}
 		
-		if (evalType == 'CNA Workbook') {
-			showRevise = false;
-			showShiftDone = false;
-			
-			if ( thiseval.status__c == 'Draft')
-				showEsign = true;
-			
-			if ( thiseval.status__c == 'Pending Approval' && isApprover) {
-				showApprove = true;
-				showReject = true;
-			}
-		}
 			
 	}
 	//End - Control the Visibility of Buttons
