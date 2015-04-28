@@ -201,10 +201,10 @@ global with sharing class uploaderController
             return attachment.Id;
         }}
         public String LastModifiedDate { get {
-            return attachment.LastModifiedDate.format('M/d/yyyy h:m a');
+            return attachment.LastModifiedDate.format('MM/dd/yyyy hh:mm:ss a');
         }}
        public String CreatedDate { get {
-            return attachment.CreatedDate.format('M/d/yyyy h:m a');
+            return attachment.CreatedDate.format('MM/dd/yyyy hh:mm:ss a');
         }}
         public String Description { get {
             return attachment.Description;
