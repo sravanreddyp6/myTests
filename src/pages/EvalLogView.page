@@ -47,11 +47,23 @@
 <!--     Section to display Restraint Reductions -->
 	
     <apex:repeat value="{!assessments}" var="asmt" rendered="{!(evalname == 'Restraint Event' && subcat == 'Reduction Review') || (evalName == 'Restraint Event' && subcat == null) }">
-    	<apex:form>
+    	<apex:form >
  			<c:restraintReductionComponent AssessmentId="{!asmt.Id}" isPDF="true" />
  		</apex:form>
    	</apex:repeat>	
    
+ 
+ 	<apex:pageBlock rendered="{! evalName == 'CNA Workbook'}" >
+	<Apex:pageblocksection columns="1" title="Approval History" collapsible="false">
+	<apex:datatable style="width: 100%;"  value="{!approvalHistory}" var="a">
+	<apex:column value="{!a.actorid}" headervalue="By"/>
+	<apex:column value="{!a.stepstatus}" headervalue="Status"/>
+	<apex:column value="{!a.comments}" headervalue="Comments"/>
+	<apex:column value="{!a.createddate}" headervalue="Date" />
+	</apex:datatable>
+	</Apex:pageblocksection>
+	</apex:pageBlock>
+ 
  		
  	<script>
  	
