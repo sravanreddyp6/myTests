@@ -41,8 +41,8 @@ public with sharing class HomePageController{
 	// asignment (providing that the shift doc is active)
 	public Map<Id, List<SelectOption>> serviceAssignmentToSelectOptionMap { get; set; }
 	// List of repeatable section/subsection/subsubsection for CM Shift Doc && CNA Workbook
-	public Set<String> cmShiftDocRepeatable;
-	public Set<String> cnaWorkbookRepeatable;
+	public List<String> cmShiftDocRepeatable;
+	public List<String> cnaWorkbookRepeatable;
 
 	// Whether to show people with inactive service assignments
 	public Boolean pbsOnlyShowActiveServiceAssignment { get; set; }
@@ -108,8 +108,8 @@ public with sharing class HomePageController{
 			         eval_type__r.name
 			ORDER BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c
 		];
-		cmShiftDocRepeatable = new Set<String>();
-		cnaWorkbookRepeatable = new Set<String>();
+		cmShiftDocRepeatable = new List<String>();
+		cnaWorkbookRepeatable = new List<String>();
 		for (AggregateResult ag : evalRepeats){
 			if (ag.get('type') == 'Head To Toe') {
 				cmShiftDocRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
@@ -151,7 +151,7 @@ public with sharing class HomePageController{
 			'SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
 			'       Admission__r.Id, ' +
 			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
-			'       (SELECT Id, Name, Status__c, RecordType.Name FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
+			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
 			'WHERE Service_Location__c = :selectedProgram ' +
 			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\' ': '') +
@@ -169,7 +169,7 @@ public with sharing class HomePageController{
 			hasShiftDocMap.put(serviceAssignment.Id, false);
 			hasCnaWorkbookMap.put(serviceAssignment.Id, false);
 			for (Evaluation__c eval: serviceAssignment.Evaluations__r) {
-				if (shiftDocMap.get(serviceAssignment.Id) == null & eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
+				if (shiftDocMap.get(serviceAssignment.Id) == null & eval.RecordType.Name == 'CMShiftAssessment' && (eval.Status__c == 'Draft' || eval.Status__c == 'Final')) {
 					shiftDocMap.put(serviceAssignment.Id, eval);
 					evaluationToServiceAssignmentMap.put(eval.Id, serviceAssignment.Id);
 					hasShiftDocMap.put(serviceAssignment.Id, true);
@@ -184,10 +184,34 @@ public with sharing class HomePageController{
 			SelectOption[] optionList = new SelectOption[]{};
 			if (canSeeShiftDoc) {
 				optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
+				if (hasShiftDocMap.get(serviceAssignment.Id) && shiftDocMap.get(serviceAssignment.Id).OwnerId != UserInfo.getUserId()) {
+					for (String compositeKey: cmShiftDocRepeatable) {
+						String readableCompositeKey = compositeKey.replace('~', '/');
+						if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
+							readableCompositeKey = readableCompositeKey.substringBeforeLast('/');
+						}
+						optionList.add(new SelectOption(
+							'shiftDocAction-' + compositeKey,
+							'Add Activity Log Entry for ' + readableCompositeKey
+						));
+					}
+				}
 				optionList.add(new SelectOption('', '-------------'));
 			}
 			if (canSeeCNAWorkbook) {
 				optionList.add(new SelectOption('createCNAWorkbook', 'Create New CNA Workbook'));
+				if (hasCNAWorkbookMap.get(serviceAssignment.Id) && cnaWorkbookMap.get(serviceAssignment.Id).OwnerId == UserInfo.getUserId()) {
+					for (String compositeKey: cnaWorkbookRepeatable) {
+						String readableCompositeKey = compositeKey.replace('~', '/');
+						if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
+							readableCompositeKey = readableCompositeKey.substringBeforeLast('/');
+						}
+						optionList.add(new SelectOption(
+							'cnaWorkbookAction-' + compositeKey,
+							'Add Activity Log Entry for ' + readableCompositeKey
+						));
+					}
+				}
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
@@ -207,22 +231,15 @@ public with sharing class HomePageController{
 		Boolean shiftDocHeaderAdded = false;
 		for (AggregateResult response: responses) {
 			String compositeKey = response.get('cat') + '~' + response.get('subCat') + '~' + (String.isBlank((string) response.get('subSubCat')) ? '' : (string) response.get('subSubCat'));
-			if (response.get('type') == 'Head To Toe' && !cmShiftDocRepeatable.contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
+			if (response.get('type') == 'Head To Toe' && !new Set<String>(cmShiftDocRepeatable).contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
 				continue;
 			}
-			if (response.get('type') == 'CNA Workbook' && !cnaWorkbookRepeatable.contains(compositeKey)) {
-				continue;
-			}
-			SelectOption[] optionList = serviceAssignmentToSelectOptionMap.get(evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c')));
-			if (response.get('type') == 'Head To Toe' && canSeeShiftDoc) {
+			Id serviceAssignmentId = evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c'));
+			Boolean isShiftDocOwner = hasShiftDocMap.get(serviceAssignmentId) && shiftDocMap.get(serviceAssignmentId).OwnerId == UserInfo.getUserId();
+			SelectOption[] optionList = serviceAssignmentToSelectOptionMap.get(serviceAssignmentId);
+			if (response.get('type') == 'Head To Toe' && canSeeShiftDoc && isShiftDocOwner) {
 				optionList.add(optionList.size() - 2,  // Add before the cna workbook stuff
 					new SelectOption('shiftDocAction-' + compositeKey,
-						'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
-					)
-				);
-			} else if (response.get('type') == 'CNA Workbook' && canSeeCNAWorkbook) {
-				optionList.add(
-					new SelectOption('cnaWorkbookAction-' + compositeKey,
 						'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
 					)
 				);
