@@ -5,7 +5,7 @@ public with sharing class referral_Controller_Helper{
     @RemoteAction
     public static Related_Party__c loadRelatedParty(string relPartyId) {
             Related_Party__c party = 
-                [select Id,Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c,Person_Being_Referred__c
+                [select Id,Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c, Status__c, Person_Being_Referred__c
                  from Related_Party__c where id = :relPartyId];
             return party;
      }
