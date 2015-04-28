@@ -89,7 +89,7 @@ public without sharing class ServiceAssignmentExt {
     public Boolean hasFidDocs { get; set; }
     public List<ProgramAssociationTableWrapper> programRows { get; set; }
 
-        private void setcanEditSA() {
+    private void setcanEditSA() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                 FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.theServAssign.Id ];
 
@@ -1254,68 +1254,90 @@ public void loadProgramList() {
         PageReference ref = new PageReference('/apex/ServiceAssignmentClosureEditView?ServAssignId=' + theServAssign.Id + '&AdmId=' + admissionId + '&PbsId=' + theServAssign.Person_Being_Served__r.Id);
         return ref;
     }
+    
+    
+    
+	public Boolean canAddShiftDoc { get; private set; }
+	public Boolean canAddCNA { get; private set; }
+	
+	private void setShiftDocPermissions() {
+		canAddShiftDoc = false;
+		canAddCNA = false;
+		PermissionSetAssignment[] assignments = [
+			SELECT Id, PermissionSet.Label
+			FROM PermissionSetAssignment
+			WHERE AssigneeId = :UserInfo.getUserId()
+		];
+		List<String> permissionSets = new List<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Label);
+		}
+		String permissionSetString = String.join(permissionSets, '~');
+		if ( permissionSetString.indexOf('Tier III') >= 0 ) {
+			canAddShiftDoc = true;
+			canAddCNA = true;
+		}
+			
+		if ( permissionSetString.indexOf('Tier I') >= 0)
+			canAddCNA = true;
+					
+	}
 
-    //Added to show Nurses Assessments from Evaluation__c object
-  /*  public List<Evaluation__c> evaluations{
-        get{
-            if(evaluations == null) {
-                evaluations = [
-                    SELECT ID, Name, LastModifiedDate, Is_Signed__c,
-                           Shift_Start_time__c, Shift_end_time__c, Status__c,Owner.Name,
-                           (SELECT Id, CreatedDate, Owner.Name, Owner.Id
-                              FROM Evaluation_Responses__r
-                             WHERE RecordType.Name = 'E-Signature'
-                             ORDER BY CreatedDate DESC)
-                      FROM Evaluation__c
-							WHERE ServiceAssignment__c = :theServAssign.Id AND Status__c != 'Disregard'
-							ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
-						];
-					}
-					return evaluations;
-				}
-				set;
-			}*/
-
-			public List<Evaluation__c> residentAssessments{
-				get{
-					if(residentAssessments == null) {
-						residentAssessments = [
-							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c,
-							       Status__c,Owner.Name
-							FROM Evaluation__c
-							WHERE ServiceAssignment__c = :theServAssign.Id
-							AND Recordtype.Name = 'NursesAssessment'
-							ORDER BY CreatedDate DESC NULLS LAST LIMIT 5
-						];
-					}
-					return residentAssessments;
-				}
-				set;
+	public List<Evaluation__c> residentAssessments{
+		get{
+			if(residentAssessments == null) {
+				residentAssessments = [
+					SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c,
+					       Status__c,Owner.Name
+					FROM Evaluation__c
+					WHERE ServiceAssignment__c = :theServAssign.Id
+					AND Recordtype.Name = 'NursesAssessment'
+					ORDER BY CreatedDate DESC NULLS LAST LIMIT 5
+				];
 			}
+			return residentAssessments;
+		}
+		set;
+	}
 
-			public Boolean getshowResAsmt(){
-				List<Evaluation__c> nonDisregard = [SELECT Id from Evaluation__c WHERE Status__c != 'Disregard' AND ServiceAssignment__c = :theServAssign.Id AND RecordType.Name = 'NursesAssessment' LIMIT 1];
-
-				if(nonDisregard.size() > 0){
-					return false;
-				}
-				else{
-					return true;
-				}
-			}
-			public List<Evaluation__c> shiftAssessments{
-				get{
-					if(shiftAssessments == null) {
-						shiftAssessments = [
-							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c, Head_to_Toe_Signed_At__c,
-							Shift_Start_time__c, Shift_end_time__c, Status__c, Head_to_Toe_Status__c, Owner.Name
-							        FROM Evaluation__c 
-							        WHERE ServiceAssignment__c = :theServAssign.Id
-							        AND RecordType.Name = 'CMShiftAssessment'
-                     ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
+	public Boolean getshowResAsmt(){
+		List<Evaluation__c> nonDisregard = [SELECT Id from Evaluation__c WHERE Status__c != 'Disregard' AND ServiceAssignment__c = :theServAssign.Id AND RecordType.Name = 'NursesAssessment' LIMIT 1];
+		if(nonDisregard.size() > 0){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	public List<Evaluation__c> shiftAssessments{
+		get{
+			if(shiftAssessments == null) {
+				shiftAssessments = [
+					SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c, Head_to_Toe_Signed_At__c,
+					Shift_Start_time__c, Shift_end_time__c, Status__c, Head_to_Toe_Status__c, Owner.Name
+					        FROM Evaluation__c 
+					        WHERE ServiceAssignment__c = :theServAssign.Id
+					        AND RecordType.Name = 'CMShiftAssessment'
+             ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
                 ];
             }
 					return shiftAssessments;
+        }
+        set;
+   }
+	public List<Evaluation__c> cnaWorkbooks{
+				get{
+					if(cnaWorkbooks == null) {
+						cnaWorkbooks = [
+							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c, 
+							Shift_Start_time__c, Shift_end_time__c, Status__c, Owner.Name
+							        FROM Evaluation__c 
+							        WHERE ServiceAssignment__c = :theServAssign.Id
+							        AND RecordType.DeveloperName = 'CNA_Workbook'
+                     ORDER BY Shift_Start_Time__c DESC LIMIT 5
+                ];
+            }
+					return cnaWorkbooks;
         }
         set;
    }

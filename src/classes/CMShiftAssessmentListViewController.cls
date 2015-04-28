@@ -18,6 +18,7 @@ public with sharing class CMShiftAssessmentListViewController {
    public Boolean isShift {get; set;}
    public Boolean isResidential {get; set;}
    public Boolean isRestraint {get; set;}
+   public Boolean isCNA { get; set; }
    public Service_Assignment__c SA {get; private set;}
    public String sortColumn { get; set; }
    public String sortOrder { get; set; }
@@ -27,9 +28,12 @@ public with sharing class CMShiftAssessmentListViewController {
   	if( ApexPages.currentPage().getParameters().get('saId') != null) {
 		saId = ApexPages.currentPage().getParameters().get('saId');
 		SA = [SELECT Id, Admission__c, admission__r.Person_Being_Served__c FROM Service_Assignment__c WHERE Id=:saId LIMIT 1];
-		isShift = ApexPages.currentPage().getParameters().get('recType') == 'Nurses Shift Documentation';
-		isResidential = ApexPages.currentPage().getParameters().get('recType') == 'Residential';
-		isRestraint = ApexPages.currentPage().getParameters().get('recType') == 'Restraint Event';
+		
+		string evaltype = ApexPages.currentPage().getParameters().get('recType') ;
+		isShift = ( evaltype == 'Nurses Shift Documentation');
+		isResidential = (evaltype == 'Residential');
+		isRestraint = (evaltype == 'Restraint Event');
+		isCNA = (evaltype == 'CNA Workbook');
 		
 	  //	soql = 'SELECT ID, Name, LastModifiedDate, Is_Signed__c, Shift_Start_time__c, Shift_end_time__c, Status__c,Owner.Name,(SELECT Id, CreatedDate, Owner.Name, Owner.Id FROM Evaluation_Responses__r WHERE RecordType.Name = \'E-Signature\' ORDER BY CreatedDate DESC) FROM Evaluation__c  WHERE ServiceAssignment__c = :saId';
 	  	if(isShift){
@@ -42,6 +46,9 @@ public with sharing class CMShiftAssessmentListViewController {
 	  	
 	  	if(isRestraint){
 	  		soql = 'SELECT ID, Name, LastModifiedDate, Shift_Start_time__c, Shift_end_time__c, Status__c, Is_Signed__c, Head_to_toe_Status__c, Signed_At__c, Head_to_toe_Signed_At__c, Owner.Name FROM Evaluation__c  WHERE ServiceAssignment__c = :saId AND Recordtype.Name = \'RestraintEvent\'';
+	  	}
+	  	if(isCNA){
+	  		soql = 'SELECT ID, Name, LastModifiedDate, Shift_Start_time__c, Shift_end_time__c, Status__c, Is_Signed__c,  Signed_At__c, Owner.Name FROM Evaluation__c  WHERE ServiceAssignment__c = :saId AND Recordtype.DeveloperName = \'CNA_Workbook\'';
 	  	}
 	  	
 	  	runQuery();
