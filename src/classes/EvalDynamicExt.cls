@@ -86,9 +86,19 @@ public with sharing class EvalDynamicExt {
 		key = displayKey;
 		
 		system.debug('sectionIdonclickofplus+++++++'+evalSecId);
-		if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key.contains('Head to Toe~Skin/Body~Wound Detail') || key.contains('Head to Toe~Skin/Body~Pressure Ulcer Details') || key.contains('Residential~Skin/Body~Pressure Ulcer Detail') || key.contains('Residential~Skin/Body~Wound Detail')
-			|| key == 'Residential~Skin/Body~Skin Assessment~Residential'){
+		if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key.contains('Head to Toe~Skin/Body~Wound Detail') || key == 'Residential~Skin/Body~Skin Assessment~Residential'){
+			
 			createEvalValueRecord(key);
+			showMainComponent = false;
+		}
+		else if(key.contains('Residential~Skin/Body~Pressure Ulcer Detail') || key.contains('Residential~Skin/Body~Wound Detail')){
+			
+			if(evalSecId == null || evalSecId == ''){
+				createEvalValueRecord(key);
+			}
+			else{
+				updateEvalValueRecord(key);
+			}
 			showMainComponent = false;
 		}
 		else if(key.contains('Restraint Event~Reduction Review~Reduction Review')){
@@ -183,6 +193,18 @@ public with sharing class EvalDynamicExt {
             }
         }        
 		insert vals;
+	}
+	
+	private void updateEvalValueRecord(string key){
+		List<Eval_value__c> isValid = [SELECT Id, Boolean__c FROM Eval_Value__c WHERE what_id__c = :evalId AND Eval__r.category__c = :cat AND Eval__r.sub_category__c = :subcat AND Eval__r.Field_Name__c = 'IsValid' AND Eval_Section_Id__c = :evalSecId LIMIT 1];
+		system.debug('isValid for update'+isValid[0]);
+		if(isValid.size() > 0 && isValid[0].Boolean__c == false){
+			isValid[0].Boolean__c = true;
+			update isValid[0];
+		}
+		else{
+			return;
+		}
 	}
 	
 	 public static boolean validateAssessmentError(Id evalId, string DomainName){
@@ -405,9 +427,9 @@ public with sharing class EvalDynamicExt {
          	for(Evaluation_Response__c erp : evalResponses){
                 Evaluation_Response__c newRecord = erp.clone(false);
                 newRecord.Evaluation__c = clonedEval.Id;
-            if (newRecord.RecordType.Name == 'Allergy') {
+           /* if (newRecord.RecordType.Name == 'Allergy') {
                 newRecord.Person_Being_Served__c = currentEval.serviceassignment__r.admission__r.person_being_served__c;
-            	}
+            	}*/
             	responsestobeCreated.add(newRecord);
         	}
 

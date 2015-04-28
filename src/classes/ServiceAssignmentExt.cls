@@ -1483,32 +1483,34 @@ public void loadProgramList() {
 					}
 					getEvals.add('Behavior'); //Make Sure Behavior ApI_Flag_Name__c is also included
 					getEvals.add('RespondsTo');
-			
+					getEvals.add('Wound Detail');//Make sure ito include Pressure Ulcer and Wound Detail Sections.
+					getEvals.add('Pressure Ulcer Detail');
 
 				//	system.debug('Checking the set for null values+++++++++'+getEvals);
 					//system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
 
-					List<Eval__c> evalList = [SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals];
-					
-					Map<string, List<Eval__c>> evalMap = new Map<string, List<Eval__c>>();
+					List<Eval__c> evalList = [SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals AND Eval_Type__r.Name = 'Residential'];
+					system.debug('evalList++++'+evalList);
+				//	Map<string, List<Eval__c>> evalMap = new Map<string, List<Eval__c>>();
 					//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
 					set<string> cats = new set<string>();
 					set<string> subCats = new set<string>();
-					
 					set<string> catSubcat = new set<string>();
 					Map<string, string> uniqueTimeMap = new Map<string, string>();
-
+					
+					
 					for(Eval__c ee: evalList){
 						cats.add(ee.category__c);
 						subCats.add(ee.Sub_Category__c);
 						catSubcat.add(ee.Category__c+'~'+ee.sub_category__c);
-						string catSubcatCheck = ee.Category__c+'~'+ee.sub_category__c;
 						
-						if(string.valueOf(ee.Category__c+'~'+ee.Sub_Category__c) == catSubcatCheck){
+						//string catSubcatCheck = ee.Category__c+'~'+ee.sub_category__c;
+						
+						/*if(string.valueOf(ee.Category__c+'~'+ee.Sub_Category__c) == catSubcatCheck){
 							List<Eval__c> evs = new List<Eval__c>();
 							evs.add(ee);
 							evalMap.put(catSubcatCheck, evs);
-						}
+						}*/
 					}
 
 					integer i = 1;
@@ -1542,98 +1544,86 @@ public void loadProgramList() {
 					
 					for(Eval__c eval: evalList) {
 						
-						string fieldName = eval.API_Name_Flag__c;
-						value = new Eval_Value__c();
-						value.Eval__c = eval.Id;
-						value.Eval_Section_Type__c = 'Residential';
-						value.what_id__c = resAsmt.Id;
-						value.what_id_object__c = 'Evaluation__c';
-						
 						string catSubcatCheck = eval.Category__c+'~'+eval.Sub_Category__c;
-						if(uniqueTimeMap.keySet().contains(catSubCatCheck)){
+						string fieldName = eval.API_Name_Flag__c;
+						
+						if(fieldName != 'Behavior' && fieldName != 'RespondsTo'){
+							value = new Eval_Value__c();
+							value.Eval__c = eval.Id;
+							value.Eval_Section_Type__c = 'Residential';
+							value.what_id__c = resAsmt.Id;
+							value.what_id_object__c = 'Evaluation__c';
+							
+							if(uniqueTimeMap.keySet().contains(catSubCatCheck)){
+								value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
+							}
+								
+							if ( eval.Field_Type__c == 'Boolean'){
+								
+									if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
+										if ( (Boolean)existingEval.get(fieldName) == true)
+											value.Boolean__c = true;
+										else
+											value.Boolean__c = false;
+									}
+									else if (eval.Field_Sub_Type__c == 'Dropdown')
+										value.Text_Under_250__c = existingEval.get(fieldName)== true ? '1':'0';
+									}
+		
+							else if (eval.Field_Type__c == 'Int'){
+								value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
+							}
+							else if (eval.Field_Type__c == 'Date'){
+								value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
+							}
+							else if (eval.Field_Type__c == 'Datetime' ){
+								value.Date_Time__c = (Datetime)existingEval.get(fieldName);
+							}
+							
+							else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' || eval.Field_Type__c == 'Multiselect'
+									 || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
+									eval.Field_Type__c == 'Currency'){
+										
+								if ( eval.length__c > 250 ){
+									value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
+								}
+								else{
+									value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
+								}
+							}
+						
+						}
+						if(fieldName == 'Behavior' && string.isNotBlank(behaviorString) && behaviorString != ''){
+							value = new Eval_Value__c();
+							value.Eval__c = eval.Id;
+							value.Eval_Section_Type__c = 'Residential';
+							value.what_id__c = resAsmt.Id;
+							value.what_id_object__c = 'Evaluation__c';
 							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
+							value.Text_Under_250__c = behaviorString;
+							values.add(value);
+						}
+						if(fieldName == 'RespondsTo' && string.isNotBlank(respondstoString) && respondstoString != ''){
+							value = new Eval_Value__c();
+							value.Eval__c = eval.Id;
+							value.Eval_Section_Type__c = 'Residential';
+							value.what_id__c = resAsmt.Id;
+							value.what_id_object__c = 'Evaluation__c';
+							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
+							value.Text_Under_250__c = respondstoString;
+							values.add(value);
 						}
 							
-						if ( eval.Field_Type__c == 'Boolean'){
-							
-								if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
-									if ( (Boolean)existingEval.get(fieldName) == true)
-										value.Boolean__c = true;
-									else
-										value.Boolean__c = false;
-								}
-								else if (eval.Field_Sub_Type__c == 'Dropdown')
-									value.Text_Under_250__c = existingEval.get(fieldName)== true ? '1':'0';
-								}
-	
-						else if (eval.Field_Type__c == 'Int'){
-							value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
-						}
-						else if (eval.Field_Type__c == 'Date'){
-							value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
-						}
-						else if (eval.Field_Type__c == 'Datetime' ){
-							value.Date_Time__c = (Datetime)existingEval.get(fieldName);
-						}
-						
-						else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' 
-								 || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
-								eval.Field_Type__c == 'Currency'){
-									
-							if ( eval.length__c > 250 ){
-								value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
-							}
-							else{
-								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
-							}
-						}
-						
-						else if(eval.Field_Type__c == 'Multiselect'){
-							if(fieldName == 'Behavior' && string.isNotBlank(behaviorString)){
-								system.debug('behaviorString+++++'+behaviorString);
-								value.Text_Under_250__c = behaviorString;
-							}
-							if(fieldName == 'RespondsTo' && string.isNotBlank(respondstoString)){
-								system.debug('respondstoString++++++'+respondstoString);
-								value.Text_Under_250__c = respondstoString;
-							}
-							if(fieldName == 'Nutrition_Route__c'){
-								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
-								
-							}
-							if(fieldName == 'Prior_Living_Situation__c'){
-								value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
-								
-							}
-						}
+					
 							values.add(value);
 						
 					}
 					
-					List<Eval__c> isValidEvals = [SELECT Id, Field_Name__c, Category__c, Sub_Category__c FROM  Eval__c WHERE Field_name__c = 'IsValid' AND Category__c IN: cats AND Sub_Category__c IN: subCats];
-					system.debug('The size of isValids +++++' +isValidEvals.size());
-					for(Eval__c val: isValidEvals){
-						Eval_Value__c isVal = new Eval_value__c();
-						String keyCheck = val.Category__c+'~'+val.Sub_category__c;
-						if(uniqueTimeMap.keySet().contains(keyCheck) && val.Field_name__c == 'IsValid'){
-							isVal.Eval__c = val.Id;
-							isVal.Eval_Section_Type__c = 'Residential';
-							isVal.what_id__c = resAsmt.Id;
-							isVal.what_id_object__c = 'Evaluation__c'; 
-							isVal.eval_Section_Id__c = uniqueTimeMap.get(keyCheck);
-							isval.Boolean__c = false;
-							
-							values.add(isVal);
-						}
-					}
-						
-					system.debug('Time-CatMap+++++'+uniqueTimeMap);
-					
-					
 					//logic to carryover Evaluation Responses from Referral Evaluation to Residential Assessment
-					list<string> responseRectypes = new List<string>{'Pressure Ulcer Detail','Wound Detail'};
+					set<string> responseRectypes = new set<string>{'Pressure Ulcer Detail','Wound Detail'};
    					FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
    					list<Evaluation_Response__c> clonedResponses = new List<Evaluation_Response__c>();
+   					set<string> checkResponses = new set<string>();
    					
    					String respQuery ='SELECT ';
 		   			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
@@ -1647,109 +1637,66 @@ public void loadProgramList() {
 	                	for(Evaluation_Response__c erp : evalResponses){
 		                    Evaluation_Response__c newRecord = erp.clone(false);
 		                    newRecord.Evaluation__c = resAsmt.Id;
+		                   	checkResponses.add(erp.RecordType.Name); // to check whether to create Eval value record or not
 	                    	clonedResponses.add(newRecord);
                		 	}
             		}
-					
-				/*	for(Eval__c eval: evalList){
+            		
+            		List<Eval__c> isValidEvals = [SELECT Id, Field_Name__c, Category__c, Sub_Category__c FROM  Eval__c WHERE Field_name__c = 'IsValid' AND Category__c IN: cats AND Sub_Category__c IN: subCats AND Eval_Type__r.Name = 'Residential'];
+					system.debug('The size of isValids +++++' +isValidEvals.size()+isValidEvals);
+					for(Eval__c val: isValidEvals){
 						
-						string fieldName = eval.API_Name_Flag__c;
-						if(fieldName != 'Behavior' && fieldName != 'RespondsTo') {
-
-							value = new Eval_Value__c();
-							value.Eval__c = eval.Id;
-							value.Eval_Section_Type__c = 'Residential';
-							value.what_id__c = resAsmt.Id;
-							value.what_id_object__c = 'Evaluation__c';
-						//	value.eval_Section_Id__c = timeString;
-	
-						//	string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
-	
-							if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
-								//system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
-								value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
-	
-							}
-	
-								//Handle All Data Types
-								if ( eval.Field_Type__c == 'Boolean'){
-									if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
-										if ( (Boolean)existingEval.get(fieldName) == true)
-											value.Boolean__c = true;
-										else
-											value.Boolean__c = false;
-									}
-									else if (eval.Field_Sub_Type__c == 'Dropdown')
-										value.Text_Under_250__c = existingEval.get(fieldName)== true ? '1':'0';
-								}
-	
-								else if (eval.Field_Type__c == 'Int'){
-									value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
-								}
-								else if (eval.Field_Type__c == 'Date'){
-									value.Date_Time__c = Datetime.newInstance( (Date)existingEval.get(fieldName), Time.newInstance(0,0,0,0));
-								}
-								else if (eval.Field_Type__c == 'Datetime' ){
-									value.Date_Time__c = (Datetime)existingEval.get(fieldName);
-								}
-								else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' ||
-										eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
-										eval.Field_Type__c == 'Currency'){
-									if ( eval.length__c > 250 )
-										value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
-									else
-										value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
-								}
-
-					//	}
-								values.add(value);
-							} 
+						String keyCheck = val.Category__c+'~'+val.Sub_category__c;
+						if(uniqueTimeMap.keySet().contains(keyCheck) && val.Category__c != 'Skin/Body'){ 
+							system.debug('I am in here for++++'+val.Sub_Category__c+val.Id);
+							Eval_Value__c isVal = new Eval_value__c();
+							isVal.Eval__c = val.Id;
+							isVal.Eval_Section_Type__c = 'Residential';
+							isVal.what_id__c = resAsmt.Id;
+							isVal.what_id_object__c = 'Evaluation__c'; 
+							isVal.eval_Section_Id__c = uniqueTimeMap.get(keyCheck);
+							isval.Boolean__c = false;
 							
-						 if(string.isNotBlank(behaviorString) && eval.Field_Name__c == 'Behavior' && behaviorString != ''){
-							 	value = new Eval_Value__c();
-								value.Eval__c = eval.Id;
-								value.Eval_Section_Type__c = 'Residential';
-								value.what_id__c = resAsmt.Id;
-								value.what_id_object__c = 'Evaluation__c';
-								//value.eval_Section_Id__c = timeString;
-								value.Text_Under_250__c = behaviorString;
-								values.add(value);
+							values.add(isVal);
+						}
+						 if(val.Category__c == 'Skin/Body' && val.Sub_Category__c = 'Wound Detail' && uniqueTimeMap.keySet().contains(keyCheck)){
+							
+							Eval_Value__c woundEval = new Eval_value__c();
+							woundEval.Eval__c = val.Id;
+							woundEval.Eval_Section_Type__c = 'Residential';
+							woundEval.what_id__c = resAsmt.Id;
+							woundEval.what_id_object__c = 'Evaluation__c'; 
+							woundEval.eval_Section_Id__c = uniqueTimeMap.get(keyCheck);
+							woundEval.Boolean__c = false;
+							
+							values.add(woundEval);
+							
+						}
+						if(val.Category__c == 'Skin/Body' && val.Sub_Category__c = 'Pressure Ulcer Detail' && uniqueTimeMap.keySet().contains(keyCheck)){
+							
+							Eval_Value__c pressureEval = new Eval_value__c();
+							pressureEval.Eval__c = val.Id;
+							pressureEval.Eval_Section_Type__c = 'Residential';
+							pressureEval.what_id__c = resAsmt.Id;
+							pressureEval.what_id_object__c = 'Evaluation__c'; 
+							pressureEval.eval_Section_Id__c = uniqueTimeMap.get(keyCheck);
+							pressureEval.Boolean__c = false;
+							
+							values.add(pressureEval);
+							
 						}
 						
-						 if(string.isNotBlank(respondstoString) && eval.Field_Name__c == 'Responds To' && respondstoString != ''){
-						 		value = new Eval_Value__c();
-								value.Eval__c = eval.Id;
-								value.Eval_Section_Type__c = 'Residential';
-								value.what_id__c = resAsmt.Id;
-								value.what_id_object__c = 'Evaluation__c';
-							//	value.eval_Section_Id__c = timeString;
-								value.Text_Under_250__c = respondstoString;
-								values.add(value);
-						}
-						
-						 if(string.isNotBlank(glassesString) && eval.Field_Name__c == 'Glasses/Contacts' && glassesString != ''){
-						 		value = new Eval_Value__c();
-								value.Eval__c = eval.Id;
-								value.Eval_Section_Type__c = 'Residential';
-								value.what_id__c = resAsmt.Id;
-								value.what_id_object__c = 'Evaluation__c';
-								value.eval_Section_Id__c = timeString;
-								value.Text_Under_250__c = glassesString;
-								values.add(value);
-						}
-
+					}
 				
-					}*/
-					
-
 					try{
-						
-						if(values.size() > 0 ){
-							insert values;
-						}
+					
 						if(clonedResponses.size() > 0){
 							insert clonedResponses;
 						}
+						if(values.size() > 0 ){
+							insert values;
+						}
+						
 					}
 					catch (DMLException e){
 
