@@ -445,7 +445,10 @@ public with sharing class referralConversion_Controller {
 
     // link related parties to new Person Being Served
     linkRelParties( accNew.PersonContactId );
-
+	
+	// link Allerigies to new Person Being Served. pull them from referral eval Allergies
+	linkAllergies(accNew.PersonContactId );
+	
     // link agencies to new Person Being Served
     linkAgencies( accNew.PersonContactId );
 
@@ -504,6 +507,29 @@ public with sharing class referralConversion_Controller {
     }
   }
   
+  private void linkAllergies(ID pbsID){
+  	
+  	if(referralRecordType.startsWith('CareMeridian')){
+  		 List <Evaluation__c> refEval = [SELECT ID FROM Evaluation__c WHERE Referral__c =:referralRecord.id LIMIT 1]; //using List to avoid System.Query Exception when no records are returned
+  		 
+  		 if(refEval.size() > 0){
+  		 	List<Evaluation_Response__c> tobeClonedResponses = [SELECT Id, Allergy_Type__c, Allergy_Details__c, Life_Threatening__c FROM Evaluation_Response__c WHERE RecordType.Name = 'Allergy' AND Evaluation__c = :refEval[0].Id];
+  		 	if(tobeClonedResponses.size() > 0){
+	  		 	List<Evaluation_Response__c> clonedResponses = new List<Evaluation_Response__c>();
+	  		 	for(Evaluation_Response__c resp: tobeClonedResponses){
+	  		 		Evaluation_Response__c er = resp.clone(false);
+	  		 		er.Person_Being_Served__c = pbsID;
+	  		 		clonedResponses.add(er);
+	  		 	}
+	  		 	
+	  		 	insert clonedResponses;
+  		 	}
+  		 }
+  		
+  	}
+  	
+  	
+  }
  // get the contact id from an existing person account object
  private ID getPBSContactId ( ID pbsID )
  {
