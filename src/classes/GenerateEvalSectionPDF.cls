@@ -52,6 +52,8 @@ public with sharing class GenerateEvalSectionPDF {
 		listEntries = new List<string>();
 		mapEntries = new Map<String, EntryWrapper>();
 		mapEntryHTML = CreateFieldControls();
+		
+		approvalHistory = new List<ProcessInstanceHistory>();
 	}
 
 	public Map<string, List<string>> CreateFieldControls () {
@@ -311,5 +313,19 @@ public with sharing class GenerateEvalSectionPDF {
 			entryType = secType;
 		}
 	}
+
+    public Transient List<ProcessInstanceHistory> approvalHistory;
+    public List<ProcessInstanceHistory> getApprovalHistory () {
+    	List<ProcessInstance> pi = [SELECT Id, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate  FROM StepsAndWorkitems order by createddate desc)
+									FROM ProcessInstance where  targetobjectid = :evaluationID 
+									order by createddate desc];
+		
+		for ( ProcessInstance p : pi ) {
+			approvalHistory.addAll (p.stepsandworkitems);
+		}
+		return approvalHistory;
+    	
+    }
+    
 
 }
