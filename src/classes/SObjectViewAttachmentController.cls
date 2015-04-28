@@ -82,10 +82,10 @@ public PageReference redirectToViewAttachment() {
             return attachment.Id;
         }}
         public String LastModifiedDate { get {
-            return attachment.LastModifiedDate.format('MM/dd/yyyy hh:mm:ss a');
+            return attachment.LastModifiedDate.format('MM/dd/yyyy hh:mm a');
         }}
          public String CreatedDate { get {
-            return attachment.CreatedDate.format('MM/dd/yyyy hh:mm:ss a');
+            return attachment.CreatedDate.format('MM/dd/yyyy hh:mm a');
         }}
         public String Description { set;get {
             return attachment.Description;
