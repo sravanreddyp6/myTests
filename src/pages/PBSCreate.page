@@ -183,7 +183,7 @@ function stopRKey(evt) {
                              >
 
     <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Contact}" var="f">
-        <apex:inputField value="{!Account[f.fieldPath]}"    rendered="{! AND(NOT(f = 'PersonMailingStreet'), NOT(f = 'Mailing County'), NOT(f = 'Home Phone'), NOT(f = 'PersonOtherStreet'), NOT(f = 'PersonOtherStateCode') ,NOT (f = 'PersonMailingStateCode'), NOT (f = 'PersonMailingCountryCode'), NOT(f = 'PersonOtherCountryCode') )}"  required="{!OR(f.required, f.dbrequired)}"  />
+        <apex:inputField value="{!Account[f.fieldPath]}"    rendered="{! AND(NOT(f = 'PersonMailingStreet'), NOT(f = 'Mailing County'), NOT(f = 'Home Phone'), NOT(f = 'PersonOtherStreet'), NOT(f = 'PersonOtherStateCode') ,NOT (f = 'PersonMailingStateCode'), NOT (f = 'PersonMailingCountryCode'), NOT(f = 'PersonOtherCountryCode'), NOT(f = 'HomePhone') )}"  required="{!OR(f.required, f.dbrequired)}"  />
         
         <apex:pageBlockSectionItem rendered="{! (f = 'PersonMailingStreet')}" >
     <apex:outputLabel value="Mailing Street 1" for="Ma" />
@@ -226,7 +226,9 @@ function stopRKey(evt) {
     <apex:outputLabel value="Other Country" for="os" />
       <apex:inputField value="{!personbeingserved.PersonOtherCountryCode}" label="Other Country" />
     </apex:pageBlockSectionItem>
-    
+       <apex:outputLabel value="Phone" for="os" />
+      <apex:inputField value="{!personbeingserved.HomePhone}" label="Phone" />
+    </apex:pageBlockSectionItem>
         
     </apex:repeat>
     </apex:pageBlockSection>

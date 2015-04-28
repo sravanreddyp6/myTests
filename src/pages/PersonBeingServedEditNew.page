@@ -334,11 +334,20 @@
     <apex:outputLabel value="Other Country" for="os" />
       <apex:outputField value="{!contact.OtherCountryCode}" label="Other Country" />
     </apex:pageBlockSectionItem>
-                    <apex:outputField value="{!Contact[f]}" rendered="{!(!pbsEditModeOn) && (f != 'HomePhone' ) && (f != 'MailingStreet' )  && (f != 'OtherStreet' )  && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode')}" />
-                    <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && (f != 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode') }" required="{!OR(f.required, f.dbrequired)  }" />
+        <apex:pageBlockSectionItem rendered="{! (f = 'HomePhone'  && pbsEditModeOn)}" >
+    <apex:outputLabel value="Phone" for="os" />
+      <apex:inputField value="{!contact.HomePhone}" label="Other Country" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{! (f = 'HomePhone'  && not(pbsEditModeOn) )}" >
+    <apex:outputLabel value="Phone" for="os" />
+      <apex:outputField value="{!contact.HomePhone}" label="Phone" />
+    </apex:pageBlockSectionItem>
+    
+                    <apex:outputField value="{!Contact[f]}" rendered="{!(!pbsEditModeOn) && (f != 'HomePhone' ) && (f != 'MailingStreet' )  && (f != 'OtherStreet' )  && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode') && (f != 'HomePhone')}" />
+                    <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && (f != 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode') && (f != 'HomePhone') }" required="{!OR(f.required, f.dbrequired)  }" />
 
-                    <apex:outputField value="{!contact.phone}" label="Home Phone" rendered="{!(!pbsEditModeOn) && (f = 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) && (f = 'HomePhone') && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode') }" />
-                    <apex:inputField value="{!contact.phone}" label="Home Phone" rendered="{!pbsEditModeOn && (f = 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode') }" required="{!OR(f.required, f.dbrequired)  }" />
+                    <apex:outputField value="{!contact.phone}" label="Home Phone" rendered="{!(!pbsEditModeOn) && (f = 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) && (f = 'HomePhone') && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode')  && (f != 'HomePhone') }" />
+                    <apex:inputField value="{!contact.phone}" label="Home Phone" rendered="{!pbsEditModeOn && (f = 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode') && (f != 'HomePhone') }" required="{!OR(f.required, f.dbrequired)  }" />
                 </apex:repeat>
             </apex:pageBlockSection>
 
