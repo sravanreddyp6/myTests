@@ -1,0 +1,288 @@
+<apex:page controller="Report_CANS_DDatIntake" sidebar="false"
+	docType="html-5.0" readOnly="true">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:includeScript value="{!$Resource.jquery}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>  
+ 
+	<script>
+    function setFocusOnLoad() {}
+</script>
+	<style>
+.left_col {
+	text-align: left;
+	font-weight: bold;
+	color: #4a4a56 !important;
+	padding: 5px;
+	vertical-align: top;
+	width: 150px;
+}
+
+.thinking {
+	opacity: 0.8;
+	background-color: #ccc;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	z-index: 1000;
+}
+
+.thinkingwheel {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	background-color: white;
+	border: 2px solid gray;
+	padding: 2px;
+}
+
+.mytbl {
+	width: 100%;
+}
+
+    .dataTables_wrapper {
+        position: relative;
+        clear: none;
+        zoom: 1;
+    }
+
+.colCtr {
+	text-align: center
+}
+
+.pbTitle {
+	width: 300px !important;
+}
+
+td.details-control {
+	    background: url("{!URLFOR($Resource.DetailsOpenClose, 'details_open.png')}") no-repeat center center;
+	    cursor: pointer;
+	}
+	tr.shown td.details-control {
+	    background: url("{!URLFOR($Resource.DetailsOpenClose, 'details_close.png')}") no-repeat center center;
+	}
+ 
+table.dataTable tbody td.no-padding {
+    padding: 0;
+}
+.header{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+</style>
+
+<div class="header">CANS with Developmental Disability Identified at 1st Quarterly Assessment</div>
+
+	<apex:form >
+
+
+		<apex:pageMessages id="messages"></apex:pageMessages>
+
+		<apex:pageBlock id="CANSReportBlock" title="Filters">
+				<apex:pageBlockButtons location="bottom">
+				<apex:commandButton value="Run" action="{!runReport}"
+								reRender="dataTable, tbl_maker, messages, buttonPanel"
+								status="myStatus" />
+				</apex:pageBlockButtons>
+								
+				<apex:pageBlockSection columns="1">
+				<apex:pageBlockSectionItem >
+				<apex:outputLabel value="" />
+					<apex:outputPanel >
+						<apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" />
+						<apex:input type="auto" id="start_date" size="10" label="Start Date" styleClass="datepicker" value="{! StartDate}" />
+						<apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" />
+						<apex:input type="auto" id="end_date" size="10" label="End Date" styleClass="datepicker" value="{! EndDate}" />
+					</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+				<apex:outputLabel value="" />
+									 
+					<apex:outputPanel >
+					<apex:outputLabel styleClass="labelCol" value="Service Lines" />
+ 					<apex:selectCheckboxes value="{!selectedSL}" id="serviceLine" >
+					<apex:selectOptions value="{!optSL}" />
+					</apex:selectCheckboxes>
+					<a href="#" onclick="selectSL(1)">Select All</a> | <a href="#" onclick="selectSL(0)">Deselect All</a>
+					</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+				<apex:outputLabel value="" />
+					</apex:pageBLockSectionItem>
+				</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+
+	<apex:pageBlock id="dataTable" title="Results">
+	<apex:pageBlockButtons id="exportbtn"> 
+            <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('stateRows', 'CANS DD at 1st Quarterly')" value="Export to Excel" rendered="{!showData}" /></div>
+        </apex:pageBlockButtons>
+        
+<apex:outputPanel rendered="{!showData}">
+<table id="stateRows" cellspacing="0" class="hover" width="100%">
+	                <thead>
+	                    <tr>
+	                        <th></th>
+	                        <th>State</th>
+	                        <th style="text-align:right">PBS with 1st Quarterly</th>
+	                        <th style="text-align:right">PBS with DD at 1st Quarterly</th>
+                            <th style="text-align:right">Percent with DD at 1st Quarterly</th>
+	                        <th style="display:none"></th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <apex:repeat value="{!CANSStates}" var="s">
+	                            <tr>
+	                                <td class="{! if (CONTAINS(asmtStates, s), 'details-control','' ) }">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	                                <td>{!s}</td>
+	                                <td style="text-align:right">{!srd[s].PBSCount}</td>
+	                                <td style="text-align:right">{!srd[s].QualifyingCount}</td>
+	                                <td style="text-align:right"><apex:outputtext value="{0,Number, #0.00%}"><apex:param value="{!srd[s].PercentDD}" /></apex:outputtext></td>
+	                                <td style="display:none">{! if (CONTAINS(asmtStates, s), asmtsByState[s],'' ) }</td>
+	                            </tr>
+	                    </apex:repeat>
+	                </tbody>
+	        </table>
+	        </apex:outputPanel>
+		
+	</apex:pageBlock>
+	
+
+	<apex:actionStatus id="myStatus">
+		<apex:facet name="start">
+			<div class="thinking">
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif"
+						title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop">
+		</apex:facet>
+	</apex:actionStatus>
+
+	<apex:outputPanel id="tbl_maker" >
+	
+	<script>
+j$ = jQuery.noConflict();
+
+function selectSL(  onoff ) {
+	if ( onoff == 0 ) {
+		// turn them all off
+		j$('input[id*=serviceLine]').each(function (index, element) {
+                        j$(element).prop('checked', false);
+                        });
+                        
+		}
+	else {
+		// turn them all on
+		j$('input[id*=serviceLine]').each(function (index, element) {
+                        j$(element).prop('checked', true);
+                        });
+		}
+
+}
+
+/* Formatting function for row details - modify as you need */
+function format ( d ) {
+	var detailrow;
+	 
+	detailrow = '<div class="slider">'+
+        '<table cellspacing="0" border="1px" width="50%">'+
+            '<thead>'+
+                '<tr>'+
+                    '<th>Assessment Name</th>'+
+                    '<th>Date</th>'+
+                    '<th>Developmental/Intellectual Score</th>'+
+                '</tr>'+
+            '</thead>'+
+            '<tbody>';
+            
+	var asmtlist = j$.parseJSON( d[5]);
+	
+    j$.each(asmtlist, function(index, e ) {
+		detailrow +='<tr>'+
+		                    '<td><a href="/' + e.Assessment__r.Id + '" target="_blank">'+e.Assessment__r.Name+'</a></td>'+
+		                    '<td>'+e.Assessment__r.Assessment_Date__c+'</td>'+
+		                    '<td>'+e.Score__c+'</td>'+
+		                '</tr>';
+    });
+                
+    detailrow += '</tbody></table>';
+				        
+	return detailrow;
+}
+
+//assessment__r.name, assessment__c, score__c, assessment__r.assessment_date__c, assessment__r.admission__r.state__c
+
+
+ 
+j$(document).ready(function() { 
+
+	initializeStateTable = function(){
+    var table = j$('#stateRows').DataTable({
+                    "scrollCollapse":   true,
+                    "ordering"      :   false,
+                    "paging"        :   false,
+                    "searching"		: 	false,
+                    "columnDefs"    :   [{
+                                        "targets"       :   [0,1,2,3,4,5],
+                                        "searchable"    :   false,
+                                        "orderable"     :   false,
+                                        "defaultContent":   '',
+                                        }
+                                        ]
+			    });
+    
+    // Add event listener for opening and closing details
+    j$('#stateRows tbody').on('click', 'td.details-control', function () {
+        var tr = j$(this).closest('tr');
+        var row = table.row( tr );
+ 
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( format(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    } );
+  };
+
+	initializeStateTable();
+    });
+    
+    var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+  	//table2=j$('[id$=' + table+']');
+  	table2=table;
+  	
+    if (!table2.nodeType) table2 = document.getElementById(table2)
+    
+    // When the stripped button is clicked, clone the existing source
+	var clonedTable = j$(table2).clone();
+
+	// Strip your empty characters from the cloned table (hidden didn't seem to work since the cloned table isn't visible)
+	clonedTable.find('[style*="display:none"]').remove();
+
+    var ctx = {worksheet: name || 'Worksheet', table: clonedTable[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+    
+    
+
+</script>
+	</apex:outputPanel>
+</apex:page>
