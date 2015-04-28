@@ -165,7 +165,7 @@
    </apex:variable>
  			 <br/>
     		<apex:pageBlock title="View All Attachments">
-  			 <apex:pageBlockTable style="width: 100%;" id="NotesAndAttachments" value="{!entries}" var="entry" styleClass="dataTable" rendered="{!entries.size>0}">
+  			 <apex:pageBlockTable style="width: 100%;" id="NotesAndAttachments" value="{!getAllAttachments}" var="entry" styleClass="dataTable" rendered="{!getAllAttachments.size>0}">
                 <apex:column style="padding-right: 9px;" headerValue="Action"  >
                        <apex:outputPanel layout="none" rendered="{!!entry.isNote}">
                         <apex:outputLink value="/apex/UpdateAttachment?docId={!entry.ID}&retURL={!theRetUrl}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" styleClass="actionLink" >Edit</apex:outputLink>

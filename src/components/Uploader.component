@@ -89,10 +89,9 @@
         <apex:pageBlock title="Upload Attachments">
                 	    <div id="textId" >
         <p><h2> 1. Select the file</h2><br/>
-		Type the path of the file to choose File button to find the file. You may also include a description.<br/>
-		Click "Add More" to attach up to 5 files at once,or proceed to step 2.</p>
+		Type the path of the file or click the Choose File button to find the file. You may also include a description.<br/> Click "Add More" to attach up to 5 files at once, or proceed to Step 2.</p>
     </div>
-   
+     <apex:commandButton value="Add More" action="{!addMore}" rendered="{!NOT(hideAddMoreButton)}" />
                
             <apex:repeat value="{!newAttachments}" var="newAtt">
                 <apex:pageBlockSection columns="4" id="files">
@@ -118,10 +117,10 @@
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
             </apex:repeat>  
-            <apex:commandButton value="Add More" action="{!addMore}" rendered="{!NOT(hideAddMoreButton)}" />
+          
                       <div id="textId">
         <p><h2> 2. Click the "Upload" button </h2><br/>
-		When the upload is complete the file information will appear below. Click cancel to exit without uploading.</p>
+		When the upload is complete the file information will appear below. Click Cancel to exit without uploading.</p>
             </div>
             <apex:commandButton value="Upload" action="{!save}"/>
             <apex:commandButton value="Cancel" action="{!done}"/>
