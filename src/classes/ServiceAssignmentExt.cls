@@ -1503,14 +1503,6 @@ public void loadProgramList() {
 						cats.add(ee.category__c);
 						subCats.add(ee.Sub_Category__c);
 						catSubcat.add(ee.Category__c+'~'+ee.sub_category__c);
-						
-						//string catSubcatCheck = ee.Category__c+'~'+ee.sub_category__c;
-						
-						/*if(string.valueOf(ee.Category__c+'~'+ee.Sub_Category__c) == catSubcatCheck){
-							List<Eval__c> evs = new List<Eval__c>();
-							evs.add(ee);
-							evalMap.put(catSubcatCheck, evs);
-						}*/
 					}
 
 					integer i = 1;
@@ -1547,7 +1539,7 @@ public void loadProgramList() {
 						string catSubcatCheck = eval.Category__c+'~'+eval.Sub_Category__c;
 						string fieldName = eval.API_Name_Flag__c;
 						
-						if(fieldName != 'Behavior' && fieldName != 'RespondsTo'){
+						if(fieldName != 'Behavior' && fieldName != 'RespondsTo' && eval.Sub_Category__c != 'Pressure Ulcer Detail' && eval.Sub_Category__c != 'Wound Detail'){
 							value = new Eval_Value__c();
 							value.Eval__c = eval.Id;
 							value.Eval_Section_Type__c = 'Residential';
@@ -1591,7 +1583,8 @@ public void loadProgramList() {
 									value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
 								}
 							}
-						
+							
+							values.add(value);
 						}
 						if(fieldName == 'Behavior' && string.isNotBlank(behaviorString) && behaviorString != ''){
 							value = new Eval_Value__c();
@@ -1614,8 +1607,6 @@ public void loadProgramList() {
 							values.add(value);
 						}
 							
-					
-							values.add(value);
 						
 					}
 					
@@ -1659,7 +1650,7 @@ public void loadProgramList() {
 							
 							values.add(isVal);
 						}
-						 if(val.Category__c == 'Skin/Body' && val.Sub_Category__c = 'Wound Detail' && uniqueTimeMap.keySet().contains(keyCheck)){
+						 if(val.Category__c == 'Skin/Body' && checkResponses.contains(val.Sub_Category__c) && uniqueTimeMap.keySet().contains(keyCheck) && val.Sub_Category__c == 'Wound Detail'){
 							
 							Eval_Value__c woundEval = new Eval_value__c();
 							woundEval.Eval__c = val.Id;
@@ -1672,7 +1663,7 @@ public void loadProgramList() {
 							values.add(woundEval);
 							
 						}
-						if(val.Category__c == 'Skin/Body' && val.Sub_Category__c = 'Pressure Ulcer Detail' && uniqueTimeMap.keySet().contains(keyCheck)){
+						if(val.Category__c == 'Skin/Body' && val.Sub_Category__c == 'Pressure Ulcer Detail' && uniqueTimeMap.keySet().contains(keyCheck) && checkResponses.contains(val.Sub_Category__c)){
 							
 							Eval_Value__c pressureEval = new Eval_value__c();
 							pressureEval.Eval__c = val.Id;
