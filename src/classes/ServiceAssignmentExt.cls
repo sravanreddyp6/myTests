@@ -1481,17 +1481,68 @@ public void loadProgramList() {
 
 						}
 					}
-					getEvals.add('Behavior'); //Make Sure Behavior ApI_Flag_Name__c is also included
-					getEvals.add('RespondsTo');
-					getEvals.add('Wound Detail');//Make sure ito include Pressure Ulcer and Wound Detail Sections.
-					getEvals.add('Pressure Ulcer Detail');
+					
+					string behaviorString = '';
+					string respondstoString = '';
+					
+					for(Schema.FieldSetMember f: behavior.getFields()){
+						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
+							behaviorString += f.getLabel();
+							behaviorString += '; ';
+						}
 
-				//	system.debug('Checking the set for null values+++++++++'+getEvals);
-					//system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
+					}
+					
+					for(Schema.FieldSetMember f: respondsTo.getFields()){ 
+						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
+							respondstoString += f.getLabel();
+							respondstoString += '; ';
+						}
+					}
+					
+					if(string.isNotBlank(behaviorString) && behaviorString != ''){
+						getEvals.add('Behavior'); //Make Sure Behavior ApI_Flag_Name__c is also included
+					}
+					
+					if(string.isNotBlank(respondstoString) && respondstoString != ''){
+						getEvals.add('RespondsTo');//Make Sure RespondsTo ApI_Flag_Name__c is also included
+					}
+					
+					
+					set<string> responseRectypes = new set<string>{'Pressure Ulcer Detail','Wound Detail'};
+   					FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+   					list<Evaluation_Response__c> clonedResponses = new List<Evaluation_Response__c>();
+   					set<string> checkResponses = new set<string>();
+   					
+   					String respQuery ='SELECT ';
+		   			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
+		                    respQuery +=f.getFieldPath() + ', ';
+		            }
+            
+            		respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalOnReferralId AND RecordType.Name IN:responseRectypes';
+            		list<Evaluation_Response__c> evalResponses = database.query(respQuery);
+            		
+            		if(evalResponses!=null){
+	                	for(Evaluation_Response__c erp : evalResponses){
+		                    Evaluation_Response__c newRecord = erp.clone(false);
+		                    newRecord.Evaluation__c = resAsmt.Id;
+		                   	checkResponses.add(erp.RecordType.Name); // to check whether to create Eval value record or not
+	                    	clonedResponses.add(newRecord);
+               		 	}
+            		}
+            		
+            		if(checkResponses.contains('Wound Detail')){
+            			getEvals.add('Wound Detail');//Make sure ito include Pressure Ulcer and Wound Detail Sections.
+            		}
+            		
+            		if(checkResponses.contains('Pressure Ulcer Detail')){
+            			getEvals.add('Pressure Ulcer Detail');
+            		}
+					
+
+				//Start Eval_Value__c Creation
 
 					List<Eval__c> evalList = [SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals AND Eval_Type__r.Name = 'Residential'];
-					system.debug('evalList++++'+evalList);
-				//	Map<string, List<Eval__c>> evalMap = new Map<string, List<Eval__c>>();
 					//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
 					set<string> cats = new set<string>();
 					set<string> subCats = new set<string>();
@@ -1511,25 +1562,6 @@ public void loadProgramList() {
 						i++;
 					}
 
-					string behaviorString = '';
-					string respondstoString = '';
-
-					for(Schema.FieldSetMember f: behavior.getFields()){
-						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
-							behaviorString += f.getLabel();
-							behaviorString += '; ';
-						}
-
-					}
-					
-					for(Schema.FieldSetMember f: respondsTo.getFields()){ 
-						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
-							respondstoString += f.getLabel();
-							respondstoString += '; ';
-						}
-
-					}
-
 					//Create Corresponding Eval Value Records
 					List<Eval_Value__c> values = new List<Eval_value__c>();
 					Eval_Value__c value;
@@ -1539,7 +1571,7 @@ public void loadProgramList() {
 						string catSubcatCheck = eval.Category__c+'~'+eval.Sub_Category__c;
 						string fieldName = eval.API_Name_Flag__c;
 						
-						if(fieldName != 'Behavior' && fieldName != 'RespondsTo' && eval.Sub_Category__c != 'Pressure Ulcer Detail' && eval.Sub_Category__c != 'Wound Detail'){
+						if(eval.Sub_Category__c != 'Pressure Ulcer Detail' && eval.Sub_Category__c != 'Wound Detail' && fieldName != 'Behavior' && fieldName != 'RespondsTo'){
 							value = new Eval_Value__c();
 							value.Eval__c = eval.Id;
 							value.Eval_Section_Type__c = 'Residential';
@@ -1558,9 +1590,10 @@ public void loadProgramList() {
 										else
 											value.Boolean__c = false;
 									}
-									else if (eval.Field_Sub_Type__c == 'Dropdown')
+									else if (eval.Field_Sub_Type__c == 'Dropdown'){
 										value.Text_Under_250__c = existingEval.get(fieldName)== true ? '1':'0';
 									}
+							}
 		
 							else if (eval.Field_Type__c == 'Int'){
 								value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
@@ -1576,14 +1609,23 @@ public void loadProgramList() {
 									 || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
 									eval.Field_Type__c == 'Currency'){
 										
-								if ( eval.length__c > 250 ){
+								if ( eval.length__c > 250 )
 									value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
-								}
-								else{
+								
+								else
 									value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
-								}
+								
 							}
 							
+							if(eval.Field_Name__C == 'Behavior'){
+								value.Text_Under_250__c = behaviorString;
+							}
+							
+							if(eval.Field_name__c == 'Responds To'){
+								value.Text_Under_250__c = respondstoString;
+								
+							}
+								
 							values.add(value);
 						}
 						if(fieldName == 'Behavior' && string.isNotBlank(behaviorString) && behaviorString != ''){
@@ -1610,35 +1652,12 @@ public void loadProgramList() {
 						
 					}
 					
-					//logic to carryover Evaluation Responses from Referral Evaluation to Residential Assessment
-					set<string> responseRectypes = new set<string>{'Pressure Ulcer Detail','Wound Detail'};
-   					FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
-   					list<Evaluation_Response__c> clonedResponses = new List<Evaluation_Response__c>();
-   					set<string> checkResponses = new set<string>();
-   					
-   					String respQuery ='SELECT ';
-		   			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
-		                    respQuery +=f.getFieldPath() + ', ';
-		            }
-            
-            		respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalOnReferralId AND RecordType.Name IN:responseRectypes';
-            		list<Evaluation_Response__c> evalResponses = database.query(respQuery);
-            		
-            		if(evalResponses!=null){
-	                	for(Evaluation_Response__c erp : evalResponses){
-		                    Evaluation_Response__c newRecord = erp.clone(false);
-		                    newRecord.Evaluation__c = resAsmt.Id;
-		                   	checkResponses.add(erp.RecordType.Name); // to check whether to create Eval value record or not
-	                    	clonedResponses.add(newRecord);
-               		 	}
-            		}
-            		
             		List<Eval__c> isValidEvals = [SELECT Id, Field_Name__c, Category__c, Sub_Category__c FROM  Eval__c WHERE Field_name__c = 'IsValid' AND Category__c IN: cats AND Sub_Category__c IN: subCats AND Eval_Type__r.Name = 'Residential'];
 					system.debug('The size of isValids +++++' +isValidEvals.size()+isValidEvals);
 					for(Eval__c val: isValidEvals){
 						
 						String keyCheck = val.Category__c+'~'+val.Sub_category__c;
-						if(uniqueTimeMap.keySet().contains(keyCheck) && val.Category__c != 'Skin/Body'){ 
+						if(uniqueTimeMap.keySet().contains(keyCheck)){ 
 							system.debug('I am in here for++++'+val.Sub_Category__c+val.Id);
 							Eval_Value__c isVal = new Eval_value__c();
 							isVal.Eval__c = val.Id;
@@ -1650,33 +1669,6 @@ public void loadProgramList() {
 							
 							values.add(isVal);
 						}
-						 if(val.Category__c == 'Skin/Body' && checkResponses.contains(val.Sub_Category__c) && uniqueTimeMap.keySet().contains(keyCheck) && val.Sub_Category__c == 'Wound Detail'){
-							
-							Eval_Value__c woundEval = new Eval_value__c();
-							woundEval.Eval__c = val.Id;
-							woundEval.Eval_Section_Type__c = 'Residential';
-							woundEval.what_id__c = resAsmt.Id;
-							woundEval.what_id_object__c = 'Evaluation__c'; 
-							woundEval.eval_Section_Id__c = uniqueTimeMap.get(keyCheck);
-							woundEval.Boolean__c = false;
-							
-							values.add(woundEval);
-							
-						}
-						if(val.Category__c == 'Skin/Body' && val.Sub_Category__c == 'Pressure Ulcer Detail' && uniqueTimeMap.keySet().contains(keyCheck) && checkResponses.contains(val.Sub_Category__c)){
-							
-							Eval_Value__c pressureEval = new Eval_value__c();
-							pressureEval.Eval__c = val.Id;
-							pressureEval.Eval_Section_Type__c = 'Residential';
-							pressureEval.what_id__c = resAsmt.Id;
-							pressureEval.what_id_object__c = 'Evaluation__c'; 
-							pressureEval.eval_Section_Id__c = uniqueTimeMap.get(keyCheck);
-							pressureEval.Boolean__c = false;
-							
-							values.add(pressureEval);
-							
-						}
-						
 					}
 				
 					try{
