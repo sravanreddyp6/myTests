@@ -23,7 +23,6 @@ public with sharing class EvalDynamicExt {
 	public Boolean showEsign{get; set;}
 	public Boolean showshiftDone{get; set;}
 	public Boolean showApprove {get; set;}
-	public Boolean showReject { get; set; }
 	public Boolean isUserOwner {get; set; }
 	public Boolean isApprover { get; set; }
 	
@@ -249,7 +248,7 @@ public with sharing class EvalDynamicExt {
 		
 		Savepoint sp2 = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
 		
-		if(evalType == 'Residential'){
+		if(evalType == 'Residential' || evalType == 'CNA Workbook'){
 			thisEval.Status__c = 'Disregard';
 			try{
 				update thisEval;
@@ -443,7 +442,6 @@ public with sharing class EvalDynamicExt {
 	public void controlButtons() {
 		
 		showApprove = false;
-		showReject = false;
 		showEsign = false;
 			
 		// do this first because the approval buttons happen regardless of record ownership
@@ -458,7 +456,6 @@ public with sharing class EvalDynamicExt {
 			
 			if ( thiseval.status__c == 'Pending Approval' && isApprover) {
 				showApprove = true;
-				showReject = true;
 			}
 		}
 			
@@ -649,19 +646,13 @@ public with sharing class EvalDynamicExt {
     	
     }
     
-    public PageReference Approve() {
-    	
-    	executeNextApprovalStep('Approve','Approved');
-    	return new PageReference('/' + evalId);
+    public string revcomments { get; set; }
+    public string approvalaction { get; set; }
+    public PageReference ApproveReject() {
+    	executeNextApprovalStep(approvalaction, revcomments);
+    	return new PageReference('/apex/home');
     }
 
-    public PageReference Reject() {
-    	
-    	executeNextApprovalStep('Reject','Rejected');
-    	return new PageReference('/' + thiseval.serviceassignment__c);
-    }
-
-    
     private void executeNextApprovalStep( string approvalAction, string comment) {
     	
     	Approval.ProcessWorkitemRequest req =  new Approval.ProcessWorkitemRequest();

@@ -57,6 +57,11 @@
 			isModified = false;
 		}
 
+
+		function showReviewerComments() {
+			openModalDialog('{!$Component.reviewercomments}', 'Approve/Reject', '');
+		}
+		
 		function showReporting() {
 			//set up the attributes
 			// hide the old panel
@@ -120,7 +125,7 @@
 
 		function disregard(evalType) {
 
-			if (evalType == 'Residential') {
+			if (evalType == 'Residential' || evalType == 'CNA Workbook') {
 				disregardAssessment();
 			}
 
@@ -283,10 +288,7 @@
 						<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="disregard('{!evalType}'); return false;">Disregard {!evalType}</a>
 					</apex:outputPanel>
 					<apex:outputPanel rendered="{!showApprove}">
-						<a id="btnApprove" class="btn-success btn-sm pull-left" href="#" role="button" onClick="approve(); return false;">Approve</a>
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!showReject}">
-						<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="reject(); return false;">Reject</a>
+						<a id="btnApprove" class="btn-success btn-sm pull-left" href="#" role="button" onClick="showReviewerComments(); return false;">Approve/Reject</a>
 					</apex:outputPanel>
 				</div>
 
@@ -347,8 +349,6 @@
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
-		<apex:actionfunction name="approve" action="{!approve}" status="myStatus" reRender="msgs" />
-		<apex:actionfunction name="reject" action="{!reject}" status="myStatus" reRender="msgs" />
 		<apex:actionregion >
 		<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
 			<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
@@ -415,6 +415,26 @@
 		</apex:outputPanel>
 	</apex:outputPanel>
 
+	<apex:outputPanel id="reviewercomments" title="Reviewer Comments" layout="block" style="display:none">
+		<apex:form id="reviewForm">
+		<apex:pageblock>
+		<apex:pageblocksection columns="1" >
+		<apex:outputlabel for="comments" value="Reviewer Comments" />
+		<apex:inputtextarea id="commenttext" value="{!revcomments}" rows="10" cols="80" />
+		</apex:pageblocksection>
+		<div align="right">
+				<apex:commandLink styleClass="btn" value="Approve" action="{!ApproveReject}" status="myStatus">
+					<apex:param name="theaction" assignTo="{!approvalaction}" value="Approve"/>
+				</apex:commandLink>
+				<apex:commandLink styleClass="btn" value="Reject"  action="{!ApproveReject}" status="myStatus">
+					<apex:param name="theaction" assignTo="{!approvalaction}" value="Reject"/>
+				</apex:commandLink>
+				<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.reviewercomments}'); return false;" />
+		</div>
+		</apex:pageblock>
+		</apex:form>
+	</apex:outputPanel>
+	
 
 	<apex:actionStatus id="myStatus">
 		<apex:facet name="start">

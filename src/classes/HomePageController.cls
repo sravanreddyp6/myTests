@@ -63,7 +63,7 @@ public with sharing class HomePageController{
 
 	//Constructor
 	public HomePageController(){
-		
+
 		//PBS object
 		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
 		canSeePBS = oSchema.isAccessible();
@@ -320,7 +320,7 @@ public with sharing class HomePageController{
 				orderStatement += ' nulls last';
 			}
 		} else {
-			orderStatement = ' order by ActivityDate desc, Priority, CreatedDate';
+			orderStatement = ' order by ActivityDate desc, Priority';
 		}
 		System.debug('Order statement: ' + orderStatement);
 		if(viewstsk==null || viewstsk=='All Open'){

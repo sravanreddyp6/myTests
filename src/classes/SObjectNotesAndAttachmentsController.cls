@@ -62,15 +62,15 @@ public with sharing class SObjectNotesAndAttachmentsController {
         }}
         public String LastModifiedDate { get {
             if (note!=null) {
-                return note.LastModifiedDate.format('M/d/yyyy h:m a');
+                return note.LastModifiedDate.format('MM/dd/yyyy hh:mm a');
             }
-            return attachment.LastModifiedDate.format('M/d/yyyy h:m a');
+            return attachment.LastModifiedDate.format('MM/dd/yyyy hh:mm a');
         }}
        public String CreatedDate { get {
             if (note!=null) {
-                return note.CreatedDate.format('M/d/yyyy h:m a');
+                return note.CreatedDate.format('MM/dd/yyyy hh:mm a');
             }
-            return attachment.CreatedDate.format('M/d/yyyy h:m a');
+            return attachment.CreatedDate.format('MM/dd/yyyy hh:mm a');
         }}
         public String Description { get {
             if (note!=null) {

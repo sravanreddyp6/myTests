@@ -8,6 +8,7 @@ public with sharing class NursesShiftDocAddModalControllerTest {
 		CreateObjects();
 		NursesShiftDocAddModalController controller = new NursesShiftDocAddModalController();
 		controller.serviceAssignmentId = serviceAssignment.Id;
+		controller.evalType = 'CMShiftAssessment';
 		controller.showAddShiftDoc();
 		DateTime startTime = System.now();
 		DateTime endTime = System.now().addMinutes(30);
