@@ -175,7 +175,7 @@
 		          .attr("value",this)
 		          .text(this));
 		    });
-		    $('#filter').chosen().change(filterNavigation);
+		    $('#filter').chosen({search_contains: true}).change(filterNavigation);
 
 			$("[id$='dialog-confirm-navigation']").dialog({
 				resizable: false,
