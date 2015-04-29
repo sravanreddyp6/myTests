@@ -416,11 +416,13 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	private List<Seizure> getSeizures(Action_Summary__c summary) {
 		List<Seizure> tmpSeizures = new List<Seizure>();
 		Id saId = summary.Service_Assignment__c;
+		Date endDate = summary.End_Date__c.addDays(1);  // Because we want to include the record on the end date as well
 		String query =
 			'SELECT Id, Start_DateTime__c, End_DateTime__c, Observed_By__c, CreatedDate, ' +
 			        'Observed_By__r.Name ' +
 			'  FROM Seizure__c ' +
 			' WHERE Service_Assignment__c = :saId ' +
+			'   AND Start_DateTime__c <= :endDate ' +
 			'ORDER BY CreatedDate ASC ';
 		for (Seizure__c seizure: Database.query(query)) {
 			tmpSeizures.add(new Seizure(seizure));
@@ -431,12 +433,14 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	private List<IsolationEvent> getIsolationEvents(Action_Summary__c summary) {
 		List<IsolationEvent> tmpIsolationEvents = new List<IsolationEvent>();
 		Id saId = summary.Service_Assignment__c;
+		Date endDate = summary.End_Date__c.addDays(1);  // Because we want to include the record on the end date as well
 		String query =
 			'SELECT Id, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, CreatedDate, ' +
 			'       Isolation_Status__c, Isolation_Type__c ' +
 			'  FROM Evaluation_Response__c ' +
 			' WHERE RecordType.Name = \'Isolation Event\' ' +
 			'   AND Service_Assignment__c = :saId ' +
+			'   AND Isolation_Event_Start_Date__c <= :endDate ' +
 			'ORDER BY CreatedDate ASC ';
 		for (Evaluation_Response__c event: Database.query(query)) {
 			tmpIsolationEvents.add(new IsolationEvent(event));
@@ -447,6 +451,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	private List<RestraintEvent> getRestraintEvents(Action_Summary__c summary) {
 		List<RestraintEvent> restraintEvents = new List<RestraintEvent>();
 		Id saId = summary.Service_Assignment__c;
+		Date endDate = summary.End_Date__c.addDays(1);  // Because we want to include the record on the end date as well
 		String query =
 			'SELECT Id, Shift_Start_Time__c, Shift_End_Time__c, Status__c, CreatedDate, ' +
 			'       (SELECT Id FROM Assessments__r ' +
@@ -455,7 +460,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			'  FROM Evaluation__c ' +
 			' WHERE ServiceAssignment__c = :saId' +
 			'   AND RecordType.Name = \'RestraintEvent\' ' +
-			'   AND (Shift_Start_Time__c != null OR Shift_End_Time__c != null) ' +
+			'   AND (Shift_Start_Time__c != null AND Shift_Start_Time__c <= :endDate) ' +
 			'ORDER BY CreatedDate ASC ';
 		Evaluation__c[] tmpRestraintEvents = Database.query(query);
 		Map<Id, Id> assessmentEvaluationMap = new Map<Id, Id>();
@@ -510,7 +515,10 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		}
 		List<VitalsDetail> vitalsDetails = new List<VitalsDetail>();
 		for (String evalSectionId: entryValuesMap.keySet()) {
-			vitalsDetails.add(new VitalsDetail(entryValuesMap.get(evalSectionId)));
+			VitalsDetail detail = new VitalsDetail(entryValuesMap.get(evalSectionId));
+			if (detail.dateTaken >= summary.Start_Date__c && detail.dateTaken <= summary.End_Date__c) {
+				vitalsDetails.add(new VitalsDetail(entryValuesMap.get(evalSectionId)));
+			}
 		}
 		vitalsDetails.sort();
 		return vitalsDetails;
