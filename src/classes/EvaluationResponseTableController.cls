@@ -110,7 +110,14 @@ public with sharing class EvaluationResponseTableController {
 			currentResponse.Isolation_Event_End_Date__c = Utility.getDateTimeFromString(value+':00');
 		}
 	}
-
+    public String timeObserved {
+        get {
+            return currentResponse.Time_Observed__c == null ? null : Utility.getMilitarytimeNoSeconds(currentResponse.Time_Observed__c);
+        }
+        set {
+            currentResponse.Time_Observed__c = Utility.getDateTimeFromString(value+':00');
+        }
+    }
 	public void saveResponse() {
 		System.debug('saveResponse called, currentResponse: ' + currentResponse);
 		//      Start EC-116
@@ -234,11 +241,12 @@ public with sharing class EvaluationResponseTableController {
 			lbl.value = columnsToHeadersMap.get(column);
 			if(reqFields.contains(column) ){lbl.styleClass = 'evalCompReqField';}
 
-			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c'){
+			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c' || column == 'Time_Observed__c'){
 				Component.Apex.InputText dialogInput = new Component.Apex.InputText(id=column);
 				dialogInput.styleClass = 'militaryDateTime';
 				if (column == 'Isolation_Event_Start_Date__c' ) dialogInput.expressions.value = '{!isolationEventStartDate}';
 				else if (column == 'Isolation_Event_End_Date__c' ) dialogInput.expressions.value = '{!isolationEventEndDate}';
+				else if (column == 'Time_Observed__c' ) dialogInput.expressions.value = '{!timeObserved}';
 				PBSI.childComponents.add(lbl);
 				PBSI.childComponents.add(dialogInput);
 			}else{
