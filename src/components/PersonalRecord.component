@@ -25,7 +25,7 @@
 			// jumping to an anchor point
 			var moveAnchor = function(hash) {
 				if (booleanStick) {
-					j$(window).scrollTop(j$(window).scrollTop() - j$("#pbsBlueCard").height());
+					jQuery(window).scrollTop(jQuery(window).scrollTop() - jQuery("#pbsBlueCard").height());
 				}
 			}
 			if ("onhashchange" in window) { // event supported?
@@ -45,9 +45,9 @@
 				// After we pin the blue card, the anchor point position is not
 				// the same as it was before, so we have to jump to the anchor
 				// point again.
-				j$(window).trigger('hashchange');
-				j$(window).scrollTop(j$(window.location.hash).offset().top - j$("#pbsBlueCard").height());
-				
+				jQuery(window).trigger('hashchange');
+				jQuery(window).scrollTop(jQuery(window.location.hash).offset().top - jQuery("#pbsBlueCard").height());
+
 			}
 		});
 
