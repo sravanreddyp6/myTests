@@ -1498,7 +1498,7 @@ public void loadProgramList() {
 					}
 					query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
 					sObject existingEval = Database.Query(query);
-
+				
 					for(Schema.FieldSetMember f: copyFields.getFields()){
 						if(string.isNOTBLANK(string.Valueof(existingEval.get(f.getFieldPath()))) && !string.Valueof(existingEval.get(f.getFieldPath())).equalsIgnoreCase('false')){
 							getEvals.add(f.getFieldPath());
@@ -1556,7 +1556,7 @@ public void loadProgramList() {
             		}
             		
             		if(checkResponses.contains('Wound Detail')){
-            			getEvals.add('Wound Detail');//Make sure ito include Pressure Ulcer and Wound Detail Sections.
+            			getEvals.add('Wound Detail');//Make sure to include Pressure Ulcer and Wound Detail Sections.
             		}
             		
             		if(checkResponses.contains('Pressure Ulcer Detail')){
@@ -1585,6 +1585,8 @@ public void loadProgramList() {
 						uniqueTimeMap.put(s,Userinfo.getUserId()+'-'+DateTime.now().addSeconds(i).getTime());
 						i++;
 					}
+					
+					system.debug('Cat sub cat++++++'+catSubcat);
 
 					//Create Corresponding Eval Value Records
 					List<Eval_Value__c> values = new List<Eval_value__c>();
