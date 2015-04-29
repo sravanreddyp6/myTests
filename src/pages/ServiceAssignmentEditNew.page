@@ -266,8 +266,8 @@
 	</script>
 	<apex:pagemessages id="msgs" />
 	<br />
-	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock.addShiftDocStatus}" />
-	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!theServAssign.Id}" shiftType="CNA Workbook" onShowRerender="msgs, evaluationscna" status="{!$Component.myFRM.residentAssessmentShiftDocBlock.AddCNAStatus}" />
+	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock2.addShiftDocStatus}" />
+	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!theServAssign.Id}" shiftType="CNA Workbook" onShowRerender="msgs, evaluationscna" status="{!$Component.myFRM.CNABlock.AddCNAStatus}" />
 	<apex:form id="myFRM">
 		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
 		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
@@ -1237,7 +1237,7 @@ END: Uncomment to have the element collapsed by default -->
 <!-- 						<apex:facet name="stop" /> -->
 <!-- 					</apex:actionStatus> -->
 
-				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && showResAsmt}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" id="residentAsmtButton" />
+				<apex:CommandButton value="Add Resident Assessment" rendered="{! AND(Service_Assignment__c.Status__c != 'Inactive', showResAsmt, canAddShiftDoc)}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" id="residentAsmtButton" />
 					<apex:actionStatus id="AddResidentAssessmentStatus" >
 						<apex:facet name="start">
 							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
@@ -1272,7 +1272,7 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:pageBlock>
 
 		<a name="ShiftAssessments" id="ShiftAssessments"></a>
-		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
+		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock2">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddShiftDoc) }" />
 				<apex:actionStatus id="AddShiftDocStatus">
@@ -1315,7 +1315,7 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:outputText value="No records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
 			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Nurses Shift Documentation" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
 		</apex:pageBlock>
-		<apex:pageBlock title="CNA Workbooks" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" >
+		<apex:pageBlock title="CNA Workbooks" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="CNABlock">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Add CNA Workbook" onclick="showAddShiftDoc2(); return false;" status="AddCNAStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddCNA)}" />
 				<apex:actionStatus id="AddCNAStatus">
