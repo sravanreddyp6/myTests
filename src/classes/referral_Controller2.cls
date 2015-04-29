@@ -528,6 +528,7 @@ public with sharing class referral_Controller2 {
 	public void saveRelParty() {
 		populateRelParties();
 		this.relParty = new Related_Party__c();
+		this.relParty.Status__c = 'Active';
 		relParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(this.ReferralRecord);
 	}
 

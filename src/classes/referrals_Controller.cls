@@ -909,6 +909,7 @@ public with sharing class referrals_Controller{
 	public void saveRelParty() {
 		this.relParties.add(this.relParty);
 		this.relParty = new Related_Party__c();
+		this.relParty.Status__c = 'Active';
 		relParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(this.ReferralRecord);
 	}
 
