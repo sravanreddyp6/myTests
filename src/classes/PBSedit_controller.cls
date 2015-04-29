@@ -279,6 +279,7 @@ public void showAddRelParty() {
   public void saveRelParty() {
     populateRelParties();
     this.relParty = new Related_Party__c();
+    relParty.Status__c = 'Active';
   }
     
  public void createRelParties() {
