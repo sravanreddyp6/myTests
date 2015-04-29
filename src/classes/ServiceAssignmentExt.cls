@@ -504,6 +504,8 @@ public without sharing class ServiceAssignmentExt {
             programRows.add(new ProgramAssociationTableWrapper(999,docsRunningCount.intValue(),docsFiledRunningCount.intValue(),totalPhasePercentage));
             
          populateSeizures();   
+         
+         setShiftDocPermissions();
     }
 // END: CONSTRUCTOR
 
