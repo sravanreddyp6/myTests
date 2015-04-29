@@ -5,6 +5,8 @@ public with sharing class EvaluationResponseTableController {
 	public string username { get; set; }
 	public string password { get; set; }
 	public Boolean eSignable { get; set; }
+	
+	public string currentUserOpGroup{get; set;}
 
 	public set<string> reqFields { get; set; }
 	public Id saId {
@@ -69,6 +71,7 @@ public with sharing class EvaluationResponseTableController {
 		isEdit = false;
 		reqFields = new set<string>();
 		hasError = false;
+		currentUserOpGroup = [SELECT Id, Operating_Group__c FROM User WHERE Id= :Userinfo.getUserId()].Operating_Group__c;
 	}
 
 	public PageReference showAddResponse() {
@@ -225,6 +228,7 @@ public with sharing class EvaluationResponseTableController {
 			// don't show the last mod details on the entry screen
 			if ( column == 'LastModifiedDate' || column == 'LastModifiedByID')
 				continue;
+				
 			Component.Apex.PageBlockSectionItem PBSI = new Component.Apex.PageBlockSectionItem();
 			Component.Apex.OutputLabel lbl = new Component.Apex.OutputLabel();
 			lbl.value = columnsToHeadersMap.get(column);
@@ -293,6 +297,11 @@ public with sharing class EvaluationResponseTableController {
 		columnsToFetch = new String[] {};
 		columnsToHeadersMap = new Map<String, String>();
 		for (Schema.FieldSetMember column: columns) {
+
+			if(currentUserOpGroup == 'NeuroRestorative' && (column.getFieldPath() == 'Depth__c' || column.getFieldPath() == 'Exudate_Type_Odor_Amount__c' || column.getFieldPath() == 'Undermining_in_cm__c' || column.getFieldPath() == 'Tunneling_in_cm__c' || column.getFieldPath() =='Surrounding_Tissue_Color_and_Condition__c' 
+				|| column.getFieldPath() == 'Associated_Pain__c' || column.getFieldPath() == 'Time_Observed__c' ) && recordType == 'Pressure Ulcer Detail')
+				continue;
+				
 			columnsToFetch.add(column.getFieldPath());
 			columnsToHeadersMap.put(column.getFieldPath(), column.getLabel());
 			if( column.getRequired() ){
