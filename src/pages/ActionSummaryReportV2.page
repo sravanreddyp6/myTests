@@ -83,7 +83,7 @@
 				<apex:commandButton value="Save" action="{!save}" id="saveButton" status="pageProcessingStatus" rendered="{!mode == 'edit'}" />
 				<apex:commandButton value="Cancel" action="{!cancel}" id="cancelButton" rendered="{!mode == 'edit'}" />
 				<apex:commandButton value="Edit" id="editButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=edit'; return false;" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
-				<apex:commandButton value="Finalize" action="{!finalize}" id="finalizeButton" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
+				<apex:commandButton value="Finalize" onclick="authenticate(); return false; " id="finalizeButton" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
 				<apex:commandButton value="Disregard" id="disregardButton" onclick="if (confirm('Are you sure you want to disregard this summary?')) { disregard(); } return false; " rendered="{!AND(mode == 'view', Action_Summary__c.Status__c = 'Final')}" />
 				<apex:commandButton value="Print" id="printButton" onclick="window.location='/apex/ActionSummaryReportPDFV2?id={!Action_Summary__c.Id}'; return false;" rendered="{!mode == 'view'}" />
 			</div>
@@ -99,10 +99,10 @@
 					<apex:outputLink id="summaryCreatedBy" value="/{!Action_Summary__c.CreatedBy.Id}">{!Action_Summary__c.CreatedBy.Name}</apex:outputLink>
 				</apex:pageBlockSectionItem>
 				<apex:outputText label="Created Date">
-					<c:MilitaryDateTime dateTimeVal="{!Action_Summary__c.CreatedDate}" />
+					<c:MilitaryDatetime dateTimeVal="{!Action_Summary__c.CreatedDate}" />
 				</apex:outputText>
 				<apex:outputText label="Finalized Date" rendered="{!Action_Summary__c.Status__c = 'Final'}">
-					<c:MilitaryDateTime dateTimeVal="{!Action_Summary__c.Finalized_Date__c}" />
+					<c:MilitaryDatetime dateTimeVal="{!Action_Summary__c.Finalized_Date__c}" />
 				</apex:outputText>
 				<apex:outputField value="{!Action_Summary__c.Finalized_By__c}" rendered="{!Action_Summary__c.Status__c = 'Final'}" />
 			</apex:pageBlockSection>
@@ -110,7 +110,7 @@
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
 					<apex:pageBlockTable value="{!vitalsDetails}" var="vital" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Date">
-							<c:MilitaryDateTime dateTimeVal="{!vital.dateTaken}" />
+							<c:MilitaryDatetime dateTimeVal="{!vital.dateTaken}" />
 						</apex:column>
 						<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
 						<apex:column headerValue="Blood Pressure" value="{!vital.bloodPressure}" />
@@ -141,10 +141,10 @@
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}">
 					<apex:pageBlockTable value="{!isolationEvents}" var="event" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
-							<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
+							<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
 						</apex:column>
 						<apex:column headerValue="End Date/Time">
-							<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
+							<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
 						</apex:column>
 						<apex:column headerValue="Type" value="{!event.type}" />
 					</apex:pageBlockTable>
@@ -155,10 +155,10 @@
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
 					<apex:pageBlockTable value="{!restraintEvents}" var="event" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
-							<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
+							<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
 						</apex:column>
 						<apex:column headerValue="End Date/Time">
-							<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
+							<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
 						</apex:column>
 						<apex:column headerValue="Status" value="{!event.status}" />
 						<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
@@ -329,12 +329,13 @@
 			</apex:repeat>
 		</apex:pageBlock>
 		<apex:actionFunction name="disregard" action="{!disregard}" status="pageProcessingStatus" />
+		<c:Authentication formId="{!$Component.mainForm}" title="E-Sign" handler="ActionSummaryReportV2" objectId="{!Action_Summary__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');" />
 	</apex:form>
 	<apex:outputPanel id="allVitalsDialog" style="display: none; ">
 		<apex:pageBlock >
 			<apex:pageBlockTable value="{!vitalsDetails}" var="vital">
 				<apex:column headerValue="Date">
-					<c:MilitaryDateTime dateTimeVal="{!vital.dateTaken}" />
+					<c:MilitaryDatetime dateTimeVal="{!vital.dateTaken}" />
 				</apex:column>
 				<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
 				<apex:column headerValue="Blood Pressure" value="{!vital.bloodPressure}" />
@@ -363,10 +364,10 @@
 		<apex:pageBlock >
 			<apex:pageBlockTable value="{!isolationEvents}" var="event">
 				<apex:column headerValue="Start Date/Time">
-					<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
+					<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
 				</apex:column>
 				<apex:column headerValue="End Date/Time">
-					<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
+					<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
 				</apex:column>
 				<apex:column headerValue="Type" value="{!event.type}" />
 			</apex:pageBlockTable>
@@ -376,10 +377,10 @@
 		<apex:pageBlock >
 			<apex:pageBlockTable value="{!restraintEvents}" var="event">
 				<apex:column headerValue="Start Date/Time">
-					<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
+					<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
 				</apex:column>
 				<apex:column headerValue="End Date/Time">
-					<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
+					<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
 				</apex:column>
 				<apex:column headerValue="Status" value="{!event.status}" />
 				<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
