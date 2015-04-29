@@ -23,6 +23,10 @@ public with sharing class ActionSummaryReportV2Tests {
 		System.assertEquals(1, controller.isolationEvents.size());
 		System.assertEquals(1, controller.restraintEvents.size());
 		System.assertEquals(1, controller.vitalsDetails.size());
+		System.assertEquals(0, controller.seizures[0].compareTo(controller.seizures[0]));
+		System.assertEquals(0, controller.isolationEvents[0].compareTo(controller.isolationEvents[0]));
+		System.assertEquals(0, controller.restraintEvents[0].compareTo(controller.restraintEvents[0]));
+		System.assertEquals(0, controller.vitalsDetails[0].compareTo(controller.vitalsDetails[0]));
 
 		controller.systemSummaryResultMap.get('Diagnostics').status = controller.systemStatusOptions[0].getValue();
 		controller.systemSummaryResultMap.get('Diagnostics').comment = 'Test Comment';
@@ -55,6 +59,8 @@ public with sharing class ActionSummaryReportV2Tests {
 
 		controller.disregard();
 		System.assertEquals('Disregard', controller.summary.Status__c);
+		controller.handle(summary.Id, UserInfo.getUserId());
+		controller = new ActionSummaryReportV2();
 	}
 	private static Action_Plan__c createData(){
 		TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();

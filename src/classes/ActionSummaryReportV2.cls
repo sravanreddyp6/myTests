@@ -1,4 +1,4 @@
-public with sharing class ActionSummaryReportV2 {
+public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public Action_Summary__c summary { get; set; }
 	public ApexPages.standardController controller { get; set; }
 	public String mode { get; set; }
@@ -59,6 +59,9 @@ public with sharing class ActionSummaryReportV2 {
 			return new PageReference('/' + this.summary.Id);
 		}
 		return null;
+	}
+	public ActionSummaryReportV2() {
+		// This is only used for esigning purpose. Don't use it otherwise!
 	}
 	public ActionSummaryReportV2(ApexPages.standardController controller) {
 		this.controller = controller;
@@ -316,6 +319,18 @@ public with sharing class ActionSummaryReportV2 {
 		upsert resultsToUpdate;
 		update summary;
 		return new PageReference('/' + summary.Id);
+	}
+
+	public PageReference handle(Id recordId, Id userId) {
+		Action_Summary__c summary = [
+			SELECT Id, Status__c, Start_Date__c, End_Date__c, Finalized_Date__c,
+			       Service_Assignment__c
+			  FROM Action_Summary__c WHERE Id=:recordId
+		];
+		ActionSummaryReportV2 controller = new ActionSummaryReportV2(
+				new ApexPages.standardController(summary)
+				);
+		return controller.finalize();
 	}
 
 	public PageReference finalize() {
