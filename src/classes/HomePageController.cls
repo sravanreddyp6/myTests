@@ -75,9 +75,10 @@ public with sharing class HomePageController{
 		List<AggregateResult> slPrgms = [
 			SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
 			  FROM service_assignment__c
-			GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c
+			GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c,
+			         service_location__r.programid__c
 			HAVING COUNT(service_location__r.id) > 0
-			ORDER BY service_location__r.program__c
+			ORDER BY service_location__r.programid__c, service_location__r.program__c
 		];
 		for (AggregateResult slPrgm : slPrgms) {
 			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
