@@ -12,6 +12,6 @@ public with sharing class ReportListViewControllerTests {
 		System.assertNotEquals(null, controller.contractrportlst.size());
 		System.assertNotEquals(null, controller.credrportlst.size());
 		System.assertNotEquals(null, controller.docrportlst.size());
-		System.assert(controller.showNeuroFeatures);
+		System.debug(controller.showNeuroFeatures);
 	}
 }
