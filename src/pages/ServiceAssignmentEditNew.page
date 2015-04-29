@@ -1064,7 +1064,7 @@ END: Uncomment to have the element collapsed by default -->
 		<a name="Assessment_res" id="Assessment_res"></a>
 		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
 			<div class="pbHeaderButton">
-				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive'}"/>
+				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && canAddShiftDoc}"/>
 			</div>
 			<apex:pageBlockTable value="{!restraintEvents}" var="event" rendered="{!restraintEvents.size > 0}">
 <!-- 				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
