@@ -1104,7 +1104,7 @@ END: Uncomment to have the element collapsed by default -->
                                        showTitle="false"
                                        formId="{!$Component.myFRM}"
                                        uniqueId="Isolation_Event"
-                                       rules="{&quot;Isolation_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"                                       
+                                       rules="{&quot;Isolation_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                        cols="1"
                                        rows="5"
                                        showDisregard="false"
@@ -1409,7 +1409,7 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:pageBlock>
 		<!-- end FAD Assessments -->
 
-	
+
 		<!--  Funding Sources section -->
 		<!-- Add Funding Source modal. -->
 		<apex:outputPanel id="FundingSourceModal" style="display:none">
@@ -1833,6 +1833,7 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:outputPanel>
 		</apex:outputPanel>
 	</apex:form>
+	<a id="shiftSummaries" />
 	<apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
 	<c:SObjectNotesAndAttachments parentPage="ServAssign" parentId="{!Service_Assignment__c.id}" showAction="true" rendered="{!!editSA && newSA==false}"   pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
 	<c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
