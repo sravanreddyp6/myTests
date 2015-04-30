@@ -810,7 +810,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			Seizure anotherSeizure = (Seizure) anotherSeizureObject;
 			if (this.startTime < anotherSeizure.startTime) {
 				return -1;
-			} else if (this.startTime == anotherSeizure.endTime) {
+			} else if (this.startTime == anotherSeizure.startTime) {
 				return 0;
 			} else {
 				return 1;
