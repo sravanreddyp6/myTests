@@ -93,7 +93,7 @@ public class fallAssessmentComponentControllerTest {
 		 controller.MyRating = 'test';
 		 controller.MyScore = 2;
 		 controller.MyColor = 'green';
-		 controller.questionID = qs[1].Id;
+		 controller.questionID = qs[0].Id;
 		
 		// controller.myUpsert();
 		// system.assertEquals(false,fallAssessmentComponentController.validateError(eval.Id, 'Fall Risk Assessment Domain'));
