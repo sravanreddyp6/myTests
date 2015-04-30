@@ -117,22 +117,28 @@
 				</apex:outputPanel>
 			
 				// Apply rules to input fields
-				$('body input').on("change", function(event) {
+				$('#evalForm input').on("change", function(event) {
 					applyShowHideRulesToField(event.target);
 					applyRulesToField(event.target);
 				});
-				$('body select').on("change", function(event) {
+				$('#evalForm select').on("change", function(event) {
 					applyShowHideRulesToField(event.target);
 					applyRulesToField(event.target);
 				});
-				$('body input').each(function(_, target) {
+				$('#evalForm input').each(function(_, target) {
 					applyShowHideRulesToField(target);
 					applyRulesToField(target);
 				});
-				$('body select').each(function(_, target) {
+				$('#evalForm select').each(function(_, target) {
 					applyShowHideRulesToField(target);
 					applyRulesToField(target);
 				});
+				
+				// set isModified to true on a field value change
+                $('#evalForm input, #evalForm select').on("change", function(event) {
+                    isModified = true;
+                });
+				 
 			};
 
 			window.handleFormErros = function() {
