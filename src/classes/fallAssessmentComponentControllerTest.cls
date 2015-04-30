@@ -29,18 +29,18 @@ public class fallAssessmentComponentControllerTest {
 		 Assessment_Question__c q1 = new Assessment_Question__c();
 		 q1.Question_Title__c = 'Fall Test';
 		 q1.Is_MultiSelect__c = True;
-		 q1.Question_Domain__c = thisDomains[1].Id;
-		 questions.add(q1);
+		 q1.Question_Domain__c = thisDomains[0].Id;
+		 insert q1;
 		 
-		 Assessment_Question__c q2 = new Assessment_Question__c();
+		/* Assessment_Question__c q2 = new Assessment_Question__c();
 		 q2.Question_Title__c = 'Skin Test';
 		 q2.Question_Domain__c = thisDomains[0].id;
 		 questions.add(q2);
 		 
-		 insert questions;
+		 insert questions;*/
 		 
 		 
-		 List<Assessment_Question__c> qs = [SELECT Id FROM Assessment_Question__c WHERE Id IN: questions];
+	//	 List<Assessment_Question__c> qs = [SELECT Id FROM Assessment_Question__c WHERE Id IN: questions];
 		 
 		 Eval_Type__c evlTyp = new Eval_Type__c(Name = 'TEST', Category__c = 'TEST', External_Eval_Type_ID__c = 1);
          insert evlTyp;
@@ -76,33 +76,26 @@ public class fallAssessmentComponentControllerTest {
 		 PageReference pageRef = Page.EvalDynamic;
 		 test.setCurrentpage(pageRef);
 		 pageRef.getParameters().put('evalID',eval.Id);
-		// Apexpages.StandardController sc = new ApexPages.StandardController(eval);
+		 
 		 fallAssessmentComponentController controller = new fallAssessmentComponentController();
 		 controller.domainName = 'Fall Risk Assessment Domain';
 		 
-		// system.assertEquals(2, controller.ListForMapCurrentResponses.size());
-		// system.assertEquals(true,fallAssessmentComponentController.validateError(eval.Id, 'Fall Risk Assessment Domain'));
-		 
+		 controller.getThisRecordsDomains();
 		 controller.getMapDomains();
-		 controller.getMapAnswers();
 		 controller.getMapQuestions();
-	//	 controller.getMapskinDomains();
-	//	 controller.getMapskinAnswers();
-	//	 controller.getMapskinQuestions();
+		 controller.getMapAnswers();
 		 
 		 controller.MyRating = 'test';
 		 controller.MyScore = 2;
 		 controller.MyColor = 'green';
-		 controller.questionID = qs[0].Id;
+		 controller.questionID = q1.Id;
 		
-		// controller.myUpsert();
-		// system.assertEquals(false,fallAssessmentComponentController.validateError(eval.Id, 'Fall Risk Assessment Domain'));
+		 controller.myUpsert();
+		 system.assertEquals(false,fallAssessmentComponentController.validateError(eval.Id, 'Fall Risk Assessment Domain'));
 		 
-	//	 controller.clearSelection();
-		// system.assertEquals(true,fallAssessmentComponentController.validateError(eval.Id, 'Fall Risk Assessment Domain'));
-		 
-	//	 controller.questionID = qs[0].Id;
-	//	 controller.myUpsert2();
+		 controller.clearSelection();
+		 system.assertEquals(true,fallAssessmentComponentController.validateError(eval.Id, 'Fall Risk Assessment Domain'));
+		
 		 Test.StopTest();
 		 
 		 
