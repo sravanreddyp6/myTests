@@ -519,7 +519,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		List<VitalsDetail> vitalsDetails = new List<VitalsDetail>();
 		for (String evalSectionId: entryValuesMap.keySet()) {
 			VitalsDetail detail = new VitalsDetail(entryValuesMap.get(evalSectionId));
-			if (detail.dateTaken >= summary.Start_Date__c && detail.dateTaken <= summary.End_Date__c) {
+			if (detail.dateTaken >= summary.Start_Date__c && detail.dateTaken <= summary.End_Date__c.addDays(1)) {
 				vitalsDetails.add(new VitalsDetail(entryValuesMap.get(evalSectionId)));
 			}
 		}
