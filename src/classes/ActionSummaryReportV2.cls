@@ -23,6 +23,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public Integer LIST_LIMIT { get { return 10; } }
 	public String TABLE_WIDTH { get { return '80%'; } }
 
+	public Boolean editable { get; set; }
+
 	public List<SelectOption> recommendationOptions {
 		get {
 			if (recommendationOptions != null) {
@@ -73,6 +75,18 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		mode = ApexPages.currentPage().getParameters().get('mode');
 		if (mode == '' || mode == null) {
 			mode = 'view';
+		}
+
+		List<UserRecordAccess> acls = [
+			SELECT RecordId, HasEditAccess
+			  FROM UserRecordAccess
+			 WHERE UserId = :UserInfo.getUserId()
+			   AND RecordId = :summary.Id
+		];
+		if (acls.size() > 0) {
+			editable = acls[0].HasEditAccess;
+		} else {
+			editable = false;
 		}
 
 		recommendationSummaryResultMap = new Map<Id, RecommendationSummaryResult>();
@@ -151,11 +165,11 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				           AND Day__c >= :summary.Start_Date__c),
 				       (SELECT Day_time__c , Occurrences__c, Occurred__c
 				          FROM Action_Behavior_results__r
-				         WHERE Day_time__c <= :summary.End_Date__c
+				         WHERE Day_time__c <= :summary.End_Date__c.addDays(1)
 				           AND Day_time__c >= :summary.Start_Date__c),
 				       (SELECT Description__c, CreatedDate
 				          FROM Action_Narrative_results__r
-				         WHERE CreatedDate <= :summary.End_Date__c
+				         WHERE CreatedDate <= :summary.End_Date__c.addDays(1)
 				           AND CreatedDate >= :summary.Start_Date__c
 				        ORDER BY CreatedDate)
 				  FROM Action_Plan_Objective__c
@@ -623,9 +637,11 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				if (result.Met_Objective__c == 'n') {
 					notMetObjectiveMap.put(startMonth, notMetObjectiveMap.get(startMonth) + 1);
 				}
-				percentMetObjectiveMap.put(startMonth,
-					(metObjectiveMap.get(startMonth) * 100)/(metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth))
-				);
+				if (metObjectiveMap.get(startMonth) != 0 || notMetObjectiveMap.get(startMonth) != 0) {
+					percentMetObjectiveMap.put(startMonth,
+						(metObjectiveMap.get(startMonth) * 100)/(metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth))
+					);
+				}
 			}
 			for (Date startMonth: startDateSet) {
 				skillResults.add(
