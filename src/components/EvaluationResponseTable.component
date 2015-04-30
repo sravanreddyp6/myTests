@@ -60,8 +60,8 @@
 	<apex:pageBlockSection id="evalResponseBlock" columns="1" title="{!IF(showTitle,type,'')}" collapsible="{!collapsible}">
         <apex:pageBlockSectionItem dataStyle="display:none;" labelStyle="display:none;">
 		<apex:outputPanel style="display: none; ">
-			<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" />
-			<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();">
+			<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" immediate="true"/>
+			<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();" immediate="true">
 				<apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
 			</apex:actionFunction>
 			<!-- We need to use this actionFunction rather than calling authenticateWithId straight up because of a bug in SF, see the comment in the controller's getAuthentication() -->
@@ -71,7 +71,7 @@
 		</apex:outputPanel>
         </apex:pageBlockSectionItem>
         
-		<apex:outputPanel layout="none" rendered="{!addEnabled}">
+		<apex:outputPanel layout="none" rendered="{!addEnabled && canCreate }">
 			<apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top: -30px; ">
 				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign}" />
 			</apex:outputPanel>
@@ -80,7 +80,7 @@
 		<apex:outputPanel id="responseTableWrapper">
 
 			<apex:pageBlockTable value="{!responses}" var="response" id="responseTable" rendered="{!numberOfResponses>0}">
-				<apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled}">
+				<apex:column headerValue="{!IF(AND(responses.size>0,isPdf != true), 'Action', '')}" width="80px" rendered="{!editEnabled && canEdit }">
 					<apex:commandLink onclick="{!onEdit}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit != null) && !isPdf && (response.eSigned_By__c == null) && (response.Isolation_Event_End_Date__c == null)}" />
 					<apex:commandLink onclick="showEditResponse{!uniqueId}('{!response.Id}'); return false;" value="Edit" rendered="{!(onEdit == null) && !isPdf && (response.eSigned_By__c == null) && !response.Disregard__c && (response.Isolation_Event_End_Date__c == null)}" /> &nbsp;
 					<apex:commandLink onclick="auth{!uniqueId}('{!response.Id}'); return false;" value="E-Sign" rendered="{! eSign && !isPdf && !response.Disregard__c && (response.esigned_by__c == null)}" />
@@ -219,9 +219,9 @@
 					<apex:actionStatus id="saveResponseStatus">
 						<apex:facet name="stop">
 							<apex:outputPanel id="buttons">
-								<apex:commandButton value="Save" rendered="{! !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null}" onClick="saveResponse{!uniqueId}(false); return false;" />
-								<apex:commandButton value="Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null}" onClick="saveResponse{!uniqueId}(true); return false;" /> &nbsp;
-								<apex:commandButton value="Disregard" rendered="{! showDisregard && currentResponse.Id != null}" onClick="disregardResponse{!uniqueId}(false); return false;" />
+								<apex:commandButton value="Save" rendered="{! !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null && canEdit}" onClick="saveResponse{!uniqueId}(false); return false;" />
+								<apex:commandButton value="Save & New" rendered="{!showAddNew && !currentResponse.Disregard__c && currentResponse.eSigned_By__c == null && canEdit}" onClick="saveResponse{!uniqueId}(true); return false;" /> &nbsp;
+								<apex:commandButton value="Disregard" rendered="{! showDisregard && currentResponse.Id != null && canEdit}" onClick="disregardResponse{!uniqueId}(false); return false;" />
 								<apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.responseDialog}'); return false;" />
 							</apex:outputPanel>
 						</apex:facet>

@@ -419,33 +419,33 @@
 			'use strict';
 
 			window.openAllVitalsDialog = function () {
-				openModalDialog('allVitalsDialog', 'span', 'Vitals Details', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.allVitalsDialog}', 'Vitals Details', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			window.openAllSeizuresDialog = function () {
-				openModalDialog('allSeizuresDialog', 'span', 'Seizure Activities', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.allSeizuresDialog}', 'Seizure Activities', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			window.openAllIsolationEventsDialog = function () {
-				openModalDialog('allIsolationEventsDialog', 'span', 'Isolation Events', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.allIsolationEventsDialog}', 'Isolation Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			window.openAllRestraintEventsDialog = function () {
-				openModalDialog('allRestraintEventsDialog', 'span', 'Restraint Events', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.allRestraintEventsDialog}', 'Restraint Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			window.openPastSummariesDialog = function () {
-				openModalDialog('pastSummariesDialog', 'span', 'Past Summaries', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.pastSummariesDialog}', 'Past Summaries', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			var setUpCloseButtons = function () {
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
-					closeModalDialog('allVitalsDialog', 'span');
-					closeModalDialog('allSeizuresDialog', 'span');
-					closeModalDialog('allIsolationEventsDialog', 'span');
-					closeModalDialog('allRestraintEventsDialog', 'span');
-					closeModalDialog('pastSummariesDialog', 'span');
+					closeModalDialog('{!$Component.allVitalsDialog}');
+					closeModalDialog('{!$Component.allSeizuresDialog}');
+					closeModalDialog('{!$Component.allIsolationEventsDialog}');
+					closeModalDialog('{!$Component.allRestraintEventsDialog}');
+					closeModalDialog('{!$Component.pastSummariesDialog}');
 					event.preventDefault();
 				});
 			};
