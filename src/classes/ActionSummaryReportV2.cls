@@ -165,11 +165,11 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				           AND Day__c >= :summary.Start_Date__c),
 				       (SELECT Day_time__c , Occurrences__c, Occurred__c
 				          FROM Action_Behavior_results__r
-				         WHERE Day_time__c <= :summary.End_Date__c
+				         WHERE Day_time__c <= :summary.End_Date__c.addDays(1)
 				           AND Day_time__c >= :summary.Start_Date__c),
 				       (SELECT Description__c, CreatedDate
 				          FROM Action_Narrative_results__r
-				         WHERE CreatedDate <= :summary.End_Date__c
+				         WHERE CreatedDate <= :summary.End_Date__c.addDays(1)
 				           AND CreatedDate >= :summary.Start_Date__c
 				        ORDER BY CreatedDate)
 				  FROM Action_Plan_Objective__c
