@@ -23,6 +23,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public Integer LIST_LIMIT { get { return 10; } }
 	public String TABLE_WIDTH { get { return '80%'; } }
 
+	public Boolean editable { get; set; }
+
 	public List<SelectOption> recommendationOptions {
 		get {
 			if (recommendationOptions != null) {
@@ -73,6 +75,18 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		mode = ApexPages.currentPage().getParameters().get('mode');
 		if (mode == '' || mode == null) {
 			mode = 'view';
+		}
+
+		List<UserRecordAccess> acls = [
+			SELECT RecordId, HasEditAccess
+			  FROM UserRecordAccess
+			 WHERE UserId = :UserInfo.getUserId()
+			   AND RecordId = :summary.Id
+		];
+		if (acls.size() > 0) {
+			editable = acls[0].HasEditAccess;
+		} else {
+			editable = false;
 		}
 
 		recommendationSummaryResultMap = new Map<Id, RecommendationSummaryResult>();
