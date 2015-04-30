@@ -637,9 +637,11 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				if (result.Met_Objective__c == 'n') {
 					notMetObjectiveMap.put(startMonth, notMetObjectiveMap.get(startMonth) + 1);
 				}
-				percentMetObjectiveMap.put(startMonth,
-					(metObjectiveMap.get(startMonth) * 100)/(metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth))
-				);
+				if (metObjectiveMap.get(startMonth) != 0 || notMetObjectiveMap.get(startMonth) != 0) {
+					percentMetObjectiveMap.put(startMonth,
+						(metObjectiveMap.get(startMonth) * 100)/(metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth))
+					);
+				}
 			}
 			for (Date startMonth: startDateSet) {
 				skillResults.add(
