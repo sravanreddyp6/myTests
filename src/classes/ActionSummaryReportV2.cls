@@ -808,9 +808,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 
 		public Integer compareTo(Object anotherSeizureObject) {
 			Seizure anotherSeizure = (Seizure) anotherSeizureObject;
-			if (this.createdDate < anotherSeizure.createdDate) {
+			if (this.startTime < anotherSeizure.startTime) {
 				return -1;
-			} else if (this.createdDate == anotherSeizure.createdDate) {
+			} else if (this.startTime == anotherSeizure.endTime) {
 				return 0;
 			} else {
 				return 1;
