@@ -6,6 +6,19 @@ public with sharing class EvaluationResponseTableController {
 	public string password { get; set; }
 	public Boolean eSignable { get; set; }
 	
+	public Boolean canCreate { get {
+		Schema.DescribeSObjectResult oSchema = Evaluation_Response__c.sObjectType.getDescribe();
+		return oSchema.isCreateable();
+	}
+		set; }
+		
+	public Boolean canEdit { get {
+		Schema.DescribeSObjectResult oSchema = Evaluation_Response__c.sObjectType.getDescribe();
+		return oSchema.isUpdateable();
+		
+	}
+		 set; }
+	
 	public string currentUserOpGroup{get; set;}
 
 	public set<string> reqFields { get; set; }
