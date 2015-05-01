@@ -1820,6 +1820,23 @@ public void loadProgramList() {
         return ref;
     }
 
+  public boolean canCreateFundingSource { get {
+  		Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
+		return oSchema.isCreateable();
+  	
+  } }
+  
+  public boolean canEditFundingSource { get {
+  		Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
+		return oSchema.isUpdateable();
+  	
+  } }
+  public boolean canViewFundingSource { get {
+  		Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
+		return oSchema.isAccessible();
+  	
+  } }
+  
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
