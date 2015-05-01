@@ -9,6 +9,7 @@ public with sharing class EvalRepeaters {
 	public string parentShiftStatus { get; set; }
 	public Boolean parentHasOpenAsmt{get; set;} //Used for restraints 
 	
+	
 	private integer numEmpty;
 	private integer numErrors;
 	
@@ -180,6 +181,36 @@ public with sharing class EvalRepeaters {
 		
 		}
 
+
+	public Boolean canEditEvalType;
+	// determines if this user can edit the given type of eval - used to show or hide the + button
+	public Boolean getcanEditEvalType() {
+		
+		canEditEvalType = false;
+		
+		// only tier iii can add/edit resident, restraint, and nurses shift doc
+		PermissionSetAssignment[] assignments = [
+			SELECT Id, PermissionSet.Name
+			FROM PermissionSetAssignment
+			WHERE AssigneeId = :UserInfo.getUserId()
+		];
+		Set<String> permissionSets = new Set<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Name);
+		}
+		
+		if ( evalname.indexOf('CNA') < 0 ) {
+			if ( permissionSets.contains('iServe_Tier_III')) {
+				canEditEvalType = true;
+			}
+		}	else if ( permissionSets.contains('iServe_Tier_III') ||  permissionSets.contains('iServe_Tier_I') ) {
+				// anyone can edit CNA
+				canEditEvalType = true;
+		}
+		
+		return canEditEvalType;
+		
+	}
 
 	public class EvalValueWrapper {
 		

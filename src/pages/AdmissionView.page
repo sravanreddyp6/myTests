@@ -387,7 +387,7 @@
 
 		<a id="admissionDocuments">
 			<apex:pageBlock title="Admission Documents" rendered="{!isCM && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
-				<apex:actionStatus id="AddEditDocStatus">
+				<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
 					<apex:facet name="start">
 						<span class="pbHeaderButton">
 							<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>

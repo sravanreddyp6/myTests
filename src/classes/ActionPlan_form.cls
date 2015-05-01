@@ -71,7 +71,8 @@ public boolean getHasDraft(){
 
 }    
  public Boolean canFinalize { get {
-        // do not allow level 1 or 2 to finalize
+ 		
+        // do not allow level 1 or 2 or Tier I to finalize
         return (!isUserLevel1or2());
         }
         set;
@@ -87,8 +88,8 @@ public boolean getHasDraft(){
             //System.Debug( p.permissionset.name );
                         
             // user can only update if in one of these three permission sets
-            if ( p.PermissionSet.Name.Contains('Level_1') || p.PermissionSet.Name.Contains('Level_2') ) {
-                System.Debug('User is level1 or level2.');
+            if ( p.PermissionSet.Name.Contains('Level_1') || p.PermissionSet.Name.Contains('Level_2') || p.PermissionSet.Name.Contains('Tier_1') ) {
+                System.Debug('User is level1 or level2 or Tier I.');
                 return true;    
             }
         }
