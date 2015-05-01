@@ -1101,9 +1101,9 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageBlock title="Isolation Events" rendered="{!!editSA && vfVarIsCM}" >
             <c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
                                        type="Isolation Event"
-                                       showTitle="false"
                                        formId="{!$Component.myFRM}"
                                        uniqueId="Isolation_Event"
+                                       showTitle="false"
                                        rules="{&quot;Isolation_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
                                        cols="1"
                                        rows="5"
@@ -1496,7 +1496,7 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
 				</apex:pageBlockSection>
 
-				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
+				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian' }">
 					<apex:outputText value="Benefit Information" styleClass="modalSubheader" />
 					<apex:pageBlockSectionItem />
 					<apex:inputField value="{!fundingSource.Effective_Date__c}" />
@@ -1669,7 +1669,7 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlock>
 
 			<apex:pageBlock >
-				<apex:pageblockButtons location="bottom">
+				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource}">
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
 					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
@@ -1684,9 +1684,9 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:outputPanel>
 
 		<a id="Funding_Sources"></a>
-		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM && !newSA}">
+		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM && !newSA && canViewFundingSource}">
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" />
+				<apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
 				<apex:actionStatus id="AddFundingSourceStatus">
 					<apex:facet name="start">
 						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1696,7 +1696,7 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputText value="No Funding Sources to display" rendered="{!(fundingSources.size=0)}" />
 
-			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0}">
+			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0  && canEditFundingSource }">
 				<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
 				</apex:column>
 				<apex:column value="{!fundingSource.Funding_Source__c}" />
@@ -1707,7 +1707,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Comment__c}" />
 			</apex:pageBlockTable>
 
-			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0}">
+			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0 && canEditFundingSource }">
 				<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
 				</apex:column>
 				<apex:column value="{!fundingSource.Type_of_Coverage__c}" />
@@ -1718,7 +1718,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Comment__c}" />
 			</apex:pageBlockTable>
 
-			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0}">
+			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0 && canEditFundingSource }">
 				<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
 				</apex:column>
 				<apex:column value="{!fundingSource.Type_of_Coverage__c}" />
