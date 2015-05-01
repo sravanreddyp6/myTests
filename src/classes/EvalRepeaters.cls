@@ -200,10 +200,10 @@ public with sharing class EvalRepeaters {
 		}
 		
 		if ( evalname.indexOf('CNA') < 0 ) {
-			if ( permissionSets.contains('Tier_III')) {
+			if ( permissionSets.contains('iServe_Tier_III')) {
 				canEditEvalType = true;
 			}
-		}	else if ( permissionSets.contains('Tier_III') ||  permissionSets.contains('Tier_I') ) {
+		}	else if ( permissionSets.contains('iServe_Tier_III') ||  permissionSets.contains('iServe_Tier_I') ) {
 				// anyone can edit CNA
 				canEditEvalType = true;
 		}
