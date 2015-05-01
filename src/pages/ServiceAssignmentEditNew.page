@@ -1137,7 +1137,8 @@ END: Uncomment to have the element collapsed by default -->
 
 				<apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) }">
 
-					<apex:column headerValue="Action" styleClass="editcol"><a href="/{!pl.ID}">Edit</a>
+					<apex:column headerValue="Action" styleClass="editcol" rendered="{!canEditPlan}">
+						<a href="/{!pl.ID}">Edit</a>
 					</apex:column>
 					<apex:column headerValue="Name">
 						<apex:outputLink value="/{!pl.id}">
