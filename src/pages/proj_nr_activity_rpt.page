@@ -1,0 +1,234 @@
+<apex:page standardController="Project__c" extensions="proj_nr_activity_rpt" sidebar="false" readOnly="true" >
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.js')}" />
+
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
+<!--
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
+-->
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<style>
+.nodisplay{display: none;}
+#rptHeader{width: 100%; text-align: center;}
+#rptHeader h1{font-size: 20px; float: left;}
+#tnaFilters{ width: 550px; margin-bottom: 10px; text-align: center; padding: 10px; margin: 0 auto; border: 1px solid gray; border-radius: 3px;}
+#tnaFilters h2{font-size: 17px;}
+#tnaFilters label{ cursor: pointer;}
+.act_row:hover{
+    background: lightblue; 
+    background: -webkit-linear-gradient(#E6E6FA   ,#F9F9F9);
+    //outline: #E6E6FA 1px solid;
+
+}
+.OVERDUE-row, .OVERDUE_sim{   
+    border-left: 3px Red solid;
+}
+.Completed-row, .Completed_sim{
+    border-left: 3px #32CD32   double;
+}
+.Incomplete-row, .Incomplete_sim{
+    border-left: 3px #4682B4   double;
+}
+#wrapper{ padding: 10px;}
+.fRight{float: right;}
+.tbl{width: 100%; font-size: 15px;  border: 1px solid black; border-collapse: collapse;}
+.tbl tr:hover{ outline: blue 1px solid;}
+.tbl tr{ outline: transparent 1px solid;}
+.tbl th{border-bottom: 2px solid black; padding: 10px; }
+.tbl td{ vertical-align: top;}
+.tbl td{ padding: 5px;}
+.taskPad{padding-left: 15px !important;}
+.actPad{padding-left: 25px !important;}
+.projRow{border-left: 3px solid lightblue;}
+.projRow td{background: lightblue; border-bottom: 1px solid black; }
+.date-width{width: 125px;}
+.taskRow td{border-bottom: 1px solid gray;}
+.actRow td{border-bottom: 1px solid gray;}
+.row-letter{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px;
+    background: -webkit-linear-gradient(#AEAEAE, #3a7728);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    cursor: default;
+    text-transform: uppercase;
+ 
+}
+</style>
+<script>
+var j$ = jQuery.noConflict();
+function toggleClass(cName, item){
+    //alert();
+    var comp = j$("#comp").prop('checked');
+    var incomp = j$("#incomp").prop('checked');
+    var overdue = j$("#overdue").prop('checked');
+    var onlymine = j$("#onlymine").prop('checked');
+
+    if(onlymine){ 
+        j$(".notCurUserRow").addClass('nodisplay');          
+    }
+    else{
+        j$(".notCurUserRow").removeClass('nodisplay');         
+    }     
+    
+    if(comp){ 
+        //j$(".Completed").css('display','table-row');   
+        j$(".Completed").removeClass('nodisplay');
+       
+    }
+    else{
+       // j$(".Completed").css('display','none');
+        j$(".Completed").addClass('nodisplay');
+
+    }
+    
+    if(incomp){   
+        j$(".Incomplete").removeClass('nodisplay');
+    }
+    else{
+        j$(".Incomplete").addClass('nodisplay'); 
+    }
+    
+    if(overdue ){   
+        j$(".OVERDUE").removeClass('nodisplay'); 
+    }
+    else{
+        j$(".OVERDUE").addClass('nodisplay');
+    }
+}
+function createtbl(){
+    console.log('starting tables');
+    var table = j$('#tbl-data').dataTable({ 
+            "bPaginate": false, 
+            "ordering": false,
+            "bFilter": true,
+             "info": false, 
+            dom: 'T<"clear">lfrtip',
+            "tableTools": {
+               "aButtons": [ "xls", 
+                   {
+                    "sExtends": "pdf",
+                    "sPdfOrientation": "landscape",
+                    "sTitle": "Project Export"
+                    },
+                    {
+                    "sExtends": "pdf",
+                    "sPdfSize": "legal",
+                    "sPdfOrientation": "landscape",
+                    "sButtonText": "PDF - Legal",
+                    "sTitle": "Project Export",
+                    }                
+                ],         
+               "sSwfPath": "{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/swf/copy_csv_xls_pdf.swf')}"
+            } 
+        });
+}
+j$( document ).ready(function() {
+
+    createtbl();
+});
+</script>
+<div id="rptHeader">
+    <h1>Project Activty Report </h1>
+    <div class="fRight">                    
+        <!--<input class="btn view" type="button" onclick="tableToExcel('tbl-data', 'tasks')" value="Export to Excel"/>-->
+    </div> 
+    <div id="tnaFilters">
+        <h2>Filters </h2><br/>
+        <span class="Completed_sim"><label><input id="comp" type="checkbox" onclick="toggleClass('Completed')" checked="true" />Completed</label ></span>
+        <span class="Incomplete_sim"><label><input id="incomp" type="checkbox" onclick="toggleClass('Incomplete')" checked="true" />Incomplete</label></span>
+        <span class="OVERDUE_sim"><label><input id="overdue" type="checkbox" onclick="toggleClass('OVERDUE')" checked="true" />OVERDUE</label></span>
+        <span >&nbsp;&nbsp;&nbsp;<label><input id="onlymine" type="checkbox" onclick="toggleClass('notCurUserRow')" />Only show items Assigned to me</label></span>
+    </div>
+
+</div>
+<div id="wrapper">
+<table id="tbl-data" class="tbl"  cellspacing="0">
+    <thead>
+        <th></th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Notes</th>
+        <th>Assigned To</th>
+        <th class="date-width">Start</th>
+        <th class="date-width">Due</th>
+        <th class="date-width">Revised</th> 
+        <th>Progress</th>
+        <th class="date-width">Completed on</th>     
+        <th>Total Items</th>      
+        <th>Completed Items</th> 
+    </thead>
+
+    <apex:repeat value="{!allData.root.nodes}" var="p">
+        <tr class="projRow">
+            <td ><span class="row-letter">P</span></td>
+            <td><apex:outputLink value="/{!p.proj.id}"><apex:outputField value="{!p.Proj.Name}"/></apex:outputLink> </td>
+            <td>{!p.Proj.Description__c}</td>
+            <td></td>
+            <td></td>
+            <td><apex:outputField value="{!p.Proj.Start_Date__c}"/></td>
+            <td><apex:outputField value="{!p.Proj.Due_Date__c}"/></td> 
+            <td></td>       
+            <td><apex:outputField value="{!p.Proj.Complete__c}"/></td> 
+            <td></td>
+            <td><apex:outputField value="{!p.Proj.Total_Items__c}"/></td>
+            <td><apex:outputField value="{!p.Proj.Total_Items_Completed__c}"/></td>
+        </tr>
+            <apex:repeat value="{!p.nodes}" var="t">
+                <apex:variable value="{!if($User.Id = t.ProjTask.Assigned_To__c,'isCurUserRow','notCurUserRow')}" var="tMine"/>
+                <tr class="taskRow {!tMine} {!t.ProjTask.Status__c}-row">
+                    <td class="{!t.ProjTask.Status__c}"><span class="row-letter">T</span></td>
+                    <td class="taskPad {!t.ProjTask.Status__c}"><apex:outputLink value="/{!t.ProjTask.id}"><apex:outputField value="{!t.ProjTask.Name}"/></apex:outputLink></td>
+                    <td class="{!t.ProjTask.Status__c}">{!t.ProjTask.Description__c}</td>
+                    <td class="{!t.ProjTask.Status__c}">{!t.ProjTask.Notes__c}</td>
+                    <td class="{!t.ProjTask.Status__c}"><apex:outputField value="{!t.ProjTask.Assigned_To__r.name}"/></td>
+                    <td class="{!t.ProjTask.Status__c}"><apex:outputField value="{!t.ProjTask.Start_Date__c}"/></td>
+                    <td class="{!t.ProjTask.Status__c}"><apex:outputField value="{!t.ProjTask.Due_Date__c}"/></td>        
+                    <td class="{!t.ProjTask.Status__c}"><apex:outputField value="{!t.ProjTask.Revised_Due_Date__c}"/></td>
+                    <td class="{!t.ProjTask.Status__c}"><apex:outputField value="{!t.ProjTask.Complete__c}"/></td>
+                    <td class="{!t.ProjTask.Status__c}"><apex:outputField value="{!t.ProjTask.Completed_Date__c}"/></td>
+                    <td class="{!t.ProjTask.Status__c}"><apex:outputField value="{!t.ProjTask.Total_Activities__c}"/></td>  
+                    <td class="{!t.ProjTask.Status__c}"><apex:outputField value="{!t.ProjTask.Total_Activities_Completed__c}"/></td> 
+                </tr> 
+                <apex:repeat value="{!t.nodes}" var="a">
+                    <apex:variable value="{!if($User.Id = a.ProjTaskAct.Assigned_To__c,'isCurUserRow','notCurUserRow')}" var="aMine"/>
+                    <tr class="actRow {!aMine} {!a.ProjTaskAct.Status__c}-row">
+                        <td class="{!a.ProjTaskAct.Status__c}"><span class="row-letter">A</span></td>
+                        <td class="actPad {!a.ProjTaskAct.Status__c}"><apex:outputLink value="/apex/proj_nr_form?id={!p.proj.id}&gotoID={!a.ProjTaskAct.id}"><apex:outputField value="{!a.ProjTaskAct.Name}"/></apex:outputLink></td>
+                        <td class="{!a.ProjTaskAct.Status__c}">{!a.ProjTaskAct.Description__c}</td>
+                        <td class="{!a.ProjTaskAct.Status__c}">{!a.ProjTaskAct.Notes__c}</td>
+                        <td class="{!a.ProjTaskAct.Status__c}"><apex:outputField value="{!a.ProjTaskAct.Assigned_To__r.name}"/></td>
+                        <td class="{!a.ProjTaskAct.Status__c}"><apex:outputField value="{!a.ProjTaskAct.Start_Date__c}"/></td>
+                        <td class="{!a.ProjTaskAct.Status__c}"><apex:outputField value="{!a.ProjTaskAct.Due_Date__c}"/></td>        
+                        <td class="{!a.ProjTaskAct.Status__c}"><apex:outputField value="{!a.ProjTaskAct.Revised_Due_Date__c}"/></td> 
+                        <td class="{!a.ProjTaskAct.Status__c}"><apex:outputField value="{!a.ProjTaskAct.Complete__c}"/></td> 
+                        <td class="{!a.ProjTaskAct.Status__c}"><apex:outputField value="{!a.ProjTaskAct.Completed_Date__c}"/></td> 
+                        <td class="{!a.ProjTaskAct.Status__c}"></td> 
+                        <td class="{!a.ProjTaskAct.Status__c}"></td> 
+                    </tr>
+                </apex:repeat>               
+            </apex:repeat>
+    </apex:repeat>
+
+
+</table>
+</div>
+<script>
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+  }
+})()
+
+</script>
+</apex:page>
