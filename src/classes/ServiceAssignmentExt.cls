@@ -17,7 +17,8 @@ public without sharing class ServiceAssignmentExt {
     public List<Action_Plan__c> getplans() {return plans;}
     public List<Progress_Note__c> notes;
     public List<Progress_Note__c> getNotes() {return notes;}
-    public Boolean canCreatePlan { get; set; }
+    public Boolean canCreatePlan { get; private set;  }
+    public Boolean canEditPlan { get; private set; }
     public Boolean canCreateSummary { get; set; }
     public Boolean canEditSA { get; set; }
     public static Boolean showdiagModal { get; set; }
@@ -105,10 +106,14 @@ public without sharing class ServiceAssignmentExt {
     private void setcanCreatePlan() {
         Schema.DescribeSObjectResult oSchema = Action_Plan__c.sObjectType.getDescribe();
         canCreatePlan = oSchema.IsCreateable();
-        if(currentRecord.Status__c=='Inactive')
-        canCreatePlan = false;
+        canEditPlan = oSchema.IsUpdateable();
+        if(currentRecord.Status__c=='Inactive') {
+        	canCreatePlan = false;
+        	canEditPlan = false;
+        }
 
     }
+
     private void setcanCreateSummary() {
         Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
         canCreateSummary = oSchema.IsCreateable();
@@ -404,7 +409,6 @@ public without sharing class ServiceAssignmentExt {
         setcanEditSA();
         setcanCreatePlan();
         setcanCreateSummary();
-
 
         getContractsAndXrefs();
         contractsList = new List<SelectOption>();
