@@ -1279,12 +1279,12 @@ public void loadProgramList() {
 			permissionSets.add(assignment.PermissionSet.Name);
 		}
 		
-		if ( permissionSets.Contains('Tier_III') >= 0 ) {
+		if ( permissionSets.Contains('Tier_III') ) {
 			canAddShiftDoc = true;
 			canAddCNA = true;
 		}
 			
-		if ( permissionSets.Contains('Tier_I') >= 0)
+		if ( permissionSets.Contains('Tier_I') )
 			canAddCNA = true;
 					
 	}
