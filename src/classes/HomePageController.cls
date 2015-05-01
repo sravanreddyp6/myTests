@@ -124,17 +124,17 @@ public with sharing class HomePageController{
 			FROM PermissionSetAssignment
 			WHERE AssigneeId = :UserInfo.getUserId()
 		];
-		List<String> permissionSets = new List<String>();
+		Set<String> permissionSets = new Set<String>();
 		for (PermissionSetAssignment assignment: assignments) {
 			permissionSets.add(assignment.PermissionSet.Label);
 		}
-		permissionSetString = String.join(permissionSets, '~');
-		if (permissionSetString.indexOf('iServe - Tier I') != -1 || permissionSetString.indexOf('iServe - Tier III') != -1) {
+		permissionSetString = String.join(new List<String>(permissionSets), '~');
+		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier III')) {
 			canSeeCNAWorkbook = true;
 		} else {
 			canSeeCNAWorkbook = false;
 		}
-		if (permissionSetString.indexOf('iServe - Tier III') != -1) {
+		if (permissionSets.contains('iServe - Tier III')) {
 			canSeeShiftDoc = true;
 		} else {
 			canSeeShiftDoc = false;
