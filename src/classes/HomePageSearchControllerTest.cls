@@ -97,11 +97,11 @@ public class HomePageSearchControllerTest {
         
         HomePageSearchController con = new HomePageSearchController();
         
-        Person_Being_Referred__c pbr = createPersonBeingReferred(con.FirstNM,con.LastNM,25);
+        Person_Being_Referred__c pbr = createPersonBeingReferred(con.firstName,con.lastName,25);
         Referral__c ref = Referral_CreateTestData.createReferral('California', 'New', 'Test123', pbr);
-        TMN_Contact__c tmn = TMNContact(con.FirstNM,con.LastNM);
-        Account acnt = newAccount(con.FirstNM,con.LastNM);
-        Account acnt2 = newAccount( con.FirstNM + '111', con.LastNM);
+        TMN_Contact__c tmn = TMNContact(con.firstName,con.lastName);
+        Account acnt = newAccount(con.firstName,con.lastName);
+        Account acnt2 = newAccount( con.firstName + '111', con.lastName);
         Admission__c newAdm = newAdmission( acnt);
         
         system.assertequals( (con.getTotalList()).size(), 4);

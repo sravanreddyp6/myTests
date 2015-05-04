@@ -1,5 +1,7 @@
 public with sharing class NursesShiftDocAddModalController {
 	public Service_Assignment__c serviceAssignment { get; set; }
+	public String evalType { get; set; }
+
 	public Id serviceAssignmentId {
 		get;
 		set {
@@ -31,24 +33,27 @@ public with sharing class NursesShiftDocAddModalController {
 		string pbsFirstinitial = this.serviceAssignment.Admission__r.Person_Being_Served__r.FirstName != null ? this.serviceAssignment.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
 		shiftDoc = new Evaluation__c();
 		shiftDoc.Name = pbsFirstinitial+'. ' + pbsLastName;
-		shiftDoc.RecordTypeID = Utility.getEvaluationRecordType('CMShiftAssessment');
+		shiftDoc.RecordTypeID = Utility.getEvaluationRecordType(evalType);
 		shiftDoc.ServiceAssignment__c = this.serviceAssignment.Id;
 		shiftDoc.Status__c = 'Draft';
-		shiftDoc.Head_to_Toe_Status__c = 'Draft'; //Added by Sravan to differentiate Head to Toe Status from Shift Status
+		if ( evalType == 'CMShiftAssessment')
+			shiftDoc.Head_to_Toe_Status__c = 'Draft'; //Added by Sravan to differentiate Head to Toe Status from Shift Status
 	}
 
 	public pageReference saveShiftDoc() {
 		String ownerfirstInitial = UserInfo.getFirstName() != null ? UserInfo.getFirstName().Substring(0,1) : '';
-		
-		shiftDoc.Name = this.shiftDoc.Name + ' - ' + shiftDoc.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString()) + ' - NSD - ' + ownerfirstInitial + '. ' + UserInfo.getLastName();
+
+		String docType = evalType == 'CMShiftAssessment' ? 'NSD' : 'CNA';
+		shiftDoc.Name = this.shiftDoc.Name + ' - ' + shiftDoc.Shift_Start_time__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString()) + ' - ' + docType + ' - ' + ownerfirstInitial + '. ' + UserInfo.getLastName();
 		insert shiftDoc;
 		return new PageReference('/apex/EvaluationView?id=' + shiftDoc.Id);
 	}
 
 	@RemoteAction
-	public static boolean findDupeEval(string shiftStart, string shiftEnd, Id saId) {
+	public static boolean findDupeEval(string shiftStart, string shiftEnd, Id saId, string evalType) {
 		DateTime st = Datetime.parse(shiftStart);
 		DateTime en = Datetime.parse(shiftEnd);
+
 		List<Evaluation__c> dupeEval = [
 			SELECT Id, Name, Shift_Start_time__c, Shift_end_time__c
 			FROM Evaluation__c
@@ -56,7 +61,7 @@ public with sharing class NursesShiftDocAddModalController {
 			  AND ((Shift_Start_time__c >= :st and Shift_Start_time__c <= :en)
 			        OR (Shift_end_time__c >= :st and Shift_end_time__c <= :en)
 			        OR (Shift_Start_time__c <= :st and Shift_end_time__c >= :en))
-			  AND RecordType.Name = 'CMShiftAssessment'
+			  AND RecordType.Name = :evalType
 			  AND Status__c !='Disregard' LIMIT 1
 		];
 

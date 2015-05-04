@@ -1,4 +1,4 @@
-public with sharing class ActionSummaryReportV2 {
+public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public Action_Summary__c summary { get; set; }
 	public ApexPages.standardController controller { get; set; }
 	public String mode { get; set; }
@@ -22,6 +22,8 @@ public with sharing class ActionSummaryReportV2 {
 	// Some constants for config purpose
 	public Integer LIST_LIMIT { get { return 10; } }
 	public String TABLE_WIDTH { get { return '80%'; } }
+
+	public Boolean editable { get; set; }
 
 	public List<SelectOption> recommendationOptions {
 		get {
@@ -60,6 +62,9 @@ public with sharing class ActionSummaryReportV2 {
 		}
 		return null;
 	}
+	public ActionSummaryReportV2() {
+		// This is only used for esigning purpose. Don't use it otherwise!
+	}
 	public ActionSummaryReportV2(ApexPages.standardController controller) {
 		this.controller = controller;
 
@@ -72,8 +77,24 @@ public with sharing class ActionSummaryReportV2 {
 			mode = 'view';
 		}
 
+		List<UserRecordAccess> acls = [
+			SELECT RecordId, HasEditAccess
+			  FROM UserRecordAccess
+			 WHERE UserId = :UserInfo.getUserId()
+			   AND RecordId = :summary.Id
+		];
+		if (acls.size() > 0) {
+			editable = acls[0].HasEditAccess;
+		} else {
+			editable = false;
+		}
+
 		recommendationSummaryResultMap = new Map<Id, RecommendationSummaryResult>();
 		systemSummaryResultMap = new Map<String, SystemSummaryResult>();
+		Map<Id, List<ObjectiveSkillResult>> finalizedSkillResultMap = new Map<Id, List<ObjectiveSkillResult>>();
+		Map<Id, List<ObjectiveBehaviorCountResult>> finalizedCountResultMap = new Map<Id, List<ObjectiveBehaviorCountResult>>();
+		Map<Id, List<ObjectiveNarrativeResult>> finalizedNarrativeResultMap = new Map<Id, List<ObjectiveNarrativeResult>>();
+
 		Action_Plan_Summary_Result__c[] results = [
 			SELECT Id, Type__c, Data__c, Action_Plan_Summary__c
 			  FROM Action_Plan_Summary_Result__c
@@ -106,6 +127,30 @@ public with sharing class ActionSummaryReportV2 {
 					vitalsDetails = new List<VitalsDetail>();
 				}
 				vitalsDetails.add(new VitalsDetail(result.Data__c));
+			} else if (result.Type__c == 'Skill') {
+				ObjectiveSkillResult skillResult = (ObjectiveSkillResult) JSON.deserialize(
+					result.Data__c, ObjectiveSkillResult.class
+				);
+				if (!finalizedSkillResultMap.containsKey(skillResult.objectiveId)) {
+					finalizedSkillResultMap.put(skillResult.objectiveId, new List<ObjectiveSkillResult>());
+				}
+				finalizedSkillResultMap.get(skillResult.objectiveId).add(skillResult);
+			} else if (result.Type__c == 'Behavior - Count') {
+				ObjectiveBehaviorCountResult countResult = (ObjectiveBehaviorCountResult) JSON.deserialize(
+					result.Data__c, ObjectiveBehaviorCountResult.class
+				);
+				if (!finalizedCountResultMap.containsKey(countResult.objectiveId)) {
+					finalizedCountResultMap.put(countResult.objectiveId, new List<ObjectiveBehaviorCountResult>());
+				}
+				finalizedCountResultMap.get(countResult.objectiveId).add(countResult);
+			} else if (result.Type__c == 'Narrative') {
+				ObjectiveNarrativeResult narrativeResult = (ObjectiveNarrativeResult) JSON.deserialize(
+					result.Data__c, ObjectiveNarrativeResult.class
+				);
+				if (!finalizedNarrativeResultMap.containsKey(narrativeResult.objectiveId)) {
+					finalizedNarrativeResultMap.put(narrativeResult.objectiveId, new List<ObjectiveNarrativeResult>());
+				}
+				finalizedNarrativeResultMap.get(narrativeResult.objectiveId).add(narrativeResult);
 			}
 		}
 
@@ -120,16 +165,13 @@ public with sharing class ActionSummaryReportV2 {
 				           AND Day__c >= :summary.Start_Date__c),
 				       (SELECT Day_time__c , Occurrences__c, Occurred__c
 				          FROM Action_Behavior_results__r
-				         WHERE Day_time__c <= :summary.End_Date__c
+				         WHERE Day_time__c <= :summary.End_Date__c.addDays(1)
 				           AND Day_time__c >= :summary.Start_Date__c),
 				       (SELECT Description__c, CreatedDate
 				          FROM Action_Narrative_results__r
-				         WHERE CreatedDate <= :summary.End_Date__c
+				         WHERE CreatedDate <= :summary.End_Date__c.addDays(1)
 				           AND CreatedDate >= :summary.Start_Date__c
-				        ORDER BY CreatedDate),
-				       (SELECT comment__c, recommendation__c, met_objective_count__c, not_met_count__c, occurrences__c
-				          FROM Objective_Summary_Comments__r
-				         WHERE Action_Summary__c = :summary.Id)
+				        ORDER BY CreatedDate)
 				  FROM Action_Plan_Objective__c
 				 WHERE Effective_Date__c <= :summary.End_Date__c
 				   AND Target_End_Date__c >= :summary.Start_Date__c
@@ -149,25 +191,10 @@ public with sharing class ActionSummaryReportV2 {
 		} else {
 			objectives = new Map<Id, Action_Plan_Objective__c>([
 				SELECT Id, Former_Id__c, Type__c, Status__c, Description__c,
-				       CreatedDate, Effective_Date__c, Target_End_Date__c,
-				       (SELECT met_objective__c , Day__c, attempts__c
-				          FROM Action_skill_results__r
-				         WHERE Day__c <= :summary.End_Date__c
-				           AND Day__c >= :summary.Start_Date__c),
-				       (SELECT Day_time__c , Occurrences__c, Occurred__c
-				          FROM Action_Behavior_results__r
-				         WHERE Day_time__c <= :summary.End_Date__c
-				           AND Day_time__c >= :summary.Start_Date__c),
-				       (SELECT Description__c, CreatedDate
-				          FROM Action_Narrative_results__r
-				         WHERE CreatedDate <= :summary.End_Date__c
-				           AND CreatedDate >= :summary.Start_Date__c
-				        ORDER BY CreatedDate),
-				       (SELECT comment__c, recommendation__c, met_objective_count__c, not_met_count__c, occurrences__c
-				          FROM Objective_Summary_Comments__r
-				         WHERE Action_Summary__c = :summary.Id)
+				       CreatedDate, Effective_Date__c, Target_End_Date__c
 				  FROM Action_Plan_Objective__c
 				 WHERE Effective_Date__c <= :summary.End_Date__c
+				   AND CreatedDate < :summary.Finalized_Date__c
 				   AND Target_End_Date__c >= :summary.Start_Date__c
 				   AND action_plan_goal__r.action_plan__r.Service_Assignment__c = :summary.Service_Assignment__c
 				   AND (action_plan_goal__r.action_plan__r.Status__c = 'Inactive Final'
@@ -179,9 +206,21 @@ public with sharing class ActionSummaryReportV2 {
 				         sort_order__c
 			]);
 		}
+		if (seizures == null) {
+			seizures = new List<Seizure>();
+		}
 		seizures.sort();
+		if (isolationEvents == null) {
+			isolationEvents = new List<IsolationEvent>();
+		}
 		isolationEvents.sort();
+		if (restraintEvents == null) {
+			restraintEvents = new List<RestraintEvent>();
+		}
 		restraintEvents.sort();
+		if (vitalsDetails == null) {
+			vitalsDetails = new List<VitalsDetail>();
+		}
 		vitalsDetails.sort();
 
 		Set<Id> allTopLevelObjectives = new Set<Id>();
@@ -195,7 +234,23 @@ public with sharing class ActionSummaryReportV2 {
 			if (!objectiveParentToChildrenMap.containsKey(parentObjectiveId)) {
 				objectiveParentToChildrenMap.put(parentObjectiveId, new List<Objective>());
 			}
-			objectiveParentToChildrenMap.get(parentObjectiveId).add(new Objective(objectives.get(objectiveId)));
+			Objective obj = new Objective(objectives.get(objectiveId));
+			objectiveParentToChildrenMap.get(parentObjectiveId).add(obj);
+			if (this.summary.Status__c == 'Draft') {
+				obj.populateSkillResults();
+				obj.populateBehaviorCountResults();
+				obj.populateNarrativeResults();
+			} else {
+				if (finalizedSkillResultMap.containsKey(objectiveId)) {
+					obj.skillResults = finalizedSkillResultMap.get(objectiveId);
+				}
+				if (finalizedCountResultMap.containsKey(objectiveId)) {
+					obj.countResults = finalizedCountResultMap.get(objectiveId);
+				}
+				if (finalizedNarrativeResultMap.containsKey(objectiveId)) {
+					obj.narrativeResults = finalizedNarrativeResultMap.get(objectiveId);
+				}
+			}
 		}
 		// Sort all the objectives
 		for (String type: objectiveMap.keySet()) {
@@ -243,7 +298,7 @@ public with sharing class ActionSummaryReportV2 {
 		// if it's a revised objective, and take the form zo*** if it's not a
 		// revised objective
 		Boolean isValidId = (parentObjectiveId instanceOf ID) ? true : false;
-		if (parentObjectiveId != null && isValidId && objectives.get(parentObjectiveId).Type__c == objective.Type__c) {
+		if (parentObjectiveId != null && isValidId && objectives.containsKey(parentObjectiveId) && objectives.get(parentObjectiveId).Type__c == objective.Type__c) {
 			return findParentObjective(objectives.get(parentObjectiveId), objectives);
 		}
 		// Return own id if this is not a revised objective
@@ -280,6 +335,18 @@ public with sharing class ActionSummaryReportV2 {
 		return new PageReference('/' + summary.Id);
 	}
 
+	public PageReference handle(Id recordId, Id userId) {
+		Action_Summary__c summary = [
+			SELECT Id, Status__c, Start_Date__c, End_Date__c, Finalized_Date__c,
+			       Service_Assignment__c
+			  FROM Action_Summary__c WHERE Id=:recordId
+		];
+		ActionSummaryReportV2 controller = new ActionSummaryReportV2(
+				new ApexPages.standardController(summary)
+				);
+		return controller.finalize();
+	}
+
 	public PageReference finalize() {
 		summary.Status__c = 'Final';
 		summary.Finalized_Date__c = DateTime.now();
@@ -314,6 +381,45 @@ public with sharing class ActionSummaryReportV2 {
 				Data__c = vital.serialize()
 			));
 		}
+		if (objectiveMap.containsKey('Skill')) {
+			for (Id topObjective: objectiveMap.get('Skill').keySet()) {
+				for (Objective obj: objectiveMap.get('Skill').get(topObjective)) {
+					for (ObjectiveSkillResult result: obj.skillResults) {
+						toInsert.add(new Action_Plan_Summary_Result__c(
+							Action_Plan_Summary__c = this.summary.Id,
+							Type__c = 'Skill',
+							Data__c = result.serialize()
+						));
+					}
+				}
+			}
+		}
+		if (objectiveMap.containsKey('Behavior - Count')) {
+			for (Id topObjective: objectiveMap.get('Behavior - Count').keySet()) {
+				for (Objective obj: objectiveMap.get('Behavior - Count').get(topObjective)) {
+					for (ObjectiveBehaviorCountResult result: obj.countResults) {
+						toInsert.add(new Action_Plan_Summary_Result__c(
+							Action_Plan_Summary__c = this.summary.Id,
+							Type__c = 'Behavior - Count',
+							Data__c = result.serialize()
+						));
+					}
+				}
+			}
+		}
+		if (objectiveMap.containsKey('Narrative')) {
+			for (Id topObjective: objectiveMap.get('Narrative').keySet()) {
+				for (Objective obj: objectiveMap.get('Narrative').get(topObjective)) {
+					for (ObjectiveNarrativeResult result: obj.narrativeResults) {
+						toInsert.add(new Action_Plan_Summary_Result__c(
+							Action_Plan_Summary__c = this.summary.Id,
+							Type__c = 'Narrative',
+							Data__c = result.serialize()
+						));
+					}
+				}
+			}
+		}
 		insert toInsert;
 		update summary;
 		return new PageReference('/' + summary.Id);
@@ -323,12 +429,15 @@ public with sharing class ActionSummaryReportV2 {
 	/////////////////////////
 	private List<Seizure> getSeizures(Action_Summary__c summary) {
 		List<Seizure> tmpSeizures = new List<Seizure>();
-		Id saId = summary.Service_Assignment__r.Id;
+		Id saId = summary.Service_Assignment__c;
+		Date endDate = summary.End_Date__c.addDays(1);  // Because we want to include the record on the end date as well
+		Date startDate = summary.Start_Date__c;
 		String query =
 			'SELECT Id, Start_DateTime__c, End_DateTime__c, Observed_By__c, CreatedDate, ' +
 			        'Observed_By__r.Name ' +
 			'  FROM Seizure__c ' +
 			' WHERE Service_Assignment__c = :saId ' +
+			'   AND Start_DateTime__c <= :endDate AND (End_DateTime__c = null OR Start_DateTime__c >= :startDate) ' +
 			'ORDER BY CreatedDate ASC ';
 		for (Seizure__c seizure: Database.query(query)) {
 			tmpSeizures.add(new Seizure(seizure));
@@ -338,13 +447,16 @@ public with sharing class ActionSummaryReportV2 {
 
 	private List<IsolationEvent> getIsolationEvents(Action_Summary__c summary) {
 		List<IsolationEvent> tmpIsolationEvents = new List<IsolationEvent>();
-		Id saId = summary.Service_Assignment__r.Id;
+		Id saId = summary.Service_Assignment__c;
+		Date endDate = summary.End_Date__c.addDays(1);  // Because we want to include the record on the end date as well
+		Date startDate = summary.Start_Date__c;
 		String query =
 			'SELECT Id, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, CreatedDate, ' +
 			'       Isolation_Status__c, Isolation_Type__c ' +
 			'  FROM Evaluation_Response__c ' +
 			' WHERE RecordType.Name = \'Isolation Event\' ' +
 			'   AND Service_Assignment__c = :saId ' +
+			'   AND Isolation_Event_Start_Date__c <= :endDate AND (Isolation_Event_End_Date__c = null OR Isolation_Event_Start_Date__c >= :startDate) ' +
 			'ORDER BY CreatedDate ASC ';
 		for (Evaluation_Response__c event: Database.query(query)) {
 			tmpIsolationEvents.add(new IsolationEvent(event));
@@ -354,7 +466,9 @@ public with sharing class ActionSummaryReportV2 {
 
 	private List<RestraintEvent> getRestraintEvents(Action_Summary__c summary) {
 		List<RestraintEvent> restraintEvents = new List<RestraintEvent>();
-		Id saId = summary.Service_Assignment__r.Id;
+		Id saId = summary.Service_Assignment__c;
+		Date endDate = summary.End_Date__c.addDays(1);  // Because we want to include the record on the end date as well
+		Date startDate = summary.Start_Date__c;
 		String query =
 			'SELECT Id, Shift_Start_Time__c, Shift_End_Time__c, Status__c, CreatedDate, ' +
 			'       (SELECT Id FROM Assessments__r ' +
@@ -363,7 +477,7 @@ public with sharing class ActionSummaryReportV2 {
 			'  FROM Evaluation__c ' +
 			' WHERE ServiceAssignment__c = :saId' +
 			'   AND RecordType.Name = \'RestraintEvent\' ' +
-			'   AND (Shift_Start_Time__c != null OR Shift_End_Time__c != null) ' +
+			'   AND (Shift_Start_Time__c != null AND Shift_Start_Time__c <= :endDate AND Shift_Start_Time__c >= :startDate) ' +
 			'ORDER BY CreatedDate ASC ';
 		Evaluation__c[] tmpRestraintEvents = Database.query(query);
 		Map<Id, Id> assessmentEvaluationMap = new Map<Id, Id>();
@@ -418,7 +532,10 @@ public with sharing class ActionSummaryReportV2 {
 		}
 		List<VitalsDetail> vitalsDetails = new List<VitalsDetail>();
 		for (String evalSectionId: entryValuesMap.keySet()) {
-			vitalsDetails.add(new VitalsDetail(entryValuesMap.get(evalSectionId)));
+			VitalsDetail detail = new VitalsDetail(entryValuesMap.get(evalSectionId));
+			if (detail.dateTaken >= summary.Start_Date__c && detail.dateTaken <= summary.End_Date__c.addDays(1)) {
+				vitalsDetails.add(new VitalsDetail(entryValuesMap.get(evalSectionId)));
+			}
 		}
 		vitalsDetails.sort();
 		return vitalsDetails;
@@ -427,24 +544,80 @@ public with sharing class ActionSummaryReportV2 {
 	//////////////////////
 	// The wrapper classes
 	//////////////////////
-	public class ObjectiveSkillResults {
-		public Action_plan_objective__c objective { get; set; }
+	public abstract class ObjectiveResult implements Comparable {
+		public Date resultDate { get; set; }
+		public Id objectiveId { get; set; }
 
-		public transient List<Date> startDates { get; set; }
-		public transient Map<Date, Integer> metObjectiveMap { get; set; }
-		public transient Map<Date, Integer> notMetObjectiveMap { get; set; }
-		public transient Map<Date, Integer> percentMetObjectiveMap { get; set; }
+		public Integer compareTo(Object anotherResultObject) {
+			ObjectiveResult anotherResult = (ObjectiveResult) anotherResultObject;
+			if (this.resultDate < anotherResult.resultDate) {
+				return -1;
+			} else if (this.resultDate == anotherResult.resultDate) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
 
+		public String serialize() {
+			return JSON.serialize(this);
+		}
+	}
+	public class ObjectiveSkillResult extends ObjectiveResult {
+		public Integer met { get; set; }
+		public Integer notMet { get; set; }
+		public Integer percentMet { get; set; }
+		public ObjectiveSkillResult(Id objectiveId, Date startMonth, Integer met, Integer notMet, Integer percentMet) {
+			this.objectiveId = objectiveId;
+			this.resultDate = startMonth;
+			this.met = met;
+			this.notMet = notMet;
+			this.percentMet = percentMet;
+		}
+	}
 
-		public ObjectiveSkillResults(Action_plan_objective__c objective) {
-			this.objective = objective;
-			metObjectiveMap = new Map<Date, Integer>();
-			notMetObjectiveMap = new Map<Date, Integer>();
-			percentMetObjectiveMap = new Map<Date, Integer>();
-			startDates = new List<Date>();
+	public class ObjectiveBehaviorCountResult extends ObjectiveResult {
+		public Integer occurrences { get; set; }
+
+		public ObjectiveBehaviorCountResult(Id objectiveId, Date startMonth, Integer occurrences) {
+			this.objectiveId = objectiveId;
+			this.resultDate = startMonth;
+			this.occurrences = occurrences;
+		}
+	}
+
+	public class ObjectiveNarrativeResult extends ObjectiveResult {
+		public String description { get; set; }
+
+		public ObjectiveNarrativeResult(Id objectiveId, DateTime resultDate, String description) {
+			this.objectiveId = objectiveId;
+			this.resultDate = Date.newInstance(resultDate.year(), resultDate.month(), resultDate.day());
+			this.description = description;
+		}
+	}
+
+	public class Objective implements Comparable {
+		public Action_Plan_Objective__c objectiveSObject { get; set; }
+		public Boolean highlight { get; set; }
+		public List<ObjectiveSkillResult> skillResults { get; set; }
+		public List<ObjectiveBehaviorCountResult> countResults { get; set; }
+		public List<ObjectiveNarrativeResult> narrativeResults { get; set; }
+
+		public Objective(Action_Plan_Objective__c objectiveSObject) {
+			this.objectiveSObject = objectiveSObject;
+			this.highlight = false;
+			this.skillResults = new List<ObjectiveSkillResult>();
+			this.countResults = new List<ObjectiveBehaviorCountResult>();
+			this.narrativeResults = new List<ObjectiveNarrativeResult>();
+		}
+
+		public void populateSkillResults() {
+			Map<Date, Integer> metObjectiveMap = new Map<Date, Integer>();
+			Map<Date, Integer> notMetObjectiveMap = new Map<Date, Integer>();
+			Map<Date, Integer> percentMetObjectiveMap = new Map<Date, Integer>();
 			Set<Date> startDateSet = new Set<Date>();
 
-			for(Action_skill_result__c result: objective.Action_skill_results__r) {
+			for(Action_skill_result__c result: objectiveSObject.Action_skill_results__r) {
 				Date startMonth = Date.newInstance(result.Day__c.year(), result.Day__c.month(), 1);
 				if (!startDateSet.contains(startMonth)) {
 					startDateSet.add(startMonth);
@@ -464,29 +637,31 @@ public with sharing class ActionSummaryReportV2 {
 				if (result.Met_Objective__c == 'n') {
 					notMetObjectiveMap.put(startMonth, notMetObjectiveMap.get(startMonth) + 1);
 				}
-				percentMetObjectiveMap.put(startMonth,
-					(metObjectiveMap.get(startMonth) * 100)/(metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth))
+				if (metObjectiveMap.get(startMonth) != 0 || notMetObjectiveMap.get(startMonth) != 0) {
+					percentMetObjectiveMap.put(startMonth,
+						(metObjectiveMap.get(startMonth) * 100)/(metObjectiveMap.get(startMonth) + notMetObjectiveMap.get(startMonth))
+					);
+				}
+			}
+			for (Date startMonth: startDateSet) {
+				skillResults.add(
+					new ObjectiveSkillResult(
+						objectiveSObject.Id,
+						startMonth,
+						metObjectiveMap.get(startMonth),
+						notMetObjectiveMap.get(startMonth),
+						percentMetObjectiveMap.get(startMonth)
+					)
 				);
 			}
-			startDates.addAll(startDateSet);
-			startDates.sort();
+			skillResults.sort();
 		}
-	}
 
-	public class ObjectiveBehaviorCountResults {
-		public Action_Plan_Objective__c objective { get; set; }
-
-		public transient List<Date> startDates { get; set; }
-		public transient Map<Date, Integer> occurrenceMap { get; set; }
-
-		public ObjectiveBehaviorCountResults(Action_plan_objective__c objective) {
-			this.objective = objective;
-
-			occurrenceMap = new Map<Date, Integer>();
-			startDates = new List<Date>();
+		public void populateBehaviorCountResults() {
+			Map<Date, Integer> occurrenceMap = new Map<Date, Integer>();
 			Set<Date> startDateSet = new Set<Date>();
 
-			for(Action_behavior_result__c result: objective.Action_Behavior_results__r) {
+			for(Action_behavior_result__c result: objectiveSObject.Action_Behavior_results__r) {
 				Date startMonth = Date.newInstance(result.Day_time__c.yearGmt(), result.Day_time__c.monthGmt(), 1);
 				if (!startDateSet.contains(startMonth)) {
 					startDateSet.add(startMonth);
@@ -498,22 +673,29 @@ public with sharing class ActionSummaryReportV2 {
 					occurrenceMap.get(startMonth) + (result.Occurrences__c == null ? 0 : result.Occurrences__c.intValue())
 				);
 			}
-			startDates.addAll(startDateSet);
-			startDates.sort();
+			for (Date startMonth: startDateSet) {
+				countResults.add(
+					new ObjectiveBehaviorCountResult(
+						objectiveSObject.Id,
+						startMonth,
+						occurrenceMap.get(startMonth)
+					)
+				);
+			}
+			countResults.sort();
 		}
-	}
 
-	public class Objective implements Comparable {
-		public Action_Plan_Objective__c objectiveSObject { get; set; }
-		public Boolean highlight { get; set; }
-		public ObjectiveSkillResults skillResults { get; set; }
-		public ObjectiveBehaviorCountResults countResults { get; set; }
-
-		public Objective(Action_Plan_Objective__c objectiveSObject) {
-			this.objectiveSObject = objectiveSObject;
-			this.highlight = false;
-			this.skillResults = new ObjectiveSkillResults(objectiveSObject);
-			this.countResults = new ObjectiveBehaviorCountResults(objectiveSObject);
+		public void populateNarrativeResults() {
+			for(Action_Narrative_result__c result: objectiveSObject.Action_Narrative_results__r) {
+				narrativeResults.add(
+					new ObjectiveNarrativeResult(
+						objectiveSObject.Id,
+						result.CreatedDate,
+						result.Description__c
+					)
+				);
+			}
+			narrativeResults.sort();
 		}
 
 		public Integer compareTo(Object anotherObjective) {
@@ -642,9 +824,9 @@ public with sharing class ActionSummaryReportV2 {
 
 		public Integer compareTo(Object anotherSeizureObject) {
 			Seizure anotherSeizure = (Seizure) anotherSeizureObject;
-			if (this.createdDate < anotherSeizure.createdDate) {
+			if (this.startTime < anotherSeizure.startTime) {
 				return -1;
-			} else if (this.createdDate == anotherSeizure.createdDate) {
+			} else if (this.startTime == anotherSeizure.startTime) {
 				return 0;
 			} else {
 				return 1;

@@ -6,7 +6,9 @@ public with sharing class EvalRepeaters {
 	public boolean anyEmpty{ get { return (numEmpty > 0);} set;}
 	public ID parentEvalOwnerId { get; set; }
 	public string parentEvalStatus { get; set; }
+	public string parentShiftStatus { get; set; }
 	public Boolean parentHasOpenAsmt{get; set;} //Used for restraints 
+	
 	
 	private integer numEmpty;
 	private integer numErrors;
@@ -68,8 +70,10 @@ public with sharing class EvalRepeaters {
 		buildEvalDataList( evalwraps );
 		
 		// for restraint assessment we need a special case to reduce the # of empties by 1 since you can't fill out the 2nd subcat
-		if ( evalname == 'Restraint Event' )
-			numEmpty -=1;  
+		//&& condition addded by Sravan as Restraint Event Should behave normally when the first section is filled out especially disabling the Complete button when Second section is empty
+		if ( evalname == 'Restraint Event' && parentEvalStatus == 'Not Restrained')
+			numEmpty -=1; 
+		
 	
 		
 		system.debug( 'ANY EMPTY? ' + numEmpty);
@@ -82,11 +86,12 @@ public with sharing class EvalRepeaters {
 		
 		
 		system.debug( 'EVAL ID IS: ' + evaluationID);
-		Evaluation__c[] parentEval = [ select id, ownerid, status__c, Has_Open_Assessment__c from evaluation__c where id = :evaluationID ];
+		Evaluation__c[] parentEval = [ select id, ownerid, status__c, Has_Open_Assessment__c, head_to_toe_status__c from evaluation__c where id = :evaluationID ];
 		if ( parentEval.size() == 1) {
 			parentEvalOwnerID = parentEval[0].OwnerId;
 			parentEvalStatus = parentEval[0].status__c;
 			parentHasOpenAsmt = parentEval[0].Has_Open_Assessment__c;
+			parentShiftStatus = parentEval[0].Head_to_Toe_status__c;
 		} 
 		else {
 			parentEvalOwnerID = null;
@@ -176,6 +181,36 @@ public with sharing class EvalRepeaters {
 		
 		}
 
+
+	public Boolean canEditEvalType;
+	// determines if this user can edit the given type of eval - used to show or hide the + button
+	public Boolean getcanEditEvalType() {
+		
+		canEditEvalType = false;
+		
+		// only tier iii can add/edit resident, restraint, and nurses shift doc
+		PermissionSetAssignment[] assignments = [
+			SELECT Id, PermissionSet.Name
+			FROM PermissionSetAssignment
+			WHERE AssigneeId = :UserInfo.getUserId()
+		];
+		Set<String> permissionSets = new Set<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Name);
+		}
+		
+		if ( evalname.indexOf('CNA') < 0 ) {
+			if ( permissionSets.contains('iServe_Tier_III')) {
+				canEditEvalType = true;
+			}
+		}	else if ( permissionSets.contains('iServe_Tier_III') ||  permissionSets.contains('iServe_Tier_I') ) {
+				// anyone can edit CNA
+				canEditEvalType = true;
+		}
+		
+		return canEditEvalType;
+		
+	}
 
 	public class EvalValueWrapper {
 		

@@ -43,7 +43,7 @@
 			<label class="labelCol">Created By:</label>{!evalSectionOwner}
 			<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" rendered="{!editEnabled}">
 				<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false;" />
-				<input class="btn" type="button" value="Cancel" onclick="isModified=false; evalForm.reset(); setUpFields();" />
+				<input class="btn" type="button" value="Cancel" onclick="clearPanel();" />
 			</apex:outputPanel>
 			<apex:outputPanel rendered="{!htmlTable != '' && hasErros}"><span id="evalSecValMsgs" style="color: red;"></span></apex:outputPanel>
 			<apex:outputText value="{!htmlTable}" escape="false" />
@@ -117,22 +117,28 @@
 				</apex:outputPanel>
 			
 				// Apply rules to input fields
-				$('body input').on("change", function(event) {
+				$('#evalForm input').on("change", function(event) {
 					applyShowHideRulesToField(event.target);
 					applyRulesToField(event.target);
 				});
-				$('body select').on("change", function(event) {
+				$('#evalForm select').on("change", function(event) {
 					applyShowHideRulesToField(event.target);
 					applyRulesToField(event.target);
 				});
-				$('body input').each(function(_, target) {
+				$('#evalForm input').each(function(_, target) {
 					applyShowHideRulesToField(target);
 					applyRulesToField(target);
 				});
-				$('body select').each(function(_, target) {
+				$('#evalForm select').each(function(_, target) {
 					applyShowHideRulesToField(target);
 					applyRulesToField(target);
 				});
+				
+				// set isModified to true on a field value change
+                $('#evalForm input, #evalForm select').on("change", function(event) {
+                    isModified = true;
+                });
+				 
 			};
 
 			window.handleFormErros = function() {
@@ -215,7 +221,7 @@
 			$('.datetimepicker').datetimepicker({});
 			
 			
-			<apex:outputPanel layout="none" rendered="{!subcategory == 'Current Pain'}">
+			<apex:outputPanel layout="none" rendered="{!subcategory == 'Current Pain' || subcategory == 'Pain'}">
 			
 			var options =  [0,1,2,3,4,5,6,7,8,9,10];
 			var initialValue = '0';
@@ -254,7 +260,7 @@
 				}
 			</apex:outputPanel>
 
-			<apex:outputPanel layout="none" rendered="{!(subcategory == 'Body Map' || subcategory=='Current Pain')}">
+			<apex:outputPanel layout="none" rendered="{!(subcategory == 'Body Map' || subcategory=='Current Pain' || subcategory == 'Pain')}">
 			anno.reset();
 			var el = $('#bodyMap{!evalSectionUuid}').get(0);
 			if (el) {

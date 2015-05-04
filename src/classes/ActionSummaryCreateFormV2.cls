@@ -32,7 +32,7 @@ public with sharing class ActionSummaryCreateFormV2 {
 			upsert summary;
 			return new ApexPages.standardController(summary).view();
 		} catch (Exception ex) {
-			// Salesforce will automatically create a PageMessage here
+			ApexPages.addMessages(ex);
 		}
 		return null;
 	}

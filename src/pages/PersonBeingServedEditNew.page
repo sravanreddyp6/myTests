@@ -16,7 +16,7 @@
             top: 75px;
             left: 100px;
             overflow-y: scroll;
-            max-height: 400px;
+            max-height: 600px;
         }
     </style>
 
@@ -107,6 +107,9 @@
             if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
                 errors += '<li>Party Name is a required field.</li>';
             }
+            if (j$('select[id$=relatedPartyEntry_Status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }            
             var partyType = j$('select[id$=relatedPartyEntry_Type]').val();
             if (partyType == '') {
                 errors += '<li>Type is a required field.</li>';
@@ -275,8 +278,6 @@
             </apex:pageBlockSection>
 
             <!--Contact Information Section-->
-            <a name="AI" id="AI" />
-            <!-- Using Additional info anchor here as a hack as the blue card will cover the top portion of the page. Sravan EC-43 10/14/2014 1:00 PM-->
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputContactInfo">
 
                 <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Contactinfo}" var="f">
@@ -298,12 +299,55 @@
     <apex:outputLabel value="Other Street 1" for="os" />
       <apex:inputText id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
     </apex:pageBlockSectionItem>
+       <apex:pageBlockSectionItem rendered="{! (f = 'OtherStateCode'  && pbsEditModeOn)}" >
+    <apex:outputLabel value="Other State/Province" for="os" />
+      <apex:inputField value="{!contact.OtherStateCode}" label="Other State/Province" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{! (f = 'OtherStateCode'  && not(pbsEditModeOn) )}" >
+    <apex:outputLabel value="Other State/Province" for="os" />
+      <apex:outputField value="{!contact.OtherStateCode}" label="Other State/Province" />
+    </apex:pageBlockSectionItem>
     
-                    <apex:outputField value="{!Contact[f]}" rendered="{!(!pbsEditModeOn) && (f != 'HomePhone' ) && (f != 'MailingStreet' )  && (f != 'OtherStreet' ) }" />
-                    <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && (f != 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) }" required="{!OR(f.required, f.dbrequired)  }" />
+      <apex:pageBlockSectionItem rendered="{! (f = 'MailingStateCode'  && pbsEditModeOn)}" >
+    <apex:outputLabel value="Mailing State/Province" for="os" />
+      <apex:inputField value="{!contact.MailingStateCode}" label="Mailing State/Province" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{! (f = 'MailingStateCode'  && not(pbsEditModeOn) )}" >
+    <apex:outputLabel value="Mailing State/Province" for="os" />
+      <apex:outputField value="{!contact.MailingStateCode}" label="Mailing State/Province" />
+    </apex:pageBlockSectionItem>
+ 
+    
+     <apex:pageBlockSectionItem rendered="{! (f = 'MailingCountryCode'  && pbsEditModeOn)}" >
+    <apex:outputLabel value="Mailing Country" for="os" />
+      <apex:inputField value="{!contact.MailingCountryCode}" label="Mailing Country" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{! (f = 'MailingCountryCode'  && not(pbsEditModeOn) )}" >
+    <apex:outputLabel value="Mailing Country" for="os" />
+      <apex:outputField value="{!contact.MailingCountryCode}" label="Mailing Country" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{! (f = 'OtherCountryCode'  && pbsEditModeOn)}" >
+    <apex:outputLabel value="Other Country" for="os" />
+      <apex:inputField value="{!contact.OtherCountryCode}" label="Other Country" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{! (f = 'OtherCountryCode'  && not(pbsEditModeOn) )}" >
+    <apex:outputLabel value="Other Country" for="os" />
+      <apex:outputField value="{!contact.OtherCountryCode}" label="Other Country" />
+    </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{! (f = 'HomePhone'  && pbsEditModeOn)}" >
+    <apex:outputLabel value="Phone" for="os" />
+      <apex:inputField value="{!contact.HomePhone}" label="Other Country" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{! (f = 'HomePhone'  && not(pbsEditModeOn) )}" >
+    <apex:outputLabel value="Phone" for="os" />
+      <apex:outputField value="{!contact.HomePhone}" label="Phone" />
+    </apex:pageBlockSectionItem>
+    
+                    <apex:outputField value="{!Contact[f]}" rendered="{!(!pbsEditModeOn) && (f != 'HomePhone' ) && (f != 'MailingStreet' )  && (f != 'OtherStreet' )  && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode') && (f != 'HomePhone')}" />
+                    <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && (f != 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode') && (f != 'HomePhone') }" required="{!OR(f.required, f.dbrequired)  }" />
 
-                    <apex:outputField value="{!contact.phone}" label="Home Phone" rendered="{!(!pbsEditModeOn) && (f = 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) }" />
-                    <apex:inputField value="{!contact.phone}" label="Home Phone" rendered="{!pbsEditModeOn && (f = 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) }" required="{!OR(f.required, f.dbrequired)  }" />
+                    <apex:outputField value="{!contact.phone}" label="Home Phone" rendered="{!(!pbsEditModeOn) && (f = 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) && (f = 'HomePhone') && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode')  && (f != 'HomePhone') }" />
+                    <apex:inputField value="{!contact.phone}" label="Home Phone" rendered="{!pbsEditModeOn && (f = 'HomePhone') && (f != 'MailingStreet' ) && (f != 'OtherStreet' ) && (f != 'OtherStateCode')  && (f != 'MailingStateCode')  && (f != 'MailingCountryCode') && (f != 'OtherCountryCode') && (f != 'HomePhone') }" required="{!OR(f.required, f.dbrequired)  }" />
                 </apex:repeat>
             </apex:pageBlockSection>
 
@@ -321,6 +365,7 @@
 
             <!--Additional Information Section-->
 
+            <a name="AI" id="AI" />
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo">
                 <apex:repeat value="{!$ObjectType.Contact.FieldSets.Additional_Information}" var="f">
                     <apex:outputField value="{!Contact[f]}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath)}" />
@@ -440,7 +485,7 @@
         </apex:pageBlock>
 
         <!-- Add Related Party modal. -->
-        <apex:outputPanel id="relatedPartyModal" style="display:none">
+        <apex:outputPanel id="relatedPartyModal" style="display:none; dispaly: block; height: 500px;">
 
             <apex:pageBlock title="Add Related Party">
                 <apex:pageblockButtons location="bottom">
@@ -647,7 +692,9 @@
 
 
             </apex:pageBlock>
-            <apex:pageBlock rendered="{!vfVarIsCM}">                
+            
+            <apex:pageBlock rendered="{!vfVarIsCM}">
+            <a id="assistiveDevices" />            
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device"
                                            formId="{!$Component.FormID}"
@@ -665,13 +712,15 @@
                                                                                                         &quot;Side Rail Half&quot; : [&quot;Side_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
                                                                                                         &quot;Side Rail Full&quot; : [&quot;Side_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;]
                                                                                                         }}"
-                                           cols="1" />  
+                                           cols="1" 
+                                           rows="5" />
+                <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>  
             </apex:pageBlock>
         <apex:pageBlock >
             <!--Task History Section-->
             <!--Open Tasks Section -->
-            <apex:outputPanel >
-                <apex:commandButton onclick="window.open('/apex/PBS_AddTask_Page?PBS={!Contact.Id}&accID={!currentContact.AccountID}', '_self'); return false;" value="Add Task"/>
+            <apex:outputPanel style="display: block; width: 100%;">
+                <apex:commandButton style="float: right;" onclick="window.open('/apex/PBS_AddTask_Page?PBS={!Contact.Id}&accID={!currentContact.AccountID}', '_self'); return false;" value="Add Task"/>
             </apex:outputPanel>
             <apex:pageBlockSection title="Open Tasks" showHeader="true" columns="1" collapsible="true">
                 <apex:pageBlockTable value="{!taskOnCurrentPBSAccount}" var="OpenActivity" rendered="{!(taskOnCurrentPBSAccount.size>0)}">
