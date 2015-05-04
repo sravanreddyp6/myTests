@@ -1,11 +1,11 @@
-<apex:page controller="HomePageController" sidebar="false" id="thePage" tabStyle="Referral__c">
+<apex:page controller="HomePageController" sidebar="false" id="thePage">
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
-	
+
 	<style type="text/css">
 		.thinking {
 			opacity: 0.8;
@@ -196,7 +196,7 @@
 			<c:HomePageComponents objectName="Contract Management" />
 			<c:HomePageComponents objectName="Documents" />
 		</apex:outputPanel>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!OperatingGroup == 'Care Meridian'}">
+		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!AND(OperatingGroup == 'Care Meridian', canSeePBS)}">
 			<apex:pageBlockSection columns="2">
 				<apex:selectList id="selectprograms" value="{!selectedProgram}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
@@ -212,29 +212,40 @@
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
 				<apex:column headerValue="View Current Shift">
-					<apex:outputPanel rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}">
-						<a href="/{!serviceAssignment.Evaluations__r[0].Id}">{!serviceAssignment.Evaluations__r[0].Name}</a>
+					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
+						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
+						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
-					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft'), serviceAssignment.Evaluations__r[0].Id, '')}">
-						<apex:selectOption itemValue="createShiftDoc" itemLabel="Create New Shift Doc" />
-						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" rendered="{!AND(serviceAssignment.Evaluations__r.size > 0, serviceAssignment.Evaluations__r[0].Status__c = 'Draft')}" />
+					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
+						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="pbsActionButton" />
 				</apex:column>
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" />
+						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Packet" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Action_Plans__r[0].Id}" itemLabel="Current Action Plan" rendered="{!serviceAssignment.Action_Plans__r.size > 0}" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" />
+<!-- 						<apex:selectOption itemValue="/{!serviceAssignment.Action_Plans__r[0].Id}" itemLabel="Current Action Plan" rendered="{!serviceAssignment.Action_Plans__r.size > 0}" /> -->
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Nurses Shift Documentation" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" />
 					</apex:selectList>
-					<apex:commandButton value="Go" onclick="window.location = jQuery(document.getElementById('{!$Component.navigationList}')).val(); return false;" />
+					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
 				</apex:column>
 				<apex:column headerValue="saId">
 					{!serviceAssignment.Id}
@@ -292,7 +303,7 @@
 				<apex:column headerValue="Created By"><a href="/{!app.MostRecent}">{!app.LMName}</a>
 				</apex:column>
 				<apex:column headerValue="Date Submitted">
-					<apex:outputText Value="{!app.cDate}"></apex:outputText>
+					<apex:outputText value=" {!app.cDate}" />
 				</apex:column>
 			</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
@@ -303,6 +314,9 @@
 			<apex:param name="sort_order" value="" assignTo="{!sortOrder}" />
 		</apex:actionFunction>
 		<apex:actionFunction status="pageProcessing" name="showAddShiftDocModal" rerender="shiftDocAddModal" oncomplete="showAddShiftDoc1(); return false;">
+			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
+		</apex:actionFunction>
+		<apex:actionFunction status="pageProcessing" name="showAddCNAWorkbookModal" rerender="cnaWorkbookAddModal" oncomplete="showAddShiftDoc2(); return false;">
 			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
 		</apex:actionFunction>
 		<apex:actionFunction name="createPanel" rerender="{!$Component.evalSection}" oncomplete="showEvalForm();" status="pageProcessing">
@@ -318,6 +332,7 @@
 	<div id="shiftDocActionDialog"></div>
 	<div id="searchResultDialog"></div>
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
+	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!serviceAssignmentIdForAction}" status="" shiftType="CNA Workbook" id="cnaWorkbookAddModal" />
 	<c:EvalSection id="evalSection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}"
 		subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
 		evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}"
@@ -473,6 +488,7 @@
 				var $selected = $selectElement.find('option:selected');
 				var serviceAssignmentId = $selectElement.data('service-assignment-id');
 				var latestShiftDocId = $selectElement.data('latest-shift-doc-id');
+				var latestCNAWorkbookId = $selectElement.data('latest-cna-workbook-id');
 				var selectedValue = $selected.val();
 				if (selectedValue == 'createShiftDoc') {
 					showAddShiftDocModal(serviceAssignmentId);
@@ -480,6 +496,12 @@
 					var category = selectedValue.replace('shiftDocAction-', '').split('~')[0];
 					var subcategory = selectedValue.replace('shiftDocAction-', '').split('~')[1];
 					createPanel('Head to Toe', category, subcategory, null, 'Activity Log', true, latestShiftDocId);
+				} else if (selectedValue == 'createCNAWorkbook') {
+					showAddCNAWorkbookModal(serviceAssignmentId);
+				} else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
+					var category = selectedValue.replace('cnaWorkbookAction-', '').split('~')[0];
+					var subcategory = selectedValue.replace('cnaWorkbookAction-', '').split('~')[1];
+					createPanel('CNA Workbook', category, subcategory, null, 'Activity Log', true, latestCNAWorkbookId);
 				}
 				event.preventDefault();
 			});
@@ -488,13 +510,12 @@
 				// resize all boxes to same height
 				var maxheight = 0;
 				$(".panel").each(function(index, element) {
-					if (this.clientHeight > maxheight)
-						maxheight = this.clientHeight;
+					$(this).css("height", "");
+					var panelHeight = $(this).height();
+					if (panelHeight > maxheight)
+						maxheight = panelHeight;
 				});
-
 				$(".panel").css("height", maxheight);
-				$(".panel").clientHeight = maxheight;
-
 			};
 
 			$(window).resize(setSize);

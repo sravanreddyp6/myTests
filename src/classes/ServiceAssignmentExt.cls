@@ -17,7 +17,8 @@ public without sharing class ServiceAssignmentExt {
     public List<Action_Plan__c> getplans() {return plans;}
     public List<Progress_Note__c> notes;
     public List<Progress_Note__c> getNotes() {return notes;}
-    public Boolean canCreatePlan { get; set; }
+    public Boolean canCreatePlan { get; private set;  }
+    public Boolean canEditPlan { get; private set; }
     public Boolean canCreateSummary { get; set; }
     public Boolean canEditSA { get; set; }
     public static Boolean showdiagModal { get; set; }
@@ -89,7 +90,7 @@ public without sharing class ServiceAssignmentExt {
     public Boolean hasFidDocs { get; set; }
     public List<ProgramAssociationTableWrapper> programRows { get; set; }
 
-        private void setcanEditSA() {
+    private void setcanEditSA() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                 FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.theServAssign.Id ];
 
@@ -105,10 +106,14 @@ public without sharing class ServiceAssignmentExt {
     private void setcanCreatePlan() {
         Schema.DescribeSObjectResult oSchema = Action_Plan__c.sObjectType.getDescribe();
         canCreatePlan = oSchema.IsCreateable();
-        if(currentRecord.Status__c=='Inactive')
-        canCreatePlan = false;
+        canEditPlan = oSchema.IsUpdateable();
+        if(currentRecord.Status__c=='Inactive') {
+        	canCreatePlan = false;
+        	canEditPlan = false;
+        }
 
     }
+
     private void setcanCreateSummary() {
         Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
         canCreateSummary = oSchema.IsCreateable();
@@ -405,7 +410,6 @@ public without sharing class ServiceAssignmentExt {
         setcanCreatePlan();
         setcanCreateSummary();
 
-
         getContractsAndXrefs();
         contractsList = new List<SelectOption>();
         contractsList.add(new SelectOption('','--None--'));
@@ -504,6 +508,8 @@ public without sharing class ServiceAssignmentExt {
             programRows.add(new ProgramAssociationTableWrapper(999,docsRunningCount.intValue(),docsFiledRunningCount.intValue(),totalPhasePercentage));
             
          populateSeizures();   
+         
+         setShiftDocPermissions();
     }
 // END: CONSTRUCTOR
 
@@ -1254,76 +1260,90 @@ public void loadProgramList() {
         PageReference ref = new PageReference('/apex/ServiceAssignmentClosureEditView?ServAssignId=' + theServAssign.Id + '&AdmId=' + admissionId + '&PbsId=' + theServAssign.Person_Being_Served__r.Id);
         return ref;
     }
+    
+    
+    
+	public Boolean canAddShiftDoc { get; private set; }
+	public Boolean canAddCNA { get; private set; }
+	
+	private void setShiftDocPermissions() {
+		canAddShiftDoc = false;
+		canAddCNA = false;
+		PermissionSetAssignment[] assignments = [
+			SELECT Id, PermissionSet.Name
+			FROM PermissionSetAssignment
+			WHERE AssigneeId = :UserInfo.getUserId()
+		];
+		Set<String> permissionSets = new Set<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Name);
+		}
+		
+		if ( permissionSets.Contains('iServe_Tier_III') ) {
+			canAddShiftDoc = true;
+			canAddCNA = true;
+		}
+			
+		if ( permissionSets.Contains('iServe_Tier_I') )
+			canAddCNA = true;
+					
+	}
 
-    //Added to show Nurses Assessments from Evaluation__c object
-    public List<Evaluation__c> evaluations{
-        get{
-            if(evaluations == null) {
-                evaluations = [
-                    SELECT ID, Name, LastModifiedDate, Is_Signed__c,
-                           Shift_Start_time__c, Shift_end_time__c, Status__c,Owner.Name,
-                           (SELECT Id, CreatedDate, Owner.Name, Owner.Id
-                              FROM Evaluation_Responses__r
-                             WHERE RecordType.Name = 'E-Signature'
-                             ORDER BY CreatedDate DESC)
-                      FROM Evaluation__c
-							WHERE ServiceAssignment__c = :theServAssign.Id AND Status__c != 'Disregard'
-							ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
-						];
-					}
-					return evaluations;
-				}
-				set;
+	public List<Evaluation__c> residentAssessments{
+		get{
+			if(residentAssessments == null) {
+				residentAssessments = [
+					SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c,
+					       Status__c,Owner.Name
+					FROM Evaluation__c
+					WHERE ServiceAssignment__c = :theServAssign.Id
+					AND Recordtype.Name = 'NursesAssessment'
+					ORDER BY CreatedDate DESC NULLS LAST LIMIT 5
+				];
 			}
+			return residentAssessments;
+		}
+		set;
+	}
 
-			public List<Evaluation__c> residentAssessments{
-				get{
-					if(residentAssessments == null) {
-						residentAssessments = [
-							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c,
-							       Status__c,Owner.Name,
-							       (SELECT Id, CreatedDate, Owner.Name, Owner.Id
-							          FROM Evaluation_Responses__r
-							         WHERE RecordType.Name = 'E-Signature'
-							        ORDER BY CreatedDate DESC)
-							FROM Evaluation__c
-							WHERE ServiceAssignment__c = :theServAssign.Id
-							AND Recordtype.Name = 'NursesAssessment'
-							ORDER BY CreatedDate DESC NULLS LAST LIMIT 5
-						];
-					}
-					return residentAssessments;
-				}
-				set;
-			}
-
-			public Boolean getshowResAsmt(){
-				List<Evaluation__c> nonDisregard = [SELECT Id from Evaluation__c WHERE Status__c != 'Disregard' AND ServiceAssignment__c = :theServAssign.Id AND RecordType.Name = 'NursesAssessment' LIMIT 1];
-
-				if(nonDisregard.size() > 0){
-					return false;
-				}
-				else{
-					return true;
-				}
-			}
-			public List<Evaluation__c> shiftAssessments{
-				get{
-					if(shiftAssessments == null) {
-						shiftAssessments = [
-							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c, Head_to_Toe_Signed_At__c,
-							Shift_Start_time__c, Shift_end_time__c, Status__c, Head_to_Toe_Status__c, Owner.Name,
-							(SELECT Id, CreatedDate, Owner.Name, Owner.Id
-							        FROM Evaluation_Responses__r
-							        WHERE RecordType.Name = 'E-Signature'
-							        ORDER BY CreatedDate DESC)
-							        FROM Evaluation__c
-                     WHERE ServiceAssignment__c = :theServAssign.Id
-							        AND RecordType.Name = 'CMShiftAssessment'
-                     ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
+	public Boolean getshowResAsmt(){
+		List<Evaluation__c> nonDisregard = [SELECT Id from Evaluation__c WHERE Status__c != 'Disregard' AND ServiceAssignment__c = :theServAssign.Id AND RecordType.Name = 'NursesAssessment' LIMIT 1];
+		if(nonDisregard.size() > 0){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	public List<Evaluation__c> shiftAssessments{
+		get{
+			if(shiftAssessments == null) {
+				shiftAssessments = [
+					SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c, Head_to_Toe_Signed_At__c,
+					Shift_Start_time__c, Shift_end_time__c, Status__c, Head_to_Toe_Status__c, Owner.Name
+					        FROM Evaluation__c 
+					        WHERE ServiceAssignment__c = :theServAssign.Id
+					        AND RecordType.Name = 'CMShiftAssessment'
+             ORDER BY Shift_Start_Time__c DESC NULLS LAST LIMIT 5
                 ];
             }
 					return shiftAssessments;
+        }
+        set;
+   }
+	public List<Evaluation__c> cnaWorkbooks{
+				get{
+					if(cnaWorkbooks == null) {
+						cnaWorkbooks = [
+							SELECT ID, Name, LastModifiedDate, Is_Signed__c,Signed_At__c, 
+							Shift_Start_time__c, Shift_end_time__c, Status__c, Owner.Name
+							        FROM Evaluation__c 
+							        WHERE ServiceAssignment__c = :theServAssign.Id
+							        AND RecordType.DeveloperName = 'CNA_Workbook'
+                     ORDER BY Shift_Start_Time__c DESC LIMIT 5
+                ];
+            }
+					return cnaWorkbooks;
         }
         set;
    }
@@ -1349,84 +1369,6 @@ public void loadProgramList() {
 		return pOpGroup;
 	}
 
-//Commented out by Sravan - 11/25/2014 as Users will not create Admission Assessment from Service Assignemnt page. It will carry over from Referral.
-   public PageReference addResidentAssessment(){
-   		string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
-    	string pbsFirstinitial = this.theServAssign.Admission__r.Person_Being_Served__r.FirstName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.FirstName.substring(0, 1) : '';
-		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
-		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-				Assessment__c fallAsmt = new Assessment__c(Name=pbsLastName+' Resident Assessment',Type__c ='Resident Assessment',Service_Assignment__c = theServAssign.Id,Admission__c = theServAssign.Admission__c, AccountPerson__c = theServAssign.Person_Being_Served__r.AccountId);
-   		if(!referral.Has_Evaluation__c){
-   			Evaluation__c resAsmt = new Evaluation__c(
-   											ServiceAssignment__c = theServAssign.Id,
-   											Name = resAsmtName,
-   											RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
-   														
-   			);
-   			
-   			insert resAsmt;
-   			
-					fallAsmt.Evaluation__c = resAsmt.Id;
-					insert fallAsmt;
-
-   			return new PageReference ('/apex/NursingEvaluationEdit?id='+resAsmt.Id);
-   		}
-   		else{
-   			Id evalOnReferralId = referral.Evaluations__r[0].Id;
-   			list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
-   			list<string> responseRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
-   			FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
-   			string query = 'SELECT ';
-   			FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
-   			
-   			for(Schema.FieldSetMember f: copyFields.getFields()) {
-   				query += f.getFieldPath() + ', ';
-   			}
-   			
-   			query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
-   			
-   			sObject existingEval = Database.Query(query);
-   			string evaluationObj = 'Evaluation__c';
-   			sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
-   			
-   			for(Schema.FieldSetMember f: copyFields.getFields()){
-   				dynObjectEvaluationRecord.put(f.getFieldPath(),existingEval.get(f.getfieldpath()));
-   				
-   			}
-   			dynObjectEvaluationRecord.put('RecordtypeId',Utility.getEvaluationRecordType('NursesAssessment'));
-   			dynObjectEvaluationRecord.put('ServiceAssignment__c',theServAssign.Id);
-   			dynObjectEvaluationRecord.put('Name',resAsmtName);
-   			
-   			insert dynObjectEvaluationRecord;
-   			
-					fallAsmt.Evaluation__c = dynObjectEvaluationRecord.Id;
-					insert fallAsmt;
-
-   			String respQuery ='SELECT ';
-   			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
-                    respQuery +=f.getFieldPath() + ', ';
-            }
-            
-            respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalOnReferralId AND RecordType.Name IN:responseRectypes';
-            list<Evaluation_Response__c> evalResponses = database.query(respQuery);
-            if(evalResponses!=null){
-                for(Evaluation_Response__c erp : evalResponses){
-                    Evaluation_Response__c newRecord = erp.clone(false);
-                    newRecord.Evaluation__c = dynobjectEvaluationRecord.Id;
-                    if (newRecord.RecordType.Name == 'Allergy') {
-                        newRecord.Person_Being_Served__c = theServAssign.Admission__r.Person_Being_Served__c;
-                    }
-                    tobeCreated.add(newRecord);
-                }
-                
-           		insert tobeCreated;
-   			}
-        
-       		 return new PageReference ('/apex/NursingEvaluationEdit?id='+dynObjectEvaluationRecord.Id);
-    	} 
-    	
-    	return null;
-  	}
     
 			public pageReference addResAsmt(){
 				string pbsLastName = this.theServAssign.Admission__r.Person_Being_Served__r.LastName != null ? this.theServAssign.Admission__r.Person_Being_Served__r.LastName : '' ;
@@ -1466,102 +1408,144 @@ public void loadProgramList() {
 				//	return new pageReference ('/apex/EvalDynamic?evalId='+resAsmt.Id+'&opGrp=Care Meridian&evalType=Residential');
 
 
-				if(referral.Has_Evaluation__c) {
+				if(referral != null && referral.Has_Evaluation__c) { //Prevent null pointer exception
 					Id evalOnReferralId = referral.Evaluations__r[0].Id; //Grab the Id of the Existing evaluation record on referral
 					//FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses; //Calling the Field set
 					string query = 'SELECT ';
 					FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment; // Calling the Field set where the about to be cloned fieldvalue paths are stored
 					FieldSet behavior = SObjectType.Evaluation__c.FieldSets.Behavior;
+					FieldSet respondsTo = SObjectType.Evaluation__c.FieldSets.RespondsTo;
+					//FieldSet glasses = SObjectType.Evaluation__c.FieldSets.Glasses;
 
 					set<String> getEvals = new set<String>(); //Collection to store the API names of the Fields which will be used in Query (API_Name_Flag__c)
 					for(Schema.FieldSetMember f: copyFields.getFields()) {
 						query += f.getFieldPath() + ', ';
 					}
-
 					query += 'Name FROM Evaluation__c WHERE Id=:evalOnReferralId';
 					sObject existingEval = Database.Query(query);
-
+				
 					for(Schema.FieldSetMember f: copyFields.getFields()){
 						if(string.isNOTBLANK(string.Valueof(existingEval.get(f.getFieldPath()))) && !string.Valueof(existingEval.get(f.getFieldPath())).equalsIgnoreCase('false')){
 							getEvals.add(f.getFieldPath());
 
 						}
 					}
-					getEvals.add('Behavior'); //Make Sure Behavior ApI_Flag_Name__c is also included
-
-					system.debug('Checking the set for null values+++++++++'+getEvals);
-					system.debug('string+++++++++++++='+string.valueOf(existingEval.get('Advanced_Directives_Attached__c')));
-
-					Map<id,Eval__c> evalMap = new Map<id,Eval__c>([SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals]);
-
-					//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
-					set<string> catSubcat = new set<string>();
-					Map<string, string> uniqueTimeMap = new Map<string, string>();
-
-					for(Eval__c ee: evalMap.values()){
-						catSubcat.add(ee.Category__c+'~'+ee.sub_category__c);
-					}
-
-					string timeString =  Userinfo.getUserId()+'-'+DateTime.now().getTime();
-					integer n = 0;
-					system.debug('Strings+++++++++++++++++++++++'+catSubcat);
-					for(String s: catSubcat){
-						n = n+1;
-						uniqueTimeMap.put(s,timeString+string.valueOf(n));
-					}
-
-					system.debug('timeMap+++++++++++=='+uniqueTimeMap);
-
-					//Create Corresponding Eval Value Records
-					List<Eval_Value__c> values = new List<Eval_value__c>();
-					Eval_Value__c value;
-
+					
 					string behaviorString = '';
-
+					string respondstoString = '';
+					
 					for(Schema.FieldSetMember f: behavior.getFields()){
-
-						system.debug('behvaiorset+++++++'+behavior.getFields());
-						system.debug('fieldValue+++++'+existingEval.get(f.getFieldPath()));
-
-						if(string.isNotBlank(string.valueOF(existingEval.get(f.getFieldPath())))) {
+						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
 							behaviorString += f.getLabel();
 							behaviorString += '; ';
 						}
 
 					}
-
-					for(Eval__c eval: evalMap.values()){
-
-						string fieldName = eval.API_Name_Flag__c;
-
-						value = new Eval_Value__c();
-						value.Eval__c = eval.Id;
-						value.Eval_Section_Type__c = 'Residential';
-						value.what_id__c = resAsmt.Id;
-						value.what_id_object__c = 'Evaluation__c';
-
-						string catSubCatCheck = eval.Category__c+'~'+eval.sub_category__c;
-
-						if(uniqueTimeMap.keySet().contains(catSubCatCheck)) {
-							system.debug('ValueValue+++++++++'+uniqueTimeMap.get(catSubCatCheck));
-							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
-
+					
+					for(Schema.FieldSetMember f: respondsTo.getFields()){ 
+						if(existingEval.get(f.getFieldPath()) == true){ //Skip those not checked
+							respondstoString += f.getLabel();
+							respondstoString += '; ';
 						}
+					}
+					
+					if(string.isNotBlank(behaviorString) && behaviorString != ''){
+						getEvals.add('Behavior'); //Make Sure Behavior ApI_Flag_Name__c is also included
+					}
+					
+					if(string.isNotBlank(respondstoString) && respondstoString != ''){
+						getEvals.add('RespondsTo');//Make Sure RespondsTo ApI_Flag_Name__c is also included
+					}
+					
+					
+					set<string> responseRectypes = new set<string>{'Pressure Ulcer Detail','Wound Detail'};
+   					FieldSet copyresponseFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
+   					list<Evaluation_Response__c> clonedResponses = new List<Evaluation_Response__c>();
+   					set<string> checkResponses = new set<string>();
+   					
+   					String respQuery ='SELECT ';
+		   			for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
+		                    respQuery +=f.getFieldPath() + ', ';
+		            }
+            
+            		respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Evaluation__c =:evalOnReferralId AND RecordType.Name IN:responseRectypes';
+            		list<Evaluation_Response__c> evalResponses = database.query(respQuery);
+            		
+            		if(evalResponses!=null){
+	                	for(Evaluation_Response__c erp : evalResponses){
+		                    Evaluation_Response__c newRecord = erp.clone(false);
+		                    newRecord.Evaluation__c = resAsmt.Id;
+		                   	checkResponses.add(erp.RecordType.Name); // to check whether to create Eval value record or not
+	                    	clonedResponses.add(newRecord);
+               		 	}
+            		}
+            		
+            		if(checkResponses.contains('Wound Detail')){
+            			getEvals.add('Wound Detail');//Make sure to include Pressure Ulcer and Wound Detail Sections.
+            		}
+            		
+            		if(checkResponses.contains('Pressure Ulcer Detail')){
+            			getEvals.add('Pressure Ulcer Detail');
+            		}
+					
 
-						if(fieldName != 'Behavior') {
+				//Start Eval_Value__c Creation
 
-							//Handle All Data Types
-							if ( eval.Field_Type__c == 'Boolean'){
-								if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
-									if ( (Boolean)existingEval.get(fieldName) == true)
-										value.Boolean__c = true;
-									else
-										value.Boolean__c = false;
-								}
-								else if (eval.Field_Sub_Type__c == 'Dropdown')
-									value.Text_Under_250__c = (String)existingEval.get(fieldName);
+					List<Eval__c> evalList = [SELECT Id, Category__c,Field_Name__c, category_sequence__c, sub_category__c, API_Name_Flag__c, sub_category_sequence__c, Field_Type__c, Field_Sub_Type__c, length__c FROM Eval__c WHERE API_Name_Flag__c IN: getEvals AND Eval_Type__r.Name = 'Residential'];
+					//Logic to generate Unique Section Id based on the Combination of Category and SubCategory
+					set<string> cats = new set<string>();
+					set<string> subCats = new set<string>();
+					set<string> catSubcat = new set<string>();
+					Map<string, string> uniqueTimeMap = new Map<string, string>();
+					
+					
+					for(Eval__c ee: evalList){
+						cats.add(ee.category__c);
+						subCats.add(ee.Sub_Category__c);
+						catSubcat.add(ee.Category__c+'~'+ee.sub_category__c);
+					}
+
+					integer i = 1;
+					for(String s: catSubcat){
+						uniqueTimeMap.put(s,Userinfo.getUserId()+'-'+DateTime.now().addSeconds(i).getTime());
+						i++;
+					}
+					
+					system.debug('Cat sub cat++++++'+catSubcat);
+
+					//Create Corresponding Eval Value Records
+					List<Eval_Value__c> values = new List<Eval_value__c>();
+					Eval_Value__c value;
+					
+					for(Eval__c eval: evalList) {
+						
+						string catSubcatCheck = eval.Category__c+'~'+eval.Sub_Category__c;
+						string fieldName = eval.API_Name_Flag__c;
+						
+						if(eval.Sub_Category__c != 'Pressure Ulcer Detail' && eval.Sub_Category__c != 'Wound Detail' && fieldName != 'Behavior' && fieldName != 'RespondsTo'){
+							value = new Eval_Value__c();
+							value.Eval__c = eval.Id;
+							value.Eval_Section_Type__c = 'Residential';
+							value.what_id__c = resAsmt.Id;
+							value.what_id_object__c = 'Evaluation__c';
+							
+							if(uniqueTimeMap.keySet().contains(catSubCatCheck)){
+								value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
 							}
-
+								
+							if ( eval.Field_Type__c == 'Boolean'){
+								
+									if (eval.Field_Sub_Type__c == 'Checkbox' || eval.Field_Sub_Type__c == 'Radio') {
+										if ( (Boolean)existingEval.get(fieldName) == true)
+											value.Boolean__c = true;
+										else
+											value.Boolean__c = false;
+									}
+									else if (eval.Field_Sub_Type__c == 'Dropdown'){
+										value.Text_Under_250__c = existingEval.get(fieldName)== true ? '1':'0';
+									}
+							}
+		
 							else if (eval.Field_Type__c == 'Int'){
 								value.Number_No_Decimal__c = (Integer)existingEval.get(fieldName);
 							}
@@ -1571,29 +1555,82 @@ public void loadProgramList() {
 							else if (eval.Field_Type__c == 'Datetime' ){
 								value.Date_Time__c = (Datetime)existingEval.get(fieldName);
 							}
-							else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' ||
-									eval.Field_Type__c == 'Multiselect' || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
+							
+							else if (eval.Field_Type__c == 'String' || eval.Field_Type__c == 'ID' || eval.Field_Type__c == 'Multiselect'
+									 || eval.Field_Type__c == 'Dropdown' || eval.Field_Type__c == 'Double' ||
 									eval.Field_Type__c == 'Currency'){
+										
 								if ( eval.length__c > 250 )
 									value.Text_Over_250__c = String.ValueOf(existingEval.get(fieldName));
+								
 								else
 									value.Text_Under_250__c = String.valueOf(existingEval.get(fieldName));
+								
 							}
-
+							
+							if(eval.Field_Name__C == 'Behavior'){
+								value.Text_Under_250__c = behaviorString;
+							}
+							
+							if(eval.Field_name__c == 'Responds To'){
+								value.Text_Under_250__c = respondstoString;
+								
+							}
+								
+							values.add(value);
 						}
-
-						if(string.isNotBlank(behaviorString) && eval.Field_Name__c == 'Behavior' ){
-
+						if(fieldName == 'Behavior' && string.isNotBlank(behaviorString) && behaviorString != ''){
+							value = new Eval_Value__c();
+							value.Eval__c = eval.Id;
+							value.Eval_Section_Type__c = 'Residential';
+							value.what_id__c = resAsmt.Id;
+							value.what_id_object__c = 'Evaluation__c';
+							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
 							value.Text_Under_250__c = behaviorString;
+							values.add(value);
 						}
-
-						values.add(value);
-
+						if(fieldName == 'RespondsTo' && string.isNotBlank(respondstoString) && respondstoString != ''){
+							value = new Eval_Value__c();
+							value.Eval__c = eval.Id;
+							value.Eval_Section_Type__c = 'Residential';
+							value.what_id__c = resAsmt.Id;
+							value.what_id_object__c = 'Evaluation__c';
+							value.eval_Section_Id__c = uniqueTimeMap.get(catSubCatCheck);
+							value.Text_Under_250__c = respondstoString;
+							values.add(value);
+						}
+							
+						
 					}
-
+					
+            		List<Eval__c> isValidEvals = [SELECT Id, Field_Name__c, Category__c, Sub_Category__c FROM  Eval__c WHERE Field_name__c = 'IsValid' AND Category__c IN: cats AND Sub_Category__c IN: subCats AND Eval_Type__r.Name = 'Residential'];
+					system.debug('The size of isValids +++++' +isValidEvals.size()+isValidEvals);
+					for(Eval__c val: isValidEvals){
+						
+						String keyCheck = val.Category__c+'~'+val.Sub_category__c;
+						if(uniqueTimeMap.keySet().contains(keyCheck)){ 
+							system.debug('I am in here for++++'+val.Sub_Category__c+val.Id);
+							Eval_Value__c isVal = new Eval_value__c();
+							isVal.Eval__c = val.Id;
+							isVal.Eval_Section_Type__c = 'Residential';
+							isVal.what_id__c = resAsmt.Id;
+							isVal.what_id_object__c = 'Evaluation__c'; 
+							isVal.eval_Section_Id__c = uniqueTimeMap.get(keyCheck);
+							isval.Boolean__c = false;
+							
+							values.add(isVal);
+						}
+					}
+				
 					try{
-
-						insert values;
+					
+						if(clonedResponses.size() > 0){
+							insert clonedResponses;
+						}
+						if(values.size() > 0 ){
+							insert values;
+						}
+						
 					}
 					catch (DMLException e){
 
@@ -1708,6 +1745,23 @@ public void loadProgramList() {
         return ref;
     }
 
+  public boolean canCreateFundingSource { get {
+  		Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
+		return oSchema.isCreateable();
+  	
+  } }
+  
+  public boolean canEditFundingSource { get {
+  		Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
+		return oSchema.isUpdateable();
+  	
+  } }
+  public boolean canViewFundingSource { get {
+  		Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
+		return oSchema.isAccessible();
+  	
+  } }
+  
   public void showAddFundingSource() {
     fundingSource = new Funding_Source__c();
     fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');

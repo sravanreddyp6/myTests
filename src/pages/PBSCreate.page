@@ -183,7 +183,7 @@ function stopRKey(evt) {
                              >
 
     <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Contact}" var="f">
-        <apex:inputField value="{!Account[f.fieldPath]}"    rendered="{! AND(NOT(f = 'PersonMailingStreet'), NOT(f = 'Mailing County'), NOT(f = 'Home Phone'), NOT(f = 'PersonOtherStreet') )}"  required="{!OR(f.required, f.dbrequired)}"  />
+        <apex:inputField value="{!Account[f.fieldPath]}"    rendered="{! AND(NOT(f = 'PersonMailingStreet'), NOT(f = 'Mailing County'), NOT(f = 'Home Phone'), NOT(f = 'PersonOtherStreet'), NOT(f = 'PersonOtherStateCode') ,NOT (f = 'PersonMailingStateCode'), NOT (f = 'PersonMailingCountryCode'), NOT(f = 'PersonOtherCountryCode') )}"  required="{!OR(f.required, f.dbrequired)}"  />
         
         <apex:pageBlockSectionItem rendered="{! (f = 'PersonMailingStreet')}" >
     <apex:outputLabel value="Mailing Street 1" for="Ma" />
@@ -208,7 +208,25 @@ function stopRKey(evt) {
         <apex:inputtext id="os1"  value="{!personbeingserved.PersonOtherStreet}" label="Other Street 1"  />
     </apex:pageBlockSectionItem>
         
-        
+           
+       <apex:pageBlockSectionItem rendered="{! (f = 'PersonOtherStateCode')}" >
+    <apex:outputLabel value="Other State/Province" for="os" />
+      <apex:inputField value="{!personbeingserved.PersonOtherStateCode}" label="Other State/Province" />
+    </apex:pageBlockSectionItem>
+    
+      <apex:pageBlockSectionItem rendered="{! (f = 'PersonMailingStateCode')}" >
+    <apex:outputLabel value="Mailing State/Province" for="os" />
+      <apex:inputField value="{!personbeingserved.PersonMailingStateCode}" label="Mailing State/Province" />
+    </apex:pageBlockSectionItem>
+     <apex:pageBlockSectionItem rendered="{! (f = 'PersonMailingCountryCode')}" >
+    <apex:outputLabel value="Mailing Country" for="os" />
+      <apex:inputField value="{!personbeingserved.PersonMailingCountryCode}" label="Mailing Country" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{! (f = 'PersonOtherCountryCode')}" >
+    <apex:outputLabel value="Other Country" for="os" />
+      <apex:inputField value="{!personbeingserved.PersonOtherCountryCode}" label="Other Country" />
+    </apex:pageBlockSectionItem>
+     
     </apex:repeat>
     </apex:pageBlockSection>
 

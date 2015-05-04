@@ -384,6 +384,7 @@
                             <apex:column value="{!relatedParty.Phone_1_Type__c}"/>
                             <apex:column value="{!relatedParty.Phone_2__c}"/>
                             <apex:column value="{!relatedParty.Phone_2_Type__c}"/>
+                            <apex:column value="{!relatedParty.Status__c}"/>
                             <apex:column value="{!relatedParty.Comments__c}"/>
                         </apex:pageBlockTable>
                     </apex:pageBlockSection>
@@ -1098,6 +1099,29 @@
             </apex:pageBlockButtons>
         </apex:pageBlock>
         <apex:outputPanel id="relatedPartyDialog" style="display:none">
+<script>
+        function validateRelatedParty() {
+            var errors = '';
+            jQuery('#relatedPartyErrors').html(errors);
+            if (jQuery('input[id$=relatedPartyEntry_Name]').val() == '') {
+                errors += '<li>Party Name is a required field.</li>';
+            }
+            if (jQuery('select[id$=relatedPartyEntry_Status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }              
+            var partyType = jQuery('select[id$=relatedPartyEntry_Type]').val();
+            if (partyType == '') {
+                errors += '<li>Type is a required field.</li>';
+            }
+            jQuery('#relatedPartyErrors').html(errors);
+            return (errors == '');
+		}
+		function saveRelPartyJS(SveNew) {
+			if(validateRelatedParty() ){
+				saveRelatedParty(SveNew);
+			}
+		} 
+</script>        
             <apex:pageBlock title="Add/Edit Related Party" id="relatedPartyDialogMainBlock">
                 <apex:pageblockButtons location="bottom">
                    <apex:actionFunction name="saveRelatedParty" action="{!saveRelatedParty}" rerender="relatedPartyTable,relatedPartyDialogMainBlock,relatedPartyDialogErrors" status="saveRelatedPartyStatus" oncomplete="afterSave('{!$Component.relatedPartyDialog}', request.options.parameters.keepDialogOpen, showAddRelatedParty);">
@@ -1106,10 +1130,10 @@
                     <apex:actionStatus id="saveRelatedPartyStatus">
                         <apex:facet name="stop">
                             <apex:outputPanel id="relPartyButtons">
-                                <apex:commandButton value="Save" onClick="saveRelatedParty(false); return false;" />
-                                <apex:commandButton value="Save & New" onClick="saveRelatedParty(true); return false;" />
-                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); return false;" />
-                            </apex:outputPanel>
+                                <apex:commandButton value="Save" onClick="saveRelPartyJS(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="saveRelPartyJS(true); return false;" />
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.relatedPartyDialog}'); jQuery('#relatedPartyErrors').html(''); return false;" />
+                            </apex:outputPanel> 
                         </apex:facet>
                         <apex:facet name="start">
                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1117,9 +1141,10 @@
                     </apex:actionStatus>
                 </apex:pageblockButtons>
                 <apex:pageMessages id="relatedPartyDialogErrors" />
+                <div id='relatedPartyErrors' style='color:red'></div>
                 <apex:pageBlockSection columns="2">
-                    <apex:inputField value="{!currentRelatedParty.Name}" />
-                    <apex:inputField value="{!currentRelatedParty.Type__c}" />
+                    <apex:inputField value="{!currentRelatedParty.Name}" id="relatedPartyEntry_Name"/>
+                    <apex:inputField value="{!currentRelatedParty.Type__c}" id="relatedPartyEntry_Type"/>
                     <apex:inputField value="{!currentRelatedParty.Address__c}" />
                     <apex:inputField value="{!currentRelatedParty.Email__c}" />
                     <apex:inputField value="{!currentRelatedParty.Phone__c}" />
@@ -1127,8 +1152,9 @@
                     <apex:inputField value="{!currentRelatedParty.Phone_2__c}" />
                     <apex:inputField value="{!currentRelatedParty.Phone_2_Type__c}" />
                 </apex:pageBlockSection>
-                <apex:pageBlockSection columns="1">
+                <apex:pageBlockSection columns="1">                	
                     <apex:inputField value="{!currentRelatedParty.Comments__c}" style="width: 90%;" />
+                    <apex:inputField value="{!currentRelatedParty.Status__c}"  id="relatedPartyEntry_Status"/>
                 </apex:pageBlockSection>
             </apex:pageBlock>
         </apex:outputPanel>

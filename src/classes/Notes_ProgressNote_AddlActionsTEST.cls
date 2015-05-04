@@ -8,7 +8,7 @@ private class Notes_ProgressNote_AddlActionsTEST {
         User u = new User(Alias = 'testxxx1', Email='standarduser@testorg.com111', 
                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US', 
                     LocaleSidKey='en_US', ProfileId = p.Id, 
-                    TimeZoneSidKey='America/Los_Angeles', UserName='standarduser@testorg.com222');
+                    TimeZoneSidKey='America/Los_Angeles', UserName='integration@testorg.com222');
         insert u;           
         
         // update permissions

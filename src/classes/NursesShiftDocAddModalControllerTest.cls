@@ -8,6 +8,7 @@ public with sharing class NursesShiftDocAddModalControllerTest {
 		CreateObjects();
 		NursesShiftDocAddModalController controller = new NursesShiftDocAddModalController();
 		controller.serviceAssignmentId = serviceAssignment.Id;
+		controller.evalType = 'CMShiftAssessment';
 		controller.showAddShiftDoc();
 		DateTime startTime = System.now();
 		DateTime endTime = System.now().addMinutes(30);
@@ -17,7 +18,7 @@ public with sharing class NursesShiftDocAddModalControllerTest {
 		List<Evaluation__c> shiftAsmts = [SELECT Id, NAME FROM Evaluation__c WHERE ServiceAssignment__c =:serviceAssignment.Id AND RecordType.Name = 'CMShiftAssessment'];
 		System.assertEquals(1, shiftAsmts.size());
 		System.assertEquals(true,
-			NursesShiftDocAddModalController.findDupeEval(startTime.format(), endTime.format(), serviceAssignment.Id)
+			NursesShiftDocAddModalController.findDupeEval(startTime.format(), endTime.format(), serviceAssignment.Id, 'CMShiftAssessment')
 		);
 	}
 	private static void CreateObjects(){

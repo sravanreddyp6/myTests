@@ -40,8 +40,9 @@ public with sharing class HomePageController{
 	// (excluding Create New Shift Doc) for the latest shift doc of that service
 	// asignment (providing that the shift doc is active)
 	public Map<Id, List<SelectOption>> serviceAssignmentToSelectOptionMap { get; set; }
-	// List of repeatable section/subsection/subsubsection for CM Shift Doc
-	public Set<String> cmShiftDocRepeatable;
+	// List of repeatable section/subsection/subsubsection for CM Shift Doc && CNA Workbook
+	public List<String> cmShiftDocRepeatable;
+	public List<String> cnaWorkbookRepeatable;
 
 	// Whether to show people with inactive service assignments
 	public Boolean pbsOnlyShowActiveServiceAssignment { get; set; }
@@ -50,8 +51,23 @@ public with sharing class HomePageController{
 	public Id searchResultPBS { get; set; }
 	public Id highlightedServiceAssignmentId { get; set; }
 
+	public Boolean canSeeCNAWorkbook { get; set; }
+	public Boolean canSeeShiftDoc { get; set; }
+	//PBS object
+	public Boolean canSeePBS { get; private set; }
+
+	public Map<Id, Evaluation__c> shiftDocMap { get; set; }
+	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
+	public Map<Id, Boolean> hasShiftDocMap { get; set; }
+	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
+
 	//Constructor
 	public HomePageController(){
+
+		//PBS object
+		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
+		canSeePBS = oSchema.isAccessible();
+
 		pbsOnlyShowActiveServiceAssignment = true;
 		searchResultList = new List<HomePageSearchController.SearchResult>();
 		programsList = new list<SelectOption>();
@@ -59,9 +75,10 @@ public with sharing class HomePageController{
 		List<AggregateResult> slPrgms = [
 			SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
 			  FROM service_assignment__c
-			GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c
+			GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c,
+			         service_location__r.programid__c
 			HAVING COUNT(service_location__r.id) > 0
-			ORDER BY service_location__r.program__c
+			ORDER BY service_location__r.programid__c, service_location__r.program__c
 		];
 		for (AggregateResult slPrgm : slPrgms) {
 			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
@@ -79,34 +96,53 @@ public with sharing class HomePageController{
 		}
 		// get list of repeatables
 		List<AggregateResult> evalRepeats = [
-			SELECT category__c, sub_category__c, sub_sub_category__c
+			SELECT category__c, sub_category__c, sub_sub_category__c,
+			       eval_type__r.name type
 			  FROM eval__c
-			 WHERE eval_type__r.name = 'Head To Toe'
+			 WHERE (eval_type__r.name = 'Head To Toe'
+			    OR eval_type__r.name = 'CNA Workbook')
 			   AND eval_type__r.Category__c = 'Care Meridian'
 			   AND eval__c.field_name__c = 'isRepeatable'
 			   AND eval__c.visible__c = false
-			GROUP BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c, category__c, sub_category__c, sub_sub_category__c
+			GROUP BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c,
+			         category__c, sub_category__c, sub_sub_category__c,
+			         eval_type__r.name
 			ORDER BY cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c
 		];
-		cmShiftDocRepeatable = new set<String>();
+		cmShiftDocRepeatable = new List<String>();
+		cnaWorkbookRepeatable = new List<String>();
 		for (AggregateResult ag : evalRepeats){
-			cmShiftDocRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
+			if (ag.get('type') == 'Head To Toe') {
+				cmShiftDocRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
+			} else {
+				cnaWorkbookRepeatable.add((string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c')));
+			}
 		}
-		updateProgramSelection();
 
 		PermissionSetAssignment[] assignments = [
 			SELECT Id, PermissionSet.Label
 			FROM PermissionSetAssignment
 			WHERE AssigneeId = :UserInfo.getUserId()
 		];
-		List<String> permissionSets = new List<String>();
+		Set<String> permissionSets = new Set<String>();
 		for (PermissionSetAssignment assignment: assignments) {
 			permissionSets.add(assignment.PermissionSet.Label);
 		}
-		permissionSetString = String.join(permissionSets, '~');
+		permissionSetString = String.join(new List<String>(permissionSets), '~');
+		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier III')) {
+			canSeeCNAWorkbook = true;
+		} else {
+			canSeeCNAWorkbook = false;
+		}
+		if (permissionSets.contains('iServe - Tier III')) {
+			canSeeShiftDoc = true;
+		} else {
+			canSeeShiftDoc = false;
+		}
 		System.debug('permissionSets: ' + permissionSets);
 		System.debug('permissionSetString: ' + permissionSetString);
 
+		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();
 	}
@@ -116,42 +152,99 @@ public with sharing class HomePageController{
 			'SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
 			'       Admission__r.Id, ' +
 			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
-			'       (SELECT Id, Name, Status__c FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' ORDER BY CreatedDate DESC LIMIT 1) ' +
+			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
 			'WHERE Service_Location__c = :selectedProgram ' +
-			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\'': '') +
+			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\' ': '') +
 			'ORDER BY Person_Being_Served__r.Name';
 		serviceAssignments = Database.query(query);
 		Map<Id, Id> evaluationToServiceAssignmentMap = new Map<Id, Id>();
+		shiftDocMap = new Map<Id, Evaluation__c>();
+		cnaWorkbookMap = new Map<Id, Evaluation__c>();
+		hasShiftDocMap = new Map<Id, Boolean>();
+		hasCnaWorkbookMap = new Map<Id, Boolean>();
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
-			if (serviceAssignment.Evaluations__r.size() > 0 && serviceAssignment.Evaluations__r[0].Status__c == 'Draft') {
-				evaluationToServiceAssignmentMap.put(serviceAssignment.Evaluations__r[0].Id, serviceAssignment.Id);
+			// Get the latest shift doc/CNA Workbook
+			shiftDocMap.put(serviceAssignment.Id, null);
+			cnaWorkbookMap.put(serviceAssignment.Id, null);
+			hasShiftDocMap.put(serviceAssignment.Id, false);
+			hasCnaWorkbookMap.put(serviceAssignment.Id, false);
+			for (Evaluation__c eval: serviceAssignment.Evaluations__r) {
+				if (shiftDocMap.get(serviceAssignment.Id) == null & eval.RecordType.Name == 'CMShiftAssessment' && (eval.Status__c == 'Draft' || eval.Status__c == 'Final')) {
+					shiftDocMap.put(serviceAssignment.Id, eval);
+					evaluationToServiceAssignmentMap.put(eval.Id, serviceAssignment.Id);
+					hasShiftDocMap.put(serviceAssignment.Id, true);
+				}
+				if (cnaWorkbookMap.get(serviceAssignment.Id) == null & eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
+					cnaWorkbookMap.put(serviceAssignment.Id, eval);
+					evaluationToServiceAssignmentMap.put(eval.Id, serviceAssignment.Id);
+					hasCnaWorkbookMap.put(serviceAssignment.Id, true);
+				}
 			}
-			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, new List<SelectOption>());
+
+			SelectOption[] optionList = new SelectOption[]{};
+			if (canSeeShiftDoc) {
+				optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
+				if (hasShiftDocMap.get(serviceAssignment.Id) && shiftDocMap.get(serviceAssignment.Id).OwnerId != UserInfo.getUserId()) {
+					for (String compositeKey: cmShiftDocRepeatable) {
+						String readableCompositeKey = compositeKey.replace('~', '/');
+						if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
+							readableCompositeKey = readableCompositeKey.substringBeforeLast('/');
+						}
+						optionList.add(new SelectOption(
+							'shiftDocAction-' + compositeKey,
+							'Add Activity Log Entry for ' + readableCompositeKey
+						));
+					}
+				}
+				optionList.add(new SelectOption('', '-------------'));
+			}
+			if (canSeeCNAWorkbook) {
+				optionList.add(new SelectOption('createCNAWorkbook', 'Create New CNA Workbook'));
+				if (hasCNAWorkbookMap.get(serviceAssignment.Id) && cnaWorkbookMap.get(serviceAssignment.Id).OwnerId == UserInfo.getUserId()) {
+					for (String compositeKey: cnaWorkbookRepeatable) {
+						String readableCompositeKey = compositeKey.replace('~', '/');
+						if (readableCompositeKey.endsWith('/')) {  // if a category has no sub sub category
+							readableCompositeKey = readableCompositeKey.substringBeforeLast('/');
+						}
+						optionList.add(new SelectOption(
+							'cnaWorkbookAction-' + compositeKey,
+							'Add Activity Log Entry for ' + readableCompositeKey
+						));
+					}
+				}
+			}
+			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
 		List<AggregateResult> responses = [
 			SELECT What_Id__c, Eval__r.Category__c cat, Eval__r.Sub_Category__c subCat,
-			       Eval__r.Sub_Sub_Category__c subSubCat
+			       Eval__r.Sub_Sub_Category__c subSubCat, Eval__r.Eval_Type__r.Name type
 			  FROM Eval_Value__c
 			 WHERE What_Id__c IN :evaluationToServiceAssignmentMap.keySet()
 			   AND Eval_Section_Type__c != 'Activity Log'
 			GROUP BY Eval__r.cat_seq_text__c, Eval__r.subcat_seq_text__c,
 			         Eval__r.subsubcat_seq_text__c, Eval__r.category__c,
 			         Eval__r.sub_category__c, Eval__r.Sub_Sub_Category__c,
-			         What_Id__c
-			ORDER BY Eval__r.cat_seq_text__c, Eval__r.subcat_seq_text__c,
-			         Eval__r.subsubcat_seq_text__c
+			         What_Id__c, Eval__r.Eval_Type__r.Name
+			ORDER BY Eval__r.Eval_Type__r.Name DESC, Eval__r.cat_seq_text__c,
+			         Eval__r.subcat_seq_text__c, Eval__r.subsubcat_seq_text__c
 		];
+		Boolean shiftDocHeaderAdded = false;
 		for (AggregateResult response: responses) {
 			String compositeKey = response.get('cat') + '~' + response.get('subCat') + '~' + (String.isBlank((string) response.get('subSubCat')) ? '' : (string) response.get('subSubCat'));
-			if (!cmShiftDocRepeatable.contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
+			if (response.get('type') == 'Head To Toe' && !new Set<String>(cmShiftDocRepeatable).contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
 				continue;
 			}
-			serviceAssignmentToSelectOptionMap.get(evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c'))).add(
-				new SelectOption('shiftDocAction-' + compositeKey,
-					'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
-				)
-			);
+			Id serviceAssignmentId = evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c'));
+			Boolean isShiftDocOwner = hasShiftDocMap.get(serviceAssignmentId) && shiftDocMap.get(serviceAssignmentId).OwnerId == UserInfo.getUserId();
+			SelectOption[] optionList = serviceAssignmentToSelectOptionMap.get(serviceAssignmentId);
+			if (response.get('type') == 'Head To Toe' && canSeeShiftDoc && isShiftDocOwner) {
+				optionList.add(optionList.size() - 2,  // Add before the cna workbook stuff
+					new SelectOption('shiftDocAction-' + compositeKey,
+						'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
+					)
+				);
+			}
 		}
 		highlightedServiceAssignmentId = null;
 		ApexPages.currentPage().setCookies(new Cookie[]{ new Cookie('homePageInitialProgram', selectedProgram, null, 30*24*60*60, false) }); //  set the cookie max age to a month

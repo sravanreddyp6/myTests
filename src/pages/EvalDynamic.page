@@ -1,4 +1,9 @@
-<apex:page title="Shift Notes" Controller="EvalDynamicExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+<apex:page title="{!thisEval.Name}" Controller="EvalDynamicExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+	<style> <!-- Move this to the top of the page so the user doesn't see a flash -->
+		#tabContainer {
+			display: none;
+		}
+	</style>
 	<!-- Bootstrap core CSS -->
 	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
 	<!-- Custom styles for this template -->
@@ -9,7 +14,7 @@
 	-->
 
 	<!-- Bootstrap core JavaScript-->
-<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/jquery.min.js')}" /> -->        
+<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/jquery.min.js')}" /> -->
 <!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/bootstrap.min.js')}" /> -->
 <!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/docs.min.js')}" /> -->
 
@@ -29,10 +34,39 @@
 		var evalSectionType = null;
 		var canEdit = null;
 
+
+		jQuery(function ($) {
+        	$('.collapsearrow').on("click", function (e) {
+            if ($(this).hasClass('panel-collapsed')) {
+                // expand the panel
+                $(this).parents('.inset').find('.panelshrink').slideDown();
+                $(this).removeClass('panel-collapsed');
+                $(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+            }
+            else {
+                // collapse the panel
+                $(this).parents('.inset').find('.panelshrink').slideUp();
+                $(this).addClass('panel-collapsed');
+                $(this).find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+            }
+        	});
+    		});
+
 		function clearPanel() {
-   			jQuery("[id$='panel-panel-info']").empty();
+   			jQuery("[id$='panel-panel-info']").empty().removeClass('panel panel-info');
 			isModified = false;
 		}
+
+
+		function showReviewerComments() {
+			openModalDialog('{!$Component.reviewercomments}', 'Approve/Reject', '');
+		}
+		
+		function showReporting() {
+			//set up the attributes
+			// hide the old panel
+			jQuery("#panel-form").empty().append(jQuery("[id$='goalobjreportform']"));
+			}
 
 		function showForm(key) {
 			if (key.indexOf('Head to Toe~Skin/Body~Wound Detail') > -1 || key.indexOf('Head to Toe~Skin/Body~Pressure Ulcer Details') > -1 || key.indexOf('Residential~Skin/Body~Pressure Ulcer Detail') > -1 || key.indexOf('Residential~Skin/Body~Wound Detail') > -1 ) {
@@ -50,7 +84,6 @@
 				setUpFields();
 		        jQuery('#evalSecValMsgs').html(jQuery('#ErrorMsg').val());
 			}
-			isModified = true;
 		}
 
 		function setupButtons(disableFlag) {
@@ -58,26 +91,25 @@
                 jQuery("#btnESign").removeClass('btn-success').addClass('btn-danger');
                 jQuery("#btnESign").removeAttr('onclick');
 				jQuery("#btnEsign").removeAttr('href');
-				
+
 				jQuery("#btnDone").removeClass('btn-success').addClass('btn-danger');
                 jQuery("#btnDone").removeAttr('onclick');
 				jQuery("#btnDone").removeAttr('href');
-			
+
                 }
 			else {
                 jQuery("#btnESign").removeClass('btn-danger').addClass('btn-success');
                 jQuery("#btnESign").attr('onclick','authenticate();');
                 jQuery("#btnESign").attr('href','#');
-                
+
                 jQuery("#btnDone").removeClass('btn-danger').addClass('btn-success');
                 jQuery("#btnDone").attr('onclick','authenticate();');
                 jQuery("#btnDone").attr('href','#');
-                
+
                 }
             jQuery("#btnESign").prop('disabled', disableFlag);
-            
             jQuery("#btnDone").prop('disabled', disableFlag);
-               
+
 		}
 
 		function revise() {
@@ -92,7 +124,7 @@
 
 		function disregard(evalType) {
 
-			if (evalType == 'Residential') {
+			if (evalType == 'Residential' || evalType == 'CNA Workbook') {
 				disregardAssessment();
 			}
 
@@ -104,7 +136,7 @@
 					return null;
 				}
 			}
-			
+
 			if(evalType == 'Restraint Event'){
 				disregardAssessment();
 			}
@@ -115,13 +147,13 @@
 		    jQuery('.sidebar-module.sidebar-module-inset > span > div').each(function() {
 			    var _this = jQuery(this);
 			    var title = _this.find('.panel-title').prop("innerHTML").split(" --")[0].toLowerCase();
-			
+
 			    if (title.indexOf(filter) < 0 && filter != '--none--') {
 			        _this.hide();
 			    } else {
 			        _this.show();
 			    }
-		    });    
+		    });
 		}
 
 		jQuery(document).ready(function($) {
@@ -140,9 +172,9 @@
 		        $('#filter')
 		          .append($("<option></option>")
 		          .attr("value",this)
-		          .text(this)); 
+		          .text(this));
 		    });
-		    $('#filter').chosen().change(filterNavigation);
+		    $('#filter').chosen({search_contains: true}).change(filterNavigation);
 
 			$("[id$='dialog-confirm-navigation']").dialog({
 				resizable: false,
@@ -198,6 +230,7 @@
 	</style>
 
 	<c:PersonalRecord pbsId="{!PBSID}" servAssignId="{!SAID}" parentPage="Evaluation" servAssignNew="false" admId="{!AdmId}" />
+	
 	<div class="container">
 		<div class="blog-header"></div>
 		<div class="row">
@@ -207,18 +240,22 @@
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
                         <p>Head to Toe Status: {!thisEval.Head_to_Toe_Status__c}<br/> Shift Status:{!thisEval.Status__c} {!evalStatusDate} </p>
 					</apex:outputPanel>
-					
+
 					<apex:outputPanel rendered="{!evalType == 'Residential'}">
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
                         <p>Status:{!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
 					</apex:outputPanel>
 					
+					<apex:outputPanel rendered="{!evalType == 'CNA Workbook'}">
+						<h4>CNA: {!thisEval.Owner.Name}</h4>
+						<p>Status: {!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
+					</apex:outputPanel>
+
 					<apex:outputPanel rendered="{!evalType == 'Restraint Event'}">
 						<p>
 						   Restraint Status:{!thisEval.Status__c}<br/>
                            CreatedDate: <apex:outputText value=" {!shiftCreatedDate}" /> <br/>
-                           {!thisEval.Has_Open_Assessment__c}
-                           <apex:variable value="" var="a" rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__C == 'Applied Restraint'}" >
+                           <apex:variable value="" var="a" rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'}" >
 						   		Restrained By: {!thisEval.Owner.Name} <br/>
 						   </apex:variable>
 						   <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
@@ -227,7 +264,7 @@
 						   <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null}" >
 						   		End Date/Time :{!shiftEndTime}
 						   </apex:variable>
-						</p>				
+						</p>
 					</apex:outputPanel>
 
 					<apex:outputPanel >
@@ -249,9 +286,26 @@
 					<apex:outputPanel rendered="{!showDisregard}">
 						<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="disregard('{!evalType}'); return false;">Disregard {!evalType}</a>
 					</apex:outputPanel>
+					<apex:outputPanel rendered="{!showApprove}">
+						<a id="btnApprove" class="btn-success btn-sm pull-left" href="#" role="button" onClick="showReviewerComments(); return false;">Approve/Reject</a>
+					</apex:outputPanel>
 				</div>
-                <label for="filter" >Section :&nbsp;</label><select id="filter" size="1" class="chosenSelect" value=""><option value="--None--">--None--</option></select>
-				<div class="sidebar-module sidebar-module-inset">
+
+               <label for="filter" >Section :&nbsp;</label><select id="filter" size="1" class="chosenSelect" value=""><option value="--None--">--All--</option></select>
+
+				<apex:outputPanel rendered="{!evalType == 'Head to Toe' || evalType == 'CNA Workbook'}">
+				<div class="sidebar-module-inset sidebar-module-sm-no-scroll" style="height:auto;text-align:left" >
+				<div id="objreportingpanel" class="inset">
+				<h4>Plan Reporting</h4>
+				<span class="pull-right collapsearrow"><i class="glyphicon glyphicon-chevron-up"></i></span>
+					<apex:outputPanel id="goalObjRepeaters" layout="block" styleclass="panelshrink">
+						<c:GoalObjRepeaters parentID="{!SAID}"  opGrp="{!$CurrentPage.parameters.opGrp}" start="{!thisEval.Shift_Start_Time__c}" end="{!thisEval.Shift_End_Time__c}" />
+					</apex:outputPanel>
+					</div>
+				</div>
+
+				</apex:outputPanel>
+ 				<div class="sidebar-module sidebar-module-inset">
 					<apex:outputPanel id="evalRepeaters" layout="none">
 						<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
 					</apex:outputPanel>
@@ -264,13 +318,13 @@
 				<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
 					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 						<div class="panel-heading clearfix">
-							<h3 class="panel-title pull-left">{!$CurrentPage.parameters.Category}/{!$CurrentPage.parameters.SubCategory} -- {!$CurrentPage.parameters.evaltype}</h3>
-							<div class="pull-right"><a class="btn" onclick="clearPanel();">X</a></div>
+							<h3 class="panel-title pull-left">{!$CurrentPage.parameters.Category}/{!$CurrentPage.parameters.SubCategory} -- {! evaltype}</h3>
 						</div>
 						<div id="panel-form" class="panel-body">
 
 						</div>
 					</apex:outputPanel>
+
 				</apex:outputPanel>
 				<!-- /.blog-post -->
 			</div>
@@ -290,10 +344,19 @@
 			<apex:param name="canEdit" value="" />
 		</apex:actionFunction>
         <apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();"/>
-		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
+		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (evalType=='CNA Workbook','completeShift();', 'location.reload(true);')} return false;" />
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
+		<apex:actionregion >
+		<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
+			<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
+			<apex:param name="Category" value="" AssignTo="{!cat}" />
+			<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
+			<apex:param name="currobjID" value="" />
+			<apex:param name="currobjType" value="" />
+ 		</apex:actionfunction>
+ 		</apex:actionregion>
 	</apex:form>
 
 	<c:EvalSection id="outputsection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}" subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}" evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" rendered="{!showMainComponent}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters(); " />
@@ -302,19 +365,19 @@
 		<apex:form id="assessmentForm">
 			<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain" rendered="{!key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential'}" AssessmentName="Fall Risk Assessment" lowerScore="1" medianScore="30" higherScore="31" />
 			<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential~Skin/Body~Skin Assessment~Residential'}" AssessmentName="Skin Assessment" lowerScore="1" medianScore="14" higherScore="14" />
-<!-- 			<c:fallAssessmentComponent Domain="Restraint Reduction" rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event'}" AssessmentName = "Restraint Reduction" /> -->
-			<input class="btn" type="button" style="align:center;" value="Close" onclick="clearPanel();" />
 		</apex:form>
 	</apex:outputPanel>
-	 
+
 	<apex:outputPanel style="display: none" id="restraintReduction" >
 		<apex:form id="restraintForm" >
 			<c:restraintReductionComponent rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event' || key=='Restraint Event~Reduction Review~Reduction Review~Activity Log'}" AssessmentId="{!currentAssessId}"/>
-			<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel();" />
-			
 		</apex:form>
 	</apex:outputPanel>
- 
+
+ 	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
+			<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}" enddate="{!thisEval.Shift_End_Time__c}"/>
+	</apex:outputPanel>
+
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
 		<apex:form id="evalResponsesForm">
 			<apex:pageBlock >
@@ -323,12 +386,22 @@
         <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Head to Toe' || key=='Residential~Skin/Body~Pressure Ulcer Detail~Residential'}"/>
         <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubitiLog" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Activity Log'}"/>
 				<apex:pageBlockButtons location="bottom">
-					<input class="btn" type="button" value="Close" onclick="clearPanel();" />
+					<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel();" />
 				</apex:pageBlockButtons>
 			</apex:pageBlock>
 		</apex:form>
 	</apex:outputPanel>
-
+	
+	<apex:pageBlock rendered="{! evalType == 'CNA Workbook'}">
+	<Apex:pageblocksection columns="1" title="Approval History" >
+	<apex:datatable style="width: 100%;"  value="{!approvalHistory}" var="a">
+	<apex:column value="{!a.actorid}" headervalue="By"/>
+	<apex:column value="{!a.stepstatus}" headervalue="Status"/>
+	<apex:column value="{!a.comments}" headervalue="Comments"/>
+	<apex:column value="{!a.createddate}" headervalue="Date" />
+	</apex:datatable>
+	</Apex:pageblocksection>
+	</apex:pageBlock>
 
 	<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block">
 		<apex:outputPanel layout="inline">
@@ -338,6 +411,26 @@
 		</apex:outputPanel>
 	</apex:outputPanel>
 
+	<apex:outputPanel id="reviewercomments" title="Reviewer Comments" layout="block" style="display:none">
+		<apex:form id="reviewForm">
+		<apex:pageblock >
+		<apex:pageblocksection columns="1" >
+		<apex:outputlabel for="comments" value="Reviewer Comments" />
+		<apex:inputtextarea id="commenttext" value="{!revcomments}" rows="10" cols="80" />
+		</apex:pageblocksection>
+		<div align="right">
+				<apex:commandLink styleClass="btn" value="Approve" action="{!ApproveReject}" status="myStatus">
+					<apex:param name="theaction" assignTo="{!approvalaction}" value="Approve"/>
+				</apex:commandLink>
+				<apex:commandLink styleClass="btn" value="Reject"  action="{!ApproveReject}" status="myStatus">
+					<apex:param name="theaction" assignTo="{!approvalaction}" value="Reject"/>
+				</apex:commandLink>
+				<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.reviewercomments}'); return false;" />
+		</div>
+		</apex:pageblock>
+		</apex:form>
+	</apex:outputPanel>
+	
 
 	<apex:actionStatus id="myStatus">
 		<apex:facet name="start">
@@ -371,10 +464,4 @@
 		</apex:facet>
 		<apex:facet name="stop"> </apex:facet>
 	</apex:actionStatus>
-
-	<style>
-		#tabContainer {
-			display: none;
-		}
-	</style>
 </apex:page>

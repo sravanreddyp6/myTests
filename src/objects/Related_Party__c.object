@@ -124,6 +124,26 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>IDofPBR_FromPBS__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Person_Being_Referred__r.Id</formula>
+        <label>IDofPBR_FromPBS</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>IDofPBS_FromPBR__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Referred__r.Person_Being_Served__r.Id</formula>
+        <label>IDofPBS_FromPBR</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Paper_Id__c</fullName>
         <caseSensitive>true</caseSensitive>
         <description>This is used to determine the record to upsert in the paper form.</description>
@@ -354,19 +374,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Guardian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Family/Friends</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Funder Resources</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Medical</fullName>
+                <fullName>Case Worker</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -374,15 +382,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Referring Provider</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Case Worker</fullName>
+                <fullName>Family/Friends</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -390,15 +390,19 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Funder Resources</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Guardian</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Insurance</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Physician - Primary</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Physician - Alternate</fullName>
+                <fullName>Medical</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -407,6 +411,30 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Mentor Co-Applicant</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Parent</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Physician - Alternate</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Physician - Primary</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Referring Provider</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Spouse</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -538,6 +566,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Employment</fullName>
                 <default>false</default>
             </values>
@@ -546,11 +578,19 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Financial Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Funder Resources</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Guardian</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -567,6 +607,26 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Physician - Alternate</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Physician - Primary</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referring Provider</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Spouse</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -680,11 +740,23 @@
         <picklistValues>
             <picklist>Type__c</picklist>
             <values>
+                <fullName>Caregiver</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Employment</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Family%2FFriends</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Financial Worker</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -696,11 +768,27 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Insurance</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Medical</fullName>
                 <default>false</default>
             </values>
             <values>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor Co-Applicant</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -713,6 +801,10 @@
             </values>
             <values>
                 <fullName>Referring Provider</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Spouse</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -830,11 +922,19 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Employment</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Family%2FFriends</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Financial Worker</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -846,11 +946,27 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Insurance</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Medical</fullName>
                 <default>false</default>
             </values>
             <values>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor Co-Applicant</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -863,6 +979,10 @@
             </values>
             <values>
                 <fullName>Referring Provider</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Spouse</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

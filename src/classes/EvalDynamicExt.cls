@@ -17,11 +17,14 @@ public with sharing class EvalDynamicExt {
 	public string key {get; set;}
 	
 	
+	
 	public Boolean showDisregard {get; set;}
 	public Boolean showRevise {get; set;}
 	public Boolean showEsign{get; set;}
 	public Boolean showshiftDone{get; set;}
+	public Boolean showApprove {get; set;}
 	public Boolean isUserOwner {get; set; }
+	public Boolean isApprover { get; set; }
 	
 	public String getEvalStatusDate(){
 		if (evalType == 'Head to Toe')
@@ -49,7 +52,7 @@ public with sharing class EvalDynamicExt {
 		cat = ApexPages.currentPage().getParameters().get('Category');
 		subCat = ApexPages.currentPage().getParameters().get('SubCategory');
 		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
-		
+		approvalHIstory = new List<ProcessInstanceHistory>();
 		
 		showMainComponent = true;
 		showDisregard = false;
@@ -57,6 +60,7 @@ public with sharing class EvalDynamicExt {
 		showEsign = false;
 		showshiftDone = false;
 		isUserOwner = false;
+		isApprover = false;
 		
 		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c from Evaluation__c where ID = :evalID LIMIT 1];
 		
@@ -67,6 +71,9 @@ public with sharing class EvalDynamicExt {
 			accId = thisEval.serviceassignment__r.admission__r.person_being_served__r.AccountId;
 			if ( UserInfo.getUserId() == thisEval.OwnerID )	
 				isUserOwner = true;
+			
+			if ( UserInfo.getUserId() == getApprovalUserID( thisEval.Id))
+				isApprover = true;
 				
 			controlButtons();
 		}
@@ -78,9 +85,19 @@ public with sharing class EvalDynamicExt {
 		key = displayKey;
 		
 		system.debug('sectionIdonclickofplus+++++++'+evalSecId);
-		if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key.contains('Head to Toe~Skin/Body~Wound Detail') || key.contains('Head to Toe~Skin/Body~Pressure Ulcer Details') || key.contains('Residential~Skin/Body~Pressure Ulcer Detail') || key.contains('Residential~Skin/Body~Wound Detail')
-			|| key == 'Residential~Skin/Body~Skin Assessment~Residential'){
+		if(key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key.contains('Head to Toe~Skin/Body~Wound Detail') || key.contains('Head to Toe~Skin/Body~Pressure Ulcer Detail') || key == 'Residential~Skin/Body~Skin Assessment~Residential'){
+			
 			createEvalValueRecord(key);
+			showMainComponent = false;
+		}
+		else if(key.contains('Residential~Skin/Body~Pressure Ulcer Detail') || key.contains('Residential~Skin/Body~Wound Detail')){
+			
+			if(evalSecId == null || evalSecId == ''){
+				createEvalValueRecord(key);
+			}
+			else{
+				updateEvalValueRecord(key);
+			}
 			showMainComponent = false;
 		}
 		else if(key.contains('Restraint Event~Reduction Review~Reduction Review')){
@@ -177,6 +194,17 @@ public with sharing class EvalDynamicExt {
 		insert vals;
 	}
 	
+	private void updateEvalValueRecord(string key){
+		List<Eval_value__c> isValid = [SELECT Id, Boolean__c FROM Eval_Value__c WHERE what_id__c = :evalId AND Eval__r.category__c = :cat AND Eval__r.sub_category__c = :subcat AND Eval__r.Field_Name__c = 'IsValid' AND Eval_Section_Id__c = :evalSecId LIMIT 1];
+		if(isValid.size() > 0 && isValid[0].Boolean__c == false){
+			isValid[0].Boolean__c = true;
+			update isValid[0];
+		}
+		else{
+			return;
+		}
+	}
+	
 	 public static boolean validateAssessmentError(Id evalId, string DomainName){
         Boolean error = false;
         List<Assessment_Response__c> currentResponses = [SELECT Id, Rating__c FROM Assessment_Response__c WHERE Assessment__r.Evaluation__c = :evalId AND Question__r.Question_Domain__r.Name = :DomainName];
@@ -219,7 +247,7 @@ public with sharing class EvalDynamicExt {
 		
 		Savepoint sp2 = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
 		
-		if(evalType == 'Residential'){
+		if(evalType == 'Residential' || evalType == 'CNA Workbook'){
 			thisEval.Status__c = 'Disregard';
 			try{
 				update thisEval;
@@ -286,6 +314,9 @@ public with sharing class EvalDynamicExt {
 	
 	public pageReference completeShift() {
 		
+		if ( evalType == 'CNA Workbook') 
+			return FinalizeCNA();
+			
 		//Commented by Sravan - 04/13/2015 as the whole logic is handled in CMShiftAssessmentEsign.cls -- CLciking the Complete button invokes Authentication Component but not this method.
 		
 		/*savepoint completeShiftSavepoint = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
@@ -394,9 +425,9 @@ public with sharing class EvalDynamicExt {
          	for(Evaluation_Response__c erp : evalResponses){
                 Evaluation_Response__c newRecord = erp.clone(false);
                 newRecord.Evaluation__c = clonedEval.Id;
-            if (newRecord.RecordType.Name == 'Allergy') {
+           /* if (newRecord.RecordType.Name == 'Allergy') {
                 newRecord.Person_Being_Served__c = currentEval.serviceassignment__r.admission__r.person_being_served__c;
-            	}
+            	}*/
             	responsestobeCreated.add(newRecord);
         	}
 
@@ -409,14 +440,33 @@ public with sharing class EvalDynamicExt {
 	//Start - Control the visibility of buttons
 	public void controlButtons() {
 		
+		showApprove = false;
+		showEsign = false;
+			
+		// do this first because the approval buttons happen regardless of record ownership
+		if (evalType == 'CNA Workbook') {
+			showRevise = false;
+			showShiftDone = false;
+			
+			if ( thiseval.status__c == 'Draft' && isUserOwner) {
+				showEsign = true;
+				showDisregard = true;
+			}
+			
+			if ( thiseval.status__c == 'Pending Approval' && isApprover) {
+				showApprove = true;
+			}
+		}
+			
 		if (!isUserOwner ) {
 			showEsign=false;
 			showRevise = false;
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
 			showDisregard = false;
-			
+
 			return;
 		}
+		
 			
 		if(evalType == 'Residential'){
 			showshiftDone = false;
@@ -507,31 +557,10 @@ public with sharing class EvalDynamicExt {
 				showshiftDone = true;
 			}
 		}
+		
 			
 	}
 	//End - Control the Visibility of Buttons
-	
-	Public static string determineEvalStatus(id evalId){
-		string status='';
-		Evaluation__c currentEval = [SELECT Id,Recordtype.Name, ServiceAssignment__c FROM Evaluation__c WHERE Id=: evalId LIMIT 1];
-		
-			List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r Where Status__c != 'Disregard' order by createdDate asc) FROM Service_Assignment__c WHERE Id=: currentEval.ServiceAssignment__c LIMIT 1];
-			
-			if(currentEval.RecordType.Name == 'CMShiftAssessment' ){
-				status = 'Final';
-			}
-			else if(currentEval.Recordtype.Name == 'NursesAssessment' && currentEval.Id == servAssign[0].Evaluations__r[0].Id){
-				status = 'Final Admission';
-			}
-			else if(currentEval.Recordtype.Name == 'NursesAssessment' && currentEval.Id != servAssign[0].Evaluations__r[0].Id){
-				status = 'Final Revision';
-			}
-			else{
-				status = 'Final';
-			}
-		
-		return status;
-	}
 	
 	public static Id createAssessmentforRestraint(string sectionId, Id evalId, Id PBSId, Id saId, Id admId, Id accId){
 		
@@ -576,5 +605,62 @@ public with sharing class EvalDynamicExt {
 		
 	}
     
+    
+    public PageReference FinalizeCNA(){
+        return new PageReference('/apex/EvalApproval?id=' + evalID);
+    }
+    
+    public List<ProcessInstanceHistory> approvalHistory;
+    public List<ProcessInstanceHistory> getApprovalHistory () {
+    	List<ProcessInstance> pi = [SELECT Id, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate  FROM StepsAndWorkitems order by createddate desc)
+									FROM ProcessInstance where  targetobjectid = :evalID 
+									order by createddate desc];
+		
+		for ( ProcessInstance p : pi ) {
+			approvalHistory.addAll (p.stepsandworkitems);
+		}
+		return approvalHistory;
+    	
+    }
+    
+    public string revcomments { get; set; }
+    public string approvalaction { get; set; }
+    public PageReference ApproveReject() {
+    	executeNextApprovalStep(approvalaction, revcomments);
+    	return new PageReference('/apex/home');
+    }
+
+    private void executeNextApprovalStep( string approvalAction, string comment) {
+    	
+    	Approval.ProcessWorkitemRequest req =  new Approval.ProcessWorkitemRequest();
+        req.setAction(approvalAction);
+        req.setComments( comment);
+        req.setNextApproverIds(null);
+        
+        // get the current work item
+        List<ProcessInstanceWorkitem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :evalID];
+    	
+        if ( pwi.size() == 0) {
+        	Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,'Error approving item'));
+        	return;
+        }
+       	req.setWorkitemId(pwi[0].id);
+        
+        // Submit the request for approval
+        Approval.ProcessResult result =  Approval.process(req);
+    }
+    
+    
+    public ID getApprovalUserID( ID theID ) {
+    	
+    	List<ProcessInstanceWorkitem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :theID];
+    	
+    	if ( pwi.size() > 0) {
+    		system.debug('Approver is:' + pwi[0].actorID);
+    		return pwi[0].actorId;
+    	} else {
+    		return null;
+    	}
+    }
 	
 }

@@ -1,4 +1,4 @@
-<apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportV2" renderAs="{!IF(mode='pdf', 'pdf', '')}" action="{!checkFinalizedEdit}">
+<apex:page standardController="Action_Summary__c" extensions="ActionSummaryReportV2" action="{!checkFinalizedEdit}">
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
 	<apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}"/>
@@ -82,10 +82,10 @@
 				<apex:commandButton value="Go To Prior Summaries" id="priorSummariesButton" rendered="{!mode == 'edit'}" onclick="openPastSummariesDialog(); return false; " />
 				<apex:commandButton value="Save" action="{!save}" id="saveButton" status="pageProcessingStatus" rendered="{!mode == 'edit'}" />
 				<apex:commandButton value="Cancel" action="{!cancel}" id="cancelButton" rendered="{!mode == 'edit'}" />
-				<apex:commandButton value="Edit" id="editButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=edit'; return false;" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
-				<apex:commandButton value="Finalize" action="{!finalize}" id="finalizeButton" rendered="{!AND(mode == 'view', Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
+				<apex:commandButton value="Edit" id="editButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=edit'; return false;" rendered="{!AND(mode == 'view', editable, Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
+				<apex:commandButton value="Finalize" onclick="authenticate(); return false; " id="finalizeButton" rendered="{!AND(mode == 'view', editable, Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
 				<apex:commandButton value="Disregard" id="disregardButton" onclick="if (confirm('Are you sure you want to disregard this summary?')) { disregard(); } return false; " rendered="{!AND(mode == 'view', Action_Summary__c.Status__c = 'Final')}" />
-				<apex:commandButton value="Print" id="printButton" onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=pdf'; return false;" rendered="{!mode == 'view'}" />
+				<apex:commandButton value="Print" id="printButton" onclick="window.open('/apex/ActionSummaryReportPDFV2?id={!Action_Summary__c.Id}', '_blank'); return false;" rendered="{!mode == 'view'}" />
 			</div>
 			<apex:pageBlockSection title="Summary Details" columns="2">
 				<apex:outputField value="{!Action_Summary__c.Name}" label="Summary Name" />
@@ -99,10 +99,10 @@
 					<apex:outputLink id="summaryCreatedBy" value="/{!Action_Summary__c.CreatedBy.Id}">{!Action_Summary__c.CreatedBy.Name}</apex:outputLink>
 				</apex:pageBlockSectionItem>
 				<apex:outputText label="Created Date">
-					<c:MilitaryDateTime dateTimeVal="{!Action_Summary__c.CreatedDate}" />
+					<c:MilitaryDatetime dateTimeVal="{!Action_Summary__c.CreatedDate}" />
 				</apex:outputText>
-				<apex:outputText label="Finalized Date">
-					<c:MilitaryDateTime dateTimeVal="{!Action_Summary__c.Finalized_Date__c}" />
+				<apex:outputText label="Finalized Date" rendered="{!Action_Summary__c.Status__c = 'Final'}">
+					<c:MilitaryDatetime dateTimeVal="{!Action_Summary__c.Finalized_Date__c}" />
 				</apex:outputText>
 				<apex:outputField value="{!Action_Summary__c.Finalized_By__c}" rendered="{!Action_Summary__c.Status__c = 'Final'}" />
 			</apex:pageBlockSection>
@@ -110,7 +110,7 @@
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
 					<apex:pageBlockTable value="{!vitalsDetails}" var="vital" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Date">
-							<c:MilitaryDateTime dateTimeVal="{!vital.dateTaken}" />
+							<c:MilitaryDatetime dateTimeVal="{!vital.dateTaken}" />
 						</apex:column>
 						<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
 						<apex:column headerValue="Blood Pressure" value="{!vital.bloodPressure}" />
@@ -141,10 +141,10 @@
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}">
 					<apex:pageBlockTable value="{!isolationEvents}" var="event" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
-							<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
+							<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
 						</apex:column>
 						<apex:column headerValue="End Date/Time">
-							<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
+							<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
 						</apex:column>
 						<apex:column headerValue="Type" value="{!event.type}" />
 					</apex:pageBlockTable>
@@ -155,10 +155,10 @@
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
 					<apex:pageBlockTable value="{!restraintEvents}" var="event" rows="{!LIST_LIMIT}">
 						<apex:column headerValue="Start Date/Time">
-							<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
+							<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
 						</apex:column>
 						<apex:column headerValue="End Date/Time">
-							<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
+							<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
 						</apex:column>
 						<apex:column headerValue="Status" value="{!event.status}" />
 						<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
@@ -239,17 +239,17 @@
 																</tr>
 															</thead>
 															<tbody>
-																<apex:repeat value="{!objective.skillResults.startDates}" var="startDate">
+																<apex:repeat value="{!objective.skillResults}" var="result">
 																	<tr>
 																		<td>
-																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!startDate}" /></apex:outputText>
+																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!result.resultDate}" /></apex:outputText>
 																		</td>
-																		<td>{!objective.skillResults.metObjectiveMap[startDate]}</td>
-																		<td>{!objective.skillResults.notMetObjectiveMap[startDate]}</td>
-																		<td>{!objective.skillResults.percentMetObjectiveMap[startDate]}</td>
+																		<td>{!result.met}</td>
+																		<td>{!result.notMet}</td>
+																		<td>{!result.percentMet}</td>
 																	</tr>
 																</apex:repeat>
-																<apex:outputPanel layout="none" rendered="{!objective.skillResults.startDates.size == 0}">
+																<apex:outputPanel layout="none" rendered="{!objective.skillResults.size == 0}">
 																	<tr>
 																		<td colspan="4">No data recorded</td>
 																	</tr>
@@ -266,15 +266,15 @@
 																</tr>
 															</thead>
 															<tbody>
-																<apex:repeat value="{!objective.countResults.startDates}" var="startDate">
+																<apex:repeat value="{!objective.countResults}" var="result">
 																	<tr>
 																		<td>
-																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!startDate}" /></apex:outputText>
+																			<apex:outputText value="{0, date, MMM yyyy}"><apex:param value="{!result.resultDate}" /></apex:outputText>
 																		</td>
-																		<td>{!objective.countResults.occurrenceMap[startDate]}</td>
+																		<td>{!result.occurrences}</td>
 																	</tr>
 																</apex:repeat>
-																<apex:outputPanel layout="none" rendered="{!objective.countResults.startDates.size == 0}">
+																<apex:outputPanel layout="none" rendered="{!objective.countResults.size == 0}">
 																	<tr>
 																		<td colspan="2">No data recorded</td>
 																	</tr>
@@ -285,17 +285,17 @@
 													<apex:outputPanel rendered="{!objectiveType == 'Narrative'}" layout="block" style="max-height: 200px; overflow: auto;">
 														<table>
 															<tbody>
-																<apex:repeat value="{!objective.objectiveSObject.Action_Narrative_Results__r}" var="result">
+																<apex:repeat value="{!objective.narrativeResults}" var="result">
 																	<tr>
 																		<td>
-																			<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!result.CreatedDate}" /></apex:outputText>
+																			<apex:outputText value="{0, date, M/d/yyyy}"><apex:param value="{!result.resultDate}" /></apex:outputText>
 																		</td>
 																		<td>
-																			{!result.Description__c}
+																			{!result.description}
 																		</td>
 																	</tr>
 																</apex:repeat>
-																<apex:outputPanel layout="none" rendered="{!objective.objectiveSObject.Action_Narrative_Results__r.size == 0}">
+																<apex:outputPanel layout="none" rendered="{!objective.narrativeResults.size == 0}">
 																	<tr>
 																		<td colspan="2">No data recorded</td>
 																	</tr>
@@ -329,12 +329,13 @@
 			</apex:repeat>
 		</apex:pageBlock>
 		<apex:actionFunction name="disregard" action="{!disregard}" status="pageProcessingStatus" />
+		<c:Authentication formId="{!$Component.mainForm}" title="E-Sign" handler="ActionSummaryReportV2" objectId="{!Action_Summary__c.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');" />
 	</apex:form>
 	<apex:outputPanel id="allVitalsDialog" style="display: none; ">
 		<apex:pageBlock >
 			<apex:pageBlockTable value="{!vitalsDetails}" var="vital">
 				<apex:column headerValue="Date">
-					<c:MilitaryDateTime dateTimeVal="{!vital.dateTaken}" />
+					<c:MilitaryDatetime dateTimeVal="{!vital.dateTaken}" />
 				</apex:column>
 				<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
 				<apex:column headerValue="Blood Pressure" value="{!vital.bloodPressure}" />
@@ -363,10 +364,10 @@
 		<apex:pageBlock >
 			<apex:pageBlockTable value="{!isolationEvents}" var="event">
 				<apex:column headerValue="Start Date/Time">
-					<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
+					<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
 				</apex:column>
 				<apex:column headerValue="End Date/Time">
-					<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
+					<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
 				</apex:column>
 				<apex:column headerValue="Type" value="{!event.type}" />
 			</apex:pageBlockTable>
@@ -376,10 +377,10 @@
 		<apex:pageBlock >
 			<apex:pageBlockTable value="{!restraintEvents}" var="event">
 				<apex:column headerValue="Start Date/Time">
-					<c:MilitaryDateTime dateTimeVal="{!event.startTime}" />
+					<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
 				</apex:column>
 				<apex:column headerValue="End Date/Time">
-					<c:MilitaryDateTime dateTimeVal="{!event.endTime}" />
+					<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
 				</apex:column>
 				<apex:column headerValue="Status" value="{!event.status}" />
 				<apex:column headerValue="Most Current Restraint Reduction Score" value="{!event.score}" />
@@ -418,33 +419,33 @@
 			'use strict';
 
 			window.openAllVitalsDialog = function () {
-				openModalDialog('allVitalsDialog', 'span', 'Vitals Details', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.allVitalsDialog}', 'Vitals Details', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			window.openAllSeizuresDialog = function () {
-				openModalDialog('allSeizuresDialog', 'span', 'Seizure Activities', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.allSeizuresDialog}', 'Seizure Activities', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			window.openAllIsolationEventsDialog = function () {
-				openModalDialog('allIsolationEventsDialog', 'span', 'Isolation Events', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.allIsolationEventsDialog}', 'Isolation Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			window.openAllRestraintEventsDialog = function () {
-				openModalDialog('allRestraintEventsDialog', 'span', 'Restraint Events', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.allRestraintEventsDialog}', 'Restraint Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			window.openPastSummariesDialog = function () {
-				openModalDialog('pastSummariesDialog', 'span', 'Past Summaries', 'fixed-dialog', 800, 'mainForm', false);
+				openModalDialog('{!$Component.pastSummariesDialog}', 'Past Summaries', '{!$Component.mainForm}', 'fixed-dialog', null, false);
 				setUpCloseButtons();
 			};
 			var setUpCloseButtons = function () {
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
-					closeModalDialog('allVitalsDialog', 'span');
-					closeModalDialog('allSeizuresDialog', 'span');
-					closeModalDialog('allIsolationEventsDialog', 'span');
-					closeModalDialog('allRestraintEventsDialog', 'span');
-					closeModalDialog('pastSummariesDialog', 'span');
+					closeModalDialog('{!$Component.allVitalsDialog}');
+					closeModalDialog('{!$Component.allSeizuresDialog}');
+					closeModalDialog('{!$Component.allIsolationEventsDialog}');
+					closeModalDialog('{!$Component.allRestraintEventsDialog}');
+					closeModalDialog('{!$Component.pastSummariesDialog}');
 					event.preventDefault();
 				});
 			};
