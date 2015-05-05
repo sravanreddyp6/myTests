@@ -97,7 +97,7 @@
 
 
 		jQuery(document).ready(function($) {
-			
+
 			window.beforeEvaluationSave = function() {
 				// Temporarily enable all the disabled fields before saving the
 				// record, so that they are included in the POST to the server.
@@ -115,7 +115,7 @@
 				$('#evalForm :input').prop('disabled', true);
 				return;
 				</apex:outputPanel>
-			
+
 				// Apply rules to input fields
 				$('#evalForm input').on("change", function(event) {
 					applyShowHideRulesToField(event.target);
@@ -133,12 +133,12 @@
 					applyShowHideRulesToField(target);
 					applyRulesToField(target);
 				});
-				
+
 				// set isModified to true on a field value change
                 $('#evalForm input, #evalForm select').on("change", function(event) {
                     isModified = true;
                 });
-				 
+
 			};
 
 			window.handleFormErros = function() {
@@ -149,7 +149,7 @@
 					if ($target.val() == '')
 						errorMsg += '<li>' + $('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
 				});
-				
+
 				// This logic below looks for any multi checkboxes marked as required.
 				$(".requiredInput").prev().filter(":visible").each(function(_, target) {
 				    var $target = $(target);
@@ -164,7 +164,7 @@
 				        errorMsg += '<li>At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
 				    }
 				});
-				
+
 				if (errorMsg != '') {
 					$('#IsValid').val("false").trigger('change');
 					$('#ErrorMsg').val(errorMsg).trigger('change');
@@ -219,19 +219,19 @@
 				closeOnDateSelect: true
 			});
 			$('.datetimepicker').datetimepicker({});
-			
-			
+
+
 			<apex:outputPanel layout="none" rendered="{!subcategory == 'Current Pain' || subcategory == 'Pain'}">
-			
+
 			var options =  [0,1,2,3,4,5,6,7,8,9,10];
 			var initialValue = '0';
-			
+
 			var $initialValue = $(document.getElementById('painLevel'));
 			if ( $initialValue != null) {
-				if ($initialValue.val() != '') 
+				if ($initialValue.val() != '')
 					initialValue = $initialValue.val();
 			}
-						
+
 			$(document.getElementById('painSlider')).slider({
             	min: 0,
             	max: 10,
@@ -240,16 +240,16 @@
             	disabled: false,
             	change: function (event, ui) {
                 handleSliderChange('painLevel', options[ui.value]);
-            	}	
+            	}
         	});
-			
-			
+
+
 			handleSliderChange = function (inputIdToUpdate, value) {
-			
+
 				var $inputToUpdate = $(document.getElementById(inputIdToUpdate));
 				return ($inputToUpdate.val(value));
 			};
-			
+
 			getSliderInitial = function ( inputIdForInitial ) {
 			debugger;
 				var $initalValue = $(document.getElementById(inputIdForInitial));
