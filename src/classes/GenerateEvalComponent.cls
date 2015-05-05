@@ -1,11 +1,16 @@
-/* 
-Fields type - sub types that are not yet handelled: 
+/*
+Fields type - sub types that are not yet handelled:
     Boolean - Radio
 */
 public with sharing class GenerateEvalComponent {
 
-    //public List<string> ctlList {get { return CreateFieldControls();} private set;}
-    public String htmlTable {get{ return CreateFieldControls();} private set;}
+	//public List<string> ctlList {get { return CreateFieldControls();} private set;}
+	public String htmlTable {
+		get {
+			return CreateFieldControls();
+		}
+		set;
+	}
 	public string cat {get; set;}
 	public string subcat{get; set;}
 	public string subsubcat{get; set;}
@@ -14,7 +19,10 @@ public with sharing class GenerateEvalComponent {
 	public ID pbsID { get; set;}
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
-    
+
+    List<Eval_Drop_Down__c> dd;
+    List<Eval__c> listEvalItems;
+
     public transient string evalSectionOwner;
     public string getEvalSectionOwner(){
     	String str='';
@@ -31,10 +39,10 @@ public with sharing class GenerateEvalComponent {
     	}
     	return str;
     }
-    
-    
+
+
     public transient boolean hasErros { get; private set;}
-            
+
 	public static Map<ID, Eval__c> mapEvalItems;
 	public static Map<ID, Eval_Value__c> mapEvalValues;
 	    public Evaluation_Response__c[] annotations { set;
@@ -56,25 +64,9 @@ public with sharing class GenerateEvalComponent {
 	}
 
     public String CreateFieldControls () {
-
-		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
-		List<Eval_Drop_Down__c> dd = [ select whatid__c, option_name__c, option_value__c, Dependent_Fields__c, visibility_row_rules__c, visibility_rules__c from eval_drop_down__c where What_Id_Object__c = 'Eval__c' order by whatid__c, Sequence__c ];
-		List<Eval_Drop_Down__c> newdd;
-		for ( Eval_Drop_Down__c edd : dd ) {
-			if ( ddOptions.ContainsKey( edd.whatid__c)) {
-				if ( (newdd = ddOptions.get(edd.whatid__c)) == null )
-					newdd = new List<Eval_Drop_Down__c>();
-			} else {
-				newdd = new List<Eval_Drop_Down__c>();
-			}
-			newdd.Add( edd);
-			ddOptions.put( edd.whatid__c, newdd);
-
-		}
-
 		// get the list of controls for this type, category, and subcategory
 		List<String> htmlcontrols = new List<String>();
-		List<Eval__c> listEvalItems = [
+		listEvalItems = [
 			select id,
 			       htmlid__c,
 			       field_name__c,
@@ -100,6 +92,34 @@ public with sharing class GenerateEvalComponent {
 		];
 		// create a map for easy access
 		mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
+		List<String> evalIds = new List<String>();
+		for (Eval__c eval: listEvalItems) {
+			evalIds.add(eval.Id);
+		}
+
+		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
+			dd = [
+				select whatid__c, option_name__c, option_value__c,
+				       Dependent_Fields__c, visibility_row_rules__c,
+				       visibility_rules__c
+				  from eval_drop_down__c
+				 where What_Id_Object__c = 'Eval__c'
+				   and whatid__c in :evalIds
+				order by whatid__c, Sequence__c
+			];
+
+		List<Eval_Drop_Down__c> newdd;
+		for ( Eval_Drop_Down__c edd : dd ) {
+			if ( ddOptions.ContainsKey( edd.whatid__c)) {
+				if ( (newdd = ddOptions.get(edd.whatid__c)) == null )
+					newdd = new List<Eval_Drop_Down__c>();
+			} else {
+				newdd = new List<Eval_Drop_Down__c>();
+			}
+			newdd.Add( edd);
+			ddOptions.put( edd.whatid__c, newdd);
+
+		}
 
         // get any populated values for this eval and section
         List<Eval_Value__c> listEvalValues = [
@@ -136,7 +156,7 @@ public with sharing class GenerateEvalComponent {
 
                 if ( e.Field_Type__c == 'Hidden' )  {
                 	newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
-                    newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" ';  
+                    newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" ';
                 	if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' ;
 	                	if (e.Field_Sub_Type__c == 'Boolean') {
@@ -149,8 +169,8 @@ public with sharing class GenerateEvalComponent {
 	                        newHTMLfld += mapEvalValues.get(e.id).Text_Over_250__c;
 	                    }
                 	}
-                    newHTMLfld += '"/></td>'; 
-                                              
+                    newHTMLfld += '"/></td>';
+
                 } else if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
                     if ( e.Field_Sub_Type__c == 'Checkbox') {
                         newHTMLfld = '<td class="dataCol"><div style="display: table-row;"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '"';
@@ -181,7 +201,7 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld += '</select></div></div></td>';
                     } //TODO: output radio buttons for Radio type
                 } else if (e.Field_Type__c=='String') {
-                	
+
                 	if ( e.length__c >= 3000) {
                         newHTMLfld = '<td class="dataCol" style="vertical-align: top" ><div style="display: table-row;">';
                         newHTMLfld += reqfldHTML;
@@ -192,7 +212,7 @@ public with sharing class GenerateEvalComponent {
                                 newHTMLfld += strVal;
                         }
                         newHTMLfld +=  '</textarea></div></div></td>';
-                        
+
                     }else{
                         newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
@@ -203,14 +223,14 @@ public with sharing class GenerateEvalComponent {
 	                            strVal = mapEvalValues.get(e.id).text_over_250__c;
 	                        else
 	                            strVal = mapEvalValues.get(e.id).text_under_250__c;
-	
+
 	                        if (strVal != null && strVal != '')
 	                            newHTMLfld += strVal;
-	                            
+
 	                            newHTMLfld += '"';
 	                    }
                         newHTMLfld +=  '/></div></div></td>';
-                	} 
+                	}
                 } else if (e.Field_Type__c == 'Double'){
                     newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
@@ -218,14 +238,14 @@ public with sharing class GenerateEvalComponent {
 	                    if (mapEvalValues.ContainsKey( e.id )) {
 	                        newHTMLfld += 'value="' ;
 	                        strVal = mapEvalValues.get(e.id).text_under_250__c;
-	
+
 	                        if (strVal != null && strVal != '')
 	                            newHTMLfld += strVal;
-	                            
+
 	                            newHTMLfld += '"';
 	                    }
                         newHTMLfld +=  '/></div></div></td>';
-						
+
 				} else if (e.Field_Type__c == 'Int'){
                     newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 	                    newHTMLfld += reqfldHTML;
@@ -233,14 +253,14 @@ public with sharing class GenerateEvalComponent {
 	                    if (mapEvalValues.ContainsKey( e.id )) {
 	                        newHTMLfld += 'value="' ;
 	                        strVal = String.valueOf(mapEvalValues.get(e.id).Number_No_Decimal__c);
-	
+
 	                        if (strVal != null && strVal != '')
 	                            newHTMLfld += strVal;
-	                            
+
 	                            newHTMLfld += '"';
 	                    }
                         newHTMLfld +=  '/></div></div></td>';
-						
+
 				} else if (e.Field_Type__c == 'DropDown') {
 
                     // get the value
@@ -292,7 +312,7 @@ public with sharing class GenerateEvalComponent {
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
                 	if ( e.Field_Sub_Type__c == 'Checkbox') {
                         newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;" id=' + e.htmlid__c + '>';
-                        if (e.Required__c) {                        
+                        if (e.Required__c) {
 	                        newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
 	                        newHtmlLbl += reqfldHTML;
 	                        newHtmlLbl +=  '</div></td>';
@@ -301,7 +321,7 @@ public with sharing class GenerateEvalComponent {
 		                	newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
 	                        if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
 	                               newHTMLFld += ' checked ';
-                                
+
 	                        newHTMLfld += '/>&nbsp<span>' + thisdd.Option_Name__c + '</span><br/>';
 	                    }
                         newHTMLfld +=  '</div></td>';
@@ -313,36 +333,36 @@ public with sharing class GenerateEvalComponent {
 	                        newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
 	                        if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
 	                            newHTMLFld += ' selected ';
-	
+
 	                        newHTMLFld += '>' + thisdd.option_name__c + '</option>';
 	                    }
-                        newHTMLfld += '</select></div></div></td>';                         
+                        newHTMLfld += '</select></div></div></td>';
                 	}
                 } else if (e.field_type__c == 'BodyMap') {
-                	
+
                     newHTMLfld = '<td><div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
                 	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL('WholeBodyNoGrid') + '?' + evalSectionId + '" id="bodyMap' + evalSectionID + '" />';
                 	newHTMLfld += '</div>';
                     newHTMLfld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
                     newHTMLfld += '<table id="annotations">';
                     newHTMLfld += '<tbody></tbody></table></div></td>';
-                    
-                	
+
+
                 } else if ( e.field_type__c == 'Image') {
-                	
+
                 	newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
                     newHTMLfld += '<img id="' + e.htmlid__c + '"  name="' + e.id + '"';
                     newHTMLfld += ' src="' + GetResourceURL(e.field_sub_type__c) + '" />';
                     newHTMLfld +=  '</td>';
-                	
+
                 } else if ( e.field_type__c == 'Slider') {
                 	newHTMLfld = '<td class="dataCol" style="vertical-align: top">';
                 	newHTMLfld += '<div id="' + e.htmlid__c + '" style="margin-left: 30px; margin-right: 40px;" name="' + e.id + '" />';
                 	newHTMLfld += '</td>';
                 	system.debug( newHTMLfld);
-                	
+
                 }
-                
+
                 htmlControls.Add( newHtmlLbl);
 				htmlControls.Add( newHTMLfld);
 			}
@@ -352,12 +372,12 @@ public with sharing class GenerateEvalComponent {
 			}
 		}
 
-        String htmlTable2 = '<table style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';       
+        String htmlTable2 = '<table style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
         integer i=0;
         for (String s : htmlControls){
             if (Math.mod(i, 4) == 0 )
                 htmlTable2 += '</tr><tr class="border_bottom">';
-                  
+
             htmlTable2 += s;
             i++;
         }
@@ -365,15 +385,15 @@ public with sharing class GenerateEvalComponent {
 
         return htmlTable2;
 	}
-	
+
 	public class FormKeyVal{
 		public Id name;
-		public String value; 
+		public String value;
 	}
 
 	@RemoteAction
 	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String cat, String subcat, String jsonForm) {
-		
+
 		mapEvalItems = new Map<ID, Eval__c>([ select   id,
 												       htmlid__c,
 												       field_name__c,
@@ -393,7 +413,7 @@ public with sharing class GenerateEvalComponent {
 												   and sub_category__c = :subcat
 												   and visible__c = true
 												order by category_sequence__c, sub_category_sequence__c, field_sequence__c]);
-		
+
 		// get any populated values for this eval and section
 		List<Eval_Value__c> listEvalValues = [
 			select id, boolean__c, currency__c, date_time__c, number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c from eval_value__c
@@ -409,7 +429,7 @@ public with sharing class GenerateEvalComponent {
 		for ( Eval_Value__c ev: listEvalValues )
 			mapEvalValues.put( ev.eval__c, ev);
 
-		//Map<String,Object> formData = (Map<String, Object>) JSON.deserializeUntyped(jsonForm);		
+		//Map<String,Object> formData = (Map<String, Object>) JSON.deserializeUntyped(jsonForm);
 		list<FormKeyVal> objs = (list<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
 		Map<String,String> formData = new map<String, String>();
 		String oldMapVal;
@@ -463,8 +483,8 @@ public with sharing class GenerateEvalComponent {
 				else if (ei.Field_Type__c == 'Datetime' ){
                     ev.Date_Time__c = Datetime.valueOf(formData.get(f).replace('/','-')+':00');
                 }
-				else if (ei.Field_Type__c == 'String' || ei.Field_Type__c == 'ID' || 
-						 ei.Field_Type__c == 'Multiselect' || ei.Field_Type__c == 'Dropdown' || ei.Field_Type__c == 'Double' || 
+				else if (ei.Field_Type__c == 'String' || ei.Field_Type__c == 'ID' ||
+						 ei.Field_Type__c == 'Multiselect' || ei.Field_Type__c == 'Dropdown' || ei.Field_Type__c == 'Double' ||
 						 ei.Field_Type__c == 'Currency'){
 					if ( ei.length__c > 250 )
 						ev.Text_Over_250__c = formData.get(f);
@@ -479,7 +499,7 @@ public with sharing class GenerateEvalComponent {
                     	ev.Text_Over_250__c = formData.get(f);
                     }
                 }
-                
+
 				newValues.add(ev);
 			}
 			else if (ev.id != null ) {
@@ -487,16 +507,16 @@ public with sharing class GenerateEvalComponent {
 			}
 
 		}
-		
+
 		for (ID evID : mapEvalValues.Keyset()){
 			delValues.add((Eval_Value__c) mapEvalValues.get(evID));
 		}
-		
+
 		delete delValues;
 		upsert newValues;
 	}
-	
-	
+
+
 	@RemoteAction
     public static Evaluation_Response__c addOrModifyAnnotation(ID annotationId, String source, Decimal x, Decimal y, Decimal Width, Decimal Height, String Shape, String Text, String evaluationId) {
         Evaluation_Response__c annotation;
@@ -520,30 +540,30 @@ public with sharing class GenerateEvalComponent {
         upsert annotation;
         return annotation;
     }
-    
-     
+
+
     @RemoteAction
     public static void deleteAnnotation(ID annotationId) {
         delete [
             SELECT ID FROM Evaluation_Response__c WHERE ID=:annotationId
         ];
     }
-    
-    
+
+
     public static String GetResourceURL(String resourceName) {
 
 		List<StaticResource> resourceList = [
-		   SELECT Name, NamespacePrefix, SystemModStamp 
-		   FROM StaticResource 
+		   SELECT Name, NamespacePrefix, SystemModStamp
+		   FROM StaticResource
 		   WHERE Name = :resourceName
 		];
-                    
+
 		if (resourceList.size() == 1) {
 		   String namespace = resourceList[0].NamespacePrefix;
-		   return '/resource/' 
-		      + resourceList[0].SystemModStamp.getTime() + '/' 
-		      + (namespace != null && namespace != '' ? namespace + '__' : '') 
-		      + resourceName; 
+		   return '/resource/'
+		      + resourceList[0].SystemModStamp.getTime() + '/'
+		      + (namespace != null && namespace != '' ? namespace + '__' : '')
+		      + resourceName;
 		} else return '';
 
 }

@@ -8,6 +8,9 @@ public with sharing class PersonalRecordController {
 	public boolean hasPhoto { get; set; }
 	public String contactId { get;
 	set {
+		if (value == contactId) {
+			return;
+		}
 		this.contactId = value;
 		System.debug('Contact ID: ' + value);
 		this.con = [
@@ -42,7 +45,7 @@ public with sharing class PersonalRecordController {
 
 	public String parentPageName {get; set { System.Debug('parentPage: ' + value); }
 	}
-	
+
 	public string getevalType(){
 		if( ApexPages.currentPage().getParameters().get('evalType') != null){
 			return ApexPages.currentPage().getParameters().get('evalType');
@@ -50,9 +53,9 @@ public with sharing class PersonalRecordController {
 		else{
 			return null;
 		}
-		
+
 	}
-	
+
 	public string getrecType(){
 		if( ApexPages.currentPage().getParameters().get('recType') != null){
 			return ApexPages.currentPage().getParameters().get('recType');
@@ -60,7 +63,7 @@ public with sharing class PersonalRecordController {
 		else{
 			return null;
 		}
-		
+
 	}
 
 	public String admissionId { get {
@@ -99,75 +102,107 @@ public with sharing class PersonalRecordController {
 
 	public String primaryDiagnosis {
 		get {
+			if (primaryDiagnosis != null) {
+				return primaryDiagnosis;
+			}
 			Diagnosis__c[] d = [select Primary_Diagnosis__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' order by Effective_Date__c desc limit 1];
 			if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian') {
 				if (d.size() > 0) {
-					return d[0].primary_diagnosis__c;
-				} else
+					primaryDiagnosis = d[0].primary_diagnosis__c;
+					return primaryDiagnosis;
+				} else {
 					return null;
-			}
-			else
+				}
+			} else {
 				return null;
+			}
 		}
+		set;
 	}
 
 	public String primaryPhysician{
 		get{
+			if (primaryPhysician != null) {
+				return primaryPhysician;
+			}
 			Related_Party__c[] party = [select id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c from Related_Party__c where Person_Being_Served__c = :con.Id And Type__c =: 'Physician - Primary' limit 1];
 			if (party.size() > 0 ) {
-				return party[0].Name;
+				primaryPhysician = party[0].Name;
+				return primaryPhysician;
 			} else
 				return null;
 		}
+		set;
 	}
 
 	public String primaryPhysicianPhone{
 		get{
-			String physicianPhone;
+			if (primaryPhysicianPhone != null) {
+				return primaryPhysicianPhone;
+			}
 			Related_Party__c[] party = [select id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c from Related_Party__c where Person_Being_Served__c = :con.Id And Type__c =: 'Physician - Primary' limit 1];
 			if (party.size() > 0 ) {
 				if (party[0].Phone_1_Type__c == 'Work'){
-					physicianPhone = party[0].Phone__c;
+					primaryPhysicianPhone = party[0].Phone__c;
 				}
 				else if(party[0].Phone_2_Type__c == 'Work'){
-					physicianPhone = party[0].Phone_2__c;
+					primaryPhysicianPhone = party[0].Phone_2__c;
 				}
-				return physicianPhone;
-			} else
+				return primaryPhysicianPhone;
+			} else {
 				return null;
+			}
 		}
+		set;
 	}
 
-    public String isolationStatus{
-        get{
-            String isoStatus;
-            Evaluation_Response__c[] isolation = [select Isolation_Status__c from Evaluation_Response__c where Service_Assignment__r.Status__c = 'Active' AND Isolation_Status__c = 'Isolated' AND Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id ];
-            if(isolation.size() > 0){
-                isoStatus = 'Isolated';
-            } else {
-                isoStatus = 'Not Isolated';
-            }
-        return isoStatus;    
-        }
-    }
+	public String isolationStatus{
+		get{
+			if (isolationStatus != null) {
+				return isolationStatus;
+			}
+			Evaluation_Response__c[] isolation = [
+				SELECT Isolation_Status__c
+				  FROM Evaluation_Response__c
+				 WHERE Service_Assignment__r.Status__c = 'Active'
+				   AND Isolation_Status__c = 'Isolated'
+				   AND Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id
+			];
+			if(isolation.size() > 0){
+				isolationStatus = 'Isolated';
+			} else {
+				isolationStatus = 'Not Isolated';
+			}
+			return isolationStatus;
+		}
+		set;
+	}
 
-    public String isolationType{
-        get{set<String> isolation = new set<String>();
-        	list<Evaluation_Response__c> isolations = [select Isolation_Type__c,Other__c  from Evaluation_Response__c
-        	                                        where Service_Assignment__r.Status__c = 'Active' 
-        	                                        AND Isolation_Status__c = 'Isolated' 
-        	                                        AND Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id
-        	                                        AND Isolation_Event_End_Date__c = null 
-        	                                        order by Isolation_Event_Start_Date__c desc];
-	        for(Evaluation_Response__c evlRes : isolations){
-	        	for (String s : evlRes.Isolation_Type__c.split(';') ){
-	        		  if (s == 'Other') s = evlRes.Other__c;
-	        	      isolation.add(s);
-	        	}
-	        } 
-	        return String.join(new list<String>(isolation), ', ');    
-        }
-    }
+	public String isolationType{
+		get{
+			if (isolationType != null) {
+				return isolationType;
+			}
+			set<String> isolation = new set<String>();
+			List<evaluation_response__c> isolations = [
+				select isolation_type__c,other__c  from evaluation_response__c
+				 where service_assignment__r.status__c = 'active'
+				   and isolation_status__c = 'isolated'
+				   and service_assignment__r.admission__r.person_being_served__c=:con.id
+				   and isolation_event_end_date__c = null
+				order by isolation_event_start_date__c desc
+			];
+			for(evaluation_response__c evlres : isolations){
+				for (string s : evlres.isolation_type__c.split(';') ){
+					if (s == 'other') s = evlres.other__c;
+					isolation.add(s);
+				}
+			}
+			isolationType = string.join(new list<string>(isolation), ', ');
+			return isolationType;
+		}
+		set;
+	}
 
 	public void uploadPhoto(){
 		Attachment objA=new Attachment();
