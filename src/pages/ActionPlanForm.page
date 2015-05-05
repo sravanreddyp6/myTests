@@ -5,7 +5,9 @@
 <apex:includeScript value="{!URLFOR($Resource.jQueryTabSlideOut, 'js/jquery.tabSlideOut.v1.3.js')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
-<apex:variable value="{! (Action_Plan__c.Service_Assignment__r.Admission__r.State__c = 'Arizona' && Action_Plan__c.Service_Assignment__r.Service_location__r.ProgramID__c != '114165002') || $User.Operating_Group__c ='Cambridge'}" var="hideObjType"/>
+<apex:variable value="{! (Action_Plan__c.Service_Assignment__r.Admission__r.State__c == 'AZ' 
+                            && Action_Plan__c.Service_Assignment__r.Service_location__r.ProgramID__c == '114165002') ||
+                         $User.Operating_Group__c = 'Cambridge' }" var="hideObjType"/>
 <apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>
 <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
 
