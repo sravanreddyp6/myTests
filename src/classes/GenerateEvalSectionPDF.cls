@@ -214,7 +214,13 @@ public with sharing class GenerateEvalSectionPDF {
                             newHTMLfld += strVal;
                     }
                     newHTMLfld +=  '</div>';
-                } else if (e.Field_Type__c == 'DropDown') {
+                } else if (e.Field_Type__c == 'Int'){
+                    if ( mapEvalValues.ContainsKey( e.id ))
+                        strVal = String.valueOf(mapEvalValues.get(e.id).Number_No_Decimal__c);
+                    newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld += strVal;
+                    newHTMLfld += '</div>';                    
+                } else if (e.Field_Type__c == 'DropDown' || e.Field_Type__c == 'Double') {
                     // get the value
                     if ( mapEvalValues.ContainsKey( e.id ))
                         strVal = mapEvalValues.get(e.id).text_under_250__c;
