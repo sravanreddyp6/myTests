@@ -68,6 +68,8 @@ public with sharing class AdmissionViewExtension {
     				break;
     			}
     		}
+    		if (!match)
+    			return;
     	}
     	
     	// if we got past other tests, then set flag to true
