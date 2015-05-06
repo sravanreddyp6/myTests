@@ -33,7 +33,8 @@ public with sharing class GoalObjRepeaters {
 			system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
 			ot.put( objw.objtype, objs);
 		}
-		
+		// reset temp objects
+		objw = null;	
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableBehaviorDObjectives( shiftStart.Date(), shiftEnd.Date())) {
@@ -46,6 +47,9 @@ public with sharing class GoalObjRepeaters {
 			system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
 			ot.put( objw.objtype, objs);
 		}
+		
+		// reset temp objects
+		objw = null;	
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableSkillObjectives( shiftStart.Date(), shiftEnd.Date())) {
@@ -59,6 +63,8 @@ public with sharing class GoalObjRepeaters {
 			system.debug( 'storing in type: ' + objw.objtype + ':' + objs);
 			ot.put( objw.objtype, objs);
 		}
+		// reset temp objects
+		objw = null;	
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableNarrativeObjectives( shiftStart.Date(), shiftEnd.Date())) {
@@ -88,11 +94,11 @@ public with sharing class GoalObjRepeaters {
 		List<AggregateResult> ag = [ select type__c, count(id) from action_plan_objective__c 
 									where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
 									and (
-										 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
+										 (effective_date__c > :firstDay  and effective_date__c <= :lastDay)
 										  or
-										 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+										 (effective_date__c <= :firstDay and target_end_date__c >= :firstday ) 
 									)
-									and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
+									and Status__c in ('In Progress', 'Revised', 'New')
 									and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
 									group by type__c
 									order by type__c];
@@ -113,12 +119,12 @@ public with sharing class GoalObjRepeaters {
 				from  Action_Plan_Objective__c
 				where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
 				and (
-					 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
-					  or
-					 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+					(effective_date__c > :firstDay  and effective_date__c <= :lastDay)
+										  or
+					(effective_date__c <= :firstDay and target_end_date__c >= :firstday ) 
 				)					
 				and Type__c = 'Behavior - Count'
-				and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
+				and Status__c in ('In Progress', 'Revised', 'New')
 				and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
 				order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
 	}
@@ -128,12 +134,12 @@ public with sharing class GoalObjRepeaters {
 				from  Action_Plan_Objective__c
 				where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
 					and (
-					 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
-					  or
-					 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+					 (effective_date__c > :firstDay  and effective_date__c <= :lastDay)
+					 or
+					(effective_date__c <= :firstDay and target_end_date__c >= :firstday ) 
 					)	
 					and Type__c = 'Behavior - Duration'
-					and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
+					and Status__c in ('In Progress', 'Revised', 'New')
 					and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
 				order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
 	}
@@ -143,12 +149,12 @@ public with sharing class GoalObjRepeaters {
                    from  Action_Plan_Objective__c
                   where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
 					and (
-					 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
+					 (effective_date__c > :firstDay  and effective_date__c <= :lastDay)
 					  or
-					 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+					(effective_date__c <= :firstDay and target_end_date__c >= :firstday ) 
 					)	                    
 					and Type__c = 'Skill'
-                    and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
+                    and Status__c in ('In Progress', 'Revised', 'New')
                     and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
                   order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
     }
@@ -159,12 +165,12 @@ public with sharing class GoalObjRepeaters {
 				from  Action_Plan_Objective__c
 				where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
 					and (
-					 (effective_date__c >= :firstDay and  target_end_date__c >= :firstday and effective_date__c <= :lastDay)
-					  or
-					 (effective_date__c < :firstDay and target_end_date__c >= :firstday ) 
+					 (effective_date__c > :firstDay  and effective_date__c <= :lastDay)
+					or
+					(effective_date__c <= :firstDay and target_end_date__c >= :firstday ) 
 					)						
 					and (Type__c = 'Narrative' )
-					and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
+					and Status__c in ('In Progress', 'Revised', 'New')
 					and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
 				order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
 	}
