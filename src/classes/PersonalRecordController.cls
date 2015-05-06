@@ -109,13 +109,13 @@ public with sharing class PersonalRecordController {
 			if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian') {
 				if (d.size() > 0) {
 					primaryDiagnosis = d[0].primary_diagnosis__c;
-					return primaryDiagnosis;
 				} else {
-					return null;
+					primaryDiagnosis = '';
 				}
 			} else {
-				return null;
+				primaryDiagnosis = '';
 			}
+			return primaryDiagnosis;
 		}
 		set;
 	}
@@ -128,9 +128,10 @@ public with sharing class PersonalRecordController {
 			Related_Party__c[] party = [select id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c from Related_Party__c where Person_Being_Served__c = :con.Id And Type__c =: 'Physician - Primary' limit 1];
 			if (party.size() > 0 ) {
 				primaryPhysician = party[0].Name;
-				return primaryPhysician;
-			} else
-				return null;
+			} else {
+				primaryPhysician = '';
+			}
+			return primaryPhysician;
 		}
 		set;
 	}
@@ -148,10 +149,10 @@ public with sharing class PersonalRecordController {
 				else if(party[0].Phone_2_Type__c == 'Work'){
 					primaryPhysicianPhone = party[0].Phone_2__c;
 				}
-				return primaryPhysicianPhone;
 			} else {
-				return null;
+				primaryPhysicianPhone = '';
 			}
+			return primaryPhysicianPhone;
 		}
 		set;
 	}
