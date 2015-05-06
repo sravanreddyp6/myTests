@@ -45,14 +45,14 @@ public with sharing class GenerateEvalComponent {
 
 	public static Map<ID, Eval__c> mapEvalItems;
 	public static Map<ID, Eval_Value__c> mapEvalValues;
-	    public Evaluation_Response__c[] annotations { set;
-        get {
+    public Evaluation_Response__c[] annotations { set;
+        get { String annotationRecType= cat != null && cat.contains('Neuro') ? 'NeuroAnnotation': 'Annotation';
             return [
                 SELECT ID, Annotation_Height__c, Annotation_Width__c,
                        Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
                        Annotation_Shape__c, Annotation_Text__c
                 FROM Evaluation_Response__c WHERE Evaluation__c=:evaluationId
-                 AND RecordType.Name='Annotation'
+                 AND RecordType.Name =: annotationRecType
             ];
         }
     }
@@ -341,7 +341,7 @@ public with sharing class GenerateEvalComponent {
                 } else if (e.field_type__c == 'BodyMap') {
 
                     newHTMLfld = '<td><div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
-                	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL('WholeBodyNoGrid') + '?' + evalSectionId + '" id="bodyMap' + evalSectionID + '" />';
+                	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL(e.field_sub_type__c) + '?' + evalSectionId + '" id="bodyMap' + evalSectionID + '" />';
                 	newHTMLfld += '</div>';
                     newHTMLfld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
                     newHTMLfld += '<table id="annotations">';

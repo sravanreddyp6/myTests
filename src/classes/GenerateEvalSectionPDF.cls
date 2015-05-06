@@ -18,13 +18,13 @@ public with sharing class GenerateEvalSectionPDF {
 	public transient Map<String, List<string>> mapEntryHTML{ get; set;}
 	
 	public Evaluation_Response__c[] annotations { set;
-        get {
+        get { String annotationRecType= cat != null && cat.contains('Neuro') ? 'NeuroAnnotation': 'Annotation';
             return [
                 SELECT ID, Annotation_Height__c, Annotation_Width__c,
                        Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
                        Annotation_Shape__c, Annotation_Text__c
                 FROM Evaluation_Response__c WHERE Evaluation__c=:evaluationId
-                AND RecordType.Name='Annotation'
+                 AND RecordType.Name =: annotationRecType
             ];
         }
     }
@@ -259,7 +259,7 @@ public with sharing class GenerateEvalSectionPDF {
                 } else if (e.field_type__c == 'BodyMap') {
                 	newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
        				newHTMLfld += '<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
-                	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL('WholeBodyNoGrid') + '?' + entryID + '" id="bodyMap' + entryID + '" />';
+                	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' + GetResourceURL(e.field_sub_type__c) + '?' + entryID + '" id="bodyMap' + entryID + '" />';
                 	newHTMLfld += '</div>';
                     newHTMLfld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
                     newHTMLfld += '<table id="annotations">';
