@@ -5,6 +5,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />    
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
     
@@ -72,6 +73,7 @@
 	jQuery(document).ready(function ($) {
     
 <apex:outputPanel layout="none" >
+                document.getElementById('painSlider').innerHTML=document.getElementById('painLevel').innerHTML;
 // need to create an array of bodymap elements and add the annotations to each of them
 
                     var el = $('[id*=bodyMap]');
@@ -112,6 +114,7 @@
                     	createAnnotationElements(anno.getAnnotations($(element).prop("src")), element);
                     	anno.hideSelectionWidget( $(element).prop("src") );
                     	});
+                    	
 </apex:outputPanel>
 
 });
