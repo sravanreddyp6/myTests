@@ -80,8 +80,10 @@ public with sharing class HomePageController{
 			HAVING COUNT(service_location__r.id) > 0
 			ORDER BY service_location__r.programid__c, service_location__r.program__c
 		];
+		Set<String> allProgramSet = new Set<String>();
 		for (AggregateResult slPrgm : slPrgms) {
 			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
+			allProgramSet.add((String) slPrgm.get('slID'));
 		}
 		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram');
 		if (initialProgramCookie == null) {
@@ -90,8 +92,10 @@ public with sharing class HomePageController{
 			}
 		} else {
 			String tmpId = initialProgramCookie.getValue();
-			if (tmpId != null && tmpId != '') {
+			if (tmpId != null && tmpId != '' && allProgramSet.contains(tmpId)) {
 				selectedProgram = tmpId;  // Because you can't assign null to an ID variable
+			} else if (programsList.size() > 0) {
+				selectedProgram = programslist[0].getValue();
 			}
 		}
 		// get list of repeatables
