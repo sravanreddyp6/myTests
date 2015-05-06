@@ -53,15 +53,18 @@ public with sharing class AdmissionViewExtension {
     			programs.addAll( c.programs__c.split(','));
     	}
     	
+    	
     	// if there's a state listed, check against admission state
     	// if no states are listed, then all states apply
     	if ( states.size() > 0 && !states.contains( admState )  )
     		return;
     		
     	// if there's a program listed, check against SA programs - check both alias and full program id
-    	List<service_assignment__c> saPrograms = [ select service_location__r.alias__c, service_location__r.programid__c from service_assignment__c where admission__c = :admission.Id ];
     	Boolean match = false;
     	if ( programs.size() > 0 ) {
+    		IgnoreSharing noSharing = new IgnoreSharing();
+    		List<service_assignment__c> saPrograms = noSharing.getallSA(admission.Id);
+    		
     		for (service_assignment__c p: saPrograms) {
     			if ( programs.contains ( p.service_location__r.alias__c ) || programs.contains ( p.service_location__r.programid__c )) {
     				match = true;
@@ -214,6 +217,11 @@ public with sharing class AdmissionViewExtension {
                FROM Assessment__c
                WHERE Assessment_Type__r.Name='CANS' AND Admission__c=:admissionId Order By CreatedDate DESC 
             ]; 
+        }
+        
+        public list<Service_Assignment__c>getallSA(ID admissionId) {
+        	return [ select service_location__r.alias__c, service_location__r.programid__c from service_assignment__c where admission__c = :admissionId ];
+        	
         }
         public IgnoreSharing(){
 
