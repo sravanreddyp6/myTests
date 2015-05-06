@@ -50,7 +50,7 @@ public with sharing class AdmissionViewExtension {
     		if ( !String.IsEmpty(c.state__c) )
     			states.add( c.state__c);
     		if ( !String.IsEmpty(c.programs__c))
-    			programs.add( c.programs__c);
+    			programs.addAll( c.programs__c.split(','));
     	}
     	
     	// if there's a state listed, check against admission state
