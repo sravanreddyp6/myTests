@@ -230,6 +230,7 @@ public with sharing class HomePageController{
 			         Eval__r.subcat_seq_text__c, Eval__r.subsubcat_seq_text__c
 		];
 		Boolean shiftDocHeaderAdded = false;
+		Integer indexToInsert = 1;
 		for (AggregateResult response: responses) {
 			String compositeKey = response.get('cat') + '~' + response.get('subCat') + '~' + (String.isBlank((string) response.get('subSubCat')) ? '' : (string) response.get('subSubCat'));
 			if (response.get('type') == 'Head To Toe' && !new Set<String>(cmShiftDocRepeatable).contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
@@ -239,11 +240,12 @@ public with sharing class HomePageController{
 			Boolean isShiftDocOwner = hasShiftDocMap.get(serviceAssignmentId) && shiftDocMap.get(serviceAssignmentId).OwnerId == UserInfo.getUserId();
 			SelectOption[] optionList = serviceAssignmentToSelectOptionMap.get(serviceAssignmentId);
 			if (response.get('type') == 'Head To Toe' && canSeeShiftDoc && isShiftDocOwner) {
-				optionList.add(optionList.size() - 2,  // Add before the cna workbook stuff
+				optionList.add(indexToInsert,  // Add before the cna workbook stuff
 					new SelectOption('shiftDocAction-' + compositeKey,
 						'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
 					)
 				);
+				indexToInsert += 1;
 			}
 		}
 		highlightedServiceAssignmentId = null;
