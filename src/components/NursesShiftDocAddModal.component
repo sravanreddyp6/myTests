@@ -36,11 +36,11 @@
 		$j = jQuery.noConflict();
 		jQuery(document).ready(function($) {
 			//"use strict";
-			window.openModalDialogN = function(dialogId, titleString, formId) {
+			window.openModalDialogN = function(dialogId, pageTitle, formId) {
 				var $element = $(document.getElementById(dialogId));
 				if ($element.dialog("isOpen") !== true) {
 					$element.dialog({
-						title: titleString,
+						title: pageTitle,
 						modal: true,
 						width: 800,
 						resizable: false,
@@ -93,11 +93,11 @@
 				$shiftDocMessages.html('');
 
 				if (startValue == '' || endValue == '') {
-					evalErrors.push('Shift Start time and end time cannot be blank');
+					evalErrors.push('Shift start time and end time cannot be blank');
 				}
 
 				if (start >= end) {
-					evalErrors.push('Shift End time Should be greater than Start time');
+					evalErrors.push('Shift end time must be greater than start time');
 				}
 
 				if (evalErrors.length > 0) {
@@ -112,7 +112,7 @@
 							if (event.status) {
 								console.log(result);
 								if (result) {
-									dupe.push('There is already an existing Nurses Shift Documentation for the current timings. Do you still want to proceed?');
+									dupe.push('There is existing documentation for that time period. Do you want to proceed?');
 									$dupeFound.append('<li class="warning">' + dupe + '</li>');
 									$shiftStartDate.prop('disabled', true);
 									$shiftEndDate.prop('disabled', true);
@@ -174,15 +174,15 @@
 			setUpButtons();
 		});
 	</script>
-
 	<apex:form id="shiftDocModalForm">
-		<apex:actionFunction name="showAddShiftDoc{!uniqueId}" action="{!showAddShiftDoc}" status="{!status}" oncomplete="openModalDialogN('{!$Component.shiftDocModal}', 'Add Nurses Shift Documentation', '{!$Component.shiftDocModalForm}'); jQuery('#shiftDocMessages{!uniqueId}').html('');" rerender="{!onShowRerender}" />
+
+		<apex:actionFunction name="showAddShiftDoc{!uniqueId}" action="{!showAddShiftDoc}" status="{!status}" oncomplete="openModalDialogN('{!$Component.shiftDocModal}', 'Add {!if (shiftType == 'CMShiftAssessment', 'Nurses Shift Documentation', shiftType)}', '{!$Component.shiftDocModalForm}'); jQuery('#shiftDocMessages{!uniqueId}').html('');" rerender="{!onShowRerender}" immediate="true"/>
 		<apex:actionFunction name="saveShiftDoc{!uniqueId}" action="{!saveShiftDoc}" status="{!$Component.shiftDocModalForm.modalMainBlock.modalButtons.saveShiftDocStatus}" />
 
 		<apex:outputPanel id="shiftDocModal" style="display: none">
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<div id='shiftDocMessages{!uniqueId}'></div>
-			<apex:pageBlock title="Add Nurses Shift Documentation" id="modalMainBlock">
+			<apex:pageBlock id="modalMainBlock" >
 				<apex:pageBlockSection columns="2" id="shiftDocEntry">
 					<apex:pageBlockSectionItem id="shiftStartTimeEntry">
 						<apex:outputPanel id="shiftStartTimeEntryPanel">
