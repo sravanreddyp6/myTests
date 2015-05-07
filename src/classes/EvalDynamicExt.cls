@@ -559,10 +559,12 @@ public with sharing class EvalDynamicExt {
 				showDisregard = false;
 				showEsign = false;
 				showshiftDone = false;
-			} else if ((thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint') && isUserOwner) {
-				showDisregard = true;
+			} else if (thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint') {
 				showEsign = false;
-				showshiftDone = true;
+				if (isEditable) {
+					showShiftDone = true;
+					showDisregard = true;
+				}
 			}
 		}
 
