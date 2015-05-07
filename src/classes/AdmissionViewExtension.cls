@@ -12,6 +12,7 @@ public with sharing class AdmissionViewExtension {
     public boolean canCreateSvc{ get; set;}
     public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
+    public boolean showCANS { get; private set; }
     
     private void setisEditor() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
@@ -27,6 +28,67 @@ public with sharing class AdmissionViewExtension {
     private void setcanCreateAsmt() {
         Schema.DescribeSObjectResult oSchema = Assessment__c.sObjectType.getDescribe();
         canCreateAsmt = oSchema.IsCreateable();
+    }
+    
+    
+    private void setshowCANS() {
+    	
+    	showCANS = false;
+    	
+    	// look for this op grp in the custom setting
+    	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :getOperatingGroup()];
+    	// this op group isn't allowed 
+    	if ( cansList.size() == 0 )
+    		return;
+    	
+    	String admState = admission.state__c;
+    	
+    	Set<string> states = new Set<string>();
+    	set<string> programs = new Set<string>();
+    	
+    	for ( CANS_Settings__c c : cansList ) {
+    		if ( !String.IsEmpty(c.state__c) )
+    			states.add( c.state__c);
+    		if ( !String.IsEmpty(c.programs__c))
+    			programs.addAll( c.programs__c.split(','));
+    	}
+    	
+    	
+    	// if there's a state listed, check against admission state
+    	// if no states are listed, then all states apply
+    	if ( states.size() > 0 && !states.contains( admState )  )
+    		return;
+    		
+    	// if there's a program listed, check against SA programs - check both alias and full program id
+    	Boolean match = false;
+    	if ( programs.size() > 0 ) {
+    		IgnoreSharing noSharing = new IgnoreSharing();
+    		List<service_assignment__c> saPrograms = noSharing.getallSA(admission.Id);
+    		
+    		for (service_assignment__c p: saPrograms) {
+    			if ( programs.contains ( p.service_location__r.alias__c ) || programs.contains ( p.service_location__r.programid__c )) {
+    				match = true;
+    				break;
+    			}
+    		}
+    		if (!match)
+    			return;
+    	}
+    	
+    	// if we got past other tests, then set flag to true
+    	showCANS = true;	
+    	
+    	
+    }
+    
+    private string getOperatingGroup() {
+    	// what is this user's operating group
+    	try {
+    		TMN_User__c thisTMN = [ select id, operating_group__c from TMN_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
+    		return thisTMN.operating_group__c;
+    	} catch (Exception e) {
+    		return '';
+    	}
     }
     
     private void setcanCreateAdm() {
@@ -86,6 +148,7 @@ public with sharing class AdmissionViewExtension {
         this.issaAssessments = fetchAssessments('ISSA', this.admission.ID);
         
         setcanCreateAsmt();
+        setshowCANS();
         setcanCreateAdm();
         setcanCreateSvc();
         setcanCreatePlan();
@@ -154,6 +217,11 @@ public with sharing class AdmissionViewExtension {
                FROM Assessment__c
                WHERE Assessment_Type__r.Name='CANS' AND Admission__c=:admissionId Order By CreatedDate DESC 
             ]; 
+        }
+        
+        public list<Service_Assignment__c>getallSA(ID admissionId) {
+        	return [ select service_location__r.alias__c, service_location__r.programid__c from service_assignment__c where admission__c = :admissionId ];
+        	
         }
         public IgnoreSharing(){
 
