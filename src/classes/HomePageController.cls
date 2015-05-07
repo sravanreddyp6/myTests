@@ -85,7 +85,7 @@ public with sharing class HomePageController{
 			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
 			allProgramSet.add((String) slPrgm.get('slID'));
 		}
-		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram');
+		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram-' + UserInfo.getUserId());
 		if (initialProgramCookie == null) {
 			if (programsList.size() > 0) {
 				selectedProgram = programslist[0].getValue();
@@ -253,7 +253,14 @@ public with sharing class HomePageController{
 			}
 		}
 		highlightedServiceAssignmentId = null;
-		ApexPages.currentPage().setCookies(new Cookie[]{ new Cookie('homePageInitialProgram', selectedProgram, null, 30*24*60*60, false) }); //  set the cookie max age to a month
+		ApexPages.currentPage().setCookies(
+			new Cookie[]{
+				new Cookie(
+					'homePageInitialProgram-' + UserInfo.getUserId(),
+					selectedProgram, null, 30*24*60*60, false
+				)
+			}
+		); //  set the cookie max age to a month
 	}
 
 	public String getOperatingGroup() {
