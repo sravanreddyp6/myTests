@@ -26,6 +26,8 @@ public with sharing class EvalDynamicExt {
 	public Boolean isUserOwner {get; set; }
 	public Boolean isApprover { get; set; }
 
+	public Boolean isEditable;
+
 	public String getEvalStatusDate(){
 		if (evalType == 'Head to Toe')
             return thisEval.Shift_Start_Time__c.format('MM/dd/yyyy HH:mm:ss', UserInfo.getTimeZone().toString() );
@@ -74,6 +76,8 @@ public with sharing class EvalDynamicExt {
 
 			if ( UserInfo.getUserId() == getApprovalUserID( thisEval.Id))
 				isApprover = true;
+
+			isEditable = [SELECT RecordId, HasEditAccess FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :thisEval.Id LIMIT 1].HasEditAccess;
 
 			controlButtons();
 		}
@@ -458,7 +462,7 @@ public with sharing class EvalDynamicExt {
 			}
 		}
 
-		if (!isUserOwner ) {
+		if (!isUserOwner && evalType != 'Restraint Event') {  // EC-153 Let other people finalize Restraint Events
 			showEsign=false;
 			showRevise = false;
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
@@ -538,20 +542,24 @@ public with sharing class EvalDynamicExt {
 		}
 
 		if(evalType == 'Restraint Event'){
+			// Default
 			showRevise = false;
+			showEsign=false;
+			showDisregard = false;
 
-			if(thisEval.Status__c == 'Not Restrained') {
-				showDisregard = true;
-				showEsign = true;
-				showshiftDone = false;
-			}
-			else if(thisEval.Status__c == 'Disregard'){
+			if (thisEval.Status__c == 'Not Restrained') {
+				if (isEditable) {
+					showEsign = true;  // EC-153
+				}
+				if (isUserOwner) {
+					showDisregard = true;
+					showshiftDone = false;
+				}
+			} else if (thisEval.Status__c == 'Disregard' && isUserOwner) {
 				showDisregard = false;
 				showEsign = false;
 				showshiftDone = false;
-
-			}
-			else if(thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'){
+			} else if ((thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint') && isUserOwner) {
 				showDisregard = true;
 				showEsign = false;
 				showshiftDone = true;
