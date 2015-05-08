@@ -17,6 +17,10 @@ public with sharing class GenerateEvalSectionPDF {
 	public transient List<String> listEntries {get;set;}
 	public transient Map<String, List<string>> mapEntryHTML{ get; set;}
 	
+	public static Evaluation__c thiseval { get; private set;}
+	
+	public List<GenerateGoalObjPDF.ObjectiveWrapper> objectives { get; set; }
+	
 	public Evaluation_Response__c[] annotations { set;
         get { String annotationRecType= cat != null && cat.contains('Neuro') ? 'NeuroAnnotation': 'Annotation';
             return [
@@ -54,6 +58,14 @@ public with sharing class GenerateEvalSectionPDF {
 		mapEntryHTML = CreateFieldControls();
 		
 		approvalHistory = new List<ProcessInstanceHistory>();
+	
+		thisEval = [ select id, name, shift_start_time__c, shift_end_time__c, status__c, head_to_toe_status__c, owner.name from evaluation__c where id = :evaluationID LIMIT 1];
+			
+		GenerateGoalObjPDF goalscontroller = new GenerateGoalObjPDF();
+		goalscontroller.init( evaluationID, evalname);
+		objectives = goalscontroller.objectives;
+		
+		
 	}
 
 	public Map<string, List<string>> CreateFieldControls () {
