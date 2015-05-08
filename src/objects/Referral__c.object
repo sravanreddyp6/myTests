@@ -83087,7 +83087,7 @@
     <validationRules>
         <fullName>Closed_Admitted_NoServiceLoc</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISPICKVAL(  Close_Reason__c , &apos;Admitted&apos;) &amp;&amp; ISBLANK(Service_Location__c)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Referral_Status__c , &apos;Closed&apos;) &amp;&amp; ISPICKVAL(  Close_Reason__c , &apos;Admitted&apos;) &amp;&amp; ISBLANK(Service_Location__c) &amp;&amp; RecordType.DeveloperName != &apos;CareMeridian&apos;</errorConditionFormula>
         <errorMessage>Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location.</errorMessage>
     </validationRules>
     <validationRules>
