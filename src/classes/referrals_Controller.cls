@@ -597,7 +597,7 @@ public with sharing class referrals_Controller{
 		this.operatinggroup=([select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty()) ? ''
 				: [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1][0].operating_group__c;
 		if (!Test.isRunningTest()) {
-			ctl.addFields(new String[]{'Service_Location__r.Alias__c'});
+			ctl.addFields(new String[]{'Service_Location__r.Alias__c', 'Anticipated_Admission_DateTime__c'});
 		}
 		this.isErrorDisplayed = false;
 		this.isCambridge = false;
