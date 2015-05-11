@@ -9,15 +9,6 @@
 	<!-- Custom styles for this template -->
 	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" />
 
-	<!--
-	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-	-->
-
-	<!-- Bootstrap core JavaScript-->
-<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/jquery.min.js')}" /> -->
-<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/bootstrap.min.js')}" /> -->
-<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/docs.min.js')}" /> -->
-
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
@@ -61,7 +52,7 @@
 		function showReviewerComments() {
 			openModalDialog('{!$Component.reviewercomments}', 'Approve/Reject', '');
 		}
-		
+
 		function showReporting() {
 			//set up the attributes
 			// hide the old panel
@@ -230,7 +221,7 @@
 	</style>
 
 	<c:PersonalRecord pbsId="{!PBSID}" servAssignId="{!SAID}" parentPage="Evaluation" servAssignNew="false" admId="{!AdmId}" />
-	
+
 	<div class="container">
 		<div class="blog-header"></div>
 		<div class="row">
@@ -245,7 +236,7 @@
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
                         <p>Status:{!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
 					</apex:outputPanel>
-					
+
 					<apex:outputPanel rendered="{!evalType == 'CNA Workbook'}">
 						<h4>CNA: {!thisEval.Owner.Name}</h4>
 						<p>Status: {!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
@@ -299,7 +290,7 @@
 				<h4>Plan Reporting</h4>
 				<span class="pull-right collapsearrow"><i class="glyphicon glyphicon-chevron-up"></i></span>
 					<apex:outputPanel id="goalObjRepeaters" layout="block" styleclass="panelshrink">
-						<c:GoalObjRepeaters parentID="{!SAID}"  opGrp="{!$CurrentPage.parameters.opGrp}" start="{!thisEval.Shift_Start_Time__c}" end="{!thisEval.Shift_End_Time__c}" />
+						<c:GoalObjRepeaters parentID="{!SAID}" evalID="{!$CurrentPage.Parameters.evalID}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" start="{!thisEval.Shift_Start_Time__c}" end="{!thisEval.Shift_End_Time__c}" />
 					</apex:outputPanel>
 					</div>
 				</div>
@@ -381,17 +372,17 @@
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
 		<apex:form id="evalResponsesForm">
 			<apex:pageBlock >
-        <c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Head to Toe' || key == 'Residential~Skin/Body~Wound Detail~Residential'}"/>
-        <c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="woundLog" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Activity Log'}"/>
-        <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Head to Toe' || key=='Residential~Skin/Body~Pressure Ulcer Detail~Residential'}"/>
-        <c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubitiLog" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Activity Log'}"/>
+				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Head to Toe' || key == 'Residential~Skin/Body~Wound Detail~Residential'}"/>
+				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="woundLog" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Activity Log'}"/>
+				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Head to Toe' || key=='Residential~Skin/Body~Pressure Ulcer Detail~Residential'}"/>
+				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubitiLog" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Activity Log'}"/>
 				<apex:pageBlockButtons location="bottom">
-					<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel();" />
+					<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel(); return false;" />
 				</apex:pageBlockButtons>
 			</apex:pageBlock>
 		</apex:form>
 	</apex:outputPanel>
-	
+
 	<apex:pageBlock rendered="{! evalType == 'CNA Workbook'}">
 	<Apex:pageblocksection columns="1" title="Approval History" >
 	<apex:datatable style="width: 100%;"  value="{!approvalHistory}" var="a">
@@ -430,7 +421,7 @@
 		</apex:pageblock>
 		</apex:form>
 	</apex:outputPanel>
-	
+
 
 	<apex:actionStatus id="myStatus">
 		<apex:facet name="start">

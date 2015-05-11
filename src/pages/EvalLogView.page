@@ -1,15 +1,84 @@
-<apex:page controller="GenerateEvalSectionPDF" standardStylesheets="true" sidebar="false" readonly="True" tabStyle="Persons_Being_Served_New__tab" showheader="false" >
+<apex:page controller="GenerateEvalSectionPDF" standardStylesheets="true" sidebar="false" readonly="True" tabStyle="Persons_Being_Served_New__tab" showheader="false" title="Summary View: {!thisEval.name}">
 
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />      
 
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />    
     <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
     
     
     <apex:form >
+
+    <apex:pageblock title="{!thisEval.name}" >
+	<apex:pageblocksection rendered="{!evalname == 'Head to Toe'}">
+	<apex:pageBlockSectionItem>
+	<apex:outputLabel value="Nurse" />
+	<apex:outputText value="{!thisEval.Owner.Name}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem>
+	<apex:outputLabel value="Head to Toe Status" />
+	<apex:outputText value="{!thisEval.Head_to_Toe_Status__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem>
+	<apex:outputLabel value="Shift Status" />
+	<apex:outputText value="{!thisEval.Status__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem>
+	<apex:outputLabel value="Start" />
+	<c:militarydatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+	</apex:pageBlockSectionItem>
+	</apex:pageBlockSection>
+	
+	<apex:pageBlockSection rendered="{!evalname == 'Restraint Event'}">
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="Restraint Status" />
+	<apex:outputText value="{!thisEval.Status__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem>
+    <apex:outputLabel value="Created Date" />
+    <c:militarydatetime datetimeval="{!thiseval.shift_start_time__c}" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'}" >
+	<apex:outputLabel value="Restrained By" />
+	<apex:outputText value="{!thisEval.Owner.Name}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem rendered="{!thisEval.shift_start_time__c != null}">
+	<apex:outputLabel value="Start" />
+	<c:militarydatetime datetimeval="{!thiseval.shift_start_time__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem rendered="{!thisEval.shift_end_time__c != null}">
+	<apex:outputLabel value="End" />
+	<c:militarydatetime datetimeval="{!thiseval.shift_end_time__c}" />
+	</apex:pageBlockSectionItem>
+	</apex:pageBlockSection>
+	
+	<apex:pageBlockSection rendered="{!evalname == 'CNA Workbook'}">
+	<apex:pageBlockSectionItem>
+	<apex:outputLabel value="CNA" />
+	<apex:outputText value="{!thisEval.Owner.Name}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="Status" />
+	<apex:outputText value="{!thisEval.Status__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem>
+	<apex:outputLabel value="Start Time" />
+	<c:militaryDateTime datetimeval="{!thiseval.shift_start_time__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem>
+	<apex:outputLabel value="End Time" />
+	<c:militaryDateTime datetimeval="{!thiseval.shift_end_time__c}" />
+	</apex:pageBlockSectionItem>
+</apex:pageblocksection>	
+</apex:pageblock>
+    
+    
+    <apex:repeat value="{!objectives}" var="objective" rendered="{! $CurrentPage.Parameters.Cat == '' || ( $CurrentPage.Parameters.Cat == 'Objective')}" >
+    	<c:GoalObjReportingPDF oid="{!objective.objid}" type="{!objective.objType}" startdate="{!objective.shiftstart}" enddate="{!objective.shiftend}" />
+    </apex:repeat>
     
     <apex:repeat value="{!listEntries}" var="entry" >
     <apex:variable var="list" value="{!mapEntryHTML[entry]}" />
@@ -72,6 +141,7 @@
 	jQuery(document).ready(function ($) {
     
 <apex:outputPanel layout="none" >
+                document.getElementById('painSlider').innerHTML=document.getElementById('painLevel').innerHTML;
 // need to create an array of bodymap elements and add the annotations to each of them
 
                     var el = $('[id*=bodyMap]');
@@ -112,6 +182,7 @@
                     	createAnnotationElements(anno.getAnnotations($(element).prop("src")), element);
                     	anno.hideSelectionWidget( $(element).prop("src") );
                     	});
+                    	
 </apex:outputPanel>
 
 });

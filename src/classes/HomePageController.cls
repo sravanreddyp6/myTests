@@ -80,18 +80,22 @@ public with sharing class HomePageController{
 			HAVING COUNT(service_location__r.id) > 0
 			ORDER BY service_location__r.programid__c, service_location__r.program__c
 		];
+		Set<String> allProgramSet = new Set<String>();
 		for (AggregateResult slPrgm : slPrgms) {
 			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
+			allProgramSet.add((String) slPrgm.get('slID'));
 		}
-		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram');
+		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram-' + UserInfo.getUserId());
 		if (initialProgramCookie == null) {
 			if (programsList.size() > 0) {
 				selectedProgram = programslist[0].getValue();
 			}
 		} else {
 			String tmpId = initialProgramCookie.getValue();
-			if (tmpId != null && tmpId != '') {
+			if (tmpId != null && tmpId != '' && allProgramSet.contains(tmpId)) {
 				selectedProgram = tmpId;  // Because you can't assign null to an ID variable
+			} else if (programsList.size() > 0) {
+				selectedProgram = programslist[0].getValue();
 			}
 		}
 		// get list of repeatables
@@ -170,12 +174,12 @@ public with sharing class HomePageController{
 			hasShiftDocMap.put(serviceAssignment.Id, false);
 			hasCnaWorkbookMap.put(serviceAssignment.Id, false);
 			for (Evaluation__c eval: serviceAssignment.Evaluations__r) {
-				if (shiftDocMap.get(serviceAssignment.Id) == null & eval.RecordType.Name == 'CMShiftAssessment' && (eval.Status__c == 'Draft' || eval.Status__c == 'Final')) {
+				if (shiftDocMap.get(serviceAssignment.Id) == null && eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
 					shiftDocMap.put(serviceAssignment.Id, eval);
 					evaluationToServiceAssignmentMap.put(eval.Id, serviceAssignment.Id);
 					hasShiftDocMap.put(serviceAssignment.Id, true);
 				}
-				if (cnaWorkbookMap.get(serviceAssignment.Id) == null & eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
+				if (cnaWorkbookMap.get(serviceAssignment.Id) == null && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
 					cnaWorkbookMap.put(serviceAssignment.Id, eval);
 					evaluationToServiceAssignmentMap.put(eval.Id, serviceAssignment.Id);
 					hasCnaWorkbookMap.put(serviceAssignment.Id, true);
@@ -230,6 +234,7 @@ public with sharing class HomePageController{
 			         Eval__r.subcat_seq_text__c, Eval__r.subsubcat_seq_text__c
 		];
 		Boolean shiftDocHeaderAdded = false;
+		Integer indexToInsert = 1;
 		for (AggregateResult response: responses) {
 			String compositeKey = response.get('cat') + '~' + response.get('subCat') + '~' + (String.isBlank((string) response.get('subSubCat')) ? '' : (string) response.get('subSubCat'));
 			if (response.get('type') == 'Head To Toe' && !new Set<String>(cmShiftDocRepeatable).contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
@@ -239,15 +244,23 @@ public with sharing class HomePageController{
 			Boolean isShiftDocOwner = hasShiftDocMap.get(serviceAssignmentId) && shiftDocMap.get(serviceAssignmentId).OwnerId == UserInfo.getUserId();
 			SelectOption[] optionList = serviceAssignmentToSelectOptionMap.get(serviceAssignmentId);
 			if (response.get('type') == 'Head To Toe' && canSeeShiftDoc && isShiftDocOwner) {
-				optionList.add(optionList.size() - 2,  // Add before the cna workbook stuff
+				optionList.add(indexToInsert,  // Add before the cna workbook stuff
 					new SelectOption('shiftDocAction-' + compositeKey,
 						'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
 					)
 				);
+				indexToInsert += 1;
 			}
 		}
 		highlightedServiceAssignmentId = null;
-		ApexPages.currentPage().setCookies(new Cookie[]{ new Cookie('homePageInitialProgram', selectedProgram, null, 30*24*60*60, false) }); //  set the cookie max age to a month
+		ApexPages.currentPage().setCookies(
+			new Cookie[]{
+				new Cookie(
+					'homePageInitialProgram-' + UserInfo.getUserId(),
+					selectedProgram, null, 30*24*60*60, false
+				)
+			}
+		); //  set the cookie max age to a month
 	}
 
 	public String getOperatingGroup() {
