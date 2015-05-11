@@ -17,14 +17,18 @@ public with sharing class GenerateEvalSectionPDF {
 	public transient List<String> listEntries {get;set;}
 	public transient Map<String, List<string>> mapEntryHTML{ get; set;}
 	
+	public static Evaluation__c thiseval { get; private set;}
+	
+	public List<GenerateGoalObjPDF.ObjectiveWrapper> objectives { get; set; }
+	
 	public Evaluation_Response__c[] annotations { set;
-        get {
+        get { String annotationRecType= cat != null && cat.contains('Neuro') ? 'NeuroAnnotation': 'Annotation';
             return [
                 SELECT ID, Annotation_Height__c, Annotation_Width__c,
                        Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
                        Annotation_Shape__c, Annotation_Text__c
                 FROM Evaluation_Response__c WHERE Evaluation__c=:evaluationId
-                AND RecordType.Name='Annotation'
+                 AND RecordType.Name =: annotationRecType
             ];
         }
     }
@@ -54,6 +58,14 @@ public with sharing class GenerateEvalSectionPDF {
 		mapEntryHTML = CreateFieldControls();
 		
 		approvalHistory = new List<ProcessInstanceHistory>();
+	
+		thisEval = [ select id, name, shift_start_time__c, shift_end_time__c, status__c, head_to_toe_status__c, owner.name from evaluation__c where id = :evaluationID LIMIT 1];
+			
+		GenerateGoalObjPDF goalscontroller = new GenerateGoalObjPDF();
+		goalscontroller.init( evaluationID, evalname);
+		objectives = goalscontroller.objectives;
+		
+		
 	}
 
 	public Map<string, List<string>> CreateFieldControls () {
@@ -180,7 +192,14 @@ public with sharing class GenerateEvalSectionPDF {
 				newHTMLfld = '';
 				strval = '';
 				
-                if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
+                if ( e.Field_Type__c == 'Hidden' )  {
+                	newHTMLfld += '<div id="' + e.htmlid__c + '" style="display: none;">';
+                    if (mapEvalValues.ContainsKey( e.id )) {
+                    	if (e.Field_Sub_Type__c == 'String')
+                    		newHTMLfld += mapEvalValues.get(e.id).text_over_250__c;
+                    }
+                    newHTMLfld +=  '</div>';
+                } else if ( e.Field_Type__c == 'Boolean' )  { // Boolean can be Checkbox, Radio, or Dropdown
                     if ( e.Field_Sub_Type__c == 'Checkbox') {
                         newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                         // insert value
@@ -214,7 +233,13 @@ public with sharing class GenerateEvalSectionPDF {
                             newHTMLfld += strVal;
                     }
                     newHTMLfld +=  '</div>';
-                } else if (e.Field_Type__c == 'DropDown') {
+                } else if (e.Field_Type__c == 'Int'){
+                    if ( mapEvalValues.ContainsKey( e.id ))
+                        strVal = String.valueOf(mapEvalValues.get(e.id).Number_No_Decimal__c);
+                    newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld += strVal;
+                    newHTMLfld += '</div>';                    
+                } else if (e.Field_Type__c == 'DropDown' || e.Field_Type__c == 'Double') {
                     // get the value
                     if ( mapEvalValues.ContainsKey( e.id ))
                         strVal = mapEvalValues.get(e.id).text_under_250__c;
@@ -244,14 +269,25 @@ public with sharing class GenerateEvalSectionPDF {
 	                newHTMLfld += strval;
                     newHTMLfld +=  '</div>';
                 } else if (e.field_type__c == 'BodyMap') {
-       				newHTMLfld = '<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
-                	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL('WholeBodyNoGrid') + '?' + entryID + '" id="bodyMap' + entryID + '" />';
+                	newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+       				newHTMLfld += '<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
+                	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' + GetResourceURL(e.field_sub_type__c) + '?' + entryID + '" id="bodyMap' + entryID + '" />';
                 	newHTMLfld += '</div>';
                     newHTMLfld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
                     newHTMLfld += '<table id="annotations">';
                     newHTMLfld += '<tbody></tbody></table></div>';
+                    newHTMLfld +=  '</div>';
+                } else if ( e.field_type__c == 'Image') {
+                	newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld += '<div style="display: table-row;">';
+                    newHTMLfld += '<img id="' + e.htmlid__c + '"  name="' + e.id + '"';
+                    newHTMLfld += ' src="' + GetResourceURL(e.field_sub_type__c) + '" />';
+                    newHTMLfld +=  '</div>';
+                } else if ( e.field_type__c == 'Slider') {
+                	newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+                    newHTMLfld += '<div id="' + e.htmlid__c + '" name="' + e.id + '" />';
+                    newHTMLfld +=  '</div>';
                 }
-                
                 
                htmlControls.add(newHtmlFld);
 				mapEvalEntryHTML.put( entryId, htmlControls );

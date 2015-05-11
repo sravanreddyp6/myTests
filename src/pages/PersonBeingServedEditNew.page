@@ -649,19 +649,6 @@
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}" type="Allergy" formId="{!$Component.FormID}" uniqueId="allergy" />
             </apex:pageBlock>
         </a>
-            <apex:pageBlock rendered="{! vfVarIsCM}" >
-                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
-                                           type="PPD Skin Test"
-                                           formId="{!$Component.FormID}"
-                                           uniqueId="PPD_SkinTest"
-                                           cols="1"
-                                           rows="5"
-                                           showDisregard="true"
-                                           eSign="true"
-                                           />
-            <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
-
-            </apex:pageBlock>
             <a id="immunization"></a>
             <apex:pageBlock rendered="{! (Assessments_ChildImmune.size > 0 || contact.Age__c < 18) && vfVarIsCM}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
@@ -676,8 +663,8 @@
                                            addEnabled="{!contact.Age__c < 18}"
                                            editEnabled="{!contact.Age__c < 18}"/>
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
-
             </apex:pageBlock>
+            
             <apex:pageBlock rendered="{!contact.Age__c > 17 && vfVarIsCM}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Adult"
@@ -691,6 +678,19 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Adult" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
 
 
+            </apex:pageBlock>
+            
+            <apex:pageBlock rendered="{! vfVarIsCM}" >
+                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                                           type="PPD Skin Test"
+                                           formId="{!$Component.FormID}"
+                                           uniqueId="PPD_SkinTest"
+                                           cols="1"
+                                           rows="5"
+                                           showDisregard="true"
+                                           eSign="true"
+                                           />
+            <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             
             <apex:pageBlock rendered="{!vfVarIsCM}">

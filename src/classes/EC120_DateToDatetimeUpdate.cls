@@ -1,8 +1,8 @@
 /*
 
-Database.executeBatch(new EC120_DateToDatetimeUpdate('SELECT Id, Anticipated_Admission_Date__c, Anticipated_Admission_DateTime__c from Referral__c where Anticipated_Admission_Date__c != null and Anticipated_Admission_DateTime__c = null', 'Referral__c'),500);
-Database.executeBatch(new EC120_DateToDatetimeUpdate('SELECT Id, Effective_Date__c, Admission_Effective_DateTime__c from Admission__c where Effective_Date__c != null and Admission_Effective_DateTime__c = null', 'Admission__c'),500);
-Database.executeBatch(new EC120_DateToDatetimeUpdate('SELECT Id, Start_Date__c, SA_Start_DateTime__c from Service_Assignment__c where Start_Date__c != null and SA_Start_DateTime__c = null', 'Service_Assignment__c'),500);
+Database.executeBatch(new EC120_DateToDatetimeUpdate('SELECT Id, Anticipated_Admission_Date__c, Anticipated_Admission_DateTime__c from Referral__c where Anticipated_Admission_Date__c != null and Anticipated_Admission_DateTime__c != null and CreatedDate < 2015-05-02T00:00:00.000Z and LastModifiedById = '005U0000001BHvT'', 'Referral__c'),500);
+Database.executeBatch(new EC120_DateToDatetimeUpdate('SELECT Id, Effective_Date__c, Admission_Effective_DateTime__c from Admission__c where Effective_Date__c != null and Admission_Effective_DateTime__c != null and CreatedDate < 2015-05-02T00:00:00.000Z and LastModifiedById = '005U0000001BHvT'', 'Admission__c'),500);
+Database.executeBatch(new EC120_DateToDatetimeUpdate('SELECT Id, Start_Date__c, SA_Start_DateTime__c from Service_Assignment__c where Start_Date__c != null and SA_Start_DateTime__c != null and CreatedDate < 2015-05-02T00:00:00.000Z and LastModifiedById = '005U0000001BHvT'', 'Service_Assignment__c'),500);
 */
 
 global class EC120_DateToDatetimeUpdate implements Database.Batchable<sObject> {
@@ -23,17 +23,17 @@ global class EC120_DateToDatetimeUpdate implements Database.Batchable<sObject> {
 	        if (targetSobj == 'Referral__c') {
                 for(sObject s : scope){
                     Referral__c ref = (Referral__c) s;
-		            ref.Anticipated_Admission_DateTime__c = DateTime.newInstance(ref.Anticipated_Admission_Date__c, Time.newInstance(0, 0, 0, 0));
+		            ref.Anticipated_Admission_DateTime__c = DateTime.newInstance(ref.Anticipated_Admission_Date__c, Time.newInstance(4, 0, 0, 0));
 	           }
 	        } else if(targetSobj == 'Admission__c'){
                 for(sObject s : scope){
 	               Admission__c adm = (Admission__c) s;
-	               adm.Admission_Effective_DateTime__c = DateTime.newInstance(adm.Effective_Date__c, Time.newInstance(0, 0, 0, 0));
+	               adm.Admission_Effective_DateTime__c = DateTime.newInstance(adm.Effective_Date__c, Time.newInstance(4, 0, 0, 0));
                 }
 	        } else if(targetSobj == 'Service_Assignment__c'){
                 for(sObject s : scope){
 	               Service_Assignment__c sa = (Service_Assignment__c) s;
-	               sa.SA_Start_DateTime__c = DateTime.newInstance(sa.Start_Date__c, Time.newInstance(0, 0, 0, 0));
+	               sa.SA_Start_DateTime__c = DateTime.newInstance(sa.Start_Date__c, Time.newInstance(4, 0, 0, 0));
                 }
 	        }
             update scope;
@@ -47,7 +47,7 @@ global class EC120_DateToDatetimeUpdate implements Database.Batchable<sObject> {
                 Messaging.reserveSingleEmailCapacity(1);
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
 
-                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Neeraj Gupta'];
+                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Adam Vernatter'];
                 Id userID = userIds[0].Id;
                 mail.setTargetObjectId(userID);
                 mail.setReplyTo('notifications@thementornetwork.com');
@@ -83,7 +83,7 @@ global class EC120_DateToDatetimeUpdate implements Database.Batchable<sObject> {
                 Messaging.reserveSingleEmailCapacity(1);
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
         
-                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Neeraj Gupta'];
+                List<User> userIDs = [SELECT Id FROM User WHERE Name = 'Adam Vernatter'];
                 Id userID = userIds[0].Id;
                 mail.setTargetObjectId(userID);
                 mail.setReplyTo('notifications@thementornetwork.com');
