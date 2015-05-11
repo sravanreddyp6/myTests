@@ -174,12 +174,12 @@ public with sharing class HomePageController{
 			hasShiftDocMap.put(serviceAssignment.Id, false);
 			hasCnaWorkbookMap.put(serviceAssignment.Id, false);
 			for (Evaluation__c eval: serviceAssignment.Evaluations__r) {
-				if (shiftDocMap.get(serviceAssignment.Id) == null & eval.RecordType.Name == 'CMShiftAssessment' && (eval.Status__c == 'Draft' || eval.Status__c == 'Final')) {
+				if (shiftDocMap.get(serviceAssignment.Id) == null && eval.RecordType.Name == 'CMShiftAssessment' && eval.Status__c == 'Draft') {
 					shiftDocMap.put(serviceAssignment.Id, eval);
 					evaluationToServiceAssignmentMap.put(eval.Id, serviceAssignment.Id);
 					hasShiftDocMap.put(serviceAssignment.Id, true);
 				}
-				if (cnaWorkbookMap.get(serviceAssignment.Id) == null & eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
+				if (cnaWorkbookMap.get(serviceAssignment.Id) == null && eval.RecordType.Name == 'CNA Workbook' && eval.Status__c == 'Draft') {
 					cnaWorkbookMap.put(serviceAssignment.Id, eval);
 					evaluationToServiceAssignmentMap.put(eval.Id, serviceAssignment.Id);
 					hasCnaWorkbookMap.put(serviceAssignment.Id, true);
