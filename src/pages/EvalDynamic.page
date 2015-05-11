@@ -9,15 +9,6 @@
 	<!-- Custom styles for this template -->
 	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" />
 
-	<!--
-	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-	-->
-
-	<!-- Bootstrap core JavaScript-->
-<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/jquery.min.js')}" /> -->
-<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/bootstrap.min.js')}" /> -->
-<!--     <apex:includeScript value="{!URLFOR($Resource.EvalBootstrap, 'js/docs.min.js')}" /> -->
-
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
@@ -299,7 +290,7 @@
 				<h4>Plan Reporting</h4>
 				<span class="pull-right collapsearrow"><i class="glyphicon glyphicon-chevron-up"></i></span>
 					<apex:outputPanel id="goalObjRepeaters" layout="block" styleclass="panelshrink">
-						<c:GoalObjRepeaters parentID="{!SAID}"  opGrp="{!$CurrentPage.parameters.opGrp}" start="{!thisEval.Shift_Start_Time__c}" end="{!thisEval.Shift_End_Time__c}" />
+						<c:GoalObjRepeaters parentID="{!SAID}" evalID="{!$CurrentPage.Parameters.evalID}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" start="{!thisEval.Shift_Start_Time__c}" end="{!thisEval.Shift_End_Time__c}" />
 					</apex:outputPanel>
 					</div>
 				</div>

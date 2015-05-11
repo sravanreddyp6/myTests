@@ -4,7 +4,7 @@ private class GenerateEvalSectionPdfTest {
         
     static testMethod void myUnitTest() {
         TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
-        Evaluation__c evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id);
+        Evaluation__c evaluation = new Evaluation__c(shift_start_time__c=DateTime.now().addDays(-1), shift_end_time__c=DateTime.now().addDays(1), Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id);
         insert evaluation;
           
         createData();
