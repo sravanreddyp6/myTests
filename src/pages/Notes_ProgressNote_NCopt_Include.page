@@ -6,10 +6,10 @@
 	<apex:form id="myFrm">
 		<apex:pageBlock mode="maindetail">
 			<apex:pageBlockSection columns="1" rendered="{! !Progress_Note__c.Locked__c}">
-				<apex:selectCheckboxes label="Primary Care Provider Names" value="{! strSelectedParties}">
+				<apex:selectlist Size="1" label="Primary Care Provider Names" value="{! Progress_Note__c.Primary_Care_Provider_Name__c }">
 					<apex:selectOptions value="{!soRelParties}"/>
 					<apex:actionSupport event="onchange" action="{!SaveParties}" reRender="myFrm" status="partyStatus"/>
-				</apex:selectCheckboxes>
+				</apex:selectlist>
 			</apex:pageBlockSection>
 			<apex:pageBlockSection columns="1" rendered="{! Progress_Note__c.Locked__c}">
 				<apex:outputField label="Primary Care Provider Names" value="{!thePN.Primary_Care_Provider_Name__c}"/>

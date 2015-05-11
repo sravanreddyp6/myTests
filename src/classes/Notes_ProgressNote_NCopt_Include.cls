@@ -13,17 +13,23 @@ public with sharing class Notes_ProgressNote_NCopt_Include {
     }
     public void constructClass(){
         strSelectedParties = new list<string>(); 
-        soRelParties = new List<SelectOption>();     
+        soRelParties = new List<SelectOption>();  
+        soRelParties.Add( new SelectOption( '', '--None--'));   
         for ( Related_Party__c rp :  
-                [ select id, name, type__c from related_party__c where person_being_served__c = :thePN.Person_Being_Served__c and type__c in ('Physician - Primary', 'Physician - Alternate') ORDER BY Name] ) {
+                [ select id, name, type__c from related_party__c where person_being_served__c = :thePN.Person_Being_Served__c and type__c in ('Physician - Primary') ORDER BY Name] ) {
           // create the list of options
           soRelParties.Add( new SelectOption( rp.Name, rp.Name));
-        }    
+        }  
+        /*  
         if(!String.isBlank(thePN.Primary_Care_Provider_Name__c))
               strSelectedParties = thePN.Primary_Care_Provider_Name__c.split(';');                     
+        */
         }
+        
 
     public PageReference SaveParties() {
+    	/*
+    }
       string primaryCareNames ='';
         for(String f : strSelectedParties )
           primaryCareNames += f+';';
@@ -36,6 +42,7 @@ public with sharing class Notes_ProgressNote_NCopt_Include {
         else{
             thePN.Primary_Care_Provider_Name__c ='';
         }
+        */
       update thePN;
       return null;
       
