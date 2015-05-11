@@ -46,6 +46,7 @@ function stopRKey(evt) {
             });
         }
         setUpFields();
+        handleCommonShowHide();
     });   //end "ready" function
 
 
@@ -113,6 +114,24 @@ function stopRKey(evt) {
       return false;
   }
 
+//Written a Seperate function as the setupFields() function is not working may be due to conflict b/w J$ and $. Sravan: 11/05/2015 PRI-110
+  showHideGender = function(){
+  	var genderOther =  j$('[id$=identifyOtherGender]').val();
+  	console.log(genderOther);
+  	
+  	if(genderOther == 'Yes'){
+  		j$('[id$=genderIdentityPanel]').show();
+  	}
+  	else{
+  		j$('[id$=genderIdentityPanel]').hide();
+  		j$('input[id$="genderIdentity"]').val('');
+  	}
+  
+  }
+  
+  handleCommonShowHide = function(){
+  	showHideGender();
+  }
 
   </script>
 
@@ -159,7 +178,21 @@ function stopRKey(evt) {
              </apex:outputPanel>
          </apex:pageBlockSectionItem>		
     </apex:repeat>
-    </apex:pageBlockSection>
+    
+   	<apex:inputField value="{!Account.Gender__pc}" />
+   	
+   	<apex:pageBlockSectionItem >
+   		<apex:outputPanel>
+   			<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/>
+   			<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" onChange="showHideGender(); return false;"/>
+		   	<apex:outputPanel id="genderIdentityPanel">
+		   		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" id="genderIdentityLabel" />
+				<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity"/> 
+		   	</apex:outputPanel>	
+	   </apex:outputPanel>
+   	</apex:pageBlockSectionItem>
+  	
+</apex:pageBlockSection>
 
  <apex:pageBlockSection title="Funding Information"
                              showHeader="true"
