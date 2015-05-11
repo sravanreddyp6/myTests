@@ -35,7 +35,7 @@ public with sharing class referralConversion_Controller {
     this.referralRecord = getFullReferralRecord(((Referral__c) ctl.getRecord()).Id);
 
     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING,
-            'You have chosen to convert the referral ' + this.referralRecord.Name + '. Please confirm the information below and click Convert to Admission to continue the conversion process. If you would like to revise the referral, click Edit.' ));
+            'You have chosen to convert the referral ' + this.referralRecord.Name + '. Please confirm the information below and click Confirm Conversion to continue the conversion process. If you would like to revise the referral, click Edit.' ));
 
     // get the referral location information
     parseLocationInfo();
@@ -977,7 +977,6 @@ public class personRecord {
         age = String.valueOf(pbs.Age__c);
         race =  pbs.Race__c;
     }
-
 
 }
 class referralConversionException extends Exception {
