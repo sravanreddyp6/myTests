@@ -144,6 +144,11 @@ function validate() {
         context.font = "18px sans-serif";
         fontsize = 18;
         line += fontsize*2;
+
+        context.textAlign="center";
+        var text = "Outpatient Therapy";
+        context.fillText(text, (width / 2), line);
+        line += fontsize;  
         
         context.textAlign="center";
         var text = "NC Division of Mental Health, Developmental Disabilities and Substance Abuse Services";
@@ -168,7 +173,7 @@ function validate() {
         line += fontsize;
         
         context.textAlign="left";
-        text = "Primary Care Provider Name: {!Progress_Note__c.Primary_Care_Provider_Name__c}";
+        text = "Type of Contact: {!Progress_Note__c.Type_Of_Contact__c}";
         context.fillText( text, 2, line );
 
         
@@ -180,9 +185,6 @@ function validate() {
         line += fontsize;
         context.textAlign="left";
 
-        text = "Primary Care Provider NPI Number: {!Progress_Note__c.Primary_Care_Provider_NPI_Number__c}";
-        context.fillText( text, 2, line );
-        line += fontsize ;
 
         context.moveTo(0, line);
         context.lineTo(width, line);
