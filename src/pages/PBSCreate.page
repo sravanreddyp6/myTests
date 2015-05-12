@@ -120,11 +120,13 @@ function stopRKey(evt) {
   	console.log(genderOther);
   	
   	if(genderOther == 'Yes'){
-  		j$('[id$=genderIdentityPanel]').show();
+  		j$('[id$=genderIdentityLabel]').show();
+  		j$('[id$=genderIdentity]').show();
   	}
   	else{
-  		j$('[id$=genderIdentityPanel]').hide();
   		j$('input[id$="genderIdentity"]').val('');
+  		j$('[id$=genderIdentityLabel]').hide();
+  		j$('[id$=genderIdentity]').hide();
   	}
   
   }
@@ -180,16 +182,23 @@ function stopRKey(evt) {
     </apex:repeat>
     
    	<apex:inputField value="{!Account.Gender__pc}" />
+   	<apex:pageBlockSectionItem />
    	
    	<apex:pageBlockSectionItem >
-   		<apex:outputPanel>
-   			<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/>
-   			<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" onChange="showHideGender(); return false;"/>
-		   	<apex:outputPanel id="genderIdentityPanel">
-		   		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" id="genderIdentityLabel" />
-				<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity"/> 
-		   	</apex:outputPanel>	
-	   </apex:outputPanel>
+ 		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/>
+   		<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" onChange="showHideGender(); return false;"/>
+   	</apex:pageBlockSectionItem>
+   	
+   	<apex:pageBlockSectionItem />
+   	
+   	<apex:pageBlockSectionItem >
+   		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" id="genderIdentityLabel" />
+   		<apex:outputPanel >
+   			<div class="requiredInput">
+				<div class="requiredBlock"></div>
+   				<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity"/>
+   			</div>
+   		</apex:outputPanel>
    	</apex:pageBlockSectionItem>
   	
 </apex:pageBlockSection>
