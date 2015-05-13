@@ -292,37 +292,82 @@
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                 </apex:repeat>
-                
-                <apex:inputField value="{!Contact.Gender__c}" rendered="{!pbsEditModeOn}"/>
-                <apex:outputField value="{!Contact.Gender__c}" rendered="{!!pbsEditModeOn}" />
-			   	<apex:pageBlockSectionItem />
-			   	
-			   	<apex:pageBlockSectionItem rendered="{!pbsEditModeOn}" >
-			 		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/>
-			   		<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" onChange="showHideGender(); return false;"/>
-			   	</apex:pageBlockSectionItem>
-			   	
-		   		<apex:pageBlockSectionItem rendered="{!!pbsEditModeOn}" >
-		 		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/>
-		   		<apex:outputField value="{!Contact.Does_the_person_Identify__c}" />
-			   	</apex:pageBlockSectionItem>
-			   	
-			   	<apex:pageBlockSectionItem />
-			   	
-			   	<apex:pageBlockSectionItem rendered="{!pbsEditModeOn}" >
-			   		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" id="genderIdentityLabel" />
-			   		<apex:outputPanel >
-			   			<div class="requiredInput">
+                <apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">
+                	<apex:outputPanel Styleclass="helpButton" >
+			    		<apex:outputLabel value="Gender" />
+			    		<img src="/s.gif" id="HelpImage" class="helpOrb" title="Select the person's legal gender" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
+			    	</apex:outputPanel>
+			    	<apex:outputPanel >
+				    	<apex:inputField value="{!Contact.Gender__c}" />
+				    	<br/>
+				    	<br/>
+				    	<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" onChange="showHideGender(); return false;" />
+				    	<div class="requiredInput">
 							<div class="requiredBlock"></div>
-			   				<apex:inputFIeld value="{!Contact.Gender_Identity__c}" id="genderIdentity"/>
-			   			</div>
-			   		</apex:outputPanel>
-			   	</apex:pageBlockSectionItem>
+				    	<apex:inputFIeld value="{!Contact.Gender_Identity__c}" id="genderIdentity" />
+				    	</div>
+			    	</apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!!pbsEditModeOn}">
+                	<apex:outputPanel Styleclass="helpButton" >
+			    		<apex:outputLabel value="Gender" />
+			    		<img src="/s.gif" id="HelpImage" alt="Select the person's legal gender" class="helpOrb" title="Select the person's legal gender" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Describe Gender Identity" rendered="{!Contact.Does_the_person_Identify__c == 'Yes'}"/>
+			    	</apex:outputPanel>
+			    	<apex:outputPanel >
+				    	<apex:outputField value="{!Contact.Gender__c}" />
+				    	<br/>
+				    	<br/>
+				    	<apex:outputField value="{!Contact.Does_the_person_Identify__c}"  />
+				    	<br/>
+				    	<br/>
+				    	<apex:outputFIeld value="{!Contact.Gender_Identity__c}"  rendered="{!Contact.Does_the_person_Identify__c == 'Yes'}" />
+				    	
+			    	</apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+<!--                 <apex:inputField value="{!Contact.Gender__c}" rendered="{!pbsEditModeOn}"/> -->
+<!--                 <apex:outputField value="{!Contact.Gender__c}" rendered="{!!pbsEditModeOn}" /> -->
+<!-- 			   	<apex:pageBlockSectionItem /> -->
 			   	
-			   	<apex:pageBlockSectionItem rendered="{!!pbsEditModeOn && Contact.Gender_Identity__c == 'Yes'}" >
-			   		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" />
-			   		<apex:outputField value="{!Contact.Gender_Identity__c}" />
-			   	</apex:pageBlockSectionItem>
+<!-- 			   	<apex:pageBlockSectionItem rendered="{!pbsEditModeOn}" > -->
+<!-- 			 		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/> -->
+<!-- 			   		<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" onChange="showHideGender(); return false;"/> -->
+<!-- 			   	</apex:pageBlockSectionItem> -->
+			   	
+<!-- 		   		<apex:pageBlockSectionItem rendered="{!!pbsEditModeOn}" > -->
+<!-- 		 		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/> -->
+<!-- 		   		<apex:outputField value="{!Contact.Does_the_person_Identify__c}" /> -->
+<!-- 			   	</apex:pageBlockSectionItem> -->
+			   	
+<!-- 			   	<apex:pageBlockSectionItem /> -->
+			   	
+<!-- 			   	<apex:pageBlockSectionItem rendered="{!pbsEditModeOn}" > -->
+<!-- 			   		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" id="genderIdentityLabel" /> -->
+<!-- 			   		<apex:outputPanel > -->
+<!-- 			   			<div class="requiredInput"> -->
+<!-- 							<div class="requiredBlock"></div> -->
+<!-- 			   				<apex:inputFIeld value="{!Contact.Gender_Identity__c}" id="genderIdentity"/> -->
+<!-- 			   			</div> -->
+<!-- 			   		</apex:outputPanel> -->
+<!-- 			   	</apex:pageBlockSectionItem> -->
+			   	
+<!-- 			   	<apex:pageBlockSectionItem rendered="{!!pbsEditModeOn && Contact.Gender_Identity__c == 'Yes'}" > -->
+<!-- 			   		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" /> -->
+<!-- 			   		<apex:outputField value="{!Contact.Gender_Identity__c}" /> -->
+<!-- 			   	</apex:pageBlockSectionItem> -->
                 
             </apex:pageBlockSection>
 
