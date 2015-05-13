@@ -35,13 +35,13 @@
 			// However, this method is called both when the page is initialized
 			// and when a value is changed, so we need to make sure to not use
 			// more timeout handler than necessary (i.e. in the latter case)
-			if (!$element.hasClass("timer-attached")) {
+			if (!$element.hasClass("rules-timer-attached")) {
 				var originalValue = $element.realVal();
 				setInterval(function() {
 					var currentValue = $element.realVal();
 					if (JSON.stringify(currentValue) != JSON.stringify(originalValue)) { // Normal comparison do NOT work with list, so we use this workaround
 						originalValue = currentValue;
-						$element.addClass("timer-attached");
+						$element.addClass("rules-timer-attached");
 						$element.trigger("change");
 					}
 				}, 100)
@@ -111,6 +111,35 @@
 	// will be shown/hidden.
 	window.applyShowHideRulesToField = function(element) {
 		var $element = $(element);
+		if ($element.attr('multiple') == 'multiple' && !$element.attr('id').endsWith('_selected') & !$element.attr('id').endsWith('_unselected')) {
+			// This is the hidden select field for multi-picklist that gets
+			// populated automagically by Salesforce when items are moved from
+			// the selected and unselected lists. By default, this never gets
+			// the change event when its value changed, because their values
+			// are changed programmatically by SF (and those don't trigger change
+			// event. Therefore, we have to monitor these values.
+			// However, this method is called both when the page is initialized
+			// and when a value is changed, so we need to make sure to not use
+			// more timeout handler than necessary (i.e. in the latter case)
+			if (!$element.hasClass("show-hide-rules-timer-attached")) {
+				var originalValue = $element.realVal();
+				setInterval(function() {
+					var currentValue = $element.realVal();
+					if (JSON.stringify(currentValue) != JSON.stringify(originalValue)) { // Normal comparison do NOT work with list, so we use this workaround
+						originalValue = currentValue;
+						$element.addClass("show-hide-rules-timer-attached");
+						$element.trigger("change");
+					}
+				}, 100)
+			}
+		}
+		// For multi-picklist, apparently the data- passthrough also
+		// exist in the selected and unselected checkboxes, which confuse
+		// the script, so we check for their existence here.
+		if ($element.attr('multiple') == 'multiple' && ($element.attr('id').endsWith('_selected') || $element.attr('id').endsWith('_unselected'))) {
+			return;
+		}
+
 		var shownTargets = [];
 		var rules = $element.data("visibility-rules");
 
