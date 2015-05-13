@@ -284,9 +284,11 @@
         <active>true</active>
         <errorConditionFormula>TEXT(Status__c) != &apos;N/A&apos; &amp;&amp; 
 ISBlank(TEXT(Type__c))&amp;&amp;   
-!ISBLANK(Description__c) &amp;&amp;
-($User.Operating_Group__c == &apos;Redwood&apos; || $User.Operating_Group__c == &apos;Care Meridian&apos;) &amp;&amp; 
-Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Service_Location__r.ProgramID__c != &apos;114165002&apos;</errorConditionFormula>
+!ISBLANK(Description__c) &amp;&amp; 
+NOT (
+$User.Operating_Group__c == &apos;Cambridge&apos; || (
+ISPICKVAL(Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Admission__r.State__c, &apos;AZ&apos;) &amp;&amp;
+Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Service_Location__r.ProgramID__c != &apos;114165002&apos;))</errorConditionFormula>
         <errorDisplayField>Type__c</errorDisplayField>
         <errorMessage>Type is required</errorMessage>
     </validationRules>
