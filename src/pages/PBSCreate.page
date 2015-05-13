@@ -46,6 +46,7 @@ function stopRKey(evt) {
             });
         }
         setUpFields();
+        handleCommonShowHide();
     });   //end "ready" function
 
 
@@ -113,6 +114,26 @@ function stopRKey(evt) {
       return false;
   }
 
+//Written a Seperate function as the setupFields() function is not working may be due to conflict b/w J$ and $. Sravan: 11/05/2015 PRI-110
+  showHideGender = function(){
+  	var genderOther =  j$('[id$=identifyOtherGender]').val();
+  	console.log(genderOther);
+  	
+  	if(genderOther == 'Yes'){
+  		j$('[id$=genderIdentityLabel]').show();
+  		j$('[id$=genderIdentity]').show();
+  	}
+  	else{
+  		j$('input[id$="genderIdentity"]').val('');
+  		j$('[id$=genderIdentityLabel]').hide();
+  		j$('[id$=genderIdentity]').hide();
+  	}
+  
+  }
+  
+  handleCommonShowHide = function(){
+  	showHideGender();
+  }
 
   </script>
 
@@ -159,7 +180,28 @@ function stopRKey(evt) {
              </apex:outputPanel>
          </apex:pageBlockSectionItem>		
     </apex:repeat>
-    </apex:pageBlockSection>
+    
+   	<apex:inputField value="{!Account.Gender__pc}" />
+   	<apex:pageBlockSectionItem />
+   	
+   	<apex:pageBlockSectionItem >
+ 		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/>
+   		<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" onChange="showHideGender(); return false;"/>
+   	</apex:pageBlockSectionItem>
+   	
+   	<apex:pageBlockSectionItem />
+   	
+   	<apex:pageBlockSectionItem >
+   		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" id="genderIdentityLabel" />
+   		<apex:outputPanel >
+   			<div class="requiredInput">
+				<div class="requiredBlock"></div>
+   				<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity"/>
+   			</div>
+   		</apex:outputPanel>
+   	</apex:pageBlockSectionItem>
+  	
+</apex:pageBlockSection>
 
  <apex:pageBlockSection title="Funding Information"
                              showHeader="true"

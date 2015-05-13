@@ -26,7 +26,7 @@
     font-size: 12pt;
 }
 .med{
-    font-size: 16pt;
+    font-size: 14pt;
     }
 .myTB{
     width: 100%;
@@ -75,6 +75,8 @@
 </head>
 <body>
 <table class="myTB">
+
+	<tr><td class="med" align="center">Outpatient Therapy</td></tr>
     <tr><td class="med" align="center">NC Division of Mental Health, Developmental Disabilities and Substance Abuse Services</td></tr>
 </table>
 <apex:outputPanel layout="block" style="border: 1px solid black;">
@@ -87,10 +89,9 @@
         <td align="right">Record Number:&nbsp;<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></td>
     </tr>
     <tr>
-        <td>Primary Care Provider Name:&nbsp;<apex:outputField value="{!Progress_Note__c.Primary_Care_Provider_Name__c}"/></td>
+        <td>Type of Contact:&nbsp;<apex:outputField value="{!Progress_Note__c.Type_of_Contact__c}"/></td>
         <td align="right">DOB:<apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Birthdate}"/></td>
     </tr>
-    <tr><td>Primary Care Provider NPI Number:&nbsp;<apex:outputField value="{!Progress_Note__c.Primary_Care_Provider_NPI_Number__c}"/></td></tr>
 </table>
 <table class="myTB1">
     <tr>
