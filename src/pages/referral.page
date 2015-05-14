@@ -1594,20 +1594,20 @@
                 		<br/>
                 		<br/>
                 		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
-                		<br/>
-                		<br/>
-                		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Referral__c.Legal_Guardian_Status__c != null}" />
                 	</apex:outputPanel>
                 	<apex:outputPanel >
                 		<apex:inputField value="{!Referral__c.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
                 		<br/>
                 		<br/>
                 		<apex:inputField value="{!Referral__c.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
-                		<br/>
-                		<br/>
-                		<apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" rendered="{!Referral__c.Legal_Guardian_Status__c != null}" />
                 	</apex:outputPanel>
                 </apex:pageBlocksectionitem>
+                
+                <apex:pageBlocksectionItem rendered="{!Referral__c.Legal_Guardian_Status__c != null}" />
+                <apex:pageBlockSectionItem rendered="{!Referral__c.Legal_Guardian_Status__c != null}" >
+                	<apex:outputLabel value="Legal/Guardianship Staus"  />
+                	<apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" />
+                </apex:pageBlockSectionItem>
            
              	<apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}"  rendered="{!referralRecordType == 'NeuroRestorative'}" required="true" />
 
