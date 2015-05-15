@@ -98,6 +98,22 @@
     <script>
         jQuery.noConflict();
         jQuery(document).ready(function($) {
+        	setUpFields = function () {
+				// Apply rules to input fields
+				$('body input').on("change", function (event) {
+					applyShowHideRulesToField(event.target);
+				});
+				$('body select').on("change", function (event) {
+					applyShowHideRulesToField(event.target);
+				});
+				$('body input').each(function (_, target) {
+					applyShowHideRulesToField(target);
+				});
+				$('body select').each(function (_, target) {
+					applyShowHideRulesToField(target);
+				});
+			};
+			setUpFields();
             enableDiagEff();
         });
     </script>
@@ -477,6 +493,22 @@
                 j$('.saveBtn').prop('value', 'Save Referral');
             }
         }
+        
+        handleGuardianShip = function(){
+		  	var type = j$('[id$=guardianShipType]').val();
+		  
+		  	if(type == 'Partial Guardianship/Conservatorship'){
+		  		j$('[id$=partialGuardianShip]').show();
+		  		j$('[id$=partialGuardianShipLabel]').show();
+		  	}
+		  	else{
+		  		j$('input[id$="partialGuardianShip"]').val('');
+		  		j$('[id$=partialGuardianShip]').hide();
+		  		j$('[id$=partialGuardianShipLabel]').hide();
+		  	}
+		  
+	  }
+        
     </script>
 
     <apex:form id="referralForm">
@@ -1409,7 +1441,7 @@
                                 </apex:facet>
                                 <apex:facet name="stop"></apex:facet>
                             </apex:actionStatus>
-                            <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusRefSourceType" oncomplete="enableDiagEff(); " />
+                            <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusRefSourceType" oncomplete="enableDiagEff();setUpFields();" />
                         </apex:inputField>
                     </apex:actionRegion>
                 </apex:pageBlockSectionItem>
@@ -1554,10 +1586,29 @@
 
                 <apex:inputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}" />
-
-                <apex:inputField value="{!Referral__c.Legal_Guardian_Status__c}" />
                 
-
+<!-- 				Added by Sravan for PRI-164 05/13/2015 -->
+				<apex:pageBlocksectionitem >
+					<apex:outputPanel >
+                		<apex:outputLabel value="Guardianship Type" id="guardianshipTypeLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+                	</apex:outputPanel>
+                	<apex:outputPanel >
+                		<apex:inputField value="{!Referral__c.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
+                		<br/>
+                		<br/>
+                		<apex:inputField value="{!Referral__c.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                	</apex:outputPanel>
+                </apex:pageBlocksectionitem>
+                
+                <apex:pageBlocksectionItem rendered="{!Referral__c.Legal_Guardian_Status__c != null}" />
+                <apex:pageBlockSectionItem rendered="{!Referral__c.Legal_Guardian_Status__c != null}" >
+                	<apex:outputLabel value="Legal/Guardianship Staus"  />
+                	<apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" />
+                </apex:pageBlockSectionItem>
+           
              	<apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}"  rendered="{!referralRecordType == 'NeuroRestorative'}" required="true" />
 
                 

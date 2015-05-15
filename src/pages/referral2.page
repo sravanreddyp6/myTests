@@ -1339,7 +1339,27 @@
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}" />
-                <apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" />
+<!--                 <apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" /> -->
+                <apex:pageBlocksectionitem >
+					<apex:outputPanel >
+                		<apex:outputLabel value="Guardianship Type" />
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship" rendered="{!Referral__c.Guardianship_Type__c == 'Partial Guardianship/Conservatorship'}" />
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Legal/Guardianship Staus"  rendered="{!Referral__c.Legal_Guardian_Status__c != null}" />
+                	</apex:outputPanel>
+                	<apex:outputPanel >
+                		<apex:outputField value="{!Referral__c.Guardianship_Type__c}"  />
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Referral__c.Partial_Guardianship_Conservatorship__c}"  rendered="{!Referral__c.Guardianship_Type__c == 'Partial Guardianship/Conservatorship'}"/>
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" rendered="{!Referral__c.Legal_Guardian_Status__c != null}" />
+                	</apex:outputPanel>
+                </apex:pageBlocksectionitem>
                 <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge}" />
                 <apex:outputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />

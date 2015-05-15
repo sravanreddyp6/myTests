@@ -89,9 +89,10 @@
         <apex:pageBlock title="Upload Attachments">
                 	    <div id="textId" >
         <p><h2> 1. Select the file</h2><br/>
-		Type the path of the file or click the Choose File button to find the file. You may also include a description.<br/> Click "Add More" to attach up to 5 files at once, or proceed to Step 2.</p>
+		To attach one file, click "Choose File" to select a file. You may also add a description.<br/>To attach up to five files at once, first click "Add Multiple." Then click "Choose File" to select each file. You may also add descriptions.
+		<BR/>Next, proceed to Step 2.</p>
     </div>
-     <apex:commandButton value="Add More" action="{!addMore}" rendered="{!NOT(hideAddMoreButton)}" />
+     <apex:commandButton value="Add Multiple" action="{!addMore}" rendered="{!NOT(hideAddMoreButton)}" />
                
             <apex:repeat value="{!newAttachments}" var="newAtt">
                 <apex:pageBlockSection columns="4" id="files">
