@@ -273,7 +273,7 @@ table#persons_table.dataTable {
                                             	View Shift Docs
                                             </apex:outputLink>
                                             &nbsp;<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}"
-                                                rendered="{!$User.Operating_Group__c != 'Cambridge'}" >
+                                                rendered="{!$User.Operating_Group__c != 'Cambridge' && $User.Operating_Group__c != 'Redwood'}" >
                                                 Add Seizure
                                                 <apex:param value="{!sa.ID}" name="service_assignment" />
                                                 <apex:param value="{!admission.Person_Being_Served__r.ID}" name="pbsId" />
@@ -363,7 +363,7 @@ table#persons_table.dataTable {
                                             View Current Notes
                                         </apex:outputLink>
                                         &nbsp;<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}"
-                                                rendered="{!$User.Operating_Group__c != 'Cambridge'}" >
+                                                rendered="{!$User.Operating_Group__c != 'Cambridge' && $User.Operating_Group__c != 'Redwood'}" >
                                                 Add Seizure
                                                 <apex:param value="{!jo.Service_Assignment__r.ID}" name="service_assignment" />
                                                 <apex:param value="{!jo.Service_Assignment__r.Person_Being_Served__r.ID}" name="pbsId" />
