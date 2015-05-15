@@ -433,6 +433,8 @@ public with sharing class referralConversion_Controller {
                                 Avatar_ID__pc = referralRecord.Billing_ID__c,
                                 Avatar_Source_System__pc = strBillingSystem,
                                 Legal_Guardianship_Status__pc = referralRecord.Legal_Guardian_Status__c,
+                                Guardianship_Type__pc = referralRecord.Guardianship_Type__c,
+                                Partial_Guardianship_Conservatorship__pc = referralRecord.Partial_Guardianship_Conservatorship__c,
                                 Current_Medications__pc = referralRecord.Current_Medications__c,
                                 Other_id__pc = referralRecord.Payer_Medical_Record_Number__c ,
                                 Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c,
