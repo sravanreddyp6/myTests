@@ -1,0 +1,192 @@
+<apex:page controller="Report_CANS_ActionableItems" docType="html-5.0">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
+
+	<script>
+		function setFocusOnLoad() {}
+		jQuery.noConflict();
+		jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+			"datetime-us-flex-pre": function(a) {
+				// If there's no slash, then it's not an actual date, so return zero for sorting
+				if (a.indexOf('/') === -1) {
+					return '0';
+				} else {
+					// Set optional items to zero
+					var hour = 0,
+						min = 0,
+						ap = 0;
+					// Execute match. Requires month, day, year. Can be mm/dd or m/d. Can be yy or yyyy
+					// Time is optional. am/pm is optional
+					// TODO - remove extra time column from array
+					var b = a.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})( (\d{1,2}):(\d{1,2}))? ?(am|pm|AM|PM|Am|Pm)?/),
+						month = b[1],
+						day = b[2],
+						year = b[3];
+					// If time exists then output hours and minutes
+					if (b[4] != undefined) {
+						hour = b[5];
+						min = b[6];
+					}
+					// if using am/pm then change the hour to 24 hour format for sorting
+					if (b[7] != undefined) {
+						ap = b[7];
+						if (hour == '12') hour = '0';
+						if (ap == 'pm') hour = parseInt(hour, 10) + 12;
+					}
+
+					// for 2 digit years, changes to 20__ if less than 70
+					if (year.length == 2) {
+						if (parseInt(year, 10) < 70) year = '20' + year;
+						else year = '19' + year;
+					}
+					// Converts single digits
+					if (month.length == 1) month = '0' + month;
+					if (day.length == 1) day = '0' + day;
+					if (hour.length == 1) hour = '0' + hour;
+					if (min.length == 1) min = '0' + min;
+					var tt = year + month + day + hour + min;
+					return tt;
+				}
+			},
+			"datetime-us-flex-asc": function(a, b) {
+				return a - b;
+			},
+			"datetime-us-flex-desc": function(a, b) {
+				return b - a;
+			}
+		});
+		jQuery(document).ready(function($) {
+			window.setUpTable = function() {
+				window.responsesTable = $("#responses").dataTable({
+					columnDefs: [{
+						type: 'datetime-us-flex',
+						targets: 2
+					}]
+				});
+			};
+			setUpTable();
+		});
+	</script>
+	<style>
+		.pbTitle {
+			width: 300px !important;
+		}
+		.thinking {
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 1000;
+		}
+		.thinkingwheel {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
+		.header{
+			font-size: 20px;
+			font-weight: bold;
+			padding: 12px;
+		}
+		tr.dataRow {
+			background-color:white;
+		}
+		tr.dataRow:hover {
+			background-color: #e3f3ff;
+		};
+	</style>
+	<div class="header">CANS Actionable Items</div>
+	<apex:pageMessages id="pageMessages" />
+	<apex:form id="mainForm">
+		<apex:pageBlock id="mainBlock" title="Filters">
+			<apex:pageBlockSection columns="2">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Start Date" />
+					<apex:input type="auto" styleClass="datepicker" value="{!startDate}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="End Date" />
+					<apex:input type="auto" styleClass="datepicker" value="{!endDate}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Score" />
+					<apex:selectList value="{!scoreChosen}" size="1" required="true">
+						<apex:selectOptions value="{!scoreOptions}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem />
+			</apex:pageBlockSection>
+			<apex:pageBlockButtons location="bottom">
+				<apex:commandButton value="Run" action="{!runReport}" rerender="pageMessages, responsesBlock" status="pageProcessingStatus" oncomplete="setUpTable();" />
+			</apex:pageBlockButtons>
+		</apex:pageBlock>
+		<apex:pageBlock id="responsesBlock" title="Results">
+			<apex:pageBlockButtons location="both">
+				<apex:commandButton onclick="tableToExcel(); return false;" value="Export To Excel" rendered="{!scoreChosen != ''}" style="float: right;" />
+			</apex:pageBlockButtons>
+			<table id="responses" class="list">
+				<thead>
+					<tr class="headerRow">
+						<th>Person Being Served</th>
+						<th>Assessment Name</th>
+						<th>Assessment Date</th>
+						<th>Owner</th>
+						<th>Question Title</th>
+						<th>Score</th>
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!listWrapper}" var="partial_list" id="listWrapper">
+						<apex:repeat value="{!partial_list}" var="response">
+							<tr class="dataRow">
+								<td class="dataCell">
+									<a href="/{!response.Assessment__r.Admission__r.Person_Being_Served__r.Id}">{!response.Assessment__r.Admission__r.Person_Being_Served__r.Name}</a>
+								</td>
+								<td class="dataCell">
+									<a href="/{!response.Assessment__r.Id}">{!response.Assessment__r.Name}</a>
+								</td>
+								<td class="dataCell">
+									<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+										<apex:param value="{!response.Assessment__r.Assessment_Date__c}" />
+									</apex:outputText>
+								</td>
+								<td class="dataCell">
+									<a href="/{!response.Assessment__r.Owner.Id}">{!response.Assessment__r.Owner.Name}</a>
+								</td>
+								<td class="dataCell">
+									{!response.Question__r.Question_Title__c}
+								</td>
+								<td class="dataCell">
+									{!response.Rating__c}
+								</td>
+							</tr>
+						</apex:repeat>
+					</apex:repeat>
+				</tbody>
+			</table>
+			<script>
+				window.tableToExcel = function () {
+					window.open("/apex/Report_CANS_ActionableItemsExcel?startDate={!URLENCODE(TEXT(startDate))}&endDate={!URLENCODE(TEXT(endDate))}&scoreChosen={!URLENCODE(scoreChosen)}", "_blank");
+				};
+			</script>
+		</apex:pageBlock>
+	</apex:form>
+	<apex:actionStatus id="pageProcessingStatus">
+		<apex:facet name="start">
+			<div class="thinking">
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop"> </apex:facet>
+	</apex:actionStatus>
+</apex:page>

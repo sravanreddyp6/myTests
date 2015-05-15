@@ -1,0 +1,383 @@
+<apex:page standardController="Account"  extensions="PBS_Controller,PBS_controller_helper" standardStylesheets="true" sidebar="false"  tabStyle="Persons_Being_Served_New__tab">
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+ <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+
+  <style type="text/css">
+    .nowrap {
+      white-space: nowrap;
+    }
+    .fixed-dialog{
+        position: fixed;
+        top:75px;
+        left:100px;
+        overflow-y:scroll;
+        max-height:400px;
+    }
+  </style>
+
+  <script language="javascript">
+
+   j$ = jQuery.noConflict();
+     //disable enter key
+function stopRKey(evt) {
+   var evt = (evt) ? evt : ((event) ? event : null);
+   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+}
+
+    jQuery(document).ready(function ($) {
+       setUpFields = function () {
+				// Apply rules to input fields
+				$('body input').on("change", function (event) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(event.target);
+				});
+				$('body select').on("change", function (event) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(event.target);
+				});
+				$('body input').each(function (_, target) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(target);
+				});
+				$('body select').each(function (_, target) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(target);
+				});
+			};
+		setUpFields();
+    });   //end "ready" function
+
+
+  //opens the dialog
+  function openDialog(dialogId, tagType, titleString)
+  {
+   selector = tagType + '[id$=' + dialogId + ']';
+
+   j$(selector).dialog({dialogClass: 'fixed-dialog',title:titleString,modal:true, width:800, closeOnEscape:false}).parent().appendTo(j$('form[id$=referralForm]'));
+      j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+  }
+  function closeDialog(dialogId, tagType)
+  {
+   selector = tagType + '[id$=' + dialogId + ']';
+
+   j$(selector).dialog('destroy');
+  }
+
+ function validateRelatedParty() {
+    var errors = '';
+    j$('#relatedPartyErrors').html(errors);
+    if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
+        errors += '<li>Party Name is a required field.</li>';
+    }
+    if (j$('select[id$=relatedPartyEntry_Type]').val() =='') {
+        errors += '<li>Type is a required field.</li>';
+    }
+    var x = j$('input[id$=relatedPartyEntry_Email]').val();
+    if (x.length > 0) {
+        var atpos=x.indexOf("@");
+        var dotpos=x.lastIndexOf(".");
+        if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+            errors += '<li>Email is not a valid Email address</li>';
+        }
+    }
+    j$('#relatedPartyErrors').html(errors);
+    return (errors == '');
+  }
+
+
+ //copies relatedParty fields from dialog for postback
+  function relatedPartySave(isDialogClose) {
+      if (validateRelatedParty()) {
+          var partyID = j$('input[id$=relatedPartyEntry_Id]').val();
+          var partyName = j$('input[id$=relatedPartyEntry_Name]').val();
+          var partyType = j$('select[id$=relatedPartyEntry_Type]').val();
+          var partyEmail = j$('input[id$=relatedPartyEntry_Email]').val();
+          var partyPhone1 = j$('input[id$=relatedPartyEntry_Phone]').val();
+          var partyAddress = j$('textarea[id$=relatedPartyEntry_Address]').val();
+          var partyPhone2 = j$('input[id$=relatedPartyEntry_Phone_2]').val();
+          var partyPhone1Type = j$('select[id$=relatedPartyEntry_Phone_1_Type]').val();
+          var partyPhone2Type = j$('select[id$=relatedPartyEntry_Phone_2_Type]').val();
+          var partyComments = j$('textarea[id$=relatedPartyEntry_Comments]').val();
+
+          PBS_controller.saveRelatedParty(partyID, partyName, partyType, partyPhone1, partyEmail,
+             partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments,
+             function(result, event){
+                    if (isDialogClose) {
+                        closeDialog('relatedPartyModal', 'span');
+                    }
+             },
+             {escape: true}
+           );
+      }
+      return false;
+  }
+  </script>
+
+  <apex:form id="pbsForm">
+
+    <apex:pageMessages />
+
+<apex:pageBlock title="Person Being Served">
+ <div class="pbHeaderButton">
+ <apex:commandButton value="Save" id="SavePBSId"  action="{!savePBS}"  />
+ <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancel}" />
+ </div>
+
+ <apex:pageBlockSection showHeader="true"
+                             columns="2"
+                             collapsible="false"
+                             id="pbsOutPutsectionId" >
+
+    <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Basic}" var="f">
+		<apex:inputField value="{!Account[f]}"  rendered="{! AND(NOT(f = 'FirstName'), NOT(f = 'Primary_Language__pc'), NOT(f = 'LastName'), NOT(f = 'PersonBirthdate') )}" required="{!OR(f.required, f.dbrequired)}"/>
+		<apex:inputtext label="First Name" value="{!fname}"  rendered="{!f = 'FirstName' }"/>
+		<apex:pageBlockSectionItem rendered="{!f = 'PersonBirthdate'}" >
+			<apex:outputLabel value="Date of Birth" for="txtDOB" />
+			<apex:outputPanel styleClass="requiredInput" layout="block" >
+			  <apex:outputPanel styleClass="requiredBlock" layout="block" />
+			    <apex:inputfield id="txtDOB"  value="{!personbeingserved.PersonBirthdate}" label="Date of Birth" required="true" />
+			</apex:outputPanel>
+		</apex:pageBlockSectionItem>
+		<apex:pageBlockSectionItem rendered="{!f = 'LastName'}" >
+		<apex:outputLabel value="Last Name" for="txtlast" />
+		<apex:outputPanel styleClass="requiredInput" layout="block" >
+		  <apex:outputPanel styleClass="requiredBlock" layout="block" />
+		    <apex:inputtext id="txtlast" value="{!lname}" label="Last Name" required="true" />
+		</apex:outputPanel>
+		</apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem rendered="{!  f == 'Primary_Language__pc'}">
+             <apex:outputText value="Primary Language" />
+             <apex:outputPanel styleClass="nowrap">
+                 <apex:inputField value="{!Account[f]}" required="{!OR(f.required, f.dbrequired)}" /> &nbsp;&nbsp;&nbsp;
+                 <apex:outputLabel value="Non-Verbal" />&nbsp;
+                 <apex:inputField value="{!Account.Non_Verbal__pc}"  /> 
+                 <apex:outputLabel value="Sign Language" />&nbsp;
+                 <apex:inputField value="{!Account.Sign_Language__pc}"  />
+             </apex:outputPanel>
+         </apex:pageBlockSectionItem>		
+    </apex:repeat>
+    
+    <apex:pageBlocksectionItem >
+    	<apex:outputPanel styleClass="helpButton">
+    		<apex:outputLabel value="Gender" styleClass="labelCol" />
+    		<img src="/s.gif" id="HelpImage" alt="Select the person's legal gender" class="helpOrb" title="Select the person's legal gender" />
+    		<br/>
+    		<br/>
+    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
+    		<br/>
+    		<br/>
+    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
+    	</apex:outputPanel>
+    	<apex:outputPanel >
+	    	<apex:inputField value="{!Account.Gender__pc}" />
+	    	<br/>
+	    	<br/>
+	    	<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}" />
+	    	<div class="requiredInput">
+				<div class="requiredBlock"></div>
+	    	<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity" />
+	    	</div>
+    	</apex:outputPanel>
+    </apex:pageBlocksectionItem>
+<!--    	<apex:inputField value="{!Account.Gender__pc}" /> -->
+<!--    	<apex:pageBlockSectionItem /> -->
+   	
+<!--    	<apex:pageBlockSectionItem > -->
+<!--  		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/> -->
+<!--    		<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" onChange="showHideGender(); return false;"/> -->
+<!--    	</apex:pageBlockSectionItem> -->
+   	
+<!--    	<apex:pageBlockSectionItem /> -->
+   	
+<!--    	<apex:pageBlockSectionItem > -->
+<!--    		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" id="genderIdentityLabel" /> -->
+<!--    		<apex:outputPanel > -->
+<!--    			<div class="requiredInput"> -->
+<!-- 				<div class="requiredBlock"></div> -->
+<!--    				<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity"/> -->
+<!--    			</div> -->
+<!--    		</apex:outputPanel> -->
+<!--    	</apex:pageBlockSectionItem> -->
+  	
+</apex:pageBlockSection>
+
+ <apex:pageBlockSection title="Funding Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="true"
+                             id="pbsOutputFundingSection" >
+
+    <apex:repeat value="{!$ObjectType.Account.FieldSets.Funding_Information}" var="f">
+        <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
+
+    </apex:repeat>
+    </apex:pageBlockSection>
+
+    <!--Contact Information Section-->
+
+      <apex:pageBlockSection title="Contact Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="true"
+                             id="pbsOutputContactInfo"
+                             >
+
+    <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Contact}" var="f">
+        <apex:inputField value="{!Account[f.fieldPath]}"    rendered="{! AND(NOT(f = 'PersonMailingStreet'), NOT(f = 'Mailing County'), NOT(f = 'Home Phone'), NOT(f = 'PersonOtherStreet'), NOT(f = 'PersonOtherStateCode') ,NOT (f = 'PersonMailingStateCode'), NOT (f = 'PersonMailingCountryCode'), NOT(f = 'PersonOtherCountryCode') )}"  required="{!OR(f.required, f.dbrequired)}"  />
+        
+        <apex:pageBlockSectionItem rendered="{! (f = 'PersonMailingStreet')}" >
+    <apex:outputLabel value="Mailing Street 1" for="Ma" />
+      <apex:inputtext id="ma"  value="{!personbeingserved.personmailingStreet}" label="Mailing Street 1" />
+    </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{!f = 'Mailing County'}" >
+    <apex:outputLabel value="Mailing County" for="mc" />
+        <apex:inputfield id="mc"  value="{!personbeingserved.Mailing_County__pc}" label="Mailing County"  />
+    </apex:pageBlockSectionItem>
+        
+        
+        
+        <apex:pageBlockSectionItem rendered="{!f = 'Home Phone'}" >
+    <apex:outputLabel value="Phone" for="hp" />
+        <apex:inputfield id="hp"  value="{!personbeingserved.PersonHomePhone}" label="Phone"  />
+    </apex:pageBlockSectionItem>
+        
+        
+        <apex:pageBlockSectionItem rendered="{!f = 'PersonOtherStreet'}" >
+    <apex:outputLabel value="Other Street 1" for="os1" />
+        <apex:inputtext id="os1"  value="{!personbeingserved.PersonOtherStreet}" label="Other Street 1"  />
+    </apex:pageBlockSectionItem>
+        
+           
+       <apex:pageBlockSectionItem rendered="{! (f = 'PersonOtherStateCode')}" >
+    <apex:outputLabel value="Other State/Province" for="os" />
+      <apex:inputField value="{!personbeingserved.PersonOtherStateCode}" label="Other State/Province" />
+    </apex:pageBlockSectionItem>
+    
+      <apex:pageBlockSectionItem rendered="{! (f = 'PersonMailingStateCode')}" >
+    <apex:outputLabel value="Mailing State/Province" for="os" />
+      <apex:inputField value="{!personbeingserved.PersonMailingStateCode}" label="Mailing State/Province" />
+    </apex:pageBlockSectionItem>
+     <apex:pageBlockSectionItem rendered="{! (f = 'PersonMailingCountryCode')}" >
+    <apex:outputLabel value="Mailing Country" for="os" />
+      <apex:inputField value="{!personbeingserved.PersonMailingCountryCode}" label="Mailing Country" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{! (f = 'PersonOtherCountryCode')}" >
+    <apex:outputLabel value="Other Country" for="os" />
+      <apex:inputField value="{!personbeingserved.PersonOtherCountryCode}" label="Other Country" />
+    </apex:pageBlockSectionItem>
+     
+    </apex:repeat>
+    </apex:pageBlockSection>
+
+
+<apex:pageBlockSection title="Financial Information"
+                             showHeader="true"
+                             columns="2"
+                             collapsible="true"
+                             id="pbsOutputFinancialInfo"
+                             rendered="{!showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo}"
+                             >
+
+    <apex:repeat value="{!$ObjectType.Account.FieldSets.PBS_Financial}" var="f">
+        <apex:inputField value="{!Account[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}"  />
+    </apex:repeat>
+</apex:pageBlockSection>
+
+
+<!--Additional Information Section-->
+
+<apex:pageBlockSection columns="2"
+                             title="Additional Information"
+                             showHeader="true"
+                             collapsible="False"
+                             id="pbsOutputAdditionalInfo">
+    <apex:repeat value="{!$ObjectType.Account.FieldSets.Additional_Information}" var="f">
+        <apex:inputField value="{!Account[f.fieldPath]}" rendered="{!!Contains(dontShowFields, f.FieldPath) && NOT(f.fieldPath == 'Legal_Guardianship_Status__pc')}" required="{!OR(f.required, f.dbrequired)}"/>
+        
+        <apex:pageBlockSectionItem rendered="{!f.fieldPath == 'Legal_Guardianship_Status__pc'}" >
+        	<apex:outputPanel >
+          		<apex:outputLabel value="Guardianship Type" id="guardianshipTypeLabel"/>
+          		<br/>
+          		<br/>
+          		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+          	</apex:outputPanel>
+           	<apex:outputPanel >
+           		<apex:inputField value="{!Account.Guardianship_Type__pc}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
+           		<br/>
+           		<br/>
+           		<apex:inputField value="{!Account.Partial_Guardianship_Conservatorship__pc}" id="partialGuardianShip" />
+           	</apex:outputPanel>
+        </apex:pageBlockSectionItem>
+    </apex:repeat>
+    <apex:inputField value="{!Account.Code_Status__pc}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{!!Contains(dontShowFields, 'Code_Status__pc')}"/>
+    <apex:inputField value="{!Account.Code_Status_Other__pc}" id="codeStatusOther" label="Specify Other" rendered="{!!Contains(dontShowFields, 'Code_Status_Other__pc')}"/>
+</apex:pageBlockSection>
+
+<!-- rearranged this section information for  EPRIQM-107  -->
+         <apex:pageBlockSection columns="2" rendered="{!canViewFamilyInfo}" title="Family Information" showHeader="True" id="pbsFamilyInfo">
+              <apex:inputfield value="{!Account.Family_Annual_Income__pc}"/>
+              <apex:inputfield value="{!Account.Family_Military_Involvement__pc}"/>
+              <apex:pageBlockSectionItem >
+                      <apex:outputLabel for="nativeancestry" value="Family Native American Ancestry" />
+                      <apex:actionRegion >
+                    <apex:inputField id="nativeancestry" value="{!Account.Family_Native_American_Ancestry__pc}">
+                         <apex:actionStatus id="statusnativeancestry">
+                             <apex:facet name="start">
+                                 <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                                     <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+                                 </div>
+                             </apex:facet>
+                             <apex:facet name="stop"></apex:facet>
+                         </apex:actionStatus>
+                        <apex:actionSupport event="onchange" rerender="familynativeamericantribe" status="statusnativeancestry" />
+                    </apex:inputField>
+                    </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+                      <apex:inputField value="{!Account.Family_Military_Involvement_Branch__pc}"/>
+                    <apex:PageBlockSectionitem >
+             			<apex:outputLabel Value="Family Native American Tribe" for="nativetribe"/>
+              				<apex:outputpanel id="familynativeamericantribe" >
+               				<apex:inputfield value="{!Account.Family_Native_American_Tribe__pc}" rendered="{!NOT(Account.Family_Native_American_Ancestry__pc)}" html-disabled="true"/>
+              				 <apex:inputfield value="{!Account.Family_Native_American_Tribe__pc}" required="{!Account.Family_Native_American_Ancestry__pc}" rendered="{!Account.Family_Native_American_Ancestry__pc = True}"/>
+               			</apex:outputpanel>
+               		</apex:PageBlockSectionitem>
+
+             <apex:inputfield value="{!Account.Family_Prior_Military_Involvement_Date__pc}"/>
+         </apex:pageBlockSection>
+
+    </apex:pageBlock>
+<apex:pageBlock title="Related Party">
+
+        <apex:facet name="header">
+          <p><strong>For persons under the age of 18, enter a guardian here.  You will be able to enter more related parties after initial save.</strong></p>
+        </apex:facet>
+
+
+        <apex:pageBlockSection columns="2" id="relatedPartyEntry">
+
+          <apex:inputField value="{!relParty.Name}" id="relatedPartyEntry_Name"/>
+          <apex:outputField value="{!relParty.Type__c}" id="relatedPartyEntry_Type"/>
+
+          <apex:inputField value="{!relParty.Address__c}" id="relatedPartyEntry_Address"/>
+          <apex:inputField value="{!relParty.Email__c}" id="relatedPartyEntry_Email"/>
+
+          <apex:inputField value="{!relParty.Phone__c}" id="relatedPartyEntry_Phone"/>
+          <apex:inputField value="{!relParty.Phone_1_Type__c}" id="relatedPartyEntry_Phone_1_Type"/>
+
+          <apex:inputField value="{!relParty.Phone_2__c}" id="relatedPartyEntry_Phone_2"/>
+          <apex:inputField value="{!relParty.Phone_2_Type__c}" id="relatedPartyEntry_Phone_2_Type"/>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" id="relatedPartyEntry2">
+          <apex:inputField value="{!relParty.Comments__c}" style="width: 90%;" id="relatedPartyEntry_Comments"/>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+  </apex:form>
+
+</apex:page>
