@@ -11,6 +11,7 @@
 
     <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS" />
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
 
 	<style>
@@ -999,7 +1000,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA}">
+        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW}">
             <div class="pbHeaderButton">
 <!--             <apex:actionStatus id="AddSeizureStatus"> -->
 <!--                 <apex:facet name="start"> -->
