@@ -917,7 +917,7 @@ END: Uncomment to have the element collapsed by default -->
 		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis}">
 
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" onClick="showAddDiagnosis();return false;" />
+				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" />
 			</div>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
