@@ -1191,7 +1191,7 @@
     <validationRules>
         <fullName>Gender_Identity_Required</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL(Does_the_person_Identify__pc, &apos;Yes&apos;) &amp;&amp;       ISBLANK(Gender_Identity__pc)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL(Does_the_person_Identify__pc, &apos;Yes&apos;) &amp;&amp;       ISBLANK(Gender_Identity__pc) &amp;&amp; NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
         <errorMessage>Gender Identity is required when the person Identify with a gender other than the legal gender is Yes</errorMessage>
     </validationRules>
     <validationRules>
