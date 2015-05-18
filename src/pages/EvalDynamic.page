@@ -94,7 +94,7 @@
                 jQuery("#btnESign").attr('href','#');
 
                 jQuery("#btnDone").removeClass('btn-danger').addClass('btn-success');
-                jQuery("#btnDone").attr('onclick','authenticate();');
+                jQuery("#btnDone").attr("onclick","complete('{!evalType}');");
                 jQuery("#btnDone").attr('href','#');
 
                 }
@@ -131,6 +131,36 @@
 			if(evalType == 'Restraint Event'){
 				disregardAssessment();
 			}
+		}
+		
+		//EC-159
+		function complete(evalType) {
+			if(evalType == 'Restraint Event'){
+				openModalDialog('{!$Component.completeRestraintPanel}', 'Complete Restraint Event', '');
+			}
+			else{
+				authenticate();
+			}
+			
+		}
+		
+		function validateRestraintEndtime(){
+			
+			document.getElementById('resEventtimeErrors').innerHTML = '';
+			var startValue = '{!thisEval.shift_Start_Time__c}';
+			var st = new Date(startValue);
+			var EndValue = jQuery("[id$='eventendtime']").val();
+			var en = new Date(EndValue);
+			
+			console.log(st);
+			console.log(en);
+			
+			 if(en <= st){
+			 	jQuery("[id$='resEventtimeErrors']").append('<li style="Color:red;"> End time should be greater than start time </li>' );
+			 }
+			 else{
+			 	completeRestraintEvent();
+			 }
 		}
 
 		filterNavigation = function(){
@@ -252,7 +282,7 @@
 						   <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
 						   		Start Date/Time : {!shiftStartTime}<br/>
 						   </apex:variable>
-						   <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null}" >
+						   <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null && thisEval.Status__c == 'Restraint Event Ended'}" >
 						   		End Date/Time :{!shiftEndTime}
 						   </apex:variable>
 						</p>
@@ -271,7 +301,7 @@
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!showshiftDone}">
-						<a id="btnDone" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">Complete {!evalType}</a>
+						<a id="btnDone" class="btn-success btn-sm pull-left" href="#" role="button" onClick="complete('{!evalType}'); return false;">Complete {!evalType}</a>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!showDisregard}">
@@ -339,6 +369,7 @@
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
+		<apex:actionfunction name="completeRestraintEvent" action="{!completeRestraintEvent}" status="myStatus" reRender="msgs" oncomplete="closeModalDialog('{!$Component.completeRestraintPanel}'); authenticate(); return false;"/>
 		<apex:actionregion >
 		<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
 			<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
@@ -417,6 +448,28 @@
 					<apex:param name="theaction" assignTo="{!approvalaction}" value="Reject"/>
 				</apex:commandLink>
 				<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.reviewercomments}'); return false;" />
+		</div>
+		</apex:pageblock>
+		</apex:form>
+	</apex:outputPanel>
+	
+	<apex:outputPanel id="completeRestraintPanel" title="Enter End Time" layout="block" style="display:none">
+		<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+		<apex:form id="dateFieldForm">
+		<apex:pageblock >
+		<div id="resEventtimeErrors" ></div>
+		<apex:pageblocksection columns="1" >
+		<apex:pageBlockSectionItem >
+			<apex:outputlabel value="Event End Time" />
+			<apex:outputPanel layout="none">
+				<c:MilitaryDatetime dateTimeVal="{!thisEval.shift_End_Time__c}" edit="true" hiddenFieldId="eventendtime"/>
+				<apex:inputHidden id="eventendtime" value="{!thisEval.shift_End_Time__c}" />
+			</apex:outputPanel>
+		</apex:pageBlockSectionItem>
+		</apex:pageblocksection>
+		<div align="center">
+				<apex:commandLink styleClass="btn" value="Save & E-sign" onClick="validateRestraintEndtime(); return false;" />
+				<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.completeRestraintPanel}'); return false;" />
 		</div>
 		</apex:pageblock>
 		</apex:form>

@@ -38,7 +38,7 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
 		}
 		else if(assessment.RecordType.name == 'RestraintEvent' && (assessment.Status__c == 'Applied Alternative to Restraint' || assessment.Status__c == 'Applied Restraint')){
 			assessment.Status__c = 'Restraint Event Ended';
-			assessment.Shift_End_time__c = system.now();
+		//	assessment.Shift_End_time__c = system.now();
 			List<Assessment__c> asmts = [SELECT Id, Status__c FROM Assessment__c WHERE Evaluation__c = :assessment.Id];
 			if(asmts.size() > 0){
 				for(Assessment__c a: asmts){

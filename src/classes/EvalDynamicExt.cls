@@ -360,6 +360,12 @@ public with sharing class EvalDynamicExt {
 		}*/
 		return null;
 	}
+	
+	public pageReference completeRestraintEvent(){
+		update thisEval;
+		return null;
+		
+	}
 
 	//Generic Clone functionality to copy Eval Value records.
 	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup){
