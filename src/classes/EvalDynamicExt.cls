@@ -16,8 +16,6 @@ public with sharing class EvalDynamicExt {
 	public Boolean showMainComponent {get; set;}
 	public string key {get; set;}
 
-
-
 	public Boolean showDisregard {get; set;}
 	public Boolean showRevise {get; set;}
 	public Boolean showEsign{get; set;}
