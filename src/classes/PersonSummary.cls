@@ -19,8 +19,8 @@ public with sharing class PersonSummary {
     private static map<String, Integer> relPartyRank = new map<String, Integer>();
     private static map<String, String> fundingSrcFldLbls = new map<String, String>();
     public map<String, String> getFundingSrcFldLbls(){return fundingSrcFldLbls;}    
-    private map<String, String> fundingSrcFldVals = new map<String, String>();
-    public map<String, String> getFundingSrcFldVals(){return fundingSrcFldVals;}
+    private map<String, Object> fundingSrcFldVals = new map<String, Object>();
+    public map<String, Object> getFundingSrcFldVals(){return fundingSrcFldVals;}
     public String fundingSrcFldValsKeys {get;set;}
     
     {   relPartyRank.put('Physician - Primary', 1);
@@ -98,6 +98,10 @@ public with sharing class PersonSummary {
                             Admission__r.Admission_Effective_DateTime__c,
                             Admission__r.Referred_Out_Agency_Name__c,
                             Admission__r.Referred_Out_Reason__c,
+                            person_being_served__r.Code_Status__c,
+                            person_being_served__r.Code_Status_Other__c,
+                            person_being_served__r.Advanced_Directives__c,
+                            person_being_served__r.Advanced_Directives_Attached__c,
                             
                             (select Type_of_Coverage__c, Payer_Name__c, Policy_Type__c, TPA__c, TPA_Phone__c, Primary_Med_Ind_Phys_Group__c, Primary_Med_Ind_Phys_Group_Phone__c,
                             Network__c, Network_Phone__c, Verified_By__c, Payer_Verification_Date__c, Verified_With__c, Representing__c, 
@@ -140,7 +144,7 @@ public with sharing class PersonSummary {
 	private void populateFundingSrcFields(){
 		if (sa.Funding_Sources__r.size() > 0)
 			for(String fld : fundingSrcFldLbls.keySet()){
-				if (sa.Funding_Sources__r[0].get(fld) != null) fundingSrcFldVals.put(fld, String.valueOf(sa.Funding_Sources__r[0].get(fld)));
+				if (sa.Funding_Sources__r[0].get(fld) != null) fundingSrcFldVals.put(fld, sa.Funding_Sources__r[0].get(fld));
 			}
 			
         for ( String key: fundingSrcFldVals.keySet()) {

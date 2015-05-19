@@ -16,6 +16,7 @@
             padding: 5px !important;
             text-decoration: none;
         }
+        
         @media print { 
             .noprint { display: none; }
             
@@ -61,7 +62,7 @@
             <input class="btn" type="button" onclick="window.print(); return false;" value="Print" />
         </div>
         <apex:pageBlock id="personSummaryDetail" mode="maindetail" >
-            <apex:outputPanel layout="block" style="padding-left: 15%; padding-right: 20%;">
+            <apex:outputPanel layout="block" style="padding-left: 5%; padding-right: 15%;">
                 <apex:pageBlockSection columns="1" collapsible="false" showHeader="false">
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
@@ -140,7 +141,9 @@
                                         <apex:outputlabel value="Date of Birth" styleclass="labelCol" />
                                     </td>
                                     <td>
-                                        <apex:outputText value=" {!sa.person_being_served__r.Birthdate}" />
+                                        <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                            <apex:param value="{!sa.person_being_served__r.Birthdate}" /> 
+                                        </apex:outputText>
                                     </td>
                                     <td>
                                         <apex:outputlabel value="Age" styleclass="labelCol" />
@@ -251,6 +254,29 @@
                                     </td>
                                 </tr>
 
+                                <tr>
+                                    <td>
+                                        <apex:outputlabel value="Code Status" styleclass="labelCol" />
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{!sa.person_being_served__r.Code_Status__c}" rendered="{!sa.person_being_served__r.Code_Status__c != 'Other'}"/>
+                                        <apex:outputText value="{!sa.person_being_served__r.Code_Status_Other__c}" rendered="{!sa.person_being_served__r.Code_Status__c == 'Other'}"/>
+                                    </td>
+                                    <td>
+                                        <apex:outputlabel value="Advance Directives" styleclass="labelCol" />
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{!HTMLENCODE('Yes')}" rendered="{!sa.person_being_served__r.Advanced_Directives__c}"/>
+                                        <apex:outputText value="{!HTMLENCODE('None')}" rendered="{!!sa.person_being_served__r.Advanced_Directives__c}"/>
+                                    </td>
+                                    <td>
+                                        <apex:outputlabel value="Advance Directives Attached" styleclass="labelCol" />
+                                    </td>
+                                    <td>
+                                        <apex:outputText value="{!HTMLENCODE('Yes')}" rendered="{!sa.person_being_served__r.Advanced_Directives_Attached__c}"/>
+                                        <apex:outputText value="{!HTMLENCODE('None')}" rendered="{!!sa.person_being_served__r.Advanced_Directives_Attached__c}"/>
+                                    </td>
+                                </tr>
                             </table>
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
@@ -504,7 +530,9 @@
                                         <apex:outputlabel value="{!fundingSrcFldLbls['Payer_Verification_Date__c']}" styleclass="labelCol" />
                                     </td>
                                     <td>
-                                        <c:MilitaryDatetime dateTimeVal="{!fundingSrcFldVals['Payer_Verification_Date__c']}" />                                    
+	                                    <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+	                                        <apex:param value="{!fundingSrcFldVals['Payer_Verification_Date__c']}" /> 
+	                                    </apex:outputText>
                                     </td>
                                     <apex:variable var="index" value="{!index + 1}" />
                                 </apex:outputPanel>
