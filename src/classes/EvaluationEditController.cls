@@ -35,7 +35,10 @@ public with sharing class EvaluationEditController{
         		return null;
         	}*/
         	returnURL = new PageReference('/apex/EvalDynamic?evalId=' + evaluation.Id + '&opGrp=Care Meridian&evalType=Head to Toe');
-        }
+		} else if(evaluation.RecordTypeId == Utility.getEvaluationRecordType('CNA Workbook')) {
+			returnURL = new PageReference('/apex/EvalDynamic?evalId=' + evaluation.Id + '&opGrp=Care Meridian&evalType=CNA+Workbook');
+		}
+
         return returnURL;
     }
 }
