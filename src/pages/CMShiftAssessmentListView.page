@@ -3,7 +3,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-	
+
 	<c:PersonalRecord pbsId="{!SA.admission__r.Person_Being_Served__c}" servAssignId="{!SA.Id}" admId="{!SA.Admission__c}" parentPage="ShiftAssessmentListView" />
 
 	<apex:form >
@@ -21,7 +21,7 @@
 						</apex:facet>
 						<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
 					</apex:column>
-					
+
 					<apex:column rendered="{!isShift}">
 						<apex:facet name="header" >
 							<apex:commandLink Value="Shift Start Time" action="{!toggleSort}"  reRender="evaluationsT,errors" >
@@ -30,7 +30,7 @@
 						</apex:facet>
 						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
 					</apex:column>
-					
+
 					<apex:column rendered="{!isShift}">
 						<apex:facet name="header" >
 							<apex:commandLink Value="Shift End Time" action="{!toggleSort}" reRender="evaluationsT,errors" >
@@ -39,7 +39,7 @@
 						</apex:facet>
 						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
 					</apex:column>
-					
+
 					<apex:column rendered="{!isShift}" >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Head to Toe Status" action="{!toggleSort}" reRender="evaluationsT,errors" >
@@ -48,16 +48,16 @@
 						</apex:facet>
 						<apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
 					</apex:column>
-					
+
 					<apex:column rendered="{!isShift}" >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Signed At" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Head_to_toe_signed_at__c" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
-						<apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
+						<c:MilitaryDatetime dateTimeVal="{!evs.Head_to_Toe_Signed_At__c}" />
 					</apex:column>
-					
+
 					<apex:column rendered="{!!isRestraint}">
 						<apex:facet name="header" >
 							<apex:commandLink Value="{!If(isShift, 'Shift Status','Status')}" action="{!toggleSort}" reRender="evaluationsT,errors" >
@@ -66,7 +66,7 @@
 						</apex:facet>
 						<apex:outputText value="{!evs.Status__c}" />
 					</apex:column>
-					
+
 					<apex:column rendered="{!isRestraint}" >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Restraint Status" action="{!toggleSort}" reRender="evaluationsT,errors" >
@@ -75,7 +75,7 @@
 						</apex:facet>
 						<apex:outputText value="{!evs.Status__c}" />
 					</apex:column>
-					
+
 					<apex:column rendered="{!isRestraint}">
 						<apex:facet name="header" >
 							<apex:commandLink Value="Restraint Event Start Time" action="{!toggleSort}"  reRender="evaluationsT,errors" >
@@ -84,7 +84,7 @@
 						</apex:facet>
 						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
 					</apex:column>
-					
+
 					<apex:column rendered="{!isRestraint}">
 						<apex:facet name="header" >
 							<apex:commandLink Value="Restraint Event End Time" action="{!toggleSort}" reRender="evaluationsT,errors" >
@@ -93,16 +93,16 @@
 						</apex:facet>
 						<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
 					</apex:column>
-					
+
 					<apex:column rendered="{!!isRestraint}">
 						<apex:facet name="header" >
 							<apex:commandLink Value="Signed At" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="Signed_At__c" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
-						<apex:outputText value=" {!evs.Signed_At__c}" />
+						<c:MilitaryDatetime dateTimeVal="{!evs.Signed_At__c}" />
 					</apex:column>
-					
+
 					<apex:column >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Owner Name" action="{!toggleSort}" reRender="evaluationsT,errors" >
@@ -111,16 +111,16 @@
 						</apex:facet>
 						<apex:outputText value="{!evs.Owner.Name}" />
 					</apex:column>
-					
+
 					<apex:column >
 						<apex:facet name="header" >
 							<apex:commandLink Value="Last Modified" action="{!toggleSort}" reRender="evaluationsT,errors" >
 								<apex:param name="sortField" value="LastModifiedDate" assignTo="{!sortField}" />
 							</apex:commandLink>
 						</apex:facet>
-						<apex:outputText value=" {!evs.LastModifiedDate}" />
+						<c:MilitaryDatetime dateTimeVal="{!evs.LastModifiedDate}" />
 					</apex:column>
-					
+
 				</apex:pageBlockTable>
 			</apex:pageBlockSection>
 		</apex:pageBlock>
