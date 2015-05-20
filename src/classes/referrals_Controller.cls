@@ -804,7 +804,7 @@ public with sharing class referrals_Controller{
 				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,Age_month__c,Age_year__c,Age_days__c,
 				       Race__c, Ethnicity__c, Fax__c, First_Name__c, Gender__c,
 				       Home_County__c, Last_Name__c, Marital_Status__c,
-				       Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
+				       Middle_Initial__c, Phone__c, Primary_Language__c, //SSN__c,
 				       State__c, Street_1__c, Street_2__c, Zip_Code__c,
 				       Additional_Information_Comments__c, Sign_Language__c,
 				       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,
@@ -843,7 +843,7 @@ public with sharing class referrals_Controller{
 				select Age__c, MailingCity, BirthDate, Email, Race__c, Marital_Status__c, 
 				       Fax, FirstName, Gender__c,
 				       LastName, Ethnicity_Picklist__c,
-				       Middle_Name__c, Phone, Primary_Language__c, SSN__c,
+				       Middle_Name__c, Phone, Primary_Language__c, //SSN__c,
 				       MailingState, MailingStreet, OtherStreet, MailingPostalCode,
 				       Legal_Guardianship_Status__c, Sign_Language__c, Non_Verbal__c,
 				       Current_Medications__c, Level_of_Education__c

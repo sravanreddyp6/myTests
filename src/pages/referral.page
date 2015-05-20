@@ -587,7 +587,7 @@
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
                 <apex:inputField value="{!personBeingRefRecord.Gender__c}" />
-                <apex:inputField value="{!personBeingRefRecord.SSN__c}" />
+               <!-- Removed for PRI-160   <apex:inputField value="{!personBeingRefRecord.SSN__c}" /> -->
             </apex:pageBlockSection>
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" rendered="{!ISNULL(personBeingServedRecord.id)}">
                 <apex:inputField value="{!personBeingRefRecord.Additional_Information_Comments__c}" style="width: 90%;" />
@@ -888,7 +888,7 @@
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
-
+			<!--  Removed for PRI-160
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel for="insuredSSN" value="Insured SSN" />
                             <apex:outputPanel >
@@ -896,6 +896,7 @@
                                 <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredSSN}', '{!personBeingRefRecord.SSN__c}'); return false;" />
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
+                  -->      
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel for="insuredDOB" value="Insured DOB" />
                             <apex:outputPanel >

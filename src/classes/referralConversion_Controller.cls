@@ -202,7 +202,7 @@ public with sharing class referralConversion_Controller {
       pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c, Age_year__c,Age_month__c,Age_days__c,
                        Ethnicity__c, Fax__c, First_Name__c, Gender__c,
                        Home_County__c, Last_Name__c, Marital_Status__c,
-                       Middle_Initial__c, Phone__c, Primary_Language__c, Race__c, SSN__c,
+                       Middle_Initial__c, Phone__c, Primary_Language__c, Race__c, //SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
                        Additional_Information_Comments__c, Sign_Language__c,
                        Legal_Guardianship_Status__c, Non_Verbal__c, Level_of_Education__c
@@ -226,7 +226,7 @@ public with sharing class referralConversion_Controller {
       pBSRec = [select MailingCity, BirthDate, Email, Age__c,Age_year__c,Age_month__c,Age_days__c,
                        Ethnicity_Picklist__c, Fax, FirstName, Gender__c,
                        Mailing_County__c, LastName,
-                       Middle_Name__c, Phone, Primary_Language__c, Race__c, SSN__c,
+                       Middle_Name__c, Phone, Primary_Language__c, Race__c, //SSN__c,
                        MailingState, MailingStreet, MailingPostalCode, uci_id__c, medicaid_id__c, Marital_Status__c, non_verbal__c, sign_language__c, legal_guardianship_status__c,
                        Level_of_Education__c
 
@@ -423,7 +423,7 @@ public with sharing class referralConversion_Controller {
                                 Non_Verbal__pc = pbrCurr.Non_Verbal__c,
                                 Race__pc = pbrCurr.Race__c,
                                 Sign_Language__pc = pbrCurr.Sign_Language__c,
-                                SSN__pc = pbrCurr.SSN__c,
+                               // SSN__pc = pbrCurr.SSN__c,
                                 Guardian1_Name__pc =  sGuardian1Name,
                                 Guardian_1_Address__pc = sGuardian1Address,
                                 Guardian_1_E_Mail__pc = sGuardian1Email,
@@ -914,7 +914,7 @@ public class personRecord {
     public string Ethnicity { get { return eth;} set; }
     public string Gender { get { return gen; } set; }
     public string PrimaryLanguage { get { return lang;} set; }
-    public string SSN { get { return ss;} set; }
+   // public string SSN { get { return ss;} set; }
     public string MedicaidID { get { return medid;} set; }
     public string MaritalStatus { get { return marstat;} set; }
     public boolean NonVerbal { get { return nonverb;} set; }
@@ -945,7 +945,7 @@ public class personRecord {
         eth = pbr.Ethnicity__c;
         gen = pbr.Gender__c;
         lang = pbr.Primary_Language__c;
-        ss = pbr.SSN__c;
+       // ss = pbr.SSN__c;
         marstat = pbr.Marital_Status__c;
         legalstat = pbr.Legal_Guardianship_Status__c;
         nonverb = pbr.Non_Verbal__c;
@@ -975,7 +975,7 @@ public class personRecord {
         gen = pbs.Gender__c;
         ct = pbs.Mailing_County__c;
         lang = pbs.Primary_Language__c;
-        ss = pbs.SSN__c;
+       // ss = pbs.SSN__c;
         marstat = pbs.Marital_Status__c;
         legalstat = pbs.Legal_Guardianship_Status__c;
         nonverb = pbs.Non_Verbal__c;
