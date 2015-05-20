@@ -131,6 +131,20 @@ public with sharing class EvaluationResponseTableController {
             currentResponse.Time_Observed__c = Utility.getDateTimeFromString(value+':00');
         }
     }
+    
+    public string getimmunizationReport(){
+    	string theId;
+        theId= [select id, developername from report where developername = 'Immunization_for_PBS' limit 1].id;
+  
+        return theId;
+    }
+    
+    public string getPBSName(){
+    	string name;
+    	name = [SELECT Name FROM Contact WHERE Id=: pbsId].Name;
+    	return name;
+    	
+    }
 	public void saveResponse() {
 		System.debug('saveResponse called, currentResponse: ' + currentResponse);
 		//      Start EC-116
