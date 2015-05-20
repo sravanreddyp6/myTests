@@ -259,7 +259,14 @@
 				<div class="sidebar-module-sm-no-scroll sidebar-module-inset">
 					<apex:outputPanel rendered="{!evalType == 'Head to Toe'}">
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
-                        <p>Head to Toe Status: {!thisEval.Head_to_Toe_Status__c}<br/> Shift Status:{!thisEval.Status__c} {!evalStatusDate} </p>
+                        <p>Head to Toe Status: {!thisEval.Head_to_Toe_Status__c}<br/> Shift Status:{!thisEval.Status__c} 
+	                        <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
+	                            <br/>Start Date/Time : {!shiftStartTime}
+	                        </apex:variable>
+	                        <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null && thisEval.Status__c == 'Restraint Event Ended'}" >
+	                            <br/>End Date/Time :{!shiftEndTime}
+	                        </apex:variable>
+                        </p>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!evalType == 'Residential'}">
@@ -269,7 +276,14 @@
 
 					<apex:outputPanel rendered="{!evalType == 'CNA Workbook'}">
 						<h4>CNA: {!thisEval.Owner.Name}</h4>
-						<p>Status: {!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
+						<p>Status: {!thisEval.Status__c} 
+                            <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
+                                <br/>Start Date/Time : {!shiftStartTime}
+                            </apex:variable>
+                            <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null && thisEval.Status__c == 'Restraint Event Ended'}" >
+                                <br/>End Date/Time :{!shiftEndTime}
+                            </apex:variable>
+                        </p>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!evalType == 'Restraint Event'}">
