@@ -16,7 +16,10 @@
             padding: 5px !important;
             text-decoration: none;
         }
-        
+        .personSummarydataTable tr td:nth-child(odd) {
+            text-align: right;
+            width:20%;
+        }
         @media print { 
             .noprint { display: none; }
             
@@ -27,6 +30,10 @@
 	            border-collapse: collapse !important;
 	            border-bottom: solid thin !important;
 	            border-color: #ececec !important;
+	        }
+	        .personSummarydataTable tr td:nth-child(odd) {
+	            text-align: right;
+	            width:auto;
 	        }
          }
     </style>
@@ -62,7 +69,7 @@
             <input class="btn" type="button" onclick="window.print(); return false;" value="Print" />
         </div>
         <apex:pageBlock id="personSummaryDetail" mode="maindetail" >
-            <apex:outputPanel layout="block" style="padding-left: 5%; padding-right: 15%;">
+            <apex:outputPanel layout="block" style="padding-left: 10%; padding-right: 20%;">
                 <apex:pageBlockSection columns="1" collapsible="false" showHeader="false">
                     <apex:pageBlockSectionItem >
                         <apex:outputPanel layout="none">
