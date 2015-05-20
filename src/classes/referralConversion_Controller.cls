@@ -199,7 +199,7 @@ public with sharing class referralConversion_Controller {
    private Person_Being_Referred__c getPBRRec() {
     Person_Being_Referred__c pBRRec;
     try {
-      pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c, 
+      pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c, Age_year__c,Age_month__c,Age_days__c,
                        Ethnicity__c, Fax__c, First_Name__c, Gender__c,
                        Home_County__c, Last_Name__c, Marital_Status__c,
                        Middle_Initial__c, Phone__c, Primary_Language__c, Race__c, SSN__c,
@@ -223,7 +223,7 @@ public with sharing class referralConversion_Controller {
   private Contact getPBSRec() {
     Contact pBSRec;
     try {
-      pBSRec = [select MailingCity, BirthDate, Email, Age__c,
+      pBSRec = [select MailingCity, BirthDate, Email, Age__c,Age_year__c,Age_month__c,Age_days__c,
                        Ethnicity_Picklist__c, Fax, FirstName, Gender__c,
                        Mailing_County__c, LastName,
                        Middle_Name__c, Phone, Primary_Language__c, Race__c, SSN__c,
@@ -923,6 +923,9 @@ public class personRecord {
     public string Education { get {return educ;} set; }
 	public String age { get {return age;} set; }
 	public String race { get {return race;} set; }
+	public String year { get {return year;} set; }
+	public String month { get {return month;} set; }
+	public String days { get {return days;} set; }
 	
     public personRecord( Person_Being_Referred__c pbr ) {
         System.Debug('calling person record with referred: ' + pbr);
@@ -950,6 +953,9 @@ public class personRecord {
         educ = pbr.Level_of_Education__c;
 		age = String.valueOf(pbr.Age__c);	
 		race =  pbr.Race__c;
+		year =  String.valueOf(pbr.Age_year__c);
+        month =  String.valueOf(pbr.Age_month__c);
+        days =  String.valueOf(pbr.Age_days__c);
     }
 
 
@@ -978,6 +984,9 @@ public class personRecord {
         educ = pbs.Level_of_Education__c;
         age = String.valueOf(pbs.Age__c);
         race =  pbs.Race__c;
+        year =  pbs.Age_year__c;
+        month =  pbs.Age_month__c;
+        days =  pbs.Age_days__c;
     }
 
 }

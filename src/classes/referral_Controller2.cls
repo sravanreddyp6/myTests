@@ -393,7 +393,7 @@ public with sharing class referral_Controller2 {
 		Person_Being_Referred__c pBRRec;
 		try {
 			pBRRec = [
-				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,
+				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,Age_month__c,Age_year__c,Age_days__c,
 				       Race__c, Ethnicity__c, Fax__c, First_Name__c, Gender__c,
 				       Home_County__c, Last_Name__c, Marital_Status__c,
 				       Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
@@ -429,7 +429,7 @@ public with sharing class referral_Controller2 {
 		try {
 			pBSRec = [
 				select Age__c, MailingCity, BirthDate, Email,  Race__c, Marital_Status__c,  Sign_Language__c, Non_Verbal__c,Mailing_Street_2__c,Mailing_County__c,
-				       Fax, FirstName, Gender__c,
+				       Fax, FirstName, Gender__c,Age_month__c,Age_year__c,Age_days__c,
 				       LastName, Ethnicity_Picklist__c,
 				       Middle_Name__c, Phone, Primary_Language__c, SSN__c,
 				       MailingState, MailingStreet, OtherStreet, MailingPostalCode,
