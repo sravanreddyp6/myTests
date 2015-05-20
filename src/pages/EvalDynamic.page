@@ -132,35 +132,37 @@
 				disregardAssessment();
 			}
 		}
-		
+
 		//EC-159
 		function complete(evalType) {
 			if(evalType == 'Restraint Event'){
 				openModalDialog('{!$Component.completeRestraintPanel}', 'Complete Restraint Event', '');
+			} else if (evalType == 'Head to Toe' || evalType == 'CNA Workbook') {
+				openModalDialog('{!$Component.endOfShiftDONPanel}', 'End Shift', '');
 			}
 			else{
 				authenticate();
 			}
-			
+
 		}
-		
-		function validateRestraintEndtime(){
-			
-			document.getElementById('resEventtimeErrors').innerHTML = '';
+
+		function validateEndtime(errorDomId, endTimeDomId, successfulCallback){
+
+			document.getElementById(errorDomId).innerHTML = '';
 			var startValue = '{!thisEval.shift_Start_Time__c}';
 			var st = new Date(startValue);
-			var EndValue = jQuery("[id$='eventendtime']").val();
+			var EndValue = jQuery(document.getElementById(endTimeDomId)).val();
 			var en = new Date(EndValue);
-			
+
 			if(EndValue == '' || EndValue == null){
-				jQuery("[id$='resEventtimeErrors']").append('<li style="Color:red;"> Please enter end time </li>' );
+				jQuery("[id$=" + errorDomId + "]").append('<li style="Color:red;"> Please enter end time </li>' );
 			}
 			else if(en <= st){
-			 	jQuery("[id$='resEventtimeErrors']").append('<li style="Color:red;"> End time should be greater than start time </li>' );
-			 }
-			 else{
-			 	completeRestraintEvent();
-			 }
+				jQuery("[id$=" + errorDomId + "]").append('<li style="Color:red;"> End time should be greater than start time </li>' );
+			}
+			else{
+				successfulCallback();
+			}
 		}
 
 		filterNavigation = function(){
@@ -259,31 +261,45 @@
 				<div class="sidebar-module-sm-no-scroll sidebar-module-inset">
 					<apex:outputPanel rendered="{!evalType == 'Head to Toe'}">
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
-                        <p>Head to Toe Status: {!thisEval.Head_to_Toe_Status__c}<br/> Shift Status:{!thisEval.Status__c} 
-	                        <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
-	                            <br/>Start Date/Time : {!shiftStartTime}
-	                        </apex:variable>
-	                        <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null && thisEval.Status__c == 'Restraint Event Ended'}" >
-	                            <br/>End Date/Time :{!shiftEndTime}
-	                        </apex:variable>
-                        </p>
+						<p>
+							<apex:outputPanel rendered="{!thisEval.Status__c != 'End of Shift'}" layout="none">
+								Head to Toe Status: {!thisEval.Head_to_Toe_Status__c}<br/> Shift Status:{!thisEval.Status__c}
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!thisEval.Status__c == 'End of Shift'}" layout="none">
+								Head to Toe Status: {!thisEval.Head_to_Toe_Status__c}<br/> Shift Status: {!thisEval.Status__c} by: {!thisEval.Signed_By__r.Name} {!evalStatusDate}
+							</apex:outputPanel>
+							<apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
+								<br/>
+								Start Date/Time : {!shiftStartTime}
+							</apex:variable>
+							<apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null}" >
+								<br/>
+								End Date/Time :{!shiftEndTime}
+							</apex:variable>
+						</p>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!evalType == 'Residential'}">
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
-                        <p>Status:{!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
+						<p>Status:{!thisEval.Status__c} (<apex:outputText value="{!evalStatusDate}" />)</p>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!evalType == 'CNA Workbook'}">
 						<h4>CNA: {!thisEval.Owner.Name}</h4>
-						<p>Status: {!thisEval.Status__c} 
-                            <apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
-                                <br/>Start Date/Time : {!shiftStartTime}
-                            </apex:variable>
-                            <apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null && thisEval.Status__c == 'Restraint Event Ended'}" >
-                                <br/>End Date/Time :{!shiftEndTime}
-                            </apex:variable>
-                        </p>
+						<p>
+							<apex:outputPanel rendered="{!ISBLANK(thisEval.Signed_By__c)}" layout="none">
+								Status: {!thisEval.Status__c}
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!AND(NOT(ISBLANK(thisEval.Signed_By__c)), thisEval.Status__c == 'Final')}" layout="none">
+								Status: {!thisEval.Status__c} by: {!thisEval.Signed_By__r.Name} (<apex:outputText value="{!evalStatusDate}" />)
+							</apex:outputPanel>
+							<apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}" >
+								<br/>Start Date/Time : {!shiftStartTime}
+							</apex:variable>
+							<apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null}" >
+								<br/>End Date/Time :{!shiftEndTime}
+							</apex:variable>
+						</p>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!evalType == 'Restraint Event'}">
@@ -308,6 +324,10 @@
 					<br/>
 					<apex:outputPanel rendered="{!showEsign}">
 						<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">Finalize {!evalType}</a>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!showEndOfShiftDON}">
+						<a id="btnEOS" class="btn-success btn-sm pull-left" href="#" role="button" onClick="complete('{!evalType}'); return false;">End Shift</a>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!showRevise}">
@@ -379,11 +399,10 @@
 			<apex:param name="canEdit" value="" />
 		</apex:actionFunction>
         <apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();"/>
-		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (evalType=='CNA Workbook','completeShift();', 'location.reload(true);')} return false;" />
+		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (AND(evalType=='CNA Workbook', thisEval.OwnerId == $User.Id),'completeShift();', 'location.reload(true);')} return false;" />
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
-<!-- 		<apex:actionfunction name="completeRestraintEvent" action="{!completeRestraintEvent}" status="myStatus" reRender="msgs" oncomplete="closeModalDialog('{!$Component.completeRestraintPanel}'); authenticate(); return false;"/> -->
 		<apex:actionregion >
 		<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
 			<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
@@ -466,27 +485,50 @@
 		</apex:pageblock>
 		</apex:form>
 	</apex:outputPanel>
-	
+
 	<apex:outputPanel id="completeRestraintPanel" title="Enter End Time" layout="block" style="display:none">
 		<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 		<apex:form id="dateFieldForm">
-		<apex:actionfunction name="completeRestraintEvent" action="{!completeRestraintEvent}" status="myStatus" reRender="msgs" oncomplete="closeModalDialog('{!$Component.completeRestraintPanel}'); authenticate(); return false;"/>
-		<apex:pageblock >
-		<div id="resEventtimeErrors" ></div>
-		<apex:pageblocksection columns="1" >
-		<apex:pageBlockSectionItem >
-			<apex:outputlabel value="Event End Time" />
-			<apex:outputPanel layout="none">
-				<c:MilitaryDatetime dateTimeVal="{!thisEval.Shift_End_Time__c}" edit="true" hiddenFieldId="eventendtime"/>
-				<apex:inputHidden id="eventendtime" value="{!thisEval.Shift_End_Time__c}" />
-			</apex:outputPanel>
-		</apex:pageBlockSectionItem>
-		</apex:pageblocksection>
-		<div align="center">
-				<apex:commandLink styleClass="btn" value="Save & E-sign" onClick="validateRestraintEndtime(); return false;" />
-				<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.completeRestraintPanel}'); return false;" />
-		</div>
-		</apex:pageblock>
+			<apex:actionfunction name="completeRestraintEvent" action="{!completeRestraintEvent}" status="myStatus" reRender="msgs" oncomplete="closeModalDialog('{!$Component.completeRestraintPanel}'); authenticate(); return false;"/>
+			<apex:pageblock >
+				<div id="resEventtimeErrors" ></div>
+				<apex:pageblocksection columns="1" >
+					<apex:pageBlockSectionItem id="endTimeItem">
+						<apex:outputlabel value="Event End Time" />
+						<apex:outputPanel layout="none">
+							<c:MilitaryDatetime dateTimeVal="{!thisEval.Shift_End_Time__c}" edit="true" hiddenFieldId="eventEndTime"/>
+							<apex:inputHidden id="eventEndTime" value="{!thisEval.Shift_End_Time__c}" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				</apex:pageblocksection>
+				<div align="center">
+					<apex:commandLink styleClass="btn" value="Save & E-sign" onClick="validateEndtime('resEventtimeErrors', '{!$Component.completeRestraintPanel.endTimeItem.eventEndTime}', completeRestraintEvent); return false;" />
+					<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.completeRestraintPanel}'); return false;" />
+				</div>
+			</apex:pageblock>
+		</apex:form>
+	</apex:outputPanel>
+
+	<apex:outputPanel id="endOfShiftDONPanel" title="Enter End Time" layout="block" style="display: none; ">
+		<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+		<apex:form id="endOfShiftDateForm">
+			<apex:actionfunction name="endShiftDON" action="{!endShiftDON}" status="myStatus" reRender="msgs" oncomplete="closeModalDialog('{!$Component.endOfShiftDONPanel}'); authenticate(); return false;"/>
+			<apex:pageblock >
+				<div id="endOfShiftTimeErrors" ></div>
+				<apex:pageblocksection columns="1" id="endTimeSection">
+					<apex:pageBlockSectionItem id="endTimeItem">
+						<apex:outputlabel value="Shift End Time" />
+						<apex:outputPanel layout="none">
+							<c:MilitaryDatetime dateTimeVal="{!thisEval.Shift_End_Time__c}" edit="true" hiddenFieldId="shiftEndTimeDON"/>
+							<apex:inputHidden id="shiftEndTimeDON" value="{!thisEval.Shift_End_Time__c}" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				</apex:pageblocksection>
+				<div align="center">
+					<apex:commandLink styleClass="btn" value="Save & E-sign" onClick="validateEndtime('endOfShiftTimeErrors', '{!$Component.endTimeSection.endTimeItem.shiftEndTimeDON}', endShiftDON); return false;" />
+					<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.endOfShiftDONPanel}'); return false;" />
+				</div>
+			</apex:pageblock>
 		</apex:form>
 	</apex:outputPanel>
 
