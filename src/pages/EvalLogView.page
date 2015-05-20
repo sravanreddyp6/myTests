@@ -121,10 +121,10 @@
  		</apex:form>
    	</apex:repeat>	
    
-    <c:TurnsChart id="turnschart" parentID="{!thiseval.id}" rendered="{! $CurrentPage.Parameters.Cat == '' && $CurrentPage.Parameters.SubCat == '' && evalname == 'CNA Workbook'}" />
+    <c:TurnsChart id="turnschart" parentID="{!thiseval.id}" rendered="{! ($CurrentPage.Parameters.Cat == '' || $CurrentPage.Parameters.Cat == 'Turns') && evalname == 'CNA Workbook'}" />
      
  
- 	<apex:pageBlock rendered="{! evalName == 'CNA Workbook'}" >
+ 	<apex:pageBlock rendered="{! evalName == 'CNA Workbook' && $CurrentPage.Parameters.Cat == ''}" >
 	<Apex:pageblocksection columns="1" title="Approval History" collapsible="false">
 	<apex:datatable style="width: 100%;"  value="{!approvalHistory}" var="a">
 	<apex:column value="{!a.actorid}" headervalue="By"/>
