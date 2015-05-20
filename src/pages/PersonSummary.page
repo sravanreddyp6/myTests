@@ -248,16 +248,17 @@
                                         <c:MilitaryDatetime dateTimeVal="{!sa.Admission__r.Admission_Effective_DateTime__c}" />
                                     </td>
                                     <td>
-                                        <apex:outputlabel value="Admitted From Facility" styleclass="labelCol" />
+                                        <apex:outputlabel value="Referral Source Type" styleclass="labelCol" />
+                                        <apex:outputlabel escape="false" value="<br/>({!sa.Referral__r.Referral_Source_Type__c})" styleclass="labelCol" rendered="{!sa.Referral__r.Referral_Source_Type__c != null }" />
                                     </td>
                                     <td>
-                                        <apex:outputText value="{!sa.Admission__r.Referred_Out_Agency_Name__c}" />
+                                        <apex:outputText value="{!sa.Referral__r.Agency_Name__c}" />
                                     </td>
                                     <td>
                                         <apex:outputlabel value="Reason" styleclass="labelCol" />
                                     </td>
                                     <td>
-                                        <apex:outputText value="{!sa.Admission__r.Referred_Out_Reason__c}" />
+                                        <apex:outputText value="{!LEFT(sa.Referral__r.Reason_for_Referral__c, 50)}" />
                                     </td>
                                 </tr>
 

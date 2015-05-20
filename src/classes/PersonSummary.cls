@@ -96,8 +96,10 @@ public with sharing class PersonSummary {
                             person_being_served__r.HomePhone,
                             person_being_served__r.otherPhone,
                             Admission__r.Admission_Effective_DateTime__c,
-                            Admission__r.Referred_Out_Agency_Name__c,
-                            Admission__r.Referred_Out_Reason__c,
+                            Referral__r.Referral_Source_Type__c,
+                            Referral__r.Agency_Name__c,
+                            Referral__r.Reason_for_Referral__c,
+                            
                             person_being_served__r.Code_Status__c,
                             person_being_served__r.Code_Status_Other__c,
                             person_being_served__r.Advanced_Directives__c,
