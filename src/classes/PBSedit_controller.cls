@@ -5,9 +5,10 @@ public boolean UnderAgePageMsg{get;set;}
 public boolean pbsEditModeOn{get;set;}
 public ApexPages.StandardController PBSController{get;set;}
 public String PageMessage{get;set;}
-public Contact currentContact{ get { return [ select id, accountid, ownerid from contact where id = :pbsId]; }
+public Contact currentContact{ get { return [ select id, accountid, ownerid ,Age_year__c,Age_month__c,Age_days__c from contact where id = :pbsId]; }
                                     set; }
 public ID PBSId{get;set;}
+public String age {set;get{ return currentContact.Age_year__c +' Years '+ currentContact.Age_month__c + ' Months ' + currentContact.Age_days__c +' Days';}}       
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }

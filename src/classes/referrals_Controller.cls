@@ -801,7 +801,7 @@ public with sharing class referrals_Controller{
 		Person_Being_Referred__c pBRRec;
 		try {
 			pBRRec = [
-				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,
+				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,Age_month__c,Age_year__c,Age_days__c,
 				       Race__c, Ethnicity__c, Fax__c, First_Name__c, Gender__c,
 				       Home_County__c, Last_Name__c, Marital_Status__c,
 				       Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
@@ -1056,6 +1056,7 @@ public with sharing class referrals_Controller{
 
 		try {
 			if (this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null) {
+				setAge ();
 				update this.personBeingRefRecord;
 			}
 
@@ -1227,9 +1228,51 @@ public with sharing class referrals_Controller{
 		}
 	}
 
+	
+public void setAge () {
+  Date birthday = this.personBeingRefRecord.Date_of_Birth__c;
+    Date today = Date.today();
+    Integer years =  today.year() - birthday.year();
+    Integer currMonth = Today.month();
+	Integer birthMonth = birthday.month();
+	Integer months = currMonth - birthMonth;
+    Integer days = 0;       
+			      if (months < 0)
+			      {
+			         years--;
+			         months = 12 - birthMonth + currMonth;
+			         if (Today.day() < birthDay.day())
+			            months--;
+			      } else if (months == 0 && Today.day() < birthDay.day())
+			      {
+			         years--;
+			         months = 11;
+			      }
+    	if (Today.day() > birthDay.day())
+			          days = Today.day() - birthDay.day();
+			       else if (Today.day() < birthDay.day())
+			       {
+			          days = Date.daysInMonth(Today.year(), Today.month() -1) - birthDay.day() + Today.day();
+			       } else
+			       {
+			          days = 0;
+			          if (months == 12)
+			          {
+			             years++;
+			             months = 0;
+			          }
+			       }
+
+	this.personBeingRefRecord.Age_year__c = years;
+	this.personBeingRefRecord.Age_month__c = String.valueOf(months);
+	this.personBeingRefRecord.Age_days__c = String.valueOf(days);
+}
 	public void createPBR() {
 		if (this.personBeingRefRecord != null) {
 			try {
+			if(this.personBeingRefRecord.Date_of_Birth__c!=null){
+					setAge ();
+				}
 				insert this.personBeingRefRecord;
 			} catch (Exception e) {
 				return;
