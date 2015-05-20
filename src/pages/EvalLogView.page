@@ -14,21 +14,21 @@
 
     <apex:pageblock title="{!thisEval.name}" >
 	<apex:pageblocksection rendered="{!evalname == 'Head to Toe'}">
-	<apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
 	<apex:outputLabel value="Nurse" />
 	<apex:outputText value="{!thisEval.Owner.Name}" />
 	</apex:pageBlockSectionItem>
-	<apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
 	<apex:outputLabel value="Head to Toe Status" />
 	<apex:outputText value="{!thisEval.Head_to_Toe_Status__c}" />
 	</apex:pageBlockSectionItem>
-	<apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
 	<apex:outputLabel value="Shift Status" />
 	<apex:outputText value="{!thisEval.Status__c}" />
 	</apex:pageBlockSectionItem>
-	<apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
 	<apex:outputLabel value="Start" />
-	<c:militarydatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
 	</apex:pageBlockSectionItem>
 	</apex:pageBlockSection>
 	
@@ -37,26 +37,26 @@
 	<apex:outputLabel value="Restraint Status" />
 	<apex:outputText value="{!thisEval.Status__c}" />
 	</apex:pageBlockSectionItem>
-	<apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
     <apex:outputLabel value="Created Date" />
-    <c:militarydatetime datetimeval="{!thiseval.shift_start_time__c}" />
+    <c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
     </apex:pageBlockSectionItem>
     <apex:pageBlockSectionItem rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'}" >
 	<apex:outputLabel value="Restrained By" />
 	<apex:outputText value="{!thisEval.Owner.Name}" />
 	</apex:pageBlockSectionItem>
-	<apex:pageBlockSectionItem rendered="{!thisEval.shift_start_time__c != null}">
+	<apex:pageBlockSectionItem rendered="{!thisEval.Shift_Start_Time__c != null}">
 	<apex:outputLabel value="Start" />
-	<c:militarydatetime datetimeval="{!thiseval.shift_start_time__c}" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
 	</apex:pageBlockSectionItem>
-	<apex:pageBlockSectionItem rendered="{!thisEval.shift_end_time__c != null}">
+	<apex:pageBlockSectionItem rendered="{!thisEval.Shift_End_Time__c != null}">
 	<apex:outputLabel value="End" />
-	<c:militarydatetime datetimeval="{!thiseval.shift_end_time__c}" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_End_Time__c}" />
 	</apex:pageBlockSectionItem>
 	</apex:pageBlockSection>
 	
 	<apex:pageBlockSection rendered="{!evalname == 'CNA Workbook'}">
-	<apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
 	<apex:outputLabel value="CNA" />
 	<apex:outputText value="{!thisEval.Owner.Name}" />
 	</apex:pageBlockSectionItem>
@@ -64,13 +64,13 @@
 	<apex:outputLabel value="Status" />
 	<apex:outputText value="{!thisEval.Status__c}" />
 	</apex:pageBlockSectionItem>
-	<apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
 	<apex:outputLabel value="Start Time" />
-	<c:militaryDateTime datetimeval="{!thiseval.shift_start_time__c}" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
 	</apex:pageBlockSectionItem>
-	<apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
 	<apex:outputLabel value="End Time" />
-	<c:militaryDateTime datetimeval="{!thiseval.shift_end_time__c}" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_End_Time__c}" />
 	</apex:pageBlockSectionItem>
 </apex:pageblocksection>	
 </apex:pageblock>
@@ -121,6 +121,8 @@
  		</apex:form>
    	</apex:repeat>	
    
+    <c:TurnsChart id="turnschart" parentID="{!thiseval.id}" rendered="{! $CurrentPage.Parameters.Cat == '' && $CurrentPage.Parameters.SubCat == '' && evalname == 'CNA Workbook'}" />
+     
  
  	<apex:pageBlock rendered="{! evalName == 'CNA Workbook'}" >
 	<Apex:pageblocksection columns="1" title="Approval History" collapsible="false">
