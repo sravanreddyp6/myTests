@@ -254,7 +254,7 @@ public with sharing class GenerateEvalSectionPDF {
 				} else if (e.Field_Type__c == 'Datetime') {
                     newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     if (mapEvalValues.ContainsKey( e.id )) 
-                        newHTMLfld += mapEvalValues.get(e.id).date_time__c; // output date format
+                        newHTMLfld += Utility.getMilitarytime(mapEvalValues.get(e.id).date_time__c); // output date format
                     newHTMLfld +=  '</div>';
                 } else if (e.Field_Type__c == 'Multiselect') {
                 	
