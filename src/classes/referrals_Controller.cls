@@ -1268,12 +1268,15 @@ public void setAge () {
 	this.personBeingRefRecord.Age_year__c = years;
 	this.personBeingRefRecord.Age_month__c = String.valueOf(months);
 	this.personBeingRefRecord.Age_days__c = String.valueOf(days);
+	this.personBeingRefRecord.Age__c = years;
 }
 	public void createPBR() {
 		if (this.personBeingRefRecord != null) {
 			try {
 			if(this.personBeingRefRecord.Date_of_Birth__c != null){
 					setAge ();
+				} else 	if(this.personBeingRefRecord.Age_year__c != null){
+					this.personBeingRefRecord.Age__c = this.personBeingRefRecord.Age_year__c;
 				}
 				insert this.personBeingRefRecord;
 			} catch (Exception e) {
