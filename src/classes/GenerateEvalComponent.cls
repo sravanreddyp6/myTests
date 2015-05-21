@@ -297,6 +297,9 @@ public with sharing class GenerateEvalComponent {
                     if (mapEvalValues.ContainsKey( e.id )) {
                         newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('yyyy/MM/dd HH:mm');
                         newHTMLfld  += '"';
+                    }else if (e.Required__c) {
+                        newHTMLfld += 'value="' + Datetime.now().format('yyyy/MM/dd HH:mm');
+                        newHTMLfld  += '"';
                     }
                     newHTMLfld +=  '/></div></div></td>';
                 } else if (e.Field_Type__c == 'Multiselect') {
@@ -482,6 +485,11 @@ public with sharing class GenerateEvalComponent {
 				}
 				else if (ei.Field_Type__c == 'Datetime' ){
                     ev.Date_Time__c = Datetime.valueOf(formData.get(f).replace('/','-')+':00');
+                    if (EvalType == 'Head to Toe' || EvalType == 'CNA Workbook'){
+                        Datetime evalShiftStartTime = [select Shift_Start_Time__c from Evaluation__c where ID = :evalId limit 1].Shift_Start_Time__c;
+                        if (evalShiftStartTime > ev.Date_Time__c || ev.Date_Time__c > Datetime.now() )  
+                            throw new InvalidDateTimeValException('<li>Save failed!!! The date and time value for ' + ei.field_name__c + ' must be within the current shift start time and the current time.</li>');
+                    }
                 }
 				else if (ei.Field_Type__c == 'String' || ei.Field_Type__c == 'ID' ||
 						 ei.Field_Type__c == 'Multiselect' || ei.Field_Type__c == 'Dropdown' || ei.Field_Type__c == 'Double' ||
@@ -516,6 +524,8 @@ public with sharing class GenerateEvalComponent {
 		upsert newValues;
 	}
 
+    public class InvalidDateTimeValException extends Exception{
+    }
 
 	@RemoteAction
     public static Evaluation_Response__c addOrModifyAnnotation(ID annotationId, String source, Decimal x, Decimal y, Decimal Width, Decimal Height, String Shape, String Text, String evaluationId) {
