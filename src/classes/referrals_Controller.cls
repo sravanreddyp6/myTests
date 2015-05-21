@@ -1056,7 +1056,9 @@ public with sharing class referrals_Controller{
 
 		try {
 			if (this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null) {
+				if(this.personBeingRefRecord.Date_of_Birth__c != null){
 				setAge ();
+				}
 				update this.personBeingRefRecord;
 			}
 
@@ -1270,7 +1272,7 @@ public void setAge () {
 	public void createPBR() {
 		if (this.personBeingRefRecord != null) {
 			try {
-			if(this.personBeingRefRecord.Date_of_Birth__c!=null){
+			if(this.personBeingRefRecord.Date_of_Birth__c != null){
 					setAge ();
 				}
 				insert this.personBeingRefRecord;
