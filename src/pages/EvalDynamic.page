@@ -492,7 +492,7 @@
 			<apex:actionfunction name="completeRestraintEvent" action="{!completeRestraintEvent}" status="myStatus" reRender="msgs" oncomplete="closeModalDialog('{!$Component.completeRestraintPanel}'); authenticate(); return false;"/>
 			<apex:pageblock >
 				<div id="resEventtimeErrors" ></div>
-				<apex:pageblocksection columns="1" >
+				<apex:pageblocksection columns="1" id="resTimeSection">
 					<apex:pageBlockSectionItem id="endTimeItem">
 						<apex:outputlabel value="Event End Time" />
 						<apex:outputPanel layout="none">
@@ -502,7 +502,7 @@
 					</apex:pageBlockSectionItem>
 				</apex:pageblocksection>
 				<div align="center">
-					<apex:commandLink styleClass="btn" value="Save & E-sign" onClick="validateEndtime('resEventtimeErrors', '{!$Component.completeRestraintPanel.endTimeItem.eventEndTime}', completeRestraintEvent); return false;" />
+					<apex:commandLink styleClass="btn" value="Save & E-sign" onClick="validateEndtime('resEventtimeErrors', '{!$Component.resTimeSection.endTimeItem.eventEndTime}', completeRestraintEvent); return false;" />
 					<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.completeRestraintPanel}'); return false;" />
 				</div>
 			</apex:pageblock>
