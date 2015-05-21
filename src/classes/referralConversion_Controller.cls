@@ -149,6 +149,8 @@ public with sharing class referralConversion_Controller {
                         r.Medicaid_ID__c,
                         r.Level_of_Disability__c,
                         r.Legal_Guardian_Status__c,
+                        r.Guardianship_Type__c,
+                        r.Partial_Guardianship_Conservatorship__c,
                         r.LastModifiedDate,
                         r.LastModifiedById,
                         r.LastActivityDate,
