@@ -647,12 +647,22 @@
             <isRequired>true</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Date__c</field>
+            <field>Time_Given__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>true</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Result_in_mm__c</field>
+            <field>Location_picklist__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Lot__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Expiration_Date__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>true</isRequired>
         </displayedFields>
@@ -660,6 +670,21 @@
             <field>Administered_By__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Time_Observed__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Result_in_mm__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Read_By__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
         </displayedFields>
         <label>PPD Skin Test</label>
     </fieldSets>
@@ -1938,6 +1963,25 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Location_picklist__c</fullName>
+        <description>picklist of locations where test was administered</description>
+        <externalId>false</externalId>
+        <label>Location</label>
+        <picklist>
+            <picklistValues>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Lot__c</fullName>
         <externalId>false</externalId>
         <label>Lot #</label>
@@ -2147,6 +2191,17 @@
         <fullName>Radiology_Type__c</fullName>
         <externalId>false</externalId>
         <label>Type</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Read_By__c</fullName>
+        <description>name of person reading result of test</description>
+        <externalId>false</externalId>
+        <label>Read By</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -2924,6 +2979,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -3461,6 +3527,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4006,6 +4083,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -4547,6 +4635,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5100,6 +5199,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -5645,6 +5755,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -6182,6 +6303,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6727,6 +6859,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -7264,6 +7407,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7809,6 +7963,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8363,6 +8528,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -8904,6 +9080,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9453,6 +9640,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9958,6 +10156,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10508,6 +10717,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -11053,6 +11273,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -11590,6 +11821,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12140,6 +12382,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -12685,6 +12938,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -13226,6 +13490,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13779,6 +14054,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -14324,6 +14610,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -14861,6 +15158,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15406,6 +15714,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15956,6 +16275,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -16501,6 +16831,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -17038,6 +17379,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17583,6 +17935,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -18120,6 +18483,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18670,6 +19044,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>L Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>R Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -18907,6 +19292,16 @@ RecordType.DeveloperName = &apos;PPD_Skin_Test&apos;
 )</errorConditionFormula>
         <errorDisplayField>Date__c</errorDisplayField>
         <errorMessage>Date can not be in the future</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>PPD_Requires_ReadInfo</fullName>
+        <active>true</active>
+        <description>Require Results and Read By to be populated when Date Read is filled in.</description>
+        <errorConditionFormula>AND( NOT(ISBLANK(Time_Observed__c )), 
+OR(ISBLANK( Result_in_mm__c ), ISBLANK( Read_By__c )), 
+$RecordType.DeveloperName = &apos;PPD_Skin_Test&apos;)</errorConditionFormula>
+        <errorDisplayField>Read_By__c</errorDisplayField>
+        <errorMessage>Results and Read By are required when Date Read is filled in</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Vaccine_Typc_Other</fullName>

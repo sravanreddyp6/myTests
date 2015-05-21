@@ -5,6 +5,7 @@ public with sharing class EvaluationResponseTableController {
 	public string username { get; set; }
 	public string password { get; set; }
 	public Boolean eSignable { get; set; }
+	public string labels{ get; set; }
 	
 	public Boolean canCreate { get {
 		Schema.DescribeSObjectResult oSchema = Evaluation_Response__c.sObjectType.getDescribe();
@@ -338,11 +339,42 @@ public with sharing class EvaluationResponseTableController {
 				continue;
 				
 			columnsToFetch.add(column.getFieldPath());
-			columnsToHeadersMap.put(column.getFieldPath(), column.getLabel());
+			
+			// check for custom label
+			string label = (string)column.getLabel();
+			Map<String,String> labelMap = new map<String, String>();
+			system.debug( labels);
+			
+			if (!string.isempty( labels)) {
+				labels= labels.unescapeHtml3();
+				list<FieldLabelVal> objs = (list<FieldLabelVal>) JSON.deserialize(labels, list<FieldLabelVal>.class);
+			
+				for(FieldLabelVal d : objs){ 
+			    	 labelMap.put(d.field, d.label);
+				}
+				system.debug( labelMap);
+			
+			}
+		
+			if ( labelMap.size() > 0 ) {
+				if ( labelMap.get( column.getFieldPath())!= null) {
+					
+					label = String.valueof(labelMap.get( column.getFieldPath()));
+					system.debug( 'found custom label for column.getFieldPath(): '  + label );
+				}
+			} 
+			columnsToHeadersMap.put(column.getFieldPath(), label);
 			if( column.getRequired() ){
 				reqFields.add( column.getFieldPath() );
 			}
 		}
 		return String.join(columnsToFetch, ', ');
+	
 	}
+	
+	public class FieldLabelVal{
+		public String field;
+		public String label;
+	}
+	
 }
