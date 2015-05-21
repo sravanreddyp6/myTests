@@ -15,6 +15,8 @@ public with sharing class EvalDynamicExt {
     public Id currentAssessId {get; set;}
 	public Boolean showMainComponent {get; set;}
 	public string key {get; set;}
+	public Evaluation_Response__c lateEntryNote { get; set; }  // EC-164
+	public Evaluation_Response__c[] lateEntryNotes { get; set; }
 
 	public Boolean showDisregard {get; set;}
 	public Boolean showRevise {get; set;}
@@ -55,6 +57,10 @@ public with sharing class EvalDynamicExt {
 		subCat = ApexPages.currentPage().getParameters().get('SubCategory');
 		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
 		approvalHIstory = new List<ProcessInstanceHistory>();
+		refreshLateEntryNotes();
+		lateEntryNote = new Evaluation_Response__c(
+			RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note')
+		);
 
 		showMainComponent = true;
 		showDisregard = false;
@@ -100,6 +106,51 @@ public with sharing class EvalDynamicExt {
 			controlButtons();
 		}
 
+	}
+
+	public void refreshLateEntryNotes() {
+		lateEntryNotes = [
+			SELECT Id, Late_Entry_Date__c
+			FROM Evaluation_Response__c
+			WHERE RecordTypeId = :Utility.getEvaluationResponseRecordType('Late Entry Note')
+			ORDER BY Late_Entry_Date__c
+		];
+	}
+
+	public void refreshLateEntryNote() {
+		String lateEntryNoteId = ApexPages.currentPage().getParameters().get('lateEntryNoteId');
+		if (lateEntryNoteId == null || lateEntryNoteId == '') {
+			lateEntryNote = new Evaluation_Response__c(
+				RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note')
+			);
+		} else {
+			lateEntryNote = [ SELECT Id, CreatedById, CreatedBy.Name, Late_Entry_Note__c, Late_Entry_Date__c FROM Evaluation_Response__c WHERE Id = :lateEntryNoteId ];
+		}
+	}
+
+	public void validateLateEntryNote() {
+		if (lateEntryNote.Late_Entry_Note__c == '' || lateEntryNote.Late_Entry_Note__c == null) {
+			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Note cannot be blank'));
+		}
+		if (lateEntryNote.Late_Entry_Date__c == null) {
+			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Date cannot be blank'));
+		}
+	}
+
+	public void saveLateEntryNote() {
+		Boolean errorFound = false;
+		if (lateEntryNote.Late_Entry_Note__c == '' || lateEntryNote.Late_Entry_Note__c == null) {
+			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Note cannot be blank'));
+			errorFound = true;
+		}
+		if (lateEntryNote.Late_Entry_Date__c == null) {
+			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Date cannot be blank'));
+			errorFound = true;
+		}
+		if (!errorFound) {
+			upsert lateEntryNote;
+			refreshLateEntryNotes();
+		}
 	}
 
 	public void myAction(){
@@ -378,11 +429,11 @@ public with sharing class EvalDynamicExt {
 		}*/
 		return null;
 	}
-	
+
 	public void completeRestraintEvent(){
 		update thisEval;
 	}
-		
+
 	public void endShiftDON() {
 		update thisEval;
 	}
@@ -678,11 +729,11 @@ public with sharing class EvalDynamicExt {
         req.setAction(approvalAction);
         req.setComments( comment);
         req.setNextApproverIds(null);
-        
-        // if a rejection, set up a task for the CNA owner 
+
+        // if a rejection, set up a task for the CNA owner
         DateTime n = DateTime.now();
         Task t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
-        insert t; 
+        insert t;
 
         // get the current work item
         List<ProcessInstanceWorkitem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :evalID];
