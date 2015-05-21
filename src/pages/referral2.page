@@ -781,7 +781,7 @@
                 <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
                     <apex:outputField value="{!personBeingRefRecord.Full_Name__c}" />
                     <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age__c})">
+                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age_year__c} Years {!personBeingRefRecord.Age_month__c} Months {!personBeingRefRecord.Age_days__c} Days)">
                         <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}" />
                     </apex:outputText>
                     <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
@@ -810,7 +810,7 @@
                 <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
                     <apex:outputField value="{!personBeingRefRecord.Full_Name__c}" />
                     <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age__c})">
+                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age_year__c} Years {!personBeingRefRecord.Age_month__c} Months {!personBeingRefRecord.Age_days__c} Days)">
                         <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}" />
                     </apex:outputText>
                     <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
