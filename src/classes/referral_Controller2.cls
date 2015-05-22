@@ -273,14 +273,14 @@ public with sharing class referral_Controller2 {
 		try {
 			if(this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null){
 				this.relParties = [
-					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c, Status__c, Person_Being_Referred__c
+					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c, Status__c, Person_Being_Referred__c, CreatedDate
 					from Related_Party__c
 					where Person_Being_Referred__c = :this.personBeingRefRecord.Id order by Type__c, Name
 					limit 150
 				];
 			} else if (this.personBeingServedRecord != null && this.personBeingServedRecord.Id != null){
 				this.relParties = [
-					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c, Person_Being_Referred__c, Person_Being_Served__c
+					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c, Person_Being_Referred__c, Person_Being_Served__c, CreatedDate
 					from Related_Party__c
 					where Person_Being_Served__c = :this.personBeingServedRecord.Id order by Type__c, Name
 					limit 150
@@ -305,7 +305,7 @@ public with sharing class referral_Controller2 {
 	}
 	private void populateAgencies() {
 		this.agencies = [
-			select Id, Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c
+			select Id, Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
 			from Agency_Involved_With_Individual__c
 			where Referral__c = :this.referralRecord.Id
 			limit 150
@@ -315,7 +315,7 @@ public with sharing class referral_Controller2 {
 	private void populateFundingSources() {
 		this.fundingSources = [
 			select id, Payor__c, Funding_Source__c, Funding_Source_ID__c, Status__c, Service_Being_Funded__c, Comment__c, Referral__c,
-			       type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c
+			       type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c, CreatedDate
 			from Funding_Source__c
 			where Referral__c = :this.referralRecord.Id
 			order by Type_of_Coverage__c

@@ -692,6 +692,7 @@
                     <apex:column value="{!relParty.Phone_2_Type__c}" />
                     <apex:column value="{!relParty.Status__c}" />
                     <apex:column value="{!relParty.Comments__c}" />
+                    <apex:column value="{!relParty.CreatedDate}" />
                 </apex:pageBlockTable>
                 <apex:outputpanel style="display:none">
                     <apex:inputHidden value="{!relParty.Name}" id="relatedPartyName" />
@@ -2338,6 +2339,7 @@
                     <apex:column value="{!agency.Address__c}" />
                     <apex:column value="{!agency.Phone__c}" />
                     <apex:column value="{!agency.Reason_for_Involvement__c}" />
+                    <apex:column value="{!agency.CreatedDate}" />
                 </apex:pageBlockTable>
                 <apex:outputpanel style="display:none">
                     <apex:inputHidden value="{!agency.Name}" id="agencyName" />
@@ -2367,6 +2369,7 @@
                     <apex:column value="{!fundingSource.Payor__c}" rendered="{!ReferralRecordType=='CareMeridian'}" />
                     <apex:column value="{!fundingSource.Status__c}" />
                     <apex:column value="{!fundingSource.Comment__c}" />
+                    <apex:column value="{!fundingSource.CreatedDate}" />
                 </apex:pageBlockTable>
                 <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!ReferralRecordType == 'CareMeridian'}">
                     <apex:column value="{!fundingSource.Type_of_Coverage__c}" />

@@ -230,7 +230,7 @@ public Map<String, String> fieldMap { get; set; }
     private void populateRelParties() {
     try {
         this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c,
-                                Person_Being_Served__c, Status__c
+                                Person_Being_Served__c, Status__c, CreatedDate
                          from Related_Party__c
                          where Person_Being_Served__c = :pbsId order by Type__c, Name
                          ];
@@ -242,7 +242,7 @@ public Map<String, String> fieldMap { get; set; }
   }
    private void populateAgencies() {
     try {
-      this.relAgencies = [select Name, Address__c, Person_Being_Served__c, Phone__c, Reason_for_Involvement__c, Referral__c
+      this.relAgencies = [select Name, Address__c, Person_Being_Served__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
                          from Agency_Involved_with_Individual__c
                          where Person_Being_Served__c = :pbsId
                          ];      }
