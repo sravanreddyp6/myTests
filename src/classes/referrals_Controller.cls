@@ -677,7 +677,7 @@ public with sharing class referrals_Controller{
 			if(this.personBeingRefRecord.Id != null) {
 				this.relParties = [
 					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c,
-					       Person_Being_Referred__c, Person_Being_Served__c
+					       Person_Being_Referred__c, Person_Being_Served__c, CreatedDate
 					  from Related_Party__c
 					 where Person_Being_Referred__c = :this.personBeingRefRecord.Id order by Type__c, Name
 					 limit 150
@@ -685,7 +685,7 @@ public with sharing class referrals_Controller{
 			} else if (this.personBeingServedRecord.Id != null) {
 				this.relParties = [
 					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c, 
-					       Person_Being_Referred__c, Person_Being_Served__c
+					       Person_Being_Referred__c, Person_Being_Served__c, CreatedDate
 					  from Related_Party__c
 					 where Person_Being_Served__c = :this.personBeingServedRecord.Id order by Type__c, Name
 					 limit 150
@@ -704,13 +704,13 @@ public with sharing class referrals_Controller{
 
 		try {
 			this.agencies = [
-				select Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c
+				select Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
 				  from Agency_Involved_With_Individual__c
 				 where Referral__c = :this.referralRecord.Id
 				 limit 150
 			];
 			this.fundingSources = [
-				SELECT ID, Funding_Source__c, Status__c, Comment__c, Funding_Source_ID__c,
+				SELECT ID, CreatedDate, Funding_Source__c, Status__c, Comment__c, Funding_Source_ID__c,
 				       Service_Being_Funded__c, Type_of_Coverage__c, Payer_Verification_Date__c,
 				       Verified_With__c, Representing__c, Call_Reference_Number__c,
 				       Payer_Name__c, TPA__c, Primary_Med_Ind_Phys_Group__c,

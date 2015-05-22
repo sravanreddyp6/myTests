@@ -1698,6 +1698,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Payor__c}" rendered="{!fundingSourceRecordType=='CareMeridian'}" />
 				<apex:column value="{!fundingSource.Status__c}" />
 				<apex:column value="{!fundingSource.Comment__c}" />
+				<apex:column value="{!fundingSource.CreatedDate}" />
 			</apex:pageBlockTable>
 
 			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0 && canEditFundingSource }">

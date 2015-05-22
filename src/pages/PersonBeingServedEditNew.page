@@ -432,7 +432,7 @@
 			          		<apex:outputLabel value="Guardianship Type" id="guardianshipTypeLabel" for="guardianShipType"/>
 			          		<br/>
 			          		<br/>
-			          		<apex:outputLabel  value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel" for="partialGuardianShip"/>
+			          		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel" for="partialGuardianShip"/>
 			          	</apex:outputPanel>
 			           	<apex:outputPanel >
 			           		<apex:inputField value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
@@ -576,6 +576,7 @@
                     <apex:column value="{!relParty.Phone_2_Type__c}" />
                     <apex:column value="{!relParty.Status__c}" />
                     <apex:column value="{!relParty.Comments__c}" />
+                    <apex:column value="{!relParty.CreatedDate}" />
                 </apex:pageBlockTable>
                 <script type="text/javascript">
                     relPartyData = '{!relPartiesJSON}';
@@ -645,6 +646,7 @@
                     <apex:column value="{!relAgency.Address__c}" />
                     <apex:column value="{!relAgency.Phone__c}" />
                     <apex:column value="{!relAgency.Reason_for_Involvement__c}" />
+                    <apex:column value="{!relAgency.CreatedDate}" />
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
         </apex:pageBlock>
