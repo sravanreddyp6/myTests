@@ -576,13 +576,13 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem helpText="{!$ObjectType.Person_Being_Referred__c.fields.Age_year__c.inlineHelpText}">
-                    <apex:outputText value="Age: Years" />
+                    <apex:outputText value="Age " />
                     <apex:outputPanel styleClass="nowrap">
-                        <apex:inputField value="{!personBeingRefRecord.Age_year__c}" />&nbsp;
-                        <apex:outputLabel value="Age: Months" />&nbsp;
-                        <apex:inputField value="{!personBeingRefRecord.Age_month__c}"  />&nbsp;
-                        <apex:outputLabel value="Age: Days" />&nbsp;
-                        <apex:inputField value="{!personBeingRefRecord.Age_days__c}" style="width: 42px;"  />
+                        <apex:inputField value="{!personBeingRefRecord.Age_year__c}" style="width: 30px;"/>&nbsp;Years&nbsp;
+                        <apex:outputLabel value=" " />
+                        <apex:inputField value="{!personBeingRefRecord.Age_month__c}"  />&nbsp; Months &nbsp;
+                        <apex:outputLabel value=" " />&nbsp;
+                        <apex:inputField value="{!personBeingRefRecord.Age_days__c}"  /> Days
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
