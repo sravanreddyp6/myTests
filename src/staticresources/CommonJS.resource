@@ -1,13 +1,13 @@
-(function ($) {
+(function($) {
 	"use strict";
 
-	window.scrollToTop = function () {
+	window.scrollToTop = function() {
 		window.scrollTo(0, 0);
 	};
-	String.prototype.endsWith = function (suffix) {
+	String.prototype.endsWith = function(suffix) {
 		return this.indexOf(suffix, this.length - suffix.length) !== -1;
 	};
-	$.fn.realVal = function () {
+	$.fn.realVal = function() {
 		// This function is here to put all the value-getting functionalities
 		// in one place. This is because calling val() on a checkbox input
 		// will only return the default value.
@@ -23,7 +23,7 @@
 	// Do the field disabling/enabling functionality here
 	// When values are in map -> will be enabled when key is changed
 	// This doesn't support the use case when 2 fields try to control 1 field.
-	window.applyRulesToField = function (element) {
+	window.applyRulesToField = function(element) {
 		var $element = $(element);
 		if ($element.attr('multiple') == 'multiple' && !$element.attr('id').endsWith('_selected') & !$element.attr('id').endsWith('_unselected')) {
 			// This is the hidden select field for multi-picklist that gets
@@ -35,13 +35,13 @@
 			// However, this method is called both when the page is initialized
 			// and when a value is changed, so we need to make sure to not use
 			// more timeout handler than necessary (i.e. in the latter case)
-			if (!$element.hasClass("timer-attached")) {
+			if (!$element.hasClass("rules-timer-attached")) {
 				var originalValue = $element.realVal();
 				setInterval(function() {
 					var currentValue = $element.realVal();
 					if (JSON.stringify(currentValue) != JSON.stringify(originalValue)) { // Normal comparison do NOT work with list, so we use this workaround
 						originalValue = currentValue;
-						$element.addClass("timer-attached");
+						$element.addClass("rules-timer-attached");
 						$element.trigger("change");
 					}
 				}, 100)
@@ -55,10 +55,10 @@
 		}
 		var enabledFields = [];
 		var rules = $element.data("rules");
-		rules && $.each(rules, function (key, value) {
+		rules && $.each(rules, function(key, value) {
 			var $targets = [];
 			if (value instanceof Array) {
-				$.each(value, function (_, selector) {
+				$.each(value, function(_, selector) {
 					$targets.push($(document.getElementById(selector)));
 				});
 			} else {
@@ -67,7 +67,7 @@
 			var val = $element.realVal();
 			if (val == key || (val instanceof Array && $.inArray(key, val) != -1)) {
 				// Enable fields
-				$.each($targets, function (_, $target) {
+				$.each($targets, function(_, $target) {
 					if ($target.attr("multiple")) {
 						$target.parent().find("select").prop("disabled", false);
 					} else {
@@ -77,7 +77,7 @@
 				});
 			} else {
 				// Disable fields
-				$.each($targets, function (_, $target) {
+				$.each($targets, function(_, $target) {
 					// We also need to revert the field(s) to their original state
 					// One exception: if the field has been enabled by one of the
 					// earlier rules, then don't disable it!
@@ -109,7 +109,7 @@
 	// If the element has a visibility-row-rules and it is true, the whole row
 	// containing the target will be shown/hidden, otherwise only the target
 	// will be shown/hidden.
-	 window.applyShowHideRulesToField = function(element) {
+	window.applyShowHideRulesToField = function(element) {
 		var $element = $(element);
 		if ($element.attr('multiple') == 'multiple' && !$element.attr('id').endsWith('_selected') & !$element.attr('id').endsWith('_unselected')) {
 			// This is the hidden select field for multi-picklist that gets

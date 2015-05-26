@@ -15,8 +15,8 @@ public with sharing class EvalDynamicExt {
     public Id currentAssessId {get; set;}
 	public Boolean showMainComponent {get; set;}
 	public string key {get; set;}
-
-
+	public Evaluation_Response__c lateEntryNote { get; set; }  // EC-164
+	public Evaluation_Response__c[] lateEntryNotes { get; set; }
 
 	public Boolean showDisregard {get; set;}
 	public Boolean showRevise {get; set;}
@@ -25,8 +25,10 @@ public with sharing class EvalDynamicExt {
 	public Boolean showApprove {get; set;}
 	public Boolean isUserOwner {get; set; }
 	public Boolean isApprover { get; set; }
+	public Boolean showEndOfShiftDON { get; set; }  // EC-163
 
 	public Boolean isEditable;
+	public Boolean isDON;
 
 	public String getEvalStatusDate(){
 		if (evalType == 'Head to Toe')
@@ -55,16 +57,38 @@ public with sharing class EvalDynamicExt {
 		subCat = ApexPages.currentPage().getParameters().get('SubCategory');
 		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
 		approvalHIstory = new List<ProcessInstanceHistory>();
+		refreshLateEntryNotes();
+		lateEntryNote = new Evaluation_Response__c(
+			RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note')
+		);
 
 		showMainComponent = true;
 		showDisregard = false;
 		showRevise = false;
 		showEsign = false;
 		showshiftDone = false;
+		showEndOfShiftDON = false;
 		isUserOwner = false;
 		isApprover = false;
 
-		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c from Evaluation__c where ID = :evalID LIMIT 1];
+		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
+		PermissionSetAssignment[] assignments = [
+		                                         SELECT Id, PermissionSet.Name
+		                                         FROM PermissionSetAssignment
+		                                         WHERE AssigneeId = :UserInfo.getUserId()
+		                                         ];
+		Set<String> permissionSets = new Set<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Name);
+		}
+
+		if (permissionSets.contains('iServe_DON')) {
+			isDON = true;
+		} else {
+			isDON = false;
+		}
+
+		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Signed_By__r.Name, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
 
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
@@ -82,6 +106,51 @@ public with sharing class EvalDynamicExt {
 			controlButtons();
 		}
 
+	}
+
+	public void refreshLateEntryNotes() {
+		lateEntryNotes = [
+			SELECT Id, Late_Entry_Date__c
+			FROM Evaluation_Response__c
+			WHERE RecordTypeId = :Utility.getEvaluationResponseRecordType('Late Entry Note')
+			ORDER BY Late_Entry_Date__c
+		];
+	}
+
+	public void refreshLateEntryNote() {
+		String lateEntryNoteId = ApexPages.currentPage().getParameters().get('lateEntryNoteId');
+		if (lateEntryNoteId == null || lateEntryNoteId == '') {
+			lateEntryNote = new Evaluation_Response__c(
+				RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note')
+			);
+		} else {
+			lateEntryNote = [ SELECT Id, CreatedById, CreatedBy.Name, Late_Entry_Note__c, Late_Entry_Date__c FROM Evaluation_Response__c WHERE Id = :lateEntryNoteId ];
+		}
+	}
+
+	public void validateLateEntryNote() {
+		if (lateEntryNote.Late_Entry_Note__c == '' || lateEntryNote.Late_Entry_Note__c == null) {
+			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Note cannot be blank'));
+		}
+		if (lateEntryNote.Late_Entry_Date__c == null) {
+			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Date cannot be blank'));
+		}
+	}
+
+	public void saveLateEntryNote() {
+		Boolean errorFound = false;
+		if (lateEntryNote.Late_Entry_Note__c == '' || lateEntryNote.Late_Entry_Note__c == null) {
+			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Note cannot be blank'));
+			errorFound = true;
+		}
+		if (lateEntryNote.Late_Entry_Date__c == null) {
+			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Date cannot be blank'));
+			errorFound = true;
+		}
+		if (!errorFound) {
+			upsert lateEntryNote;
+			refreshLateEntryNotes();
+		}
 	}
 
 	public void myAction(){
@@ -361,6 +430,14 @@ public with sharing class EvalDynamicExt {
 		return null;
 	}
 
+	public void completeRestraintEvent(){
+		update thisEval;
+	}
+
+	public void endShiftDON() {
+		update thisEval;
+	}
+
 	//Generic Clone functionality to copy Eval Value records.
 	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup){
 
@@ -468,6 +545,13 @@ public with sharing class EvalDynamicExt {
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
 			showDisregard = false;
 
+			if (isDON) {
+				if (evalType == 'Head to Toe' && thisEval.Head_to_Toe_Status__c == 'Draft' && thisEval.Status__c == 'Draft') {  // EC-163
+					showEndOfShiftDON = true;
+				} else if (evalType == 'CNA Workbook' && thisEval.Status__c == 'Draft') {
+					showEndOfShiftDON = true;
+				}
+			}
 			return;
 		}
 
@@ -525,18 +609,17 @@ public with sharing class EvalDynamicExt {
 				showDisregard = true;
 				showshiftDone = false;
 
-			}
-			else if(thisEval.Head_to_toe_Status__c == 'Final' && thisEval.Status__c == 'Draft'){
+			} else if (thisEval.Head_to_toe_Status__c == 'Final' && thisEval.Status__c == 'Draft'){
 				showEsign = false;
 				showDisregard = true;
 				showshiftDone = true;
 
-			}
-			else if(thisEval.Head_to_toe_Status__c == 'Final' && thisEval.Status__c == 'Completed' ){
+			} else if(thisEval.Head_to_toe_Status__c == 'Final' && thisEval.Status__c == 'Completed' ){
 				showEsign = false;
 				showDisregard = true;
 				showshiftDone = false;
-
+			} else if (thisEval.Status__c == 'End of Shift') {
+				showDisregard = true;
 			}
 
 		}
@@ -646,6 +729,11 @@ public with sharing class EvalDynamicExt {
         req.setAction(approvalAction);
         req.setComments( comment);
         req.setNextApproverIds(null);
+
+        // if a rejection, set up a task for the CNA owner
+        DateTime n = DateTime.now();
+        Task t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
+        insert t;
 
         // get the current work item
         List<ProcessInstanceWorkitem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :evalID];

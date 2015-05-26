@@ -247,10 +247,15 @@
 										<br />
 
 										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && opGrp!='Redwood' && servAssigns.size > 0 }">
-											Add Seizure
+											Add Seizure <br />
 											<apex:param value="{!con.Id}" name="pbsId" />
 											<apex:param value="{!$CurrentPage.URL}" name="retURL" />
 										</apex:outputLink>
+
+                                        <apex:outputLink styleClass="servicelink" 
+                                            onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!opGrp=='Care Meridian' && servAssigns.size > 0 }">
+                                            Person Summary
+                                        </apex:outputLink>                                        
 									</td>
 
 									<td style="vertical-align:top; padding-left:10px; padding-right:20px; line-height:20px">
