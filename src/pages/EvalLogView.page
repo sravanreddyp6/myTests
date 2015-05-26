@@ -1,0 +1,194 @@
+<apex:page controller="GenerateEvalSectionPDF" standardStylesheets="true" sidebar="false" readonly="True" tabStyle="Persons_Being_Served_New__tab" showheader="false" title="Summary View: {!thisEval.name}">
+
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />      
+
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />    
+    <apex:includeScript value="{!$Resource.AnnotoriousDev}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
+    
+    
+    <apex:form >
+
+    <apex:pageblock title="{!thisEval.name}" >
+	<apex:pageblocksection rendered="{!evalname == 'Head to Toe'}">
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="Nurse" />
+	<apex:outputText value="{!thisEval.Owner.Name}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="Head to Toe Status" />
+	<apex:outputText value="{!thisEval.Head_to_Toe_Status__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="Shift Status" />
+	<apex:outputText value="{!thisEval.Status__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="Start" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+	</apex:pageBlockSectionItem>
+	</apex:pageBlockSection>
+	
+	<apex:pageBlockSection rendered="{!evalname == 'Restraint Event'}">
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="Restraint Status" />
+	<apex:outputText value="{!thisEval.Status__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
+    <apex:outputLabel value="Created Date" />
+    <c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'}" >
+	<apex:outputLabel value="Restrained By" />
+	<apex:outputText value="{!thisEval.Owner.Name}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem rendered="{!thisEval.Shift_Start_Time__c != null}">
+	<apex:outputLabel value="Start" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem rendered="{!thisEval.Shift_End_Time__c != null}">
+	<apex:outputLabel value="End" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_End_Time__c}" />
+	</apex:pageBlockSectionItem>
+	</apex:pageBlockSection>
+	
+	<apex:pageBlockSection rendered="{!evalname == 'CNA Workbook'}">
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="CNA" />
+	<apex:outputText value="{!thisEval.Owner.Name}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="Status" />
+	<apex:outputText value="{!thisEval.Status__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="Start Time" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+	</apex:pageBlockSectionItem>
+	<apex:pageBlockSectionItem >
+	<apex:outputLabel value="End Time" />
+	<c:MilitaryDatetime datetimeval="{!thiseval.Shift_End_Time__c}" />
+	</apex:pageBlockSectionItem>
+</apex:pageblocksection>	
+</apex:pageblock>
+    
+    
+    <apex:repeat value="{!objectives}" var="objective" rendered="{! $CurrentPage.Parameters.Cat == '' || ( $CurrentPage.Parameters.Cat == 'Objective')}" >
+    	<c:GoalObjReportingPDF oid="{!objective.objid}" type="{!objective.objType}" startdate="{!objective.shiftstart}" enddate="{!objective.shiftend}" />
+    </apex:repeat>
+    
+    <apex:repeat value="{!listEntries}" var="entry" >
+    <apex:variable var="list" value="{!mapEntryHTML[entry]}" />
+   
+    <apex:pageBlock >
+    <apex:pageBlockSection title="{!mapEntries[entry].cat } / {!mapEntries[entry].subcat} ({!evalName})" collapsible="false" columns="2">
+    <apex:outputText style="font-style:italic" value="{!mapEntries[entry].entryType} by {!mapEntries[entry].owner} on {!mapEntries[entry].created}" /><apex:outputText value="" />
+    
+   <apex:pageblocksectionitem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null'}"> 
+   <c:EvaluationResponseTablePDF parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" formId="{!$Component.wholePage}" uniqueId="wound" isPDF="true" rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null'}"/>
+   </apex:pageblocksectionitem>
+   <apex:pageblocksectionitem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}">
+   <c:EvaluationResponseTablePDF parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" formId="{!$Component.wholePage}" uniqueId="decubiti" rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}"/>
+   </apex:pageblocksectionitem>
+      <apex:pageblocksectionitem rendered="{!mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assessment' }">
+    	<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"  rendered="{!mapEntries[entry].compositeKey == 'Fall Risk Assessment~Fall Assessment~null'}" AssessmentName="Fall Risk Assessment" lowerScore="1" medianScore="30" higherScore="31" isPDF="true"/>
+		<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!mapEntries[entry].compositeKey == 'Skin/Body~Skin Assessment~null'}" AssessmentName="Skin Assessment" lowerScore="1" medianScore="14" higherScore="14" isPDF="true"/>
+    </apex:pageblocksectionitem>
+   <apex:pageBlockSectionItem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null' || mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assessment'}" >
+   <apex:outputText value=""  />
+    </apex:pageBlockSectionItem>
+    
+    <apex:repeat value="{!mapEntryHTML[entry]}" var="fld" >
+   		<apex:pageBlockSectionItem >
+   		<apex:outputText value="{!fld}" escape="false" />
+   		</apex:pageBlockSectionItem>
+    </apex:repeat>
+    </apex:pageBlockSection>
+
+    </apex:pageBlock>
+ 	</apex:repeat>
+   
+    </apex:form>
+    
+<!--     Section to display Restraint Reductions -->
+	
+    <apex:repeat value="{!assessments}" var="asmt" rendered="{!(evalname == 'Restraint Event' && subcat == 'Reduction Review') || (evalName == 'Restraint Event' && subcat == null) }">
+    	<apex:form >
+ 			<c:restraintReductionComponent AssessmentId="{!asmt.Id}" isPDF="true" />
+ 		</apex:form>
+   	</apex:repeat>	
+   
+    <c:TurnsChart id="turnschart" parentID="{!thiseval.id}" rendered="{! ($CurrentPage.Parameters.Cat == '' || $CurrentPage.Parameters.Cat == 'Turns') && evalname == 'CNA Workbook'}" />
+     
+ 
+ 	<apex:pageBlock rendered="{! evalName == 'CNA Workbook' && $CurrentPage.Parameters.Cat == ''}" >
+	<Apex:pageblocksection columns="1" title="Approval History" collapsible="false">
+	<apex:datatable style="width: 100%;"  value="{!approvalHistory}" var="a">
+	<apex:column value="{!a.actorid}" headervalue="By"/>
+	<apex:column value="{!a.stepstatus}" headervalue="Status"/>
+	<apex:column value="{!a.comments}" headervalue="Comments"/>
+	<apex:column value="{!a.createddate}" headervalue="Date" />
+	</apex:datatable>
+	</Apex:pageblocksection>
+	</apex:pageBlock>
+ 
+ 		
+ 	<script>
+ 	
+    jQuery.noConflict();
+   
+	jQuery(document).ready(function ($) {
+    
+<apex:outputPanel layout="none" >
+                document.getElementById('painSlider').innerHTML=document.getElementById('painLevel').innerHTML;
+// need to create an array of bodymap elements and add the annotations to each of them
+
+                    var el = $('[id*=bodyMap]');
+                    el.each( function (index, element) {
+                        	anno.makeAnnotatable(element);
+                    });
+                                    
+                    <apex:repeat value="{!annotations}" var="annotation" >
+                    el.each( function (index, element) {
+                    	anno.addAnnotation({
+                        Id: "{!annotation.Id}",
+                        src: $(element).prop("src"),
+                        text: "{!JSENCODE(annotation.Annotation_Text__c)}",
+                        shapes: [{
+                            type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
+                            geometry: {
+                                x: {!annotation.Annotation_X__c},
+                                y: {!annotation.Annotation_Y__c},
+                                width: {!annotation.Annotation_Width__c},
+                                height: {!annotation.Annotation_Height__c}
+                            }
+                        }]
+                    });
+                    });
+                    </apex:repeat>
+                    
+                    var createAnnotationElements = function (annotations, ele) {
+                        $('table#annotations tr').remove(); // so that they won't repeat in the tables
+                        $.each(annotations, function (index, annotation) {
+                            var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+                            $(ele).parent().append($divEl);
+                            var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+                            $divEl.append($textEl);
+                            $("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+                        });
+                    }
+                    $.each( el, function( index, element ) {
+                    	createAnnotationElements(anno.getAnnotations($(element).prop("src")), element);
+                    	anno.hideSelectionWidget( $(element).prop("src") );
+                    	});
+                    	
+</apex:outputPanel>
+
+});
+    </script>
+ 		
+ 		
+</apex:page>

@@ -1,0 +1,49 @@
+<apex:page controller="RestraintReductionReport">
+	<style>
+		table.restraint-table {
+			border-collapse: collapse;
+			margin-bottom: 20px;
+		}
+
+		table.restraint-table, table.restraint-table td {
+			border: 1px solid black;
+		}
+	</style>
+	<apex:repeat value="{!restraints}" var="restraint">
+		<table class="restraint-table">
+			<tr>
+				<td></td>
+				<td colspan="100">Reduction Review Event</td>
+			</tr>
+			<tr>
+				<td></td>
+				<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+					<td colspan="2"><c:MilitaryDatetime dateTimeVal="{!reduction.CreatedDate}" /></td>
+				</apex:repeat>
+			</tr>
+			<tr>
+				<td>Topic</td>
+				<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+					<td>Value</td>
+					<td>Score</td>
+				</apex:repeat>
+			</tr>
+			<apex:repeat value="{!questions}" var="question">
+				<tr>
+					<td>{!question.Question_Title__c}</td>
+					<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+						<td>{!reduction.responseMap[question.Id].Rating__c}</td>
+						<td>{!reduction.responseMap[question.Id].Score__c}</td>
+					</apex:repeat>
+				</tr>
+			</apex:repeat>
+			<tr>
+				<td></td>
+				<apex:repeat value="{!restraints[restraint].reductions}" var="reduction">
+					<td>Total Score</td>
+					<td>{!reduction.domainResult.Score__c}</td>
+				</apex:repeat>
+			</tr>
+		</table>
+	</apex:repeat>
+</apex:page>
