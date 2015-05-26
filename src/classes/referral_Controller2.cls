@@ -273,14 +273,14 @@ public with sharing class referral_Controller2 {
 		try {
 			if(this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null){
 				this.relParties = [
-					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c, Status__c, Person_Being_Referred__c
+					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c, Status__c, Person_Being_Referred__c, CreatedDate
 					from Related_Party__c
 					where Person_Being_Referred__c = :this.personBeingRefRecord.Id order by Type__c, Name
 					limit 150
 				];
 			} else if (this.personBeingServedRecord != null && this.personBeingServedRecord.Id != null){
 				this.relParties = [
-					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c, Person_Being_Referred__c, Person_Being_Served__c
+					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c, Person_Being_Referred__c, Person_Being_Served__c, CreatedDate
 					from Related_Party__c
 					where Person_Being_Served__c = :this.personBeingServedRecord.Id order by Type__c, Name
 					limit 150
@@ -305,7 +305,7 @@ public with sharing class referral_Controller2 {
 	}
 	private void populateAgencies() {
 		this.agencies = [
-			select Id, Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c
+			select Id, Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
 			from Agency_Involved_With_Individual__c
 			where Referral__c = :this.referralRecord.Id
 			limit 150
@@ -315,7 +315,7 @@ public with sharing class referral_Controller2 {
 	private void populateFundingSources() {
 		this.fundingSources = [
 			select id, Payor__c, Funding_Source__c, Funding_Source_ID__c, Status__c, Service_Being_Funded__c, Comment__c, Referral__c,
-			       type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c
+			       type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c, CreatedDate
 			from Funding_Source__c
 			where Referral__c = :this.referralRecord.Id
 			order by Type_of_Coverage__c
@@ -393,10 +393,10 @@ public with sharing class referral_Controller2 {
 		Person_Being_Referred__c pBRRec;
 		try {
 			pBRRec = [
-				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,
+				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,Age_month__c,Age_year__c,Age_days__c,
 				       Race__c, Ethnicity__c, Fax__c, First_Name__c, Gender__c,
 				       Home_County__c, Last_Name__c, Marital_Status__c,
-				       Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
+				       Middle_Initial__c, Phone__c, Primary_Language__c, //SSN__c,
 				       State__c, Street_1__c, Street_2__c, Zip_Code__c,
 				       Additional_Information_Comments__c, Sign_Language__c,
 				       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,
@@ -429,9 +429,9 @@ public with sharing class referral_Controller2 {
 		try {
 			pBSRec = [
 				select Age__c, MailingCity, BirthDate, Email,  Race__c, Marital_Status__c,  Sign_Language__c, Non_Verbal__c,Mailing_Street_2__c,Mailing_County__c,
-				       Fax, FirstName, Gender__c,
+				       Fax, FirstName, Gender__c,Age_month__c,Age_year__c,Age_days__c,
 				       LastName, Ethnicity_Picklist__c,
-				       Middle_Name__c, Phone, Primary_Language__c, SSN__c,
+				       Middle_Name__c, Phone, Primary_Language__c, //SSN__c,
 				       MailingState, MailingStreet, OtherStreet, MailingPostalCode,
 				       Level_of_Education__c
 				from Contact

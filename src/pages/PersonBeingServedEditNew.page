@@ -1,6 +1,6 @@
 <apex:page standardController="Contact" extensions="PBSedit_controller,PBS_controller_helper" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
-    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
@@ -19,30 +19,32 @@
             max-height: 600px;
         }
     </style>
-
-
-
+    
     <script language="javascript">
         function setFocusOnLoad() {}
         var inputsDisabled = []; // global variable to hold the list of inputs disabled unsing below script. These needs to be enabled before submit or else they dont get submitted.
         jQuery(document).ready(function($) {
             setUpFields = function() {
+            	console.log('set up fields');
                 $('body input').on("change", function(event) {
                     applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
                 });
                 $('body select').on("change", function(event) {
                     applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
                 });
                 $('body input').each(function(_, target) {
                     applyRulesToField(target);
+                    applyShowHideRulesToField(target);
                 });
                 $('body select').each(function(_, target) {
                     applyRulesToField(target);
+                    applyShowHideRulesToField(target);
                 });
             }
             setUpFields();
             setUpTabOrder();
-
             // this is to remove the disabled property from
             $('form').bind('submit', function() {
                 $.each(inputsDisabled, function(_, $inDis) {
@@ -285,23 +287,60 @@
         <!--Person Being Served Section-->
         <apex:pageBlock id="PBSDetailID" title="Person Being Served">
             <div class="pbHeaderButton">
-                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" />
+                <apex:commandButton value="Edit Person Being Served" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" action="{!showEditMode}" />
                 <apex:commandButton value="Save" id="SavePBSId" action="{!save}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
                 <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
             </div>
 
             <apex:pageBlockSection title="Person Being Served" showHeader="false" columns="2" collapsible="false" id="pbsOutPutsectionId">
+                <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Basic}" var="f">
+
+
                 <apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput"/>
                 <apex:inputField value="{!Contact.Race__c }" taborderhint="2" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Middle_Name__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Ethnicity_Picklist__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.LastName}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Marital_Status__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
+                
                 <apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" >
-                    <apex:outputLabel value="Date of Birth" for="txtDOB" />
-                         <apex:outputPanel styleClass="requiredInput" layout="block" >
-                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                            <apex:inputfield id="txtDOB" taborderhint="1" value="{!Contact.Birthdate}" label="Date of Birth" required="true" />
+                    <apex:pageBlockSectionItem rendered="{!f == 'Birthdate' && NOT(pbsEditModeOn)}" >
+                            <apex:outputLabel value="Date of Birth" for="txtDOB" />
+                              <apex:outputPanel layout="block" >
+                               <apex:outputPanel layout="block" />
+                                 <apex:outputField id="txtDOB"  value="{!Contact.Birthdate}"/>
+                                 </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+
+				<apex:pageBlockSectionItem rendered="{!f == 'Age__c' }" >
+                            <apex:outputLabel value="Age"  />
+                              <apex:outputPanel layout="block" >
+                               <apex:outputPanel layout="block" />
+                                {!age}
+                                 </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+
+
+                        <apex:pageBlockSectionItem rendered="{!f == 'Birthdate' && AND(pbsEditModeOn)}" >
+                            <apex:outputLabel value="Date of Birth" for="txtDOB" />
+                                 <apex:outputPanel styleClass="requiredInput" layout="block" >
+                                    <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                                    <apex:inputfield id="txtDOB" value="{!Contact.Birthdate}" label="Date of Birth" required="true" />
+                                </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                    <apex:outputField value="{!Contact[f]}" rendered="{! NOT(pbsEditModeOn) && (f != 'Primary_Language__c') && ( f != 'Birthdate') && (f != 'Age__c')}" />
+                    <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && (f != 'Primary_Language__c') && ( f != 'Birthdate') && (f != 'Age__c') }" required="{!OR(f.required, f.dbrequired)}" />
+                    <apex:pageBlockSectionItem rendered="{!  NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}">
+
+                        <apex:outputText value="Primary Language" />
+                        <apex:outputPanel styleClass="nowrap">
+                            <apex:outputField value="{!Contact[f]}" /> &nbsp;&nbsp;
+                            <apex:outputLabel value="Non-Verbal" />&nbsp;
+                            <apex:outputField value="{!Contact.Non_Verbal__c}" rendered="{! NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}" />&nbsp;
+                            <apex:outputLabel value="Sign Language" />&nbsp;
+                            <apex:outputField value="{!Contact.Sign_Language__c}" rendered="{! NOT(pbsEditModeOn) && (f == 'Primary_Language__c')}" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }">
@@ -347,6 +386,51 @@
                 <apex:outputField value="{!Contact.Age__c}" rendered="{! !pbsEditModeOn }"/>
                 <apex:outputField value="{!Contact.Level_of_Education__c}" rendered="{! !pbsEditModeOn }"/>
                 <apex:outputField value="{!Contact.Gender__c}" rendered="{! !pbsEditModeOn }"/>
+                <apex:pageBlockSectionItem rendered="{!pbsEditModeOn}">                	
+                	<apex:outputPanel Styleclass="helpButton" >
+			    		<apex:outputLabel value="Gender" />
+			    		<img src="/s.gif" id="HelpImage" class="helpOrb" title="Select the person's legal gender" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
+			    	</apex:outputPanel>
+			    	<apex:outputPanel >
+				    	<apex:inputField value="{!Contact.Gender__c}" />
+				    	<br/>
+				    	<br/>
+				    	<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}"/>
+				    	<div class="requiredInput">
+							<div class="requiredBlock"></div>
+				    	<apex:inputFIeld value="{!Contact.Gender_Identity__c}" id="genderIdentity" />
+				    	</div>
+			    	</apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!!pbsEditModeOn}">
+                	<apex:outputPanel Styleclass="helpButton" >
+			    		<apex:outputLabel value="Gender" />
+			    		<img src="/s.gif" id="HelpImage" alt="Select the person's legal gender" class="helpOrb" title="Select the person's legal gender" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Describe Gender Identity" rendered="{!Contact.Does_the_person_Identify__c == 'Yes'}"/>
+			    	</apex:outputPanel>
+			    	<apex:outputPanel >
+				    	<apex:outputField value="{!Contact.Gender__c}" />
+				    	<br/>
+				    	<br/>
+				    	<apex:outputField value="{!Contact.Does_the_person_Identify__c}"  />
+				    	<br/>
+				    	<br/>
+				    	<apex:outputFIeld value="{!Contact.Gender_Identity__c}"  rendered="{!Contact.Does_the_person_Identify__c == 'Yes'}" />
+				    	
+			    	</apex:outputPanel>
+                </apex:pageBlockSectionItem> 
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection">
@@ -477,8 +561,50 @@
             <a name="AI" id="AI" />
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo">
                 <apex:repeat value="{!$ObjectType.Contact.FieldSets.Additional_Information}" var="f">
-                    <apex:outputField value="{!Contact[f]}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath)}" />
-                    <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && !Contains(dontShowFields, f.FieldPath)}" required="{!OR(f.required, f.dbrequired)}" />
+                    <apex:outputField value="{!Contact[f]}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, f.FieldPath) && NOT(f.fieldPath == 'Legal_Guardianship_Status__c')}" />
+                    <apex:inputField value="{!Contact[f]}" rendered="{!pbsEditModeOn && !Contains(dontShowFields, f.FieldPath) && NOT(f.fieldPath == 'Legal_Guardianship_Status__c')}" required="{!OR(f.required, f.dbrequired)}" />
+                    <apex:pageBlockSectionItem rendered="{!f.fieldPath == 'Legal_Guardianship_Status__c' && pbsEditModeOn}" >
+			        	<apex:outputPanel >
+			          		<apex:outputLabel value="Guardianship Type" id="guardianshipTypeLabel" for="guardianShipType"/>
+			          		<br/>
+			          		<br/>
+			          		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel" for="partialGuardianShip"/>
+			          	</apex:outputPanel>
+			           	<apex:outputPanel >
+			           		<apex:inputField value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
+			           		<br/>
+			           		<br/>
+			           		<apex:inputField value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+			           	</apex:outputPanel>
+			        </apex:pageBlockSectionItem>
+			        
+			         <apex:pageBlockSectionItem rendered="{!f.fieldPath == 'Legal_Guardianship_Status__c' && !pbsEditModeOn}" >
+			        	<apex:outputPanel >
+			          		<apex:outputLabel value="Guardianship Type" />
+			          		<br/>
+			          		<br/>
+			          		<apex:outputLabel value="Partial Guardianship/Conservatorship" rendered="{!Contact.Guardianship_Type__c == 'Partial Guardianship/Conservatorship'}"/>
+			          		<br/>
+			          		<br/>
+			          		<apex:outputLabel value="Legal/Guardianship Status" rendered="{!Contact.Legal_Guardianship_Status__c != null}"/>
+			          	</apex:outputPanel>
+			           	<apex:outputPanel >
+			           		<apex:outputField value="{!Contact.Guardianship_Type__c}"  />
+			           		<br/>
+			           		<br/>
+			           		<apex:outputField value="{!Contact.Partial_Guardianship_Conservatorship__c}"  rendered="{!Contact.Guardianship_Type__c == 'Partial Guardianship/Conservatorship'}" />
+			           		<br/>
+			           		<br/>
+			           		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+			           	</apex:outputPanel>
+			        </apex:pageBlockSectionItem>
+			        
+			        <apex:pageBlocksectionItem rendered="{!f.fieldPath == 'Legal_Guardianship_Status__c' && pbsEditModeOn && Contact.Legal_Guardianship_Status__c != null}" />
+			        <apex:pageBlockSectionItem rendered="{!f.fieldPath == 'Legal_Guardianship_Status__c' && pbsEditModeOn && Contact.Legal_Guardianship_Status__c != null}" >
+			        	<apex:outputLabel for="guardStatus" value="Legal/Guardianship Status" styleClass="labelCol"/>
+	           			<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}"  />
+			        </apex:pageBlockSectionItem>
+			        
                 </apex:repeat>
                 <apex:pageBlockSectionItem rendered="{!!Contains(dontShowFields, 'Advanced_Directives__c')}" />
                 <apex:outputField value="{!Contact.Advanced_Directives__c}" rendered="{!NOT(pbsEditModeOn) && !Contains(dontShowFields, 'Advanced_Directives__c')}" />
@@ -586,6 +712,7 @@
                     <apex:column value="{!relParty.Phone_2_Type__c}" />
                     <apex:column value="{!relParty.Status__c}" />
                     <apex:column value="{!relParty.Comments__c}" />
+                    <apex:column value="{!relParty.CreatedDate}" />
                 </apex:pageBlockTable>
                 <script type="text/javascript">
                     relPartyData = '{!relPartiesJSON}';
@@ -655,6 +782,7 @@
                     <apex:column value="{!relAgency.Address__c}" />
                     <apex:column value="{!relAgency.Phone__c}" />
                     <apex:column value="{!relAgency.Reason_for_Involvement__c}" />
+                    <apex:column value="{!relAgency.CreatedDate}" />
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
         </apex:pageBlock>

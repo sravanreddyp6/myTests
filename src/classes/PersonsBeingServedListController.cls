@@ -309,7 +309,7 @@ public with sharing class PersonsBeingServedListController {
     @RemoteAction
     public static Contact getPersonBeingServed(String ID) {
         return [
-            SELECT Name, Birthdate, Age__c, Ethnicity_Picklist__c, Phone,
+            SELECT Name, Birthdate, Age__c, Ethnicity_Picklist__c, Phone,Age_month__c,Age_year__c,Age_days__c,
                    Guardian1_Name__c, Guardian_Phone_Number__c, Family_Member_Other__c, ID 
             FROM Contact WHERE AccountID=:ID
         ];

@@ -677,7 +677,7 @@ public with sharing class referrals_Controller{
 			if(this.personBeingRefRecord.Id != null) {
 				this.relParties = [
 					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c,
-					       Person_Being_Referred__c, Person_Being_Served__c
+					       Person_Being_Referred__c, Person_Being_Served__c, CreatedDate
 					  from Related_Party__c
 					 where Person_Being_Referred__c = :this.personBeingRefRecord.Id order by Type__c, Name
 					 limit 150
@@ -685,7 +685,7 @@ public with sharing class referrals_Controller{
 			} else if (this.personBeingServedRecord.Id != null) {
 				this.relParties = [
 					select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c, Status__c, 
-					       Person_Being_Referred__c, Person_Being_Served__c
+					       Person_Being_Referred__c, Person_Being_Served__c, CreatedDate
 					  from Related_Party__c
 					 where Person_Being_Served__c = :this.personBeingServedRecord.Id order by Type__c, Name
 					 limit 150
@@ -704,13 +704,13 @@ public with sharing class referrals_Controller{
 
 		try {
 			this.agencies = [
-				select Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c
+				select Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
 				  from Agency_Involved_With_Individual__c
 				 where Referral__c = :this.referralRecord.Id
 				 limit 150
 			];
 			this.fundingSources = [
-				SELECT ID, Funding_Source__c, Status__c, Comment__c, Funding_Source_ID__c,
+				SELECT ID, CreatedDate, Funding_Source__c, Status__c, Comment__c, Funding_Source_ID__c,
 				       Service_Being_Funded__c, Type_of_Coverage__c, Payer_Verification_Date__c,
 				       Verified_With__c, Representing__c, Call_Reference_Number__c,
 				       Payer_Name__c, TPA__c, Primary_Med_Ind_Phys_Group__c,
@@ -801,10 +801,10 @@ public with sharing class referrals_Controller{
 		Person_Being_Referred__c pBRRec;
 		try {
 			pBRRec = [
-				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,
+				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,Age_month__c,Age_year__c,Age_days__c,
 				       Race__c, Ethnicity__c, Fax__c, First_Name__c, Gender__c,
 				       Home_County__c, Last_Name__c, Marital_Status__c,
-				       Middle_Initial__c, Phone__c, Primary_Language__c, SSN__c,
+				       Middle_Initial__c, Phone__c, Primary_Language__c, //SSN__c,
 				       State__c, Street_1__c, Street_2__c, Zip_Code__c,
 				       Additional_Information_Comments__c, Sign_Language__c,
 				       Legal_Guardianship_Status__c, Non_Verbal__c, Full_Name__c,
@@ -843,7 +843,7 @@ public with sharing class referrals_Controller{
 				select Age__c, MailingCity, BirthDate, Email, Race__c, Marital_Status__c, 
 				       Fax, FirstName, Gender__c,
 				       LastName, Ethnicity_Picklist__c,
-				       Middle_Name__c, Phone, Primary_Language__c, SSN__c,
+				       Middle_Name__c, Phone, Primary_Language__c, //SSN__c,
 				       MailingState, MailingStreet, OtherStreet, MailingPostalCode,
 				       Legal_Guardianship_Status__c, Sign_Language__c, Non_Verbal__c,
 				       Current_Medications__c, Level_of_Education__c
@@ -1056,6 +1056,9 @@ public with sharing class referrals_Controller{
 
 		try {
 			if (this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null) {
+				if(this.personBeingRefRecord.Date_of_Birth__c != null){
+				setAge ();
+				}
 				update this.personBeingRefRecord;
 			}
 
@@ -1227,9 +1230,54 @@ public with sharing class referrals_Controller{
 		}
 	}
 
+	
+public void setAge () {
+  Date birthday = this.personBeingRefRecord.Date_of_Birth__c;
+    Date today = Date.today();
+    Integer years =  today.year() - birthday.year();
+    Integer currMonth = Today.month();
+	Integer birthMonth = birthday.month();
+	Integer months = currMonth - birthMonth;
+    Integer days = 0;       
+			      if (months < 0)
+			      {
+			         years--;
+			         months = 12 - birthMonth + currMonth;
+			         if (Today.day() < birthDay.day())
+			            months--;
+			      } else if (months == 0 && Today.day() < birthDay.day())
+			      {
+			         years--;
+			         months = 11;
+			      }
+    	if (Today.day() > birthDay.day())
+			          days = Today.day() - birthDay.day();
+			       else if (Today.day() < birthDay.day())
+			       {
+			          days = Date.daysInMonth(Today.year(), Today.month() -1) - birthDay.day() + Today.day();
+			       } else
+			       {
+			          days = 0;
+			          if (months == 12)
+			          {
+			             years++;
+			             months = 0;
+			          }
+			       }
+
+	this.personBeingRefRecord.Age_year__c = years;
+	this.personBeingRefRecord.Age_month__c = String.valueOf(months);
+	this.personBeingRefRecord.Age_days__c = String.valueOf(days);
+	this.personBeingRefRecord.Age__c = years;
+}
 	public void createPBR() {
 		if (this.personBeingRefRecord != null) {
 			try {
+			if(this.personBeingRefRecord.Date_of_Birth__c != null){
+					setAge ();
+				} else 	if(this.personBeingRefRecord.Age_year__c != null){
+					this.personBeingRefRecord.Age__c = this.personBeingRefRecord.Age_year__c;
+				}
 				insert this.personBeingRefRecord;
 			} catch (Exception e) {
 				return;

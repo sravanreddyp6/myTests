@@ -1421,7 +1421,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
 					<apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
 					<!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
+					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age_year__c} Years {!theServAssign.Person_Being_Served__r.Age_month__c} Months {!theServAssign.Person_Being_Served__r.Age_days__c} Days)">
 						<apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
 					</apex:outputText>
 					<apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
@@ -1450,7 +1450,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
 					<!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
+					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age_year__c} Years {!theServAssign.Person_Being_Served__r.Age_month__c} Months {!theServAssign.Person_Being_Served__r.Age_days__c} Days)">
 						<apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
 					</apex:outputText>
 					<apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
@@ -1465,7 +1465,7 @@ END: Uncomment to have the element collapsed by default -->
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
 					<apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
-
+					<!-- 
 					<apex:pageBlockSectionItem >
 						<apex:outputLabel for="insuredSSN" value="Insured SSN" />
 						<apex:outputPanel >
@@ -1473,6 +1473,7 @@ END: Uncomment to have the element collapsed by default -->
 							<apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredSSN}', '{!theServAssign.Person_Being_Served__r.SSN__c}'); return false;" />
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
+					 -->
 					<apex:pageBlockSectionItem >
 						<apex:outputLabel for="insuredDOB" value="Insured DOB" />
 						<apex:outputPanel >
@@ -1697,6 +1698,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Payor__c}" rendered="{!fundingSourceRecordType=='CareMeridian'}" />
 				<apex:column value="{!fundingSource.Status__c}" />
 				<apex:column value="{!fundingSource.Comment__c}" />
+				<apex:column value="{!fundingSource.CreatedDate}" />
 			</apex:pageBlockTable>
 
 			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0 && canEditFundingSource }">

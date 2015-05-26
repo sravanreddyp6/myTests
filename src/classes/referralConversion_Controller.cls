@@ -149,6 +149,8 @@ public with sharing class referralConversion_Controller {
                         r.Medicaid_ID__c,
                         r.Level_of_Disability__c,
                         r.Legal_Guardian_Status__c,
+                        r.Guardianship_Type__c,
+                        r.Partial_Guardianship_Conservatorship__c,
                         r.LastModifiedDate,
                         r.LastModifiedById,
                         r.LastActivityDate,
@@ -199,10 +201,10 @@ public with sharing class referralConversion_Controller {
    private Person_Being_Referred__c getPBRRec() {
     Person_Being_Referred__c pBRRec;
     try {
-      pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c, 
+      pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c, Age_year__c,Age_month__c,Age_days__c,
                        Ethnicity__c, Fax__c, First_Name__c, Gender__c,
                        Home_County__c, Last_Name__c, Marital_Status__c,
-                       Middle_Initial__c, Phone__c, Primary_Language__c, Race__c, SSN__c,
+                       Middle_Initial__c, Phone__c, Primary_Language__c, Race__c, //SSN__c,
                        State__c, Street_1__c, Street_2__c, Zip_Code__c,
                        Additional_Information_Comments__c, Sign_Language__c,
                        Legal_Guardianship_Status__c, Non_Verbal__c, Level_of_Education__c
@@ -223,10 +225,10 @@ public with sharing class referralConversion_Controller {
   private Contact getPBSRec() {
     Contact pBSRec;
     try {
-      pBSRec = [select MailingCity, BirthDate, Email, Age__c,
+      pBSRec = [select MailingCity, BirthDate, Email, Age__c,Age_year__c,Age_month__c,Age_days__c,
                        Ethnicity_Picklist__c, Fax, FirstName, Gender__c,
                        Mailing_County__c, LastName,
-                       Middle_Name__c, Phone, Primary_Language__c, Race__c, SSN__c,
+                       Middle_Name__c, Phone, Primary_Language__c, Race__c, //SSN__c,
                        MailingState, MailingStreet, MailingPostalCode, uci_id__c, medicaid_id__c, Marital_Status__c, non_verbal__c, sign_language__c, legal_guardianship_status__c,
                        Level_of_Education__c
 
@@ -423,7 +425,7 @@ public with sharing class referralConversion_Controller {
                                 Non_Verbal__pc = pbrCurr.Non_Verbal__c,
                                 Race__pc = pbrCurr.Race__c,
                                 Sign_Language__pc = pbrCurr.Sign_Language__c,
-                                SSN__pc = pbrCurr.SSN__c,
+                               // SSN__pc = pbrCurr.SSN__c,
                                 Guardian1_Name__pc =  sGuardian1Name,
                                 Guardian_1_Address__pc = sGuardian1Address,
                                 Guardian_1_E_Mail__pc = sGuardian1Email,
@@ -433,6 +435,8 @@ public with sharing class referralConversion_Controller {
                                 Avatar_ID__pc = referralRecord.Billing_ID__c,
                                 Avatar_Source_System__pc = strBillingSystem,
                                 Legal_Guardianship_Status__pc = referralRecord.Legal_Guardian_Status__c,
+                                Guardianship_Type__pc = referralRecord.Guardianship_Type__c,
+                                Partial_Guardianship_Conservatorship__pc = referralRecord.Partial_Guardianship_Conservatorship__c,
                                 Current_Medications__pc = referralRecord.Current_Medications__c,
                                 Other_id__pc = referralRecord.Payer_Medical_Record_Number__c ,
                                 Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c,
@@ -912,7 +916,7 @@ public class personRecord {
     public string Ethnicity { get { return eth;} set; }
     public string Gender { get { return gen; } set; }
     public string PrimaryLanguage { get { return lang;} set; }
-    public string SSN { get { return ss;} set; }
+   // public string SSN { get { return ss;} set; }
     public string MedicaidID { get { return medid;} set; }
     public string MaritalStatus { get { return marstat;} set; }
     public boolean NonVerbal { get { return nonverb;} set; }
@@ -921,6 +925,9 @@ public class personRecord {
     public string Education { get {return educ;} set; }
 	public String age { get {return age;} set; }
 	public String race { get {return race;} set; }
+	public String year { get {return year;} set; }
+	public String month { get {return month;} set; }
+	public String days { get {return days;} set; }
 	
     public personRecord( Person_Being_Referred__c pbr ) {
         System.Debug('calling person record with referred: ' + pbr);
@@ -940,7 +947,7 @@ public class personRecord {
         eth = pbr.Ethnicity__c;
         gen = pbr.Gender__c;
         lang = pbr.Primary_Language__c;
-        ss = pbr.SSN__c;
+       // ss = pbr.SSN__c;
         marstat = pbr.Marital_Status__c;
         legalstat = pbr.Legal_Guardianship_Status__c;
         nonverb = pbr.Non_Verbal__c;
@@ -948,6 +955,9 @@ public class personRecord {
         educ = pbr.Level_of_Education__c;
 		age = String.valueOf(pbr.Age__c);	
 		race =  pbr.Race__c;
+		year =  String.valueOf(pbr.Age_year__c);
+        month =  String.valueOf(pbr.Age_month__c);
+        days =  String.valueOf(pbr.Age_days__c);
     }
 
 
@@ -967,7 +977,7 @@ public class personRecord {
         gen = pbs.Gender__c;
         ct = pbs.Mailing_County__c;
         lang = pbs.Primary_Language__c;
-        ss = pbs.SSN__c;
+       // ss = pbs.SSN__c;
         marstat = pbs.Marital_Status__c;
         legalstat = pbs.Legal_Guardianship_Status__c;
         nonverb = pbs.Non_Verbal__c;
@@ -976,6 +986,9 @@ public class personRecord {
         educ = pbs.Level_of_Education__c;
         age = String.valueOf(pbs.Age__c);
         race =  pbs.Race__c;
+        year =  pbs.Age_year__c;
+        month =  pbs.Age_month__c;
+        days =  pbs.Age_days__c;
     }
 
 }

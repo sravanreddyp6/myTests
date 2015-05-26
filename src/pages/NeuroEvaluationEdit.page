@@ -340,7 +340,7 @@
                         <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
                         <apex:inputField value="{!pbr.Date_of_Birth__c}" />
                         <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Age__c}" />
+                        <apex:outputText label="Age">{!pbr.Age_year__c}&nbsp;Years&nbsp;{!pbr.Age_month__c}&nbsp;Months &nbsp;{!pbr.Age_days__c}&nbsp;Days</apex:outputText>
                         <apex:inputField value="{!Evaluation__c.Occupation__c}" />
                         <apex:outputText value="Employment Status" styleClass="labelCol" style="margin-left: 3cm;"/>
                         <apex:pageBlockSectionItem />
