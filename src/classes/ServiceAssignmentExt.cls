@@ -59,6 +59,16 @@ public without sharing class ServiceAssignmentExt {
 	public string currentProgramID { get; set { currentProgramID = value; loadAvailableCodesbyID(); }}
 	public String currentLocation { get; set; }
 	public String currentServiceLine { get; set; }
+	// Dummy obj so that we can bind inputField to dummy Date fields
+	public Service_Assignment__c dummy {
+		get {
+			if (dummy == null) {
+				dummy = new Service_Assignment__c();
+			}
+			return dummy;
+		}
+		set;
+	}
 	//for adding new JOs
 	public ID SelectedCodeID {get; set;}
 	public ID SelectedCodeKey { get; set; }

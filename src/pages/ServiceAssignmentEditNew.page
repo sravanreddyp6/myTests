@@ -108,6 +108,7 @@
 					resizable: false,
 					minHeight: 0,
 					dialogClass: 'modalDialog',
+					zIndex: 9, // so that datepickers appear on top of the dialogs
 					closeOnEscape: false,
 					position: {
 						my: "center top",
@@ -1066,6 +1067,7 @@ END: Uncomment to have the element collapsed by default -->
 		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && canAddShiftDoc}"/>
+				<apex:commandButton value="Restraint Reduction Report" onclick="openModalDialogSA('restraintReportModal', 'span', 'Generate Restraint Reduction Report'); return false; " />
 			</div>
 			<apex:pageBlockTable value="{!restraintEvents}" var="event" rendered="{!restraintEvents.size > 0}">
 <!-- 				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
@@ -1823,6 +1825,49 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputHidden value="{!diag.Id}" rendered="{!!newDiagnosis}" id="diagnosisEntry_Id" />
 				</apex:pageBlock>
 			</apex:outputPanel>
+		</apex:outputPanel>
+
+		<apex:outputPanel id="restraintReportModal" style="display: none; ">
+			<script>
+				(function ($) {
+					"use strict";
+					window.generateRestraintReport = function () {
+						var errorString = '';
+						var startDate = $(document.getElementById('{!$Component.block.section.reportStartDate}')).val();
+						var endDate = $(document.getElementById('{!$Component.block.section.reportEndDate}')).val();
+						if (startDate == '') {
+							errorString += 'Start Date cannot be blanked.\r\n';
+						}
+						if (endDate == '') {
+							errorString += 'End Date cannot be blanked.\r\n';
+						}
+						var $checkedItem = $(document.getElementById('{!$Component.block.section.reportType}')).find('input:checked');
+						if ($checkedItem.length == 0) {
+							errorString += 'Report Type cannot be blanked.';
+						}
+						if (errorString != '') {
+							alert(errorString);
+						} else {
+							window.location = '/apex/RestraintReductionReport?startDate='+startDate+'&endDate='+endDate+'&type='+$checkedItem.val()+'&saId={!Service_Assignment__c.Id}';
+						}
+					};
+				})(jQuery);
+			</script>
+			<apex:pageBlock title="Restraint Reduction Report" id="block">
+				<apex:pageBlockSection columns="2" id="section">
+					<!-- The next 2 fields are just dummies so we can use SF inputField datepicker -->
+					<apex:inputField value="{!dummy.Date_of_Injury__c}" label="Start Date" id="reportStartDate" />
+					<apex:inputField value="{!dummy.Date_of_Injury__c}" label="End Date" id="reportEndDate" />
+					<apex:selectRadio label="Report Type" id="reportType">
+						<apex:selectOption itemLabel="Summary" itemValue="Summary" />
+						<apex:selectOption itemLabel="Detailed" itemValue="Detailed" />
+					</apex:selectRadio>
+				</apex:pageBlockSection>
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Generate" onclick="generateRestraintReport(); return false; " />
+					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('restraintReportModal', 'span'); return false; " />
+				</apex:pageBlockButtons>
+			</apex:pageBlock>
 		</apex:outputPanel>
 	</apex:form>
 	<a id="shiftSummaries" />
