@@ -128,15 +128,65 @@ public with sharing class referral_Controller2 {
 	private Id personBeingServedId {get; set;}
 	public Id pBSId { get; set; }
 	public boolean isEditor{get; set;}
+	
 	SystemSettings__c OS = SystemSettings__c.getOrgDefaults(); // Custom setting to control the visibility of convert button for CareMeridian group Sravan: 07/10/2014 1:42 PM.
 	public boolean canConvert{ get {
 
-		Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana','Wisconsin'};
+		Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana'};
 		system.debug( 'Ref record type: ' + referralrecordtype );
 		system.debug(' is cambridge:' + iscambridge);
 		system.debug(' operatinggroup:' + operatinggroup);
-		return ((operatinggroup == 'Cambridge' && isCambridge )|| (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) );
+		return ((operatinggroup == 'Cambridge' && isCambridge )|| 
+				(operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || 
+				(operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) ||
+				(operatinggroup == 'Redwood' && referralrecordtype == 'Wisconsin' && showCANS )
+			);
+			
 	} set;}
+
+	// shortcut used for WI CANS programs - need the ability to convert only some programs in order to do CANS.  This is the same code used on the Admission View page to show CANS button.
+	public boolean showCANS { get; set; }
+	private void setshowCANS() {
+    	
+    	showCANS = false;
+    	
+    	// look for this op grp in the custom setting
+    	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :operatingGroup];
+    	// this op group isn't allowed 
+    	if ( cansList.size() == 0 )
+    		return;
+    	
+    	String refState = Utility.getStateCodeFromName(referralRecord.State_for_Preferred_Service__c);
+    	
+    	Set<string> states = new Set<string>();
+    	set<string> programs = new Set<string>();
+    	
+    	for ( CANS_Settings__c c : cansList ) {
+    		if ( !String.IsEmpty(c.state__c) )
+    			states.add( c.state__c);
+    		if ( !String.IsEmpty(c.programs__c))
+    			programs.addAll( c.programs__c.split(','));
+    	}
+    	
+    	
+    	// if there's a state listed, check against admission state
+    	// if no states are listed, then all states apply
+    	if ( states.size() > 0 && !states.contains( refState )  )
+    		return;
+    		
+    	// if there's a program listed, check against SA programs - check both alias and full program id
+    	Boolean match = false;
+    	if ( programs.size() > 0 ) {
+			if ( !programs.contains ( referralRecord.service_location__r.alias__c ) && !programs.contains ( referralRecord.service_location__r.programid__c )) {
+				return;
+			}
+		}
+	
+    	
+    	// if we got past other tests, then set flag to true
+    	showCANS = true;	
+    	
+    }
 
 	public Boolean canUpdateReferral {
 		get {
@@ -171,7 +221,7 @@ public with sharing class referral_Controller2 {
 	public referral_Controller2(ApexPages.standardController ctl){
 		system.debug('in constructor');
 		if(!test.isRunningTest()){
-			ctl.addFields(new list<string>{'Service_Location__r.Name'});
+			ctl.addFields(new list<string>{'Service_Location__r.Name', 'Service_Location__r.Alias__c', 'Service_Location__r.ProgramID__c'});
 		}
 		this.referralRecord = (Referral__c) ctl.getRecord();
 		this.operatinggroup=([select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty())?''
@@ -219,6 +269,7 @@ public with sharing class referral_Controller2 {
 		}
 
 		setIsEditor();
+		setshowCANS();
 		isCambridge = false;
 		isCareMeridian = false;
 		referralRecordType= (this.ReferralRecord.RecordTypeId != null)?Utility.getRecordTypeForReferral(Id.valueOf(this.ReferralRecord.RecordTypeId)):'';//(this.ReferralRecord.RecordType.Name!=null)?this.ReferralRecord.RecordType.Name:[select name from recordtype where id=:this.referralRecord.recordTypeId limit 1].name;
