@@ -731,15 +731,17 @@ public with sharing class EvalDynamicExt {
         req.setNextApproverIds(null);
 
         // if a rejection, set up a task for the CNA owner
-        DateTime n = DateTime.now();
-        Task t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
-        insert t;
+        if ( approvalAction == 'Reject') {
+        	DateTime n = DateTime.now();
+        	Task t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
+        	insert t;
+        }
 
         // get the current work item
         List<ProcessInstanceWorkitem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :evalID];
 
         if ( pwi.size() == 0) {
-        	Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,'Error approving item'));
+        	Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,'Error approving or rejecting item'));
         	return;
         }
        	req.setWorkitemId(pwi[0].id);
