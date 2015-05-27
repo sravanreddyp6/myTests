@@ -39,7 +39,7 @@ public without sharing class TMN_Generic_Core_TestData {
 		theAdm = new Admission__c(
 				Name = 'TEST ADM',
 				Person_Being_Served__c = contactID,
-				Effective_Date__c = date.newInstance(2013, 1, 1),
+				Admission_Effective_DateTime__c = datetime.newInstance(2013, 1, 1, 0, 0, 0),
 				//Discharged_Date__c = date.today(),
 				//Status__c = 'Discharged',
 				//Discharged_Status__c = 'Positive',
@@ -72,11 +72,11 @@ public without sharing class TMN_Generic_Core_TestData {
 				Person_Being_served__c = contactID,
 				Program__c = 'IFCS',
 				Status__c = 'Active',
-				Start_Date__c = date.newInstance(2013, 1, 1),
+				SA_Start_DateTime__c = datetime.newInstance(2013, 1, 1, 0, 0, 0),
 				Projected_Treatment_End_Date__c = date.newInstance(2014, 12, 31),
 				Service_Location__c = sl.Id
 				);
-		System.debug('Helloworld');
+		
 		System.debug([SELECT service_location__r.id, service_location__r.Alias__c, service_location__r.program__c
 					  FROM service_assignment__c]);
 		System.debug([SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
@@ -86,7 +86,9 @@ public without sharing class TMN_Generic_Core_TestData {
 						ORDER BY service_location__r.program__c]);
 
 		insert theSA;
-
+		theSA  = [ select id, phase_1_start_date__c, admission__c, person_being_served__c, program__c, status__c, SA_Start_DateTime__c, projected_treatment_end_date__c, service_location__c, start_date__c from Service_Assignment__c where Id = :theSA.ID];
+		//system.debug(theSA);
+		
 		theServiceCode = new Service_Code__c(
 				Service_Code__c = '10942.1161',
 				FacilityID__c = 'TEST FAC ID',
