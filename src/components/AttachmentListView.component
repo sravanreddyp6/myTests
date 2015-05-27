@@ -1,0 +1,187 @@
+<apex:component controller="SObjectNotesAndAttachmentsController" allowDML="true">
+    <apex:attribute name="parentId" assignTo="{!parent}" type="ID" description="The ID of the parent SObject" />
+    <apex:attribute name="url"  type="String" description="Return url" required="false" default="false"  assignTo="{!retURL}" />
+     <apex:attribute name="parentPage" type="string" description="This id used for personal Record component"/>
+<apex:attribute name="pbsId" type="string" description="PBS Id" required="false" default="false"  />
+<apex:attribute name="apId" type="string" description="Action Plan Id" default="false"   />
+<apex:attribute name="servAssignId" type="string" description="Service Assignment Id" default="false"   />
+<apex:attribute name="admId" type="string" description="Admission Id" default="false"   />
+<apex:attribute name="asmtType" type="string" description="Assessment Type" default="false"   />
+<apex:attribute name="asmtId" type="string" description="Assessment Id" default="false"   />
+<apex:attribute name="ReferralName" type="string" description="Referral Name" default="false"   />
+    <apex:variable value="{!if(retURL != null, retURL ,$CurrentPage.URL)}" var="theRetUrl"/>
+      <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/js/jquery-filestyle.min.js')}"/>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/redmond/jquery-ui.css">
+    <apex:stylesheet value="{!URLFOR($Resource.jQueryFilestyle, '0.1.3/css/jquery-filestyle.min.css')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
+    
+    </link>
+    <style>
+        .deleteLink {
+            text-decoration:underline;
+            cursor:pointer;
+        }
+        div.jquery-filestyle input[type="text"][disabled] {
+            padding: 0px;
+        }
+        div.jquery-filestyle label {
+            padding: 1px 6px;
+        }
+        
+        
+        .dataTable {
+			width: 100% !important;
+		}
+		.dataTables_filter {
+			float: right;
+			!important;
+		}
+		.dataTables_length {
+			width: 150px;
+			float: left;
+			!important;
+		}
+		.dataTables_info {
+			float: left;
+			width: 250px;
+			!important;
+		}
+		.dataTables_paginate {
+			float: right;
+			!important;
+		}
+		.sorting {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_both.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_disabled {
+			background: #f2f3f3 !important;
+		}
+		table.dataTable tr.odd {
+			background-color: white;
+		}
+		table.dataTable tr.even {
+			background-color: white;
+		}
+		table.dataTable tr.odd td.sorting_1 {
+			background-color: white;
+		}
+		table.dataTable tr.odd td.sorting_2 {
+			background-color: white;
+		}
+		table.dataTable tr.odd td.sorting_3 {
+			background-color: white;
+		}
+		table.dataTable tr.even td.sorting_1 {
+			background-color: white;
+		}
+		table.dataTable tr.even td.sorting_2 {
+			background-color: white;
+		}
+		table.dataTable tr.even td.sorting_3 {
+			background-color: white;
+		}
+		.dataTables_length,
+		.dataTables_filter,
+		.dataTables_info,
+		.dataTables_paginate {
+			padding: 3px;
+		}
+		.paginate_button {
+			margin-left: 5px;
+			border-radius: 12%;
+			width: 10px;
+			height: 8px;
+			padding: 0.5px;
+			background: #F8F8F8;
+			border: 1px solid #666;
+			color: #666;
+			text-align: center;
+			font: 10px Time New Roman, sans-serif;
+			cursor: pointer;
+		}
+		.paginate_active {
+			margin-left: 5px;
+			border-radius: 12%;
+			width: 10px;
+			height: 8px;
+			padding: 0.5px;
+			background: #7AC143;
+			border: 1px solid #666;
+			color: #666;
+			text-align: center;
+			font: 10px Times New Roman, sans-serif;
+			cursor: pointer;
+		}
+    </style>
+    
+    <script type="text/javascript" language="javascript">
+    var j$ = jQuery.noConflict();
+    j$(document).ready(function() {
+		j$('table.dataTable').dataTable({
+			searching: true,
+				paging: false,
+				bInfo: false,
+			'aoColumnDefs': [{
+				'bSortable': false,
+				'aTargets': [0]
+			}],
+			sPaginationType: "full_numbers"
+		});
+	});
+		
+	</script>	
+ 	<c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!parentId}" parentPage="PBS"  viewall="true"/>
+   <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" viewall="true"/>
+   <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" viewall="true"/>
+   <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}" servAssignId="{!servAssignId}" viewall="true"/>
+    <c:PersonalRecord rendered="{!parentPage='Admission'}" pbsId="{!pbsId}" parentPage="Admission" admId="{!admId}" viewall="true"/>
+    <c:PersonalRecord rendered="{!parentPage='ActionSummaryReport'}" pbsId="{!pbsId}" parentPage="ActionSummaryReport" admId="{!admId}" apId="{!apId}" servAssignId="{!servAssignId}"  viewall="true"/>
+    <c:PersonalRecord rendered="{!parentPage='ShiftNote'}" pbsId="{!pbsId}" parentPage="ShiftNote" admId="{!admId}" apId="{!apId}" servAssignId="{!servAssignId}"  viewall="true"/>
+    <apex:variable var="v" value="val"   rendered="{!parentPage = 'referral'}">
+    <div class="breadcrumb" >
+        <a href="/">Home</a> > <a href="/{!parentId}">Referral: {!ReferralName}</a> > View All Attachments
+    </div>
+   </apex:variable>
+ 			 <br/>
+    		<apex:pageBlock title="View All Attachments">
+  			 <apex:pageBlockTable style="width: 100%;" id="NotesAndAttachments" value="{!getAllAttachments}" var="entry" styleClass="dataTable" rendered="{!getAllAttachments.size>0}">
+                <apex:column style="padding-right: 9px;" headerValue="Action"  >
+                       <apex:outputPanel layout="none" rendered="{!!entry.isNote}">
+                        <apex:outputLink value="/apex/UpdateAttachment?docId={!entry.ID}&retURL={!theRetUrl}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" styleClass="actionLink" >Edit</apex:outputLink>
+                    </apex:outputPanel>
+                </apex:column>
+ 				<apex:column style="padding-right: 9px;" headerValue="Title">
+                    <apex:outputLink value="/apex/viewAttachment?docId={!entry.ID}&retURL={!theRetUrl}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" >{!entry.Title}</apex:outputLink>
+                </apex:column>
+				<apex:column headerValue="Description">{!entry.Description}</apex:column>
+				<apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
+                    <apex:outputText value="{!entry.CreatedDate}" />
+                </apex:column>
+				 <apex:column style="padding-right: 9px;" headerValue="Created By">
+                    <apex:outputLink value="/{!entry.OwnerId}">{!entry.OwnerName}</apex:outputLink>
+                </apex:column>
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+    
+</apex:component>
