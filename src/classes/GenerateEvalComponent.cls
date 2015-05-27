@@ -310,7 +310,8 @@ public with sharing class GenerateEvalComponent {
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
-                        newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('yyyy/MM/dd HH:mm');
+                    	system.debug(mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm'));
+                        newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm');
                         newHTMLfld  += '"';
                     }
                     newHTMLfld +=  '/></div></div></td>';
