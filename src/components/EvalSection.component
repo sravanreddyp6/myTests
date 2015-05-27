@@ -45,7 +45,7 @@
                 <input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false;" />
                 <input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />
             </apex:outputPanel>
-            <apex:outputPanel rendered="{!htmlTable != '' && hasErros}"><span id="evalSecValMsgs" style="color: red;"></span></apex:outputPanel>
+            <span id="evalSecValMsgs" style="color: red;"></span>
             <apex:outputText value="{!htmlTable}" escape="false" />
         </apex:pageBlock>
     </form>
@@ -186,8 +186,7 @@
                     // vf remote to save data
                     GenerateEvalComponent.saveFields('{!parentID}', (('{!evalSectionUuid}' != '') ? '{!evalSectionUuid}' : '{!$User.Id}' + '-' + uuid), '{!evalSectionType}', '{!evaltype}', '{!category}', '{!subcategory}', jsonData, function(result, event) {
                         if (!event.status) {
-                            alert("Failed to save data! Error: " + event.message);
-                            anno.addAnnotation(element);
+                            $('#evalSecValMsgs').html(event.message);
                         } else {
                             {!onEntrySaveSuccess}
                         }
