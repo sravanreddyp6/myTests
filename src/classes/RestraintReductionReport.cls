@@ -1,12 +1,21 @@
 public with sharing class RestraintReductionReport {
 	public Map<Id, Restraint> restraints { get; set; }
 	public Assessment_Question__c[] questions { get; set; }
+	public Integer[] rows { get; set; }
+	public Service_Assignment__c serviceAssignment { get; set; }
+	public Date startDate { get; set; }
+	public Date endDate { get; set; }
 
 	public RestraintReductionReport() {
-		Date startDate = Date.parse(ApexPages.currentPage().getParameters().get('startDate'));
-		Date endDate = Date.parse(ApexPages.currentPage().getParameters().get('endDate'));
+		startDate = Date.parse(ApexPages.currentPage().getParameters().get('startDate'));
+		endDate = Date.parse(ApexPages.currentPage().getParameters().get('endDate'));
 		String reportType = ApexPages.currentPage().getParameters().get('type');
 		Id saId = ApexPages.currentPage().getParameters().get('saId');
+		serviceAssignment = [
+			SELECT Id, Admission__c, Person_Being_Served__c
+			FROM Service_Assignment__c
+			WHERE Id=:saId
+		];
 
 		questions = [
 			SELECT ID, Question_Number__c, Question_Title__c, Name, Question_Description__c,
@@ -19,6 +28,7 @@ public with sharing class RestraintReductionReport {
 			AND Question_Domain__r.Assessment_Type2__c = 'Restraint Reduction'
 			ORDER BY Question_Number__c ASC
 		];
+		Integer numRows = questions.size() + 2;  // We need space for Total and Guideline as well
 
 		restraints = new Map<Id, Restraint>();
 		for (Assessment__c reduction: [
@@ -31,7 +41,8 @@ public with sharing class RestraintReductionReport {
 			ORDER BY CreatedDate ASC
 		]) {
 			if (!restraints.containsKey(reduction.Evaluation__c)) {
-				restraints.put(reduction.Evaluation__c, new Restraint());
+				Integer maxReductions = (reportType == 'Detailed' ? 4 : 6);
+				restraints.put(reduction.Evaluation__c, new Restraint(maxReductions));
 			}
 			Restraint restraint = restraints.get(reduction.Evaluation__c);
 			restraint.addReduction(new Reduction(reduction));
@@ -66,27 +77,59 @@ public with sharing class RestraintReductionReport {
 			Reduction reduction = restraints.get(result.Assessment__r.Evaluation__c).getReductionFromId(result.Assessment__c);
 			reduction.setDomainResult(result);
 		}
+
+		for (Eval_Value__c preRestraintResponse: [
+			SELECT eval_section_id__c, id, boolean__c, currency__c, date_time__c,
+			       number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c,
+			       eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c,
+			       owner.name, createddate, eval__r.length__c, what_id__c,
+			       eval__r.field_name__c, eval__r.field_type__c, eval__r.field_sub_type__c
+			FROM eval_value__c
+			WHERE what_id__c IN :restraints.keySet()
+			AND what_id_object__c = 'Evaluation__c'
+			AND eval__r.Field_name__c != 'Dummy Value'
+			ORDER BY eval__r.cat_seq_text__c, eval__r.subcat_seq_text__c,
+			         eval__r.subsubcat_seq_text__c, eval__r.field_sequence__c,
+			         eval_section_id__c, createddate
+		]) {
+			restraints.get(preRestraintResponse.What_Id__c).addPreRestraintResponse(preRestraintResponse);
+			if (numRows < restraints.get(preRestraintResponse.What_Id__c).preRestraintKeyOrder.size()) {
+				numRows = restraints.get(preRestraintResponse.What_Id__c).preRestraintKeyOrder.size();
+			}
+		}
+
+		rows = new Integer[] {};
+		for (Integer i = 0; i < numRows; i ++) {
+			rows.add(i);
+		}
 	}
 
 	private class Restraint {
-		public Integer MAX_REDUCTIONS = 6;
 		public Reduction[] reductions { get; set; }
+		public Map<String, String> preRestraintResponses { get; set; }
+		public String[] preRestraintKeyOrder { get; set; }
+		public DateTime preRestraintDate { get; set; }
+		public Integer maxReductions;
+
 		private Map<Id, Reduction> reductionMap;
 
-		public Restraint() {
+		public Restraint(Integer maxReductions) {
 			this.reductions = new Reduction[]{};
 			this.reductionMap = new Map<Id, Reduction>();
+			this.preRestraintResponses = new Map<String, String>();
+			this.preRestraintKeyOrder = new String[] {};
+			this.maxReductions = maxReductions;
 		}
 
 		public void addReduction(Reduction reduction) {
-			if (this.reductions.size() >= MAX_REDUCTIONS && this.reductions.size() > 0 && reduction.compareTo(this.reductions[0]) > 0) {
+			if (this.reductions.size() >= maxReductions && this.reductions.size() > 0 && reduction.compareTo(this.reductions[0]) > 0) {
 				// At the limit already, so we have to remove the earliest reduction
 				reductionMap.remove(reductions[0].Id);
 				reductions.remove(0);
 				reductions.add(reduction);
 				reductionMap.put(reduction.Id, reduction);
 				reductions.sort();
-			} else if (this.reductions.size() < MAX_REDUCTIONS) {
+			} else if (this.reductions.size() < maxReductions) {
 				reductions.add(reduction);
 				reductionMap.put(reduction.Id, reduction);
 				reductions.sort();
@@ -95,6 +138,55 @@ public with sharing class RestraintReductionReport {
 
 		public Reduction getReductionFromId(Id Id) {
 			return reductionMap.get(Id);
+		}
+
+		public void addPreRestraintResponse(Eval_Value__c response) {
+			String value;
+			if (response.Eval__r.Field_Type__c == 'Boolean')  { // Boolean can be Checkbox, Radio, or Dropdown
+				if (response.Eval__r.Field_Sub_Type__c == 'Checkbox') {
+					value = response.Boolean__c ? 'Yes': 'No';
+				} else if (response.Eval__r.Field_Sub_Type__c == 'Dropdown') {
+					if (response.Text_Under_250__c == '1') {
+						value = 'Yes';
+					} else if (response.Text_Under_250__c == '0') {
+						value = 'No';
+					}
+				}
+			} else if (response.Eval__r.Field_Type__c=='String') {
+				if (response.Eval__r.Length__c > 250) {
+					value = response.text_over_250__c;
+				} else {
+					value = response.text_under_250__c;
+				}
+			} else if (response.Eval__r.Field_Type__c == 'Int') {
+				value = String.valueOf(response.Number_No_Decimal__c);
+			} else if (response.Eval__r.Field_Type__c == 'Double') {
+				value = response.Text_Under_250__c;
+			} else if (response.Eval__r.Field_Type__c == 'DropDown') {
+				value = response.Text_Under_250__c;
+			} else if (response.Eval__r.Field_Type__c == 'Date') {
+				value = response.Date_Time__c.Date().format();
+			} else if (response.Eval__r.Field_Type__c == 'Datetime') {
+				value = Utility.getMilitarytime(response.date_time__c);
+			} else if (response.Eval__r.Field_Type__c == 'Multiselect') {
+				if (response.Eval__r.Length__c > 250) {
+					value = response.Text_Over_250__c;
+				} else {
+					value = response.Text_Under_250__c;
+				}
+				if (preRestraintResponses.containsKey(response.Eval__r.Field_Name__c)) {
+					value = preRestraintResponses.get(response.Eval__r.Field_Name__c) + '; ' + value;
+				}
+			}
+			if (value != null) {
+				if (!preRestraintResponses.containsKey(response.Eval__r.Field_Name__c)) {
+					preRestraintKeyOrder.add(response.Eval__r.Field_Name__c);
+				}
+				preRestraintResponses.put(response.Eval__r.Field_Name__c, value);
+			}
+			if (preRestraintDate == null) {
+				preRestraintDate = response.CreatedDate;
+			}
 		}
 	}
 
