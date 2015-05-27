@@ -1,10 +1,4 @@
-<apex:page controller="RestraintReductionReport">
-	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
-	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-	<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
-
+<apex:page controller="RestraintReductionReport" contentType="application/vnd.ms-excel#RestraintReductionReport.xls" cache="true">
 	<style>
 		table.restraint-table {
 			border-collapse: collapse;
@@ -46,12 +40,7 @@
 	<apex:variable var="fillerWidth" value="{!20}" />
 	<apex:variable var="valueWidth" value="{!200}" />
 
-	<c:PersonalRecord pbsId="{!serviceAssignment.Person_Being_Served__c}" servAssignId="{!serviceAssignment.Id}" parentPage="ServAssign" admId="{!serviceAssignment.Admission__c}" />
-	<br />
 	<apex:pageBlock title="Restraint Reduction Report">
-		<apex:pageBlockButtons location="top">
-			<input class="btn" type="submit" value="Print" onclick="openModalDialog('{!$Component.printDialog}', 'Print Report', ''); return false;" />
-		</apex:pageBlockButtons>
 		<apex:pageBlockSection columns="2">
 			<apex:outputField value="{!serviceAssignment.Person_Being_Served__c}" label="Person Being Served" />
 			<apex:pageBlockSectionItem>
@@ -182,15 +171,4 @@
 			</apex:outputPanel>
 		</apex:pageBlockSection>
 	</apex:pageBlock>
-	<apex:outputPanel id="printDialog" style="display: none; ">
-		<apex:pageBlock title="Choose Format">
-			<apex:pageBlockButtons location="bottom">
-				<input value="Close" class="btn" type="submit" onclick="closeModalDialog('{!$Component.printDialog}'); return false;" />
-			</apex:pageBlockButtons>
-			<ul>
-				<li><a target="_blank" href="/apex/RestraintReductionReportPDF?startDate={!$CurrentPage.parameters.startDate}&endDate={!$CurrentPage.parameters.endDate}&type={!$CurrentPage.parameters.type}&saId={!$CurrentPage.parameters.saId}">PDF</a></li>
-				<li><a target="_blank" href="/apex/RestraintReductionReportExcel?startDate={!$CurrentPage.parameters.startDate}&endDate={!$CurrentPage.parameters.endDate}&type={!$CurrentPage.parameters.type}&saId={!$CurrentPage.parameters.saId}">Excel</a></li>
-			</ul>
-		</apex:pageBlock>
-	</apex:outputPanel>
 </apex:page>
