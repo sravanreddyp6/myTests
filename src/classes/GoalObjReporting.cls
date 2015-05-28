@@ -289,8 +289,17 @@ public with sharing class GoalObjReporting {
 	public List<Date> getDaysToDisplay() {
 		List<Date> month = new List<Date>();
 		Date startDate = shiftStart.Date();
+		DateTime endDateTime = getMinDateTime(shiftEnd, DateTime.now());
 		Date endDate = getMinDateTime(shiftEnd, DateTime.now()).Date();
+		
 		for(Date dateiter = StartDate; dateiter <= endDate; dateiter = dateiter+1){
+			// don't include last day if shift ends on midnight
+			if ( dateiter == endDate ) {
+					system.debug( 'on end date this is time:' + endDateTime.time());
+				// check end hour 
+				if (endDateTime.time() == Time.newInstance(0,0,0,0))
+					continue;	
+			}
 			month.Add(dateiter);
 		}
 		return month;
@@ -299,10 +308,21 @@ public with sharing class GoalObjReporting {
 	public List<Date> getDaysOfMonth() {
 		List<Date> month = new List<Date>();
 		Date endDate = getMinDateTime(shiftEnd, Datetime.now()).date();
+		DateTime endDateTime = getMinDateTime(shiftEnd, DateTime.now());
 		system.debug(shiftStart.Date().addmonths(1));
 		system.debug(shiftStart.Date().addmonths(1).toStartofMonth());
 		for(Date dateiter = shiftStart.Date(); dateiter <= endDate; dateiter = dateiter+1){
+			
+			// don't include last day if shift ends on midnight
+			if ( dateiter == endDate ) {
+				system.debug( 'on end date this is time:' + endDateTime.time());
+				// check end hour 
+				if (endDateTime.time() == Time.newInstance(0,0,0,0))
+					continue;	
+			}
 			month.Add(dateiter);
+					
+				
 		}
 		return month;
 	}
