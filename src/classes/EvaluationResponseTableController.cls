@@ -141,9 +141,16 @@ public with sharing class EvaluationResponseTableController {
         }
     }
     
-    public string getimmunizationReport(){
+    public string getAdultimmunizationReport(){
     	string theId;
-        theId= [select id, developername from report where developername = 'Immunization_for_PBS' limit 1].id;
+        theId= [select id, developername from report where developername = 'Immunization_Adult_for_PBS' limit 1].id;
+  
+        return theId;
+    }
+    
+      public string getChildimmunizationReport(){
+    	string theId;
+        theId= [select id, developername from report where developername = 'Immunization_Child_for_PBS' limit 1].id;
   
         return theId;
     }
