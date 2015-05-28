@@ -28,7 +28,8 @@ public with sharing class EvalDynamicExt {
 	public Boolean showEndOfShiftDON { get; set; }  // EC-163
 
 	public Boolean isEditable;
-	public Boolean isDON;
+	public Boolean isDON { get; set; }
+	public Boolean isTierIII { get; set; }
 
 	public String getEvalStatusDate(){
 		if (evalType == 'Head to Toe')
@@ -86,6 +87,11 @@ public with sharing class EvalDynamicExt {
 			isDON = true;
 		} else {
 			isDON = false;
+		}
+		if (permissionSets.contains('iServe_Tier_III')) {
+			isTierIII = true;
+		} else {
+			isTierIII = false;
 		}
 
 		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Signed_By__r.Name, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
