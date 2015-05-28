@@ -1044,19 +1044,6 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Age_at_Administration_Report__c</fullName>
-        <description>This is created only for reporting purposes. on immunization report, the age should be displayed only for Child.</description>
-        <externalId>false</externalId>
-        <formula>IF(FLOOR((Date__c -Person_Being_Served__r.Birthdate+1)/365.2425) &gt;= 18,null, FLOOR((Date__c -Person_Being_Served__r.Birthdate+1)/365.2425))</formula>
-        <label>Age at Administration</label>
-        <precision>18</precision>
-        <required>false</required>
-        <scale>0</scale>
-        <trackTrending>false</trackTrending>
-        <type>Number</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>Age_at_Administration__c</fullName>
         <externalId>false</externalId>
         <formula>FLOOR((Date__c -Person_Being_Served__r.Birthdate+1)/365.2425)</formula>

@@ -55,6 +55,10 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>MapHighlightAction</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>Merge</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -417,6 +421,25 @@
         <label>Advance Directives</label>
         <trackHistory>false</trackHistory>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Age_String__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(Today()&lt;Birthdate, &quot;Check the Date!&quot;,
+
+TEXT(IF(YEAR(Today())=YEAR(Birthdate),0,IF(YEAR(Today())-YEAR(Birthdate)=1,IF(MONTH(Today())=MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),0,1),IF(MONTH(Today())&lt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),1,0),1)),IF(MONTH(Today())-MONTH(Birthdate)&lt;0,YEAR(Today())-YEAR(Birthdate)-1,IF(MONTH(Today())=MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),YEAR(Today())-YEAR(Birthdate)-1,YEAR(Today())-YEAR(Birthdate)),YEAR(Today())-YEAR(Birthdate)))))) &amp; &quot; year(s), &quot; &amp;
+
+TEXT(IF(YEAR(Today())=YEAR(Birthdate),IF(MONTH(Today())=MONTH(Birthdate),0,IF(MONTH(Today())&gt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),MONTH(Today())-MONTH(Birthdate)-1,MONTH(Today())-MONTH(Birthdate)),0)),IF(MONTH(Today())=MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),11,0),IF(MONTH(Today())&gt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),MONTH(Today())-MONTH(Birthdate)-1,MONTH(Today())-MONTH(Birthdate)),IF(MONTH(Today())&lt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),11-(MONTH(Birthdate)-MONTH(Today())),12-(MONTH(Birthdate)-MONTH(Today()))),12-(MONTH(Birthdate)-MONTH(Today()))))))) &amp; &quot; month(s), &amp; &quot; &amp;
+
+TEXT(IF(DAY(Today())&gt;=DAY(Birthdate),DAY(Today())-DAY(Birthdate),31-(DAY(Birthdate)-DAY(Today())))) &amp; &quot; day(s)&quot;
+
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Age String</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Age__c</fullName>
@@ -1404,7 +1427,7 @@
         <description>System assigned a unique 10-digit number to a Person Being Served upon creation.</description>
         <displayFormat>{0000000000}</displayFormat>
         <externalId>false</externalId>
-        <label>PBS_Identifier</label>
+        <label>Person #</label>
         <trackHistory>false</trackHistory>
         <type>AutoNumber</type>
     </fields>
