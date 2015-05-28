@@ -13,6 +13,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+    <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
 
 	<style>
 		.dialogLoadingSpinner {
@@ -400,11 +401,11 @@
 				<apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
-				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !vfVarIsCM}" />
-				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !vfVarIsCM}" required="{!episodeReq}" />
+				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !vfVarIsCM && !isNR }" />
+				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !vfVarIsCM && !isNR}" required="{!episodeReq}" />
 				<apex:pageblocksectionitem />
-				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
-				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM}">
+				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
+				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR}">
 					<apex:outputLabel value="Model" for="modelfield" />
 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
 				</apex:pageblocksectionitem>
@@ -506,14 +507,14 @@
 				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM}">
-				<apex:pageBlockSectionItem rendered="{!editSA}">
+			<apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR}">
+				<apex:pageBlockSectionItem rendered="{!editSA && !isNR}">
 					<apex:outputLabel value="Contract" />
 					<apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false">
 						<apex:selectOptions value="{!contractsList}" />
 					</apex:selectList>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!!editSA}">
+				<apex:pageBlockSectionItem rendered="{!!editSA && !isNR}">
 					<apex:outputLabel value="Contract" />
 					<apex:outputText value="{!associatedContractName}" />
 				</apex:pageBlockSectionItem>
@@ -914,7 +915,7 @@ END: Uncomment to have the element collapsed by default -->
 		<!--Diagnosis Section -->
 
 		<a name="Diag" id="Diag"></a>
-		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis}">
+		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!IF(!isNR,showDiagnosis,!showDiagnosis)}">
 
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" />
@@ -1125,7 +1126,7 @@ END: Uncomment to have the element collapsed by default -->
 			<div class="pbHeaderButton">
 				<apex:actionStatus id="planstatus">
 					<apex:facet name="stop">
-						<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
+						<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA && !isNR }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
 					</apex:facet>
 					<apex:facet name="start">
 						<apex:commandButton value="Loading..." disabled="true" />
@@ -1406,7 +1407,7 @@ END: Uncomment to have the element collapsed by default -->
 		<!-- Add Funding Source modal. -->
 		<apex:outputPanel id="FundingSourceModal" style="display:none">
 			<div id='fundingMessages'></div>
-			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative'}">
+			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian'}">
 				<apex:pageBlockSection columns="1" id="fundingSourceEntry">
 					<apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source" />
 					<apex:inputField value="{!fundingSource.Funding_Source_ID__c}" id="fundingEntry_SourceId" />
