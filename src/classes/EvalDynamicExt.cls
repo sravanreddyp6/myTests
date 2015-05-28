@@ -117,11 +117,11 @@ public with sharing class EvalDynamicExt {
 
 	public void refreshLateEntryNotes() {
 		lateEntryNotes = [
-			SELECT Id, Late_Entry_Date__c
+			SELECT Id, CreatedDate
 			FROM Evaluation_Response__c
 			WHERE RecordTypeId = :Utility.getEvaluationResponseRecordType('Late Entry Note')
 			AND Evaluation__c = :evalId
-			ORDER BY Late_Entry_Date__c
+			ORDER BY CreatedDate
 		];
 	}
 
@@ -133,7 +133,7 @@ public with sharing class EvalDynamicExt {
 				Evaluation__c = evalId
 			);
 		} else {
-			lateEntryNote = [ SELECT Id, CreatedById, CreatedBy.Name, Late_Entry_Note__c, Late_Entry_Date__c FROM Evaluation_Response__c WHERE Id = :lateEntryNoteId ];
+			lateEntryNote = [ SELECT Id, CreatedById, CreatedBy.Name, Late_Entry_Note__c, CreatedDate FROM Evaluation_Response__c WHERE Id = :lateEntryNoteId ];
 		}
 	}
 
@@ -141,19 +141,12 @@ public with sharing class EvalDynamicExt {
 		if (lateEntryNote.Late_Entry_Note__c == '' || lateEntryNote.Late_Entry_Note__c == null) {
 			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Note cannot be blank'));
 		}
-		if (lateEntryNote.Late_Entry_Date__c == null) {
-			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Date cannot be blank'));
-		}
 	}
 
 	public void saveLateEntryNote() {
 		Boolean errorFound = false;
 		if (lateEntryNote.Late_Entry_Note__c == '' || lateEntryNote.Late_Entry_Note__c == null) {
 			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Note cannot be blank'));
-			errorFound = true;
-		}
-		if (lateEntryNote.Late_Entry_Date__c == null) {
-			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Date cannot be blank'));
 			errorFound = true;
 		}
 		if (!errorFound) {

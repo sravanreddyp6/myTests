@@ -361,7 +361,7 @@
 							<div class="panel-body">
 								<apex:repeat value="{!lateEntryNotes}" var="entryNote">
 									<a href="#" onClick="refreshLateEntryNote('{!entryNote.Id}', 'Goal Reporting', 'Objective', 'Id', 'Type'); return false;" style="color:#781d7d;" data-toggle="tooltip" data-placement="top">
-										Entry at <c:MilitaryDatetime dateTimeVal="{!entryNote.Late_Entry_Date__c}" />
+										Entry at <c:MilitaryDatetime dateTimeVal="{!entryNote.CreatedDate}" />
 									</a>
 									<br />
 								</apex:repeat>
@@ -486,21 +486,9 @@
 								<apex:inputField id="lateEntryInput" value="{!lateEntryNote.Late_Entry_Note__c}" />
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
-						<apex:pageBlockSectionItem >
-							<apex:outputLabel value="Late Entry Date" />
-							<apex:outputPanel styleClass="requiredInput" layout="block">
-								<apex:outputPanel styleClass="requiredBlock" layout="block" />
-								<c:MilitaryDatetime dateTimeVal="{!lateEntryNote.Late_Entry_Date__c}" edit="true" hiddenFieldId="lateEntryDate"/>
-							</apex:outputPanel>
-						</apex:pageBlockSectionItem>
-						<apex:inputHidden id="lateEntryDate" value="{!lateEntryNote.Late_Entry_Date__c}" />
 					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" rendered="{!!lateEntryEditable}">
 						<apex:outputField id="lateEntryInput" value="{!lateEntryNote.Late_Entry_Note__c}" />
-						<apex:pageBlockSectionItem >
-							<apex:outputLabel value="Late Entry Date" />
-							<c:MilitaryDatetime dateTimeVal="{!lateEntryNote.Late_Entry_Date__c}" />
-						</apex:pageBlockSectionItem>
 					</apex:pageBlockSection>
 				</apex:pageblock>
 			</apex:actionRegion>
