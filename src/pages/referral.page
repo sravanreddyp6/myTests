@@ -617,15 +617,15 @@
                 <apex:pageBlockSectionItem helpText="{!$ObjectType.Person_Being_Referred__c.fields.Age_year__c.inlineHelpText}">
                     <apex:outputText value="Age " />
                     <apex:outputPanel styleClass="nowrap">
-                        <apex:inputField value="{!personBeingRefRecord.Age_year__c}" style="width: 30px;"/>&nbsp;Years&nbsp;
+                        <apex:inputField value="{!personBeingRefRecord.Age_year__c}" taborderhint="1" style="width: 30px;"/>&nbsp;Years&nbsp;
                         <apex:outputLabel value=" " />
-                        <apex:inputField value="{!personBeingRefRecord.Age_month__c}"  />&nbsp; Months &nbsp;
+                        <apex:inputField value="{!personBeingRefRecord.Age_month__c}" taborderhint="1"  />&nbsp; Months &nbsp;
                         <apex:outputLabel value=" " />&nbsp;
-                        <apex:inputField value="{!personBeingRefRecord.Age_days__c}"  /> Days
+                        <apex:inputField value="{!personBeingRefRecord.Age_days__c}"  taborderhint="1" /> Days
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
-                <apex:inputField value="{!personBeingRefRecord.Gender__c}" />
+                <apex:inputField value="{!personBeingRefRecord.Gender__c}" taborderhint="1" />
                <!-- Removed for PRI-160   <apex:inputField value="{!personBeingRefRecord.SSN__c}" /> -->
             </apex:pageBlockSection>
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" rendered="{!ISNULL(personBeingServedRecord.id)}">
