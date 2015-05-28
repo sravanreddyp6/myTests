@@ -5,7 +5,7 @@ private class TurnsChartController_Test {
     static testMethod void turnsTest() {
     	
         TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
-        Evaluation__c evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id, shift_start_date__c = Datetime.newinstance(2015, 4, 27, 0,0,0), shift_end_date__c = DateTime.newInstance(2015,4,28,0,0,0));
+        Evaluation__c evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id, shift_start_time__c = Datetime.newinstance(2015, 4, 27, 0,0,0), shift_end_time__c = DateTime.newInstance(2015,4,28,0,0,0));
         insert evaluation;
         
         list<eval__c> evals = TMN_Generic_Core_TestData.getEvalTestRecords();
@@ -16,6 +16,7 @@ private class TurnsChartController_Test {
                                                    and category__c = 'Turns'
                                                    and sub_category__c = 'Details'
                                                    and visible__c = true]){
+                                                   	
             GenerateEvalComponent.FormKeyVal val = new GenerateEvalComponent.FormKeyVal();
             val.name= e.id;
             if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'Boolean')
@@ -40,12 +41,15 @@ private class TurnsChartController_Test {
             evalVals.add(val);
         }
 
+
         Eval_Type__c evlTyp = [Select Name, id from Eval_Type__c where Name = 'CNA Workbook'];
         GenerateEvalComponent.saveFields(evaluation.id, UserInfo.getUserId() + '-' + DateTime.now().formatLong(), 
-                                        'Shift', evlTyp.Name, 'TEST', 'TEST_TEST', JSON.serialize(evalVals));
+                                        'CNA Workbook', evlTyp.Name, 'Turns', 'Details', JSON.serialize(evalVals));
         
         system.assert([select id from eval_value__c].size() > 0 );
         
-	   
+	   TurnsChartController controller = new TurnsChartController();
+	   controller.evalID = evaluation.id;
+	   system.assertEquals( controller.turnsInnerKeys.size(), 6 );
     }
 }
