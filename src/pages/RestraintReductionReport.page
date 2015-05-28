@@ -51,6 +51,7 @@
 	<apex:pageBlock title="Restraint Reduction Report">
 		<apex:pageBlockButtons location="top">
 			<input class="btn" type="submit" value="Print" onclick="openModalDialog('{!$Component.printDialog}', 'Print Report', ''); return false;" />
+			<input class="btn" type="submit" value="Close" onclick="window.location = '/{!serviceAssignment.Id}#Assessment_res'; return false;" />
 		</apex:pageBlockButtons>
 		<apex:pageBlockSection columns="2">
 			<apex:outputField value="{!serviceAssignment.Person_Being_Served__c}" label="Person Being Served" />
