@@ -115,7 +115,9 @@
 </apex:pageblocksectionitem>
 <apex:pageblocksectionitem >
 <apex:outputlabel for="status" value="Prompt" />
-<apex:inputfield id="status" value="{!currResult.currResultS.Status__c}" />
+<apex:selectList value="{!currResult.currResultS.Status__c}" size="1">
+ 	<apex:selectOptions value="{!promptList}"/>
+ </apex:selectList>
 </apex:pageblocksectionitem>
 <apex:pageblocksectionitem >
 <apex:outputlabel for="initials" value="Initials" />

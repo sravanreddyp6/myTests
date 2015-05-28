@@ -15,6 +15,8 @@ public with sharing class GoalObjReporting {
 		
 	public objResultWrapper currResult { get; set; }
 	
+	public list<SelectOption> promptList { get; private set;}
+	
 	public transient List<Action_Narrative_Result__c> narrativeResults;
 	public transient List<Action_Skill_Result__c> skillResults; 
 	
@@ -27,6 +29,7 @@ public with sharing class GoalObjReporting {
 		narrativeResults = new List<Action_Narrative_Result__c>();
 		skillResults = new List<Action_Skill_Result__c>();
 		currResult = new objResultWrapper();
+		promptList = new List<SelectOption>();
 	}
 	
 	
@@ -46,8 +49,23 @@ public with sharing class GoalObjReporting {
 			else {
 				currResult = new objResultWrapper( objType, thisObj.id);
 			}
-		} 
 		}
+		// create list of prompt options
+		if ( promptList.size() == 0 ) {
+		promptList.Add(new SelectOption('', '--None--'));	
+		promptList.Add(new SelectOption('I','Independent'));
+		promptList.Add(new SelectOption('V','Verbal'));
+		promptList.Add(new SelectOption('M','Model'));
+		promptList.Add(new SelectOption('PP','Partial Physical Assistance'));
+		promptList.Add(new SelectOption('FP','Full Physical ASsistance'));
+		promptList.Add(new SelectOption('D','Declined'));
+		promptList.Add(new SelectOption('L','Leave/Absent'));
+		promptList.Add(new SelectOption('S','Sick'));
+		promptList.Add(new SelectOption('H','Hospitalized'));
+		promptList.Add(new SelectOption('HL','Holiday'));
+		}
+		}
+		
 	}
 	
 	public List<Action_Narrative_Result__c> getnarrativeResults() {	
