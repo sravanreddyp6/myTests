@@ -36,7 +36,7 @@ public with sharing class RestraintReductionReport {
 			FROM Assessment__c
 			WHERE Type__c = 'Restraint Reduction'
 			AND	CreatedDate >= :startDate
-			AND CreatedDate <= :endDate
+			AND CreatedDate <= :endDate.addDays(1)  // We need to include reports on the end day as well, so we'll add 1 day to the End Date
 			AND Evaluation__r.ServiceAssignment__c = :saId
 			ORDER BY CreatedDate ASC
 		]) {
