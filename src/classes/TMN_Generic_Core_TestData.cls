@@ -73,6 +73,7 @@ public without sharing class TMN_Generic_Core_TestData {
 				Program__c = 'IFCS',
 				Status__c = 'Active',
 				SA_Start_DateTime__c = datetime.newInstance(2013, 1, 1, 0, 0, 0),
+				start_date__c = date.newInstance(2013,1,1),
 				Projected_Treatment_End_Date__c = date.newInstance(2014, 12, 31),
 				Service_Location__c = sl.Id
 				);
@@ -86,6 +87,7 @@ public without sharing class TMN_Generic_Core_TestData {
 						ORDER BY service_location__r.program__c]);
 
 		insert theSA;
+
 		
 		theServiceCode = new Service_Code__c(
 				Service_Code__c = '10942.1161',
