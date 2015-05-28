@@ -60,7 +60,8 @@ public with sharing class EvalDynamicExt {
 		approvalHIstory = new List<ProcessInstanceHistory>();
 		refreshLateEntryNotes();
 		lateEntryNote = new Evaluation_Response__c(
-			RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note')
+			RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note'),
+			Evaluation__c = evalId
 		);
 
 		showMainComponent = true;
@@ -119,6 +120,7 @@ public with sharing class EvalDynamicExt {
 			SELECT Id, Late_Entry_Date__c
 			FROM Evaluation_Response__c
 			WHERE RecordTypeId = :Utility.getEvaluationResponseRecordType('Late Entry Note')
+			AND Evaluation__c = :evalId
 			ORDER BY Late_Entry_Date__c
 		];
 	}
@@ -127,7 +129,8 @@ public with sharing class EvalDynamicExt {
 		String lateEntryNoteId = ApexPages.currentPage().getParameters().get('lateEntryNoteId');
 		if (lateEntryNoteId == null || lateEntryNoteId == '') {
 			lateEntryNote = new Evaluation_Response__c(
-				RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note')
+				RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note'),
+				Evaluation__c = evalId
 			);
 		} else {
 			lateEntryNote = [ SELECT Id, CreatedById, CreatedBy.Name, Late_Entry_Note__c, Late_Entry_Date__c FROM Evaluation_Response__c WHERE Id = :lateEntryNoteId ];
