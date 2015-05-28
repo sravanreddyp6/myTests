@@ -98,11 +98,11 @@
 						<apex:outputField value="{!Evaluation__c.Advanced_Directives__c}" />
 						<apex:outputField value="{!Evaluation__c.Code_Status_Other__c}" label="Specify Other" />
 						<apex:outputField value="{!Evaluation__c.Advanced_Directives_Attached__c}" />
-						<apex:outputField value="{!Evaluation__c.Power_of_Attorney__c}" />
+						
 						<apex:outputField value="{!Evaluation__c.Referral__r.Agency_Name__c}" label="Referral Source" />
-						<apex:outputField value="{!Evaluation__c.PoA_Name__c}" />
+						
 						<apex:outputField value="{!Evaluation__c.Referral__r.Case_Manager_Name__c}" />
-						<apex:outputField value="{!Evaluation__c.PoA_Type__c}" />
+						
 					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Related Party">
 						<apex:actionFunction name="showAddRelatedParty" action="{!showAddRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Add Related Party', '{!$Component.wholePage}');" />
