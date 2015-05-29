@@ -67,7 +67,7 @@ public PageReference redirectToViewAttachment() {
 		return pg;
 	}
 
-  class AttachmentView  {
+ @TestVisible class AttachmentView  {
         public Attachment attachment { get; set; }
         public String Name {set; get {
             return this.attachment.Name;
