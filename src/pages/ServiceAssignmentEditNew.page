@@ -402,6 +402,7 @@
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
 				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !vfVarIsCM && !isNR }" />
+				
 				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !vfVarIsCM && !isNR}" required="{!episodeReq}" />
 				<apex:pageblocksectionitem />
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
@@ -506,7 +507,7 @@
 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
 				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
-
+			
 			<apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR}">
 				<apex:pageBlockSectionItem rendered="{!editSA && !isNR}">
 					<apex:outputLabel value="Contract" />
@@ -915,7 +916,7 @@ END: Uncomment to have the element collapsed by default -->
 		<!--Diagnosis Section -->
 
 		<a name="Diag" id="Diag"></a>
-		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!IF(!isNR,showDiagnosis,!showDiagnosis)}">
+		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis}">
 
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" />
@@ -1126,7 +1127,8 @@ END: Uncomment to have the element collapsed by default -->
 			<div class="pbHeaderButton">
 				<apex:actionStatus id="planstatus">
 					<apex:facet name="stop">
-						<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA && !isNR }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
+					<!--  Added isNR by Amruth for EB-434 -->
+					<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA && !isNR }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
 					</apex:facet>
 					<apex:facet name="start">
 						<apex:commandButton value="Loading..." disabled="true" />
