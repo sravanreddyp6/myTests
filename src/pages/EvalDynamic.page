@@ -361,7 +361,7 @@
 							<div class="panel-body">
 								<apex:repeat value="{!lateEntryNotes}" var="entryNote">
 									<a href="#" onClick="refreshLateEntryNote('{!entryNote.Id}', 'Goal Reporting', 'Objective', 'Id', 'Type'); return false;" style="color:#781d7d;" data-toggle="tooltip" data-placement="top">
-										Entry at <c:MilitaryDatetime dateTimeVal="{!entryNote.CreatedDate}" />
+										{!entryNote.CreatedBy.Name} @ <c:MilitaryDatetime dateTimeVal="{!entryNote.CreatedDate}" />
 									</a>
 									<br />
 								</apex:repeat>
@@ -470,7 +470,7 @@
 		<apex:form id="lateEntriesForm">
 			<apex:variable var="lateEntryEditable" value="{!OR($CurrentPage.parameters.lateEntryNoteId == null, $CurrentPage.parameters.lateEntryNoteId == '')}" />
 			<apex:pageMessages id="lateEntriesMessages" />
-			<apex:actionRegion>
+			<apex:actionRegion >
 				<apex:actionFunction name="saveLateEntryNote" action="{!saveLateEntryNote}" status="myStatus" rerender="lateEntriesForm, lateEntryRepeaters" oncomplete="clearPanel(); " />
 				<apex:actionFunction name="validateLateEntryNote" action="{!validateLateEntryNote}" status="myStatus" rerender="lateEntriesForm" oncomplete="if (jQuery('[id$=lateEntriesMessages]').children().length == 0) { authenticate2(); }" />
 				<apex:pageblock id="lateEntriesBlock">
@@ -479,7 +479,7 @@
 						<input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />
 					</apex:outputPanel>
 					<apex:pageBlockSection columns="1" rendered="{!lateEntryEditable}">
-						<apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem >
 							<apex:outputLabel value="Late Entry Note" />
 							<apex:outputPanel styleClass="requiredInput" layout="block" style="display: inline-block; ">
 								<apex:outputPanel styleClass="requiredBlock" layout="block" />

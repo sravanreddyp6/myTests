@@ -117,11 +117,11 @@ public with sharing class EvalDynamicExt {
 
 	public void refreshLateEntryNotes() {
 		lateEntryNotes = [
-			SELECT Id, CreatedDate
+			SELECT Id, CreatedDate, CreatedBy.Name
 			FROM Evaluation_Response__c
 			WHERE RecordTypeId = :Utility.getEvaluationResponseRecordType('Late Entry Note')
 			AND Evaluation__c = :evalId
-			ORDER BY CreatedDate
+			ORDER BY CreatedDate DESC
 		];
 	}
 
