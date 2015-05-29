@@ -4,6 +4,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+    <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
 
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <style type="text/css">
@@ -135,7 +136,6 @@
                 return false;
             }
         }
-
         //opens the dialog
         function openDialog(dialogId, tagType, titleString) {
             console.log('trying to open modal');
@@ -632,7 +632,8 @@
 
         <!--Agencies Related to Person Section-->
         <a name="Agency" id="Agency"></a>
-        <apex:pageBlock id="relatedAgenciesId" rendered="{!showDiagnosis}">
+        <!--  added by Amruth for EB-430 -->
+        <apex:pageBlock id="relatedAgenciesId" rendered="{!showDiagnosis || isNR}">
                 <div style="float: right;">
                     <apex:actionRegion >
                         <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
@@ -801,8 +802,8 @@
                                            />
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
-            
-            <apex:pageBlock rendered="{!vfVarIsCM}">
+            <!-- added isNR for EB-430 by Amruth -->
+            <apex:pageBlock rendered="{!vfVarIsCM || isNR}">
             <a id="assistiveDevices" />            
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device"
