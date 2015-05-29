@@ -9,12 +9,16 @@
                 </apex:pageblockButtons>            
                 <apex:pageBlockSection columns="2">
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true"/>
+                    <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}"/>
                     <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true"/>
+                    <apex:inputField label="Personal Email" value="{!TMNUser.Personal_Email__c}"/>
                     <apex:inputField label="Hire Date" value="{!TMNUser.Hire_Date__c}" required="true"/>
                     <apex:inputField label="Last Day" value="{!TMNUser.Last_Day__c}"/>
                     <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Name__c}" required="true"/>
                     <apex:inputField label="Manager Email" value="{!TMNUser.Manager_Email__c}" required="true"/>
                     <apex:inputField label="Alias" value="{!TMNUser.Alias__c}" required="true" />
+                    <apex:inputField label="Job Status" value="{!TMNUser.Job_Status__c}"/>
+                    <apex:inputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}"/>
                     <apex:selectList label="Pay Basis" value="{!TMNUser.Pay_Basis__c}" size="1" required="true">
                         <apex:selectOption itemValue="Hourly" itemLabel="Hourly"/>
                         <apex:selectOption itemValue="Salaried" itemLabel="Salaried"/>
@@ -27,6 +31,8 @@
                         <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
                     </apex:selectList>
                     <apex:inputField label="Work State" value="{!TMNUser.Work_State__c}" required="true"/>
+                    <apex:inputField label="Office Phone" value="{!TMNUser.Office_Phone__c}"/>
+                    <apex:inputField label="Mobile Phone" value="{!TMNUser.Personal_Phone__c}"/>
                     <apex:inputField label="Office Location" value="{!TMNUser.Office_Location__c}" />
                 <!--    <apex:inputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}" required="true"/> -->
                 </apex:pageBlockSection>
