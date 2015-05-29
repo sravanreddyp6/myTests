@@ -203,7 +203,8 @@ public without sharing class ServiceAssignmentExt {
 				pshowNurseAssessment = false;
 			} else {
 				pOpGroup = tmnUsers[0].Operating_Group__c;
-				pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian';
+				// added NeuroRestorative to show diagnosis for EB-434
+				pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' ;
 				pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
 				pshowCodes = ( ( pOpGroup == 'Redwood'  && admission.State__c == 'AZ' && theservassign.service_location__r.programid__c != '114165002')
 						|| ( pOpGroup != 'Care Meridian'  && pOpGroup != 'Redwood'));
@@ -214,7 +215,6 @@ public without sharing class ServiceAssignmentExt {
 		}
 		return psetFlags;
 	}
-
 	public void showAddLocation() {
 		// empty for action support
 	}
