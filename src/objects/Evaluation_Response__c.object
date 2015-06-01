@@ -50,7 +50,7 @@
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
-    <enableReports>false</enableReports>
+    <enableReports>true</enableReports>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
@@ -584,6 +584,16 @@
         <label>Lab Detail</label>
     </fieldSets>
     <fieldSets>
+        <fullName>Late_Entry_Note</fullName>
+        <description>Used in Nurses Shift Docs</description>
+        <displayedFields>
+            <field>Late_Entry_Note__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Late Entry Note</label>
+    </fieldSets>
+    <fieldSets>
         <fullName>Micro_Detail</fullName>
         <description>Evaluation Response Component</description>
         <displayedFields>
@@ -647,17 +657,42 @@
             <isRequired>true</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Date__c</field>
+            <field>Location_picklist__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Time_Given__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Time_Observed__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Administered_By__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Read_By__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Lot__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>true</isRequired>
         </displayedFields>
         <displayedFields>
             <field>Result_in_mm__c</field>
             <isFieldManaged>false</isFieldManaged>
-            <isRequired>true</isRequired>
+            <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Administered_By__c</field>
+            <field>Expiration_Date__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>true</isRequired>
         </displayedFields>
@@ -1897,6 +1932,15 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Late_Entry_Note__c</fullName>
+        <externalId>false</externalId>
+        <label>Late Entry Note</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
         <fullName>Length_of_Time__c</fullName>
         <externalId>false</externalId>
         <label>Length of Time</label>
@@ -1923,6 +1967,25 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Location_picklist__c</fullName>
+        <description>picklist of locations where test was administered</description>
+        <externalId>false</externalId>
+        <label>Location</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Lot__c</fullName>
@@ -2134,6 +2197,17 @@
         <fullName>Radiology_Type__c</fullName>
         <externalId>false</externalId>
         <label>Type</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Read_By__c</fullName>
+        <description>name of person reading result of test</description>
+        <externalId>false</externalId>
+        <label>Read By</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -2911,6 +2985,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -3448,6 +3533,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -3993,6 +4089,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -4534,6 +4641,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5087,6 +5205,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -5632,6 +5761,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -6169,6 +6309,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6714,6 +6865,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -7251,6 +7413,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7796,6 +7969,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8350,6 +8534,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -8891,6 +9086,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9440,6 +9646,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9945,6 +10162,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10495,6 +10723,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -11040,6 +11279,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -11235,6 +11485,570 @@
             </values>
             <values>
                 <fullName>Burn</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Surgical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Traumatic</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>X2_Negative_Cultures__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Late_Entry_Note</fullName>
+        <active>true</active>
+        <label>Late Entry Note</label>
+        <picklistValues>
+            <picklist>Allergy_Type__c</picklist>
+            <values>
+                <fullName>Drug</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Food</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Assistive_Device_Removable__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Assistive_Device_Restricts_Movement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Assistive_Device_Type__c</picklist>
+            <values>
+                <fullName>Bed Alarm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bed Cradle</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cane</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Contacts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Dentures</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elastic Hose</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Enclosure Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Front-Wheeled Walker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Glasses</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hand Rails</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hearing Aid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>LE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lap Tray</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Low Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Overhead Trapeze</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Seat Belt</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Side Rail Full</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Side Rail Half</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Trunk Supports</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>UE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Wheelchair</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Associated_Pain__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Category__c</picklist>
+            <values>
+                <fullName>CT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Doppler</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>X-Ray</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Contacts_Present__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Contacts_Type__c</picklist>
+            <values>
+                <fullName>Hard</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Soft</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Denture_Type__c</picklist>
+            <values>
+                <fullName>Full</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lower</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Upper</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Glasses_Contacts_Purpose__c</picklist>
+            <values>
+                <fullName>For Distance</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>For Reading</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Multifocal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Glasses_Present__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Hearing_Aid_Present__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Hearing_Aid_Type__c</picklist>
+            <values>
+                <fullName>Both</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Left</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Isolation_Status__c</picklist>
+            <values>
+                <fullName>Isolated</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Isolated</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Isolation_Type__c</picklist>
+            <values>
+                <fullName>Contact - C%2E Difficile</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Contact - MRSA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Contact - PPE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Droplet</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reverse</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>JawWires_Present__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>PPD_Administration_Interval__c</picklist>
+            <values>
+                <fullName>Annual</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>First</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Second</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Position__c</picklist>
+            <values>
+                <fullName>Lying</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sitting</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Standing</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Restraint_Action__c</picklist>
+            <values>
+                <fullName>Applied Alternative to Restraint</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Applied Restraint</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Restraint_Type__c</picklist>
+            <values>
+                <fullName>Bed Enclosure</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chest Restraint</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MITT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Passive Range of Motion</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pressure Release</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Restrain Release</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vest</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Side_Rail_Position__c</picklist>
+            <values>
+                <fullName>Both</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Left</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Test_Type__c</picklist>
+            <values>
+                <fullName>Acintobacter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>C-diff</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MDR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRSA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TB</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>VRE</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Vaccine_Type__c</picklist>
+            <values>
+                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Heamophilus influensae type b</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hepatitis A</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hepatitis B</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Inactivated Poliovirus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Influenza</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Influenza Vaccine</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Measles%2FMumps%2FRubella</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pneumococcal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pnuemonia Vaccine</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rotavirus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Varicella</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Wound_Type__c</picklist>
+            <values>
+                <fullName>Abrasion</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bruising</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Burn</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Open</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -11577,6 +12391,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12127,6 +12952,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -12672,6 +13508,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -13213,6 +14060,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13766,6 +14624,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -14311,6 +15180,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -14848,6 +15728,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15393,6 +16284,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15943,6 +16845,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -16488,6 +17401,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -17025,6 +17949,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17570,6 +18505,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -18107,6 +19053,17 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18657,6 +19614,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>O2_Intervention_Needed__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -18894,6 +19862,16 @@ RecordType.DeveloperName = &apos;PPD_Skin_Test&apos;
 )</errorConditionFormula>
         <errorDisplayField>Date__c</errorDisplayField>
         <errorMessage>Date can not be in the future</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>PPD_Requires_ReadInfo</fullName>
+        <active>true</active>
+        <description>Require Results and Read By to be populated when Date Read is filled in.</description>
+        <errorConditionFormula>AND( NOT(ISBLANK(Time_Observed__c )), 
+OR(ISBLANK( Result_in_mm__c ), ISBLANK( Read_By__c )), 
+$RecordType.DeveloperName = &apos;PPD_Skin_Test&apos;)</errorConditionFormula>
+        <errorDisplayField>Read_By__c</errorDisplayField>
+        <errorMessage>Results and Read By are required when Date Read is filled in</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Vaccine_Typc_Other</fullName>

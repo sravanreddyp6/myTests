@@ -99,6 +99,7 @@
         jQuery.noConflict();
         jQuery(document).ready(function($) {
             enableDiagEff();
+            setUpTabOrder();
         });
     </script>
 
@@ -477,8 +478,46 @@
                 j$('.saveBtn').prop('value', 'Save Referral');
             }
         }
+//pri-162
+        function setUpTabOrder(){
+        	console.log('start tab order');
+            var tabindex = 20000;
+              j$('body :input').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                   if( $input.attr("tabindex") == ''){
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+                   }
+                 }
+              });    
+              tabindex = 1000;    
+              j$('#theWholeForm :input').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                   if( $input.attr("tabindex") == 20000){
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+    
+                   }
+                 }
+              });  
+              tabindex = 2000;    
+              j$('.btn').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+    
+                 }
+              });     
+ 
+       
+                   console.log('end tab order');    
+        }
+        //end pri-162        
     </script>
-
+<div id="theWholeForm">
     <apex:form id="referralForm">
         <apex:actionFunction name="saveRef" action="{!saveRef}" />
         <apex:actionFunction name="checkRedFlags" action="{!checkRedFlags}" oncomplete="alertOnHighRisk(); saveRef(); saveBtnDisplay('false'); return false;" rerender="redFlagged" />
@@ -526,49 +565,49 @@
 
             <apex:pageBlockSection title="Person Being Referred" showHeader="true" columns="2" collapsible="false" id="PBRSection" rendered="{!ISNULL(personBeingServedRecord.id)}">
                 <!-- Rearranged these filed for EPRIQM-117  -->
-                        <apex:inputText value="{!personBeingRefRecord.First_Name__c}" required="{!ReferralRecordType =='NeuroRestorative'}" />
-                         <apex:inputField value="{!personBeingRefRecord.Race__c}" />
-                        <apex:inputText value="{!personBeingRefRecord.Middle_Initial__c}"  />
-                         <apex:inputField value="{!personBeingRefRecord.Ethnicity__c}" />
-                        <apex:inputText value="{!personBeingRefRecord.Last_Name__c}" required="{!ReferralRecordType =='NeuroRestorative'}" />
-                <apex:inputField value="{!personBeingRefRecord.Marital_Status__c}" />
- 			<apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}" />
+                        <apex:inputText value="{!personBeingRefRecord.First_Name__c}" tabindex="10"  required="{!ReferralRecordType =='NeuroRestorative'}" />
+                         <apex:inputField value="{!personBeingRefRecord.Race__c}"  taborderhint="2" />
+                        <apex:inputText value="{!personBeingRefRecord.Middle_Initial__c}"   tabindex="10" />
+                         <apex:inputField value="{!personBeingRefRecord.Ethnicity__c}"  taborderhint="2" />
+                        <apex:inputText value="{!personBeingRefRecord.Last_Name__c}"  tabindex="10" required="{!ReferralRecordType =='NeuroRestorative'}" />
+                <apex:inputField value="{!personBeingRefRecord.Marital_Status__c}" taborderhint="2"  />
+ 			<apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}" taborderhint="1"  />
                 <apex:pageBlockSectionItem helpText="{!$ObjectType.Person_Being_Referred__c.fields.Non_Verbal__c.inlineHelpText}">
                     <apex:outputText value="Primary Language" />
                     <apex:outputPanel styleClass="nowrap">
-                        <apex:inputField value="{!personBeingRefRecord.Primary_Language__c}" />&nbsp;
+                        <apex:inputField value="{!personBeingRefRecord.Primary_Language__c}"  taborderhint="2" />&nbsp;
                         <apex:outputLabel value="Non-Verbal" />&nbsp;
-                        <apex:inputField value="{!personBeingRefRecord.Non_Verbal__c}" />&nbsp;
+                        <apex:inputField value="{!personBeingRefRecord.Non_Verbal__c}"  taborderhint="2" />&nbsp;
                         <apex:outputLabel value="Sign Language" />&nbsp;
-                        <apex:inputField value="{!personBeingRefRecord.Sign_Language__c}" />
+                        <apex:inputField value="{!personBeingRefRecord.Sign_Language__c}"  taborderhint="2" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                 <apex:inputField value="{!personBeingRefRecord.Age__c}" id="pbrAge" />
-                <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
-                <apex:inputField value="{!personBeingRefRecord.Gender__c}" />
-                <apex:inputField value="{!personBeingRefRecord.SSN__c}" />
+                 <apex:inputField value="{!personBeingRefRecord.Age__c}" taborderhint="1"  id="pbrAge" />
+                <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" taborderhint="2"  id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
+                <apex:inputField value="{!personBeingRefRecord.Gender__c}"  taborderhint="1" />
+                <apex:inputField value="{!personBeingRefRecord.SSN__c}"  taborderhint="2" />
             </apex:pageBlockSection>
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" rendered="{!ISNULL(personBeingServedRecord.id)}">
-                <apex:inputField value="{!personBeingRefRecord.Additional_Information_Comments__c}" style="width: 90%;" />
+                <apex:inputField value="{!personBeingRefRecord.Additional_Information_Comments__c}"  taborderhint="3"  style="width: 90%;" />
             </apex:pageBlockSection>
 
 
 
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="false" id="ContactSection" rendered="{!ISNULL(personBeingServedRecord.id)}">
-                <apex:inputField value="{!personBeingRefRecord.Street_1__c}" id="Perm_Street1" label="Mailing Street 1" />
-                <apex:inputField value="{!personBeingRefRecord.Phone__c}" id="Perm_Phone" />
-                <apex:inputField value="{!personBeingRefRecord.Street_2__c}" id="Perm_Street2" label="Mailing Street 2" />
-                <apex:inputField value="{!personBeingRefRecord.Email_Address__c}" id="Perm_Email" label="Email" />
-                <apex:inputText value="{!personBeingRefRecord.City__c}" id="Perm_City"  label="Mailing City" />
+                <apex:inputField value="{!personBeingRefRecord.Street_1__c}" id="Perm_Street1"  taborderhint="5"  label="Mailing Street 1" />
+                <apex:inputField value="{!personBeingRefRecord.Phone__c}"  taborderhint="6" id="Perm_Phone" />
+                <apex:inputField value="{!personBeingRefRecord.Street_2__c}"  taborderhint="5" id="Perm_Street2" label="Mailing Street 2" />
+                <apex:inputField value="{!personBeingRefRecord.Email_Address__c}" taborderhint="6" id="Perm_Email" label="Email" />
+                <apex:inputText value="{!personBeingRefRecord.City__c}" tabindex="50" id="Perm_City"  label="Mailing City" />
                 <apex:outputText value=""/>
-                <apex:inputField value="{!personBeingRefRecord.State__c}" id="Perm_State"  label="Mailing State/Province"/>
+                <apex:inputField value="{!personBeingRefRecord.State__c}" taborderhint="5" id="Perm_State"  label="Mailing State/Province"/>
                 <apex:outputText value=""/>
-                <apex:inputText value="{!personBeingRefRecord.Zip_Code__c}" style="width: 42px;" id="Perm_Zip"  label="Mailing Zip/Postal Code"/>
+                <apex:inputText value="{!personBeingRefRecord.Zip_Code__c}" tabindex="50" style="width: 42px;" id="Perm_Zip"  label="Mailing Zip/Postal Code"/>
                 <apex:outputText value=""/>
                 <!--  Fax is removed for   EPRIQM-115
                 <apex:inputField value="{!personBeingRefRecord.Fax__c}" id="Perm_Fax" />
                  -->
-                <apex:inputField value="{!personBeingRefRecord.Home_County__c}" label="Mailing County"/>
+                <apex:inputField value="{!personBeingRefRecord.Home_County__c}" taborderhint="5" label="Mailing County"/>
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Person Being Served" showHeader="true" columns="2" collapsible="false" id="readPBSSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
@@ -3349,6 +3388,7 @@
 
         </apex:pageBlock>
     </apex:form>
+</div>    
     <apex:actionStatus id="myStatus">
         <apex:facet name="start">
             <div class="thinking">

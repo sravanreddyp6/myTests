@@ -423,6 +423,25 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Age_String__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(Today()&lt;Birthdate, &quot;Check the Date!&quot;,
+
+TEXT(IF(YEAR(Today())=YEAR(Birthdate),0,IF(YEAR(Today())-YEAR(Birthdate)=1,IF(MONTH(Today())=MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),0,1),IF(MONTH(Today())&lt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),1,0),1)),IF(MONTH(Today())-MONTH(Birthdate)&lt;0,YEAR(Today())-YEAR(Birthdate)-1,IF(MONTH(Today())=MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),YEAR(Today())-YEAR(Birthdate)-1,YEAR(Today())-YEAR(Birthdate)),YEAR(Today())-YEAR(Birthdate)))))) &amp; &quot; year(s), &quot; &amp;
+
+TEXT(IF(YEAR(Today())=YEAR(Birthdate),IF(MONTH(Today())=MONTH(Birthdate),0,IF(MONTH(Today())&gt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),MONTH(Today())-MONTH(Birthdate)-1,MONTH(Today())-MONTH(Birthdate)),0)),IF(MONTH(Today())=MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),11,0),IF(MONTH(Today())&gt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),MONTH(Today())-MONTH(Birthdate)-1,MONTH(Today())-MONTH(Birthdate)),IF(MONTH(Today())&lt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),11-(MONTH(Birthdate)-MONTH(Today())),12-(MONTH(Birthdate)-MONTH(Today()))),12-(MONTH(Birthdate)-MONTH(Today()))))))) &amp; &quot; month(s), &amp; &quot; &amp;
+
+TEXT(IF(DAY(Today())&gt;=DAY(Birthdate),DAY(Today())-DAY(Birthdate),31-(DAY(Birthdate)-DAY(Today())))) &amp; &quot; day(s)&quot;
+
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Age String</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Age__c</fullName>
         <externalId>false</externalId>
         <formula>FLOOR((TODAY()-Birthdate +1)/365.2425)</formula>
@@ -587,19 +606,11 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Asian/Pacific Islander</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>Balkan</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Baltic</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Black/African-American</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -631,10 +642,6 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Hispanic/Latino</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>Indo-Chinese</fullName>
                 <default>false</default>
             </picklistValues>
@@ -647,10 +654,6 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Native American Indian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>North American</fullName>
                 <default>false</default>
             </picklistValues>
@@ -660,10 +663,6 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Oceania</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Other</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -695,7 +694,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>White/Caucasian</fullName>
+                <fullName>Unknown</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -1428,7 +1427,7 @@
         <description>System assigned a unique 10-digit number to a Person Being Served upon creation.</description>
         <displayFormat>{0000000000}</displayFormat>
         <externalId>false</externalId>
-        <label>PBS_Identifier</label>
+        <label>Person #</label>
         <trackHistory>false</trackHistory>
         <type>AutoNumber</type>
     </fields>

@@ -240,12 +240,33 @@ public with sharing class GenerateEvalSectionPDF {
                     newHTMLfld += strVal;
                     newHTMLfld += '</div>';                    
                 } else if (e.Field_Type__c == 'DropDown' || e.Field_Type__c == 'Double') {
+                    
                     // get the value
                     if ( mapEvalValues.ContainsKey( e.id ))
                         strVal = mapEvalValues.get(e.id).text_under_250__c;
                     newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
 					newHTMLfld += strVal;
+					
+					if ( e.htmlid__c == 'weightAtAdmission' || e.htmlid__c == 'kg') {
+						Double kg=Double.valueOf( strval.trim());
+						Double kgtolbs = kg*2.2046226218488;
+            			Double newlb = (Math.floor(kgtolbs));
+            			Double newoz = Math.round(((kgtolbs- newlb) * 1600) / 100);
+                            newHTMLfld += ' kg<br />';
+                            newHTMLfld += '(' + newlb + ' lb ';
+                            newHTMLfld += newoz + ' oz)';
+                    }  else if ( e.htmlid__c == 'heightAtAdmission') {
+                    	Double cm = Double.valueOf( strVal.trim());
+                    	Double inches = cm/2.54;
+            			Double newft = Math.floor(inches/12);
+            			Double newinch = Math.Round(( inches - (newft*12))*100)/100;
+                        newHTMLfld += ' cm<br />';
+                        newHTMLfld += '(' +  newft + ' ft ';
+                        newHTMLfld += newinch + ' in)';
+					}
+					
 					newHTMLfld += '</div>';
+					
                 }  else if (e.Field_Type__c == 'Date') {
 					newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
 					if (mapEvalValues.ContainsKey( e.id )) 
@@ -254,7 +275,7 @@ public with sharing class GenerateEvalSectionPDF {
 				} else if (e.Field_Type__c == 'Datetime') {
                     newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     if (mapEvalValues.ContainsKey( e.id )) 
-                        newHTMLfld += mapEvalValues.get(e.id).date_time__c; // output date format
+                        newHTMLfld += Utility.getMilitarytime(mapEvalValues.get(e.id).date_time__c); // output date format
                     newHTMLfld +=  '</div>';
                 } else if (e.Field_Type__c == 'Multiselect') {
                 	

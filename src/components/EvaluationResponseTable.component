@@ -21,6 +21,8 @@
 	<apex:attribute name="visiblityRowRules" description="The visibility rules for the fields in the dialog. Use the field names in the rules instead of field IDs." type="String" required="false" default="" />
 	<apex:attribute name="collapsible" description="Boolean describing whether or not the section is collapsible" type="Boolean" required="false" default="true" />
 	<apex:attribute name="addBtnRightAlign" description="To right align the Add button" type="boolean" required="false" default="true" />
+	<apex:attribute name="customLabels" description="json string of field name -> custom label" type="string" required="False" assignTo="{!labels}"/>
+	<apex:attribute name="enableReportButton" description="Boolean controlling whether to enable a report or not" type="Boolean" required="false" default="false" />
 
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
@@ -80,11 +82,13 @@
 		</apex:outputPanel>
         </apex:pageBlockSectionItem>
         
-		<apex:outputPanel layout="none" rendered="{!addEnabled && canCreate }">
-			<apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top: -30px; ">
-				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign}" />
+		<apex:outputPanel layout="none" rendered="{!(addEnabled && canCreate) || enableReportButton}">
+			<apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top: -30px; " >
+				<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Adult')}" onclick="window.open('/{!AdultimmunizationReport}?pv0={!PBSName}'); return false;"/>
+				<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Child')}" onclick="window.open('/{!ChildimmunizationReport}?pv0={!PBSName}'); return false;"/>
+				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign && (addEnabled && canCreate)}" />
 			</apex:outputPanel>
-			<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign}" />
+			<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign && (addEnabled && canCreate)}" />
 		</apex:outputPanel>
 		<apex:outputPanel id="responseTableWrapper">
 
