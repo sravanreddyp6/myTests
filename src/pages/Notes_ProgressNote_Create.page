@@ -33,14 +33,14 @@ function setFocusOnLoad() {};
 <script type="text/javascript">
 j$ = jQuery.noConflict();
 j$(document).ready(function(){
-	j$('.dateInput input').change(function(){
-		if(j$(this).val().toUpperCase().indexOf('PM') > 0 ){
-			j$(this).addClass("timePastNoon");
-		}else{
-			j$(this).removeClass("timePastNoon");
-		}            
-	})
-	j$('.dateInput input').trigger('change');
+    j$('.dateInput input').change(function(){
+        if(j$(this).val().toUpperCase().indexOf('PM') > 0 ){
+            j$(this).addClass("timePastNoon");
+        }else{
+            j$(this).removeClass("timePastNoon");
+        }            
+    })
+    j$('.dateInput input').trigger('change');
 });
 </script>
 
@@ -79,7 +79,8 @@ j$(document).ready(function(){
             </apex:selectRadio>            
                                 
             <apex:repeat value="{!$ObjectType.Progress_Note__c.FieldSets.NewForm}" var="f"> 
-                <apex:inputField value="{!Progress_Note__c[f]}" />
+                <apex:inputField value="{!Progress_Note__c[f]}" rendered="{!IF(And(contains(f.Label,'Unit'),Progress_Note__c.RecordTypeId ='012J00000009TWeIAM'),false,true)}"/>
+                <apex:OutputField value="{!Progress_Note__c[f]}" rendered="{!IF(And(contains(f.Label,'Unit'),Progress_Note__c.RecordTypeId ='012J00000009TWeIAM'),true,false)}" styleclass="thinkingwheel"/>
             </apex:repeat>
             <apex:outputLabel >Required Number of Signatures (put 0 if None)</apex:outputLabel>
             <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}"/>

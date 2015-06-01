@@ -9,13 +9,14 @@ public with sharing class Notes_ProgressNote_Create {
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public Id AZ_OPT_ID, SHIFT_NOTE_ID;
     public String pbsName { get; set; }
+    Public String AsmntOnly{get;set;}
 
     public list<SelectOption> rtOptions = new list<SelectOption>();
     public list<SelectOption> getrtOptions(){return rtOptions ;}
-	
-	// ADDED FOR WVPN-6 to give us a way to identify RecordType default for unsaved note when only one Record Type option is present.
-	// J. Gilliam, 3/19/14.
-	public RecordType defaultRt { get; set; }
+    
+    // ADDED FOR WVPN-6 to give us a way to identify RecordType default for unsaved note when only one Record Type option is present.
+    // J. Gilliam, 3/19/14.
+    public RecordType defaultRt { get; set; }
 
     private Final Progress_Note__c pn;
     
@@ -24,6 +25,7 @@ public with sharing class Notes_ProgressNote_Create {
 
 //contructs
     public Notes_ProgressNote_Create(ApexPages.StandardController controller) {
+        AsmntOnly = 'No';
         myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
         for (RecordType rt: myRTs) {
             if (rt.Name == 'AZ - OPT') {
@@ -44,19 +46,24 @@ public with sharing class Notes_ProgressNote_Create {
             
         }
         pn = (Progress_Note__c) controller.getRecord();
-        
+        pn.Purpose_Service_is_Billable__c = false;
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
-        Service_Assignment__c sa = [select id, name, service_location__r.programid__c from service_assignment__c where id = :saID LIMIT 1];
+        Service_Assignment__c sa = [select id, name, service_location__r.programid__c,recordtype.name from service_assignment__c where id = :saID LIMIT 1];
         
         // If Progress Note is AZ-OPT, we have to default some fields here, but only for non-CM AZ
         if (myState == 'AZ') {
-        	if ( sa.service_location__r.programid__c != '114165002') {
-            	pn.Number_of_Required_Signatures__c = 1;
-            	pn.RecordTypeId = AZ_OPT_ID;
-        	} else {
-        		pn.RecordTypeId = SHIFT_NOTE_ID;
-        	}
-        } 	
+            if ( sa.service_location__r.programid__c != '114165002') {
+                pn.Number_of_Required_Signatures__c = 1;
+                pn.RecordTypeId = AZ_OPT_ID;
+            } else {
+                pn.RecordTypeId = SHIFT_NOTE_ID;
+            }
+        }
+        //Added By Amruth
+        if(sa.recordtype.name == 'Assessment Only'){
+            AsmntOnly = 'Yes';
+            pn.Purpose_Service_is_Billable__c = false;
+        }   
         
         
         // get the user's operating group
@@ -86,6 +93,7 @@ public with sharing class Notes_ProgressNote_Create {
         
         //create record type selection option there is an escape option so is the filter is incorrect as a short term messure -go to the url and remove state in the VF page | (state=) < null or blank |
         SelectOption SO;
+       // SelectOption SO2;
         
         for (RecordType thisRT : myRTs){
             string myName = thisRT.Name.toLowerCase();
@@ -98,37 +106,48 @@ public with sharing class Notes_ProgressNote_Create {
                 rtOptions.Add(SO);
                 break;
             }
+            
             else {
                 if(myName.StartsWith(myState)){
                     SO = new SelectOption(thisRt.Id, thisRt.Name);
                     rtOptions.Add(SO);
                 }
             }
+            
+            //Added by Amruth
+            if(AsmntOnly== 'Yes' && thisRt.Name == 'Therapy'){
+                    SO = new SelectOption(thisRt.Id, thisRt.Name);
+                    
+                    pn.Purpose_Service_is_Billable__c = false;
+        
+                    rtOptions.Add(SO);
+            }
+            
         }
         
         // START: ADDED FOR WVPN-6; default selection if only one record type is present on the page (J. Gilliam, 3/19/14)
         if(rtOptions.size()==1) {
-        	Id defaultRtId;
-        	for(SelectOption o : rtOptions) {
-        		defaultRtId = o.getValue();
-        	}
-        	defaultRt = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Id = :defaultRtId ];
-        	pn.RecordTypeId = defaultRt.Id;
+            Id defaultRtId;
+            for(SelectOption o : rtOptions) {
+                defaultRtId = o.getValue();
+            }
+            defaultRt = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Id = :defaultRtId ];
+            pn.RecordTypeId = defaultRt.Id;
         }
         // END: ADDED FOR WVPN-6; default selection if only one record type is present on the page (J. Gilliam, 3/19/14)
 
 
-		// WVPN-6
-		// GET RECORD TYPES THAT SHOULD HAVE DEFAULT 0 FOR pn.Number_Of_Required_Signatures__c
-		List<RecordType> rtsForZeroSigs = new List<RecordType>();
-		rtsForZeroSigs = [ SELECT Name, DeveloperName FROM RecordType WHERE DeveloperName = 'IN_FCT' OR DeveloperName = 'MA_FCT'
-							OR DeveloperName = 'MD_FCT' OR DeveloperName = 'OH_FCT' ];
-		// LOOP THROUGH THOSE RECORD TYPES AND COMPARE TO RECORD TYPES OF THIS NOTE.  IF SAME, THEN DEFAULT SIGS TO 0
-		for(RecordType rtForLoop : rtsForZeroSigs) {
-			if(rtForLoop.Id==pn.RecordTypeId && pn.Number_of_Required_Signatures__c==null) {
-				pn.Number_of_Required_Signatures__c = 0;
-			}
-		}
+        // WVPN-6
+        // GET RECORD TYPES THAT SHOULD HAVE DEFAULT 0 FOR pn.Number_Of_Required_Signatures__c
+        List<RecordType> rtsForZeroSigs = new List<RecordType>();
+        rtsForZeroSigs = [ SELECT Name, DeveloperName FROM RecordType WHERE DeveloperName = 'IN_FCT' OR DeveloperName = 'MA_FCT'
+                            OR DeveloperName = 'MD_FCT' OR DeveloperName = 'OH_FCT' Or Name = 'Therapy'];
+        // LOOP THROUGH THOSE RECORD TYPES AND COMPARE TO RECORD TYPES OF THIS NOTE.  IF SAME, THEN DEFAULT SIGS TO 0
+        for(RecordType rtForLoop : rtsForZeroSigs) {
+            if(rtForLoop.Id==pn.RecordTypeId && pn.Number_of_Required_Signatures__c==null) {
+                pn.Number_of_Required_Signatures__c = 0;
+            }
+        }
 
     }
 
