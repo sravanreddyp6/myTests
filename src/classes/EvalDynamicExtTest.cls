@@ -50,7 +50,14 @@ private class EvalDynamicExtTest {
         System.assertEquals(false, extension.showEsign);
         System.assertEquals(true, extension.showRevise);
         System.assertEquals(true, extension.showDisregard);
-
+    }
+    static testMethod void buttonsVisibilityHeadToToe() {
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
+        EvalDynamicExt extension;
+        Evaluation__c evaluation;
+        Eval_Type__c evlTyp;
+        PageReference pageRef;
+        createData();
         //head to toe
         evaluation = new Evaluation__c(Status__c = 'Draft', Shift_Start_Time__c = DateTime.now(), Shift_End_Time__c = DateTime.now().addHours(2), Head_to_Toe_Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id);
         insert evaluation;
@@ -59,9 +66,9 @@ private class EvalDynamicExtTest {
         Apexpages.currentPage().getParameters().put('evaltype', evlTyp.Name);
 
         extension =  new EvalDynamicExt();
-		System.assertEquals(true, extension.showEsign);
-		System.assertEquals(true, extension.showDisregard);
-		System.assertEquals(false, extension.showshiftDone);
+        System.assertEquals(true, extension.showEsign);
+        System.assertEquals(true, extension.showDisregard);
+        System.assertEquals(false, extension.showshiftDone);
 
         Matcher MyMatcher1 = militaryTimePattern.matcher(extension.getEvalStatusDate().substring(11));
         System.assert(MyMatcher1.matches());
@@ -84,7 +91,14 @@ private class EvalDynamicExtTest {
         System.assertEquals(false, extension.showEsign);
         System.assertEquals(true, extension.showDisregard);
         System.assertEquals(false, extension.showshiftDone);
-
+    }
+    static testMethod void buttonsVisibilityRestrained() {
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
+        EvalDynamicExt extension;
+        Evaluation__c evaluation;
+        Eval_Type__c evlTyp;
+        PageReference pageRef;
+        createData();
 
         //Restrained
         evaluation = new Evaluation__c(Status__c = 'Not Restrained', ServiceAssignment__c = myData.theSA.Id);
@@ -112,7 +126,15 @@ private class EvalDynamicExtTest {
         System.assertEquals(false, extension.showEsign);
         System.assertEquals(true, extension.showDisregard);
         System.assertEquals(true, extension.showshiftDone);
-
+    }
+    static testMethod void buttonsVisibilityCNA() {
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
+        EvalDynamicExt extension;
+        Evaluation__c evaluation;
+        Eval_Type__c evlTyp;
+        PageReference pageRef;
+        createData();
+        
         //CNA Workbook
         evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id);
         insert evaluation;
@@ -130,9 +152,7 @@ private class EvalDynamicExtTest {
         upsert evaluation;
         extension =  new EvalDynamicExt();
         System.assertEquals(false, extension.showApprove);
-
     }
-
 
    static testMethod void testMyAction() {
         TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();

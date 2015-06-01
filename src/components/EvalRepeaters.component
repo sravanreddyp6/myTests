@@ -54,7 +54,7 @@
                 <div class="pull-right">&nbsp;</div>
                 <apex:outputPanel layout="none" rendered="{! IF(  AND(eval.compositeKey == 'Reduction Review~Reduction Review~', ( !CONTAINS(parentEvalStatus, 'Applied') || (Contains(parentEvalStatus,'Applied') && parentHasOpenAsmt))),
                 												false,
-                												parentEvalStatus != 'Completed' && (eval.repeatable || ( parentEvalOwnerID == $User.Id && counter == 0 )) && canEditEvalType
+                												parentEvalStatus != 'Completed' && parentEvalStatus != 'End of Shift' && (eval.repeatable || ( parentEvalOwnerID == $User.Id && counter == 0 )) && canEditEvalType
                 												) }">
                 <a id="{! eval.compositeKey}" class="btn btn-info btn-sm pull-right"
                     href="#" role="button"

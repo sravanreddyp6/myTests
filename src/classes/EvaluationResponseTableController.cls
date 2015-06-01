@@ -5,6 +5,7 @@ public with sharing class EvaluationResponseTableController {
 	public string username { get; set; }
 	public string password { get; set; }
 	public Boolean eSignable { get; set; }
+	public string labels{ get; set; }
 	
 	public Boolean canCreate { get {
 		Schema.DescribeSObjectResult oSchema = Evaluation_Response__c.sObjectType.getDescribe();
@@ -131,6 +132,35 @@ public with sharing class EvaluationResponseTableController {
             currentResponse.Time_Observed__c = Utility.getDateTimeFromString(value+':00');
         }
     }
+    public String timeGiven {
+        get {
+            return currentResponse.Time_Given__c == null ? null : Utility.getMilitarytimeNoSeconds(currentResponse.Time_Given__c);
+        }
+        set {
+            currentResponse.Time_Given__c = Utility.getDateTimeFromString(value+':00');
+        }
+    }
+    
+    public string getAdultimmunizationReport(){
+    	string theId;
+        theId= [select id, developername from report where developername = 'Immunization_for_PBS' limit 1].id;
+  
+        return theId;
+    }
+    
+      public string getChildimmunizationReport(){
+    	string theId;
+        theId= [select id, developername from report where developername = 'Immunization_Child_for_PBS' limit 1].id;
+  
+        return theId;
+    }
+    
+    public string getPBSName(){
+    	string name;
+    	name = [SELECT Name FROM Contact WHERE Id=: pbsId].Name;
+    	return name;
+    	
+    }
 	public void saveResponse() {
 		System.debug('saveResponse called, currentResponse: ' + currentResponse);
 		//      Start EC-116
@@ -254,12 +284,13 @@ public with sharing class EvaluationResponseTableController {
 			lbl.value = columnsToHeadersMap.get(column);
 			if(reqFields.contains(column) ){lbl.styleClass = 'evalCompReqField';}
 
-			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c' || column == 'Time_Observed__c'){
+			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c' || column == 'Time_Observed__c' || column == 'Time_Given__c'){
 				Component.Apex.InputText dialogInput = new Component.Apex.InputText(id=column);
 				dialogInput.styleClass = 'militaryDateTime';
 				if (column == 'Isolation_Event_Start_Date__c' ) dialogInput.expressions.value = '{!isolationEventStartDate}';
 				else if (column == 'Isolation_Event_End_Date__c' ) dialogInput.expressions.value = '{!isolationEventEndDate}';
 				else if (column == 'Time_Observed__c' ) dialogInput.expressions.value = '{!timeObserved}';
+				else if (column == 'Time_Given__c' ) dialogInput.expressions.value = '{!timeGiven}';
 				PBSI.childComponents.add(lbl);
 				PBSI.childComponents.add(dialogInput);
 			}else{
@@ -324,11 +355,42 @@ public with sharing class EvaluationResponseTableController {
 				continue;
 				
 			columnsToFetch.add(column.getFieldPath());
-			columnsToHeadersMap.put(column.getFieldPath(), column.getLabel());
+			
+			// check for custom label
+			string label = (string)column.getLabel();
+			Map<String,String> labelMap = new map<String, String>();
+			system.debug( labels);
+			
+			if (!string.isempty( labels)) {
+				labels= labels.unescapeHtml3();
+				list<FieldLabelVal> objs = (list<FieldLabelVal>) JSON.deserialize(labels, list<FieldLabelVal>.class);
+			
+				for(FieldLabelVal d : objs){ 
+			    	 labelMap.put(d.field, d.label);
+				}
+				system.debug( labelMap);
+			
+			}
+		
+			if ( labelMap.size() > 0 ) {
+				if ( labelMap.get( column.getFieldPath())!= null) {
+					
+					label = String.valueof(labelMap.get( column.getFieldPath()));
+					system.debug( 'found custom label for column.getFieldPath(): '  + label );
+				}
+			} 
+			columnsToHeadersMap.put(column.getFieldPath(), label);
 			if( column.getRequired() ){
 				reqFields.add( column.getFieldPath() );
 			}
 		}
 		return String.join(columnsToFetch, ', ');
+	
 	}
+	
+	public class FieldLabelVal{
+		public String field;
+		public String label;
+	}
+	
 }

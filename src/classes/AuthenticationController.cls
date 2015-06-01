@@ -45,9 +45,13 @@ public with sharing class AuthenticationController {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, errorMsg));
 			return null;
 		}
-		Type t = Type.forName(Handler_Class);
-		AuthenticatedAction handler = (AuthenticatedAction) t.newInstance();
-		return handler.handle(pID, UserInfo.getUserId());
+		if (Handler_Class != null && Handler_Class != '') {
+			Type t = Type.forName(Handler_Class);
+			AuthenticatedAction handler = (AuthenticatedAction) t.newInstance();
+			return handler.handle(pID, UserInfo.getUserId());
+		} else {
+			return null;
+		}
 	}
 
 	public PageReference authenticate() {
