@@ -33,4 +33,19 @@ public with sharing class AdmissionTriggeredActions {
 	    return dueDate;
 	}
 
+    public void OnBeforeInsert(Admission__c[] newObjects){            
+        updateAdmDate(newObjects);
+    }
+    
+    public void OnBeforeUpdate(Admission__c[] oldObjects, Admission__c[] updatedObjects, Map<Id,Admission__c> newObjMap, Map<Id, Admission__c> oldObjMap){      
+        updateAdmDate(updatedObjects);
+    }
+    
+    private void updateAdmDate(Admission__c[] admissions){
+        for(Admission__c adm: admissions){
+            if ( adm.Admission_Effective_DateTime__c != null )
+               adm.Effective_Date__c = adm.Admission_Effective_DateTime__c.date();
+        }
+    }
+    
 }

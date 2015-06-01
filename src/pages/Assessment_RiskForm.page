@@ -628,5 +628,5 @@ function toggleById(id, ms){
 </div>    
 </div>
 </apex:form>
-<c:SObjectNotesAndAttachments parentId="{!Assessment__c.ID}" rendered="{!!printmode}"  showAction="false"/>
+<c:SObjectNotesAndAttachments parentId="{!Assessment__c.ID}" showAction="true"  pbsId="{!Assessment__c.Admission__r.Person_Being_Served__c}" parentPage="Assessment" admId="{!Assessment__c.Admission__c}" asmtType="{!Assessment__c.Assessment_Type__r.Name}" asmtId="{!Assessment__c.Id}"  rendered="{!!printmode }" />
 </apex:page>

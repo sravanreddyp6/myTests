@@ -8,7 +8,7 @@ public with sharing class AnotoUtility {
             throw new PdfGenerationException('Handler not found: ' + handlerName);
         }
         return generatePdf(handlers[0].App_Id__c, xml);
-        
+
     }
     public static String generatePdf(String appId, String xml) {
         Http h = new Http();
@@ -124,7 +124,7 @@ public with sharing class AnotoUtility {
 
     public static String getLoginUrl() {
         System.debug('Salesforce URL Host: ' + URL.getSalesforceBaseUrl().getHost());
-        if (URL.getSalesforceBaseUrl().getHost().left(4).equalsignorecase('c.cs')) {
+        if ([select Id, IsSandbox from Organization limit 1].get(0).IsSandbox) {
             // Sandbox
             return 'https://test.salesforce.com/services/oauth2/token';
         } else {

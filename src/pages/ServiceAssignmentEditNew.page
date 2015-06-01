@@ -4,10 +4,14 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-    <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
-    <!--  apex:includeScript value="{!URLFOR($Resource.momentJS)}" /-->
+    <apex:includeScript value="{!URLFOR($Resource.ServiceAssignmentFS)}" />
+	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+
     <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS" />
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
 
 	<style>
@@ -71,6 +75,12 @@
 			color: #000000;
 			cursor: text;
 		}
+        #seizureMessages .success {
+            color: green;
+        }
+        #seizureMessages .error {
+            color: red;
+        }
 	</style>
 
 	<c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" servAssignNew="{!newSA}" admId="{!admissionId}" />
@@ -81,7 +91,7 @@
 			j$('input[id$=phaseToSave]').val(thePhase);
 		}
 
-		openModalDialog = function (dialogId, tagType, titleString, dClass, width) {
+		openModalDialogSA = function (dialogId, tagType, titleString, dClass, width) {
 			if (!width) {
 				width = 800;
 			}
@@ -98,6 +108,7 @@
 					resizable: false,
 					minHeight: 0,
 					dialogClass: 'modalDialog',
+					zIndex: 9, // so that datepickers appear on top of the dialogs
 					closeOnEscape: false,
 					position: {
 						my: "center top",
@@ -112,6 +123,12 @@
 				j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
 			}
 		};
+        closeModalDialogSA = function (dialogId, tagType) {
+	        selector = tagType + '[id$=' + dialogId + ']';
+	        j$(selector).dialog('destroy');
+	        // Allow "background" to be scrollable when dialogs are closed.
+	        j$("body").css("overflow", "auto");
+	    };
 
 		fundingSourceSave = function (isClose) {
 			// We cant use Visualforce functions/variables in a Static Resource JS file, so we have to pass it in here.
@@ -152,90 +169,111 @@
 		}
 
 
-        validateEval = function () {
-            var evalErrors = [];
-            var dupe = [];
-            var startValue = j$('[id$=evalstartTime]').val();
-            var st = new Date(startValue);
-            var formatStart = moment(st).format();
-            var start = new Date(formatStart);
-            var endValue = j$('[id$=evalendTime]').val();
-            var en = new Date(endValue);
-            var formatEnd = moment(en).format();
-            var end = new Date(formatEnd);
 
-            j$('#evaluationMessages').html('');
 
-            if (startValue == '' || endValue == '') {
-                evalErrors.push('Shift Start time and end time cannot be blank');
+
+        seizureSave = function (isClose) {
+            closeSeizure = isClose;
+            seizureClearMessages();
+            validateSeizure();
+        }
+
+        function loadSeizure(seizureId) {
+            showEditSeizure(seizureId);
+        }
+
+        validateSeizure = function () {
+            var seizureErrors = [];
+            var startValue = j$('[id$=seizureEntry_startDateTime]').val();
+            var formatStart = new Date(moment(new Date(startValue)).format());
+            var endValue = j$('[id$=seizureEntry_endDateTime]').val();
+            var formatEnd = new Date(moment(new Date(endValue)).format());
+
+            j$('#seizureMessages').html('');
+            if (startValue == '' && endValue == '') {
+                seizureErrors.push('The Date must contain a valid value. Please enter the date of the Seizure event.');
+            }
+            else if (startValue == '') {
+                seizureErrors.push('The Start Time must contain a valid value. Please enter a Start Time of the Seizure event.');
+            }
+            else if (endValue == '') {
+                seizureErrors.push('The End Time must contain a valid value. Please enter an End Time of the Seizure event.');
+            }
+            else if (formatStart >= formatEnd) {
+                seizureErrors.push('The End Time must come AFTER your Start Time. Please adjust the Start and End times.');
+            }
+            if (startValue.substring(0,10) > getToday()) {
+                seizureErrors.push('The Start Time cannot be in the future. Please adjust the Start Time of the Seizure event.');
+            }
+            if (j$('[id$=seizureEntry_observedBy]').val() == '') {
+                seizureErrors.push('The Observed By field must contain a value. Please enter the name of the individual who observed the event of the Seizure event.');
             }
 
-            if (start >= end) {
-                evalErrors.push('Shift End time Should be greater than Start time');
+            if (seizureErrors.length > 0) {
+                seizureScrollToTop();
+                j$.each(seizureErrors, function (index, error) {
+                    j$('#seizureMessages').append('<li class="error">' + error + '</li>');
+                });
+            } else {
+                Visualforce.remoting.Manager.invokeAction(
+	                '{!$RemoteAction.ServiceAssignmentExt.findDuplicateSeizure}',
+	                startValue,
+	                endValue,
+	                '{!Service_Assignment__c.Id}',
+	                j$('[id$=seizureEntry_Id]').val(),
+	                function(result, event){
+	                    if (event.status) {
+	                            if(result && ! j$('[id$=seizureEntry_duplicateEntry]').is(":checked") ){
+	                                j$('[id$=seizure-dialog-confirm]').dialog( "open" );
+	                            } else {
+	                                saveSeizure();
+	                            }
+	                    } else if (event.type === 'exception') {
+	                        document.getElementById("seizureMessages").innerHTML = event.message;
+	                    } else {
+	                        document.getElementById("seizureMessages").innerHTML = event.message;
+	                    }
+	                },
+	                {escape: true}
+                );
             }
+        }
 
-			if (evalErrors.length > 0) {
 
-				j$.each(evalErrors, function (index, error) {
-					j$('#evaluationMessages').append('<li class="error">' + error + '</li>');
-				});
+	    seizureScrollToTop = function (isSuccess) {
+	        if (isSuccess && jQuery('.errorMsg').length == 0 ) {
+	            j$('#seizureMessages').append('<li class="success">Save successful!</li>');
+	        }
+	        j$('[id$=seizureTrackingModal].ui-dialog-content').parent().animate({
+	            scrollTop: 0
+	        }, 200);
+	    }
+	    seizureClearMessages = function () {
+	        j$('#seizureMessages').html('');
+	    }
 
-			} else {
 
-						Visualforce.remoting.Manager.invokeAction(
-						'{!$RemoteAction.ServiceAssignmentExt.finddupeEval}',
-							startValue,endValue,'{!Service_Assignment__c.Id}',
-						function(result, event){
-							if (event.status) {
-								console.log(result);
-								if(result){
-										dupe.push('There is already an existing Nurses Shift Documentation for the current timings. Do you still want to proceed?');
-										j$('#dupeFound').append('<li class="warning">' + dupe + '</li>');
-										j$('[id$=evalstartdate]').prop('disabled', true);
-										j$('[id$=evalenddate]').prop('disabled', true);
-										j$('[id$=evalProceed]').show();
-										j$('[id$=enterNew]').show();
-										j$('[id$=evalSave]').hide();
-								} else{
-									evaluationSave();
-								}
+        j$(function() {
+            j$('[id$=seizure-dialog-confirm]').dialog({
+			    resizable:false,
+			    height:180,
+			    modal:true,
+			    autoOpen:false,
+			    buttons: { Yes: function() { j$(this).dialog( "close" ); saveSeizure(); },
+						    No : function() { j$(this).dialog( "close" ); }
+		                 }
+		    });
+        });
 
-							} else if (event.type === 'exception') {
-								document.getElementById("dupeFound").innerHTML = event.message;
-							} else {
-								document.getElementById("dupeFound").innerHTML = event.message;
-							}
-						},
-						{escape: true}
-					);
-
-				}
-
-		}
-
-		clearDates = function() {
-			j$('[id$=evalstartTime]').val('');
-			j$('[id$=evalendTime]').val('');
-			j$('[id$=evalstartdate]').prop('disabled', false);
-			j$('[id$=evalenddate]').prop('disabled', false);
-			j$('[id$=evalstartdate]').val('');
-			j$('[id$=evalenddate]').val('');
-			j$('#evaluationMessages').html('');
-			j$('#dupeFound').html('');
-			j$('[id$=evalProceed]').hide();
-			j$('[id$=evalSave]').show();
-			j$('[id$=enterNew]').hide();
-
-		}
 	</script>
 	<apex:pagemessages id="msgs" />
 	<br />
+	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock2.addShiftDocStatus}" />
+	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!theServAssign.Id}" shiftType="CNA Workbook" onShowRerender="msgs, evaluationscna" status="{!$Component.myFRM.CNABlock.AddCNAStatus}" />
 	<apex:form id="myFRM">
-		<apex:actionFunction name="evaluationSave" action="{!saveEvaluation}" status="saveevaluationStatus" reRender="" />
-		<apex:actionFunction name="showAddevaluation" action="{!showAddevaluation}" status="AddevaluationStatus" oncomplete="openModalDialog('evaluationModal','span','Add Nurses Shift Documentation',null,1000); j$('#evaluationMessages').html('');" reRender="evaluations,msgs" />
-		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialog('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
-		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
-		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialog('FundingSourceModal', 'span', 'Add Funding Source', null, 1000); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
+		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
+		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
+		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
 			<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 		</apex:actionFunction>
 		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1" />
@@ -255,6 +293,14 @@
 			<apex:param name="effend" value="" assignTo="{!effEnd}" />
 		</apex:actionFunction>
 
+        <!-- start seizure actions-->
+<!--         <apex:actionFunction name="showAddSeizure" status="AddEditSeizureStatus" action="{!showAddSeizure}" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry,seizureMessages" /> -->
+        <apex:actionFunction name="saveSeizure" action="{!saveSeizure}" status="saveSeizureStatus" oncomplete="seizureScrollToTop(true); if (closeSeizure && jQuery('.errorMsg').length == 0) closeModalDialogSA('seizureTrackingModal', 'div');" rerender="SeizureTrackingList,seizureEntry,seizureMessages" />
+        <apex:actionFunction name="showEditSeizure" action="{!showEditSeizure}" status="AddEditSeizureStatus" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600);seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry, seizureMessages">
+            <apex:param name="seizureId" value="" />
+        </apex:actionFunction>
+        <!-- end seizure actions-->
+
 		<!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
 		<apex:pageBlock mode="detail" title="Service Assignment{!if(editSA==true,' Edit','')}">
 
@@ -263,7 +309,8 @@
 				<apex:actionStatus id="SaveStatus1">
 					<apex:facet name="stop">
 						<apex:outputPanel id="buttons">
-							<apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}" /> &nbsp;
+							<apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"
+							                     onComplete="saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/> &nbsp;
 							<apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" /> &nbsp;
 							<apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
 
@@ -284,8 +331,20 @@
 				<apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}" />
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
-				<apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Start_Date__c}" required="true" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
+                <apex:pageBlockSectionItem rendered="{!!editSA}">
+                    <apex:outputLabel value="Start Date" />
+                    <apex:outputText value="{!saStrStartDateTime}" />
+                </apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!editSA}">
+                    <apex:outputLabel value="Start Date" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputText id="startdate" value="{!saStrStartDateTime}" onblur="changeEffectiveDates();"/>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
 				<apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
 				<apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}" />
 				<apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}" />
@@ -348,11 +407,7 @@
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
 				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM}">
 					<apex:outputLabel value="Model" for="modelfield" />
-					<!--         <apex:actionregion > -->
 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
-					<!--              <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" /> -->
-					<!--         </apex:inputField> -->
-					<!--         </apex:actionregion> -->
 				</apex:pageblocksectionitem>
 
 			</apex:pageBlockSection>
@@ -367,8 +422,16 @@
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
 
-				<apex:outputField value="{!theServAssign.Start_Date__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Start_Date__c}" id="startdate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
+                <apex:pageBlockSectionItem rendered="{!!editSA}">
+                    <apex:outputLabel value="Start Date" />
+                    <apex:outputText value="{!saStrStartDateTime}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!editSA}">
+                    <apex:outputLabel value="Start Date" />
+                    <apex:outputPanel >
+                            <apex:inputText id="startdate" value="{!saStrStartDateTime}" onblur="changeEffectiveDates();"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
 
 				<apex:outputField value="{!theServAssign.Medical_Record_Number__c}" />
 
@@ -428,6 +491,11 @@
 				<apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}" />
 				<apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
 
+				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
+				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
+
+				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA}" />
+				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{! !editSA}" />
 
 				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}" />
 				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}" />
@@ -435,11 +503,7 @@
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
 				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM}">
 					<apex:outputLabel value="Model" for="modelfield" />
-					<!--         <apex:actionregion > -->
 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
-					<!--              <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="ContractAssoc, ProgAssoc" /> -->
-					<!--         </apex:inputField> -->
-					<!--         </apex:actionregion> -->
 				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
 
@@ -854,7 +918,7 @@ END: Uncomment to have the element collapsed by default -->
 		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis}">
 
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" onClick="showAddDiagnosis();return false;" />
+				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" />
 			</div>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -893,6 +957,169 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:pageBlock>
 
 
+        <!--  Seizure section -->
+        <!-- Add Seizure Tracking modal. -->
+        <apex:outputPanel id="seizureTrackingModal" layout="block" style="display:none" rendered="{!!newSA}">
+            <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+            <div id='seizureMessages'></div>
+            <apex:pageBlock >
+                <apex:pageBlockSection columns="1" id="seizureEntry">
+                    <apex:pageBlockSectionItem ><apex:outputLabel Value="Start Time"/>
+                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem > <apex:outputLabel Value="End Time"/>
+                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy"/>
+                    <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
+                    <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
+                    <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
+                </apex:pageBlockSection>
+                    <apex:inputHidden value="{!seizureStart_DateTime}" id="seizureEntry_startDateTime" />
+                    <apex:inputHidden value="{!seizureEnd_DateTime}" id="seizureEntry_endDateTime" />
+                <apex:pageblockButtons location="bottom">
+                    <apex:actionStatus id="saveSeizureStatus">
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop">
+	                        <apex:outputPanel >
+			                    <apex:commandButton id="saveSeizure" value="Save" onclick="seizureSave(true);return false;" />
+			                    <apex:commandButton id="saveAndNewSeizure" value="Save & New" onclick="seizureSave(false); return false;" />
+			                    <apex:commandButton value="Cancel" onclick="closeModalDialogSA('seizureTrackingModal', 'div');j$('#seizureMessages').html('');return false;" />
+	                        </apex:outputPanel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        <apex:outputPanel id="seizure-dialog-confirm" title="Confirm save" layout="block" style="display:none">
+		    <apex:outputPanel layout="inline">
+            <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />
+		        There is already an existing Seizure for the overlapping time, this could be a duplicate entry. Do you still want to Save?
+		    </apex:outputPanel>
+        </apex:outputPanel>
+
+        <a id="Seizure_Tracking"></a>
+        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW}">
+            <div class="pbHeaderButton">
+<!--             <apex:actionStatus id="AddSeizureStatus"> -->
+<!--                 <apex:facet name="start"> -->
+<!--                     <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
+<!--                 </apex:facet> -->
+<!--                 <apex:facet name="stop" > -->
+<!--                <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" /> -->
+                    <input type="button" class="btn" value="Add Seizure" onclick="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
+<!--                <input type="button" class="btn" value="Add Seizure" onclick="showAddSeizure(); return false;"/> -->
+                    <input type="button" class="btn" value="Seizure Report" onclick="window.open('/apex/SeizureTrackingRpt?saId={!Service_Assignment__c.Id}', '_self'); return false;" />
+<!--                 </apex:facet> -->
+<!--             </apex:actionStatus> -->
+            </div>
+            <apex:outputText value="No seizures to display" rendered="{!seizures.size==0}" />
+            <apex:outputPanel rendered="{!seizures.size > 5}">Showing 5 most recent Records. Click <a href="/apex/SeizureListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+
+<!--             <apex:actionStatus id="editSeizureStatus"> -->
+<!--                 <apex:facet name="start"> -->
+<!--                     <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
+<!--                 </apex:facet> -->
+<!--                 <apex:facet name="stop"></apex:facet> -->
+<!--             </apex:actionStatus> -->
+
+            <apex:pageBlockTable value="{!seizures}" var="seizure" rendered="{!seizures.size>0}" rows="5">
+                <apex:column headerValue="Action" width="12%">
+                     <a href="#" onclick="loadSeizure('{!seizure.Id}');return false; ">Edit</a>
+                </apex:column>
+                <apex:column headerValue="Seizure Start Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.Start_DateTime__c}"/></apex:column>
+                <apex:column headerValue="Seizure End Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.End_DateTime__c}"/></apex:column>
+                <apex:column value="{!seizure.Observed_By__c}" width="16%"/>
+                <apex:column value="{!seizure.Comments__c}" width="40%"/>
+                <apex:column value="{!seizure.Duplicate_Entry__c}" width="5%"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+
+        <apex:actionStatus id="AddEditSeizureStatus" >
+            <apex:facet name="start">
+                    <style>
+                    .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+                .foggy{
+                    opacity:0.8;
+                    background-color:#ccc;
+                    position:fixed;
+                    width:100%;
+                    height:100%;
+                    top:0px;
+                    left:0px;
+                    z-index:1000;
+                }
+                </style>
+
+                <div class="foggy" />
+                <div class="thinkingwheel" >
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                </div>
+            </apex:facet>
+            <apex:facet name="stop"> </apex:facet>
+        </apex:actionStatus>
+        <!-- end Seizures section-->
+
+	<!-- Restraint Events Start -->
+		<a name="Assessment_res" id="Assessment_res"></a>
+		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
+			<div class="pbHeaderButton">
+				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && canAddShiftDoc}"/>
+				<apex:commandButton value="Restraint Reduction Report" onclick="openModalDialogSA('restraintReportModal', 'span', 'Generate Restraint Reduction Report'); return false; " />
+			</div>
+			<apex:pageBlockTable value="{!restraintEvents}" var="event" rendered="{!restraintEvents.size > 0}">
+<!-- 				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
+<!-- 				</apex:column> -->
+				<apex:column headerValue="Name">
+					<apex:outputLink value="/apex/EvaluationView?id={!event.Id}">{!event.Name}</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Restraint Status">
+					<apex:outputText value="{!event.Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Restraint Event Start Time" >
+					<c:MilitaryDatetime dateTimeVal="{!event.Shift_Start_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Restraint Event End Time" >
+					<c:MilitaryDatetime dateTimeVal="{!event.Shift_End_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Owner Name">
+					<apex:outputText value="{!event.Owner.Name}" />
+				</apex:column>
+				<apex:column headerValue="Last Modified">
+					<apex:outputText value=" {!event.LastModifiedDate}" />
+				</apex:column>
+<!-- 				<apex:column headerValue="Event End At"> -->
+<!-- 					<apex:outputfield value=" {!event.Signed_At__c}" /> -->
+<!-- 				</apex:column> -->
+			</apex:pageBlockTable>
+			<apex:outputText value="No Restraint Events to display" rendered="{!restraintEvents.size=0 || restraintEvents == null}" />
+			<apex:outputPanel rendered="{!restraintEvents.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Restraint Event" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+		</apex:pageBlock>
+<!-- 		End -->
+
+        <!-- Isolation Events Start -->
+        <a id="isolation"></a>
+        <apex:pageBlock title="Isolation Events" rendered="{!!editSA && vfVarIsCM}" >
+            <c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
+                                       type="Isolation Event"
+                                       formId="{!$Component.myFRM}"
+                                       uniqueId="Isolation_Event"
+                                       showTitle="false"
+                                       rules="{&quot;Isolation_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
+                                       cols="1"
+                                       rows="5"
+                                       showDisregard="false"
+                                       eSign="false"
+                                       addEnabled="true"
+                                       editEnabled="true"
+                                       showAddNew="false"
+                                       collapsible="false"
+                                       addBtnRightAlign="true" />
+        </apex:pageBlock>
+        <!-- Isolation Events End -->
+
 		<!--  Plan section -->
 		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="planstatus" />
 		<a name="Plan" id="Plan"></a>
@@ -900,7 +1127,7 @@ END: Uncomment to have the element collapsed by default -->
 			<div class="pbHeaderButton">
 				<apex:actionStatus id="planstatus">
 					<apex:facet name="stop">
-						<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan();" />
+						<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
 					</apex:facet>
 					<apex:facet name="start">
 						<apex:commandButton value="Loading..." disabled="true" />
@@ -913,7 +1140,8 @@ END: Uncomment to have the element collapsed by default -->
 
 				<apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) }">
 
-					<apex:column headerValue="Action" styleClass="editcol"><a href="/{!pl.ID}">Edit</a>
+					<apex:column headerValue="Action" styleClass="editcol" rendered="{!canEditPlan}">
+						<a href="/{!pl.ID}">Edit</a>
 					</apex:column>
 					<apex:column headerValue="Name">
 						<apex:outputLink value="/{!pl.id}">
@@ -927,6 +1155,7 @@ END: Uncomment to have the element collapsed by default -->
 
 			</apex:pageBlockSection>
 		</apex:pageBlock>
+
 		<!--  SkillWorksheet section -->
 		<a name="SkillWorksheet" id="SkillWorksheetAnchor"></a>
 		<apex:pageBlock id="SkillWorksheet" title="Active Skill Worksheets" rendered="{! showWorksheetBlocks && vfVarCanAccessWS}">
@@ -998,63 +1227,60 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 
-		<!-- Admission and Shift Assessments Section -->
-		<apex:outputPanel id="evaluationModal" style="display:none">
-			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
-			<div id='evaluationMessages'></div>
-			<apex:pageBlock title="Add Nurses Shift Documentation" rendered="{!vfVarIsCM}">
-				<apex:pageBlockSection columns="2" id="evaluationEntry">
-					<apex:pageBlockSectionItem >
-						<apex:outputPanel >
-							<apex:outputLabel Value="Shift Start Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalstartTime" dateTimeVal="{!evaluation.Shift_Start_Time__c}" datetimepickerid="evalstartdate" shiftTop="20" />
-							<apex:inputhidden value="{!evaluation.Shift_Start_Time__c}" id="evalstartTime" />
-						</apex:outputPanel>
-					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem >
-					<apex:outputpanel >
-							<apex:outputLabel Value="Shift End Time" styleClass="labelCol"/>
-							<c:MilitaryDatetime edit="true" hiddenFieldId="evalendTime" dateTimeVal="{!evaluation.Shift_End_Time__c}" datetimepickerid="evalenddate" shiftTop="20" />
-							<apex:inputhidden value="{!evaluation.Shift_End_Time__c}" id="evalendTime" />
-						</apex:outputpanel>
-					</apex:pageBlockSectionItem>
-				</apex:pageBlockSection>
-				<div id="dupeFound" ></div>
-				<apex:pageBlockButtons location="bottom">
-					<apex:commandButton value="Save" onclick="validateEval();return false;" id="evalSave" />
-					<apex:commandbutton value="Proceed" onClick="evaluationSave(); return false;" id="evalProceed"/>
-					<apex:commandButton value="Enter new time" onClick="clearDates(); j$('#dupeFound').html(''); return false;" id="enterNew"/>
-					<apex:commandButton value="Cancel" onclick="closeModalDialog('evaluationModal', 'span'); clearDates(); return false;" />
-					<apex:actionStatus id="saveevaluationStatus">
-						<apex:facet name="start">
-							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-						</apex:facet>
-						<apex:facet name="stop" />
-					</apex:actionStatus>
-				</apex:pageBlockButtons>
-			</apex:pageBlock>
-		</apex:outputPanel>
-		<a name="ShiftAssessments" id="ShiftAssessments"></a>
-		<apex:pageBlock title="Resident Assessment and Nurses Shift Documentation" rendered="{!showNurseAssessment && !editSA && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
+		<a id="residentAssessment"></a>
+		<apex:pageBlock title="Resident Assessment" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
 			<div class="pbHeaderButton">
-				<apex:CommandButton value="Add Resident Assessment" rendered="{!Service_Assignment__c.Status__c!='Inactive' && evaluations.size = 0}" action="{!addResidentAssessment}" status="AddResidentAssessmentStatus" rerender="none" />
+
+				<apex:CommandButton value="Add Resident Assessment" rendered="{! AND(Service_Assignment__c.Status__c != 'Inactive', showResAsmt, canAddShiftDoc)}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" id="residentAsmtButton" />
 					<apex:actionStatus id="AddResidentAssessmentStatus" >
 						<apex:facet name="start">
-							<apex:outputText> <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /><i><b>Please wait..</b></i></apex:outputText>
+							<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+							<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+								<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+							</div>
 						</apex:facet>
 						<apex:facet name="stop" />
 					</apex:actionStatus>
-				
-				<apex:commandButton value="Add Nurses Shift Documentation" rendered="{!Service_Assignment__c.Status__c!='Inactive' && evaluations.size > 0}" onclick="showAddevaluation(); j$('[id$=evalProceed]').hide(); j$('[id$=enterNew]').hide();return false;" />
-				<apex:actionStatus id="AddevaluationStatus">
+			</div>
+			<apex:pageBlockTable styleclass="pcBody-list" value="{!residentAssessments}" var="evs"  rendered="{!residentAssessments.size > 0}" id="evaluations">
+					<apex:column >
+						 <apex:facet name="header">Action</apex:facet>
+						<apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c && canAddShiftDoc}">Edit</apex:outputLink>
+					</apex:column>
+					<apex:column >
+						 <apex:facet name="header">Name</apex:facet>
+						<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+					</apex:column>
+					<apex:column >
+						 <apex:facet name="header">Status</apex:facet>
+						 <apex:outputText >{!evs.Status__c}</apex:outputText>
+					</apex:column>
+					<apex:column headerValue="Signed At" >
+						<apex:outputfield value=" {!evs.Signed_At__c}" />
+					</apex:column>
+					<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+					<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+			</apex:pageBlockTable>
+			<apex:outputText value="No records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
+			<apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
+		</apex:pageBlock>
+
+		<a name="ShiftAssessments" id="ShiftAssessments"></a>
+		<apex:pageBlock title="Nurses Shift Documentation" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock2">
+			<div class="pbHeaderButton">
+				<apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddShiftDoc) }" />
+				<apex:actionStatus id="AddShiftDocStatus">
 					<apex:facet name="start">
-						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+						<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+							<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+						</div>
 					</apex:facet>
 					<apex:facet name="stop" />
 				</apex:actionStatus>
 			</div>
-			<apex:pageBlockTable styleclass="pcBody-list" value="{!evaluations}" var="evs" rendered="{!evaluations.size>0}" id="evaluations">
-				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}&tab=demographicsTab" rendered="{!!evs.Is_Signed__c}">Edit</apex:outputLink>
+			<apex:pageBlockTable styleclass="pcBody-list" value="{!shiftAssessments}" var="evs" rendered="{!shiftAssessments.size > 0}" id="evaluations2">
+				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c && canADdShiftDoc}">Edit</apex:outputLink>
 				</apex:column>
 				<apex:column headerValue="Name">
 					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
@@ -1065,28 +1291,67 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headerValue="Shift End Time" >
 					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
 				</apex:column>
-				<apex:column value="{!evs.Status__c}" />
-				<apex:column headerValue="Signed" value="{!evs.Is_Signed__c}" />
-				<apex:column headerValue="Signed By">
-					 <apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}" escape="false">
-						<a href="/{!evs.Evaluation_Responses__r[0].Owner.Id}">{!evs.Evaluation_Responses__r[0].Owner.Name}</a>
-					</apex:outputText>
+				<apex:column headerValue="Head to Toe Status">
+					<apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Signed At" >
+					<apex:outputfield value=" {!evs.Head_to_Toe_Signed_At__c}" />
+				</apex:column>
+				<apex:column headerValue="Shift Status">
+					<apex:outputText value="{!evs.Status__c}" />
 				</apex:column>
 				<apex:column headerValue="Signed At">
-					<apex:outputText rendered="{!evs.Evaluation_Responses__r.size!=0}">
-						<apex:outputField value="{!evs.Evaluation_Responses__r[0].CreatedDate}" />
-					</apex:outputText>
+					<apex:outputfield value=" {!evs.Signed_At__c}" />
 				</apex:column>
 				<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
 				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
 			</apex:pageBlockTable>
-			<apex:outputText value="No Records to display" rendered="{!evaluations.size=0 || evaluations == null}" />
-			<apex:outputPanel rendered="{!evaluations.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+			<apex:outputText value="No records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
+			<apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Nurses Shift Documentation" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
+		</apex:pageBlock>
+		<apex:pageBlock title="CNA Workbooks" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="CNABlock">
+			<div class="pbHeaderButton">
+				<apex:commandButton value="Add CNA Workbook" onclick="showAddShiftDoc2(); return false;" status="AddCNAStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddCNA)}" />
+				<apex:actionStatus id="AddCNAStatus">
+					<apex:facet name="start">
+						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+						<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+							<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+						</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
+			</div>
+
+			<apex:pageBlockTable styleclass="pcBody-list" value="{!cnaWorkbooks}" var="evs" rendered="{!cnaWorkbooks.size > 0}" id="evaluationscna">
+				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c && canAddCNA}">Edit</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Name">
+					<apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Shift Start Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Shift End Time" >
+					<c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
+				</apex:column>
+				<apex:column headerValue="Status">
+					<apex:outputText value="{!evs.Status__c}" />
+				</apex:column>
+				<apex:column headerValue="Signed At" >
+					<apex:outputfield value=" {!evs.Signed_At__c}" />
+				</apex:column>
+				<apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+				<apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+			</apex:pageBlockTable>
+			<apex:outputText value="No records to display" rendered="{!cnaWorkbooks== null || cnaWorkbooks.size=0 }" />
+			<apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
+
 		</apex:pageBlock>
 
 		<!--  Notes section -->
 		<a name="Notes" id="Notes"></a>
-		<apex:pageBlock id="Notes" title="{!if(vfVarIsCM,'Shift Notes','Notes')}" rendered="{! !editSA}">
+		<apex:pageBlock id="Notes" title="Notes" rendered="{! AND(!editSA, !vfVarIsCM)}">
 			<div class="pbHeaderButton">
 				<!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
 				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !vfVarIsCB}" value="Goal/Objective Documentation" />
@@ -1137,6 +1402,7 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 		<!-- end FAD Assessments -->
+
 
 		<!--  Funding Sources section -->
 		<!-- Add Funding Source modal. -->
@@ -1224,7 +1490,7 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
 				</apex:pageBlockSection>
 
-				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
+				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian' }">
 					<apex:outputText value="Benefit Information" styleClass="modalSubheader" />
 					<apex:pageBlockSectionItem />
 					<apex:inputField value="{!fundingSource.Effective_Date__c}" />
@@ -1397,10 +1663,10 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlock>
 
 			<apex:pageBlock >
-				<apex:pageblockButtons location="bottom">
+				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource}">
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
-					<apex:commandButton value="Cancel" onclick="closeModalDialog('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
 					<apex:actionStatus id="saveFundingSourceStatus">
 						<apex:facet name="start">
 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1412,9 +1678,9 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:outputPanel>
 
 		<a id="Funding_Sources"></a>
-		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM}">
+		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM && !newSA && canViewFundingSource}">
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" />
+				<apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
 				<apex:actionStatus id="AddFundingSourceStatus">
 					<apex:facet name="start">
 						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
@@ -1424,7 +1690,7 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputText value="No Funding Sources to display" rendered="{!(fundingSources.size=0)}" />
 
-			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0}">
+			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0  && canEditFundingSource }">
 				<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
 				</apex:column>
 				<apex:column value="{!fundingSource.Funding_Source__c}" />
@@ -1435,7 +1701,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Comment__c}" />
 			</apex:pageBlockTable>
 
-			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0}">
+			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0 && canEditFundingSource }">
 				<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
 				</apex:column>
 				<apex:column value="{!fundingSource.Type_of_Coverage__c}" />
@@ -1446,7 +1712,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Comment__c}" />
 			</apex:pageBlockTable>
 
-			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0}">
+			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0 && canEditFundingSource }">
 				<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
 				</apex:column>
 				<apex:column value="{!fundingSource.Type_of_Coverage__c}" />
@@ -1507,13 +1773,6 @@ END: Uncomment to have the element collapsed by default -->
 
 		</apex:pageBlock>
 
-		<!--  Shift Summaries section -->
-		<a name="ShiftSummaries" id="shiftSummaries"></a>
-		<apex:pageBlock title="Shift Summaries" rendered="{!!editSA && vfVarIsCM}">
-			<apex:outputText value="No Records to Display" />
-		</apex:pageBlock>
-		<!-- End Shift Summaries -->
-
 		<!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
 		<apex:pageBlock id="pbServAssignClose" title="Service Assignment Closure" rendered="{!showServAssignClose}">
 			<div class="pbHeaderButton">
@@ -1567,11 +1826,54 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageBlock>
 			</apex:outputPanel>
 		</apex:outputPanel>
-	</apex:form>
-	<apex:relatedList list="Action_Summaries__r" rendered="{!showLocation && $ObjectType.Action_Summary__c.accessible && !editSA}" />
-	<c:SObjectNotesAndAttachments parentId="{!Service_Assignment__c.id}" showAction="false" rendered="{!!editSA && newSA==false}"></c:SObjectNotesAndAttachments>
-	<c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 
+		<apex:outputPanel id="restraintReportModal" style="display: none; ">
+			<script>
+				(function ($) {
+					"use strict";
+					window.generateRestraintReport = function () {
+						var errorString = '';
+						var startDate = $(document.getElementById('{!$Component.block.section.reportStartDate}')).val();
+						var endDate = $(document.getElementById('{!$Component.block.section.reportEndDate}')).val();
+						if (startDate == '') {
+							errorString += 'Start Date cannot be blanked.\r\n';
+						}
+						if (endDate == '') {
+							errorString += 'End Date cannot be blanked.\r\n';
+						}
+						var $checkedItem = $(document.getElementById('{!$Component.block.section.reportType}')).find('input:checked');
+						if ($checkedItem.length == 0) {
+							errorString += 'Report Type cannot be blanked.';
+						}
+						if (errorString != '') {
+							alert(errorString);
+						} else {
+							window.location = '/apex/RestraintReductionReport?startDate='+startDate+'&endDate='+endDate+'&type='+$checkedItem.val()+'&saId={!Service_Assignment__c.Id}';
+						}
+					};
+				})(jQuery);
+			</script>
+			<apex:pageBlock title="Restraint Reduction Report" id="block">
+				<apex:pageBlockSection columns="2" id="section">
+					<!-- The next 2 fields are just dummies so we can use SF inputField datepicker -->
+					<apex:inputField value="{!dummy.Date_of_Injury__c}" label="Start Date" id="reportStartDate" />
+					<apex:inputField value="{!dummy.Date_of_Injury__c}" label="End Date" id="reportEndDate" />
+					<apex:selectRadio label="Report Type" id="reportType">
+						<apex:selectOption itemLabel="Summary" itemValue="Summary" />
+						<apex:selectOption itemLabel="Detailed" itemValue="Detailed" />
+					</apex:selectRadio>
+				</apex:pageBlockSection>
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Generate" onclick="generateRestraintReport(); return false; " />
+					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('restraintReportModal', 'span'); return false; " />
+				</apex:pageBlockButtons>
+			</apex:pageBlock>
+		</apex:outputPanel>
+	</apex:form>
+	<a id="shiftSummaries" />
+	<apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
+	<c:SObjectNotesAndAttachments parentPage="ServAssign" parentId="{!Service_Assignment__c.id}" showAction="true" rendered="{!!editSA && newSA==false}"   pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
+	<c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 
 	<script type="text/javascript">
 		j$(setFocus);
@@ -1762,6 +2064,7 @@ END: Uncomment to have the element collapsed by default -->
 				j$('input[id$=lookupElement_lkid]').change(function () {
 					saveLocation();
 				});
+            saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));
 		});
 
 
@@ -1794,11 +2097,22 @@ END: Uncomment to have the element collapsed by default -->
 
 
 		function changeEffectiveDates() {
-			var sd = j$('input[id$=startdate]').val();
+			var sd = j$('input[id$=startdate]').val().substring(0,10);
 			var ed = j$('input[id$=enddate]').val();
 
 			setEffectiveDate(sd, ed);
 
+		}
+
+		var saStartDateTime = {
+		    intializeDateTimePicker: function($target) {
+		        j$($target).datetimepicker({
+		            format: 'm/d/Y H:i',
+		            onGenerate: function(dp, $input) {
+		                j$('.xdsoft_datetimepicker.xdsoft_.xdsoft_noselect').css("top", "+=10");
+		            }
+		        });
+		    }
 		}
 	</script>
 

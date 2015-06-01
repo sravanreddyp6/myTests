@@ -1,10 +1,10 @@
 <apex:page title="Home Page Search"
-    controller="HomePageSearchController" standardStylesheets="true" sidebar="false"  
+    controller="HomePageSearchController" standardStylesheets="true" sidebar="false"
     tabStyle="Get_Started__tab" readOnly="true">
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-    
+
     <style>
 #table_filter h1 {
     font-size: 14px;
@@ -130,7 +130,7 @@ table#persons_table.dataTable {
     height: 100%;
     /* IE Hack */
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='{!URLFOR($Resource.TransparentBG)}');
-    background-image:url({!URLFOR($Resource.TransparentBG)});    
+    background-image:url({!URLFOR($Resource.TransparentBG)});
     z-index: 99999;
     text-align: center;
 }
@@ -140,16 +140,16 @@ table#persons_table.dataTable {
 
 </style>
 <apex:form >
-<apex:inputText label="First Name" title="First Name" value="{!FirstNM}" id="FName"> First Name</apex:inputText>
+<apex:inputText label="First Name" title="First Name" value="{!firstName}" id="FName"> First Name</apex:inputText>
        &nbsp; &nbsp; &nbsp; &nbsp;
-  <apex:inputText label="First Name" title="Last Name" value="{!LastNM}" id="LName">Last Name</apex:inputText>
+  <apex:inputText label="First Name" title="Last Name" value="{!lastName}" id="LName">Last Name</apex:inputText>
   &nbsp; &nbsp; &nbsp; &nbsp;
   <input type="submit" id="search_values" value="Find" />
 </apex:form>
 <br />
     <apex:pageBlock id="table_block">
             <div id="table_start_filter" >
-                Browse by Name 
+                Browse by Name
                 <a href="#" data-filter='[A]'>A</a>&nbsp;|&nbsp;<a href="#" data-filter='[B]'>B</a>&nbsp;|&nbsp;
                 <a href="#" data-filter='[C]'>C</a>&nbsp;|&nbsp;<a href="#" data-filter='[D]'>D</a>&nbsp;|&nbsp;
                 <a href="#" data-filter='[E]'>E</a>&nbsp;|&nbsp;<a href="#" data-filter='[F]'>F</a>&nbsp;|&nbsp;
@@ -164,9 +164,9 @@ table#persons_table.dataTable {
                 <a href="#" data-filter='[W]'>W</a>&nbsp;|&nbsp;<a href="#" data-filter='[XYZ]'>XYZ</a>&nbsp;|&nbsp;
                 <a href="#" class="active" data-filter='.'>All</a>
             </div>
-            
+
         <apex:outputPanel layout="block" id="table_div">
-            
+
             <table id="persons_table">
                 <thead>
                     <tr>
@@ -184,7 +184,7 @@ table#persons_table.dataTable {
                                              <a href="/apex/ReferralSearch?firstName={!acct.firstname}&&lastName={!acct.lastname}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
                                    </apex:outputText>
                                    <apex:outputText rendered="{!(acct.Type=='Person Being Served')}">
-                                             <a href="/apex/PersonsBeingServedListView?id={!acct.recordId}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
+                                             <a href="/apex/PersonsBeingServedListView?id={!acct.accountId}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
                                     </apex:outputText>
                                      <apex:outputText rendered="{!(acct.Type=='Mentor')}">
                                              <a href="/{!acct.recordId}" data-record-id="{!acct}">{!(acct.lastname)}, {!(acct.firstname)}</a>
@@ -199,7 +199,7 @@ table#persons_table.dataTable {
             </table>
         </apex:outputPanel>
     </apex:pageBlock>
-   
+
     <script type="text/javascript">
     $j = jQuery.noConflict();
     function checkUndefined(field) {
@@ -209,7 +209,7 @@ table#persons_table.dataTable {
         return "-";
     }
    function refreshDataTable() {
-        
+
         // Have to make this var global in order for filter to work
         table = $j("#persons_table").dataTable({
             "bProcessing": true,
@@ -248,11 +248,11 @@ table#persons_table.dataTable {
         });
         table.fnSort( [ [0,'asc'] ] );
         //$j("#table_filter_box").keyup();
-       
+
     }
-    
+
     $j(document).ready(function() {
-        refreshDataTable();       
+        refreshDataTable();
         $j('body').on('click', '#table_start_filter a', function (event) {
             //$j('#table_filter_box').val('');  // Remove the text in filter box
             //table.fnFilter('');  // Clear the global filter
@@ -263,7 +263,7 @@ table#persons_table.dataTable {
             return false;
         });
     });
-    
+
     (function ($) {
         $.fn.dataTableExt.oPagination.four_button = {
             "fnInit": function ( oSettings, nPaging, fnCallbackDraw )
@@ -272,57 +272,57 @@ table#persons_table.dataTable {
                 nPrevious = document.createElement( 'span' );
                 nNext = document.createElement( 'span' );
                 nLast = document.createElement( 'span' );
-                  
+
                 nFirst.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sFirst ) );
                 nPrevious.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sPrevious ) );
                 nNext.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sNext ) );
                 nLast.appendChild( document.createTextNode( oSettings.oLanguage.oPaginate.sLast ) );
-                  
+
                 nFirst.className = "paginate_button first";
                 nPrevious.className = "paginate_button previous";
                 nNext.className="paginate_button next";
                 nLast.className = "paginate_button last";
-                  
+
                 nPaging.appendChild( nFirst );
                 nPaging.appendChild( nPrevious );
                 nPaging.appendChild( nNext );
                 nPaging.appendChild( nLast );
-                  
+
                 $(nFirst).click( function () {
                     oSettings.oApi._fnPageChange( oSettings, "first" );
                     fnCallbackDraw( oSettings );
                 } );
-                  
+
                 $(nPrevious).click( function() {
                     oSettings.oApi._fnPageChange( oSettings, "previous" );
                     fnCallbackDraw( oSettings );
                 } );
-                  
+
                 $(nNext).click( function() {
                     oSettings.oApi._fnPageChange( oSettings, "next" );
                     fnCallbackDraw( oSettings );
                 } );
-                  
+
                 $(nLast).click( function() {
                     oSettings.oApi._fnPageChange( oSettings, "last" );
                     fnCallbackDraw( oSettings );
                 } );
-                  
+
                 /* Disallow text selection */
                 $(nFirst).bind( 'selectstart', function () { return false; } );
                 $(nPrevious).bind( 'selectstart', function () { return false; } );
                 $(nNext).bind( 'selectstart', function () { return false; } );
                 $(nLast).bind( 'selectstart', function () { return false; } );
             },
-             
-             
+
+
             "fnUpdate": function ( oSettings, fnCallbackDraw )
             {
                 if ( !oSettings.aanFeatures.p )
                 {
                     return;
                 }
-                  
+
                 /* Loop over each instance of the pager */
                 var an = oSettings.aanFeatures.p;
                 for ( var i=0, iLen=an.length ; i<iLen ; i++ )
@@ -338,7 +338,7 @@ table#persons_table.dataTable {
                         buttons[0].className = "paginate_enabled_previous";
                         buttons[1].className = "paginate_enabled_previous";
                     }
-                      
+
                     if ( oSettings.fnDisplayEnd() == oSettings.fnRecordsDisplay() )
                     {
                         buttons[2].className = "paginate_disabled_next";

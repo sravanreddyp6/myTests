@@ -45,8 +45,8 @@ public with sharing class ActionPlan_form {
     public list<Progress_Note__c> getNotes(){
         return [select id, name, Start_Time__c, End_Time__c, createddate, createdby.name from Progress_Note__c where Action_plan__c = :actionplan.id order by createddate DESC limit 10 ];
 
-    }      
-
+    }
+    public string userOpGrp {get; private set;}
 
     public boolean canEditPlan { get {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
@@ -71,7 +71,8 @@ public boolean getHasDraft(){
 
 }    
  public Boolean canFinalize { get {
-        // do not allow level 1 or 2 to finalize
+ 		
+        // do not allow level 1 or 2 or Tier I to finalize
         return (!isUserLevel1or2());
         }
         set;
@@ -87,8 +88,8 @@ public boolean getHasDraft(){
             //System.Debug( p.permissionset.name );
                         
             // user can only update if in one of these three permission sets
-            if ( p.PermissionSet.Name.Contains('Level_1') || p.PermissionSet.Name.Contains('Level_2') ) {
-                System.Debug('User is level1 or level2.');
+            if ( p.PermissionSet.Name.Contains('Level_1') || p.PermissionSet.Name.Contains('Level_2') || p.PermissionSet.Name.Contains('Tier_1') ) {
+                System.Debug('User is level1 or level2 or Tier I.');
                 return true;    
             }
         }
@@ -608,7 +609,8 @@ public pagereference mySave(){
         isRedwood = false;
         tmp = string.valueof(system.now()).remove(' ').remove(':').remove('-');
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
-            if (TU.Operating_Group__c == 'Redwood'){isRedwood = true;} 
+            if (TU.Operating_Group__c == 'Redwood'){isRedwood = true;}
+            userOpGrp = TU.Operating_Group__c;
         }
         refreshPlan(); 
         aliasChildrenTitles();
@@ -639,21 +641,13 @@ public pagereference mySave(){
                 mapAllPrgs.put(item.ProgramID__c, item.Program_Name__c );
             }
         }        
-        List<Clinical_Catalog_Program__c> ctlgWithPrgms = [select Clinical_Catalog__r.id, Clinical_Catalog__r.Catalog_Name__c, Program_Custom_Setting__c from Clinical_Catalog_Program__c Where Program_Custom_setting__c in :mapAllPrgs.keySet()];
+        List<Clinical_Catalog_Program__c> ctlgWithPrgms = [select Clinical_Catalog__r.id, Clinical_Catalog__r.Catalog_Name__c, Program_Custom_Setting__c from Clinical_Catalog_Program__c Where Program_Custom_setting__c in :mapAllPrgs.keySet() ORDER BY Clinical_Catalog__r.Catalog_Name__c];
         map<id, string> finalBuild = new Map<id, string>();
         for(Clinical_Catalog_Program__c item: ctlgWithPrgms ){
-            finalBuild.put(item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c);        
+            finalBuild.put(item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c);   
+            ctlgs.add( new SelectOption( item.Clinical_Catalog__r.id, item.Clinical_Catalog__r.Catalog_Name__c ) );     
         }
-        for(id item: finalBuild.keySet()){
-            ctlgs.add(new SelectOption(item, finalBuild.get(item)));
-        }
-        
-        /*
-        for (Clinical_Catalog__c c : [select id, Catalog_Name__c from Clinical_Catalog__c]){
-                ctlgs.add(new SelectOption(c.id,c.Catalog_Name__c));
-            }  
-            
-            */            
+         
              
                                   
     }
@@ -664,7 +658,10 @@ public pagereference mySave(){
         ActAlias = 'Action';
         
         SystemSettings__c mc = SystemSettings__c.getInstance(UserInfo.getUserId());
-        boolean showThis = mc.ActionPlan_CatalogSelectorEnabled__c;
+        boolean showThis = (mc.ActnPln_CtlgEnabledFor_CM__c && userOpGrp == 'Care Meridian')
+                            || (mc.ActnPln_CtlgEnabledFor_Cambridge__c && userOpGrp == 'Cambridge')
+                            || (mc.ActnPln_CtlgEnabledFor_NR__c && userOpGrp == 'NeuroRestorative')
+                            || (mc.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood');
         system.debug('catalog enabled - ' + showThis);
         system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
         if(showThis){

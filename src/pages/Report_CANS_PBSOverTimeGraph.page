@@ -2,13 +2,31 @@
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}"/>  
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>  
  
 <script>
     function setFocusOnLoad() {}
+    
+	j$ = jQuery.noConflict();
+	j$( document ).ready(function() {
+	j$('[id$=pbslist]').chosen();
+	});
+
 </script>
 <style>
+
+	
+	.chosen-single {
+		background-color: white !important;
+		background-image:none !important;
+		box-shadow:none !important;
+		border-radius:0px !important;
+	}
+		
+
     .left_col{ text-align: left; font-weight: bold; color: #4a4a56 !important; padding: 5px; vertical-align: top; width: 150px;}
 .thinking{
     opacity:0.8;
@@ -60,7 +78,7 @@
 	<apex:outputlabel value="" />    
     <apex:outputPanel >
         <apex:outputLabel styleClass="labelCol" value="Person Being Served" />
-           <apex:selectList size="1" value="{!selectedPBS}" >
+           <apex:selectList size="1" value="{!selectedPBS}" id="pbslist" styleclass="chosenSelect">
            <apex:selectOptions value="{!optPBS}" />
        </apex:selectList>
     </apex:outputPanel> 

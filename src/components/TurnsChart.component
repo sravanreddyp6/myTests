@@ -1,0 +1,23 @@
+<apex:component controller="TurnsChartController" >
+
+<apex:attribute name="parentID" required="true" type="ID" description="ID of the parent evaluation" assignTo="{!evalID}" />
+
+<apex:pageBlock title="Turns Summary">
+
+<apex:pageBlockTable value="{!turnsinnerkeys}" var="turntype">
+<apex:column >
+<apex:outputText value="{!turntype}" />
+</apex:column>
+<apex:repeat value="{!turnschartkeys}" var="hour">
+
+<apex:column headervalue="{!hour}" style="text-align:vertical">
+<apex:repeat value="{!turnsChart[hour][turntype]}" var="turnPanel">
+	<apex:outputText value="{!turnPanel.turnVal}" /><br />
+</apex:repeat>
+</apex:column>
+</apex:repeat>
+</apex:pageBlockTable>
+</apex:pageBlock> 
+
+
+</apex:component>

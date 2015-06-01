@@ -1,7 +1,7 @@
 /*
  *
  *  EC-16 : Trigger to store the service location count for the person being served. 
- *
+ *  EC-120: Added start datetime field on Service Assignment, this trigger to backfill the existing SA start date field. 
  */
 
 public with sharing class ServiceAssignmentTriggeredActions {
@@ -26,7 +26,7 @@ public with sharing class ServiceAssignmentTriggeredActions {
 	            } 
             }            
 		}
-		
+		updateSaStartDate(newObjects);
 	}
 
 
@@ -57,6 +57,7 @@ public with sharing class ServiceAssignmentTriggeredActions {
 				}
             }
         }
+        updateSaStartDate(updatedObjects);
     }
 
     private Map<String,SAaggregates> getSAaggregateMap(Service_Assignment__c[] modifiedObjs){    	
@@ -85,8 +86,15 @@ public with sharing class ServiceAssignmentTriggeredActions {
         public Integer totalPlusOne(){
         	return ++this.total;
         }
-    } 
+    }
     
+     
+    private void updateSaStartDate(Service_Assignment__c[] sas){
+        for(Service_Assignment__c sa: sas){
+            if ( sa.SA_Start_DateTime__c != null )
+               sa.Start_Date__c = sa.SA_Start_DateTime__c.date();
+        }
+    }    
     
    /* 
     class ServiceAssignmentWrapper implements Comparable {

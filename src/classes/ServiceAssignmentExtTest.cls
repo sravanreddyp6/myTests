@@ -213,18 +213,18 @@ private class ServiceAssignmentExtTest {
         
     }
     
-    public testmethod static void showShiftAssessment(){
-    	CreateObjects();
-    	ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
-        ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-        controller.showAddevaluation();
-        controller.evaluation.Shift_Start_time__c = system.Now();
-        controller.evaluation.Shift_End_time__c = system.now().addminutes(30);
-        controller.saveEvaluation();
-        List<Evaluation__c> shiftAsmts = [SELECT Id, NAME FROM Evaluation__c WHERE ServiceAssignment__c =:ServAssign.Id AND RecordType.Name = 'CMShiftAssessment'];
-        system.assertEquals(1,shiftAsmts.size());
+//    public testmethod static void showShiftAssessment(){
+//    	CreateObjects();
+//    	ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+//        ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+//        controller.showAddevaluation();
+//        controller.evaluation.Shift_Start_time__c = system.Now();
+//        controller.evaluation.Shift_End_time__c = system.now().addminutes(30);
+//        controller.saveEvaluation();
+//        List<Evaluation__c> shiftAsmts = [SELECT Id, NAME FROM Evaluation__c WHERE ServiceAssignment__c =:ServAssign.Id AND RecordType.Name = 'CMShiftAssessment'];
+//        system.assertEquals(1,shiftAsmts.size());
  
-    }
+//    }
     
     public testmethod static void showWorksheetBlocks(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
@@ -330,7 +330,6 @@ private class ServiceAssignmentExtTest {
 	        insert sa;
 	        system.assertEquals('CA' , ServiceAssignmentExt.loadServiceLocation(svl.id).State__c);
             system.assertEquals(true, ServiceAssignmentExt.saveServiceLocation(sa.id, svl.id));
-          
     }
     
 	public testmethod static void showFundingSources(){
@@ -452,4 +451,41 @@ private class ServiceAssignmentExtTest {
         insert testObjective;
         
     }
+    
+    public testmethod static void remoteActionfindDuplicateSeizure(){
+        CreateObjects();
+        Datetime stEndTime = Datetime.now();
+        Seizure__c seizure = new Seizure__c();
+        seizure.Start_DateTime__c = stEndTime;
+        seizure.End_DateTime__c = stEndTime.addDays(1);
+        seizure.Service_Assignment__c = ServAssign.Id;
+        insert seizure;
+        System.assertequals(false, ServiceAssignmentExt.findDuplicateSeizure(
+                                    stEndTime.addHours(1).format(),
+                                       stEndTime.addDays(1).format(),
+                                       Id.valueOf(ServAssign.Id),
+                                       Id.valueOf(seizure.id) ) );
+        System.assertequals(true, ServiceAssignmentExt.findDuplicateSeizure(
+                                       stEndTime.addHours(1).format(),
+                                       stEndTime.addDays(1).format(),
+                                       Id.valueOf(ServAssign.Id),
+                                       null) );
+    }
+    
+    public testmethod static void saveAndEditSeizure(){
+        CreateObjects();
+                
+        ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+        ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+        controller.seizureStart_DateTime = '11/16/2014 13:00:55';
+        controller.seizureEnd_DateTime = '11/17/2014 13:00:55';
+        controller.saveSeizure();
+        System.assertequals(1, [select id from Seizure__c].size());
+        
+        PageReference pageRef = Page.SeizureEdit;
+        Test.setCurrentPage(pageRef);
+        Apexpages.currentPage().getParameters().put('seizureId', [select id from Seizure__c].get(0).id);
+        controller.showEditSeizure();
+    }
+        
 }

@@ -1,17 +1,28 @@
 public with sharing class SObjectNotesAndAttachmentsController {
     public List<NoteAttachment> entries { get; set; }
+    public String retURL {get;set;}	
     public ID toDelete { get; set; }
     public ID parent { get; set {
         parent = value;
         entries = new List<NoteAttachment>();
-        for (Note note: [SELECT ID, Title, LastModifiedDate, Owner.Name, OwnerID FROM Note WHERE ParentId=:parent]) {
-            entries.add(new NoteAttachment(note));
+        for (Note note: [SELECT ID, Title, LastModifiedDate,CreatedDate,Owner.Name, OwnerID FROM Note WHERE ParentId=:parent]) {
+             entries.add(new NoteAttachment(note));
         }
-        for (Attachment attachment: [SELECT ID, Name, LastModifiedDate, Owner.Name, OwnerID FROM Attachment WHERE ParentId=:parent]) {
+        for (Attachment attachment: [SELECT ID, Name, LastModifiedDate,CreatedDate, Description,Owner.Name, OwnerID FROM Attachment WHERE ParentId=:parent order by createddate desc limit 10]) {
             entries.add(new NoteAttachment(attachment));
         }
         entries.sort();
     }}
+    
+    public List<NoteAttachment> getAllAttachments {set; get  {
+     List<NoteAttachment> attList = new List<NoteAttachment>();
+        for (Attachment attachment: [SELECT ID, Name, LastModifiedDate,CreatedDate, Description,Owner.Name, OwnerID FROM Attachment WHERE ParentId=:parent order by createddate desc ]) {
+            attList.add(new NoteAttachment(attachment));
+        }
+        attList.sort();
+        return attList;
+    }
+    }
     public void del() {
         System.debug('Delete called');
         if (toDelete==null) return;
@@ -51,9 +62,21 @@ public with sharing class SObjectNotesAndAttachmentsController {
         }}
         public String LastModifiedDate { get {
             if (note!=null) {
-                return note.LastModifiedDate.format('M/d/yyyy h:m a');
+                return note.LastModifiedDate.format('MM/dd/yyyy hh:mm a');
             }
-            return attachment.LastModifiedDate.format('M/d/yyyy h:m a');
+            return attachment.LastModifiedDate.format('MM/dd/yyyy hh:mm a');
+        }}
+       public String CreatedDate { get {
+            if (note!=null) {
+                return note.CreatedDate.format('MM/dd/yyyy hh:mm a');
+            }
+            return attachment.CreatedDate.format('MM/dd/yyyy hh:mm a');
+        }}
+        public String Description { get {
+            if (note!=null) {
+                return null;
+            }
+            return attachment.Description;
         }}
         public NoteAttachment(Note note) {
             this.note = note;
@@ -65,8 +88,8 @@ public with sharing class SObjectNotesAndAttachmentsController {
         }
         public Integer compareTo(Object objToCompare) {
             NoteAttachment obj = (NoteAttachment) objToCompare;
-            if (this.LastModifiedDate == obj.LastModifiedDate) return 0;
-            if (this.LastModifiedDate > obj.LastModifiedDate) return -1;
+            if (this.CreatedDate == obj.CreatedDate) return 0;
+            if (this.CreatedDate > obj.CreatedDate) return -1;
             return 1;
         }
     }
