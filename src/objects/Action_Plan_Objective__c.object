@@ -47,9 +47,12 @@
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Action_Plan_Goal__c</fullName>
         <externalId>false</externalId>
@@ -187,6 +190,10 @@
                 <fullName>Skill</fullName>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>Narrative</fullName>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackTrending>false</trackTrending>
@@ -277,10 +284,11 @@
         <active>true</active>
         <errorConditionFormula>TEXT(Status__c) != &apos;N/A&apos; &amp;&amp; 
 ISBlank(TEXT(Type__c))&amp;&amp;   
-$User.Operating_Group__c == &apos;Redwood&apos; &amp;&amp; 
-!ISBLANK(Description__c) &amp;&amp;
-
- Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__r.MailingState != &apos;Arizona&apos;</errorConditionFormula>
+!ISBLANK(Description__c) &amp;&amp; 
+NOT (
+$User.Operating_Group__c == &apos;Cambridge&apos; || (
+ISPICKVAL(Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Admission__r.State__c, &apos;AZ&apos;) &amp;&amp;
+Action_Plan_Goal__r.Action_Plan__r.Service_Assignment__r.Service_Location__r.ProgramID__c != &apos;114165002&apos;))</errorConditionFormula>
         <errorDisplayField>Type__c</errorDisplayField>
         <errorMessage>Type is required</errorMessage>
     </validationRules>

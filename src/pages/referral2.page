@@ -5,8 +5,9 @@
 
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
+
     <!--<p>{!$Component.referralForm.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}</p>-->
-    <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && locations.size == 0 && Referral__c.id != null}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
+    <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
     <style type="text/css">
         .dialogLoadingSpinner {
             margin-left: 5px;
@@ -92,6 +93,9 @@
             if (j$('input[id$=relatedPartyEntry_Name]').val() == '') {
                 errors += '<li>Party Name is a required field.</li>';
             }
+            if (j$('select[id$=relatedPartyEntry_Status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }              
             var partyType = j$('select[id$=relatedPartyEntry_Type]').val();
             if (partyType == '') {
                 errors += '<li>Type is a required field.</li>';
@@ -130,9 +134,14 @@
         function validateLocation() {
             var errors = '';
             j$('#locationErrors').html(errors);
+            
+            var aliId = '{!$Component.referralForm:ReferralLocationModalBlock:referralLocationEntry:sectionItem:sl:comp:lookupElement_lkid}';
+            aliId = aliId.replace(/:/g, '\\:');
+            aliId = '#' +aliId;
+            
             if (j$('input[id$=locationEntry_ServiceLocation]').val() == '') {
-                errors += '<li>Alias is a required field.</li>';
-            } else if (j$('input[id$=lookupElement_lkid]').val() == '') {
+                errors += '<li>Alias is a required field.</li>';  
+            } else if (j$(aliId).val() == '') {
                 errors += '<li>You must lookup the Alias</li>';
             }
 
@@ -217,8 +226,9 @@
                 var partyPhone2Type = j$('select[id$=relatedPartyEntry_Phone_2_Type]').val();
                 var partyComments = j$('textarea[id$=relatedPartyEntry_Comments]').val();
                 var pbrID = '{!Referral__c.Person_Being_Referred__c}';
+                var partyStatus = j$('select[id$=relatedPartyEntry_Status]').val();
                 referral_Controller_Helper.saveRelatedParty(partyID, partyName, partyType, partyPhone1, partyEmail,
-                    partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments, pbrID,
+                    partyAddress, partyPhone2, partyPhone1Type, partyPhone2Type, partyComments, pbrID, partyStatus,
                     function(result, event) {
                         saveRelParty();
                         if (isDialogClose) {
@@ -339,6 +349,7 @@
                         j$('select[id$=relatedPartyEntry_Phone_1_Type]').val(result.Phone_1_Type__c);
                         j$('select[id$=relatedPartyEntry_Phone_2_Type]').val(result.Phone_2_Type__c);
                         j$('textarea[id$=relatedPartyEntry_Comments]').val(result.Comments__c);
+                        j$('select[id$=relatedPartyEntry_Status]').val(result.Status__c);
 
                         openModalDialog('relatedPartyModal', 'span', 'Add Related Party');
                     }
@@ -433,6 +444,59 @@
                 }
             );
         }
+
+        function cmPopup() {
+        	var v = j$('input[id$=popupHidden]').val();
+        	if(v == 'open') {
+
+        		if('{!referralRecord.Service_Location__c}'.length > 0){
+
+        		 var lookupName = '{!$Component.referralForm:ReferralAdmissionLocationModalBlock:admissionLocationEntry:admSectionItem:al:comp:LookupElement}';
+        		 lookupName = lookupName.replace(/:/g, '\\:');
+            	 lookupName = '#'+ lookupName;
+        		 j$(lookupName).val({!admissionLocationName});
+
+        		}
+        		openModalDialog('ReferralAdmissionLocationModal', 'span', 'Add Admission Location');
+
+        	}else {
+       			return null;
+       		}
+        }
+
+        function validateadmissionLocation(){
+        	var errors=[];
+        	j$('#admissionLocationErrors').html(errors);
+        	var lookupId = '{!$Component.referralForm:ReferralAdmissionLocationModalBlock:admissionLocationEntry:admSectionItem:al:comp:lookupElement_lkid}';
+            lookupId = lookupId.replace(/:/g, '\\:');
+            lookupId = '#' +lookupId;
+
+        	var admDate = j$('input[id$=antAdmDate]').val();
+        	var aliasId = j$(lookupId).val();
+
+
+        	if(admDate.length == 0){
+        		errors.push('Please Choose an Admission Date');
+        	}
+
+        	if(aliasId.length == 0){
+        		errors.push('Please Choose an Admission Location');
+        	}
+
+        	if(errors.length > 0 ){
+        		j$.each(errors, function(index, error) {
+
+						j$('#admissionLocationErrors').html('<li>' +error+ '</li>');
+					});
+        	}else{
+
+        		saveAdmissionLocation();
+        	}
+
+
+        }
+
+
     </script>
 
     <apex:form id="referralForm">
@@ -447,9 +511,11 @@
         <apex:actionFunction name="saveAgency" action="{!saveAgency}" rerender="agencies,agencyEntry,msgs" />
         <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
         <apex:actionFunction name="saveActivity" action="{!saveActivity}" rerender="activities,activityEntry,msgs" />
-        <apex:actionFunction name="showAddActivity" action="{!showAddActivity}" rerender="activities,activityEntry,msgs" oncomplete="openModalDialog('ActivityModal', 'span', 'Add Activity');" />
+        <apex:actionFunction name="showAddActivity" action="{!showAddActivity}" rerender="activities,activityEntry,msgs" oncomplete="openModalDialog('ActivityModal', 'span', 'Add Task');" />
         <apex:actionFunction name="saveLocation" action="{!saveLocation}" rerender="locations,referralLocationEntry,msgs,nonClosedPrimaryLocationId" />
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,referralLocationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location'); " status="AddLocationStatus" />
+        <apex:actionFunction name="openlocationPopup" action="{!redirectToConversion}" rerender="popupDiv,msgs" oncomplete="cmPopup();" status="convertStatus" />
+		<apex:actionFunction name="saveAdmissionLocation" action="{!saveAdmissionLocation}" reRender="msgs" status="convertStatus2"/>
 
         <apex:pageMessages id="msgs" />
 
@@ -457,6 +523,7 @@
         <apex:inputhidden value="{!Referral__c.Person_Being_Served__c}" />
         <apex:inputhidden value="{!Referral__c.Service_Location_Program__c}" />
         <apex:inputhidden value="{!Referral__c.Service_Location_Program__c}" />
+<!--         <apex:inputhidden value="{!Referral__c.Service_Location__r.Name}" /> -->
         <!--<apex:outputpanel style="display:none">
         <apex:inputField value="{!Referral__c.RecordType.Name}" />
     </apex:outputpanel>-->
@@ -467,101 +534,104 @@
                 <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}" />
-                <apex:commandButton value="Convert" action="{!redirectToConversion}" rendered="{!editable && canConvert }" />
+                <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert }"  />
             </apex:pageblockButtons>
 
             <apex:pageBlockSection title="Person Being Referred" showHeader="true" columns="2" collapsible="false" rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}" id="PBRSection">
-                <apex:pageBlockSectionItem >
-                    <apex:outputText value="Name" />
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:outputText label="" value="{!personBeingRefRecord.First_Name__c}" />&nbsp;&nbsp;
-                        <apex:outputText label="" value="{!personBeingRefRecord.Middle_Initial__c}" />&nbsp;&nbsp;
-                        <apex:outputText label="" value="{!personBeingRefRecord.Last_Name__c}" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                <apex:outputField value="{!personBeingRefRecord.Ethnicity__c}" />
 
-                <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" />
+
+                <apex:outputText label="First Name" value="{!personBeingRefRecord.First_Name__c}" />
                 <apex:outputField value="{!personBeingRefRecord.Race__c}" />
 
-                <apex:outputField value="{!personBeingRefRecord.Age__c}" id="pbrAge" />
+                <apex:outputText label="Middle Name" value="{!personBeingRefRecord.Middle_Initial__c}" />
+                <apex:outputField value="{!personBeingRefRecord.Ethnicity__c}" />
+
+                <apex:outputText label="Last Name" value="{!personBeingRefRecord.Last_Name__c}" />
                 <apex:outputField value="{!personBeingRefRecord.Marital_Status__c}" />
 
-                <apex:outputField value="{!personBeingRefRecord.Gender__c}" />
+                <apex:outputField label="Date of Birth" value="{!personBeingRefRecord.Date_of_Birth__c}" />
                 <apex:pageBlockSectionItem >
-                    <apex:outputText value="Primary Language" />
+                    <apex:outputLabel >Primary Language </apex:outputLabel>
                     <apex:outputPanel styleClass="nowrap">
-                        <apex:outputField value="{!personBeingRefRecord.Primary_Language__c}" />&nbsp;
+                        <apex:outputField value="{!personBeingRefRecord.Primary_Language__c}" />&nbsp;&nbsp;
                         <apex:outputLabel value="Non-Verbal" />&nbsp;
                         <apex:outputField value="{!personBeingRefRecord.Non_Verbal__c}" />&nbsp;
                         <apex:outputLabel value="Sign Language" />&nbsp;
-                        <apex:outputField value="{!personBeingRefRecord.Sign_Language__c}" />
+                        <apex:outputField value="{!personBeingRefRecord.Sign_Language__c}"  />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:outputField value="{!personBeingRefRecord.SSN__c}" />
+                <apex:outputField value="{!personBeingRefRecord.Age__c}" />
                 <apex:outputField value="{!personBeingRefRecord.Level_of_Education__c}" />
+
+                <apex:outputField value="{!personBeingRefRecord.Gender__c}" />
+                <apex:outputField value="{!personBeingRefRecord.SSN__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}">
                 <apex:outputField value="{!personBeingRefRecord.Additional_Information_Comments__c}" style="width: 90%;" />
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="false" id="ContactSection" rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}">
-                <apex:outputField value="{!personBeingRefRecord.Street_1__c}" />
-                <apex:outputField value="{!personBeingRefRecord.Phone__c}" />
-                <apex:outputField value="{!personBeingRefRecord.Street_2__c}" />
-                <apex:outputField value="{!personBeingRefRecord.Email_Address__c}" />
-                <apex:pageBlockSectionItem >
-                    <apex:outputText value="City" />
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:outputText value="{!personBeingRefRecord.City__c}" />&nbsp;
-                        <apex:outputLabel value="State" />&nbsp;
-                        <apex:outputField value="{!personBeingRefRecord.State__c}" />&nbsp;
-                        <apex:outputLabel value="Zip" />&nbsp;
-                        <apex:outputText value="{!personBeingRefRecord.Zip_Code__c}" style="width: 42px;" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!personBeingRefRecord.Street_1__c}"  label="Mailing Street 1" />
+                <apex:outputField value="{!personBeingRefRecord.Phone__c}"   />
+                <apex:outputField value="{!personBeingRefRecord.Street_2__c}" label="Mailing Street 2" />
+                <apex:outputField value="{!personBeingRefRecord.Email_Address__c}"  label="Email"  />
+                 <apex:outputField label="Mailing City" value="{!personBeingRefRecord.City__c}" />
+                 <apex:outputText value=""/>
+                 <apex:outputField value="{!personBeingRefRecord.State__c}" label="Mailing State/Province" />
+                 <apex:outputText value=""/>
+                 <apex:outputField label="Mailing Zip/Postal Code" value="{!personBeingRefRecord.Zip_Code__c}"  />
+                 <apex:outputText value=""/>
+                 <!--  Fax is removed for   EPRIQM-115
                 <apex:outputField value="{!personBeingRefRecord.Fax__c}" />
-                <apex:outputField value="{!personBeingRefRecord.Home_County__c}" />
+                 -->
+                <apex:outputField value="{!personBeingRefRecord.Home_County__c}" label="Mailing County"/>
             </apex:pageBlockSection>
-            <apex:pageBlockSection title="Person Being Served" showHeader="true" columns="2" collapsible="false" id="PBSSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
-                <apex:pageBlockSectionItem >
-                    <apex:outputText value="Name" />
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:outputText label="" value="{!personBeingServedRecord.FirstName}" />&nbsp;&nbsp;
-                        <apex:outputText label="" value="{!personBeingServedRecord.Middle_Name__c}" />&nbsp;&nbsp;
-                        <apex:outputText label="" value="{!personBeingServedRecord.LastName}" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
+            <apex:pageBlockSection title="Person Being Served" showHeader="true" columns="2" collapsible="false" id="readPBSSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
+
+
+                <apex:outputText label="First Name" value="{!personBeingServedRecord.FirstName}" />
+                <apex:outputField value="{!personBeingServedRecord.Race__c}" />
+
+                <apex:outputText label="Middle Name" value="{!personBeingServedRecord.Middle_Name__c}" />
                 <apex:outputField value="{!personBeingServedRecord.Ethnicity_Picklist__c}" />
 
-                <apex:outputField value="{!personBeingServedRecord.BirthDate}" />
+                <apex:outputText label="Last Name" value="{!personBeingServedRecord.LastName}" />
+                <apex:outputField value="{!personBeingServedRecord.Marital_Status__c}" />
+
+                <apex:outputField label="Date of Birth" value="{!personBeingServedRecord.BirthDate}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Primary Language </apex:outputLabel>
+                    <apex:outputPanel styleClass="nowrap">
+                        <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />&nbsp;&nbsp;
+                        <apex:outputLabel value="Non-Verbal" />&nbsp;
+                        <apex:outputField value="{!personBeingServedRecord.Non_Verbal__c}" />&nbsp;
+                        <apex:outputLabel value="Sign Language" />&nbsp;
+                        <apex:outputField value="{!personBeingServedRecord.Sign_Language__c}"  />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
 
                 <apex:outputField value="{!personBeingServedRecord.Age__c}" />
-                <apex:outputField value="{!personBeingServedRecord.Primary_Language__c}" />&nbsp;
-                <apex:outputField value="{!personBeingServedRecord.Gender__c}" />
-                <apex:outputField value="{!personBeingServedRecord.SSN__c}" />
-                <apex:pageBlockSectionItem />
                 <apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" />
 
+                <apex:outputField value="{!personBeingServedRecord.Gender__c}" />
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="false" id="readContactSection" rendered="{!!ISNULL(personBeingServedRecord.id)}">
-                <apex:outputField value="{!personBeingServedRecord.MailingStreet}" id="PermStreet1" />
-                <apex:outputField value="{!personBeingServedRecord.Phone}" id="PermPhone" />
-                <apex:outputField value="{!personBeingServedRecord.OtherStreet}" id="PermStreet2" />
-                <apex:outputField value="{!personBeingServedRecord.Email}" id="PermEmail" />
-                <apex:pageBlockSectionItem >
-                    <apex:outputText value="City" />
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:outputText value="{!personBeingServedRecord.MailingCity}" id="PermCity" />&nbsp;
-                        <apex:outputLabel value="State" />&nbsp;
-                        <apex:outputField value="{!personBeingServedRecord.MailingState}" id="PermState" />&nbsp;
-                        <apex:outputLabel value="Zip" />&nbsp;
-                        <apex:outputText value="{!personBeingServedRecord.MailingPostalCode}" style="width: 42px;" id="PermZip" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                <apex:outputField value="{!personBeingServedRecord.Fax}" id="PermFax" />
+                 <apex:outputField value="{!personBeingServedRecord.MailingStreet}"  label="Mailing Street 1" />
+                <apex:outputField value="{!personBeingServedRecord.Phone}"   />
+                <apex:outputField value="{!personBeingServedRecord.Mailing_Street_2__c}" label="Mailing Street 2" />
+                <apex:outputField value="{!personBeingServedRecord.Email}"  label="Email"  />
+                 <apex:outputField label="Mailing City" value="{!personBeingServedRecord.MailingCity}" />
+                 <apex:outputText value=""/>
+                 <apex:outputField value="{!personBeingServedRecord.MailingState}" label="Mailing State/Province" />
+                 <apex:outputText value=""/>
+                 <apex:outputField label="Mailing Zip/Postal Code" value="{!personBeingServedRecord.MailingPostalCode}"  />
+                 <apex:outputText value=""/>
+                 <!--  Fax is removed for   EPRIQM-115
+                <apex:outputField value="{!personBeingRefRecord.Fax__c}" />
+                 -->
+                <apex:outputField value="{!personBeingServedRecord.Mailing_County__c}" label="Mailing County"/>
             </apex:pageBlockSection>
 
             <apex:pageBlockSection columns="1" title="Related Parties" id="relatedParties" collapsible="false">
@@ -580,6 +650,7 @@
                     <apex:column value="{!relParty.Phone_1_Type__c}" />
                     <apex:column value="{!relParty.Phone_2__c}" />
                     <apex:column value="{!relParty.Phone_2_Type__c}" />
+                    <apex:column value="{!relParty.Status__c}" />
                     <apex:column value="{!relParty.Comments__c}" />
                 </apex:pageBlockTable>
 
@@ -623,6 +694,7 @@
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="1" id="relatedPartyEntry2">
                     <apex:inputField value="{!relParty.Comments__c}" style="width: 90%;" id="relatedPartyEntry_Comments" />
+                    <apex:inputField value="{!relParty.Status__c}" id="relatedPartyEntry_Status" />
                     <apex:outputPanel style="display:none">
                         <apex:inputHidden value="{!relParty.Id}" id="relatedPartyEntry_Id" />
                     </apex:outputPanel>
@@ -1096,9 +1168,54 @@
             </apex:pageBlock>
         </apex:outputPanel>
 
-        <!-- Activity Modal -->
+		<!-- Add Admission Location Modal for CareMeridian -->
+			<apex:outputPanel id="ReferralAdmissionLocationModal" style="display:none" >
+				<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+				<apex:pageBlock title="Add Admission Location" id="ReferralAdmissionLocationModalBlock" >
+					<apex:pageBlockButtons location="bottom" id="admButtonsBlock" >
+						<input type="button" id="admSaveandContinue" class="btn" Value="Save and Continue" onclick="validateadmissionLocation(); return false;"/>
+						<input type="button" id="admCancel" class="btn" value="Cancel" onclick="closeModalDialog('ReferralAdmissionLocationModal', 'span');j$('#admissionLocationErrors').html(''); return false;"/>
+						<apex:actionstatus id="convertStatus2" >
+				         	<apex:facet name="start">
+<!-- 								<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/> -->
+<!-- 					     			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">     -->
+				         				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+<!-- 				        			</div> -->
+				      		</apex:facet>
+				    	</apex:actionstatus>
+					</apex:pageBlockButtons>
+
+					<apex:facet name="header">
+	                    <p>
+	                        <strong>Add Admission Location:</strong>
+	                    </p>
+	                </apex:facet>
+
+	                <div id="admissionLocationErrors" style='color:red' ></div>
+
+                	<apex:pageblockSection columns="1" id="admissionLocationEntry" >
+                		<apex:pageBlockSectionItem >
+							<apex:outputLabel value="Anticipated Admission DateTime" />
+							<apex:outputPanel layout="none">
+								<c:MilitaryDatetime dateTimeVal="{!referralRecord.Anticipated_Admission_DateTime__c}" edit="true" hiddenFieldId="antAdmDate"/>
+								<apex:inputHidden id="antAdmDate" value="{!referralRecord.Anticipated_Admission_DateTime__c}" />
+							</apex:outputPanel>
+                		</apex:pageBlockSectionItem>
+                		<apex:pageBlockSectionItem id="admSectionItem" >
+                			<apex:outputLabel value="Alias" />
+                			<c:CustomLookup id="al" formID="referralForm" uniqueId="searchAdmissionLocation" type="Service_Location__c" parentId="{!referralRecord.Service_Location__c}" parentName="{!admissionLocationName}" filters="name,city__c,state__c" return="programid__c,setting__c,program__c,service_value__c,street__c,city__c,state__c,zip__c,phone__c" />
+                		</apex:pageBlockSectionItem>
+                	</apex:pageblockSection>
+				</apex:pageBlock>
+			</apex:outputPanel>
+
+		<apex:outputPanel id="popupDiv">
+			<apex:inputhidden value="{!openLocationPopup}" id="popupHidden" />
+		</apex:outputPanel>
+
+		<!-- Activity Modal -->
         <apex:outputpanel style="display:none" id="ActivityModal">
-            <apex:pageBlock title="Add Activity">
+            <apex:pageBlock title="Add Task">
                 <apex:pageblockButtons location="bottom">
                     <input type="button" class="btn" value="Save" onclick="activitySave(true); return false;" />
                     <input type="button" class="btn" value="Save & New" onclick="activitySave(false); return false;" />
@@ -1107,7 +1224,7 @@
 
                 <apex:facet name="header">
                     <p>
-                        <strong>Add Activity:</strong>
+                        <strong>Add Task:</strong>
                     </p>
                 </apex:facet>
 
@@ -1133,26 +1250,29 @@
                 <apex:outputField value="{!Referral__c.How_did_referral_come_in__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.State_for_Preferred_Service__c}" rendered="{!referralRecordType!='NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
                 <apex:outputField value="{!Referral__c.Referral_Date__c}" />
                 <apex:outputField value="{!Referral__c.UCI_Number__c}" rendered="{!ReferralRecordType=='California'}" />
                 <apex:outputField value="{!Referral__c.Referral_Status__c}" id="referralStatus">
                     <apex:actionSupport event="onchange" rerender="ReferralStatus" />
                 </apex:outputField>
+                <apex:pageBlockSectionItem rendered="{!referralRecordType == 'NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.Referral_Source_Type__c}" />
                 <apex:outputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" />
-                <apex:outputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:outputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" /> -->
                 <!-- ERC-97: Start -->
                 <!-- <apex:outputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" /> -->
                 <apex:pageBlockSectionItem helpText="{!$ObjectType.Referral__c.fields.Agency_Name__c.InlineHelpText}">
                     <apex:outputlabel for="referralSource" value="Referral Source" />
                     <apex:outputField id="referralSource" value="{!Referral__c.Agency_Name__c}" />
                 </apex:pageBlockSectionItem>
+                <apex:outputField value="{!Referral__c.How_did_they_learn__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
                 <!-- ERC-97: End -->
                 <apex:outputField value="{!Referral__c.Referral_Name__c}" />
                 <apex:outputField value="{!Referral__c.Referral_Phone_Number__c}" />
                 <apex:outputField value="{!Referral__c.Financial_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.Clinical_Evaluation_Status__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}">
                     <apex:outputText value="Location" />
                     <apex:outputPanel styleClass="nowrap@">
@@ -1199,30 +1319,28 @@
                 <apex:outputField value="{!Referral__c.Evaluated_By__c}" rendered="{!referralRecordType=='CareMeridian'}" />
 
                 <!--  START NEURO EvalBy and RefBy SECTION -->
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Evaluated_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Evaluated_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Evaluated_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Evaluated_By_Internal_Other__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
 
-                <apex:outputField value="{!Referral__c.Referral_Provided_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Referral_Provided_By__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:outputField value="{!Referral__c.Referral_Provided_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" />
+<!--                 <apex:outputField value="{!Referral__c.Referral_Provided_By_Source__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Referral_Provided_By__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Referral_Provided_By_External__c}" rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
+<!--                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='NeuroRestorative'}" /> -->
                 <!--  END NEURO EvalBy and RefBy SECTION -->
 
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
-
                 <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}" />
-
-
                 <apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" />
+                <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge}" />
                 <apex:outputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.CYBER_ID_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
@@ -1284,7 +1402,7 @@
                 <apex:pageBlockSectionItem >
                     <apex:outputText >Created By:</apex:outputText>
                     <apex:outputPanel >
-                        
+
                         <apex:outputField value="{!Referral__c.CreatedById}" />,&nbsp;
                         <apex:outputField value="{!Referral__c.CreatedDate}" />
                     </apex:outputPanel>
@@ -1302,7 +1420,7 @@
                 <apex:outputField value="{!Referral__c.OwnerID}"/>
                 <i>to change, click on Edit </i>
               </apex:outputPanel>
-            </apex:pageBlockSectionItem>        
+            </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
 
             <!--  START NEW PLACEMENT SECTION -->
@@ -1412,8 +1530,12 @@
                 <apex:outputField value="{!Referral__c.Review_On__c}" rendered="{!Referral__c.Referral_Status__c=='On Hold'}" />
             </apex:pageBlockSection>
 
-            <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo">
-                <apex:outputField value="{!Referral__c.Anticipated_Admission_Date__c}" />
+            <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo" rendered="{!(referralRecordType=='CareMeridian' && Referral__c.Anticipated_Admission_DateTime__c != null) || referralRecordType != 'CareMeridian'}" >
+                <apex:pageBlockSectionItem >
+	                <apex:outputLabel value="Anticipated Admission DateTime" />
+	                <c:MilitaryDatetime dateTimeVal="{!Referral__c.Anticipated_Admission_DateTime__c}" />
+                </apex:pageBlockSectionItem>
+
                 <apex:outputField value="{!Referral__c.Service_Location__c}" />
                 <apex:outputField value="{!Referral__c.Service_Location_Service_Value__c}" />
                 <apex:outputField value="{!Referral__c.Service_Location_Setting__c}" />
@@ -1505,28 +1627,28 @@
                 <!--Left -->
                 <apex:outputField value="{!Referral__c.Axis_IV__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian')}" />
-        
-        <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />   
-        <apex:outputField value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />     
+
+        <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+        <apex:outputField value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.New_Address_Location__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
         <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-        
-                
-                
+
+
+
         <apex:outputField value="{!Referral__c.Street_1__c}" rendered="{!AND(OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota'),referralRecordType!='CareMeridian')}" />
 
                 <!--Left -->
                 <apex:outputField value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',ReferralRecordType != 'NeuroRestorative')}" />
 
-                
 
-                
+
+
                 <apex:outputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
         <apex:outputField value="{!Referral__c.Current_Location_Name__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
-        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />                
-                
+        <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+
         <apex:outputField value="{!Referral__c.Street_1__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.Street_2__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
@@ -1785,17 +1907,17 @@
             <apex:pageBlockSection columns="1" title="Referral Tracking" id="activities" collapsible="false">
                 <apex:pageBlockSectionItem >
                     <apex:outputPanel >
-                        <input type="button" class="btn" value="Add Referral Tracking Activity" onclick="showAddActivity(); return false;" />
-                        <apex:commandButton onclick="addNeuroAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed', showNeuroFeatures)}" />
-                        <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed', showNeuroFeatures)}" style="margin-left: 8px; margin-right: 8px; " />
-                        <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(ReferralRecordType='NeuroRestorative', !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed', showNeuroFeatures)}" required="false" />
+                        <input type="button" class="btn" value="Add Referral Tracking Task" onclick="showAddActivity(); return false;" />
+                        <apex:commandButton onclick="addAdmissionSteps(); return false;" value="Add Admission Steps" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" />
+                        <apex:outputLabel value="Admission Steps Assigned To" for="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" style="margin-left: 8px; margin-right: 8px; " />
+                        <apex:inputField value="{!dummyTask.OwnerId}" label="Assigned To" id="taskOwner" rendered="{!AND(OR(AND(ReferralRecordType='NeuroRestorative', showNeuroFeatures), ReferralRecordType='Illinois', ReferralRecordType='Wisconsin'), !Referral__c.Admission_Steps_Added__c, Referral__c.Referral_Status__c != 'Closed')}" required="false" />
                         <apex:actionStatus id="taskAssignStatus">
                             <apex:facet name="start">
                                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
                             </apex:facet>
                             <apex:facet name="stop" />
                         </apex:actionStatus>
-                        <apex:actionFunction name="addNeuroAdmissionSteps" action="{!addNeuroAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
+                        <apex:actionFunction name="addAdmissionSteps" action="{!addAdmissionSteps}" rerender="activities" status="taskAssignStatus" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
@@ -2829,6 +2951,7 @@
     </span>
 
             <!-- Added by Kossi -->
+            <!--
             <apex:pageBlockSection columns="1" title="Attachments" showHeader="true" collapsible="false">
                 <apex:pageBlockSectionItem >
                     <a href="/apex/uploader?parentid={!Referral__c.id}">Add/Remove</a>
@@ -2839,7 +2962,7 @@
                     </apex:column>
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
-
+			-->
             <apex:pageBlockSection columns="1" title="Related Referrals" collapsible="false">
 
                 <apex:pageBlockTable value="{!relatedReferrals}" var="r">
@@ -2849,8 +2972,19 @@
                     <apex:column value="{!r.Referral_Status__c}" />
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
+       </apex:pageBlock>
+         </apex:form>
+        <c:SObjectNotesAndAttachments parentId="{!Referral__c.id}" showAction="true" parentPage="referral" ReferralName="{!Referral__c.Name}"/>
+       	<apex:actionstatus id="convertStatus" >
+         	<apex:facet name="start" >
+				<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;" />
+	     			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+         				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        			</div>
+      		</apex:facet>
+    	</apex:actionstatus>
 
-        </apex:pageBlock>
-    </apex:form>
     <div style="text-align:right; width:100%" class="whitenoise">{!referralRecordType}</div>
+    <div style="text-align:right; width:100%" class="whitenoise">{!admissionLocationName}</div>
+
 </apex:page>

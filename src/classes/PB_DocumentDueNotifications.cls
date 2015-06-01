@@ -27,7 +27,8 @@ global class PB_DocumentDueNotifications implements Database.Batchable<sObject> 
 	                                                                    Person_Being_Served__r.OwnerId
 	                                                               From Admission__c
 	                                                              Where Id =: admIdsFromScope // the admission Ids of the associated docs
-	                                                                And status__c = 'Active'] 
+	                                                                And status__c = 'Active'
+	                                                                And Person_Being_Served__r.Owner.IsActive = true] 
 	                                                              );
 	                                                              
 	        // the existing tasks that are not closed. look into these before creating a new one.                                                             

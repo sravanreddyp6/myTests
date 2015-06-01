@@ -17,6 +17,6 @@
         </actions>
         <active>true</active>
         <formula>NOT ISBLANK(Alias__c)</formula>
-        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <triggerType>onAllChanges</triggerType>
     </rules>
 </Workflow>

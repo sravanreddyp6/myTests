@@ -11,30 +11,34 @@ public ID PBSId{get;set;}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }
+public boolean disableAddAdm { get; set; }
+public Agency_Involved_With_Individual__c agency { get; set; }
+public string loadThisAgency {get; set;}
+
 public boolean canViewFamilyInfo { 
-	get {
-		return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
-	}}
+    get {
+        return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
+    }}
 
 public Boolean isUserLevel1or2 { get { return PBS_controller_helper.isUserLevel1or2();} set; }
  
 private TMN_User__c TMNUser_internal;
 private boolean TMNUser_set = false;
 @TestVisible private TMN_User__c TMNUser {
-	get {
-		if (!TMNUser_set) {
-			TMN_User__c[] users = [
-            	SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:currentContact.OwnerID LIMIT 1
-        	];
-        	if (users.size() == 0) {
-        		TMNUser_internal = null;
-        	} else {
-        		TMNUser_internal = users[0];
-        	}
-        	TMNUser_set = true;
-		}
-		return TMNUser_internal;
-	}}
+    get {
+        if (!TMNUser_set) {
+            TMN_User__c[] users = [
+                SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:currentContact.OwnerID LIMIT 1
+            ];
+            if (users.size() == 0) {
+                TMNUser_internal = null;
+            } else {
+                TMNUser_internal = users[0];
+            }
+            TMNUser_set = true;
+        }
+        return TMNUser_internal;
+    }}
 
   public Related_Party__c relParty {
     get {
@@ -48,12 +52,12 @@ private boolean TMNUser_set = false;
   public List<Related_Party__c> relParties { get; set; }
   
   public String relPartiesJSON {get {
-	List<RelatedParty> relPartiesData = new List<RelatedParty>();
-	if (relParties.size() > 0) {
-		for (Related_Party__c rp :relParties){
-			relPartiesData.add( new RelatedParty(rp.id, rp.Type__c) );
-		}
-	}	
+    List<RelatedParty> relPartiesData = new List<RelatedParty>();
+    if (relParties.size() > 0) {
+        for (Related_Party__c rp :relParties){
+            relPartiesData.add( new RelatedParty(rp.id, rp.Type__c) );
+        }
+    }   
     return JSON.serialize(relPartiesData);}
   }
 
@@ -61,8 +65,8 @@ private boolean TMNUser_set = false;
      Id Id;
      String TypeC;
      RelatedParty(Id id, String typeC){
-     	this.Id=id;
-     	this.TypeC = typeC;
+        this.Id=id;
+        this.TypeC = typeC;
      }
   }
   
@@ -72,22 +76,26 @@ private boolean TMNUser_set = false;
 
 // Filter some of the Additional Info Fields
 public string dontShowFields {
-	get {
-		system.debug('OpGroup:' + TMNUser.Operating_Group__c);
-		List<string> dontshow = new List<string>();
-		if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
-			dontshow.Add('Current_Medications__c');
-		}
-		
-		if ( (TMNUser.Operating_Group__c.indexOf('Care') < 0) && (TMNUser.Operating_Group__c.indexOf('Meridian') < 0) ) {
+    get {
+        system.debug('OpGroup:' + TMNUser.Operating_Group__c);
+        List<string> dontshow = new List<string>();
+        if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
+            dontshow.Add('Current_Medications__c');
+        }
+        
+        if ( (TMNUser.Operating_Group__c.indexOf('Care') < 0) && (TMNUser.Operating_Group__c.indexOf('Meridian') < 0) ) {
             dontshow.Add('Advanced_Directives__c');
             dontshow.Add('Code_Status__c');
             dontshow.Add('Code_Status_Other__c');
             dontshow.Add('Advanced_Directives_Attached__c');
-		}
-		return ' ' + String.Join(dontshow, ',');
-	}
+        }
+        return ' ' + String.Join(dontshow, ',');
+    }
 }
+//save
+
+
+
 // In order to show field labels instead of API names for history
 public Map<String, String> fieldMap { get; set; }
 
@@ -116,9 +124,22 @@ public Map<String, String> fieldMap { get; set; }
         canCreateAdm = admSchema.IsCreateable();
     }
     
+    //for EPRIQM-51
+    private boolean setdisableAddAdm() {
+        if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood')) {
+        List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId];
+        if(admissionList.size()>0){
+          return false;
+        } else {
+             return true;
+        }
+    }
+    return true;
+    }
+    
     public PBSedit_controller(ApexPages.StandardController controller) {
 
-        this.currentContact=(Contact)controller.getRecord();
+        PBSController = controller;
         pbsEditModeOn=false;
         PBSId=Apexpages.currentPage().getParameters().get('Id');
         this.relParties = new List<Related_Party__c>();
@@ -136,7 +157,7 @@ public Map<String, String> fieldMap { get; set; }
         setIsEditor();
         setcanEdit();
         setcanCreateAdm();
-        
+      disableAddAdm =  setdisableAddAdm();
         if (ApexPages.currentPage().getParameters().get('edit') == 'true' && IsEditor) {
             showEditMode();
         }
@@ -153,19 +174,40 @@ public Map<String, String> fieldMap { get; set; }
         return ApexPages.currentPage().getUrl();
     }}
 
-    public List<Admission__c> admissions{get{return [select id,Name,Discharged_Date__c, Effective_Date__c, Status__c  from Admission__c where Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id') ];}set;}
+    public List<Admission__c> admissions{get{return [select id,Name, Admission_Effective_DateTime__c, Discharged_Date__c, Effective_Date__c, Status__c  from Admission__c where Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id') ];}set;}
     public Boolean showDiagnosis { get {
         if (TMNUser == null) {
             return false;
         }
 
         return TMNUser.Operating_Group__c=='Redwood'
-        	|| TMNUser.Operating_Group__c=='Cambridge';
+            || TMNUser.Operating_Group__c=='Cambridge';
     }}
     public list<Diagnosis__c> diagnosis{get{
         return [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
     } set;}
+    public List<Evaluation_Response__c> getAssessments_ChildImmune (){
 
+        return [select id, Name  from Evaluation_Response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType('Immunization - Child') AND Person_Being_Served__c = :currentContact.id ];
+    }  
+    public List<Evaluation_Response__c> getAssessments_AdultImmune (){
+
+        return [select id, Name  from Evaluation_Response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType('Immunization - Adult') AND Person_Being_Served__c = :currentContact.id ];
+   }
+    public list<string> getImmuneReqFields(){
+      list<string> tmp = new list<string>();
+      tmp.add('Allergy_Details__c');
+      tmp.add('Life_Threatening__c');
+      tmp.add('Date__c');
+      tmp.add('Dosage__c');
+      tmp.add('Vaccine_Type__c');
+      tmp.add('Dosage_Number__c');
+      tmp.add('Location__c');
+      tmp.add('Lot__c');
+      tmp.add('Expiration_Date__c');
+      tmp.add('Administered_By__c');
+      return tmp;
+    }    
     public pageReference deleteAdmission(){
     Admission__c  admission=[select id,Name,Discharged_Date__c, Effective_Date__c, Status__c  from Admission__c where id=:Apexpages.currentpage().getparameters().get('admissionId')];
     delete admission;
@@ -186,7 +228,7 @@ public Map<String, String> fieldMap { get; set; }
     private void populateRelParties() {
     try {
         this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c,
-                                Person_Being_Served__c
+                                Person_Being_Served__c, Status__c
                          from Related_Party__c
                          where Person_Being_Served__c = :pbsId order by Type__c, Name
                          ];
@@ -207,14 +249,37 @@ public Map<String, String> fieldMap { get; set; }
         'An error occurred retrieving Related Parties. ' + e.getMessage()));
     }
   }
+  public void showAddAgency() {
+    agency = new Agency_Involved_With_Individual__c();
     
+  }  
+  public void saveAgency() {
+    agency.Person_Being_Served__c = currentContact.id;
+    for(Referral__c r : [select id from referral__c where Person_Being_Served__c = :currentContact.id]){
+        agency.Referral__c = r.id;
+    }    
+    upsert agency;
+    //this.relAgencies.add(this.agency);
+    populateAgencies();
+    agency = new Agency_Involved_With_Individual__c();
+  }   
+  public PageReference loadAgency(){
+    for(Agency_Involved_With_Individual__c agy : relAgencies){
+      if(agy.id == loadThisAgency){
+        agency = agy;
+      }
+    }
+    return null;
+  }
 public void showAddRelParty() {
     relParty = new Related_Party__c();
+    relParty.Status__c = 'Active';
   }
 
   public void saveRelParty() {
     populateRelParties();
     this.relParty = new Related_Party__c();
+    relParty.Status__c = 'Active';
   }
     
  public void createRelParties() {
@@ -234,17 +299,17 @@ public void showAddRelParty() {
         return theId;
     }
 
-	// START: CTEAE-39
-	public void showAddSibling() {
-		
-	}
-	// END: CTEAE-39
+    // START: CTEAE-39
+    public void showAddSibling() {
+        
+    }
+    // END: CTEAE-39
 
-public pageReference cancelPBSController(){
-    
-    pbsEditModeOn=false;
-    return null;
+  public pageReference cancelPBSController(){
+      
+      pbsEditModeOn=false;
+      return null;
 
-}
+  }
 
 }

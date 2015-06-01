@@ -2,18 +2,24 @@ public with sharing class EvaluationHandler {
 	private boolean m_isExecuting = false;
 	public List <Evaluation_Response__c> tobedelAnnos = new List<Evaluation_Response__c>();
 	public List<Evaluation__c> annoEvals = new List<Evaluation__c>();
-	private ID rtNursing;
-	private Id recTypeId = Utility.getEValuationRecordType('CMShiftAssessment');
+	public set<Id> nonDynamicrecTypes;
+	//private ID rtNursing;
+	//private Id recTypeId = Utility.getEValuationRecordType('CMShiftAssessment');
 
 	public EvaluationHandler(boolean isExecuting){
 		m_isExecuting = isExecuting;
-		rtNursing = [ select id from recordtype where sobjecttype='Evaluation__c' and developername='NursesAssessment' LIMIT 1].ID;
+		//rtNursing = [ select id from recordtype where sobjecttype='Evaluation__c' and developername='NursesAssessment' LIMIT 1].ID;
+		nonDynamicrecTypes = new set<id>();
+		List<RecordType> rectypes = [SELECT Id FROM RecordType WHERE sobjecttype='Evaluation__c' AND (DeveloperName = 'NeuroRestorative' OR DeveloperName = 'CareMeridian')];
+		for(RecordType rt: rectypes){
+			nonDynamicrecTypes.add(rt.Id);
+		}
 	}
 
 	public void OnBeforeInsert(Evaluation__c[] newObjects){
 		// EXECUTE BEFORE INSERT LOGIC
 		for (Evaluation__c newObject: newObjects) {
-			if(newObject.RecordTypeId != recTypeId){
+			if(nonDynamicrecTypes.contains(newObject.RecordTypeId)){
 					validateFields(newObject);
 
 			}
@@ -27,24 +33,17 @@ public with sharing class EvaluationHandler {
 	public void OnBeforeUpdate(Evaluation__c[] oldObjects, Evaluation__c[] updatedObjects, Map<Id,Evaluation__c> newObjMap){
 		// BEFORE UPDATE LOGIC
 		for(Evaluation__c eUpdated : updatedObjects) {
-			if(eUpdated.RecordTypeId != recTypeId){
+			if(nonDynamicrecTypes.contains(eUpdated.RecordTypeId)){
 				validateFields(eUpdated);
+				if(eUpdated.Is_Being_Signed__c == true ) { 
+					eUpdated.Is_Signed__c = true;
+				}
+				else {
+					eUpdated.Is_Signed__c = false;
+				}
+				eUpdated.Is_Being_Signed__c = false;
+				
 			}
-			
-			system.debug('Issigned>>>> '+ eUpdated.Is_Signed__c);
-			system.debug('isbeing signed>>>>>>>>>>'+ eUpdated.Is_Being_Signed__c);
-			
-			if(eUpdated.Is_Being_Signed__c==true && eUpdated.Is_Signed__c == false) { // Temporary fix to make sure Is_Signed__c stays true when the Nurses Documentation is finalized - Sravan 01/26/2015 11:13 AM 
-				eUpdated.Is_Signed__c = true;
-			}
-		/*	else {
-				eUpdated.Is_Signed__c = false;
-			}*/
-			eUpdated.Is_Being_Signed__c = false;
-			
-			system.debug('Issigned22222>>>> '+ eUpdated.Is_Signed__c);
-			system.debug('isbeing signed2222>>>>>>>>>>'+ eUpdated.Is_Being_Signed__c);
-			
 		}
 		//Logic to Delete Annotations on NeuroTab when Pain Present field's value is set to 'No' or 'None'.
 		   for(Evaluation__c anno : updatedObjects){
@@ -624,7 +623,7 @@ public with sharing class EvaluationHandler {
 			}
 		};
 		//2014-12-11 - change to apply to recordtype other than NursingAssessment
-		if ( obj.RecordTypeID != rtNursing ) {
+		//if ( obj.RecordTypeID != rtNursing ) {
 			validationMap.put('elimination_bladder_no_continent_details__c', new Map<String, String[]>{
 				'ICP' => new String[] {'if_icp_q__c','ICP_Describe__c'}
 			});
@@ -640,8 +639,8 @@ public with sharing class EvaluationHandler {
 			validationMap.put('Elimination_Bowel_No_Continent_Appliance__c', new Map<String, String[]>{
 				'Other' => new String[] {'Elimination_Bowel_No_Appliance_Other__c','Incontinent_Bowel_Age_Appropriate__c'}
 			});
-		}
-		system.debug( 'RECORD TYPE: ' + obj.recordtypeID);
+	//	}
+	//	system.debug( 'RECORD TYPE: ' + obj.recordtypeID);
 
 		for (String fieldName: validationMap.keySet()) {
 			String fieldStringValue;

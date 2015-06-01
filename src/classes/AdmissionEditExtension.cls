@@ -7,7 +7,7 @@ public with sharing class AdmissionEditExtension {
         // Salesforce Bug: addFields cannot be called when tests are running:
         // http://bobbuzzard.blogspot.com/2011/04/dynamic-visualforce-bindings-and.html
         if(!Test.isRunningTest()) {
-            this.stdController.addFields(new String[] {'Name', 'Effective_Date__c',
+            this.stdController.addFields(new String[] {'Name', 'Effective_Date__c','Admission_Effective_DateTime__c',
                 'Status__c', 'Discharged_Date__c',
                 'Network_Offering__c', 'Reason_for_Discharge__c', 'State__c',
                 'Referred_Out_Date__c', 'Referred_Out_Agency_Name__c', 'Referred_Out_Reason__c',

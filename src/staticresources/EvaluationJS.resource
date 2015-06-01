@@ -10,13 +10,23 @@
     downloadPaperForm = function (pdfExistenceUrl) {
         downloadPdf(pdfExistenceUrl, 6000, 20, onPdfGenerationComplete, onPdfGenerationError);
     }
-    openModalDialog = function (dialogId, titleString, formId) {
+    openModalDialog = function (dialogId, titleString, formId, dClass, width, hideCloseButton) {
+        if (!width) {
+            width = 800;
+        }
+        if (!dClass) {
+            dClass = 'fixed-dialog';
+        }
+        if (hideCloseButton === undefined) {
+            hideCloseButton = true;
+        }
         var $element = $(document.getElementById(dialogId));
         if ($element.dialog("isOpen")!==true) {
             $element.dialog({
+                dialogClass: dClass,
                 title: titleString,
                 modal: true,
-                width: 800,
+                width: width,
                 resizable: false,
                 minHeight: 0,
                 dialogClass: 'modalDialog',
@@ -32,8 +42,11 @@
                     $("body").css("overflow", "hidden");
                 }
             }).parent().appendTo($(document.getElementById(formId)));
-            $element.parent().find('a.ui-dialog-titlebar-close').remove();
+            if (hideCloseButton) {
+                $element.parent().find('a.ui-dialog-titlebar-close').remove();
+            }
         }
+        return $element;
     };
     closeModalDialog = function (dialogId) {
         var $element = $(document.getElementById(dialogId));
@@ -58,7 +71,7 @@
         });
     }
     removeSpacer();
-    
+
     scrollToTop = function() {
     	window.scrollTo(0,0);
     }
