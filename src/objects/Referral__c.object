@@ -54,10 +54,13 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>REFERRAL - Stores data related to clients being referred</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>false</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>Red_Flag_Arizona</fullName>
         <description>Field that define a Red Flag Referral in Arizona</description>
@@ -841,6 +844,14 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Anticipated_Admission_DateTime__c</fullName>
+        <externalId>false</externalId>
+        <label>Anticipated Admission DateTime</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
         <fullName>Anticipated_Admission_Date__c</fullName>
         <externalId>false</externalId>
         <label>Anticipated Admission Date</label>
@@ -868,6 +879,15 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Assessment_Date__c</fullName>
+        <description>Assessment Date</description>
+        <externalId>false</externalId>
+        <label>Assessment Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>Assigned_Users__c</fullName>
@@ -1329,7 +1349,15 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Legal Reason</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Mentor Refused Placement</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1365,11 +1393,11 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Not Eligible</fullName>
+                <fullName>No Vacancies</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>No Vacancies</fullName>
+                <fullName>Not Eligible</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -1492,6 +1520,17 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Current_Location_Name__c</fullName>
+        <description>Added in EB-353</description>
+        <externalId>false</externalId>
+        <label>Current Location Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Current_Location_Type__c</fullName>
@@ -2865,7 +2904,15 @@
         <label>Legal/Guardianship Status</label>
         <picklist>
             <picklistValues>
-                <fullName>Self</fullName>
+                <fullName>Civil Commitment</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Conservator/Conservatorship</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -2877,11 +2924,11 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Conservator</fullName>
+                <fullName>Kinship</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Civil Committment</fullName>
+                <fullName>Limited Guardianship</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -2889,19 +2936,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Conservatorship</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Full Guardian</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>State Assumes Guardianship</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Kinship</fullName>
+                <fullName>Self</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -2909,15 +2944,11 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Kinship Care</fullName>
+                <fullName>State Assumes Guardianship</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Voluntary Placement Agreement</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Limited Guardianship</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -3454,6 +3485,16 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>New_Address_Location__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>added in EB-353</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Check this box if the Current Location is different from the Facility or Permanent Address</inlineHelpText>
+        <label>New Address Location</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>No_Cross_Cultural_Placement__c</fullName>
@@ -7954,7 +7995,7 @@
             <operation>notEqual</operation>
             <value>Closed</value>
         </filters>
-        <label>Active Referral with/without Assessment</label>
+        <label>Active Referral with/without Screening</label>
         <sharedTo>
             <role>NeuroRestorative</role>
             <role>Neuro_Clinical_Evaluator</role>
@@ -8290,6 +8331,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -8299,6 +8344,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8855,15 +8904,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -8879,11 +8924,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11272,6 +11337,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -11281,6 +11350,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11567,11 +11640,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -11583,11 +11660,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13407,6 +13504,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Another Provider Chosen</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Chose Another Service</fullName>
                 <default>false</default>
             </values>
@@ -13423,7 +13524,35 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor Refused Placement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match 2nd Client Issues</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match required no children in the home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Open Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No match geography</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -13432,6 +13561,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14119,11 +14252,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -14139,6 +14276,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
@@ -14147,7 +14288,15 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16989,6 +17138,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -17685,11 +17838,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -17705,6 +17862,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
@@ -17713,7 +17874,15 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21043,15 +21212,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Host Home Provider Refusal</fullName>
+                <fullName>Inquiry Only</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Needs Exceed Resources</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>No Known Disposition</fullName>
+                <fullName>Mentor Refused Placement</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -21067,15 +21232,15 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>No match geography</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>No suitable placement available</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -21088,14 +21253,6 @@
             </values>
             <values>
                 <fullName>Referral Withdrawn</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Referred to another Network Program</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Referred to this program for evaluation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21783,11 +21940,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -21803,6 +21964,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
@@ -21811,7 +21976,15 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -24637,6 +24810,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Another Provider Chosen</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Chose Another Service</fullName>
                 <default>false</default>
             </values>
@@ -24653,7 +24830,35 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor Refused Placement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match 2nd Client Issues</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match required no children in the home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Open Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No match geography</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -24662,6 +24867,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -25349,11 +25558,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -25369,6 +25582,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
@@ -25377,7 +25594,15 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -28406,6 +28631,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Another Provider Chosen</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Chose Another Service</fullName>
                 <default>false</default>
             </values>
@@ -28422,7 +28651,35 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor Refused Placement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match 2nd Client Issues</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match required no children in the home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Open Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No match geography</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -28431,6 +28688,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -29118,11 +29379,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -29135,10 +29400,6 @@
             </values>
             <values>
                 <fullName>Kinship</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Kinship Care</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -32012,6 +32273,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Another Provider Chosen</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Chose Another Service</fullName>
                 <default>false</default>
             </values>
@@ -32028,7 +32293,35 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor Refused Placement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match 2nd Client Issues</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match required no children in the home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Open Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No match geography</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -32037,6 +32330,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -32724,11 +33021,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -32744,6 +33045,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
@@ -32752,7 +33057,15 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -35725,6 +36038,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Another Provider Chosen</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Chose Another Service</fullName>
                 <default>false</default>
             </values>
@@ -35741,7 +36058,35 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor Refused Placement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match 2nd Client Issues</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match required no children in the home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Open Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No match geography</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -35750,6 +36095,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -36437,11 +36786,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -36457,6 +36810,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
@@ -36465,7 +36822,15 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -39430,6 +39795,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Another Provider Chosen</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Chose Another Service</fullName>
                 <default>false</default>
             </values>
@@ -39446,7 +39815,35 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor Refused Placement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match 2nd Client Issues</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match required no children in the home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Open Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No match geography</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -39455,6 +39852,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -40142,11 +40543,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -40162,6 +40567,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
@@ -40170,7 +40579,15 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -42984,6 +43401,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Another Provider Chosen</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Chose Another Service</fullName>
                 <default>false</default>
             </values>
@@ -43000,7 +43421,35 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor Refused Placement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match 2nd Client Issues</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Match required no children in the home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Open Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Response</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No match geography</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -43009,6 +43458,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -43696,11 +44149,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -43716,6 +44173,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
@@ -43724,7 +44185,15 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -46705,6 +47174,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -46714,6 +47187,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -47385,15 +47862,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -47409,11 +47882,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -49895,6 +50388,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -49904,6 +50401,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -50186,11 +50687,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -50202,11 +50707,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -52099,6 +52624,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -52108,6 +52637,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -52664,15 +53197,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -52688,11 +53217,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -54977,6 +55526,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -54986,6 +55539,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -55272,11 +55829,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -55288,11 +55849,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -57069,6 +57650,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -57078,6 +57663,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -57634,15 +58223,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -57658,11 +58243,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -59963,6 +60568,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -59972,6 +60581,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -60250,7 +60863,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Civil Commitment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -60258,7 +60875,39 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Guardian</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Health Care Representative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -62043,6 +62692,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Legal Reason</fullName>
                 <default>false</default>
             </values>
@@ -62683,15 +63336,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -62707,11 +63356,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -65348,6 +66017,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -65357,6 +66030,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -65913,15 +66590,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -65937,11 +66610,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -68383,6 +69076,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -68392,6 +69089,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -68948,15 +69649,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -68972,11 +69669,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -71430,6 +72147,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -71439,6 +72160,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -71995,15 +72720,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -72019,11 +72740,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -74501,6 +75242,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -74510,6 +75255,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -75066,15 +75815,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -75090,11 +75835,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -77407,6 +78172,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -77416,6 +78185,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -77698,11 +78471,15 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Full Guardian</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -77714,11 +78491,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -79519,6 +80316,10 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Inquiry Only</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>No Vacancies</fullName>
                 <default>false</default>
             </values>
@@ -79528,6 +80329,10 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Referral Withdrawn</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -80084,15 +80889,11 @@
         <picklistValues>
             <picklist>Legal_Guardian_Status__c</picklist>
             <values>
-                <fullName>Civil Committment</fullName>
+                <fullName>Civil Commitment</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Conservator</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Conservatorship</fullName>
+                <fullName>Conservator%2FConservatorship</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -80108,11 +80909,31 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Kinship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Limited Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Parent</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shelter Care</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>State Assumes Guardianship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Voluntary Placement Agreement</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -82283,6 +83104,15 @@
         <errorConditionFormula>ISPICKVAL(Referral_Status__c, &apos;Closed&apos;) &amp;&amp;  ISPICKVAL(Close_Reason__c,&apos;&apos;)</errorConditionFormula>
         <errorDisplayField>Close_Reason__c</errorDisplayField>
         <errorMessage>Close Reason is required when status equals Closed.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>CurrentLocationName_Required</fullName>
+        <active>true</active>
+        <description>added in eb-353</description>
+        <errorConditionFormula>RecordType.DeveloperName = &apos;NeuroRestorative&apos; &amp;&amp;
+ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c</errorConditionFormula>
+        <errorDisplayField>Current_Location_Name__c</errorDisplayField>
+        <errorMessage>Current Location name is required when New Address Location is checked</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Family_Involvement_Level_Validation</fullName>

@@ -35,7 +35,7 @@ public with sharing class referralConversion_Controller {
     this.referralRecord = getFullReferralRecord(((Referral__c) ctl.getRecord()).Id);
 
     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING,
-            'You have chosen to convert the referral ' + this.referralRecord.Name + '. Please confirm the information below and click Convert to Admission to continue the conversion process. If you would like to revise the referral, click Edit.' ));
+            'You have chosen to convert the referral ' + this.referralRecord.Name + '. Please confirm the information below and click Confirm Conversion to continue the conversion process. If you would like to revise the referral, click Edit.' ));
 
     // get the referral location information
     parseLocationInfo();
@@ -179,13 +179,14 @@ public with sharing class referralConversion_Controller {
                         r.Axis_II__c,
                         r.Axis_III__c,
                         r.Anticipated_Admission_Date__c,
+                        r.Anticipated_Admission_DateTime__c,
                         r.Agency_Name__c,
                         r.Payer_Medical_Record_Number__c ,
                         r.Payer_Medical_Record_Number_Description__c
 
                         From Referral__c r
 
-      where id = :idgetref];
+      where id = :idgetref]; 
     }
     catch (Exception e ){
 
@@ -198,7 +199,7 @@ public with sharing class referralConversion_Controller {
    private Person_Being_Referred__c getPBRRec() {
     Person_Being_Referred__c pBRRec;
     try {
-      pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c,
+      pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c, 
                        Ethnicity__c, Fax__c, First_Name__c, Gender__c,
                        Home_County__c, Last_Name__c, Marital_Status__c,
                        Middle_Initial__c, Phone__c, Primary_Language__c, Race__c, SSN__c,
@@ -222,7 +223,7 @@ public with sharing class referralConversion_Controller {
   private Contact getPBSRec() {
     Contact pBSRec;
     try {
-      pBSRec = [select MailingCity, BirthDate, Email,
+      pBSRec = [select MailingCity, BirthDate, Email, Age__c,
                        Ethnicity_Picklist__c, Fax, FirstName, Gender__c,
                        Mailing_County__c, LastName,
                        Middle_Name__c, Phone, Primary_Language__c, Race__c, SSN__c,
@@ -408,7 +409,8 @@ public with sharing class referralConversion_Controller {
                                 PersonEmail = pbrCurr.Email_Address__c,
                                 Fax = pbrCurr.Fax__c,
                                 Phone = pbrCurr.Phone__c,
-                                PersonMailingStreet = strFullSt,
+                                PersonMailingStreet = pbrCurr.Street_1__c,
+                                Mailing_Street_2__pc = pbrCurr.Street_2__c,
                                 PersonMailingCity = pbrCurr.City__c,
                                 PersonMailingPostalCode = pbrCurr.Zip_Code__c,
                                 PersonMailingCountryCode= 'US',
@@ -443,15 +445,91 @@ public with sharing class referralConversion_Controller {
 
     // link related parties to new Person Being Served
     linkRelParties( accNew.PersonContactId );
-
+	
+	// link Allerigies to new Person Being Served. pull them from referral eval Allergies
+	linkAllergies(accNew.PersonContactId );
+	
     // link agencies to new Person Being Served
     linkAgencies( accNew.PersonContactId );
 
+    // link assistive devices from the referral eval to the person being served.
+    linkAssistiveDevices(accNew.PersonContactId);
+     
     // return the contact id, not the account id
     return accNew.PersonContactId;
 
  }
 
+  private void linkAssistiveDevices(ID pbsID){
+   if(referralRecordType.startsWith('CareMeridian')){        
+        map<string, string> evalFieldMap = new map<string, string>();
+        evalFieldMap.put('Glasses_For_Reading__c', 'Glasses');
+        evalFieldMap.put('Glasses_For_Distance__c', 'Glasses');
+        evalFieldMap.put('Glasses_For_Multi_Focal_Use__c', 'Glasses');
+        evalFieldMap.put('Rehab_Cane__c', 'Cane');
+        evalFieldMap.put('Front_Wheeled_Walker__c', 'Front-Wheeled Walker');
+        evalFieldMap.put('Wheel_Chair__c', 'Wheelchair');
+        evalFieldMap.put('Bed_Alarm__c', 'Bed Alarm');
+        String evalRespQuery = 'Select ' + String.join((new list<String>(evalFieldMap.keySet())), ', ') + ' From Evaluation__c Where Referral__c = \'' + String.valueOf(referralRecord.id) + '\'';
+        list<Evaluation__c> refEvals = database.query(evalRespQuery);
+        if (!refEvals.isEmpty() ) {
+        	Evaluation__c refEval = refEvals.get(0);  
+            list<Evaluation_Response__c> evalRspns = new List<Evaluation_Response__c>();
+            Id rcdTypId = Utility.getEvaluationResponseRecordType('Assistive Device');
+            for (String s : evalFieldMap.keySet()) {
+                if (s == 'Glasses_For_Reading__c'){
+                    String[] vals = new list<String>();
+                    if (refEval.Glasses_For_Reading__c) vals.add('For Reading');
+                    if (refEval.Glasses_For_Distance__c) vals.add('For Distance');
+                    if (refEval.Glasses_For_Multi_Focal_Use__c) vals.add('Multifocal');
+                    if (!vals.isEmpty()) {
+	                    Evaluation_Response__c rsp = new Evaluation_Response__c();
+	                    rsp.RecordTypeID = rcdTypId;
+	                    rsp.person_being_served__c = pbsID;
+	                    rsp.Assistive_Device_Type__c = 'Glasses';
+	                    rsp.Assistive_Device_Start_Date__c = referralRecord.Anticipated_Admission_Date__c;
+	                    rsp.Glasses_Contacts_Purpose__c = String.join(vals, ';');
+	                    evalRspns.add(rsp);
+                    }
+                } else if (s == 'Rehab_Cane__c' || s == 'Front_Wheeled_Walker__c' || s == 'Wheel_Chair__c' || s == 'Bed_Alarm__c'){
+                	if (Boolean.valueOf(refEval.get(s))){
+	                    Evaluation_Response__c rsp = new Evaluation_Response__c();
+	                    rsp.RecordTypeID = rcdTypId;
+                        rsp.person_being_served__c = pbsID;
+	                    rsp.Assistive_Device_Type__c = evalFieldMap.get(s);
+	                    rsp.Assistive_Device_Start_Date__c = referralRecord.Anticipated_Admission_Date__c;
+	                    evalRspns.add(rsp);
+                	}
+                } 
+            }
+            insert evalRspns;
+        }
+    }
+  }
+  
+  private void linkAllergies(ID pbsID){
+  	
+  	if(referralRecordType.startsWith('CareMeridian')){
+  		 List <Evaluation__c> refEval = [SELECT ID FROM Evaluation__c WHERE Referral__c =:referralRecord.id LIMIT 1]; //using List to avoid System.Query Exception when no records are returned
+  		 
+  		 if(refEval.size() > 0){
+  		 	List<Evaluation_Response__c> tobeClonedResponses = [SELECT Id, Allergy_Type__c, Allergy_Details__c, Life_Threatening__c FROM Evaluation_Response__c WHERE RecordType.Name = 'Allergy' AND Evaluation__c = :refEval[0].Id];
+  		 	if(tobeClonedResponses.size() > 0){
+	  		 	List<Evaluation_Response__c> clonedResponses = new List<Evaluation_Response__c>();
+	  		 	for(Evaluation_Response__c resp: tobeClonedResponses){
+	  		 		Evaluation_Response__c er = resp.clone(false);
+	  		 		er.Person_Being_Served__c = pbsID;
+	  		 		clonedResponses.add(er);
+	  		 	}
+	  		 	
+	  		 	insert clonedResponses;
+  		 	}
+  		 }
+  		
+  	}
+  	
+  	
+  }
  // get the contact id from an existing person account object
  private ID getPBSContactId ( ID pbsID )
  {
@@ -478,7 +556,7 @@ public with sharing class referralConversion_Controller {
             // no current admission - create one
             currAdm = new Admission__c(
                 Person_Being_Served__c = idPBS,
-                Effective_date__c = refCurr.Anticipated_Admission_Date__c,
+                Admission_Effective_DateTime__c = refCurr.Anticipated_Admission_DateTime__c,
                 Network_Offering__c = NetworkOffering,
                 Program__c = refCurr.Service_Location_Program__c,
                 Referral_Date__c = refCurr.Referral_Date__c,
@@ -520,10 +598,11 @@ public with sharing class referralConversion_Controller {
                                             RecordTypeId = idSAtype,
                                             Admission__c = idAdm,
                                             Person_Being_Served__c = idPBS,
-                                            Start_Date__c = refCurr.Anticipated_Admission_Date__c,
+                                            SA_Start_DateTime__c = refCurr.Anticipated_Admission_DateTime__c,
                                             Status__c = 'Active',
                                             Program_Detail__c = refCurr.Service_Location_Program__c,
                                             Service_Location__c = refCurr.Service_Location__c,
+                                            service_line__c = getServiceLine(),
                                             Location_Region__c = getLocation(),
                                             Program_Code__c = getProgram(),
                                             Program__c = getProgram(),
@@ -564,7 +643,7 @@ public with sharing class referralConversion_Controller {
                                         Axis_III__c = refCurr.Axis_III__c,
                                         Axis_IV__c = refCurr.Axis_IV__c,
                                         Axis_V__c = refCurr.Axis_V__c,
-                                        Effective_Date__c = DateTime.newInstance(refCurr.Anticipated_Admission_Date__c, Time.newInstance(0, 0, 0, 0)),
+                                        Effective_Date__c = refCurr.Anticipated_Admission_DateTime__c,
                                         Primary_Diagnosis__c = refCurr.Primary_Diagnosis__c,
                                         Secondary_Diagnosis__c = refCurr.Secondary_Diagnosis__c,
                                         Level_of_Disability__c = refCurr.Level_of_Disability__c,
@@ -573,10 +652,10 @@ public with sharing class referralConversion_Controller {
         insert newDiag;
     }
 
-
 /*
+This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
  * Sravan's Conversion code
- */
+ 
 
 
     //Nurses Evaluation Creation - Sravan 5/15/2014
@@ -585,13 +664,16 @@ public with sharing class referralConversion_Controller {
             SELECT ID, NAME FROM Evaluation__c
             WHERE Referral__c =:refCurr.Id LIMIT 1
         ]; //using List to avoid System.Query Exception when no records are returned
+        
+        string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(',') != null ? this.referralRecord.Name_PBR__c.Substringbefore(',') : '' ; //newSA.Admission__r.Person_Being_Served__r.LastName;
+        string pbsfirstinitial = this.referralRecord.Name_PBR__c.substringAfter(', ') != null ? this.referralRecord.Name_PBR__c.substringAfter(', ').substring(0,1) : '';
+        string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : ''; 
 
         if(refEval.isEmpty()){
-            string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(','); //newSA.Admission__r.Person_Being_Served__r.LastName;
-            if(pbslastName == null) pbslastName = '';
+        	
             Evaluation__c nurseEval = new Evaluation__c(
                                             ServiceAssignment__c = newSA.id,
-                                            Name = pbslastName +'AdmissionAssessment'+ DateTime.Now().format('MMddyy'),
+                                            Name = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName(),
                                             RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
             );
             insert nurseEval;
@@ -599,7 +681,7 @@ public with sharing class referralConversion_Controller {
         else {
             id evalID = refEval[0].id;
             list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
-            String asmtName = refEval[0].Name.length()>10 ? refEval[0].Name.Substringbefore('Eval')+'AdmissionAssessment'+ DateTime.Now().format('MMddyy') : 'AdmissionAssessment'+ DateTime.Now().format('MMddyy');
+            String asmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
             String query = 'SELECT ';
             FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
 
@@ -654,7 +736,7 @@ public with sharing class referralConversion_Controller {
         }
     }
 
- /*
+ 
   * End of Sravan's Conversion Code
   */
 
@@ -837,7 +919,9 @@ public class personRecord {
     public boolean SignLanguage{ get { return signlang;} set; }
     public string LegalGuardianship { get {return legalstat;} set; }
     public string Education { get {return educ;} set; }
-
+	public String age { get {return age;} set; }
+	public String race { get {return race;} set; }
+	
     public personRecord( Person_Being_Referred__c pbr ) {
         System.Debug('calling person record with referred: ' + pbr);
         fn = pbr.First_Name__c;
@@ -862,7 +946,8 @@ public class personRecord {
         nonverb = pbr.Non_Verbal__c;
         signlang = pbr.Sign_Language__c;
         educ = pbr.Level_of_Education__c;
-
+		age = String.valueOf(pbr.Age__c);	
+		race =  pbr.Race__c;
     }
 
 
@@ -889,8 +974,9 @@ public class personRecord {
         signlang = pbs.Sign_Language__c;
         medid = pbs.Medicaid_Id__c;
         educ = pbs.Level_of_Education__c;
+        age = String.valueOf(pbs.Age__c);
+        race =  pbs.Race__c;
     }
-
 
 }
 class referralConversionException extends Exception {

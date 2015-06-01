@@ -48,9 +48,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>ASSESSMENT</description>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Assessment_Type2__c</fullName>
         <externalId>false</externalId>
@@ -58,6 +61,18 @@
         <picklist>
             <picklistValues>
                 <fullName>FAD Summary</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Restraint Reduction</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Immunization - Child</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Immunization - Adult</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -89,13 +104,14 @@
     </fields>
     <fields>
         <fullName>External_ID__c</fullName>
+        <caseSensitive>false</caseSensitive>
         <externalId>true</externalId>
         <label>External ID</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
-        <unique>false</unique>
+        <unique>true</unique>
     </fields>
     <fields>
         <fullName>Header__c</fullName>

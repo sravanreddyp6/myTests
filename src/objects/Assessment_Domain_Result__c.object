@@ -48,9 +48,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>ASSESSMENT</description>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Answered_Questions__c</fullName>
         <externalId>false</externalId>
@@ -73,7 +76,7 @@
         <referenceTo>Assessment_Domain__c</referenceTo>
         <relationshipLabel>Assessment Domain Results</relationshipLabel>
         <relationshipName>Assessment_Domain_Results</relationshipName>
-        <required>true</required>
+        <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
@@ -100,6 +103,17 @@
         <trackTrending>false</trackTrending>
         <type>MasterDetail</type>
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>External_ID__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>true</externalId>
+        <label>External ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
     </fields>
     <fields>
         <fullName>Score__c</fullName>
@@ -161,6 +175,11 @@
     <label>Assessment Domain Result</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>CREATED_DATE</columns>
+        <columns>Assessment_Domain__c</columns>
+        <columns>Assessment_Type__c</columns>
+        <columns>Assessment__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>

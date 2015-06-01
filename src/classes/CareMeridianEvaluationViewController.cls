@@ -7,7 +7,7 @@ public with sharing class CareMeridianEvaluationViewController {
         get {
             return [
                 SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
-                       Phone_2__c, Phone_2_Type__c, Comments__c
+                       Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
                 FROM Related_Party__c WHERE Person_Being_Referred__c=:evaluation.Referral__r.Person_Being_Referred__c
             ];
         }
@@ -59,7 +59,7 @@ public with sharing class CareMeridianEvaluationViewController {
         file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
         // Assigns the person being referred Name to the PDF dynamically
         Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename='+file);
-        //Grab the Service Assignment details to populate the breadcrumb when user opens Evaluation from Sevrice Assignment Page. EC-41 Sravan:10/13/2014 1:15 PM.
+        //Grab the Service Assignment details to populate the breadcrumb when user opens Evaluation from Service Assignment Page. EC-41 Sravan:10/13/2014 1:15 PM.
         if(Apexpages.currentpage().getparameters().get('SA_Id') != null ){
             SA =[SELECT ID, Name, Admission__r.Name,Admission__c, Admission__r.Person_being_served__c, Admission__r.Person_being_served__r.Name FROM Service_Assignment__c WHERE Id =:ApexPages.currentPage().getParameters().get('SA_Id') ];
         }
@@ -69,12 +69,13 @@ public with sharing class CareMeridianEvaluationViewController {
         this.currentRelatedParty = new Related_Party__c();
         this.currentRelatedParty.Person_Being_Referred__c = this.evaluation.Referral__r.Person_Being_Referred__c;
         this.currentRelatedParty.RecordTypeId = Utility.getRelatedPartyRecordTypeFromReferral(new Referral__c(Id=this.evaluation.Referral__c));
+    	this.currentRelatedParty.Status__c = 'Active';
     }
 
     public void showEditRelatedParty() {
         this.currentRelatedParty = [
             SELECT ID, Name, Type__c, Address__c, Email__c, Phone__c, Phone_1_Type__c,
-                   Phone_2__c, Phone_2_Type__c, Comments__c
+                   Phone_2__c, Phone_2_Type__c, Comments__c, Status__c
             FROM Related_Party__c WHERE ID=:currentRelatedPartyId
         ];
     }

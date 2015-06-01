@@ -58,7 +58,7 @@ public with sharing class ActionSummaryTest {
         futureObj.Description__c = 'a future test objective';
         futureObj.Status__c = 'In Progress';
         futureObj.Type__c = 'Skill';
-        futureObj.Effective_date__c = date.Today().addmonths(1);
+        futureObj.Effective_date__c = date.Today().addmonths(1).adddays(1);
         futureObj.Target_end_date__c = date.today().addmonths(2);       
         insert futureObj;
 

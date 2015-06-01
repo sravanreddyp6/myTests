@@ -94,14 +94,14 @@ $(function() {
 </apex:outputPanel>
 <apex:outputPanel id="page2">
 <apex:form >
- <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="eleyForm" status="myStatus">
-     <apex:param name="firstParam" assignTo="{!curTreeNodeKey}" value="" />
- </apex:actionFunction>
+    <apex:actionFunction action="{!editTreeNode}" name="editNode" rerender="eleyForm" status="myStatus">
+        <apex:param name="firstParam" assignTo="{!curTreeNodeKey}" value="" />
+    </apex:actionFunction>
 
 <apex:outputPanel layout="block" styleClass="rcol">
  
     <apex:pageBlock id="fullTree">
-        <apex:pageBlockButtons >
+        <apex:pageBlockButtons location="top">
             <apex:commandButton action="{!newEley}" value="New Component" reRender="eleyForm" status="myStatus"/>
         </apex:pageBlockButtons>
         <apex:outputPanel id="tree2" layout="block" >
@@ -125,8 +125,9 @@ $(function() {
     isModified = false;
 </script>
 
-     <apex:pageBlockButtons >
-     <apex:commandButton id="SaveNodeEelement" action="{!upsertEley}" value="Save" reRender="page2" status="myStatus"/>             
+     <apex:pageBlockButtons location="top">
+        <apex:commandButton id="SaveNodeEelement" action="{!upsertEley}" value="Save" reRender="page2" status="myStatus"/>
+        <apex:commandButton id="CancelNodeEelement" action="{!newEley}" value="Cancel" immediate="true" reRender="eleyForm" status="myStatus"/>
      </apex:pageBlockButtons>        
     <apex:pageMessages ></apex:pageMessages>    
 	<apex:outputPanel layout="block" styleClass="frmLCol">   
