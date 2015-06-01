@@ -6,7 +6,7 @@
  
      <apex:pageBlock mode="view">
       <apex:pageblockButtons location="Bottom" >
-          <apex:commandButton value="Convert to Admission" action="{!convertReferral}"/>
+          <apex:commandButton value="Confirm Conversion" action="{!convertReferral}"/>
           <apex:commandButton value="Edit Referral" action="{!edit}"/>
       </apex:pageblockButtons>
 
@@ -16,29 +16,25 @@
                              columns="2"
                              collapsible="false"
                              id="PBSSection">
-                             
-          <apex:pageBlockSectionItem >
-          <apex:outputText value="Name"/>
-          <apex:outputPanel styleClass="nowrap">
-            <apex:outputText value="{!person.FirstName}" />&nbsp;
-            <apex:outputText value="{!person.MiddleInitial}" />&nbsp;
-            <apex:outputText value="{!person.LastName}" />
-          </apex:outputPanel>            
-          </apex:pageBlockSectionItem>
- 		<apex:outputText label="Date of Birth" value="{!person.DateOfBirth}" />          
- 		<apex:outputText label="Email" value="{!person.Email}" />         
- 		<apex:outputText label="Fax" value="{!person.Fax}" />         
- 		<apex:outputText label="Phone" value="{!person.Phone}" />         
- 		<apex:outputText label="Street" value="{!person.Street1} {!person.Street2} " />         
- 		<apex:outputText label="City" value="{!person.City}" />         
- 		<apex:outputText label="State" value="{!person.State}" />         
- 		<apex:outputText label="ZIP" value="{!person.ZipCode}" />         
-		<apex:outputText label="County" value="{!person.County}" />
- 		<apex:outputText label="Ethnicity" value="{!person.Ethnicity}" />         
- 		<apex:outputText label="Gender" value="{!person.Gender}" />
- 		  
- 		
- 		<apex:pageBlockSectionItem >         
+             <!-- Rearranged these filed for EPRIQM-117  -->               
+            <apex:outputText label="First Name" value="{!person.FirstName}" /> 
+            <apex:outputText label="Date of Birth" value="{!person.DateOfBirth}" /> 
+           
+            
+            <apex:outputText label="Middle Name" value="{!person.MiddleInitial}" /> 
+             <apex:outputText label="Age"  value="{!person.Age}" />
+            
+            <apex:outputText label="Last Name" value="{!person.LastName}" />
+             <apex:outputText label="Gender" value="{!person.Gender}" />   
+              <apex:outputText label="Mailing Street 1" value="{!person.Street1}" />  
+               <apex:outputText label="Race" value="{!person.race}" />
+             <apex:outputText label="Mailing Street 2" value="{!person.Street2} " />
+              <apex:outputText label="Ethnicity" value="{!person.Ethnicity}" /> 
+             
+             <apex:outputText label="Mailing City" value="{!person.City}" />    
+ 		     <apex:outputText label="Marital Status" value="{!person.MaritalStatus}" />   
+ 		     <apex:outputText label="Mailing State/Province" value="{!person.State}" />
+ 		     		<apex:pageBlockSectionItem >         
  		<apex:outputText value="Primary Language"  />
  		<apex:outputPanel styleclass="nowrap">
  		<apex:outputText value="{!person.PrimaryLanguage}" />&nbsp;&nbsp;
@@ -46,10 +42,25 @@
  		<apex:outputText value="Sign Language" rendered="{!person.SignLanguage}" />
  		</apex:outputPanel>
  		</apex:pageBlockSectionItem>
- 		<apex:outputText label="Highest Level of Education" value="{!person.Education}" />
+ 		 <apex:outputText label="Mailing Zip/Postal Code" value="{!person.ZipCode}" />         
+ 		 <apex:outputText label="Highest Level of Education" value="{!person.Education}" />
+ 		     <apex:outputText label="Mailing County"  value="{!person.County}" />
+ 		     <apex:outputText label="Legal/Guardianship Status" value="{!person.LegalGuardianship}" />    
+ 		
+ 		 <!--  Fax is removed for   EPRIQM-115        
+ 		<apex:outputText label="Fax" value="{!person.Fax}" />    
+ 		     -->  
+ 		  
+ 		<apex:outputText label="Phone" value="{!person.Phone}" />         
+ 		
+ 		<apex:outputText label="Email" value="{!person.Email}" />
+ 		 
+ 		
+ 		
+		<!-- 
  		<apex:outputText label="SSN" value="{!person.SSN}" />         
-		<apex:outputText label="Marital Status" value="{!person.MaritalStatus}" />
- 		<apex:outputText label="Legal/Guardianship Status" value="{!person.LegalGuardianship}" />
+		 -->
+ 		
  		</apex:pageBlockSection>
 
 <apex:pageBlockSection title="Admission"

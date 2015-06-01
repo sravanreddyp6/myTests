@@ -173,7 +173,7 @@ function highlightButtons ( btype, sfid, on )
                         />
     <br />
 
-    <apex:form >                 
+    <apex:form >      
         <apex:pageBlock title="Shift Note">  
         <apex:outputPanel id="messages">
             <apex:pageMessages />
@@ -376,7 +376,9 @@ function highlightButtons ( btype, sfid, on )
     </apex:form>
 </apex:outputPanel>
 
-<c:SObjectNotesAndAttachments parentId="{!pn.id}" showAction="false" rendered="{! !editMode}"></c:SObjectNotesAndAttachments>
+<c:SObjectNotesAndAttachments parentId="{!pn.id}" showAction="true" rendered="{! !editMode}" pbsId="{!pn.Person_Being_Served__c}"  parentPage="ShiftNote" 
+                        apId="{!pn.id}"   servAssignId="{! IF( pn.Action_Plan__c != null, pn.Action_Plan__r.Service_Assignment__c, pn.Service_Assignment__c)}" 
+                        admId="{!pn.Admission__c}"></c:SObjectNotesAndAttachments>
 
 <apex:actionStatus id="myStatus" >
     <apex:facet name="start">

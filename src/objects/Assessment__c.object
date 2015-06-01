@@ -54,10 +54,13 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>ASSESSMENT - Stores basic assessment info</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>false</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>CANS_Fields</fullName>
         <description>Dynamically generate summary table for CANS Assessment</description>
@@ -288,8 +291,7 @@ Delete Me</description>
     <fields>
         <fullName>Assessment_Type_Name__c</fullName>
         <externalId>false</externalId>
-        <formula>Assessment_Type__r.Name</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <formula>IF(Assessment_Type__r.Name != null, Assessment_Type__r.Name, TEXT(Type__c))</formula>
         <label>Assessment Type Name</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -333,6 +335,29 @@ Delete Me</description>
         <label>Disregard</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Evaluation__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Evaluation</label>
+        <referenceTo>Evaluation__c</referenceTo>
+        <relationshipLabel>Assessments</relationshipLabel>
+        <relationshipName>Assessments</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>External_ID__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>true</externalId>
+        <label>External ID</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
     </fields>
     <fields>
         <fullName>Family_Annual_Income__c</fullName>
@@ -385,6 +410,18 @@ Delete Me</description>
         <type>Date</type>
     </fields>
     <fields>
+        <fullName>Guidelines__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( Score__c &lt; 21, &apos;Priority&apos;, 
+IF( Score__c &lt; 36, &apos;Good&apos;,
+IF( Score__c &gt; 35, &apos;Poor&apos;, &apos;&apos;)))</formula>
+        <label>Guidelines</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Interval__c</fullName>
         <description>Interval for the assessment</description>
         <externalId>false</externalId>
@@ -408,6 +445,14 @@ Delete Me</description>
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>IsOwnerActive__c</fullName>
+        <externalId>false</externalId>
+        <formula>Owner:User.IsActive</formula>
+        <label>IsOwnerActive</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Locked__c</fullName>
         <defaultValue>false</defaultValue>
         <description>A field to control whether or not an assessment has been submitted and locked, unlocked, etc.</description>
@@ -428,6 +473,14 @@ Delete Me</description>
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Past_Due_Date__c</fullName>
+        <externalId>false</externalId>
+        <formula>TODAY() -  Assessment_Date__c &gt; 90</formula>
+        <label>Past Due Date</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Phase__c</fullName>
@@ -469,7 +522,7 @@ Delete Me</description>
         <description>Indication of the numbered quarter this assessment describes.</description>
         <externalId>false</externalId>
         <inlineHelpText>Indication of the numbered quarter this assessment describes.</inlineHelpText>
-        <label>Quarter</label>
+        <label>Quarterly Assessment Number</label>
         <precision>4</precision>
         <required>false</required>
         <scale>0</scale>
@@ -500,7 +553,7 @@ Delete Me</description>
         <fullName>Score__c</fullName>
         <externalId>false</externalId>
         <label>Score</label>
-        <summarizedField>Assessment_Response__c.ScoreOld__c</summarizedField>
+        <summarizedField>Assessment_Response__c.Score__c</summarizedField>
         <summaryForeignKey>Assessment_Response__c.Assessment__c</summaryForeignKey>
         <summaryOperation>sum</summaryOperation>
         <trackTrending>false</trackTrending>
@@ -667,6 +720,22 @@ Delete Me</description>
                 <fullName>FAD Summary</fullName>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>Resident Assessment</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Restraint Reduction</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Immunization - Child</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Immunization - Adult</fullName>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackTrending>false</trackTrending>
@@ -705,6 +774,7 @@ Delete Me</description>
         <columns>Assessment_Date__c</columns>
         <columns>CREATED_DATE</columns>
         <columns>OWNER.FIRST_NAME</columns>
+        <columns>Disregard__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -720,7 +790,15 @@ Delete Me</description>
     <validationRules>
         <fullName>Admission_Required</fullName>
         <active>true</active>
-        <errorConditionFormula>(ISBLANK(Admission__c) &amp;&amp; TEXT(Type__c) != &apos;FAD&apos;)</errorConditionFormula>
+        <errorConditionFormula>ISBLANK(Admission__c) &amp;&amp; 
+
+(
+Case(TEXT(Type__c),
+ &apos;FAD&apos;, 1,
+ &apos;Immunization - ChilD&apos;, 1,
+ &apos;Immunization - Adult&apos;, 1, 0
+)=0
+)</errorConditionFormula>
         <errorDisplayField>Admission__c</errorDisplayField>
         <errorMessage>An Admission is required for all Assessments</errorMessage>
     </validationRules>

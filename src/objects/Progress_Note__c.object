@@ -54,9 +54,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Progress Notes are the notes taken for a Person Being Served on their progress towards meeting the goals on a Plan. Progress Notes are Master-detail to Plans.</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>NewForm</fullName>
         <description>the Fields that get displayed on the new form</description>
@@ -3548,7 +3551,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <filterScope>Everything</filterScope>
         <label>My Team&apos;s Notes</label>
         <sharedTo>
-            <group>AccessHack_JeannieKing_NcRockAndRaleigh</group>
             <group>Admins</group>
             <group>All_TMN</group>
             <group>Clinical_Force_NC_Goldsboro</group>
@@ -3586,7 +3588,6 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         </filters>
         <label>FL-My Team&apos;s Notes</label>
         <sharedTo>
-            <group>AccessHack_JeannieKing_NcRockAndRaleigh</group>
             <group>Admins</group>
             <group>All_TMN</group>
             <group>Clinical_Force_NC_Goldsboro</group>
@@ -19424,9 +19425,7 @@ if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apo
 alerts.push( &apos;WARNING! A Primary Care provider name has not been entered&apos; ); 
 } 
 
-if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apos;{!Progress_Note__c.Primary_Care_Provider_NPI_Number__c}&apos; ==&apos;&apos;){ 
-alerts.push( &apos;WARNING! A Primary Care provider NPI name has not been entered&apos; );  
-} 
+
 
 var shortTermGoalQuery = sforce.connection.query(&quot;SELECT Id, Progress_Note__c, Goal__c from ProgressNote_ActionPlanChildren_mjo__c where Progress_Note__c =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
 stg_data = shortTermGoalQuery.getArray(&quot;records&quot;); 

@@ -134,6 +134,17 @@ public with sharing class NursingEvaluationViewController {
         }
     }
     
+    
+   public Evaluation_Response__c[] signatures { set;
+    	get{
+    		return [
+    			SELECT Id, Name, CreatedDate, Owner.Name, Owner.Id 
+    						FROM Evaluation_Response__c WHERE RecordType.Name = 'E-Signature' AND Evaluation__c = :this.evaluation.Id
+    						order BY CreatedDate Desc
+    		];
+    	}
+ 		
+    }
   /*   public String bodyMapUrl { get {
         Attachment[] attachments = [
             SELECT Id FROM Attachment

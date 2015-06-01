@@ -48,7 +48,15 @@ public with sharing class FieldPrintTransform {
 					Component.Apex.OutputText outTxt = new Component.Apex.OutputText( value='No', label=fielddescribe.getLabel());
 					op.childComponents.Add( outTxt );
 					
-				} else {
+				}
+				
+				else if(string.isBLANK(string.valueOf(fullobj.get(fieldname))) ) {
+					Component.Apex.OutputText outTxt = new Component.Apex.OutputText( value=' - ', label=fielddescribe.getLabel());
+					op.childComponents.Add( outTxt );
+					
+				}
+				
+				 else {
 					Component.Apex.OutputField outFld = new Component.Apex.OutputField();
 					outFld.expressions.value = '{!' + objectName + '.' + fieldname +'}';
 					op.childComponents.Add( outFld);

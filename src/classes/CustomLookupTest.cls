@@ -45,8 +45,12 @@ public with sharing class CustomLookupTest {
             controller.Searchfields = 'FacilityID__c, State__c';
             controller.returnfields = 'FacilityID__c, State__c';
             System.Debug(controller.query);
-            System.Debug('select Id, Name,State__c,FacilityID__c From Service_Location__c');
-            System.AssertEquals( controller.query.remove(' '), 'selectId,Name,State__c,FacilityID__cFromService_Location__c');
+            
+            // can't count on order of fields!
+            System.Assert( controller.query.contains('FacilityID__c'), true);
+            System.Assert( controller.query.contains('State__c'), true);
+            
+            System.Assert( controller.rfieldsOrdered.size() > 0);
             controller.Search();
         	}
         		
@@ -61,8 +65,10 @@ public with sharing class CustomLookupTest {
             controller.Searchfields = 'FacilityID__c, State__c';
             controller.returnfields = 'FacilityID__c, State__c';
             System.Debug(controller.query);
-            System.Debug('select Id, Name,State__c,FacilityID__c From Service_Location__c');
-            System.AssertEquals( controller.query.remove(' '), 'selectId,Name,State__c,FacilityID__cFromService_Location__c');
+            
+            System.Assert( controller.query.contains('FacilityID__c'), true);
+            System.Assert( controller.query.contains('State__c'), true);
+            System.Assert( controller.rfieldsOrdered.size() > 0);
             
             for ( CustomLookup.FieldWrapper fw: controller.fields ) {
             	if ( fw.name == 'State__c' ) {

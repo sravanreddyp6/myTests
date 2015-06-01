@@ -12,6 +12,8 @@ public with sharing class AdmissionViewExtension {
     public boolean canCreateSvc{ get; set;}
     public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
+    public boolean showCANS { get; private set; }
+    
     private void setisEditor() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                 FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id ];
@@ -28,9 +30,77 @@ public with sharing class AdmissionViewExtension {
         canCreateAsmt = oSchema.IsCreateable();
     }
     
+    
+    private void setshowCANS() {
+    	
+    	showCANS = false;
+    	
+    	// look for this op grp in the custom setting
+    	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :getOperatingGroup()];
+    	// this op group isn't allowed 
+    	if ( cansList.size() == 0 )
+    		return;
+    	
+    	String admState = admission.state__c;
+    	
+    	Set<string> states = new Set<string>();
+    	set<string> programs = new Set<string>();
+    	
+    	for ( CANS_Settings__c c : cansList ) {
+    		if ( !String.IsEmpty(c.state__c) )
+    			states.add( c.state__c);
+    		if ( !String.IsEmpty(c.programs__c))
+    			programs.addAll( c.programs__c.split(','));
+    	}
+    	
+    	
+    	// if there's a state listed, check against admission state
+    	// if no states are listed, then all states apply
+    	if ( states.size() > 0 && !states.contains( admState )  )
+    		return;
+    		
+    	// if there's a program listed, check against SA programs - check both alias and full program id
+    	Boolean match = false;
+    	if ( programs.size() > 0 ) {
+    		IgnoreSharing noSharing = new IgnoreSharing();
+    		List<service_assignment__c> saPrograms = noSharing.getallSA(admission.Id);
+    		
+    		for (service_assignment__c p: saPrograms) {
+    			if ( programs.contains ( p.service_location__r.alias__c ) || programs.contains ( p.service_location__r.programid__c )) {
+    				match = true;
+    				break;
+    			}
+    		}
+    		if (!match)
+    			return;
+    	}
+    	
+    	// if we got past other tests, then set flag to true
+    	showCANS = true;	
+    	
+    	
+    }
+    
+    private string getOperatingGroup() {
+    	// what is this user's operating group
+    	try {
+    		TMN_User__c thisTMN = [ select id, operating_group__c from TMN_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
+    		return thisTMN.operating_group__c;
+    	} catch (Exception e) {
+    		return '';
+    	}
+    }
+    
     private void setcanCreateAdm() {
         Schema.DescribeSObjectResult oSchema  = Admission__c.sObjectType.getDescribe();
         canCreateAdm = oSchema.IsCreateable();
+        	if(canCreateAdm ){
+           List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c 
+        		        from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: admission.Person_Being_Served__c];
+        		if(admissionList.size()>0) {
+        	canCreateAdm = false;
+        	}
+        	}
     }
     
     private void setcanCreateSvc() {
@@ -47,14 +117,14 @@ public with sharing class AdmissionViewExtension {
         // Fetch the record with necessary fields
         this.admission = [
                 SELECT ID, Name, CreatedBy.Name, CreatedDate, LastModifiedBy.Name,
-                           LastModifiedDate, Effective_Date__c, Status__c,
+                           LastModifiedDate, Effective_Date__c, Admission_Effective_DateTime__c, Status__c,
                            Discharged_Date__c,Person_Being_Served__c, Person_Being_Served__r.AccountID, person_being_served__r.Name,Person_Being_Served__r.OwnerId, person_being_served__r.LastName,
                            Network_Offering__c, Discharged_Status__c, Reason_for_Discharge__c, State__c,
                            Referred_Out_Date__c, Referred_Out_Agency_Name__c,
                            Referred_Out_Reason__c,
                            (SELECT Name, Authorization_Status__c, Payer_Authorization_Date__c, Payer_Effective_Date__c, Payer_End_Date__c, Payer_Authorization_ID__c, Payer_Name__c, Number_Of_Authorized_Units__c, Remaining_Units__c FROM Authorized_Services__r),
                            (SELECT Name, Assessment_Date__c, Score__c, Owner.FirstName, Owner.LastName, Status__c FROM Assessments__r),
-                           (SELECT Name, Person_Being_Served__r.Name, Status__c, Start_Date__c, End_Date__c FROM Service_Agreements__r ORDER BY Status__c, Start_Date__c),
+                           (SELECT Name, Person_Being_Served__r.Name, Status__c, Start_Date__c, SA_Start_DateTime__c, End_Date__c FROM Service_Agreements__r ORDER BY Status__c, Start_Date__c),
                            (SELECT Name, Status__c, Effective_Date__c, Plan_Expiration_Date__c, Long_term_Goal_1__c FROM Plans__r),
                            (SELECT Name, Plan__r.Name, First_Name__c, Last_Name__c, Start_Time__c, End_Time__c, Type_of_Contact__c, Purpose_Nature_of_Service__c FROM Progress_Notes__r)
                 FROM Admission__c WHERE ID=:ApexPages.currentPage().getParameters().get('id')
@@ -73,10 +143,12 @@ public with sharing class AdmissionViewExtension {
                 assessmentTypes.put(t.Name, true);
         }
         this.riskAssessments = fetchAssessments('Risk', this.admission.ID);
-        this.cansAssessments = fetchAssessments('CANS', this.admission.ID);
+        IgnoreSharing noSharing = new IgnoreSharing();
+        this.cansAssessments = noSharing.getAllCans(this.admission.ID);
         this.issaAssessments = fetchAssessments('ISSA', this.admission.ID);
         
         setcanCreateAsmt();
+        setshowCANS();
         setcanCreateAdm();
         setcanCreateSvc();
         setcanCreatePlan();
@@ -95,7 +167,7 @@ public with sharing class AdmissionViewExtension {
         else {
 	        return [
 	           SELECT Name, Assessment_Date__c, Finalized_Date__c, Score__c,
-	                  Owner.FirstName, Owner.LastName, Owner.Name, Status__c
+	                  Owner.FirstName, Owner.LastName, Owner.Name, Status__c, disregard__c
 	           FROM Assessment__c
 	           WHERE Assessment_Type__r.Name=:name AND Admission__c=:admissionId Order By CreatedDate DESC 
 	        ];
@@ -135,7 +207,26 @@ public with sharing class AdmissionViewExtension {
         return theId;
     
     
-    }    
+    }  
+
+    public without sharing class IgnoreSharing{
+        public list<Assessment__c> getAllCans(ID admissionId){
+            return [
+               SELECT Name, Assessment_Date__c, Finalized_Date__c, Score__c,
+                      Owner.FirstName, Owner.LastName, Owner.Name, Status__c, disregard__c
+               FROM Assessment__c
+               WHERE Assessment_Type__r.Name='CANS' AND Admission__c=:admissionId Order By CreatedDate DESC 
+            ]; 
+        }
+        
+        public list<Service_Assignment__c>getallSA(ID admissionId) {
+        	return [ select service_location__r.alias__c, service_location__r.programid__c from service_assignment__c where admission__c = :admissionId ];
+        	
+        }
+        public IgnoreSharing(){
+
+        }
+    }  
     
     
 }

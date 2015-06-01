@@ -1,4 +1,4 @@
-public with sharing class AssessmentSetup {
+public without sharing class AssessmentSetup {
 
     // Method to find and insert domains and Assessment_Response__c
     // placeholder rows for this assessment
@@ -10,10 +10,13 @@ public with sharing class AssessmentSetup {
       
       List<Assessment__c> theseAssessments = new List<Assessment__c>();
       theseAssessments = assessments;
+
+      
       Map<ID, Assessment__c> assessmentMap = new Map<ID, Assessment__c>();
-      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c FROM Assessment__c WHERE ID IN :assessments]) {
+      for (Assessment__c assessment: [SELECT ID, Admission__r.State__c, AccountPerson__c, AccountPerson__r.PersonContact.Age__c FROM Assessment__c WHERE ID IN :assessments]) {
         assessmentMap.put(assessment.ID, assessment);
       }
+ 
       
       // List to hold the ID and Type of ALL domains, plus
       // child question data
@@ -87,7 +90,62 @@ public with sharing class AssessmentSetup {
                         }
                     }
                 }
-                // END: RBO-289       
+                // END: RBO-289 
+                // For Resident Assessment
+                else if(a.Type__c=='Resident Assessment'){
+                  if(domainMap.get(assmtDomainLoopId).Assessment_Type2__c=='Resident Assessment') {
+                        dummyAdr = new Assessment_Domain_Result__c();
+                        dummyAdr.Assessment__c = a.Id; 
+                        dummyAdr.Assessment_Domain__c = domainMap.get(assmtDomainLoopId).Id;
+                        insert dummyAdr;                                    
+                    
+                        for(Assessment_Question__c q : domainMap.get(assmtDomainLoopID).Question__r){
+                          if(q.Question_title__c == 'Age'){
+                            Decimal rating = assessmentMap.get(a.id).AccountPerson__r.PersonContact.Age__c;
+                            string ratingString;
+                            Decimal score;
+                            if(rating < 1){
+                              ratingString = '<1';
+                              score = 0;
+                            }
+                            else if(rating >= 1 && rating <= 6){
+                              ratingString = '1 to 6';
+                              score = 5;
+                            }
+                            else if(rating >= 6 && rating <= 65) {
+                              ratingString = '6 to 65';
+                              score = 0;
+                            }
+                            else{
+                              ratingString = '>65';
+                              score = 4;
+                            }
+                            
+                            dummyAr.add(new Assessment_Response__c(
+                                Assessment__c = a.Id,
+                                Question__c = q.ID,
+                                Assessment_Domain_Result__c = dummyAdr.Id,
+                                Rating__c = ratingString,
+                                Score__c = score,
+                                Color__c = NULL)
+                              );
+                            
+                          }
+                          
+                          else{ 
+                              dummyAr.add(new Assessment_Response__c(
+                                Assessment__c = a.Id,
+                                Question__c = q.ID,
+                                Assessment_Domain_Result__c = dummyAdr.Id,
+                                Rating__c = NULL,
+                                Color__c = NULL)
+                              );
+                            }
+                        }
+                    }
+                  
+                }                   
+               // else if (a.Type__c=='Restraint Reduction') {}   
                 else if (a.Assessment_Type__c == domainMap.get(assmtDomainLoopId).Assessment_Type__c){
                     dummyAdr = new Assessment_Domain_Result__c();
                     dummyAdr.Assessment__c = a.Id; 
@@ -175,9 +233,15 @@ public with sharing class AssessmentSetup {
         Set<Id> assmtId = new Set<Id>();
         Map<Id,Assessment__c> assmtMap = new Map<Id,Assessment__c>();
         
+        set<string> typesToIgnoreNaming = new set<string>();
+        typesToIgnoreNaming.add('Resident Assessment');
+        typesToIgnoreNaming.add('Restraint Reduction');
+
         for (Assessment__c assmt : assessments){
-            assmtId.add(assmt.Id);
-            assmtMap.put(assmt.Id,assmt);
+          if(  !typesToIgnoreNaming.contains(assmt.Type__c) ){
+              assmtId.add(assmt.Id);
+              assmtMap.put(assmt.Id,assmt);
+          }
         }
         
         // Re-select the assessments that were already inserted prior to trigger fire
@@ -200,68 +264,72 @@ public with sharing class AssessmentSetup {
         
         // Loop through the assessment IDs we got from the trigger.
         for (Id assmtIdsToLoopThrough : assmtID){
-        
             Assessment__c thisAssmt = assmtMap.get(assmtIdsToLoopThrough);
-            system.debug('ty why - ' + thisAssmt.Assessment_Type_Name__c);
-         //   if(thisAssmt.Assessment_Type_Name__c == 'CANS'){
-                
-                String typeOfThisAssmt;
-                Integer numberOfAdmissionForAssmtWeAreCreating;
-                
-                // Get all admissions for this person being served and order by date
-                List<Contact> thisPersonsContactID = [SELECT Id FROM Contact
-                    WHERE AccountId = :thisAssmt.AccountId__c];
-                List<Admission__c> thisPersonsAdmissions = [SELECT Id, Effective_Date__c FROM Admission__c
-                    WHERE Person_Being_Served__c = :thisPersonsContactID.get(0).Id ORDER BY Effective_Date__c];
-                Integer countOfAdmissions = thisPersonsAdmissions.size();
-                Map<Integer,Admission__c> mapOfThisPersonsAdmissions = new Map<Integer,Admission__c>();
-                Integer episodeMapCounter = 1;
-                
-                for (Admission__c e : thisPersonsAdmissions){
-                    mapOfThisPersonsAdmissions.put(episodeMapCounter, e);
-                    episodeMapCounter++;
-                }
-                
-                for ( Integer numberOfAdmission : mapOfThisPersonsAdmissions.keySet() ){
-                    if ( thisAssmt.Admission__c == mapOfThisPersonsAdmissions.get(numberOfAdmission).Id){
-                        numberOfAdmissionForAssmtWeAreCreating = numberOfAdmission;
-                    }
-                }
-                
-                
-                // Loop through all Assessment_Type__c IDs, and figure out what
-                // type of assessment this one is.
-                for( ID assmtTypesToLoopThrough : assmtTypeMap.keySet() ){
-                    if ( assmtTypesToLoopThrough == thisAssmt.Assessment_Type__c ){
-                        typeOfThisAssmt = assmtTypeMap.get(assmtTypesToLoopThrough).Name;
-                    }
-                }
-                
-                // Get the assessments of this type already completed for the user.
-                List<Assessment__c> assmtPreExisting = [SELECT Id, Name, Interval__c FROM Assessment__c 
-                    WHERE AccountPerson__c = :thisAssmt.AccountPerson__c
-                    AND Admission__c = :thisAssmt.Admission__c];
-                    
-                List<Account> thisPerson = [SELECT FirstName, LastName FROM Account WHERE Id = :thisAssmt.AccountId__c LIMIT 1];
-                String thisPersonFirstName = thisPerson.get(0).FirstName;
-                String thisPersonLastName = thisPerson.get(0).LastName;
-                
-                Integer countOfAssmts = assmtPreExisting.size();
-                //System.Debug('How many assessments has this person had?' + countOfAssmts);
-                
-                // Loop through the writabe list of assessments and update the Assessment_Custom_Name__c
-                // value.    
-                for (Assessment__c tryChangeCustomName : assmtsSelectedToUpdate){
-                    if (tryChangeCustomName.Id == assmtIdsToLoopThrough)
-                        if (tryChangeCustomName.Interval__c == 'Intake' || tryChangeCustomName.Interval__c == 'Discharge'){
-                            tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c;
-                        }
-                        else{
-                            tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c + thisAssmt.Quarter__c;
-                        }
-                    update tryChangeCustomName;
-                }
-         //   }
+            system.debug('ty why - ' + thisAssmt.Assessment_Type_Name__c);          
+          if(thisAssmt.Assessment_Type_Name__c == 'Immunization - Child'){}
+          else if(thisAssmt.Assessment_Type_Name__c == 'Immunization - Adult'){}
+          else{
+
+           //   if(thisAssmt.Assessment_Type_Name__c == 'CANS'){
+                  
+                  String typeOfThisAssmt;
+                  Integer numberOfAdmissionForAssmtWeAreCreating;
+                  
+                  // Get all admissions for this person being served and order by date
+                  List<Contact> thisPersonsContactID = [SELECT Id FROM Contact
+                      WHERE AccountId = :thisAssmt.AccountId__c];
+                  List<Admission__c> thisPersonsAdmissions = [SELECT Id, Effective_Date__c FROM Admission__c
+                      WHERE Person_Being_Served__c = :thisPersonsContactID.get(0).Id ORDER BY Effective_Date__c];
+                  Integer countOfAdmissions = thisPersonsAdmissions.size();
+                  Map<Integer,Admission__c> mapOfThisPersonsAdmissions = new Map<Integer,Admission__c>();
+                  Integer episodeMapCounter = 1;
+                  
+                  for (Admission__c e : thisPersonsAdmissions){
+                      mapOfThisPersonsAdmissions.put(episodeMapCounter, e);
+                      episodeMapCounter++;
+                  }
+                  
+                  for ( Integer numberOfAdmission : mapOfThisPersonsAdmissions.keySet() ){
+                      if ( thisAssmt.Admission__c == mapOfThisPersonsAdmissions.get(numberOfAdmission).Id){
+                          numberOfAdmissionForAssmtWeAreCreating = numberOfAdmission;
+                      }
+                  }
+                  
+                  
+                  // Loop through all Assessment_Type__c IDs, and figure out what
+                  // type of assessment this one is.
+                  for( ID assmtTypesToLoopThrough : assmtTypeMap.keySet() ){
+                      if ( assmtTypesToLoopThrough == thisAssmt.Assessment_Type__c ){
+                          typeOfThisAssmt = assmtTypeMap.get(assmtTypesToLoopThrough).Name;
+                      }
+                  }
+                  
+                  // Get the assessments of this type already completed for the user.
+                  List<Assessment__c> assmtPreExisting = [SELECT Id, Name, Interval__c FROM Assessment__c 
+                      WHERE AccountPerson__c = :thisAssmt.AccountPerson__c
+                      AND Admission__c = :thisAssmt.Admission__c];
+                      
+                  List<Account> thisPerson = [SELECT FirstName, LastName FROM Account WHERE Id = :thisAssmt.AccountId__c LIMIT 1];
+                  String thisPersonFirstName = thisPerson.get(0).FirstName;
+                  String thisPersonLastName = thisPerson.get(0).LastName;
+                  
+                  Integer countOfAssmts = assmtPreExisting.size();
+                  //System.Debug('How many assessments has this person had?' + countOfAssmts);
+                  
+                  // Loop through the writabe list of assessments and update the Assessment_Custom_Name__c
+                  // value.    
+                  for (Assessment__c tryChangeCustomName : assmtsSelectedToUpdate){
+                      if (tryChangeCustomName.Id == assmtIdsToLoopThrough)
+                          if (tryChangeCustomName.Interval__c == 'Intake' || tryChangeCustomName.Interval__c == 'Discharge'){
+                              tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c;
+                          }
+                          else{
+                              tryChangeCustomName.Name = typeOfThisAssmt + '_' + thisPersonFirstName + thisPersonLastName + '_Assmt' + countOfAssmts + '_' + thisAssmt.Interval__c + thisAssmt.Quarter__c;
+                          }
+                      update tryChangeCustomName;
+                  }
+           //   }
+          }
         }
         
     }
@@ -270,25 +338,38 @@ public with sharing class AssessmentSetup {
         
         for ( Assessment__c a : assessments ){
         
-            List<Assessment__c> allAssmtsOfTypeForAdmission = [SELECT Id, Interval__c, Quarter__c FROM Assessment__c WHERE AccountPerson__c = :a.AccountPerson__c AND Admission__c = :a.Admission__c AND Assessment_Type__c = :a.Assessment_Type__c AND Disregard__c = false ORDER BY Quarter__c];
+            List<Assessment__c> allAssmtsOfTypeForAdmission = [SELECT Id, Interval__c, Quarter__c, Assessment_Date__c FROM Assessment__c WHERE AccountPerson__c = :a.AccountPerson__c AND Admission__c = :a.Admission__c AND Assessment_Type__c = :a.Assessment_Type__c AND Disregard__c = false ORDER BY Quarter__c];
             System.Debug('List allAssmtsOfTypeForAdmission: ' + allAssmtsOfTypeForAdmission);
             
-            // START: Confirm Intake is first assessment of type        
-            if( a.Interval__c == 'Intake' ){
-                if ( allAssmtsOfTypeForAdmission.size() > 0 ){
-                    // Prevent insert and throw error
-                    a.addError('Intake can only be selected as the interval for the first assessment of a given type under an admission. Another assessment of this type was found for the person being served. Please select a different inteveral or contact a system administrator for assistance.');
-                }
-            }
-            // END: Confirm Intake is first assessment of type
+
             
-            // START: Confirm that no assessment can be entered after the discharge.        
+            date earlestAssess;
+            system.debug('this date assess' + a.Assessment_Date__c);
             for ( Assessment__c aprev : allAssmtsOfTypeForAdmission){
+                //set earlest date when null or is greater then the previous assessment loop one in the loop
+                //after the loop we'll check this vs the current assessment in the main loop (a)
+                //eb-360
+                if (earlestAssess == null){earlestAssess = aprev.Assessment_Date__c;}
+                else if (earlestAssess > aprev.Assessment_Date__c){earlestAssess = aprev.Assessment_Date__c;}
+
+                // START: Confirm Intake is first assessment of type  
+                if( a.Interval__c == 'Intake' && aprev.Interval__c == 'Intake' ){
+                    a.addError('The interval Intake can only be selected when there are no other Intake Assessments for this Admission.');
+                }
+                // END: Confirm Intake is first assessment of type
+                //end eb-360
+                // START: Confirm that no assessment can be entered after the discharge. 
                 if (aprev.Interval__c == 'Discharge'){
                     a.addError('A discharge assessment of this assessment type already exists for this admission.  Additional assessments of a given type cannot be created after an assessment with interval \'Discharged\' has been created for that type.  If you require assistance, please contact your system administrator.');
                 }
+                // END: Confirm that no assessment can be entered after the discharge
             }
-            // END: Confirm that no assessment can be entered after the discharge
+            //eb-360
+            if(a.Interval__c == 'Intake' && a.Assessment_Date__c > earlestAssess){
+                String strDate = datetime.newInstance(earlestAssess.year() , earlestAssess.month() , earlestAssess.day()).format('MM/dd/yy');
+                a.addError('Intake Assessments must be the earlest Assessment: The Intake Assessment you are trying to create has an assessment date after an exsiting one (' + strDate + ').');
+            }
+            
             
             // START: Prevent Quarterly and Discharge if Intake not present.
             if( a.Interval__c == 'Quarterly' || a.Interval__c == 'Discharge' ){
@@ -315,7 +396,7 @@ public with sharing class AssessmentSetup {
                 // our number from the object is not Integer type.  So, we
                 // can use this Double and expect integers.
                 Double lastAndHighestQrtrNum = 0;
-                
+                set<Double> AssessmentQuarters = new set<Double>();
                 for ( Assessment__c aprev : allAssmtsOfTypeForAdmission){
 
                     
@@ -324,11 +405,11 @@ public with sharing class AssessmentSetup {
                         // for the Quarter__c field.  If other validation
                         // has held up, there should not be.
                         if( aprev.Quarter__c == NULL ){
-                            a.addError('A quarterly assessment for this admission seems to lack a quarter number value.  This scenario should not be possible.  Please contact your system administrator and reference this error code: \'Apex Class: AssessmentSetup.cls, Line 227\'');
+                            a.addError('A quarterly assessment for this admission seems to lack a Quarterly Assessment Number value.  This scenario should not be possible.  Please contact your system administrator and reference this error code: \'Apex Class: AssessmentSetup.cls, Line 327\'');
                         }
                         
                         if ( aprev.Quarter__c <= 0 ){
-                            a.addError('A quarterly assessment for this admission seems to have a quarter number value that equals zero or is negative.  This scenario should not be possible.  Please contact your system administrator and reference this error code: \'Apex Class: AssessmentSetup.cls, Line 230\'');
+                            a.addError('A quarterly assessment for this admission seems to have a Quarterly Assessment Number value that equals zero or is negative.  This scenario should not be possible.  Please contact your system administrator and reference this error code: \'Apex Class: AssessmentSetup.cls, Line 331\'');
                         }
                         
                         // The previous assessments in aprev are ordered by 
@@ -358,6 +439,7 @@ public with sharing class AssessmentSetup {
                         // lifetime.
                         if( aprev.Quarter__c > 0 ){
                             lastAndHighestQrtrNum = aprev.Quarter__c;
+                            AssessmentQuarters.add(aprev.Quarter__c);
                         }
                     
                     }
@@ -379,10 +461,19 @@ public with sharing class AssessmentSetup {
                 if ( a.Quarter__c > (lastAndHighestQrtrNumInt + 1) ){
                     qrtrNumAllowed = false;
                 }
-                        System.Debug('Value of qrtrNumAllowed at Line 283: ' + qrtrNumAllowed);             
+                //there may have been a q2 assessment that was disregarded after a q3,
+                // it should allowed to be created even though its no the next in the line
+                
+                
+                if(a.Quarter__c < (lastAndHighestQrtrNumInt + 1) && !AssessmentQuarters.contains(a.Quarter__c )){
+                  qrtrNumAllowed = true;
+                }
+
+
+                System.Debug('Value of qrtrNumAllowed at Line 283: ' + qrtrNumAllowed);             
                 // If qtrNumAllowed equals false after all that, prevent insert.
                 if(qrtrNumAllowed == false){
-                    a.addError('The quarter you have indicated, ' + a.Quarter__c + ', does not seem to be the next expected quarterly assessment for this admission.  Please check the numbering of the quarterly assessments under this admission and try again.  If one or more quarterly assessments have been missed, you may need to enter and save a blank assessment for the previous quarter(s) to proceed.  If you need assistance, please contact your system administrator.');
+                    a.addError('The Quarterly Assessment Number you have indicated (' + a.Quarter__c + ') does not seem to be the next expected quarterly assessment (' + (lastAndHighestQrtrNumInt + 1) +') for this admission.  Please check the numbering of the quarterly assessments under this admission and try again.  If one or more quarterly assessments have been missed, you may need to enter and save a blank assessment for the previous quarter(s) to proceed.  If you need assistance, please contact your system administrator.');
                 }   
             
             }
