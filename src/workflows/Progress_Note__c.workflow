@@ -105,6 +105,15 @@
         <protected>false</protected>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>Unit_s_Field_Update</fullName>
+        <field>Units__c</field>
+        <formula>(floor((((End_Time__c-Start_Time__c)*24*60)/127))* 8)+ IF(((Mod(((End_Time__c-Start_Time__c)*24*60),127))&gt;=8 &amp;&amp; (Mod(((End_Time__c-Start_Time__c)*24*60),127))&lt;=22), 1,IF(((Mod(((End_Time__c-Start_Time__c)*24*60),127))&gt;=23 &amp;&amp; (Mod(((End_Time__c-Start_Time__c)*24*60),127))&lt;=37),2,IF(((Mod(((End_Time__c-Start_Time__c)*24*60),127))&gt;=38 &amp;&amp; (Mod(((End_Time__c-Start_Time__c)*24*60),127)) &lt;=52),3,IF(((Mod(((End_Time__c-Start_Time__c)*24*60),127))&gt;=53 &amp;&amp; (Mod(((End_Time__c-Start_Time__c)*24*60),127))&lt;=67),4,IF(((Mod(((End_Time__c-Start_Time__c)*24*60),127))&gt;=68 &amp;&amp; (Mod(((End_Time__c-Start_Time__c)*24*60),127))&lt;=82),5,IF(((Mod(((End_Time__c-Start_Time__c)*24*60),127))&gt;=83 &amp;&amp; (Mod(((End_Time__c-Start_Time__c)*24*60),127))&lt;=97),6,IF(((Mod(((End_Time__c-Start_Time__c)*24*60),127))&gt;=98 &amp;&amp; (Mod(((End_Time__c-Start_Time__c)*24*60),127))&lt;=112),7,IF(((Mod(((End_Time__c-Start_Time__c)*24*60),127)) &gt;=113 &amp;&amp; (Mod(((End_Time__c-Start_Time__c)*24*60),127)) &lt;=127),8,0))))))))</formula>
+        <name>Unit(s) Field Update</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>Update_Approval_Date</fullName>
         <field>Approval_Status_Date__c</field>
         <formula>TODAY()</formula>
@@ -162,6 +171,30 @@
         <protected>false</protected>
         <reevaluateOnChange>true</reevaluateOnChange>
     </fieldUpdates>
+    <rules>
+        <fullName>Calculated Unit Field</fullName>
+        <actions>
+            <name>Unit_s_Field_Update</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>1 AND 2 And 3</booleanFilter>
+        <criteriaItems>
+            <field>Progress_Note__c.Start_Time__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Progress_Note__c.End_Time__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Progress_Note__c.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Therapy</value>
+        </criteriaItems>
+        <description>Based on Total time Unit field will be automatically calculated</description>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
     <rules>
         <fullName>Progress Note IMAPP Create Task</fullName>
         <actions>
