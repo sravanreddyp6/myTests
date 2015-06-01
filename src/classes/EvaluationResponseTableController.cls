@@ -132,10 +132,25 @@ public with sharing class EvaluationResponseTableController {
             currentResponse.Time_Observed__c = Utility.getDateTimeFromString(value+':00');
         }
     }
+    public String timeGiven {
+        get {
+            return currentResponse.Time_Given__c == null ? null : Utility.getMilitarytimeNoSeconds(currentResponse.Time_Given__c);
+        }
+        set {
+            currentResponse.Time_Given__c = Utility.getDateTimeFromString(value+':00');
+        }
+    }
     
-    public string getimmunizationReport(){
+    public string getAdultimmunizationReport(){
     	string theId;
         theId= [select id, developername from report where developername = 'Immunization_for_PBS' limit 1].id;
+  
+        return theId;
+    }
+    
+      public string getChildimmunizationReport(){
+    	string theId;
+        theId= [select id, developername from report where developername = 'Immunization_Child_for_PBS' limit 1].id;
   
         return theId;
     }
@@ -269,12 +284,13 @@ public with sharing class EvaluationResponseTableController {
 			lbl.value = columnsToHeadersMap.get(column);
 			if(reqFields.contains(column) ){lbl.styleClass = 'evalCompReqField';}
 
-			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c' || column == 'Time_Observed__c'){
+			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c' || column == 'Time_Observed__c' || column == 'Time_Given__c'){
 				Component.Apex.InputText dialogInput = new Component.Apex.InputText(id=column);
 				dialogInput.styleClass = 'militaryDateTime';
 				if (column == 'Isolation_Event_Start_Date__c' ) dialogInput.expressions.value = '{!isolationEventStartDate}';
 				else if (column == 'Isolation_Event_End_Date__c' ) dialogInput.expressions.value = '{!isolationEventEndDate}';
 				else if (column == 'Time_Observed__c' ) dialogInput.expressions.value = '{!timeObserved}';
+				else if (column == 'Time_Given__c' ) dialogInput.expressions.value = '{!timeGiven}';
 				PBSI.childComponents.add(lbl);
 				PBSI.childComponents.add(dialogInput);
 			}else{

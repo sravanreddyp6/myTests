@@ -15,6 +15,8 @@ public with sharing class GoalObjReporting {
 		
 	public objResultWrapper currResult { get; set; }
 	
+	public list<SelectOption> promptList { get; private set;}
+	
 	public transient List<Action_Narrative_Result__c> narrativeResults;
 	public transient List<Action_Skill_Result__c> skillResults; 
 	
@@ -27,6 +29,7 @@ public with sharing class GoalObjReporting {
 		narrativeResults = new List<Action_Narrative_Result__c>();
 		skillResults = new List<Action_Skill_Result__c>();
 		currResult = new objResultWrapper();
+		promptList = new List<SelectOption>();
 	}
 	
 	
@@ -46,8 +49,23 @@ public with sharing class GoalObjReporting {
 			else {
 				currResult = new objResultWrapper( objType, thisObj.id);
 			}
-		} 
 		}
+		// create list of prompt options
+		if ( promptList.size() == 0 ) {
+		promptList.Add(new SelectOption('', '--None--'));	
+		promptList.Add(new SelectOption('I','Independent'));
+		promptList.Add(new SelectOption('V','Verbal'));
+		promptList.Add(new SelectOption('M','Model'));
+		promptList.Add(new SelectOption('PP','Partial Physical Assistance'));
+		promptList.Add(new SelectOption('FP','Full Physical ASsistance'));
+		promptList.Add(new SelectOption('D','Declined'));
+		promptList.Add(new SelectOption('L','Leave/Absent'));
+		promptList.Add(new SelectOption('S','Sick'));
+		promptList.Add(new SelectOption('H','Hospitalized'));
+		promptList.Add(new SelectOption('HL','Holiday'));
+		}
+		}
+		
 	}
 	
 	public List<Action_Narrative_Result__c> getnarrativeResults() {	
@@ -289,8 +307,17 @@ public with sharing class GoalObjReporting {
 	public List<Date> getDaysToDisplay() {
 		List<Date> month = new List<Date>();
 		Date startDate = shiftStart.Date();
+		DateTime endDateTime = getMinDateTime(shiftEnd, DateTime.now());
 		Date endDate = getMinDateTime(shiftEnd, DateTime.now()).Date();
+		
 		for(Date dateiter = StartDate; dateiter <= endDate; dateiter = dateiter+1){
+			// don't include last day if shift ends on midnight
+			if ( dateiter == endDate ) {
+					system.debug( 'on end date this is time:' + endDateTime.time());
+				// check end hour 
+				if (endDateTime.time() == Time.newInstance(0,0,0,0))
+					continue;	
+			}
 			month.Add(dateiter);
 		}
 		return month;
@@ -299,10 +326,21 @@ public with sharing class GoalObjReporting {
 	public List<Date> getDaysOfMonth() {
 		List<Date> month = new List<Date>();
 		Date endDate = getMinDateTime(shiftEnd, Datetime.now()).date();
+		DateTime endDateTime = getMinDateTime(shiftEnd, DateTime.now());
 		system.debug(shiftStart.Date().addmonths(1));
 		system.debug(shiftStart.Date().addmonths(1).toStartofMonth());
 		for(Date dateiter = shiftStart.Date(); dateiter <= endDate; dateiter = dateiter+1){
+			
+			// don't include last day if shift ends on midnight
+			if ( dateiter == endDate ) {
+				system.debug( 'on end date this is time:' + endDateTime.time());
+				// check end hour 
+				if (endDateTime.time() == Time.newInstance(0,0,0,0))
+					continue;	
+			}
 			month.Add(dateiter);
+					
+				
 		}
 		return month;
 	}

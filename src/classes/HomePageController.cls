@@ -234,7 +234,7 @@ public with sharing class HomePageController{
 			         Eval__r.subcat_seq_text__c, Eval__r.subsubcat_seq_text__c
 		];
 		Boolean shiftDocHeaderAdded = false;
-		Integer indexToInsert = 1;
+		Map<Id, Integer> indexMap = new Map<Id, Integer>();
 		for (AggregateResult response: responses) {
 			String compositeKey = response.get('cat') + '~' + response.get('subCat') + '~' + (String.isBlank((string) response.get('subSubCat')) ? '' : (string) response.get('subSubCat'));
 			if (response.get('type') == 'Head To Toe' && !new Set<String>(cmShiftDocRepeatable).contains(compositeKey)) {  // Only add Activity Log Entry for repeatable sections/subsections/subsubsections
@@ -243,13 +243,16 @@ public with sharing class HomePageController{
 			Id serviceAssignmentId = evaluationToServiceAssignmentMap.get((Id) response.get('What_Id__c'));
 			Boolean isShiftDocOwner = hasShiftDocMap.get(serviceAssignmentId) && shiftDocMap.get(serviceAssignmentId).OwnerId == UserInfo.getUserId();
 			SelectOption[] optionList = serviceAssignmentToSelectOptionMap.get(serviceAssignmentId);
+			if (!indexMap.containsKey(serviceAssignmentId)) {
+				indexMap.put(serviceAssignmentId, 1);
+			}
 			if (response.get('type') == 'Head To Toe' && canSeeShiftDoc && isShiftDocOwner) {
-				optionList.add(indexToInsert,  // Add before the cna workbook stuff
+				optionList.add(indexMap.get(serviceAssignmentId),  // Add before the cna workbook stuff
 					new SelectOption('shiftDocAction-' + compositeKey,
 						'Add Activity Log Entry for ' + response.get('cat') + '/' + response.get('subCat') + (String.isBlank((string) response.get('subSubCat')) ? '' : '/ ' + (string) response.get('subSubCat'))
 					)
 				);
-				indexToInsert += 1;
+				indexMap.put(serviceAssignmentId, indexMap.get(serviceAssignmentId) + 1);
 			}
 		}
 		highlightedServiceAssignmentId = null;
