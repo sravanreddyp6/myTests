@@ -2900,6 +2900,10 @@ Neurostative IL role</description>
                 <fullName>Other</fullName>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>Office/TRAC</fullName>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
@@ -3221,7 +3225,7 @@ Neurostative IL role</description>
         <type>Checkbox</type>
     </fields>
     <fields>
-        <fullName>Therapy_Discipline_del__c</fullName>
+        <fullName>Therapy_Discipline__c</fullName>
         <description>Used for neurorestorative il role and used for therapy record type</description>
         <externalId>false</externalId>
         <label>Therapy Discipline</label>
@@ -18810,31 +18814,11 @@ Neurostative IL role</description>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Community Mental Health Center</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Court</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Day Program</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Home</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>MR Intermediate Care</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Medical Facility</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Office</fullName>
+                <fullName>Office%2FTRAC</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -18934,7 +18918,7 @@ Neurostative IL role</description>
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>Therapy_Discipline_del__c</picklist>
+            <picklist>Therapy_Discipline__c</picklist>
             <values>
                 <fullName>BIT</fullName>
                 <default>false</default>
@@ -20185,45 +20169,48 @@ errors.push(&apos;You must select a &quot;Service Location&quot; before continui
 if({! ISPICKVAL(Progress_Note__c.Type_of_Contact__c,&apos;&apos;)}){ 
 errors.push(&apos;You must select the &quot;Type of Contact&quot; before continuing.&apos;); 
 } 
- 
+
 
 //Check to see if there is a Service Code selected 
-var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, Service_Code__c,Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c,type__c,Staff_Name__c,Other_Service_Code__c ,Type_of_Contact__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId,RecordType.name, Service_Code__c,Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c,Type__c,Staff_Name__c,Other_Service_Code__c ,Type_of_Contact__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
 records = progressFields.getArray(&quot;records&quot;); 
 
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
-curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
+curRtype = recordTypeQuery.getArray(&quot;records&quot;);
 
-if(records[0].Service_Code__c == null &amp;&amp; records[0].RecordTypeId != &apos;012J00000009TWeIAM&apos;){ 
+var ServiceCodeQuery = sforce.connection.query(&quot;SELECT Id, Name, Service_code__c from Service_Code__c where Service_code__c = &apos;FAKE&apos;&quot;); 
+curSvcCode = ServiceCodeQuery.getArray(&quot;records&quot;); 
+
+if(records[0].Service_Code__c == null &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
 errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
 } 
-if(records[0].Type__c == &apos;Co-Treatment&apos;&amp;&amp; records[0].Staff_Name__c == null &amp;&amp; records[0].RecordTypeId == &apos;012J00000009TWeIAM&apos;){ 
+if(records[0].Type__c == &apos;Co-Treatment&apos;&amp;&amp; records[0].Staff_Name__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos;){ 
 errors.push(&apos;You must enter the staff name if the type of treatment is co-treatment&apos;); 
 }
-if(records[0].Type__c ==null &amp;&amp; records[0].RecordTypeId == &apos;012J00000009TWeIAM&apos; &amp;&amp; records[0].Type_of_Contact__c == &apos;Face-To-Face&apos;){ 
+if(records[0].Type__c ==null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Type_of_Contact__c == &apos;Face-To-Face&apos;){ 
 errors.push(&apos;If type of contact is face to face , then type of treatment needs to be selected&apos;); 
 }
-if(records[0].Service_Code__c==&apos;a0NJ000000CC80YMAT&apos; &amp;&amp; records[0].RecordTypeId == &apos;012J00000009TWeIAM&apos; &amp;&amp; records[0].Other_Service_Code__c == null){ 
+if(records[0].Service_Code__c == curSvcCode[0].Id &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Other_Service_Code__c == null){ 
 errors.push(&apos;Please Enter the Service code Manually&apos;); 
 }
 // WVPN-21
 // Make the following fields required on finalization
 if (curRtype[0].DeveloperName == &apos;IN_FCT&apos;) {
 var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
- if (value == &apos;&apos;){
-    errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
-   }
- 
- if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
-    errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
-   }
- value = &apos;{!JSENCODE(Progress_Note__c.Staff_Name__c)}&apos;;
- if (value == &apos;&apos;){
-    errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
-   }
- if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
-    errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
-   }
+if (value == &apos;&apos;){
+errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
+}
+
+if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
+errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
+}
+value = &apos;{!JSENCODE(Progress_Note__c.Staff_Name__c)}&apos;;
+if (value == &apos;&apos;){
+errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
+}
+if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
+errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
+}
 }
 
 /*
@@ -20236,13 +20223,13 @@ var admission_state = &apos;{! Progress_Note__c.Admission_State__c }&apos;;
 if(records[0].Authorization__c == null &amp;&amp; 
 billingsystem == &apos;AVATAR&apos; &amp;&amp; admission_state != &apos;AZ&apos;)
 { 
-errors.push(&apos;A Progress Note cannot be finalized without an Authorization.  Please select an Authorization from the list.  If no authorizations are available, you may need to finalize this note later.&apos;); 
+errors.push(&apos;A Progress Note cannot be finalized without an Authorization. Please select an Authorization from the list. If no authorizations are available, you may need to finalize this note later.&apos;); 
 } 
 */
 
 //Check to see if there is a signature on file
 if ((curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) &amp;&amp; records[0].Number_of_Required_Signatures__c &gt; 0 &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
-    errors.push(&apos;A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization. If you have esigned the document, hit refresh on the browser page and then click Finalize this Progress Note.&apos;);
+errors.push(&apos;A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization. If you have esigned the document, hit refresh on the browser page and then click Finalize this Progress Note.&apos;);
 }
 
 if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apos;{!Progress_Note__c.Primary_Care_Provider_Name__c}&apos; ==&apos;&apos;){ 
@@ -20250,10 +20237,10 @@ alerts.push( &apos;WARNING! A Primary Care provider name has not been entered&ap
 } 
 
 if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apos;{!Progress_Note__c.Primary_Care_Provider_NPI_Number__c}&apos; ==&apos;&apos;){ 
-alerts.push( &apos;WARNING! A Primary Care provider NPI name has not been entered&apos; );  
+alerts.push( &apos;WARNING! A Primary Care provider NPI name has not been entered&apos; ); 
 } 
 
-var shortTermGoalQuery = sforce.connection.query(&quot;SELECT Id, Progress_Note__c, Goal__c from ProgressNote_ActionPlanChildren_mjo__c where Progress_Note__c =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+var shortTermGoalQuery = sforce.connection.query(&quot;SELECT Id, Progress_Note__c, Goal__c from ProgressNote_ActionPlanChildren_mjo__c where Progress_Note__c =&apos;{!Progress_Note__c.Id}&apos;&quot;);
 stg_data = shortTermGoalQuery.getArray(&quot;records&quot;); 
 
 var stg = false; 
@@ -20320,7 +20307,7 @@ records = tfcFields.getArray(&quot;records&quot;);
 if( !records[0].Purpose_of_this_Consultation__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
 errors.push(&apos;You must populate the &quot;Purpose of this Consultation&quot; field before continuing.&apos;);
 }
-if( !records[0].Scheduling_Status__c  &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+if( !records[0].Scheduling_Status__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
 errors.push(&apos;You must populate the &quot;Scheduling Status&quot; field before continuing.&apos;);
 }
 if( !records[0].Foster_Parents__c &amp;&amp; (curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;)) {
