@@ -7,10 +7,10 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
         try{
         thePN = [select id, Name, No_Approval_Needed__c, Person_Being_Served__r.Name, person_being_served__r.medicaid_Id__c, RecordType.DeveloperName, Recordtype.Name, Status__c from Progress_Note__c where id= :myId];
         
-        	// use developername on record type to allow us to easily change the label for the record type in the future
-        	// CTEAE-25 02/03/2014         
+            // use developername on record type to allow us to easily change the label for the record type in the future
+            // CTEAE-25 02/03/2014         
             PageReference pageRef = new PageReference('/');
-            if(thePN.RecordType.DeveloperName=='FL_FSS_Progress_Note'){
+            if(thePN.RecordType.DeveloperName=='FL_FSS_Progress_Note' || thePN.RecordType.DeveloperName=='Therapy'){
                 pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_FL_FSS');
             }
             else if(thePN.RecordType.DeveloperName=='MA_IFCS_Progress_Note'){
@@ -62,22 +62,22 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
                 pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_PA_FBS');
             }
             else if(thePN.RecordType.DeveloperName=='NC_TFC'){
-            	pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_NC_TFC');
+                pageRef = new PageReference('/apex/Notes_ProgressNote_PDF_NC_TFC');
             }
             else if(thePN.RecordTYpe.DeveloperName=='NC_Wks_1_6_TFC') {
-            	pageRef = new PageReference('/apex/Notes_ProgressNOte_PDF_NC_Wks_16_TFC');	
+                pageRef = new PageReference('/apex/Notes_ProgressNOte_PDF_NC_Wks_16_TFC');  
             }
             else if(thePN.RecordType.DeveloperName=='IN_FCT' || thePN.RecordType.DeveloperName=='MA_FCT' 
-            		|| thePN.RecordType.DeveloperName=='MD_FCT' || thePN.RecordType.DeveloperName=='OH_FCT') {
-            	
-            	return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
+                    || thePN.RecordType.DeveloperName=='MD_FCT' || thePN.RecordType.DeveloperName=='OH_FCT') {
+                
+                return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
             }
             else{ // fix this - it causes an endless redirect loop that errors out
                 pageRef = new PageReference('/'+thePN.id);
             }
             
-	        pageRef.getParameters().put('id', thePN.id);
-	        pageRef.getParameters().put('id2', thePN.Person_Being_Served__r.Medicaid_ID__c);	// this is required so we can unmask the field on PDF
+            pageRef.getParameters().put('id', thePN.id);
+            pageRef.getParameters().put('id2', thePN.Person_Being_Served__r.Medicaid_ID__c);    // this is required so we can unmask the field on PDF
             
             Attachment attachmentPDF = new Attachment();           
             attachmentPDF.parentId = thePN.id;
@@ -94,10 +94,10 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
            System.Debug('What is in thePN.No_Approval_Needed__c WHEN I NEED IT?: ' + thePN.No_Approval_Needed__c);
            
            
-			// Cleaned up the if/else we had here that was doing the same thing for the true and false case based on 
-			// value of field No_Approval_Needed__c.  J. Gilliam, 3/26/14.          
-           	insert attachmentPDF;
-           	return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
+            // Cleaned up the if/else we had here that was doing the same thing for the true and false case based on 
+            // value of field No_Approval_Needed__c.  J. Gilliam, 3/26/14.          
+            insert attachmentPDF;
+            return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
             
             
         }catch(DMLException e){
