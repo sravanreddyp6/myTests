@@ -1766,7 +1766,7 @@ public without sharing class ServiceAssignmentExt {
 
 	public void showAddFundingSource() {
 		fundingSource = new Funding_Source__c();
-		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getOperatingGroup()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
 
@@ -1800,7 +1800,7 @@ public without sharing class ServiceAssignmentExt {
 
 		populateFundingSources();
 		this.fundingSource = new Funding_Source__c();
-		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getOperatingGroup()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		this.fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
 
