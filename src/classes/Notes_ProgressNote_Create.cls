@@ -59,8 +59,10 @@ public with sharing class Notes_ProgressNote_Create {
                 pn.RecordTypeId = SHIFT_NOTE_ID;
             }
         }
-        //Added By Amruth
-        if(sa.recordtype.name == 'Assessment Only'){
+       User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
+        
+        //Added By Amruth for EB-436
+        if(sa.recordtype.name == 'Assessment Only' && currUser != null && currUser.Operating_Group__c == 'NeuroRestorative'){
             AsmntOnly = 'Yes';
             pn.Purpose_Service_is_Billable__c = false;
         }   
@@ -68,7 +70,7 @@ public with sharing class Notes_ProgressNote_Create {
         
         // get the user's operating group
         //TMN_User__c currUserTMN = [ select operating_group__c from TMN_User__c where Salesforce_User_Account__c = :UserInfo.getUserId() LIMIT 1];
-        User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
+        
         System.Debug('user op group is: ' + currUser.Operating_Group__c );
         if (currUser != null ) {
             if (( myState == 'MN' || myState == 'IN' || myState == 'CA') && currUser.Operating_Group__c == 'Redwood') {
