@@ -19814,20 +19814,20 @@ Neurostative IL role</description>
         <errorMessage>Please enter only one digit after the decimal.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>NCTFC_Therapy_Notes_Must_Be_Non_Billable</fullName>
+        <active>true</active>
+        <description>A validation rule to insure that Progress Notes with the &quot;NC - TFC&quot; or &quot;NC - Wks 1-6 TFC&quot; or &quot;Therapy&quot; record types have Purpose_Service_is_Billable__c value of false.</description>
+        <errorConditionFormula>AND(OR(RecordType.DeveloperName = &apos;NC_TFC&apos;, RecordType.DeveloperName = &apos;NC_Wks_1_6_TFC&apos;,RecordType.DeveloperName = &apos;Therapy&apos;), Purpose_Service_is_Billable__c = true)</errorConditionFormula>
+        <errorDisplayField>Purpose_Service_is_Billable__c</errorDisplayField>
+        <errorMessage>For NC - TFC, NC - Wks 1-6 TFC, Therapy Progress Notes, the Purpose/Service is Billable field must be unchecked.  Please uncheck that field and try again.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>NC_IFCS_Non_Payable_Check</fullName>
         <active>true</active>
         <description>If Non Payable is checked on NC IFCS Progress Notes the user must select atleast one reason why.</description>
         <errorConditionFormula>AND(Non_Payable_Outcome__c=TRUE, Called_Client_Family_phone_disconnected__c =false, No_Show__c =false, Client_Family_not_home_left_note_on_door__c =false, Client_Family_home_but_refusing_service__c =false, Client_placed_in_detention__c =false, Client_placed_in_hospital__c =false, Client_placed_in_group_home__c=false,  Client_placed_in_Substance_Abuse_program__c=false, Family_Life_Cycle__c =false, Family_Assessment_Evaluation__c =false, Structured_Family_Assessment__c =false, Generalization__c =false, Co_Therapist_unable_to_bill__c =false, Field_Support__c =false, Child_and_Family_Team_Meeting__c =false, FCT_Fidelity_Measure__c =false, FCT_Check_Off__c =false, Called_Client_Family_left_voice_message__c =false, Called_collateral_left_voice_message__c =false )</errorConditionFormula>
         <errorDisplayField>Non_Payable_Outcome__c</errorDisplayField>
         <errorMessage>Non-Payable Outcome checkbox is checked but no outcomes have been selected. Please select an outcome.</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>NC_TFC_Notes_Must_Be_Non_Billable</fullName>
-        <active>true</active>
-        <description>A validation rule to insure that Progress Notes with the &quot;NC - TFC&quot; or &quot;NC - Wks 1-6 TFC&quot; record types have Purpose_Service_is_Billable__c value of false.</description>
-        <errorConditionFormula>AND(OR(RecordType.DeveloperName = &apos;NC_TFC&apos;, RecordType.DeveloperName = &apos;NC_Wks_1_6_TFC&apos;), Purpose_Service_is_Billable__c = true)</errorConditionFormula>
-        <errorDisplayField>Purpose_Service_is_Billable__c</errorDisplayField>
-        <errorMessage>For NC - TFC and NC - Wks 1-6 TFC Progress Notes, the Purpose/Service is Billable field must be unchecked.  Please uncheck that field and try again.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>No_future_dates</fullName>
