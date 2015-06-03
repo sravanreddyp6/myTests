@@ -15,6 +15,10 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
 		} else if(assessment.Recordtype.name == 'CMShiftAssessment' && assessment.Head_to_toe_Status__c == 'Final'){
 			assessment.Status__c = 'Completed'; // When Done button is clicked.
 			assessment.Signed_At__c = system.Now();
+			if (assessment.OwnerId != UserInfo.getUserId()) {  // EC-163
+				assessment.Status__c = 'End of Shift';
+				assessment.Signed_By__c = UserInfo.getUserId();
+			}
 		} else if(assessment.Recordtype.Name == 'NursesAssessment' && assessment.Id == servAssign[0].Evaluations__r[0].Id){
 			assessment.Status__c = 'Final Admission';
 			assessment.Signed_At__c = system.Now();

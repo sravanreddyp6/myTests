@@ -548,9 +548,7 @@ public with sharing class EvalDynamicExt {
 			showDisregard = false;
 
 			if (isDON) {
-				if (evalType == 'Head to Toe' && thisEval.Head_to_Toe_Status__c == 'Draft' && thisEval.Status__c == 'Draft') {  // EC-163
-					showEndOfShiftDON = true;
-				} else if (evalType == 'CNA Workbook' && thisEval.Status__c == 'Draft') {
+				if ((evalType == 'Head to Toe' || evalType == 'CNA Workbook') && thisEval.Status__c == 'Draft') {  // EC-163
 					showEndOfShiftDON = true;
 				}
 			}
