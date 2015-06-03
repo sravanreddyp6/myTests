@@ -1,6 +1,5 @@
 public with sharing class Notes_ProgressNote_Svc_Code_Selection {
     public Progress_Note__c CurrentRecord {get; set;}
-    
     public Notes_ProgressNote_Svc_Code_Selection(ApexPages.StandardController controller) {
         
         loadData((Progress_Note__c)Controller.getRecord());
@@ -15,7 +14,8 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
         SelectOption SOtmp = new SelectOption('', '--None--');
         Codes.Add(SOtmp);
         if(currentrecord.recordtype.name == 'Therapy'){
-            SelectOption SOtmpTherapy = new SelectOption('a0NJ000000CC80Y', 'Other');
+        	Id ServCodeId = [SELECT Id From Service_Code__c where Service_Code__c =: 'FAKE'][0].Id;
+            SelectOption SOtmpTherapy = new SelectOption(ServCodeId, 'Other');
             Codes.Add(SOtmpTherapy);
         }
             // CTEAE-88 look at note start date for effective service codes
