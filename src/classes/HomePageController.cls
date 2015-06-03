@@ -28,7 +28,7 @@ public with sharing class HomePageController{
 
 	public String TypObj;
 
-	public Id selectedProgram { get; set; }
+	public String selectedAlias { get; set; }
 	public List<SelectOption> programslist { get; set; }
 	public Service_Assignment__c[] serviceAssignments { get; set; }
 
@@ -80,22 +80,25 @@ public with sharing class HomePageController{
 			HAVING COUNT(service_location__r.id) > 0
 			ORDER BY service_location__r.programid__c, service_location__r.program__c
 		];
-		Set<String> allProgramSet = new Set<String>();
+		Set<String> allAliasSet = new Set<String>();
 		for (AggregateResult slPrgm : slPrgms) {
-			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + parseProgram(String.valueOf(slPrgm.get('prgm'))) ));
-			allProgramSet.add((String) slPrgm.get('slID'));
+			String alias = (String) slPrgm.get('alias');
+			if (!allAliasSet.contains(alias)) {
+				programslist.add(new SelectOption(alias, alias + '-' + parseProgram(String.valueOf(slPrgm.get('prgm')))));
+			}
+			allAliasSet.add(alias);
 		}
-		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram-' + UserInfo.getUserId());
-		if (initialProgramCookie == null) {
+		Cookie initialAliasCookie = ApexPages.currentPage().getCookies().get('homePageInitialAlias-' + UserInfo.getUserId());
+		if (initialAliasCookie == null) {
 			if (programsList.size() > 0) {
-				selectedProgram = programslist[0].getValue();
+				selectedAlias = programslist[0].getValue();
 			}
 		} else {
-			String tmpId = initialProgramCookie.getValue();
-			if (tmpId != null && tmpId != '' && allProgramSet.contains(tmpId)) {
-				selectedProgram = tmpId;  // Because you can't assign null to an ID variable
+			String tmpId = initialAliasCookie.getValue();
+			if (tmpId != null && tmpId != '' && allAliasSet.contains(tmpId)) {
+				selectedAlias = tmpId;  // Because you can't assign null to an ID variable
 			} else if (programsList.size() > 0) {
-				selectedProgram = programslist[0].getValue();
+				selectedAlias = programslist[0].getValue();
 			}
 		}
 		// get list of repeatables
@@ -143,8 +146,6 @@ public with sharing class HomePageController{
 		} else {
 			canSeeShiftDoc = false;
 		}
-		System.debug('permissionSets: ' + permissionSets);
-		System.debug('permissionSetString: ' + permissionSetString);
 
 		updateProgramSelection();
 		checkTmnUserRecord();
@@ -169,7 +170,7 @@ public with sharing class HomePageController{
 			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
 			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
-			'WHERE Service_Location__c = :selectedProgram ' +
+			'WHERE Service_Location__r.Alias__c = :selectedAlias ' +
 			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\' ': '') +
 			'ORDER BY Person_Being_Served__r.Name';
 		serviceAssignments = Database.query(query);
@@ -270,8 +271,8 @@ public with sharing class HomePageController{
 		ApexPages.currentPage().setCookies(
 			new Cookie[]{
 				new Cookie(
-					'homePageInitialProgram-' + UserInfo.getUserId(),
-					selectedProgram, null, 30*24*60*60, false
+					'homePageInitialAlias-' + UserInfo.getUserId(),
+					selectedAlias, null, 30*24*60*60, false
 				)
 			}
 		); //  set the cookie max age to a month
@@ -343,10 +344,8 @@ public with sharing class HomePageController{
 		return Options;
 	}
 	public void mineTasks(){
-		system.debug('came here');
 		Id userId = UserInfo.getUserId();
 		String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
-		system.debug('*********viewstsk'+viewstsk);
 		String orderStatement = '';
 		// NEVAL-56
 		Map<String, String> colNumToFieldMap = new Map<String, String>{
@@ -367,7 +366,6 @@ public with sharing class HomePageController{
 		} else {
 			orderStatement = ' order by ActivityDate desc, Priority';
 		}
-		System.debug('Order statement: ' + orderStatement);
 		if(viewstsk==null || viewstsk=='All Open'){
 			query+= orderStatement + ' limit 25';
 		}
@@ -422,7 +420,6 @@ public with sharing class HomePageController{
 	public PageReference getsearchNames() {
 		try {
 			if ((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
-				system.debug('coming here');
 				PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
 				newocp.setRedirect(true);
 				return newocp;
@@ -452,9 +449,10 @@ public with sharing class HomePageController{
 
 	public void highlightSearchResultPBS() {
 		Service_Assignment__c[] serviceAssignments = [
-			SELECT Id, Person_Being_Served__r.Id, Service_Location__r.Id, Status__c
-			FROM Service_Assignment__c
-			WHERE Person_Being_Served__c = :searchResultPBS
+			SELECT Id, Person_Being_Served__r.Id, Service_Location__r.Id, Status__c,
+			       Service_Location__r.Alias__c
+			  FROM Service_Assignment__c
+			 WHERE Person_Being_Served__c = :searchResultPBS
 			ORDER BY Person_Being_Served__r.Name
 		];
 		// We can only choose one row to highlight, so let's focus on ones with
@@ -470,7 +468,7 @@ public with sharing class HomePageController{
 			}
 		}
 		if (highlightedSA != null) {
-			selectedProgram = highlightedSA.Service_Location__r.Id;
+			selectedAlias = highlightedSA.Service_Location__r.Alias__c;
 			if (pbsOnlyShowActiveServiceAssignment && highlightedSA.Status__c != 'Active') {
 				pbsOnlyShowActiveServiceAssignment = false;
 			}
