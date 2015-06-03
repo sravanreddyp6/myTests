@@ -82,7 +82,7 @@ public with sharing class HomePageController{
 		];
 		Set<String> allProgramSet = new Set<String>();
 		for (AggregateResult slPrgm : slPrgms) {
-			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
+			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + parseProgram(String.valueOf(slPrgm.get('prgm'))) ));
 			allProgramSet.add((String) slPrgm.get('slID'));
 		}
 		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram-' + UserInfo.getUserId());
@@ -149,6 +149,17 @@ public with sharing class HomePageController{
 		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();
+	}
+
+	private String parseProgram(String program) {
+		// EC-184
+		String[] parts = program.split('-', -1);
+		if (parts.size() == 5) {
+			// It should always get here as program strings follow Mentor CBF,
+			// but if it doesn't we should be careful and just return the string.
+			parts.remove(2);
+		}
+		return String.join(parts, '-');
 	}
 
 	public void updateProgramSelection() {
