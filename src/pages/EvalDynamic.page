@@ -141,13 +141,13 @@
 		function complete(evalType) {
 			if(evalType == 'Restraint Event'){
 				openModalDialog('{!$Component.completeRestraintPanel}', 'Complete Restraint Event', '');
-			} else if (evalType == 'Head to Toe' || evalType == 'CNA Workbook') {
-				openModalDialog('{!$Component.endOfShiftDONPanel}', 'End Shift', '');
-			}
-			else{
+			} else{
 				authenticate();
 			}
+		}
 
+		function endShift() {
+			openModalDialog('{!$Component.endOfShiftDONPanel}', 'End Shift', '');
 		}
 
 		function validateEndtime(errorDomId, endTimeDomId, successfulCallback){
@@ -331,7 +331,7 @@
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!showEndOfShiftDON}">
-						<a id="btnEOS" class="btn-success btn-sm pull-left" href="#" role="button" onClick="complete('{!evalType}'); return false;">End Shift</a>
+						<a id="btnEOS" class="btn-success btn-sm pull-left" href="#" role="button" onClick="endShift(); return false;">End Shift</a>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!showRevise}">
