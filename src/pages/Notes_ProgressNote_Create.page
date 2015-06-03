@@ -79,7 +79,9 @@ j$(document).ready(function(){
             </apex:selectRadio>            
                                 
             <apex:repeat value="{!$ObjectType.Progress_Note__c.FieldSets.NewForm}" var="f"> 
-                <apex:inputField value="{!Progress_Note__c[f]}"/>
+                <!--  <apex:inputField value="{!Progress_Note__c[f]}"/>-->
+                <apex:inputField value="{!Progress_Note__c[f]}" rendered="{!IF(And(contains(f.Label,'Unit'),$User.Operating_Group__c='NeuroRestorative'),false,true)}"/>
+ 				<apex:OutputField value="{!Progress_Note__c[f]}" rendered="{!IF(And(contains(f.Label,'Unit'),$User.Operating_Group__c='NeuroRestorative'),true,false)}" styleclass="thinkingwheel"/>
             </apex:repeat>
             <apex:outputLabel >Required Number of Signatures (put 0 if None)</apex:outputLabel>
             <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}"/>

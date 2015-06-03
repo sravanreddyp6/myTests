@@ -19,9 +19,6 @@ public with sharing class Notes_ProgressNote_Create {
     public RecordType defaultRt { get; set; }
 
     private Final Progress_Note__c pn;
-    
-    
-
 
 //contructs
     public Notes_ProgressNote_Create(ApexPages.StandardController controller) {
@@ -46,7 +43,6 @@ public with sharing class Notes_ProgressNote_Create {
             
         }
         pn = (Progress_Note__c) controller.getRecord();
-        pn.Purpose_Service_is_Billable__c = false;
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
         Service_Assignment__c sa = [select id, name, service_location__r.programid__c,recordtype.name from service_assignment__c where id = :saID LIMIT 1];
         
@@ -64,7 +60,6 @@ public with sharing class Notes_ProgressNote_Create {
         //Added By Amruth for EB-436
         if(sa.recordtype.name == 'Assessment Only' && currUser != null && currUser.Operating_Group__c == 'NeuroRestorative'){
             AsmntOnly = 'Yes';
-            pn.Purpose_Service_is_Billable__c = false;
         }   
         
         
@@ -119,9 +114,6 @@ public with sharing class Notes_ProgressNote_Create {
             //Added by Amruth
             if(AsmntOnly== 'Yes' && thisRt.Name == 'Therapy'){
                     SO = new SelectOption(thisRt.Id, thisRt.Name);
-                    
-                    pn.Purpose_Service_is_Billable__c = false;
-        
                     rtOptions.Add(SO);
             }
             
