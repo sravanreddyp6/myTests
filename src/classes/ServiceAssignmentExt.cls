@@ -520,6 +520,7 @@ public without sharing class ServiceAssignmentExt {
 		populateSeizures();
 
 		setShiftDocPermissions();
+		canAddDiagnosis = Diagnosis__c.sObjectType.getDescribe().isCreateable();
 	}
 	// END: CONSTRUCTOR
 
@@ -1293,7 +1294,6 @@ public without sharing class ServiceAssignmentExt {
 		if (permissionSets.Contains('iServe_Tier_III')) {
 			canAddShiftDoc = true;
 			canAddCNA = true;
-			canAddDiagnosis = true;
 		}
 
 		if (permissionSets.Contains('iServe_Tier_I')) {
