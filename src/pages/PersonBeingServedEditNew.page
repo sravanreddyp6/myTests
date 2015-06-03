@@ -460,7 +460,7 @@
 <apex:outputField value="{!contact.Other_Contact_Information__c}"  rendered="{!  !pbsEditModeOn}"  />
             </apex:pageBlockSection>
 <!-- EB-430: Amruth:  -->
-            <apex:pageBlockSection title="Financial Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFinancialInfo" rendered="{! showDiagnosis && !canViewFamilyInfo}">
+            <apex:pageBlockSection title="Financial Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFinancialInfo" rendered="{! showDiagnosis && !isUserLevel1or2 &&  !canViewFamilyInfo}">
 
                 <apex:repeat value="{!$ObjectType.Contact.FieldSets.PBS_Financial}" var="f">
 
