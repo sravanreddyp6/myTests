@@ -57,7 +57,7 @@ private class GenerateEvalSectionPdfTest {
         system.assert(evalComponent.mapEntryHTML.size() > 0);
         system.assert(evalComponent.getApprovalHistory().size() == 0);
         system.assert(evalComponent.assessments.size() == 0);
-        system.assert(evalComponent.annotations.size() == 0);
+        system.assert(evalComponent.getAnnotations('').size() == 0);
     }
 
     private static void createData() {

@@ -21,17 +21,16 @@ public with sharing class GenerateEvalSectionPDF {
 	
 	public List<GenerateGoalObjPDF.ObjectiveWrapper> objectives { get; set; }
 	
-	public Evaluation_Response__c[] annotations { set;
-        get { String annotationRecType= cat != null && cat.contains('Neuro') ? 'NeuroAnnotation': 'Annotation';
-            return [
-                SELECT ID, Annotation_Height__c, Annotation_Width__c,
+    @TestVisible 
+	private Evaluation_Response__c[] getAnnotations(String annotationType) { 
+		String annotationRecType= annotationType != null && annotationType.contains('Neuro') ? 'NeuroAnnotation': 'Annotation';
+        return [SELECT ID, Annotation_Height__c, Annotation_Width__c,
                        Annotation_X__c, Annotation_Y__c, Annotation_Source__c,
                        Annotation_Shape__c, Annotation_Text__c
                 FROM Evaluation_Response__c WHERE Evaluation__c=:evaluationId
                  AND RecordType.Name =: annotationRecType
             ];
         }
-    }
     
     public Assessment__c[] assessments {set;
     	get{
@@ -64,8 +63,13 @@ public with sharing class GenerateEvalSectionPDF {
 		GenerateGoalObjPDF goalscontroller = new GenerateGoalObjPDF();
 		goalscontroller.init( evaluationID, evalname);
 		objectives = goalscontroller.objectives;
-		
-		
+
+        // Naming the PDF in case this controller is used for the PDF page
+        String file;
+        file = thisEval.Name+'.pdf';
+        file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
+        // Assigns the Shift Assessment Name to the PDF dynamically. Doesn't work with Chrome when Adboe Reader plugin is enabled.
+        Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename="'+file+'"');		
 	}
 
 	public Map<string, List<string>> CreateFieldControls () {
@@ -293,11 +297,31 @@ public with sharing class GenerateEvalSectionPDF {
                 	newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
        				newHTMLfld += '<div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
                 	newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' + GetResourceURL(e.field_sub_type__c) + '?' + entryID + '" id="bodyMap' + entryID + '" />';
-                	newHTMLfld += '</div>';
+                    
+                    Integer i=1;
+                    for (Evaluation_Response__c annotation : getAnnotations(e.field_sub_type__c)){
+						newHTMLfld += '<div class="annotation-number" style="pointer-events: none; position: absolute; text-align: center; '; 
+						newHTMLfld += 'left: ' + annotation.Annotation_X__c * 100 + '%;';
+						newHTMLfld += 'width: ' + annotation.Annotation_Width__c * 100 + '%;';
+						newHTMLfld += 'top: ' + annotation.Annotation_Y__c * 100 + '%;';
+						newHTMLfld += 'height: ' + annotation.Annotation_Height__c * 100 + '%;';
+						newHTMLfld += 'border: 1px black solid;"><span style="color: red; font-size: 1.5em;">';
+						newHTMLfld += i;
+						newHTMLfld += '</span></div>';
+                        ++i;
+                    }
+                	newHTMLfld += '</div>';                    
                     newHTMLfld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
                     newHTMLfld += '<table id="annotations">';
-                    newHTMLfld += '<tbody></tbody></table></div>';
+                    newHTMLfld += '<tbody>';
+                    Integer j=1;
+                    for (Evaluation_Response__c annotation : getAnnotations(e.field_sub_type__c)){
+                        newHTMLfld += '<tr><td>' + j + '</td><td>' + annotation.Annotation_Text__c + '</td></tr>';
+                        ++j;
+                    }
+                    newHTMLfld +='</tbody></table></div>';
                     newHTMLfld +=  '</div>';
+                    
                 } else if ( e.field_type__c == 'Image') {
                 	newHTMLfld += '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
                     newHTMLfld += '<div style="display: table-row;">';
@@ -327,11 +351,6 @@ public with sharing class GenerateEvalSectionPDF {
 		system.debug('HTML IS:' + mapEvalEntryHTML);
 		return mapEvalEntryHTML;
 	}
-	
-	public class FormKeyVal{
-		public Id name;
-		public String value; 
-	}
 
     public static String GetResourceURL(String resourceName) {
 
@@ -357,7 +376,7 @@ public with sharing class GenerateEvalSectionPDF {
 		public string cat {get;set;}
 		public string subcat {get;set;}
 		public string owner { get; set;}
-		public datetime created {get;set;}
+		public string created {get;set;}
 		public string entryType { get; set;}
 		
 		public EntryWrapper( string key, string eid, string eown, datetime ecr, string ecat, string esubcat, string secType ) {
@@ -366,7 +385,7 @@ public with sharing class GenerateEvalSectionPDF {
 			cat = ecat;
 			subcat = esubcat;
 			owner = eown;
-			created = ecr;
+			created = Utility.getMilitarytime(ecr);
 			entryType = secType;
 		}
 	}

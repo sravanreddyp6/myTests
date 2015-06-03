@@ -15,14 +15,24 @@
         type="Boolean" required="false" default="false" />  
     <apex:attribute name="style" description="Set the style for the Table displayed on the PDF"
         type="String" default="padding:10px;margin:10px;text-align:center;" />
+    <apex:attribute name="customLabels" description="json string of field name -> custom label" 
+        type="string" required="False" assignTo="{!labels}"/>
 
     <apex:pageBlockSection columns="1" title="{!type}" >
     	<apex:outputText value="None" rendered="{!responses.size==0 && isPDF}" />
-        <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="text-align:center;th padding:10px;" rendered="{! (numberOfResponses > 0 && isPDF) || !isPDF }">
+        <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="word-wrap: break-word;text-align:center;th padding:10px;" rendered="{! (numberOfResponses > 0 && isPDF) || !isPDF }">
                 <apex:repeat value="{!columnsToFetch}" var="column">
-                    <apex:column value="{!response[column]}"  style="{!style}" >
+                    <apex:column value="{!response[column]}"  style="{!style}" 
+                        rendered="{! column != 'LastModifiedDate' && column != 'Time_Observed__c' }" >
                     	<apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
                     </apex:column>
+                    
+                    <apex:column style="{!style}" 
+                        rendered="{! column == 'LastModifiedDate' || column == 'Time_Observed__c' }" >
+                        <c:MilitaryDatetime dateTimeVal="{!response[column]}" />
+                        <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                    </apex:column>
+                    
                 </apex:repeat>    
         </apex:pageBlockTable>
 
