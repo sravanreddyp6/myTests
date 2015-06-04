@@ -165,6 +165,14 @@ div.footer {
 			</apex:pageblocksection>
 		</apex:pageblock>
 
+		<apex:pageBlock
+			rendered="{!AND(evalName == 'Head to Toe', thisEval.Status__c != 'Draft')}">
+			<apex:pageblocksection>
+				<c:EvaluationResponseTablePDF isPdf="true"
+					parentId="{!$CurrentPage.parameters.evalId}" type="Late Entry Note"
+					formId="{!$Component.wholePage}" uniqueId="LateEntryNote" />
+			</apex:pageblocksection>
+		</apex:pageBlock>
 
 		<apex:repeat value="{!objectives}" var="objective"
 			rendered="{! $CurrentPage.Parameters.Cat == '' || ( $CurrentPage.Parameters.Cat == 'Objective')}">
@@ -195,14 +203,13 @@ div.footer {
 
 					<apex:pageblocksectionitem
 						rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}">
-						<c:EvaluationResponseTablePDF
-						    isPdf="true"
+						<c:EvaluationResponseTablePDF isPdf="true"
 							parentId="{!$CurrentPage.parameters.evalId}"
 							type="Pressure Ulcer Detail" formId="{!$Component.wholePage}"
 							uniqueId="decubiti"
 							rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}"
-							style="text-align:center;" 
-							customLabels="[{&quot;field&quot;:&quot;Exudate_Type_Odor_Amount__c&quot;, &quot;label&quot;:&quot;Exudate Type/ Odor/ Amount&quot;}]"/>
+							style="text-align:center;"
+							customLabels="[{&quot;field&quot;:&quot;Exudate_Type_Odor_Amount__c&quot;, &quot;label&quot;:&quot;Exudate Type/ Odor/ Amount&quot;}]" />
 					</apex:pageblocksectionitem>
 
 					<apex:pageblocksectionitem
@@ -227,6 +234,8 @@ div.footer {
 							<apex:outputText value="{!fld}" escape="false" />
 						</apex:pageBlockSectionItem>
 					</apex:repeat>
+
+
 				</apex:pageBlockSection>
 
 			</apex:pageBlock>
@@ -259,5 +268,4 @@ div.footer {
 			</apex:datatable>
 		</apex:pageblocksection>
 	</apex:pageBlock>
-
 </apex:page>
