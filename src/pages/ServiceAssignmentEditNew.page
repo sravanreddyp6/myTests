@@ -1165,11 +1165,21 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputPanel id="newswsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
 				<apex:repeat value="{!uncheckedWeeks}" var="week">
-					<apex:commandLink action="{!newSkillWorksheet}" value="{!week.UserDate}">
+					<apex:commandLink action="{!newSkillWorksheet}" value="{!week.UserDate}" status="{!$Component.SkillWorksheet.skillworksheetStatus}" rerender="none">
 						<apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week" />
+<!-- 						<apex:actionStatus  -->
 					</apex:commandLink>
 					<br/>
 				</apex:repeat>
+				<apex:actionStatus id="skillworksheetStatus" >
+					<apex:facet name="start">
+					<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+					</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
 			</apex:outputPanel>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -1199,11 +1209,20 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputPanel id="newbwsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
 				<apex:repeat value="{!BehaviorMonthsAvailable}" var="week">
-					<apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}">
+					<apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}" rerender="none" status="{!$Component.BehaviorWorksheet.behaviorworksheetStatus}">
 						<apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week" />
 					</apex:commandLink>
 					<br/>
 				</apex:repeat>
+				<apex:actionStatus id="behaviorworksheetStatus" >
+					<apex:facet name="start">
+					<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+					</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
 			</apex:outputPanel>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
