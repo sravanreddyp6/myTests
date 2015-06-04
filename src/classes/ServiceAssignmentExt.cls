@@ -213,7 +213,8 @@ public without sharing class ServiceAssignmentExt {
 				pshowNurseAssessment = false;
 			} else {
 				pOpGroup = tmnUsers[0].Operating_Group__c;
-				pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian';
+				// added NeuroRestorative to show diagnosis for EB-434
+				pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' ;
 				pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
 				pshowCodes = ( ( pOpGroup == 'Redwood'  && admission.State__c == 'AZ' && theservassign.service_location__r.programid__c != '114165002')
 						|| ( pOpGroup != 'Care Meridian'  && pOpGroup != 'Redwood'));
@@ -224,7 +225,6 @@ public without sharing class ServiceAssignmentExt {
 		}
 		return psetFlags;
 	}
-
 	public void showAddLocation() {
 		// empty for action support
 	}
@@ -1776,7 +1776,7 @@ public without sharing class ServiceAssignmentExt {
 
 	public void showAddFundingSource() {
 		fundingSource = new Funding_Source__c();
-		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getOperatingGroup()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
 
@@ -1810,7 +1810,7 @@ public without sharing class ServiceAssignmentExt {
 
 		populateFundingSources();
 		this.fundingSource = new Funding_Source__c();
-		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getOperatingGroup()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		this.fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
 
