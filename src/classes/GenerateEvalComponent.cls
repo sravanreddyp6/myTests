@@ -311,10 +311,10 @@ public with sharing class GenerateEvalComponent {
                     newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
                     	system.debug(mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm'));
-                        newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('yyyy/MM/dd HH:mm');
+                        newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm');
                         newHTMLfld  += '"';
                     } else if (e.Required__c) {
-                        newHTMLfld += 'value="' + Datetime.now().format('yyyy/MM/dd HH:mm');
+                        newHTMLfld += 'value="' + Datetime.now().format('MM/dd/yyyy HH:mm');
                         newHTMLfld  += '"';
                     }
                     newHTMLfld +=  '/></div></div></td>';
@@ -500,10 +500,11 @@ public with sharing class GenerateEvalComponent {
                     ev.Date_Time__c = Datetime.newInstance(Date.parse(formData.get(f)), Time.newInstance(0,0,0,0));
                 }
                 else if (ei.Field_Type__c == 'Datetime' ){
-                    ev.Date_Time__c = Datetime.valueOf(formData.get(f).replace('/','-')+':00');
+                    ev.Date_Time__c = Utility.getDateTimeFromString(formData.get(f) +':00');
                     if (EvalType == 'Head to Toe' || EvalType == 'CNA Workbook'){
                         Datetime evalShiftStartTime = [select Shift_Start_Time__c from Evaluation__c where ID = :evalId limit 1].Shift_Start_Time__c;
-                        if (evalShiftStartTime > ev.Date_Time__c || ev.Date_Time__c > Datetime.now() )  
+                        system.debug('ShiftStartTime: ' + evalShiftStartTime.format() + '  Entered time: ' + ev.Date_Time__c.format() );
+                        if (evalShiftStartTime > ev.Date_Time__c || ev.Date_Time__c > Datetime.now() )
                             throw new InvalidDateTimeValException('<li>Save failed!!! The date and time value for ' + ei.field_name__c + ' must be within the current shift start time and the current time.</li>');
                     }
                 }
