@@ -568,9 +568,9 @@
                                 </apex:outputPanel>
                                 <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
 
-                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Payer_Type__c') && CONTAINS(fundingSrcFldValsKeys, 'Call_Reference_Number__c')}">
+                                <apex:outputPanel layout="none" rendered="{! CONTAINS(fundingSrcFldValsKeys, 'Funding_Source__c') && CONTAINS(fundingSrcFldValsKeys, 'Call_Reference_Number__c')}">
                                     <td>
-                                        <apex:outputlabel value="{!fundingSrcFldVals['Payer_Type__c']}" styleclass="labelCol" />
+                                        <apex:outputlabel value="{!fundingSrcFldVals['Funding_Source__c'] + fundingSrcFldLbls['Funding_Source__c']}" styleclass="labelCol" />
                                     </td>
                                     <td>
                                         <apex:outputText value="{!fundingSrcFldVals['Call_Reference_Number__c']}" />
