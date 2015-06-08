@@ -290,7 +290,7 @@
 							<apex:outputPanel rendered="{!ISBLANK(thisEval.Signed_By__c)}" layout="none">
 								Status: {!thisEval.Status__c}
 							</apex:outputPanel>
-							<apex:outputPanel rendered="{!AND(NOT(ISBLANK(thisEval.Signed_By__c)), thisEval.Status__c == 'Final')}" layout="none">
+							<apex:outputPanel rendered="{!AND(NOT(ISBLANK(thisEval.Signed_By__c)), thisEval.Status__c == 'End of Shift')}" layout="none">
 								Status: {!thisEval.Status__c} by: {!thisEval.Signed_By__r.Name} (
 								<apex:outputText value="{!evalStatusDate}" />)
 							</apex:outputPanel>
