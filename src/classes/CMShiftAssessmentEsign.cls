@@ -55,7 +55,7 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
 			// This only happens when a DON ends a shift
 			assessment.Signed_At__c = System.now();
 			assessment.Signed_By__c = UserInfo.getUserId();
-			assessment.Status__c = 'Final';
+			assessment.Status__c = 'End of Shift';
 		}
 		update assessment;
 		if(asmtsforRestraints.size() > 0){
