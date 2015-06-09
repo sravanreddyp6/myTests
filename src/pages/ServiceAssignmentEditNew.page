@@ -497,9 +497,9 @@
 
 				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !isNR}" />
 				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !isNR}" />
-
-				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}" />
+				<!-- Added by Amruth for EB-434 -->
+				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR}" />
+				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR}" />
 
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
 				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR}">
@@ -729,7 +729,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:outputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!!editSA}" />
 				<apex:inputField value="{!theServAssign.Projected_Treatment_End_Date__c}" rendered="{!editSA}" />
 				<apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.End_Date__c}" rendered="{!editSA}" />
+				<apex:inputField value="{!theServAssign.End_Date__c}" rendered="{!editSA}" />				
 				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}" />
 				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}" />
 			</apex:pageBlockSection>
