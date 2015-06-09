@@ -1,0 +1,164 @@
+<!-- 
+    10/09/2012 05:00pm Marek Dzurilla: changed extension to controller , removed standard controller from <apex:page> tag 
+    9/27/2012 05:00pm Marek Dzurilla: added disabled="{!checkBoxesDisabled}" (lines 69, 96, 108)
+    9/27/2012 03:00pm Marek Dzurilla: new outputTest (line 33)
+    9/27/2012 02:00pm Maros Sitko: remove PageBlockSection and dtransfor it to tables
+This page is embeded in standard layout for Progress Note record and enables to manage relationship between selected progress 
+note and goals. It also enables to edit some information about each goal associated to current's note plan.  
+-->
+
+<apex:page showHeader="true" standardController="Progress_Note__c" extensions="V2SA_ProgressNotesEmbed">
+
+<style>
+.customGoals .pbSubheader { background: none !important; color: #000000 !important; font-size: 90%;}
+.customGoals .bPageBlock .pbBody .pbSubheader .hideListButton { background: url("/img/alohaSkin/twisty_sprite.png") no-repeat scroll 0 -11px transparent !important;}
+.customGoals .bPageBlock .pbBody .pbSubheader .showListButton { background: url("/img/alohaSkin/twisty_sprite.png") no-repeat scroll 0 0 transparent !important; }
+/*.customGoals .bPageBlock .pbBody {border-top:2px solid #A7BEBC !important;}*/
+.bPageBlock, .brndScnBrd, .apexDefaultPageBlock, .secondaryPalette{background: none !important; color: #000000 !important; border:0 !important; }
+
+/*.plannObjPanel{margin-left:20px;}*/
+.interventionPanel{margin-left:40px;}
+.cLine { border-color: #E7E7E7; border-style: solid; border-width: 1px 0 0; height: 1px; }
+.table-align td {
+    vertical-align: top;
+}
+</style> 
+<apex:pageBlock mode="maindetail">
+<apex:pageBlockSection title="Short Term Goals" collapsible="false"></apex:pageBlockSection>
+
+<apex:form >
+    <apex:actionStatus id="Performing">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading"
+                        style="background-color: #fbfbfb; height: 100%; opacity: 0.6; width: 100%;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /><br/>
+                        <!-- <span class="waitingDescription">Performing action, please Wait...</span> -->
+                    </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+    </apex:actionStatus>
+<apex:outputPanel id="cGoals" styleClass="customGoals">
+    <apex:pageBlock mode="mainDetail" >   
+ <apex:outputText style="color:#359988; font-weight:bold;" value="You cannot edit Progress Notes when they are locked." rendered="{!displayErrorMsg}"></apex:outputText>   
+        <!-- <apex:pageBlockSection columns="1" collapsible="false" id="goalPageblock"> -->
+            <table border="0" width="100%" cellpadding="3" cellspacing="3" class="table-align">
+                <tr>
+                    <td width="40%">
+                        <apex:outputPanel >
+                            <strong>Goal Description</strong>
+                        </apex:outputPanel>
+                    </td>
+                    <td width="20%">
+                        <apex:outputPanel >
+                            <strong>Frequency and Duration</strong>
+                        </apex:outputPanel>
+                    </td>
+                    <td width="20%">
+                        <apex:outputPanel >
+                            <strong>Status</strong>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+            </table>
+            <!-- <apex:outputPanel >
+                <strong>Action</strong>
+            </apex:outputPanel> -->
+            <apex:repeat value="{!lstInnObjectives}" var="innObjective">
+                <apex:outputPanel >
+                    <!-- <apex:outputField value="{!innObjective.objective.Name}" rendered="{!innObjective.isEditable=false}"/>
+                    <apex:inputField value="{!innObjective.objective.Name}" rendered="{!innObjective.isEditable}"/>
+                    &nbsp;
+                    <apex:outputField value="{!innObjective.objective.Objective_Name__c}" rendered="{!innObjective.isEditable=false}"/>
+                    <apex:inputField value="{!innObjective.objective.Objective_Name__c}" rendered="{!innObjective.isEditable}"/>
+                    &nbsp; -->
+                    <table border="0" width="100%" cellpadding="3" cellspacing="3" class="table-align">
+                        <tr>
+                            <td width="40%">
+                                <apex:inputCheckbox value="{!innObjective.belongsToNote}" disabled="{!checkBoxesDisabled}" rendered="{!Progress_Note__c.Status__c != 'Final'}">
+                                    <apex:actionSupport event="onclick" action="{!saveObjectives}" status="Performing" rerender="cGoals"/>
+                                </apex:inputCheckbox>&nbsp;
+                                <apex:outputField value="{!innObjective.objective.Short_Term_Goal_Description__c}" rendered="{!innObjective.isEditable=false}"/>
+                                <apex:inputField value="{!innObjective.objective.Short_Term_Goal_Description__c}" rendered="{!innObjective.isEditable}"/>
+                            </td>
+                            <td width="20%">
+                                <apex:outputField value="{!innObjective.objective.Frequency_and_Duration__c}" rendered="{!innObjective.isEditable=false}"/>
+                                <apex:inputField value="{!innObjective.objective.Frequency_and_Duration__c}" rendered="{!innObjective.isEditable}"/>
+                            </td>
+                            <td width="20%">
+                                <apex:outputField value="{!innObjective.objective.Status__c}" rendered="{!innObjective.isEditable=false}"/>
+                                <apex:inputField value="{!innObjective.objective.Status__c}" rendered="{!innObjective.isEditable}"/>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <apex:outputPanel rendered="{!AND(innObjective.belongsToNote, innObjective.lstInnPO.size>0)}" layout="block" styleClass="plannObjPanel">
+                        <apex:outputPanel style="padding-left: 27px"><i><b>Plan Objectives</b></i></apex:outputPanel>
+                        
+                        <apex:repeat value="{!innObjective.lstInnPO}" var="innPO">
+                            
+                            <!-- <apex:outputField value="{!innPO.planObjective.Name}"/>&nbsp;
+                            <apex:outputField value="{!innPO.planObjective.Objective_Name__c}" />&nbsp; -->
+                            <table border="0" width="100%" cellpadding="3" cellspacing="3" class="table-align">
+                                <tr>
+                                    <td width="40%" style="padding-left:20px;">
+                                        <apex:inputCheckbox value="{!innPO.belongsToNote}" disabled="{!checkBoxesDisabled}" rendered="{!Progress_Note__c.Status__c != 'Final'}">
+                                            <apex:actionSupport event="onclick" action="{!innPO.updateMe}" status="Performing" rerender="cGoals"/>
+                                        </apex:inputCheckbox>&nbsp;
+                                        <apex:outputField value="{!innPO.planObjective.Objective_Description__c}" />
+                                    </td>
+                                    <td width="20%"><apex:outputField value="{!innPO.planObjective.Frequency_and_Duration__c}" /></td>
+                                    <td width="20%"><apex:outputField value="{!innPO.planObjective.Status__c}" /></td>
+                                </tr>
+                            </table>
+                            <apex:outputPanel rendered="{!AND(innPO.belongsToNote, innPO.lstInnInt.size>0)}" layout="block" styleClass="interventionPanel">
+                                <apex:outputPanel style="padding-left: 5px"><i><b>Interventions</b></i></apex:outputPanel><br/>
+                                <apex:repeat value="{!innPO.lstInnInt}" var="innInt">
+                                    <apex:inputCheckbox value="{!innInt.belongsToNote}" disabled="{!checkBoxesDisabled}" rendered="{!Progress_Note__c.Status__c != 'Final'}">
+                                        <apex:actionSupport event="onclick" action="{!innInt.updateMe}" status="Performing" rerender="cGoals"/>
+                                    </apex:inputCheckbox>&nbsp;
+                                    <!-- <apex:outputField value="{!innInt.intervention.Name}" />&nbsp;
+                                    <apex:outputField value="{!innInt.intervention.Intervention_Name__c}" />&nbsp; -->
+                                    <apex:outputField value="{!innInt.intervention.Intervention_Description__c}" />
+                                    <br/>
+                                </apex:repeat>                               
+                            </apex:outputPanel> 
+                        </apex:repeat>
+                    </apex:outputPanel>
+                </apex:outputPanel> 
+<!--                <apex:outputPanel >
+                    <apex:commandLink action="{!editObjectives}" value="Edit" rerender="goalPageblock" status="Performing" rendered="{!innObjective.isEditable=false}">
+                        <apex:param value="true" assignTo="{!innObjective.isEditable}" name="toSelect"/>
+                    </apex:commandLink>
+                    <apex:commandLink action="{!editObjectives}" value="Cancel" rerender="goalPageblock" status="Performing" rendered="{!innObjective.isEditable}" immediate="true">
+                        <apex:param value="false" assignTo="{!innObjective.isEditable}" name="toSelect"/>
+                    </apex:commandLink>&nbsp;&nbsp;
+                    <apex:commandLink action="{!saveObjectives}" value="Save" status="Performing" rerender="goalPageblock" rendered="{!innObjective.isEditable}">
+                        <apex:param value="false" assignTo="{!innObjective.isEditable}" name="toSelect"/>
+                    </apex:commandLink>  
+                </apex:outputPanel>  -->
+
+                <!-- <apex:outputPanel layout="inline" rendered="{!innObjective.lstInnPO.size>0 && innObjective.belongsToNote=true}">
+                    <strong>Goal Description</strong>
+                </apex:outputPanel>
+                <apex:outputPanel layout="inline" rendered="{!innObjective.lstInnPO.size>0 && innObjective.belongsToNote=true}">
+                    <strong>Frequency and Duration</strong>
+                </apex:outputPanel>
+                <apex:outputPanel layout="inline" rendered="{!innObjective.lstInnPO.size>0 && innObjective.belongsToNote=true}">
+                    <strong>Status</strong>
+                </apex:outputPanel><hr class="cLine" /> -->
+                
+            </apex:repeat>
+        <!-- </apex:pageBlockSection> -->
+        
+    </apex:pageBlock>   
+</apex:outputPanel>
+</apex:form>
+</apex:pageBlock>
+<script type="text/javascript">
+    //checking if current progress note was created maximum than 10 seconds ago. if true display javascript alert in visualforce page that newly created progress note should be submitted for approval
+    var isSave = {!isSave};
+    if(isSave){
+        //alert('REMINDER: Please submit this Progress Note for approval using the Submit for Approval button.');
+    }
+</script>
+</apex:page>
