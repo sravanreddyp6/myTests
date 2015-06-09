@@ -923,11 +923,11 @@ public class personRecord {
     public boolean SignLanguage{ get { return signlang;} set; }
     public string LegalGuardianship { get {return legalstat;} set; }
     public string Education { get {return educ;} set; }
-	public String age { get {return age;} set; }
 	public String race { get {return race;} set; }
 	public String year { get {return year;} set; }
 	public String month { get {return month;} set; }
 	public String days { get {return days;} set; }
+	public String age { get {return age;} set; }
 	
     public personRecord( Person_Being_Referred__c pbr ) {
         System.Debug('calling person record with referred: ' + pbr);
@@ -953,11 +953,11 @@ public class personRecord {
         nonverb = pbr.Non_Verbal__c;
         signlang = pbr.Sign_Language__c;
         educ = pbr.Level_of_Education__c;
-		age = String.valueOf(pbr.Age__c);	
 		race =  pbr.Race__c;
 		year =  String.valueOf(pbr.Age_year__c);
         month =  String.valueOf(pbr.Age_month__c);
         days =  String.valueOf(pbr.Age_days__c);
+        age = Utility.getAge(year,month,days);
     }
 
 
@@ -984,14 +984,17 @@ public class personRecord {
         signlang = pbs.Sign_Language__c;
         medid = pbs.Medicaid_Id__c;
         educ = pbs.Level_of_Education__c;
-        age = String.valueOf(pbs.Age__c);
         race =  pbs.Race__c;
         year =  pbs.Age_year__c;
         month =  pbs.Age_month__c;
         days =  pbs.Age_days__c;
+        age = Utility.getAge(year,month,days);
     }
-
+    
 }
+
+
+	
 class referralConversionException extends Exception {
     }
 }

@@ -64,7 +64,10 @@ public with sharing class CareMeridianEvaluationEditController {
         if (ApexPages.currentPage().getParameters().get('tab') != null) {
             selectedTab = ApexPages.currentPage().getParameters().get('tab');
         }
+         this.age = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);
     }
+
+  public string age{set;get;}
 
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
@@ -187,6 +190,7 @@ public void setAge () {
 	this.pbr.Age_month__c = String.valueOf(months);
 	this.pbr.Age_days__c = String.valueOf(days);
 	this.pbr.Age__c = years;
+	this.age = Utility.getAge(String.valueOf(this.pbr.Age_year__c),this.pbr.Age_month__c,this.pbr.Age_days__c);
 	update this.pbr;
 }
     /**

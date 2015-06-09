@@ -8,7 +8,7 @@ public String PageMessage{get;set;}
 public Contact currentContact{ get { return [ select id, accountid, ownerid ,Age_year__c,Age_month__c,Age_days__c from contact where id = :pbsId]; }
                                     set; }
 public ID PBSId{get;set;}
-public String age {set;get{ return currentContact.Age_year__c +' Years '+ currentContact.Age_month__c + ' Months ' + currentContact.Age_days__c +' Days';}}       
+public String age {set;get{	return Utility.getAge(this.currentContact.Age_year__c,this.currentContact.Age_month__c,this.currentContact.Age_days__c);	}}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }
