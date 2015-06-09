@@ -5,6 +5,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.ServiceAssignmentFS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
@@ -265,6 +266,25 @@
 		                 }
 		    });
         });
+        
+        jQuery(document).ready(function ($) {
+		        setUpFields = function () {
+		            $('body input').on("change", function (event) {
+		                applyRulesToField(event.target);
+		            });
+		            $('body select').on("change", function (event) {
+		                applyRulesToField(event.target);
+		            });
+		            $('body input').each(function (_, target) {
+		                applyRulesToField(target);
+		            });
+		            $('body select').each(function (_, target) {
+		                applyRulesToField(target);
+		            });
+		        }
+		        setUpFields();
+		    });   //end "
+        
 
 	</script>
 	<apex:pagemessages id="msgs" />
@@ -1410,6 +1430,11 @@ END: Uncomment to have the element collapsed by default -->
 		<!--  Funding Sources section -->
 		<!-- Add Funding Source modal. -->
 		<apex:outputPanel id="FundingSourceModal" style="display:none">
+			<script>
+			  jQuery(document).ready(function ($) {
+			  	  setUpFields();
+	    		});   //end " 
+		    </script>
 			<div id='fundingMessages'></div>
 			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' }">
 				<apex:pageBlockSection columns="1" id="fundingSourceEntry">
