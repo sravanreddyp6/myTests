@@ -4,7 +4,7 @@ private class EvalRepeatersTest {
     static testMethod void myUnitTest() {
     	
     	TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
-        Evaluation__c evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id);
+        Evaluation__c evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id, shift_start_time__c = Datetime.newInstance(2015,04,27,0,0,0), shift_end_time__c = Datetime.newInstance(2015,05,2,0,0,0));
         insert evaluation;
         
         list<eval__c> evals = TMN_Generic_Core_TestData.getEvalTestRecords();
