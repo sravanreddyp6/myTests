@@ -309,7 +309,7 @@ public without sharing class ServiceAssignmentExt {
 		get{
 			if (fundingSource == null) {
 				fundingSource = new Funding_Source__c();
-				fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+				fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType());
 				fundingSource.Service_Assignment__c = this.theServAssign.Id;
 			}
 			return fundingSource;
@@ -317,12 +317,12 @@ public without sharing class ServiceAssignmentExt {
 		set; }
 	public List<Funding_Source__c> fundingSources { get; set; }
 
-	public String fundingSourceRecordType{
+	/*public String fundingSourceRecordType{
 		get{
 			return 'CareMeridian';
 		}
 		set;
-	}
+	}*/
 
 	// END:  Parent level properties with get/set methods.
 
@@ -1776,7 +1776,7 @@ public without sharing class ServiceAssignmentExt {
 
 	public void showAddFundingSource() {
 		fundingSource = new Funding_Source__c();
-		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getOperatingGroup()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
+		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
 
@@ -1810,8 +1810,22 @@ public without sharing class ServiceAssignmentExt {
 
 		populateFundingSources();
 		this.fundingSource = new Funding_Source__c();
-		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getOperatingGroup()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
+		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		this.fundingSource.Service_Assignment__c = this.theServAssign.Id;
+	}
+	
+	//This method id needed to exactly determine the name of the recordtype since Recordtype names in Funding sources are different from the Operating group names  - Sravan 06/09/2015.
+	public string getfundingsourceRecordType(){
+		string opGroup = getOperatingGroup();
+		if(opGroup == 'Care Meridian'){
+			return 'CareMeridian';
+		}
+		else if(opGroup == 'NeuroRestorative'){
+			return 'NeuroRestorative';
+		}
+		else{
+			return null; //For now since Service Assignment level funding sources are supported only for CM and NR operating groups.
+		}
 	}
 
 	private void populateFundingSources() {

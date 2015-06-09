@@ -1411,7 +1411,7 @@ END: Uncomment to have the element collapsed by default -->
 		<!-- Add Funding Source modal. -->
 		<apex:outputPanel id="FundingSourceModal" style="display:none">
 			<div id='fundingMessages'></div>
-			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian'}">
+			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' }">
 				<apex:pageBlockSection columns="1" id="fundingSourceEntry">
 					<apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source" />
 					<apex:inputField value="{!fundingSource.Funding_Source_ID__c}" id="fundingEntry_SourceId" />
@@ -1452,46 +1452,50 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputField value="{!fundingSource.Policy_Holder__c}" />
 					<apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" id="policyHolderRelationship" />
 				</apex:pageBlockSection>
+				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
-					<apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
-					<!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
-						<apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
-					</apex:outputText>
-					<apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
-					<apex:inputField value="{!fundingSource.Payer_Type__c}" />
-					<apex:inputField value="{!fundingSource.Payer_Name__c}" />
-					<apex:inputField value="{!fundingSource.Payer_Phone__c}" />
-					<apex:pageBlockSectionItem >
-						<apex:outputLabel for="policyHolder" value="Policy Holder" />
-						<apex:outputPanel >
-							<apex:inputField value="{!fundingSource.Policy_Holder__c}" id="policyHolder" />
-							<apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.policyHolder}', '{!theServAssign.Person_Being_Served__r.Name}'); return false;" />
-						</apex:outputPanel>
-					</apex:pageBlockSectionItem>
-					<apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
+                    <apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
+                    <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
+                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
+                        <apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
+                    </apex:outputText>
+                    <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
+                    <apex:inputField value="{!fundingSource.Payer_Type__c}" id="neuroPayerType" html-data-rules="{&quot;VA - Pilot&quot;: [&quot;{!$Component.vaPilotClinicalNumber}&quot;]}" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" />
+                    <apex:inputField value="{!fundingSource.Payer_Name__c}" />
+                    <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="policyHolder" value="Policy Holder" />
+                        <apex:outputPanel >
+                            <apex:inputField value="{!fundingSource.Policy_Holder__c}" id="policyHolder" />
+                            <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.policyHolder}', '{!theServAssign.Person_Being_Served__r.Name}'); return false;" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
 
-					<apex:pageBlockSectionItem >
-						<apex:outputLabel for="insuredSSN" value="Insured SSN" />
-						<apex:outputPanel >
-							<apex:inputField value="{!fundingSource.Insured_SSN__c}" id="insuredSSN" />
-							<apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredSSN}', '{!theServAssign.Person_Being_Served__r.SSN__c}'); return false;" />
-						</apex:outputPanel>
-					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem >
-						<apex:outputLabel for="insuredDOB" value="Insured DOB" />
-						<apex:outputPanel >
-							<apex:inputField value="{!fundingSource.Insured_DOB__c}" id="insuredDOB" />
-							<apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredDOB}', '{!theServAssign.Person_Being_Served__r.Birthdate}'); return false;" />
-						</apex:outputPanel>
-					</apex:pageBlockSectionItem>
-					<apex:inputField value="{!fundingSource.Policy_Number__c}" />
-					<apex:inputField value="{!fundingSource.Group_Number__c}" />
-				</apex:pageBlockSection>
-				<apex:pageBlockSection columns="1" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
-					<apex:inputField value="{!fundingSource.Additional_Coverage__c}" id="additionalCoverage" />
-					<apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
-				</apex:pageBlockSection>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="insuredSSN" value="Insured SSN" />
+                        <apex:outputPanel >
+                            <apex:inputField value="{!fundingSource.Insured_SSN__c}" id="insuredSSN" />
+                            <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredSSN}', '{!theServAssign.Person_Being_Served__r.SSN__c}'); return false;" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="insuredDOB" value="Insured DOB" />
+                        <apex:outputPanel >
+                            <apex:inputField value="{!fundingSource.Insured_DOB__c}" id="insuredDOB" />
+                            <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredDOB}', '{!theServAssign.Person_Being_Served__r.Birthdate}'); return false;" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!fundingSource.Policy_Number__c}" />
+                    <apex:inputField value="{!fundingSource.Group_Number__c}" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
+                    <apex:inputField value="{!fundingSource.Additional_Coverage__c}" id="additionalCoverage" />
+                    <apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
+                </apex:pageBlockSection>
+				
 
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian' }">
 					<apex:outputText value="Benefit Information" styleClass="modalSubheader" />
@@ -1564,6 +1568,9 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:pageBlockSectionItem />
 					<apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
 				</apex:pageBlockSection>
+				
+				
+				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:outputText value="Benefit Information" styleClass="modalSubheader" />
 					<apex:pageBlockSectionItem />
@@ -1606,7 +1613,9 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
+			
 			<apex:pageBlock title="Red Flags" id="fundingSourceRedFlagsEntry" rendered="{!fundingSourceRecordType == 'CareMeridian' || fundingSourceRecordType == 'NeuroRestorative'}">
+				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
 					<apex:inputField value="{!fundingSource.Month_to_Month__c}" id="field_validation1" />
 					<apex:inputField value="{!fundingSource.Basis__c}" id="field_check1" />
@@ -1647,6 +1656,8 @@ END: Uncomment to have the element collapsed by default -->
 
 					<apex:pageBlockSectionItem />
 				</apex:pageBlockSection>
+				
+				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:inputField value="{!fundingSource.Cobra__c}" id="field_validation20" />
 					<apex:inputField value="{!fundingSource.Payment_Detail__c}" id="field_check20" />
@@ -1663,7 +1674,56 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageBlockSection columns="1" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:inputTextArea value="{!fundingSource.Comment__c}" label="Red Flag Comments" cols="80" />
 				</apex:pageBlockSection>
+				
+				
 			</apex:pageBlock>
+			
+			
+			
+			
+<!-- 			Added by Sravan for EB-435 -->
+			<apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">       
+                <apex:pageBlockSection columns="2" >
+                    <apex:inputField value="{!fundingSource.Status__c}" />
+                    <apex:pageBlockSectionItem />
+                    <apex:outputText value="Request" styleClass="modalSubheader" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Requested_By__c}" />
+                    <apex:inputField value="{!fundingSource.Request_Date__c}" />
+                    <apex:inputField value="{!fundingSource.Request_Contact_Name__c}" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Request_Phone__c}" label="Phone" />
+                    <apex:inputField value="{!fundingSource.Request_Fax__c}" label="Fax" />
+
+                    <apex:outputText value="Received" styleClass="modalSubheader" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Given_By__c}" />
+                    <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
+                    <apex:inputField value="{!fundingSource.Days_Authorized__c}" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
+                    <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" />
+                    <apex:inputField value="{!fundingSource.Received_Rate__c}" label="Rate" />
+                    <apex:inputField value="{!fundingSource.Negotiated_Rate__c}" />
+                    <apex:inputField value="{!fundingSource.Internal_Contact__c}" />
+                    <apex:inputField value="{!fundingSource.Internal_Phone__c}" />
+                    <apex:inputField value="{!fundingSource.Internal_Fax__c}" />
+                    <apex:inputField value="{!fundingSource.Internal_Email__c}" id="payerCmEmail" />
+                    <apex:inputField value="{!fundingSource.NR_CM_Name__c}" />
+                    <apex:inputField value="{!fundingSource.NR_CM_Phone__c}" />
+                    <apex:inputField value="{!fundingSource.NR_CM_Fax__c}" />
+                    <apex:inputField value="{!fundingSource.NR_CM_Email__c}" id="nrCmEmail" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Name__c}" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Company__c}" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Phone__c}" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Fax__c}" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Email__c}" id="adjuterEmail" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:inputTextArea value="{!fundingSource.Authorization_Comments__c}" cols="80" />
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+			
 
 			<apex:pageBlock >
 				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource}">
