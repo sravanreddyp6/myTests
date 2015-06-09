@@ -30,7 +30,7 @@ private class EvalRepeatersTest {
             else if(e.Field_Type__c == 'Date') 
                     val.value = '11/12/2013';
             else if(e.Field_Type__c == 'DateTime') 
-                    val.value = '2015/04/27 18:00';
+                    val.value = '04/27/2015 18:00';
             else if(e.Field_Type__c == 'Multiselect') {
                     val.value = 'TEST';
                     GenerateEvalComponent.FormKeyVal val1 = new GenerateEvalComponent.FormKeyVal();
