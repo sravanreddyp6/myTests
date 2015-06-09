@@ -42,6 +42,7 @@ public with sharing class PersonalRecordController {
 		servAssigns = [Select Id, Name from Service_Assignment__c where Person_Being_Served__c = : value and Status__c = 'Active'];
 	}
 	}
+	public String age {set;get{	return Utility.getAge(this.con.Age_year__c,this.con.Age_month__c,this.con.Age_days__c);	}}
 
 	public String parentPageName {get; set { System.Debug('parentPage: ' + value); }
 	}

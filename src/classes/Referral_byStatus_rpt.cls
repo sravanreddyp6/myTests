@@ -25,6 +25,12 @@ public with sharing class Referral_byStatus_rpt {
                                         AND
                                         Referral_Status__c = :Status
                                     ] ;    
+                                    
+             	for (Referral__c ref:Referral_results) {
+             		ref.Person_Being_Referred__r.Age_month__c  = Utility.getAge(String.valueOf(ref.Person_Being_Referred__r.Age_year__c),ref.Person_Being_Referred__r.Age_month__c,ref.Person_Being_Referred__r.Age_days__c);
+             	}                         
+                                    
+                                    
         return null;
     }
 }

@@ -409,6 +409,7 @@ public with sharing class referral_Controller2 {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 				'The Person Being Served record id specified is invalid. ' + e.getMessage()));
 		}
+			this.age = 	Utility.getAge(String.valueOf(pBRRec.Age_year__c),pBRRec.Age_month__c,pBRRec.Age_days__c);
 		return pBRRec;
 	}
 	private void getPBSId() {
@@ -438,12 +439,16 @@ public with sharing class referral_Controller2 {
 				where Id = :pBSId
 				limit 1
 			];
+			
 		} catch (Exception e) {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 				'The Person Being Served record id specified is invalid. ' + e.getMessage()));
 		}
+	this.age = 	Utility.getAge(pBSRec.Age_year__c,pBSRec.Age_month__c,pBSRec.Age_days__c);
 		return pBSRec;
 	}
+	
+	public string age{set;get;}
 	public void showAddActivity() {
 		activity = new Task();
 		activity.Priority = 'Normal';
