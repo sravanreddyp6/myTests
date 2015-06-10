@@ -531,9 +531,15 @@ public with sharing class EvalDynamicExt {
 			showRevise = false;
 			showShiftDone = false;
 
-			if ( thiseval.status__c == 'Draft' && isUserOwner) {
-				showEsign = true;
+			
+			if ( isUserOwner) {
+				// EC-198 - 06/10/2015 - show disregard for all statuses 
 				showDisregard = true;
+				
+				// show esign only for Draft
+				if ( thiseval.status__c == 'Draft') { 
+					showEsign = true;
+				}
 			}
 
 			if ( thiseval.status__c == 'Pending Approval' && isApprover) {
