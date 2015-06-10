@@ -187,6 +187,11 @@ public with sharing class ReportListViewController {
 		if(og == 'Care Meridian'){
 			// EC-57 - added
 			items.add('Referrals_with_Funding_and_Location');
+
+			// EC-193
+			if (Utility.currentUserHasPermissionSet('iServe_DON') || Utility.currentUserHasPermissionSet('iServe_Tier_III')) {
+				items.add('Late_Entry_Report');
+			}
 		}
 		if(og == 'NeuroRestorative'){
 			items.add('Daily_Referrals');
