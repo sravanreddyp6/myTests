@@ -187,6 +187,9 @@ public with sharing class GoalObjRepeaters {
 		
 		public objWrapper( ID id, String description, datetime effdate, datetime targetdate, string otype, string status) {
 			this.id = id;
+			if ( string.isBlank(description))
+				description = 'No description provided';
+				
 			this.shortdesc = description.left(Math.min(description.length(), 47));
 			if ( description.length() > 47)
 				this.shortdesc += '...';
