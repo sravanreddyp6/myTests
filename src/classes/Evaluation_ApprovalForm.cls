@@ -5,13 +5,17 @@ public with sharing class Evaluation_ApprovalForm {
     public Evaluation_ApprovalForm(ApexPages.StandardController controller) {
         this.controller = controller;
         thisEval = (Evaluation__c)controller.getrecord();
+        getPermSets();
     }
 
 
     public boolean No_Approval_Needed {
     get {
         // TO DO: is this a supervisor user?
-        return false;
+        if ( isTierIII || isDON )
+        	return true;
+        else
+            return false;
     }
     }
     /////////////////
@@ -27,4 +31,30 @@ public with sharing class Evaluation_ApprovalForm {
         }
         return new PageReference('/' + thisEval.Id);
     }
+    
+    private boolean isDON;
+    private boolean isTierIII;
+    private void getPermSets() {
+    		PermissionSetAssignment[] assignments = [
+		                                         SELECT Id, PermissionSet.Name
+		                                         FROM PermissionSetAssignment
+		                                         WHERE AssigneeId = :UserInfo.getUserId()
+		                                         ];
+		Set<String> permissionSets = new Set<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Name);
+		}
+
+		if (permissionSets.contains('iServe_DON')) {
+			isDON = true;
+		} else {
+			isDON = false;
+		}
+		if (permissionSets.contains('iServe_Tier_III')) {
+			isTierIII = true;
+		} else {
+			isTierIII = false;
+		}
+    }
+    
 }
