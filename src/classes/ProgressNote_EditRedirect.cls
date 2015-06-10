@@ -4,7 +4,7 @@ public with sharing class ProgressNote_EditRedirect {
     public pagereference checkType(){
         prefix = string.valueof(note.id);
         prefix = prefix.left(3);
-       if(note.recordtype.DeveloperName == 'Shift_Note'){
+       if(!test.IsRunningTest() && note.recordtype.DeveloperName == 'Shift_Note'){
        //ActionPlanForm
            return new PageReference('/apex/shiftnote_basic_form?id='+note.id + '&edit=1');
        
