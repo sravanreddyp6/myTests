@@ -20625,13 +20625,13 @@ errors.push(&apos;You must select a &quot;Plan&quot; before continuing.&apos;);
 
 if({!ISBLANK(Progress_Note__c.Interventions__c)}
 &amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
-&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
 errors.push(&apos;You must populate the &quot;Intervention&quot; field before continuing.&apos;); 
 } 
 if({!ISBLANK(Progress_Note__c.Progress__c)}
 &amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
 &amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;
-&amp;&amp; curRtype[0].DeveloperName != &apos;NC_Wks_1_6_TFC&apos;){ 
+&amp;&amp; curRtype[0].DeveloperName != &apos;NC_Wks_1_6_TFC&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
 errors.push(&apos;You must populate the &quot;Progress&quot; field before continuing.&apos;); 
 } 
 
