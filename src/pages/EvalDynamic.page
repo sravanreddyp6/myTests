@@ -502,10 +502,14 @@
 	<apex:outputPanel id="evalResponsesSection" style="display:none">
 		<apex:form id="evalResponsesForm">
 			<apex:pageBlock >
-				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Head to Toe' || key == 'Residential~Skin/Body~Wound Detail~Residential'}" />
-				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="woundLog" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Activity Log'}" />
-				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Head to Toe' || key=='Residential~Skin/Body~Pressure Ulcer Detail~Residential'}" />
-				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubitiLog" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Activity Log'}" />
+				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Head to Toe' || key == 'Residential~Skin/Body~Wound Detail~Residential'}" 
+				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
+				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="woundLog" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Activity Log'}" 
+                customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
+				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Head to Toe' || key=='Residential~Skin/Body~Pressure Ulcer Detail~Residential'}" 
+                customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
+				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubitiLog" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Activity Log'}" 
+                customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
 				<apex:pageBlockButtons location="bottom">
 					<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel(); return false;" />
 				</apex:pageBlockButtons>
