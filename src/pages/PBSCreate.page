@@ -237,30 +237,29 @@ function stopRKey(evt) {
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Account.Age__pc}" taborderhint="1" />
                 <apex:inputField value="{!Account.Level_of_Education__pc}" taborderhint="2" />
-                <apex:inputField value="{!Account.Gender__pc}" taborderhint="1" />
-    
-    <apex:pageBlocksectionItem >
-    	<apex:outputPanel styleClass="helpButton">
-    		<apex:outputLabel value="Gender" styleClass="labelCol" />
-    		<img src="/s.gif" id="HelpImage" alt="Select the person's legal gender" class="helpOrb" title="Select the person's legal gender" />
-    		<br/>
-    		<br/>
-    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
-    		<br/>
-    		<br/>
-    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
-    	</apex:outputPanel>
-    	<apex:outputPanel >
-	    	<apex:inputField value="{!Account.Gender__pc}" />
-	    	<br/>
-	    	<br/>
-	    	<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}" />
-	    	<div class="requiredInput">
-				<div class="requiredBlock"></div>
-	    	<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity" />
-	    	</div>
-    	</apex:outputPanel>
-    </apex:pageBlocksectionItem>
+<!--                 <apex:inputField value="{!Account.Gender__pc}" taborderhint="1" /> -->
+			    <apex:pageBlocksectionItem >
+			    	<apex:outputPanel styleClass="helpButton">
+			    		<apex:outputLabel value="Gender" styleClass="labelCol" />
+			    		<img src="/s.gif" id="HelpImage" alt="Select the person's legal gender" class="helpOrb" title="Select the person's legal gender" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
+			    	</apex:outputPanel>
+			    	<apex:outputPanel >
+				    	<apex:inputField value="{!Account.Gender__pc}" taborderhint="1" />
+				    	<br/>
+				    	<br/>
+				    	<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}" />
+				    	<div class="requiredInput">
+							<div class="requiredBlock"></div>
+				    	<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity" />
+				    	</div>
+			    	</apex:outputPanel>
+			    </apex:pageBlocksectionItem>
 <!--    	<apex:inputField value="{!Account.Gender__pc}" /> -->
 <!--    	<apex:pageBlockSectionItem /> -->
    	
@@ -387,7 +386,21 @@ function stopRKey(evt) {
                              collapsible="False"
                              id="pbsOutputAdditionalInfo">
 				<apex:inputField taborderhint="20" value="{!Account.Family_Member_Other__pc}" />
-				<apex:inputField taborderhint="21" value="{!Account.Legal_Guardianship_Status__pc}" />
+<!-- 				<apex:inputField taborderhint="21" value="{!Account.Legal_Guardianship_Status__pc}" /> -->
+ 				<apex:pageBlockSectionItem >
+		        	<apex:outputPanel >
+		          		<apex:outputLabel value="Guardianship Type" id="guardianshipTypeLabel"/>
+		          		<br/>
+		          		<br/>
+		          		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+		          	</apex:outputPanel>
+		           	<apex:outputPanel >
+		           		<apex:inputField value="{!Account.Guardianship_Type__pc}" id="guardianShipType" taborderhint="21" html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
+		           		<br/>
+		           		<br/>
+		           		<apex:inputField value="{!Account.Partial_Guardianship_Conservatorship__pc}" id="partialGuardianShip" />
+		           	</apex:outputPanel>
+	        </apex:pageBlockSectionItem>
 				
 				<apex:inputField taborderhint="20" value="{!Account.VIP_Indicator__pc}" />
 				<apex:inputField taborderhint="21" value="{!Account.Current_Medications__pc}" rendered="{! !Contains(dontShowFields, 'Current_Medications__pc')}" />
