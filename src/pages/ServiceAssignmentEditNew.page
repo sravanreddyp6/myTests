@@ -1748,7 +1748,261 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputTextArea value="{!fundingSource.Authorization_Comments__c}" cols="80" />
                 </apex:pageBlockSection>
             </apex:pageBlock>
+            
+            <apex:pageBlock title="Costs & Therapy Authorization Details" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
+            	<apex:pageBlocksection columns="2" >
+            		<apex:inputField value="{!fundingSource.Case_Manager__c}" />
+            		<apex:inputField value="{!fundingSource.Effective_Date_of_Cost_therapy_Auth__c}" />
+            		<apex:pageBlockSectionitem />
+            		<apex:inputField value="{!fundingSource.Term_Date_of_Cost_therapy_Auth__c}" />
+            	</apex:pageBlocksection>
+            </apex:pageBlock>
 			
+			<apex:pageBlock title="COSTS PER DAY" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" >
+				<apex:pageBlockSection columns="2" >
+					<apex:pageblocksectionItem >
+						<apex:outputlabel value="Staffing Ratio 1:1" styleClass="labelCol" />
+						<apex:outputPanel >
+							<apex:SelectRadio value="{!fundingSource.Staffing_Ratio_1_1__c}" >
+								<apex:selectOption itemLabel="Yes" itemvalue="Yes" />
+								<apex:selectOption itemLabel="No" itemValue="No" />
+							</apex:SelectRadio>
+						</apex:outputPanel>
+					</apex:pageblocksectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Number of Hrs. Expected" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Number_of_Hrs_Expected__c}" style="width:100px;"/>
+					</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+				
+				<apex:panelGrid columns="3" style="margin-left: 50px;">
+					<apex:panelGroup >
+						<apex:outputlabel value="DME" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.DME__c}" style="width:100px;margin-left:109px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup >
+						<apex:selectRadio value="{!fundingSource.DME_Calculation_Type__c}" >
+							<apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+							<apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+						</apex:selectRadio>
+					</apex:panelGroup>
+					<apex:panelGroup >	
+						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.DME_Per_Day__c}" style="width:100px;"/>
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputlabel value="Medication" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Medication_Costs__c}" style="width:100px;margin-left:74px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup >
+						<apex:selectRadio value="{!fundingSource.Medication_Cost_Calculation_Type__c}" >
+							<apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+							<apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+						</apex:selectRadio>
+					</apex:panelGroup>
+					<apex:panelGroup >	
+						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Medication_Per_Day__c}" style="width:100px;"/>
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputlabel value="Nutritional Supplements" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Nutritional_Supplements_Cost__c}" style="width:100px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup >
+						<apex:selectRadio value="{!fundingSource.Nutritional_Supplements_Cost_Calculation__c}" >
+							<apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+							<apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+						</apex:selectRadio>
+					</apex:panelGroup>
+					<apex:panelGroup >	
+						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Nutritional_Supplements_Per_Day__c}" style="width:100px;"/>
+					</apex:panelGroup>
+					
+					
+					<apex:panelGroup >
+						<apex:outputlabel value="Other" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Other_Cost__c}" style="width:100px;margin-left:100px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup >
+						<apex:selectRadio value="{!fundingSource.Other_Cost_Calculation_Type__c}" >
+							<apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+							<apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+						</apex:selectRadio>
+					</apex:panelGroup>
+					<apex:panelGroup >	
+						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Other_Per_Day__c}" style="width:100px;"/>
+					</apex:panelGroup>
+					
+<!-- 					<apex:panelGroup > -->
+<!-- 						<apex:outputLabel value="Other Cost Description" styleClass="labelCol" /> -->
+<!-- 						<apex:inputField value="{!fundingSource.Other_Cost_Description__c}" /> -->
+<!-- 					</apex:panelGroup> -->
+				</apex:panelGrid>
+				
+			</apex:pageBlock>
+			
+			<apex:pageBlock title="THERAPY AUTHORIZATION" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" >
+				<apex:panelGrid columns="3" >
+					<apex:panelGroup >
+						<apex:outputLabel value="OT Auth Units" styleClass="labelCol"/>
+						<apex:inputField value="{!fundingSource.OT_Auth_Units__c}" style="width:100px; margin-left:50px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.OT_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px; " >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.OT_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputLabel value="PT Auth Units" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.PT_Auth_Units__c}" style="width:100px; margin-left:50px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.PT_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;" >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.PT_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputLabel value="SLP Auth Units"  styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.SLP_Auth_Units__c}" style="width:100px; margin-left:42px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.SLP_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;" >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.SLP_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputLabel value="BIT Auth Units"  styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.BIT_Auth_Units__c}" style="width:100px; margin-left:46px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" style="width:100px;"/>
+						<apex:inputField value="{!fundingSource.BIT_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;" >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.BIT_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputLabel value="Counselling Auth Units"  styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Counselling_Auth_Units__c}" style="width:100px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Counselling_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;" >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Counselling_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup>
+						<apex:outputLabel value="Auth Units Grand Total" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Auth_Units_Grand_Total__c}" style="width:100px;"/>
+					</apex:panelGroup>
+					<apex:panelGroup >
+						<apex:outputLabel value="Auth Excess Justification" />
+						<apex:inputTextArea value="{!fundingSource.Auth_Excess_Justification__c}" rows="3" cols="20"/>
+					</apex:panelGroup>
+					<apex:panelGroup ></apex:panelGroup>
+				</apex:panelgrid>
+<!-- 				<apex:panelGrid columns="6" >	 -->
+<!-- 					<apex:panelGroup > -->
+<!-- 						<apex:outputLabel value="OT Auth Units" styleClass="labelCol" /><br/> -->
+<!-- 						<apex:outputLabel value="PT Auth Units" styleClass="labelCol" /><br/> -->
+<!-- 						<apex:outputLabel value="SLP Auth Units" styleClass="labelCol" /><br/> -->
+<!-- 						<apex:outputLabel value="BIT Auth Units" styleClass="labelCol" /><br/> -->
+<!-- 						<apex:outputLabel value="Counselling Auth Units" styleClass="labelCol" /> -->
+<!-- 					</apex:panelGroup> -->
+<!-- 					<apex:panelGroup > -->
+<!-- 						<apex:inputField value="{!fundingSource.OT_Auth_Units__c}" style="width:100px;"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.PT_Auth_Units__c}" style="width:100px;"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.SLP_Auth_Units__c}" style="width:100px;"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.BIT_Auth_Units__c}" style="width:100px;"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.Counselling_Auth_Units__c}" style="width:100px;"/> -->
+<!-- 					</apex:panelGroup> -->
+					
+<!-- 					<apex:panelGroup > -->
+<!-- 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" /><br/> -->
+<!-- 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" /><br/> -->
+<!-- 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" /><br/> -->
+<!-- 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" /><br/> -->
+<!-- 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" /> -->
+<!-- 					</apex:panelGroup> -->
+<!-- 					<apex:panelGroup > -->
+<!-- 						<apex:inputField value="{!fundingSource.OT_Days_Authorized_From__c}" style="width:100px;"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.PT_Days_Authorized_From__c}" style="width:100px;"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.SLP_Days_Authorized_From__c}" style="width:100px;"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.BIT_Days_Authorized_From__c}" style="width:100px;"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.Counselling_Days_Authorized_From__c}" style="width:100px;"/> -->
+<!-- 					</apex:panelGroup> -->
+					
+<!-- 					<apex:panelGroup > -->
+<!-- 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" for="otdaysto" /><br/> -->
+<!-- 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" for="ptdaysto" /><br/> -->
+<!-- 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" for="slpdaysto" /><br/> -->
+<!-- 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" for="bitdaysto" /><br/> -->
+<!-- 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" for="coundaysto" /> -->
+<!-- 					</apex:panelGroup> -->
+<!-- 					<apex:panelGroup > -->
+<!-- 						<apex:inputField value="{!fundingSource.OT_Days_Authorized_To__c}" style="width:100px;" id="otdaysto"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.PT_Days_Authorized_To__c}" style="width:100px;" id="ptdaysto"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.SLP_Days_Authorized_To__c}" style="width:100px;" id="slpdaysto"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.BIT_Days_Authorized_To__c}" style="width:100px;" id="bitdaysto"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.Counselling_Days_Authorized_To__c}" style="width:100px;" id="coundaysto"/> -->
+<!-- 					</apex:panelGroup> -->
+				
+				
+<!-- 				</apex:panelGrid> -->
+			
+			</apex:pageBlock>
+			
+			<apex:pageBlock title="THERAPY AUTH EXCESS APPROVAL" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" >
+				<apex:pageBlockSection columns="2" >
+				
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Authorization Excess Approved" styleClass="labelCol" />
+						<apex:outputPanel >
+							<apex:SelectRadio value="{!fundingSource.Authorization_Excess_Approved__c}" >
+								<apex:selectOption itemLabel="Yes" itemvalue="Yes" />
+								<apex:selectOption itemLabel="No" itemValue="No" />
+							</apex:SelectRadio>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Authorization Override Comments" />
+						<apex:inputField value="{!fundingSource.Authorization_Override_Comments__c}" />
+					</apex:pageBlockSectionItem>
+					
+					<apex:pageBlockSectioNitem >
+						<apex:outputLabel value="Authorized By" />
+						<apex:inputField value="{!fundingsource.Authorization_Excess_Approved_By__c}" />
+					</apex:pageBlockSectioNitem>
+				
+				</apex:pageBlockSection>
+			
+			</apex:pageBlock>
 
 			<apex:pageBlock >
 				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource}">
