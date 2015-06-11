@@ -177,6 +177,28 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Auth_Excess_Justification__c</fullName>
+        <externalId>false</externalId>
+        <label>Auth Excess Justification</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Auth_Units_Grand_Total__c</fullName>
+        <externalId>false</externalId>
+        <label>Auth Units Grand Total</label>
+        <precision>5</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Auth_given_method__c</fullName>
         <externalId>false</externalId>
         <label>How Given</label>
@@ -211,6 +233,37 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Authorization_Excess_Approved_By__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Authorization Excess Approved By</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Funding_Sources1</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Authorization_Excess_Approved__c</fullName>
+        <externalId>false</externalId>
+        <label>Authorization Excess Approved</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Authorization_Number__c</fullName>
         <externalId>false</externalId>
         <label>Authorization Number</label>
@@ -220,6 +273,16 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Authorization_Override_Comments__c</fullName>
+        <externalId>false</externalId>
+        <label>Authorization Override Comments</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
     </fields>
     <fields>
         <fullName>Authorization_Received_Date__c</fullName>
@@ -285,6 +348,36 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>BIT_Auth_Units__c</fullName>
+        <externalId>false</externalId>
+        <label>BIT Auth Units</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>BIT_Days_Authorized_From__c</fullName>
+        <externalId>false</externalId>
+        <label>BIT Days Authorized From</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>BIT_Days_Authorized_To__c</fullName>
+        <externalId>false</externalId>
+        <label>BIT Days Authorized To</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>Basis__c</fullName>
@@ -381,6 +474,18 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Case_Manager__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Case Manager</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Funding_Sources</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Claims_Submission_City__c</fullName>
@@ -738,6 +843,36 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Counselling_Auth_Units__c</fullName>
+        <externalId>false</externalId>
+        <label>Counselling Auth Units</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Counselling_Days_Authorized_From__c</fullName>
+        <externalId>false</externalId>
+        <label>Counselling Days Authorized From</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Counselling_Days_Authorized_To__c</fullName>
+        <externalId>false</externalId>
+        <label>Counselling Days Authorized To</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Coverage_Details__c</fullName>
         <externalId>false</externalId>
         <label>Coverage Details</label>
@@ -770,6 +905,29 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
+        <fullName>DME_Calculation_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>DME Calculation Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>DME_Maximum__c</fullName>
         <externalId>false</externalId>
         <label>DME Maximum</label>
@@ -779,6 +937,17 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DME_Per_Day__c</fullName>
+        <externalId>false</externalId>
+        <label>DME Per Day</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
     </fields>
     <fields>
         <fullName>DME_Precert_Required__c</fullName>
@@ -798,6 +967,17 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>DME__c</fullName>
+        <externalId>false</externalId>
+        <label>DME</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
     </fields>
     <fields>
         <fullName>Days_Authorized_From__c</fullName>
@@ -927,6 +1107,15 @@
         <label>Effective Date</label>
         <required>false</required>
         <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Effective_Date_of_Cost_therapy_Auth__c</fullName>
+        <externalId>false</externalId>
+        <label>Effective Date of Cost/therapy Auth</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Date</type>
     </fields>
@@ -1904,6 +2093,51 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Medication_Cost_Calculation_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Medication Cost Calculation Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Medication_Costs__c</fullName>
+        <externalId>false</externalId>
+        <label>Medication Costs</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Medication_Per_Day__c</fullName>
+        <externalId>false</externalId>
+        <label>Medication Per Day</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
+    </fields>
+    <fields>
         <fullName>Month_to_Month__c</fullName>
         <externalId>false</externalId>
         <label>Month to Month</label>
@@ -2024,6 +2258,63 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Number_of_Hrs_Expected__c</fullName>
+        <externalId>false</externalId>
+        <label>Number of Hrs. Expected</label>
+        <precision>4</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Nutritional_Supplements_Cost_Calculation__c</fullName>
+        <externalId>false</externalId>
+        <label>Nutritional Supplements Calculation Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Nutritional_Supplements_Cost__c</fullName>
+        <externalId>false</externalId>
+        <label>Nutritional Supplements Cost</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Nutritional_Supplements_Per_Day__c</fullName>
+        <externalId>false</externalId>
+        <label>Nutritional Supplements Per Day</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
+    </fields>
+    <fields>
         <fullName>OOP_Expense_Met__c</fullName>
         <externalId>false</externalId>
         <label>OOP Expense (Met)</label>
@@ -2046,6 +2337,36 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>OT_Auth_Units__c</fullName>
+        <externalId>false</externalId>
+        <label>OT Auth Units</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>OT_Days_Authorized_From__c</fullName>
+        <externalId>false</externalId>
+        <label>OT Days Authorized From</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>OT_Days_Authorized_To__c</fullName>
+        <externalId>false</externalId>
+        <label>OT Days Authorized To</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
         <fullName>Other_Authorization_Type__c</fullName>
         <externalId>false</externalId>
         <label>Other Authorization Type</label>
@@ -2055,6 +2376,62 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Other_Cost_Calculation_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Other Cost Calculation Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Other_Cost_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Other Cost Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Other_Cost__c</fullName>
+        <externalId>false</externalId>
+        <label>Other Cost</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Other_Per_Day__c</fullName>
+        <externalId>false</externalId>
+        <label>Other Per Day</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
     </fields>
     <fields>
         <fullName>Out_patient_Visit_Limit__c</fullName>
@@ -2067,6 +2444,36 @@
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PT_Auth_units__c</fullName>
+        <externalId>false</externalId>
+        <label>PT Auth units</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PT_Days_Authorized_From__c</fullName>
+        <externalId>false</externalId>
+        <label>PT Days Authorized From</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>PT_Days_Authorized_To__c</fullName>
+        <externalId>false</externalId>
+        <label>PT Days Authorized To</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>Patient_Has_Policy__c</fullName>
@@ -2580,6 +2987,36 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SLP_Auth_Units__c</fullName>
+        <externalId>false</externalId>
+        <label>SLP Auth Units</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SLP_Days_Authorized_From__c</fullName>
+        <externalId>false</externalId>
+        <label>SLP Days Authorized From</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>SLP_Days_Authorized_To__c</fullName>
+        <externalId>false</externalId>
+        <label>SLP Days Authorized To</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>SNF_Day_Total__c</fullName>
@@ -3360,6 +3797,25 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Staffing_Ratio_1_1__c</fullName>
+        <externalId>false</externalId>
+        <label>Staffing Ratio 1:1</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Status_String__c</fullName>
         <externalId>false</externalId>
         <label>Status_String</label>
@@ -3431,6 +3887,15 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Term_Date_of_Cost_therapy_Auth__c</fullName>
+        <externalId>false</externalId>
+        <label>Term Date of Cost/therapy Auth</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
     </fields>
     <fields>
         <fullName>Termination_Date__c</fullName>
@@ -3594,6 +4059,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
                 <fullName>1%3A1 Sitter</fullName>
@@ -3629,6 +4105,21 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -3684,6 +4175,51 @@
             </values>
             <values>
                 <fullName>Self Pay</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -3807,6 +4343,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -3834,6 +4381,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -3877,6 +4435,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>MediCal</fullName>
@@ -3912,6 +4485,51 @@
             </values>
             <values>
                 <fullName>SSI</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -3975,6 +4593,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -4013,6 +4642,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4285,6 +4925,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -4371,6 +5026,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -4378,6 +5048,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4494,6 +5194,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -4584,6 +5295,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4856,6 +5578,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -4942,6 +5679,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -4949,6 +5701,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5249,6 +6031,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -5339,6 +6132,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5611,6 +6415,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -5769,6 +6588,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -5776,6 +6610,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5944,6 +6808,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -6034,6 +6909,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6306,6 +7192,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -6391,6 +7292,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -6398,6 +7314,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6656,6 +7602,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -6746,6 +7703,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7018,6 +7986,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -7108,6 +8091,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -7115,6 +8113,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7263,6 +8291,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -7353,6 +8392,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7625,6 +8675,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -7706,6 +8771,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -7713,6 +8793,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7915,6 +9025,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -8005,6 +9126,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8277,6 +9409,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -8390,6 +9537,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -8397,6 +9559,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8591,6 +9783,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -8681,6 +9884,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8953,6 +10167,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9035,6 +10264,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9042,6 +10286,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9170,6 +10444,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -9260,6 +10545,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9532,6 +10828,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9609,6 +10920,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9616,6 +10942,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9810,6 +11166,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -9900,6 +11267,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10172,6 +11550,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>DME_Precert_Required__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -10294,6 +11687,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Month_to_Month__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -10301,6 +11709,36 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10521,6 +11959,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -10608,6 +12057,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
                 <fullName>1%3A1 Sitter</fullName>
@@ -10647,6 +12107,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>Medicaid</fullName>
@@ -10658,6 +12133,51 @@
             </values>
             <values>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10793,6 +12313,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -10820,6 +12351,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10863,6 +12405,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>DHS</fullName>
@@ -10874,6 +12431,51 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Host Home</fullName>
@@ -10881,6 +12483,17 @@
             </values>
             <values>
                 <fullName>Periodic Services</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10916,6 +12529,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
                 <fullName>1%3A1 Sitter</fullName>
@@ -10951,6 +12575,21 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11002,6 +12641,51 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Behavioral Supports</fullName>
@@ -11021,6 +12705,17 @@
             </values>
             <values>
                 <fullName>Supported Living %2824 hour%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11056,6 +12751,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
                 <fullName>1%3A1 Sitter</fullName>
@@ -11095,6 +12801,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>BI Waiver</fullName>
@@ -11122,6 +12843,51 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>HCBS - Adult</fullName>
@@ -11145,6 +12911,17 @@
             </values>
             <values>
                 <fullName>Vocational</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11180,6 +12957,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
                 <fullName>1%3A1 Sitter</fullName>
@@ -11215,6 +13003,21 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11274,6 +13077,51 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Apartment Model</fullName>
@@ -11297,6 +13145,17 @@
             </values>
             <values>
                 <fullName>Respite</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11328,6 +13187,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11600,6 +13470,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Did_drugs_alcohol_contribute_to_injury__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -11626,6 +13511,51 @@
             </values>
             <values>
                 <fullName>Workers Comp</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11791,6 +13721,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -11845,6 +13786,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
                 <fullName>1%3A1 Sitter</fullName>
@@ -11884,6 +13836,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>CSS</fullName>
@@ -11899,6 +13866,51 @@
             </values>
             <values>
                 <fullName>Self Pay</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11922,6 +13934,17 @@
             </values>
             <values>
                 <fullName>SLA - Supportive Living</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11957,6 +13980,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
                 <fullName>1%3A1 Sitter</fullName>
@@ -11996,6 +14030,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>Commercial Insurance</fullName>
@@ -12019,6 +14068,51 @@
             </values>
             <values>
                 <fullName>Workers Compensation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12054,6 +14148,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -12081,6 +14186,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12120,6 +14236,21 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12167,6 +14298,51 @@
             </values>
             <values>
                 <fullName>United Healthcare</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12226,6 +14402,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -12253,6 +14440,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12292,6 +14490,21 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12422,6 +14635,51 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Case Management - Brokerage</fullName>
@@ -12457,6 +14715,17 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12511,6 +14780,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
                 <fullName>1%3A1 Sitter</fullName>
@@ -12550,6 +14830,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Funding_Source__c</picklist>
             <values>
                 <fullName>Medicaid</fullName>
@@ -12581,6 +14876,51 @@
             </values>
             <values>
                 <fullName>Wages</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12624,6 +14964,17 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Status__c</picklist>
             <values>
                 <fullName>Authorized</fullName>
@@ -12651,6 +15002,17 @@
             </values>
             <values>
                 <fullName>Written</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Authorization_Excess_Approved__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12690,6 +15052,21 @@
             </values>
             <values>
                 <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DME_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12785,6 +15162,51 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Medication_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Nutritional_Supplements_Cost_Calculation__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Other_Cost_Calculation_Type__c</picklist>
+            <values>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Adult Family Home</fullName>
@@ -12820,6 +15242,17 @@
             </values>
             <values>
                 <fullName>Treatment Foster Care</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Staffing_Ratio_1_1__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
