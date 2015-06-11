@@ -48,10 +48,13 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>REFERRAL - Agencies involved with the referral</description>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>false</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Address__c</fullName>
         <externalId>false</externalId>
@@ -60,6 +63,26 @@
         <trackTrending>false</trackTrending>
         <type>LongTextArea</type>
         <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>IDofPBR_FromPBS__c</fullName>
+        <externalId>false</externalId>
+        <formula>Person_Being_Served__r.Person_Being_Referred__r.Id</formula>
+        <label>IDofPBR_FromPBS</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>IDofPBS_FromRef__c</fullName>
+        <externalId>false</externalId>
+        <formula>Referral__r.Person_Being_Served__r.Id</formula>
+        <label>IDofPBS_FromRef</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Person_Being_Served__c</fullName>

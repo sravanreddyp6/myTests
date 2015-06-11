@@ -31,21 +31,26 @@ function stopRKey(evt) {
 }
 
     jQuery(document).ready(function ($) {
-        setUpFields = function () {
-            $('body input').on("change", function (event) {
-                applyRulesToField(event.target);
-            });
-            $('body select').on("change", function (event) {
-                applyRulesToField(event.target);
-            });
-            $('body input').each(function (_, target) {
-                applyRulesToField(target);
-            });
-            $('body select').each(function (_, target) {
-                applyRulesToField(target);
-            });
-        }
-        setUpFields();
+       setUpFields = function () {
+				// Apply rules to input fields
+				$('body input').on("change", function (event) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(event.target);
+				});
+				$('body select').on("change", function (event) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(event.target);
+				});
+				$('body input').each(function (_, target) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(target);
+				});
+				$('body select').each(function (_, target) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(target);
+				});
+			};
+		setUpFields();
         setUpTabOrder();
     });   //end "ready" function
 
@@ -113,6 +118,8 @@ function stopRKey(evt) {
       }
       return false;
   }
+
+
         //PRI-PRI-162
         function setUpTabOrder(){
         	console.log('start tab order');
@@ -188,7 +195,6 @@ function stopRKey(evt) {
               j$('select[id$=FamMilInvBranch ]').attr("tabindex", 310);
                    console.log('end tab order');    
         }
-
   </script>
 
   <apex:form id="pbsForm">
@@ -232,7 +238,50 @@ function stopRKey(evt) {
                 <apex:inputField value="{!Account.Age__pc}" taborderhint="1" />
                 <apex:inputField value="{!Account.Level_of_Education__pc}" taborderhint="2" />
                 <apex:inputField value="{!Account.Gender__pc}" taborderhint="1" />
-    </apex:pageBlockSection>
+    
+    <apex:pageBlocksectionItem >
+    	<apex:outputPanel styleClass="helpButton">
+    		<apex:outputLabel value="Gender" styleClass="labelCol" />
+    		<img src="/s.gif" id="HelpImage" alt="Select the person's legal gender" class="helpOrb" title="Select the person's legal gender" />
+    		<br/>
+    		<br/>
+    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
+    		<br/>
+    		<br/>
+    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
+    	</apex:outputPanel>
+    	<apex:outputPanel >
+	    	<apex:inputField value="{!Account.Gender__pc}" />
+	    	<br/>
+	    	<br/>
+	    	<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}" />
+	    	<div class="requiredInput">
+				<div class="requiredBlock"></div>
+	    	<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity" />
+	    	</div>
+    	</apex:outputPanel>
+    </apex:pageBlocksectionItem>
+<!--    	<apex:inputField value="{!Account.Gender__pc}" /> -->
+<!--    	<apex:pageBlockSectionItem /> -->
+   	
+<!--    	<apex:pageBlockSectionItem > -->
+<!--  		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/> -->
+<!--    		<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" onChange="showHideGender(); return false;"/> -->
+<!--    	</apex:pageBlockSectionItem> -->
+   	
+<!--    	<apex:pageBlockSectionItem /> -->
+   	
+<!--    	<apex:pageBlockSectionItem > -->
+<!--    		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" id="genderIdentityLabel" /> -->
+<!--    		<apex:outputPanel > -->
+<!--    			<div class="requiredInput"> -->
+<!-- 				<div class="requiredBlock"></div> -->
+<!--    				<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity"/> -->
+<!--    			</div> -->
+<!--    		</apex:outputPanel> -->
+<!--    	</apex:pageBlockSectionItem> -->
+  	
+</apex:pageBlockSection>
 
  <apex:pageBlockSection title="Funding Information"
                              showHeader="true"

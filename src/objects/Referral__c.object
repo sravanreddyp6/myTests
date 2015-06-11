@@ -2480,6 +2480,28 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Guardianship_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Guardianship Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Full Guardianship/Conservatorship</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Partial Guardianship/Conservatorship</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Has_Evaluation__c</fullName>
         <defaultValue>false</defaultValue>
         <description>whether or not evaluation exists for this referral</description>
@@ -3606,6 +3628,29 @@
         <label>Parental Disability</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Partial_Guardianship_Conservatorship__c</fullName>
+        <externalId>false</externalId>
+        <label>Partial Guardianship/Conservatorship</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Placement Decisions</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
     </fields>
     <fields>
         <fullName>Payer_Medical_Record_Number_Description__c</fullName>
@@ -8787,6 +8832,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -9167,6 +9227,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11554,6 +11629,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -11823,6 +11913,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14031,6 +14136,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -14515,6 +14635,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17617,6 +17752,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -18101,6 +18251,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -21719,6 +21884,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -22203,6 +22383,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -25337,6 +25532,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -25960,6 +26170,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -29158,6 +29383,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -29642,6 +29882,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -32800,6 +33055,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -33423,6 +33693,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -36565,6 +36850,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -37188,6 +37488,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -40322,6 +40637,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -40806,6 +41136,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -43928,6 +44273,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -44551,6 +44911,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -47641,6 +48016,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -48125,6 +48515,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -50601,6 +51006,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -50870,6 +51290,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -53080,6 +53515,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -53460,6 +53910,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -55743,6 +56208,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -56012,6 +56492,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -58106,6 +58601,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -58486,6 +58996,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -60777,6 +61302,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -61046,6 +61586,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -63192,6 +63747,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -63738,6 +64308,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -66473,6 +67058,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -66853,6 +67453,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -69532,6 +70147,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -69912,6 +70542,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -72603,6 +73248,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -72983,6 +73643,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -75698,6 +76373,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -76078,6 +76768,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -78385,6 +79090,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -78654,6 +79374,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -80772,6 +81507,21 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Guardianship_Type__c</picklist>
+            <values>
+                <fullName>Full Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial Guardianship%2FConservatorship</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hold_Reason__c</picklist>
             <values>
                 <fullName>Client%2FFamily Choice</fullName>
@@ -81152,6 +81902,21 @@
             </values>
             <values>
                 <fullName>Placement Pending</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Partial_Guardianship_Conservatorship__c</picklist>
+            <values>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Placement Decisions</fullName>
                 <default>false</default>
             </values>
         </picklistValues>

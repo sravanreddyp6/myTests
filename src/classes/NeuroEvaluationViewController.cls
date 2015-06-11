@@ -135,7 +135,13 @@ public with sharing class NeuroEvaluationViewController {
         file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
         // Assigns the person being referred Name to the PDF dynamically
         Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename="'+file+'"');
+       Person_Being_Referred__c pbr = [
+            SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c FROM Person_Being_Referred__c
+            WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
+        ];
+          this.age = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);
     }
+     public string age{set;get;}
 
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
