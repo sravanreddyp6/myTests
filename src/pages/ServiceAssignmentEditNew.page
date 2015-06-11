@@ -916,10 +916,10 @@ END: Uncomment to have the element collapsed by default -->
 		<!--Diagnosis Section -->
 
 		<a name="Diag" id="Diag"></a>
-		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis && isNR}">
+		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis}">
 
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis && isNR}" onClick="showAddDiagnosis();return false;" />
+				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" />
 			</div>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
