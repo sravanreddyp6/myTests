@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://soap.sforce.com/2006/04/metadata">
     <columns>
-        <field>FK_ACC_NAME</field>
+        <field>FK_$Contact.PBS_Identifier__c</field>
     </columns>
     <columns>
         <field>Evaluation_Response__c.Vaccine_Type__c</field>
@@ -13,13 +13,16 @@
         <field>Evaluation_Response__c.Dosage__c</field>
     </columns>
     <columns>
+        <field>Evaluation_Response__c.Dosage_Number__c</field>
+    </columns>
+    <columns>
         <field>Evaluation_Response__c.Date__c</field>
     </columns>
     <columns>
-        <field>Evaluation_Response__c.Age_at_Administration__c</field>
+        <field>Evaluation_Response__c.Location__c</field>
     </columns>
     <columns>
-        <field>Evaluation_Response__c.Location__c</field>
+        <field>Evaluation_Response__c.Lot__c</field>
     </columns>
     <columns>
         <field>Evaluation_Response__c.Expiration_Date__c</field>
@@ -42,11 +45,11 @@
         <criteriaItems>
             <column>CUST_RECORDTYPE</column>
             <operator>equals</operator>
-            <value>Evaluation_Response__c.Immunization_Adult,Evaluation_Response__c.Immunization_Child</value>
+            <value>Evaluation_Response__c.Immunization_Adult</value>
         </criteriaItems>
     </filter>
     <format>Tabular</format>
-    <name>Immunization for PBS</name>
+    <name>Immunization - Adult for PBS</name>
     <params>
         <name>co</name>
         <value>1</value>

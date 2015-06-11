@@ -28,7 +28,8 @@ public with sharing class EvalDynamicExt {
 	public Boolean showEndOfShiftDON { get; set; }  // EC-163
 
 	public Boolean isEditable;
-	public Boolean isDON;
+	public Boolean isDON { get; set; }
+	public Boolean isTierIII { get; set; }
 
 	public String getEvalStatusDate(){
 		if (evalType == 'Head to Toe')
@@ -59,7 +60,8 @@ public with sharing class EvalDynamicExt {
 		approvalHIstory = new List<ProcessInstanceHistory>();
 		refreshLateEntryNotes();
 		lateEntryNote = new Evaluation_Response__c(
-			RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note')
+			RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note'),
+			Evaluation__c = evalId
 		);
 
 		showMainComponent = true;
@@ -87,6 +89,11 @@ public with sharing class EvalDynamicExt {
 		} else {
 			isDON = false;
 		}
+		if (permissionSets.contains('iServe_Tier_III')) {
+			isTierIII = true;
+		} else {
+			isTierIII = false;
+		}
 
 		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Signed_By__r.Name, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
 
@@ -110,10 +117,11 @@ public with sharing class EvalDynamicExt {
 
 	public void refreshLateEntryNotes() {
 		lateEntryNotes = [
-			SELECT Id, Late_Entry_Date__c
+			SELECT Id, CreatedDate, CreatedBy.Name
 			FROM Evaluation_Response__c
 			WHERE RecordTypeId = :Utility.getEvaluationResponseRecordType('Late Entry Note')
-			ORDER BY Late_Entry_Date__c
+			AND Evaluation__c = :evalId
+			ORDER BY CreatedDate DESC
 		];
 	}
 
@@ -121,10 +129,11 @@ public with sharing class EvalDynamicExt {
 		String lateEntryNoteId = ApexPages.currentPage().getParameters().get('lateEntryNoteId');
 		if (lateEntryNoteId == null || lateEntryNoteId == '') {
 			lateEntryNote = new Evaluation_Response__c(
-				RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note')
+				RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note'),
+				Evaluation__c = evalId
 			);
 		} else {
-			lateEntryNote = [ SELECT Id, CreatedById, CreatedBy.Name, Late_Entry_Note__c, Late_Entry_Date__c FROM Evaluation_Response__c WHERE Id = :lateEntryNoteId ];
+			lateEntryNote = [ SELECT Id, CreatedById, CreatedBy.Name, Late_Entry_Note__c, CreatedDate FROM Evaluation_Response__c WHERE Id = :lateEntryNoteId ];
 		}
 	}
 
@@ -132,19 +141,12 @@ public with sharing class EvalDynamicExt {
 		if (lateEntryNote.Late_Entry_Note__c == '' || lateEntryNote.Late_Entry_Note__c == null) {
 			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Note cannot be blank'));
 		}
-		if (lateEntryNote.Late_Entry_Date__c == null) {
-			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Date cannot be blank'));
-		}
 	}
 
 	public void saveLateEntryNote() {
 		Boolean errorFound = false;
 		if (lateEntryNote.Late_Entry_Note__c == '' || lateEntryNote.Late_Entry_Note__c == null) {
 			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Note cannot be blank'));
-			errorFound = true;
-		}
-		if (lateEntryNote.Late_Entry_Date__c == null) {
-			Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'Late Entry Date cannot be blank'));
 			errorFound = true;
 		}
 		if (!errorFound) {
@@ -529,9 +531,15 @@ public with sharing class EvalDynamicExt {
 			showRevise = false;
 			showShiftDone = false;
 
-			if ( thiseval.status__c == 'Draft' && isUserOwner) {
-				showEsign = true;
+			
+			if ( isUserOwner) {
+				// EC-198 - 06/10/2015 - show disregard for all statuses 
 				showDisregard = true;
+				
+				// show esign only for Draft
+				if ( thiseval.status__c == 'Draft') { 
+					showEsign = true;
+				}
 			}
 
 			if ( thiseval.status__c == 'Pending Approval' && isApprover) {
@@ -546,9 +554,7 @@ public with sharing class EvalDynamicExt {
 			showDisregard = false;
 
 			if (isDON) {
-				if (evalType == 'Head to Toe' && thisEval.Head_to_Toe_Status__c == 'Draft' && thisEval.Status__c == 'Draft') {  // EC-163
-					showEndOfShiftDON = true;
-				} else if (evalType == 'CNA Workbook' && thisEval.Status__c == 'Draft') {
+				if ((evalType == 'Head to Toe' || evalType == 'CNA Workbook') && thisEval.Status__c == 'Draft') {  // EC-163
 					showEndOfShiftDON = true;
 				}
 			}
@@ -731,15 +737,17 @@ public with sharing class EvalDynamicExt {
         req.setNextApproverIds(null);
 
         // if a rejection, set up a task for the CNA owner
-        DateTime n = DateTime.now();
-        Task t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
-        insert t;
+        if ( approvalAction == 'Reject') {
+        	DateTime n = DateTime.now();
+        	Task t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
+        	insert t;
+        }
 
         // get the current work item
         List<ProcessInstanceWorkitem> pwi = [select id, actorid from processinstanceworkitem where processinstance.targetobjectid = :evalID];
 
         if ( pwi.size() == 0) {
-        	Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,'Error approving item'));
+        	Apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL,'Error approving or rejecting item'));
         	return;
         }
        	req.setWorkitemId(pwi[0].id);

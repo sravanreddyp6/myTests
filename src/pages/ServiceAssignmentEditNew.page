@@ -13,6 +13,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+    <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
 
 	<style>
 		.dialogLoadingSpinner {
@@ -108,6 +109,7 @@
 					resizable: false,
 					minHeight: 0,
 					dialogClass: 'modalDialog',
+					zIndex: 9, // so that datepickers appear on top of the dialogs
 					closeOnEscape: false,
 					position: {
 						my: "center top",
@@ -400,11 +402,11 @@
 				<apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
-				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !vfVarIsCM}" />
-				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !vfVarIsCM}" required="{!episodeReq}" />
+				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !(vfVarIsCM || isNR) }" />
+				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR)}" required="{!episodeReq}" />
 				<apex:pageblocksectionitem />
-				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
-				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM}">
+				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
+				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR}">
 					<apex:outputLabel value="Model" for="modelfield" />
 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
 				</apex:pageblocksectionitem>
@@ -442,7 +444,7 @@
 					<apex:actionregion >
 						<apex:outputPanel layout="block" styleClass="requiredInput">
 							<apex:outputpanel styleClass="requiredBlock" />
-							<c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}" parentName="{!serviceLocation.Name}" filters="name,city__c,state__c" return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
+							<c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}" parentName="{!serviceLocation.Name}" filters="name,city__c,state__c" return="programid__c, setting__c, program__c, service_value__c,street__c,city__c,state__c,zip__c,phone__c" />
 						</apex:outputPanel>
 					</apex:actionregion>
 				</apex:pageBlockSectionItem>
@@ -492,28 +494,28 @@
 
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
+				<!-- Added by Amruth for EB-434 -->
+				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !isNR}" />
+				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !isNR}" />
+				<!-- Added by Amruth for EB-434 -->
+				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR}" />
+				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR}" />
 
-				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA}" />
-				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{! !editSA}" />
-
-				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}" />
-
-				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
-				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM}">
+				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
+				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR}">
 					<apex:outputLabel value="Model" for="modelfield" />
 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
 				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
-
-			<apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM}">
-				<apex:pageBlockSectionItem rendered="{!editSA}">
+			
+			<apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR}">
+				<apex:pageBlockSectionItem rendered="{!editSA && !isNR}">
 					<apex:outputLabel value="Contract" />
 					<apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false">
 						<apex:selectOptions value="{!contractsList}" />
 					</apex:selectList>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!!editSA}">
+				<apex:pageBlockSectionItem rendered="{!!editSA && !isNR}">
 					<apex:outputLabel value="Contract" />
 					<apex:outputText value="{!associatedContractName}" />
 				</apex:pageBlockSectionItem>
@@ -914,10 +916,10 @@ END: Uncomment to have the element collapsed by default -->
 		<!--Diagnosis Section -->
 
 		<a name="Diag" id="Diag"></a>
-		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis}">
+		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis && isNR}">
 
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" />
+				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis && isNR}" onClick="showAddDiagnosis();return false;" />
 			</div>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -1066,6 +1068,7 @@ END: Uncomment to have the element collapsed by default -->
 		<apex:pageBlock id="Assessment_res" title="Restraint Events" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && canAddShiftDoc}"/>
+				<apex:commandButton value="Restraint Reduction Report" onclick="openModalDialogSA('restraintReportModal', 'span', 'Generate Restraint Reduction Report'); return false; " />
 			</div>
 			<apex:pageBlockTable value="{!restraintEvents}" var="event" rendered="{!restraintEvents.size > 0}">
 <!-- 				<apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
@@ -1121,11 +1124,13 @@ END: Uncomment to have the element collapsed by default -->
 		<!--  Plan section -->
 		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="planstatus" />
 		<a name="Plan" id="Plan"></a>
-		<apex:pageBlock id="Plan" title="Action Plans" rendered="{! !AssessmentOnly && !editSA}">
+		<!--  Added isNR by Amruth for EB-434 -->
+		<apex:pageBlock id="Plan" title="Action Plans" rendered="{! (!AssessmentOnly || isNR) && !editSA}">
 			<div class="pbHeaderButton">
 				<apex:actionStatus id="planstatus">
 					<apex:facet name="stop">
-						<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
+					<!--  Added isNR by Amruth for EB-434 -->
+					<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA && !isNR }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
 					</apex:facet>
 					<apex:facet name="start">
 						<apex:commandButton value="Loading..." disabled="true" />
@@ -1163,11 +1168,21 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputPanel id="newswsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
 				<apex:repeat value="{!uncheckedWeeks}" var="week">
-					<apex:commandLink action="{!newSkillWorksheet}" value="{!week.UserDate}">
+					<apex:commandLink action="{!newSkillWorksheet}" value="{!week.UserDate}" status="{!$Component.SkillWorksheet.skillworksheetStatus}" rerender="none">
 						<apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week" />
+<!-- 						<apex:actionStatus  -->
 					</apex:commandLink>
 					<br/>
 				</apex:repeat>
+				<apex:actionStatus id="skillworksheetStatus" >
+					<apex:facet name="start">
+					<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+					</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
 			</apex:outputPanel>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -1197,11 +1212,20 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputPanel id="newbwsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
 				<apex:repeat value="{!BehaviorMonthsAvailable}" var="week">
-					<apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}">
+					<apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}" rerender="none" status="{!$Component.BehaviorWorksheet.behaviorworksheetStatus}">
 						<apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week" />
 					</apex:commandLink>
 					<br/>
 				</apex:repeat>
+				<apex:actionStatus id="behaviorworksheetStatus" >
+					<apex:facet name="start">
+					<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+					</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
 			</apex:outputPanel>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -1406,7 +1430,7 @@ END: Uncomment to have the element collapsed by default -->
 		<!-- Add Funding Source modal. -->
 		<apex:outputPanel id="FundingSourceModal" style="display:none">
 			<div id='fundingMessages'></div>
-			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative'}">
+			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian'}">
 				<apex:pageBlockSection columns="1" id="fundingSourceEntry">
 					<apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source" />
 					<apex:inputField value="{!fundingSource.Funding_Source_ID__c}" id="fundingEntry_SourceId" />
@@ -1825,6 +1849,49 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputHidden value="{!diag.Id}" rendered="{!!newDiagnosis}" id="diagnosisEntry_Id" />
 				</apex:pageBlock>
 			</apex:outputPanel>
+		</apex:outputPanel>
+
+		<apex:outputPanel id="restraintReportModal" style="display: none; ">
+			<script>
+				(function ($) {
+					"use strict";
+					window.generateRestraintReport = function () {
+						var errorString = '';
+						var startDate = $(document.getElementById('{!$Component.block.section.reportStartDate}')).val();
+						var endDate = $(document.getElementById('{!$Component.block.section.reportEndDate}')).val();
+						if (startDate == '') {
+							errorString += 'Start Date cannot be blanked.\r\n';
+						}
+						if (endDate == '') {
+							errorString += 'End Date cannot be blanked.\r\n';
+						}
+						var $checkedItem = $(document.getElementById('{!$Component.block.section.reportType}')).find('input:checked');
+						if ($checkedItem.length == 0) {
+							errorString += 'Report Type cannot be blanked.';
+						}
+						if (errorString != '') {
+							alert(errorString);
+						} else {
+							window.location = '/apex/RestraintReductionReport?startDate='+startDate+'&endDate='+endDate+'&type='+$checkedItem.val()+'&saId={!Service_Assignment__c.Id}';
+						}
+					};
+				})(jQuery);
+			</script>
+			<apex:pageBlock title="Restraint Reduction Report" id="block">
+				<apex:pageBlockSection columns="2" id="section">
+					<!-- The next 2 fields are just dummies so we can use SF inputField datepicker -->
+					<apex:inputField value="{!dummy.Date_of_Injury__c}" label="Start Date" id="reportStartDate" />
+					<apex:inputField value="{!dummy.Date_of_Injury__c}" label="End Date" id="reportEndDate" />
+					<apex:selectRadio label="Report Type" id="reportType">
+						<apex:selectOption itemLabel="Summary" itemValue="Summary" />
+						<apex:selectOption itemLabel="Detailed" itemValue="Detailed" />
+					</apex:selectRadio>
+				</apex:pageBlockSection>
+				<apex:pageBlockButtons location="bottom">
+					<apex:commandButton value="Generate" onclick="generateRestraintReport(); return false; " />
+					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('restraintReportModal', 'span'); return false; " />
+				</apex:pageBlockButtons>
+			</apex:pageBlock>
 		</apex:outputPanel>
 	</apex:form>
 	<a id="shiftSummaries" />

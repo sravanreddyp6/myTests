@@ -4,7 +4,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
-
+	 <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <style type="text/css">
         .nowrap {
@@ -551,8 +551,8 @@
             </apex:pageBlockSection>
             <!-- rearranged this section information for  EPRIQM-107  -->
             <!--Family Information Section rendered="{!canViewFamilyInfo}" -->
-
-            <apex:pageBlockSection columns="2"  title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo">
+			<!-- Added by Amruth for EB-430 -->
+            <apex:pageBlockSection columns="2"  title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo" rendered="{isNR}">
                  <apex:inputfield taborderhint="30" value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
                  <apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
                 <apex:inputfield taborderhint="31" styleClass="setFamMilInvBranchTab" value="{!Contact.Family_Military_Involvement__c}" rendered="{!pbsEditModeOn}" />
@@ -803,7 +803,8 @@
                                            showDisregard="true"
                                            eSign="true"
                                            addEnabled="{!contact.Age__c < 18}"
-                                           editEnabled="{!contact.Age__c < 18}"/>
+                                           editEnabled="{!contact.Age__c < 18}"
+                                           enableReportButton="true"/>
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             
@@ -836,8 +837,8 @@
                                           
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
-            
-            <apex:pageBlock rendered="{!vfVarIsCM}">
+            <!-- added isNR for EB-430 by Amruth -->
+            <apex:pageBlock rendered="{!vfVarIsCM || isNR}">
             <a id="assistiveDevices" />            
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device"

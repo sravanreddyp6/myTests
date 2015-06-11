@@ -59,6 +59,16 @@ public without sharing class ServiceAssignmentExt {
 	public string currentProgramID { get; set { currentProgramID = value; loadAvailableCodesbyID(); }}
 	public String currentLocation { get; set; }
 	public String currentServiceLine { get; set; }
+	// Dummy obj so that we can bind inputField to dummy Date fields
+	public Service_Assignment__c dummy {
+		get {
+			if (dummy == null) {
+				dummy = new Service_Assignment__c();
+			}
+			return dummy;
+		}
+		set;
+	}
 	//for adding new JOs
 	public ID SelectedCodeID {get; set;}
 	public ID SelectedCodeKey { get; set; }
@@ -203,7 +213,8 @@ public without sharing class ServiceAssignmentExt {
 				pshowNurseAssessment = false;
 			} else {
 				pOpGroup = tmnUsers[0].Operating_Group__c;
-				pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian';
+				// added NeuroRestorative to show diagnosis for EB-434
+				pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' ;
 				pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
 				pshowCodes = ( ( pOpGroup == 'Redwood'  && admission.State__c == 'AZ' && theservassign.service_location__r.programid__c != '114165002')
 						|| ( pOpGroup != 'Care Meridian'  && pOpGroup != 'Redwood'));
@@ -214,7 +225,6 @@ public without sharing class ServiceAssignmentExt {
 		}
 		return psetFlags;
 	}
-
 	public void showAddLocation() {
 		// empty for action support
 	}
@@ -510,6 +520,7 @@ public without sharing class ServiceAssignmentExt {
 		populateSeizures();
 
 		setShiftDocPermissions();
+		canAddDiagnosis = Diagnosis__c.sObjectType.getDescribe().isCreateable();
 	}
 	// END: CONSTRUCTOR
 
@@ -1283,7 +1294,6 @@ public without sharing class ServiceAssignmentExt {
 		if (permissionSets.Contains('iServe_Tier_III')) {
 			canAddShiftDoc = true;
 			canAddCNA = true;
-			canAddDiagnosis = true;
 		}
 
 		if (permissionSets.Contains('iServe_Tier_I')) {
@@ -1766,7 +1776,7 @@ public without sharing class ServiceAssignmentExt {
 
 	public void showAddFundingSource() {
 		fundingSource = new Funding_Source__c();
-		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian'); 
 		fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
 
@@ -1800,7 +1810,7 @@ public without sharing class ServiceAssignmentExt {
 
 		populateFundingSources();
 		this.fundingSource = new Funding_Source__c();
-		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian'); 
 		this.fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
 

@@ -82,12 +82,13 @@
 		</apex:outputPanel>
         </apex:pageBlockSectionItem>
         
-		<apex:outputPanel layout="none" rendered="{!addEnabled && canCreate }">
-			<apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top: -30px; ">
-				<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization')}" onclick="window.open('/{!immunizationReport}?pv0={!PBSName}'); return false;"/>
-				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign}" />
+		<apex:outputPanel layout="none" rendered="{!(addEnabled && canCreate) || enableReportButton}">
+			<apex:outputPanel layout="block" styleClass="pbHeaderButton" style="top: -30px; " >
+				<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Adult')}" onclick="window.open('/{!AdultimmunizationReport}?pv0={!PBSName}'); return false;"/>
+				<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Child')}" onclick="window.open('/{!ChildimmunizationReport}?pv0={!PBSName}'); return false;"/>
+				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign && (addEnabled && canCreate)}" />
 			</apex:outputPanel>
-			<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign}" />
+			<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign && (addEnabled && canCreate)}" />
 		</apex:outputPanel>
 		<apex:outputPanel id="responseTableWrapper">
 
