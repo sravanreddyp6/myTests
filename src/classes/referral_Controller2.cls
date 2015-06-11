@@ -139,7 +139,8 @@ public with sharing class referral_Controller2 {
 		return ((operatinggroup == 'Cambridge' && isCambridge )|| 
 				(operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || 
 				(operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) ||
-				(operatinggroup == 'Redwood' && referralrecordtype == 'Wisconsin' && showCANS )
+				(operatinggroup == 'Redwood' && referralrecordtype == 'Wisconsin' && showCANS ) ||
+				(operatinggroup == 'NeuroRestorative' && personBeingRefRecord.State__c == 'Illinois' )
 			);
 			
 	} set;}
