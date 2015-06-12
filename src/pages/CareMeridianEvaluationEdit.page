@@ -320,11 +320,11 @@
 						<apex:inputField value="{!Evaluation__c.Advanced_Directives__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advancedDirectivesAttached}&quot;}" />
 						<apex:inputField value="{!Evaluation__c.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" />
 						<apex:inputField value="{!Evaluation__c.Advanced_Directives_Attached__c}" id="advancedDirectivesAttached" />
-						<apex:inputField value="{!Evaluation__c.Power_of_Attorney__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.poaName}&quot;, &quot;{!$Component.poaType}&quot;]}" />
+					<!--	<apex:inputField value="{!Evaluation__c.Power_of_Attorney__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.poaName}&quot;, &quot;{!$Component.poaType}&quot;]}" />-->
 						<apex:outputField value="{!Evaluation__c.Referral__r.Agency_Name__c}" label="Referral Source" />
-						<apex:inputField value="{!Evaluation__c.PoA_Name__c}" id="poaName" />
+					<!--	<apex:inputField value="{!Evaluation__c.PoA_Name__c}" id="poaName" />
 						<apex:outputField value="{!Evaluation__c.Referral__r.Case_Manager_Name__c}" />
-						<apex:inputField value="{!Evaluation__c.PoA_Type__c}" id="poaType" />
+						<apex:inputField value="{!Evaluation__c.PoA_Type__c}" id="poaType" /> -->
 					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Related Party">
 						<apex:actionFunction name="showAddRelatedParty" action="{!showAddRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Add Related Party', '{!$Component.wholePage}');" />
