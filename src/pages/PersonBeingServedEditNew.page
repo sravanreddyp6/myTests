@@ -302,7 +302,7 @@
             </div>
 
             <apex:pageBlockSection title="Person Being Served" showHeader="false" columns="2" collapsible="false" id="pbsOutPutsectionId">
-                <apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput"/>
+                <apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput" required="true"/>
                 <apex:inputField value="{!Contact.Race__c }" taborderhint="2" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Middle_Name__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Ethnicity_Picklist__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
@@ -340,7 +340,7 @@
 			    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
 			    	</apex:outputPanel>
 			    	<apex:outputPanel >
-				    	<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" />
+				    	<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" required="true"/>
 				    	<br/>
 				    	<br/>
 				    	<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}" />
@@ -604,7 +604,7 @@
                 <apex:inputField value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />                
                 
                 <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />                
-                <apex:outputField  value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
+                <apex:outputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
 			</apex:pageBlockSection>	
 					
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
