@@ -574,10 +574,39 @@
 
 			</apex:pageBlockSection>
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
-
-
-
-			</apex:pageBlockSection>			
+				<apex:outputField value="{!Contact.Family_Member_Other__c}" />
+				<apex:pageBlocksectionitem >
+					<apex:outputPanel >
+                		<apex:outputLabel value="Guardianship Type" id="guardianshipTypeLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                	<apex:outputPanel >
+                		<apex:outputField value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                </apex:pageBlocksectionitem>
+                <apex:outputField value="{!Contact.VIP_Indicator__c}" />
+				<apex:outputField value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
+				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
+				
+                <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" />                
+                <apex:outputField value="{!Contact.Advanced_Directives__c}" rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}" />                
+                <apex:inputField value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />                
+                
+                <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />                
+                <apex:outputField  value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
+			</apex:pageBlockSection>	
+					
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
 				<apex:pageBlockSectionItem />    
 				<apex:pageBlockSectionItem />    
