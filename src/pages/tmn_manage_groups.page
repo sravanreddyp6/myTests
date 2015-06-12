@@ -1,0 +1,25 @@
+<apex:page standardController="user" extensions="tmn_manage_groups" >
+
+<apex:form id="mee">
+<apex:pageBlock title="Manage Groups for {!User.Name}" mode="mainDetail" >
+<apex:pageMessages ></apex:pageMessages>
+     <apex:pageBlockSection columns="2">  
+        <apex:pageBlock title="Available Groups">
+           <apex:commandButton action="{!AddtoGroups}" value="Add" reRender="mee" disabled="{!$Profile.Name !='System Administrator'}" />
+           <apex:selectCheckboxes value="{!SelectGroups}" layout="pageDirection"  >
+                <apex:selectOptions value="{!AvailableGroups}" > </apex:selectOptions>
+            </apex:selectCheckboxes>          
+        </apex:pageBlock>  
+       <apex:pageBlock title="Current Group Membership">
+           <apex:commandButton action="{!DeleteFromGroups}" value="Remove" reRender="mee" disabled="{!$Profile.Name !='System Administrator'}"/>        
+            <apex:selectCheckboxes value="{!SelectGroupsToDelete}" layout="pageDirection"  >
+                <apex:selectOptions value="{!CurrentGroups}" > </apex:selectOptions>
+            </apex:selectCheckboxes> 
+                   
+       </apex:pageBlock>
+       
+    </apex:pageBlockSection>
+ </apex:pageBlock>      
+        <br/>
+</apex:form>
+</apex:page>
