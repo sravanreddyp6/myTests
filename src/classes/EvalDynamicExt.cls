@@ -323,10 +323,16 @@ public with sharing class EvalDynamicExt {
 		Savepoint sp2 = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
 
 		if(evalType == 'Residential' || evalType == 'CNA Workbook'){
-			thisEval.Status__c = 'Disregard';
+			
 			try{
-				update thisEval;
-				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
+				// need to get record without sharing on in case CNA workbook was locked as part of approval process
+				NoSharingRecord nsr = new NoSharingRecord( thisEval.id);
+				Evaluation__c tmpEval = nsr.theEval;
+				
+				tmpEval.Status__c = 'Disregard';
+				update tmpEval;
+		
+				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+tmpEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
 				pageRef.setRedirect(true);
 				return pageRef;
 			}
@@ -525,6 +531,7 @@ public with sharing class EvalDynamicExt {
 
 		showApprove = false;
 		showEsign = false;
+		showDisregard = false;
 
 		// do this first because the approval buttons happen regardless of record ownership
 		if (evalType == 'CNA Workbook') {
@@ -533,8 +540,11 @@ public with sharing class EvalDynamicExt {
 
 			
 			if ( isUserOwner) {
-				// EC-198 - 06/10/2015 - show disregard for all statuses 
-				showDisregard = true;
+				// EC-198 - 06/10/2015 - show disregard for all statuses other than already diregarded!
+				system.debug( ' isuserowner is true, status is ' + thiseval.status__c); 
+				if ( thiseval.status__c != 'Disregard')
+					showDisregard = true;
+
 				
 				// show esign only for Draft
 				if ( thiseval.status__c == 'Draft') { 
@@ -769,4 +779,16 @@ public with sharing class EvalDynamicExt {
     	}
     }
 
+
+	// need this to get around the eval that is locked through approval process
+	public without sharing class NoSharingRecord {
+		private ID evalID;
+		public Evaluation__c theEval;
+		
+		public NoSharingRecord( ID theID ) {
+			evalID = theID;
+			theEval =(Evaluation__c)[ select id, status__c from evaluation__c where id = :evalID LIMIT 1];
+			
+		}
+	}
 }
