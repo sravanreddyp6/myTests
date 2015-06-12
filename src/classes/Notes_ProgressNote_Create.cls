@@ -9,7 +9,7 @@ public with sharing class Notes_ProgressNote_Create {
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public Id AZ_OPT_ID, SHIFT_NOTE_ID;
     public String pbsName { get; set; }
-    Public String AsmntOnly{get;set;}
+    Public Boolean AsmntOnly{get;set;}
 
     public list<SelectOption> rtOptions = new list<SelectOption>();
     public list<SelectOption> getrtOptions(){return rtOptions ;}
@@ -22,7 +22,7 @@ public with sharing class Notes_ProgressNote_Create {
 
 //contructs
     public Notes_ProgressNote_Create(ApexPages.StandardController controller) {
-        AsmntOnly = 'No';
+        AsmntOnly = false;
         myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
         for (RecordType rt: myRTs) {
             if (rt.Name == 'AZ - OPT') {
@@ -59,7 +59,7 @@ public with sharing class Notes_ProgressNote_Create {
         
         //Added By Amruth for EB-436
         if(sa.recordtype.name == 'Assessment Only' && currUser != null && currUser.Operating_Group__c == 'NeuroRestorative'){
-            AsmntOnly = 'Yes';
+            AsmntOnly = true;
         }   
         
         
@@ -112,7 +112,7 @@ public with sharing class Notes_ProgressNote_Create {
             }
             
             //Added by Amruth
-            if(AsmntOnly== 'Yes' && thisRt.Name == 'Therapy'){
+            if( AsmntOnly && myname == 'therapy'){
                     SO = new SelectOption(thisRt.Id, thisRt.Name);
                     rtOptions.Add(SO);
             }
