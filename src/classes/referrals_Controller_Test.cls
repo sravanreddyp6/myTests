@@ -203,7 +203,13 @@ public class referrals_Controller_Test{
         insert new Admission_Step__c[] {
             new Admission_Step__c(Name='1', Subject__c='Subject 1', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro1'),
             new Admission_Step__c(Name='2', Subject__c='Subject 2', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro2'),
-            new Admission_Step__c(Name='3', Subject__c='Subject 3', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro3')
+            new Admission_Step__c(Name='3', Subject__c='Subject 3', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro3'),
+         	new Admission_Step__c(Name='4', Subject__c='Schedule Assessment', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro4'),
+            new Admission_Step__c(Name='5', Subject__c='Complete Assessment', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro5'),
+			new Admission_Step__c(Name='6', Subject__c='Assessment follow-up with Referral Source', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro6'),
+		    new Admission_Step__c(Name='7', Subject__c='Upload CAT to iServe', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro7'),
+            new Admission_Step__c(Name='8', Subject__c='Schedule a Red Flag call (if applicable)', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro8')
+            
         };
         Integer numberOfStepSubjects = Admission_Step__c.getAll().size();
         Person_Being_Referred__c pbr = Referral_CreateTestData.createPersonBeingReferred(25, null);
