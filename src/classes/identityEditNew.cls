@@ -24,7 +24,7 @@ public class identityEditNew {
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,
-            Unique_Id__c,Work_State_Code__c,Work_State__c 
+            Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Work_City__c,Zip_Code__c 
             FROM TMN_User__c 
             WHERE Id = :id];
     
@@ -35,6 +35,13 @@ public class identityEditNew {
         TMNUser.Manager_Email__c = aliasUser.Email__c;
         TMNUser.Operating_Group__c = aliasUser.Operating_Group__c;
         TMNUser.Office_Location__c = aliasUser.Office_Location__c;
+        TMNUser.Business_Unit__c = aliasUser.Business_Unit__c;
+        TMNUser.Current_Person_Type__c = 'Non-Employee';
+        TMNUser.Work_City__c = aliasUser.Work_City__c;
+        TMNUser.Office_Location__c = aliasUser.Office_Location__c;
+        TMNUser.Service_Region__c = aliasUser.Service_Region__c;
+        TMNUser.Service_Line__c = aliasUser.Service_Line__c;
+        TMNUser.Zip_Code__c = aliasUser.Zip_Code__c;
     }
         
     }
@@ -63,18 +70,22 @@ public class identityEditNew {
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,
-            Unique_Id__c,Work_State_Code__c,Work_State__c 
+            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c 
             FROM TMN_User__c 
             WHERE Name = :aliasName];
     
     
     public PageReference save() {
-        if(TMNUser.Name == null){
-            TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
-        }
-        if(TMNUser.Id == null){
-            TMNUser.Current_Person_Type__c = 'Contractor';
-        } 
+            if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c == null){
+                TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
+            }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c == null){
+                TMNUser.Name = TMNUser.Preferred_First_Name__c + ' ' + TMNUser.Last_Name__c;
+            }else if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c != null){
+                TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Preferred_Last_Name__c;
+            }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c != null){
+                TMNUser.Name = TMNUser.Preferred_First_Name__c + ' ' + TMNUser.Preferred_Last_Name__c;
+            }
+             
         try {
             upsert(TMNUser);
         } catch(System.DMLException e) {
