@@ -20183,6 +20183,14 @@ Neurostative IL role</description>
         <errorMessage>Non-Payable Outcome checkbox is checked but no outcomes have been selected. Please select an outcome.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>NC_TFC_Must_Be_Non_Billable</fullName>
+        <active>true</active>
+        <description>A validation rule to insure that Progress Notes with the &quot;NC - TFC&quot; or &quot;NC - Wks 1-6 TFC&quot; record types have Purpose_Service_is_Billable__c value of false.</description>
+        <errorConditionFormula>AND(OR(RecordType.DeveloperName = &apos;NC_TFC&apos;, RecordType.DeveloperName = &apos;NC_Wks_1_6_TFC&apos;), Purpose_Service_is_Billable__c = true )</errorConditionFormula>
+        <errorDisplayField>Purpose_Service_is_Billable__c</errorDisplayField>
+        <errorMessage>For NC - TFC, NC - Wks 1-6 TFC, the Purpose/Service is Billable field must be unchecked.  Please uncheck that field and try again.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>No_future_dates</fullName>
         <active>true</active>
         <errorConditionFormula>RecordType.DeveloperName !=&apos;Shift_Note&apos; &amp;&amp; OR( (Date_of_Service__c &gt;  DATEVALUE( NOW() )),(  Start_Time__c   &gt; NOW() ) ,(   End_Time__c    &gt; NOW() ) )</errorConditionFormula>
@@ -20226,6 +20234,14 @@ Neurostative IL role</description>
         <errorConditionFormula>AND(NOT(ISPICKVAL(Approval_Status__c, &quot;Pending&quot;)),  OwnerId = &apos;00GU0000001RJzX&apos;)</errorConditionFormula>
         <errorDisplayField>OwnerId</errorDisplayField>
         <errorMessage>Can&apos;t assign a Progress Note to the Approval Queue unless the record has been submitted and Approval Status is &quot;Pending&quot;.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Therapy_must_be_non_billable</fullName>
+        <active>true</active>
+        <description>For Therapy record type the Purpose/Service billable must be unchecked.</description>
+        <errorConditionFormula>AND(RecordType.DeveloperName = &apos;Therapy&apos;, ISNEW(),  Purpose_Service_is_Billable__c = true )</errorConditionFormula>
+        <errorDisplayField>Purpose_Service_is_Billable__c</errorDisplayField>
+        <errorMessage>For Therapy, the Purpose/Service is Billable field must be unchecked. Please un check that field and try again.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Type_of_Treatment</fullName>
