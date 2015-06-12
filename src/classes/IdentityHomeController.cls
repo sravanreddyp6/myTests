@@ -10,6 +10,8 @@ public with sharing class IdentityHomeController {
     public String srchMngFNameNonEmp {get; set;}
     public String srchMngLNameNonEmp {get; set;}    
     public String srchOpGroup {get; set;}
+    public String generatedKey1 {get; set;}
+    public String generatedKey2 {get; set;}
     public List<TMN_User__c> Records {get; set;}
     public List<TMN_User__c> mySubordinates {get; set;}
     public List<TMN_User__c> searchResult {get; set;}
@@ -63,7 +65,7 @@ public with sharing class IdentityHomeController {
                    Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,
                    Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c,Last_Day__c 
                    FROM TMN_User__c WHERE (Manager_Name__c=:tmnName OR Manager_Name__c=:aliasName) 
-                   AND Current_Person_Type__c IN ('Alliance','Contractor','Other','Potential Employee')
+                   AND Current_Person_Type__c NOT IN ('Employee')
                    AND Last_Day__c>=:endDate];
                    return attestNonEmployees;
     }
@@ -94,7 +96,7 @@ public with sharing class IdentityHomeController {
                     Hire_Date__c,Id,Job_Status__c,Job_Title__c,Last_Name__c,Manager_Email__c,
                     Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,
                     Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c 
-                    FROM TMN_User__c WHERE (Manager_Name__c=:tmnName OR Manager_Name__c=:aliasName) AND Current_Person_Type__c IN ('Alliance','Contractor','Other','Potential Employee')];        
+                    FROM TMN_User__c WHERE (Manager_Name__c=:tmnName OR Manager_Name__c=:aliasName) AND Current_Person_Type__c NOT IN ('Employee')];        
         return myNonEmployees;
     }                           
 
@@ -166,19 +168,6 @@ public with sharing class IdentityHomeController {
         }         
     }    
     
-//    public void search() {
-//        if(String.IsBlank(searchUser)) {
-//            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter a First or Last name to complete the search.'));
-//        } else if(searchUser.length()<3) {
-//            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least three characters to complete the search.'));
-//        } else {
-//            String searchQuery='SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id FROM TMN_User__c WHERE First_Name__c LIKE \'%'+searchUser+'%\' OR Last_Name__c LIKE \'%'+searchUser+'%\' OR Manager_Last_Name__c LIKE \'%'+searchUser+'%\' OR Manager_First_Name__c LIKE \'%'+searchUser+'%\' ORDER BY Last_Name__c ASC LIMIT 200';
-//            searchResult = Database.query(searchQuery);
-//            if(searchResult.isEmpty()) {
-//               ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'The search did not find any possible matches! Please check the name and try again.')); 
-//            }
-//        }    
-//    }
 
     public void delSearch() {       
         if (String.IsBlank(srchFName) && String.IsBlank(srchLName) && String.IsBlank(srchMngFName) && String.IsBlank(srchMngLName)) {
@@ -195,22 +184,57 @@ public with sharing class IdentityHomeController {
             }
         }      
 
-    public void nonEmpSearch() {       
-        if (String.IsBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp) && String.IsBlank(srchMngFNameNonEmp) && String.IsBlank(srchMngLNameNonEmp)) {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter something into one of the search boxes to complete the search.'));
-            btnDisable = true;
-        } else if (srchFNameNonEmp.length()<3 && srchLNameNonEmp.length()<3 && srchMngFNameNonEmp.length()<3 && srchMngLNameNonEmp.length()<3) {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least three characters in one of the search boxes to complete the search.'));
-            btnDisable = true;
-        } else {
-            String searchNonEmp='SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id,Name FROM TMN_User__c WHERE First_Name__c LIKE \'%'+srchFNameNonEmp+'%\' AND Last_Name__c LIKE \'%'+srchLNameNonEmp+'%\' AND Manager_Last_Name__c LIKE \'%'+srchMngLNameNonEmp+'%\' AND Manager_First_Name__c LIKE \'%'+srchMngFNameNonEmp+'%\' ORDER BY Last_Name__c ASC LIMIT 200';
-            searchNonEmpResult = Database.query(searchNonEmp);
-            btnDisable = false;
+      public void nonEmpSearch(){
+          generatedKey1 = Soundex.toSoundex(srchLNameNonEmp);
+          generatedKey2 = Soundex.toSoundex(srchFNameNonEmp);
+          doQuery();
+      }
+      
+      public PageReference doQuery(){
+          if (String.IsBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
+              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter something into one of the search boxes to complete the search.'));
+              btnDisable = true;
+          }else if (srchFNameNonEmp.length()<3 && srchLNameNonEmp.length()<3){
+              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least three characters in one of the search boxes to complete the search.'));
+              btnDisable = true;
+          }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){   
+              searchNonEmpResult = [SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id,Name,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c FROM TMN_User__c WHERE First_Name_Soundex_Key__c = :generatedKey2 ORDER BY Last_Name__c ASC];
+              btnDisable = false;
                 if(searchNonEmpResult.isEmpty()) {
-                    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'The search did not find any possible matches! Please check the name and try again.')); 
-                }          
-            }
-        }
+                    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'The search did not find any possible matches. Please check the name and try again or Create a New Non-Employee.')); 
+                }              
+          }else if (String.IsBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
+              searchNonEmpResult = [SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id,Name,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c FROM TMN_User__c WHERE Last_Name_Soundex_Key__c = :generatedKey1 ORDER BY Last_Name__c ASC];
+              btnDisable = false;
+                if(searchNonEmpResult.isEmpty()) {
+                    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'The search did not find any possible matches. Please check the name and try again or Create a New Non-Employee.')); 
+                }              
+          }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
+              searchNonEmpResult = [SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id,Name,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c FROM TMN_User__c WHERE Last_Name_Soundex_Key__c = :generatedKey1 OR First_Name_Soundex_Key__c = :generatedKey2 ORDER BY Last_Name__c ASC];
+              btnDisable = false;
+                if(searchNonEmpResult.isEmpty()) {
+                    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'The search did not find any possible matches. Please check the name and try again or Create a New Non-Employee.')); 
+                }              
+          }
+          return null;
+      }
+      
+//    public void nonEmpSearch() {       
+//        if (String.IsBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp) && String.IsBlank(srchMngFNameNonEmp) && String.IsBlank(srchMngLNameNonEmp)) {
+//            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter something into one of the search boxes to complete the search.'));
+//            btnDisable = true;
+//        } else if (srchFNameNonEmp.length()<3 && srchLNameNonEmp.length()<3 && srchMngFNameNonEmp.length()<3 && srchMngLNameNonEmp.length()<3) {
+//            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least three characters in one of the search boxes to complete the search.'));
+//            btnDisable = true;
+//        } else {
+//            String searchNonEmp='SELECT Email__c,First_Name__c,Last_Name__c,Operating_Group__c,Manager_Email__c,Manager_Name__c,Manager_Last_Name__c,Manager_First_Name__c,Id,Name FROM TMN_User__c WHERE First_Name__c LIKE \'%'+srchFNameNonEmp+'%\' AND Last_Name__c LIKE \'%'+srchLNameNonEmp+'%\' AND Manager_Last_Name__c LIKE \'%'+srchMngLNameNonEmp+'%\' AND Manager_First_Name__c LIKE \'%'+srchMngFNameNonEmp+'%\' ORDER BY Last_Name__c ASC LIMIT 200';
+//            searchNonEmpResult = Database.query(searchNonEmp);
+//            btnDisable = false;
+//                if(searchNonEmpResult.isEmpty()) {
+//                    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'The search did not find any possible matches! Please check the name and try again.')); 
+//                }          
+//            }
+//        }
 
     Public void tmnSearch() {
         tmnUserList = New List<TMN_User__c>();
@@ -246,3 +270,12 @@ public with sharing class IdentityHomeController {
     }
     
 }
+//Script to update Soundex Keys
+//List<TMN_User__c> tmnusers = [select id,name,Last_Name_Soundex_Key__c,First_Name_Soundex_Key__c 
+//                              from TMN_User__c
+//                              where Last_Name_Soundex_Key__c = null];
+//for (TMN_User__c tu:tmnusers){
+//    tu.Last_Name_Soundex_Key__c = Soundex.toSoundex(tu.Last_Name__c);
+//    tu.First_Name_Soundex_Key__c = Soundex.toSoundex(tu.First_Name__c);
+//}
+//update tmnusers;

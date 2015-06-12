@@ -4,22 +4,18 @@
         <apex:pageMessages />
     </apex:outputPanel>
 
-    <apex:pageBlock title="Find a Person" >
-        <apex:form id="frmNonEmpSrch" >
-            <apex:pageBlockSection columns="2" id="blkSecNonEmpSrch">  
-                <apex:inputText label="First Name" value="{!srchFNameNonEmp}"/>
-                <apex:inputText label="Manager First Name" value="{!srchMngFNameNonEmp}"/>
-                <apex:inputText label="Last Name" value="{!srchLNameNonEmp}"/>
-                <apex:inputText label="Manager Last Name" value="{!srchMngLNameNonEmp}"/>             
-                <apex:outputPanel />
-                <apex:outputPanel />
-                <apex:commandButton value="Search" action="{!nonEmpSearch}" id="srchBtn"/>
+    <apex:pageBlock title="Non-Employee Search" id="blkSecNonEmpSrch" >
+        <apex:form id="frmNonEmpSrch" >  
+                <apex:inputText label="srchFN" value="{!srchFNameNonEmp}" html-placeholder="First Name"/>
+                <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
+                <apex:inputText label="srchLN" value="{!srchLNameNonEmp}" html-placeholder="Last Name"/>
+                <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
+                <apex:commandButton value="Search" action="{!nonEmpSearch}" id="srchBtn"/>                            
                 <apex:commandButton value="Create New Non-Employee" action="/apex/identity_editnew" disabled="{!btnDisable}" id="createBtn"/>    
-            </apex:pageBlockSection>
         </apex:form>        
     </apex:pageBlock>
 
-    <apex:pageBlock title="Search Results" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
+    <apex:pageBlock title="Non-Employee Search Results" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
         <apex:form >
             <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner">
                 <apex:column headerValue="Link" >

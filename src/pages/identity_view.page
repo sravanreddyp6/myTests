@@ -5,20 +5,56 @@
                 <apex:pageblockButtons location="Bottom" >    
                     <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>
                     <apex:commandButton value="Back" action="{!URLFOR($Page.identity_home, '')}" immediate="true" html-formnovalidate="formnovalidate"/>
-                    <apex:commandButton value="Log a Request" />
+                    <apex:commandButton value="Log a Request" action="{!URLFOR($Page.identity_canvas, '')}" />
                 </apex:pageblockButtons>            
                 <apex:pageBlockSection columns="2">
                     <apex:outputField label="Name" value="{!TMNUser.Name}" />
-                    <apex:outputField value="{!TMNUser.Identity_ID__c}" />
-                    <apex:outputField value="{!TMNUser.Hire_Date__c}" />
-                    <apex:outputField value="{!TMNUser.Last_Day__c}" />
+                    <apex:outputField value="{!TMNUser.Job_Title__c}" />                    
+                    <!--<apex:outputField value="{!TMNUser.First_Name__c}"/>
+                    <apex:outputField value="{!TMNUser.Last_Name__c}"/>
+                    <apex:outputField value="{!TMNUser.Middle_Name__c}"/>
+                    <apex:outputPanel ></apex:outputPanel>
+                    <apex:outputField value="{!TMNUser.Preferred_First_Name__c}"/>
+                    <apex:outputField value="{!TMNUser.Preferred_Last_Name__c}"/> -->
+                    <apex:outputField value="{!TMNUser.Email__c}"/>                                         
+                    <apex:outputField value="{!TMNUser.Office_Phone__c}"/>
+                    <apex:outputField value="{!TMNUser.Mentor_Cell_Phone__c}"/>
+                    <apex:outputPanel ></apex:outputPanel>                                        
                     <apex:outputField value="{!TMNUser.Manager_Name__c}" />
                     <apex:outputField value="{!TMNUser.Manager_Email__c}" />
-                    <apex:outputField value="{!TMNUser.Job_Title__c}" />
-                    <apex:outputField value="{!TMNUser.Pay_Basis__c}" />
-                    <apex:outputField value="{!TMNUser.Operating_Group__c}" />
+                    <apex:outputField value="{!TMNUser.Hire_Date__c}" />
+                    <apex:outputField value="{!TMNUser.Last_Day__c}" />
+                    <apex:outputField value="{!TMNUser.Work_City__c}" />
                     <apex:outputField value="{!TMNUser.Work_State__c}" />
-                    <apex:outputField value="{!TMNUser.Office_Location__c}" />
+                    <apex:outputField value="{!TMNUser.Zip_Code__c}"/>
+                    <apex:outputField label="Work Street Address" value="{!TMNUser.Office_Location__c}" />
+                    <apex:outputField value="{!TMNUser.Operating_Group__c}" />                    
+                    <apex:outputField value="{!TMNUser.Current_Person_Type__c}" />
+                    <apex:outputField value="{!TMNUser.Job_Status__c}" />
+                    <apex:outputField value="{!TMNUser.Alias__c}" />
+                    <apex:outputField value="{!TMNUser.Pay_Basis__c}" />
+                    <apex:outputField value="{!TMNUser.Service_Region__c}"/>
+                    <apex:outputField value="{!TMNUser.Service_Line__c}"/>
+                    <apex:outputField value="{!TMNUser.Business_Unit_Region__c}"/>
+                    <apex:outputField value="{!TMNUser.Business_Unit__c}"/>
+                    <apex:outputField value="{!TMNUser.Job_Level__c}"/>
+                    <apex:outputField value="{!TMNUser.Approval_Level__c}"/>
+                 </apex:pageBlockSection>
+                 <apex:pageBlockSection title="Manager for Approvals" columns="2">
+                    <apex:outputField value="{!TMNUser.Accountable_Approval_Manager__c}"/>
+                    <apex:outputField value="{!TMNUser.Accountable_Manager_Mentor_Email__c}"/>                     
+                 </apex:pageBlockSection>
+                 <apex:pageBlockSection title="System IDs" columns="2">
+                    <apex:outputField label="AD Username" value="{!TMNUser.Network_Username__c}"/>
+                    <apex:outputField label="Salesforce Account" value="{!TMNUser.Salesforce_User_Account__c}"/> 
+                    <apex:outputField label="Identity ID" value="{!TMNUser.Identity_ID__c}" />   
+                    <apex:outputField label="Taleo ID" value="{!TMNUser.Teleo_ID__c}"/>
+                    <apex:outputField label="Unique ID" value="{!TMNUser.Unique_Id__c}"/>
+                    <apex:outputField label="Employee ID" value="{!TMNUser.Employee_Number__c}"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Personal Contact Info" columns="2">
+                    <apex:outputField value="{!TMNUser.Personal_Phone__c}"/>
+                    <apex:outputField value="{!TMNUser.Personal_Email__c}"/>                
                 </apex:pageBlockSection>
             </apex:pageBlock>
         </apex:form>

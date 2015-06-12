@@ -1,4 +1,4 @@
-<apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c">
+<apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
     
         <apex:form >
             <apex:pageBlock title="TMN User" mode="edit" >
@@ -7,34 +7,91 @@
                     <apex:commandButton value="Save" action="{!Save}"/>
                     <apex:commandButton value="Cancel" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
                 </apex:pageblockButtons>            
-                <apex:pageBlockSection columns="2">
+                <apex:pageBlockSection columns="2" title="Edit Information">
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true"/>
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}"/>
                     <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true"/>
-                    <apex:inputField label="Personal Email" value="{!TMNUser.Personal_Email__c}"/>
-                    <apex:inputField label="Hire Date" value="{!TMNUser.Hire_Date__c}" required="true"/>
-                    <apex:inputField label="Last Day" value="{!TMNUser.Last_Day__c}"/>
+                    <apex:inputField label="Job Title" value="{!TMNUser.Job_Title__c}"/>
+                    <apex:inputField label="Preferred First Name" value="{!TMNUser.Preferred_First_Name__c}"/>                   
+                    <apex:inputField label="Preferred Last Name" value="{!TMNUser.Preferred_Last_Name__c}"/>
                     <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Name__c}" required="true"/>
-                    <apex:inputField label="Manager Email" value="{!TMNUser.Manager_Email__c}" required="true"/>
-                    <apex:inputField label="Alias" value="{!TMNUser.Alias__c}" required="true" />
-                    <apex:inputField label="Job Status" value="{!TMNUser.Job_Status__c}"/>
-                    <apex:inputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}"/>
-                    <apex:selectList label="Pay Basis" value="{!TMNUser.Pay_Basis__c}" size="1" required="true">
-                        <apex:selectOption itemValue="Hourly" itemLabel="Hourly"/>
-                        <apex:selectOption itemValue="Salaried" itemLabel="Salaried"/>
-                    </apex:selectList>
+                    <apex:inputField label="Manager Email" value="{!TMNUser.Manager_Email__c}" required="true" type="email"/>                    
+                    <apex:inputField label="Office Phone" value="{!TMNUser.Office_Phone__c}" required="true" type="tel"/>
+                    <apex:inputField label="Mentor Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}"/>
+                    <apex:inputField label="Personal Email" value="{!TMNUser.Personal_Email__c}" type="email"/>
+                    <apex:outputPanel ></apex:outputPanel>              
+                    <apex:inputField label="Work City" value="{!TMNUser.Work_City__c}" required="true"/>
+                        <apex:selectList label="Work State" value="{!TMNUser.Work_State__c}" size="1" required="true">
+                        <apex:selectOption itemValue="AL" itemLabel="Alabama"/>
+                        <apex:selectOption itemValue="AK" itemLabel="Alaska"/>
+                        <apex:selectOption itemValue="AZ" itemLabel="Arizona"/>
+                        <apex:selectOption itemValue="AR" itemLabel="Arkansas"/>
+                        <apex:selectOption itemValue="CA" itemLabel="California"/>
+                        <apex:selectOption itemValue="CO" itemLabel="Colorado"/>
+                        <apex:selectOption itemValue="CT" itemLabel="Connecticut"/>
+                        <apex:selectOption itemValue="DE" itemLabel="Delaware"/>
+                        <apex:selectOption itemValue="FL" itemLabel="Florida"/>
+                        <apex:selectOption itemValue="GA" itemLabel="Georgia"/>
+                        <apex:selectOption itemValue="HI" itemLabel="Hawaii"/>
+                        <apex:selectOption itemValue="ID" itemLabel="Idaho"/>
+                        <apex:selectOption itemValue="IL" itemLabel="Illinois"/>
+                        <apex:selectOption itemValue="IN" itemLabel="Indiana"/>
+                        <apex:selectOption itemValue="IA" itemLabel="Iowa"/>
+                        <apex:selectOption itemValue="KS" itemLabel="Kansas"/>
+                        <apex:selectOption itemValue="KY" itemLabel="Kentucky"/>
+                        <apex:selectOption itemValue="LA" itemLabel="Louisiana"/>
+                        <apex:selectOption itemValue="ME" itemLabel="Maine"/>
+                        <apex:selectOption itemValue="MD" itemLabel="Maryland"/>
+                        <apex:selectOption itemValue="MA" itemLabel="Massachusetts"/>
+                        <apex:selectOption itemValue="MI" itemLabel="Michigan"/>
+                        <apex:selectOption itemValue="MN" itemLabel="Minnesota"/>
+                        <apex:selectOption itemValue="MS" itemLabel="Mississippi"/>
+                        <apex:selectOption itemValue="MO" itemLabel="Missouri"/>
+                        <apex:selectOption itemValue="MT" itemLabel="Montana"/>
+                        <apex:selectOption itemValue="NE" itemLabel="Nebraska"/>
+                        <apex:selectOption itemValue="NV" itemLabel="Nevada"/>
+                        <apex:selectOption itemValue="NH" itemLabel="New Hampshire"/>
+                        <apex:selectOption itemValue="NJ" itemLabel="New Jersey"/>
+                        <apex:selectOption itemValue="NM" itemLabel="New Mexico"/>
+                        <apex:selectOption itemValue="NY" itemLabel="New York"/>
+                        <apex:selectOption itemValue="NC" itemLabel="North Carolina"/>
+                        <apex:selectOption itemValue="ND" itemLabel="North Dakota"/>
+                        <apex:selectOption itemValue="OH" itemLabel="Ohio"/>
+                        <apex:selectOption itemValue="OK" itemLabel="Oklahoma"/>
+                        <apex:selectOption itemValue="OR" itemLabel="Oregon"/>
+                        <apex:selectOption itemValue="PA" itemLabel="Pennsylvania"/>
+                        <apex:selectOption itemValue="RI" itemLabel="Rhode Island"/>
+                        <apex:selectOption itemValue="SC" itemLabel="South Carolina"/>
+                        <apex:selectOption itemValue="SD" itemLabel="South Dakota"/>
+                        <apex:selectOption itemValue="TN" itemLabel="Tennessee"/>
+                        <apex:selectOption itemValue="TX" itemLabel="Texas"/>
+                        <apex:selectOption itemValue="UT" itemLabel="Utah"/>
+                        <apex:selectOption itemValue="VT" itemLabel="Vermont"/>
+                        <apex:selectOption itemValue="VA" itemLabel="Virginia"/>
+                        <apex:selectOption itemValue="WA" itemLabel="Washington"/>
+                        <apex:selectOption itemValue="WV" itemLabel="West Virginia"/>
+                        <apex:selectOption itemValue="WI" itemLabel="Wisconsin"/>
+                        <apex:selectOption itemValue="WY" itemLabel="Wyoming"/>
+                    </apex:selectList>                                                       
+                    <apex:inputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" required="true"/>        
+                    <apex:inputField label="Work Street Address" value="{!TMNUser.Office_Location__c}" required="true" />                    
                     <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true">
+                        <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
                         <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
                         <apex:selectOption itemValue="Corporate" itemLabel="Corporate"/>
-                        <apex:selectOption itemValue="Cambridge" itemLabel="Hastings"/>
+                        <apex:selectOption itemValue="Cambridge" itemLabel="Hastings"/>                       
                         <apex:selectOption itemValue="NeuroRestorative" itemLabel="NeuroRestorative"/>
                         <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
                     </apex:selectList>
-                    <apex:inputField label="Work State" value="{!TMNUser.Work_State__c}" required="true"/>
-                    <apex:inputField label="Office Phone" value="{!TMNUser.Office_Phone__c}"/>
-                    <apex:inputField label="Mobile Phone" value="{!TMNUser.Personal_Phone__c}"/>
-                    <apex:inputField label="Office Location" value="{!TMNUser.Office_Location__c}" />
-                <!--    <apex:inputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}" required="true"/> -->
+                    <apex:inputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}" required="true"/>
+                    <apex:inputField label="Job Status" value="{!TMNUser.Job_Status__c}" required="true"/>
+                    <apex:selectList label="Pay Basis" value="{!TMNUser.Pay_Basis__c}" size="1" required="true">
+                        <apex:selectOption itemValue="Hourly" itemLabel="Hourly"/>
+                        <apex:selectOption itemValue="Salaried" itemLabel="Salaried"/>
+                    </apex:selectList>                                                                                                                    
+                    <apex:inputField label="Start Date" value="{!TMNUser.Hire_Date__c}" required="true"/>
+                    <apex:inputField label="Last Day Worked" value="{!TMNUser.Last_Day__c}" required="false"/>
+                    <apex:inputField label="Alias" value="{!TMNUser.Alias__c}" required="true" />                                                        
                 </apex:pageBlockSection>
             </apex:pageBlock>
         </apex:form>
