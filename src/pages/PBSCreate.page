@@ -211,12 +211,23 @@ function stopRKey(evt) {
                              columns="2"
                              collapsible="false"
                              id="pbsOutPutsectionId" >
-
-                <apex:inputText value="{!Account.FirstName}" tabindex="10"  id="FirstNameInput"/>
+ 				<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="First Name" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                            <apex:inputText id="FirstNameInput" tabindex="10" value="{!Account.FirstName}"  required="true" />
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Account.Race__pc }" taborderhint="2" />
                 <apex:inputField value="{!Account.Middle_Name__pc}" taborderhint="1" />
                 <apex:inputField value="{!Account.Ethnicity_Picklist__pc}" taborderhint="2" />
-                <apex:inputText value="{!Account.LastName}" tabindex="10" />
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Name" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                            <apex:inputText id="LastNameInput" tabindex="10" value="{!Account.LastName}"  required="true" />
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Account.Marital_Status__pc}" taborderhint="2" />
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Date of Birth" for="txtDOB" />
@@ -250,7 +261,7 @@ function stopRKey(evt) {
 			    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
 			    	</apex:outputPanel>
 			    	<apex:outputPanel >
-				    	<apex:inputField value="{!Account.Gender__pc}" taborderhint="1" />
+				    	<apex:inputField value="{!Account.Gender__pc}" taborderhint="1" required="true" />
 				    	<br/>
 				    	<br/>
 				    	<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}" />
