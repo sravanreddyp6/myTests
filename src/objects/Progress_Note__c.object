@@ -20167,14 +20167,6 @@ Neurostative IL role</description>
         <errorMessage>Please enter only one digit after the decimal.</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>NCTFC_Therapy_Notes_Must_Be_Non_Billable</fullName>
-        <active>true</active>
-        <description>A validation rule to insure that Progress Notes with the &quot;NC - TFC&quot; or &quot;NC - Wks 1-6 TFC&quot; or &quot;Therapy&quot; record types have Purpose_Service_is_Billable__c value of false.</description>
-        <errorConditionFormula>AND(OR(RecordType.DeveloperName = &apos;NC_TFC&apos;, RecordType.DeveloperName = &apos;NC_Wks_1_6_TFC&apos;,AND(RecordType.DeveloperName = &apos;Therapy&apos;, ISNEW())), Purpose_Service_is_Billable__c = true)</errorConditionFormula>
-        <errorDisplayField>Purpose_Service_is_Billable__c</errorDisplayField>
-        <errorMessage>For NC - TFC, NC - Wks 1-6 TFC, Therapy Progress Notes, the Purpose/Service is Billable field must be unchecked.  Please uncheck that field and try again.</errorMessage>
-    </validationRules>
-    <validationRules>
         <fullName>NC_IFCS_Non_Payable_Check</fullName>
         <active>true</active>
         <description>If Non Payable is checked on NC IFCS Progress Notes the user must select atleast one reason why.</description>
