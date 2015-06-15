@@ -32,9 +32,10 @@ public with sharing class PersonsBeingServedListController {
     } set; }
 
     private void getcanCreateNew() {
-        
+    	
+        TMN_User__c TU = [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1];
         Schema.DescribeSObjectResult acctSchema = Account.sObjectType.getDescribe();
-        canCreateNew = acctSchema.IsCreateable();
+        canCreateNew = TU.Operating_Group__c=='NeuroRestorative'?False:acctSchema.IsCreateable();
         
     }
     public String filterId {
