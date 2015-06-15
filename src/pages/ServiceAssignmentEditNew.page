@@ -1445,7 +1445,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
 					<apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
 					<!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age_year__c} Years {!theServAssign.Person_Being_Served__r.Age_month__c} Months {!theServAssign.Person_Being_Served__r.Age_days__c} Days)">
+					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!age})">
 						<apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
 					</apex:outputText>
 					<apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
@@ -1474,7 +1474,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
 					<!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age_year__c} Years {!theServAssign.Person_Being_Served__r.Age_month__c} Months {!theServAssign.Person_Being_Served__r.Age_days__c} Days)">
+					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!age})">
 						<apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
 					</apex:outputText>
 					<apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
