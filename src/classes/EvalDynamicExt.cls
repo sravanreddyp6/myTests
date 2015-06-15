@@ -328,7 +328,7 @@ public with sharing class EvalDynamicExt {
 				// need to get record without sharing on in case CNA workbook was locked as part of approval process
 				NoSharingRecord nsr = new NoSharingRecord( thisEval.id);
 				nsr.setStatusAndSave('Disregard');
-				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+tmpEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
+				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
 				pageRef.setRedirect(true);
 				return pageRef;
 			}
@@ -787,7 +787,7 @@ public with sharing class EvalDynamicExt {
 			
 		}
 		
-		public setStatusAndSave( string newstatus) {
+		public void setStatusAndSave( string newstatus) {
 			theEval.status__c = newstatus;
 			update theEval;			
 		}
