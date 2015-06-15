@@ -639,6 +639,15 @@ public with sharing class referral_Controller2 {
 	public boolean checkRequiredFields(){
 		List<String> messages = new List<String>{};
 		boolean hasReq = false;
+		//PRI-189
+		if (personBeingRefRecord.First_Name__c == null) {
+			hasReq = false;
+			messages.Add( 'First Name');
+			}
+			if (personBeingRefRecord.Gender__c == null) {
+			hasReq = false;
+			messages.Add( 'Gender');
+			}
 
 		//start CTEAE-137
 		if(ReferralRecordType=='Cambridge North Carolina'){
