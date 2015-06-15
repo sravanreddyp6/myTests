@@ -1238,17 +1238,18 @@ public void setAge () {
     Integer currMonth = Today.month();
 	Integer birthMonth = birthday.month();
 	Integer months = currMonth - birthMonth;
-    Integer days = 0;       
+	Integer days = 0;       
 			      if (months < 0)
 			      {
 			         years--;
 			         months = 12 - birthMonth + currMonth;
-			         if (Today.day() < birthDay.day())
-			            months--;
 			      } else if (months == 0 && Today.day() < birthDay.day())
 			      {
 			         years--;
 			         months = 11;
+			      }
+			      if(Today.day() < birthDay.day()){
+			       months--;
 			      }
     	if (Today.day() > birthDay.day())
 			          days = Today.day() - birthDay.day();
@@ -1264,7 +1265,6 @@ public void setAge () {
 			             months = 0;
 			          }
 			       }
-
 	this.personBeingRefRecord.Age_year__c = years;
 	this.personBeingRefRecord.Age_month__c = String.valueOf(months);
 	this.personBeingRefRecord.Age_days__c = String.valueOf(days);
