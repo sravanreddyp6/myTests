@@ -45,8 +45,14 @@ j$(document).ready(function(){
   				<apex:outputField value="{!Service_Location__c.TIN__c}" />
                 <apex:outputField value="{!Service_Location__c.NPI__c}" />
                 <apex:inputField id="locStatus" value="{!Service_Location__c.Status__c}" rendered="{! NOT(AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR'))}"/>
-                <apex:outputText label="Status" value="This location has been inactivated in {!service_location__c.source_system__c} and cannot be edited." rendered="{! AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR')}"/>
+                <apex:outputText label="Status" value="This location has been inactivated in {!Service_Location__c.Source_System__c} and cannot be edited." rendered="{! AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR')}"/>
             </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" rendered="{!Service_Location__c.FacilityID__c == 20}" >
+            	<apex:inputField value="{!Service_Location__c.Room_and_Board_Rate__c}" label="Room and Board Cost" />
+            	<apex:inputField value="{!Service_Location__c.PRN_DS_Per_Hour__c}" />
+            	<apex:inputField value="{!Service_Location__c.Per_Productive_Unit__c}" />             
+            </apex:pageBlockSection>
+        <c:SObjectHistories object="{!Service_Location__c}" title="Field History for Service Location" rendered="{!Service_Location__c.FacilityID__c == 20}" />
         </apex:pageBlock>
     </apex:form>
 </apex:page>
