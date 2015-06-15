@@ -140,7 +140,7 @@ public with sharing class referral_Controller2 {
 				(operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || 
 				(operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) ||
 				(operatinggroup == 'Redwood' && referralrecordtype == 'Wisconsin' && showCANS ) ||
-				(operatinggroup == 'NeuroRestorative' && personBeingRefRecord.State_for_Preferred_Service__c == 'Illinois' )
+				(operatinggroup == 'NeuroRestorative' && referralRecord.State_for_Preferred_Service__c == 'Illinois' )
 			);
 			
 	} set;}
