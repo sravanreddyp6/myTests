@@ -53,7 +53,7 @@ trigger GetStartTimeOnly on Progress_Note__c (before update, before insert) {
              n.Start_Time__c != null) {
            
                  
-             if ( recordTypeMap.get(n.RecordTypeId).Name == 'Shift Note'  ||  recordTypeMap.get(n.RecordTypeId).Name == 'Therapy') {
+             if ( recordTypeMap.get(n.RecordTypeId).Name == 'Shift Note' ) {
                
                  n.Name = pbsMap.get(n.Person_Being_Served__c).Name + 
                          ' - ' + n.Start_Time__c.format('MM/dd/yyyy hh:mm a') + ' - ' +
@@ -77,6 +77,13 @@ trigger GetStartTimeOnly on Progress_Note__c (before update, before insert) {
                if (n.Type_of_Activity__c != null && n.Type_of_Activity__c != '') {
                    n.Name += ' - ' + n.Type_of_Activity__c;
                }
+               if(recordTypeMap.get(n.RecordTypeId).Name == 'Therapy'){
+                    if ( Trigger.isUpdate ) {
+                        if ( n.Disregard_Note__c ) 
+                            n.Name += ' - DISREGARD';
+                    
+                    }   
+                }
              }  
              
                   
