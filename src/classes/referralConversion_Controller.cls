@@ -628,7 +628,22 @@ public with sharing class referralConversion_Controller {
                                             );
 
     insert newSA;
-
+    //EB-362
+    if( referralRecordType.startsWith('Neuro') ){
+				list<Service_Code__c> Codes = [ SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c 
+														FROM Service_Code__c 
+														WHERE isActive__c = 1 AND Program_Value__c = :refCurr.Service_Location_Program__c];
+				list<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new list<ServiceAssignment_ServiceCode_JO__c>();	
+				for(Service_Code__c item: Codes){
+					ServiceAssignment_ServiceCode_JO__c servCodeXrefToSave = new ServiceAssignment_ServiceCode_JO__c(
+							Service_Code__c = item.Id,
+							Service_Assignment__c = newSA.Id
+							);
+					servCodeXrefsToSave.add(servCodeXrefToSave);
+				}
+	
+		if (servCodeXrefsToSave != null) {insert servCodeXrefsToSave;}
+    }
     // if none of the diagnosis fields are blank or null, create new diagnosis record and link to SA
     if ( !String.isEmpty(refCurr.Axis_I__c) ||
          !String.isEmpty(refCurr.Axis_II__c) ||
