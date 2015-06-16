@@ -334,6 +334,9 @@ public with sharing class GenerateEvalSectionPDF {
                     newHTMLfld +=  '</div>';
                 }
                 
+               //EC-169 the questions 1 through 10 do NOT apply to the section if section Type is an activity log
+               if (mapEntries.get(entryId).entryType == 'Activity Log' && e.htmlid__c.contains('HeadtoToeDiagnosticsIVQuestion')) continue; 
+                
                htmlControls.add(newHtmlFld);
 				mapEvalEntryHTML.put( entryId, htmlControls );
 				//system.debug( 'put control array onto : ' + entryid);
