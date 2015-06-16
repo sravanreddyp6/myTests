@@ -20544,22 +20544,21 @@ records = progressFields.getArray(&quot;records&quot;);
 
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
 curRtype = recordTypeQuery.getArray(&quot;records&quot;);
-
+if(records[0].Service_Code__c != null ){
 var ServiceCodeQuery = sforce.connection.query(&quot;SELECT Id, Name, Service_Code__c from Service_Code__c where id = &apos;&quot; + records[0].Service_Code__c + &quot;&apos;&quot;);
 curSvcCode = ServiceCodeQuery.getArray(&quot;records&quot;); 
-
+}
 if(records[0].Service_Code__c == null &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
 errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
 } 
 if(records[0].Type__c == &apos;Co-Treatment&apos;&amp;&amp; records[0].Staff_Name__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos;){ 
 errors.push(&apos;You must enter the staff name if the type of treatment is co-treatment&apos;); 
 }
-if(records[0].Type__c ==null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Type_of_Contact__c == &apos;Face-To-Face&apos;){ 
+if(records[0].Type__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Type_of_Contact__c == &apos;Face-To-Face&apos;){ 
 errors.push(&apos;If type of contact is face to face , then type of treatment needs to be selected&apos;); 
 }
-if(curSvcCode[0].Service_Code__c == &apos;OTHER&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Other_Service_Code__c == null){ 
+if(records[0].Service_Code__c != null &amp;&amp; curSvcCode[0].Service_Code__c == &apos;OTHER&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Other_Service_Code__c == null){ 
 errors.push(&apos;Please Enter the Service code Manually&apos;); 
-}
 }
 // WVPN-21
 // Make the following fields required on finalization
