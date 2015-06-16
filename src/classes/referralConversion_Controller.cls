@@ -628,11 +628,12 @@ public with sharing class referralConversion_Controller {
                                             );
 
     insert newSA;
-    //EB-362
+    //EB-462
     if( referralRecordType.startsWith('Neuro') ){
 				list<Service_Code__c> Codes = [ SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c 
 														FROM Service_Code__c 
-														WHERE isActive__c = 1 AND Program_Value__c = :refCurr.Service_Location_Program__c];
+														WHERE Program_Code__c = :newSA.Program_Code__c
+															AND ( end_date__c > :date.valueof(newSA.SA_Start_DateTime__c) or end_date__c = null ) ];
 				list<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new list<ServiceAssignment_ServiceCode_JO__c>();	
 				for(Service_Code__c item: Codes){
 					ServiceAssignment_ServiceCode_JO__c servCodeXrefToSave = new ServiceAssignment_ServiceCode_JO__c(
