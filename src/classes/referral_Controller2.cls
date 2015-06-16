@@ -808,14 +808,30 @@ public with sharing class referral_Controller2 {
 		for (Integer orderedName: orderedNames) {
 			// We do not batch insert the tasks here because it leads to inconsistent
 			// sorting order.
-			insert new Task(
+			Task task = new Task(
 				Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
 				Priority = 'Normal',
 				Status = 'Not Started',
 				WhatId = referralRecord.Id,
 				OwnerId = dummyTask.OwnerId,
-				RecordTypeId = taskRecordType
+				RecordTypeId = taskRecordType,
+				ActivityDate = referralRecord.Referral_Date__c
 			);
+			if (task.Subject == 'Schedule Assessment')
+                	task.ActivityDate = task.ActivityDate + 3;
+				
+            if (task.Subject == 'Complete Assessment')
+                	task.ActivityDate = task.ActivityDate + 7;
+				
+            if (task.Subject == 'Assessment follow-up with Referral Source')
+                	task.ActivityDate = task.ActivityDate + 8;
+				
+            if (task.Subject == 'Upload CAT to iServe') 
+                	task.ActivityDate = task.ActivityDate + 15;
+				
+            if (task.Subject == 'Schedule a Red Flag call (if applicable)') 
+                	task.ActivityDate = task.ActivityDate + 15;
+            insert task;
 		}
 		populateActivities();
 
