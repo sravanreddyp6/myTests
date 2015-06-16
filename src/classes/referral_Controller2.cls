@@ -647,7 +647,46 @@ public with sharing class referral_Controller2 {
 			}
 		}
 		//end CTEAE-137
+		//eb-428
+		if(referralRecordType == 'NeuroRestorative'){
+			boolean PT = false;
+			boolean CL = false;
+			for(Funding_Source__c fs :fundingSources){
+				if(fs.Type_of_Coverage__c == 'Primary'){
+					CL = true;
+					if(fs.Payer_Type__c != null ){
+						PT = true;
+					}					
+				}
 
+			}
+			if(!CL){
+				messages.Add('Primary Funding Source');
+				hasReq = false;
+			}
+			if(!PT){
+				messages.Add('Primary Funding Source - Payer Type');
+				hasReq = false;
+			}			
+			
+			if(referralRecord.Primary_Diagnosis__c == null){
+				messages.Add('Primary Diagnosis');
+				hasReq = false;				
+			}	
+			if(referralRecord.Date_of_Injury__c == null){
+				messages.Add('Date of Injury');
+				hasReq = false;				
+			}
+			if(referralRecord.Cause_of_Injury_pick__c == null){
+				messages.Add('Cause of Injury');
+				hasReq = false;				
+			}	
+			if(referralRecord.Current_Location_Type__c == null){
+				messages.Add('Current Location Type');
+				hasReq = false;				
+			}								
+		}
+		
 		//start EC-54
 		if(referralRecordType == 'CareMeridian'){
 			Boolean hasPrimaryLoc = false, hasPrimaryFund = false;
