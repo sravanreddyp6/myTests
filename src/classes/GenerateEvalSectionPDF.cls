@@ -59,11 +59,12 @@ public with sharing class GenerateEvalSectionPDF {
 		approvalHistory = new List<ProcessInstanceHistory>();
 	
 		thisEval = [ select id, name, shift_start_time__c, shift_end_time__c, status__c, head_to_toe_status__c, owner.name from evaluation__c where id = :evaluationID LIMIT 1];
-			
-		GenerateGoalObjPDF goalscontroller = new GenerateGoalObjPDF();
-		goalscontroller.init( evaluationID, evalname);
-		objectives = goalscontroller.objectives;
-
+		
+		if (thisEval.shift_start_time__c != null && thisEval.shift_end_time__c != null) {	
+			GenerateGoalObjPDF goalscontroller = new GenerateGoalObjPDF();
+			goalscontroller.init( evaluationID, evalname);
+			objectives = goalscontroller.objectives;
+		}
         // Naming the PDF in case this controller is used for the PDF page
         String file;
         file = thisEval.Name+'.pdf';
