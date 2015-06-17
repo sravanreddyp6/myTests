@@ -75,6 +75,35 @@
             if ($adjusterEmail.size()>0 && $adjusterEmail.val()!='' && !validateEmail($adjusterEmail.val())) {
                 errors.push('Adjustor Email does not seem to a valid email address');
             }
+            
+            //For EB-438 Sravan
+            
+            if($('[id$=funding_casemanagerName]').val() == ''){
+            	errors.push('Case Manager is Mandatory');
+            }
+            
+            if($('[id$=funding_costTherapyEffeciveDate]').val() == ''){
+            	errors.push('Effective Date of Cost/Therapy is Mandatory');
+            }
+             
+            if($('[id$=funding_costTherapyTermDate]').val() == ''){
+            	errors.push('Term Date of Cost/Therapy');
+            }
+            
+            if($('[id$=funding_oneoneRatio]').val() == ''){
+            	errors.push('Staffing Ratio 1:1 field is Mandatory');
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //End EB-438
 
             // Other validation
             var $referralStatus = $('[id$=referralStatus]');
@@ -135,4 +164,41 @@
         var $el = $(document.getElementById(elSelector));
         $el.val(value);
     }
+    
+    costperDay = function(ValueId, typeId, elSelector){
+    	console.log('type id is '+typeId);
+    	var idt = "+typeId+";
+    	var dayCost = $(document.getElementById(ValueId)).val();
+    	//var types = jQuery('input[id*=typeId]');
+    	var types = document.getElementsByName(idt);
+    	var t = '';
+    	
+    	
+    	for(var x= 0; x < types.length; x++){
+    		if(types[x].checked){
+    			t = types[x].value;
+    		}
+    	}
+    	
+    	/*$('input[id*=dmeType]').each(function (index, element) {
+					if ( $(element).checked )
+						t = $(element).val();
+				});*/
+    	
+    	console.log('type is'+t);
+    	
+    	if(t == 'Yearly'){
+    		dayCost = dayCost/365;
+    	}
+    	else if(t == 'Monthly'){
+    		dayCost = dayCost/30;
+    	}
+    	else if (t == 'Weekly'){
+    		dayCost = dayCost/7;
+    	}
+    	
+    	assignValue(elSelector,dayCost);
+    
+    }
+    
 }) (jQuery.noConflict());

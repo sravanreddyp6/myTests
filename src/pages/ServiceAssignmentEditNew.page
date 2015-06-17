@@ -137,7 +137,7 @@
 			closeFundingSource = isClose;
 			fundingSourceSaveHelper('{!JSENCODE(fundingSourceRecordType)}');
 		}
-
+		
 		function loadFundingSource(fundingId) {
 			// This provides backward-compatibility with code the Appirio wrote
 			showEditFundingSource(fundingId);
@@ -154,6 +154,7 @@
 				j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').hide();
 			}
 		}
+		
 
 		function getToday() {
 			var today = new Date();
@@ -1479,6 +1480,8 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageBlockSection>
 				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
+					<apex:inputField value="{!fundingSource.Funding_Source_Status__c}"  />
+					<apex:pageBlockSectionItem />
                     <apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
                     <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
                     <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
@@ -1751,23 +1754,57 @@ END: Uncomment to have the element collapsed by default -->
             
             <apex:pageBlock title="Costs & Therapy Authorization Details" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
             	<apex:pageBlocksection columns="2" >
-            		<apex:inputField value="{!fundingSource.Case_Manager__c}" />
-            		<apex:inputField value="{!fundingSource.Effective_Date_of_Cost_therapy_Auth__c}" />
+            		<apex:pageBlockSectionItem >
+            			<apex:outputLabel value="Case Manager" />
+            			<apex:outputPanel >
+            				<div class="requiredInput">
+								<div class="requiredBlock"></div>
+           						<apex:inputField value="{!fundingSource.Case_Manager__c}" id="funding_casemanagerName"/>
+            				</div>
+            			</apex:outputPanel>
+            		</apex:pageBlockSectionItem>
+            		<apex:pageBlockSectionItem >
+            			<apex:outputLabel value="Effective Date of Cost/Therapy" />
+            			<apex:outputPanel >
+            				<div class="requiredInput">
+								<div class="requiredBlock"></div>
+           						<apex:inputField value="{!fundingSource.Effective_Date_of_Cost_therapy_Auth__c}" id="funding_costTherapyEffeciveDate"/>
+            				</div>
+            			</apex:outputPanel>
+            		</apex:pageBlockSectionItem>
+<!--             		<apex:inputField value="{!fundingSource.Effective_Date_of_Cost_therapy_Auth__c}" /> -->
             		<apex:pageBlockSectionitem />
-            		<apex:inputField value="{!fundingSource.Term_Date_of_Cost_therapy_Auth__c}" />
+            		
+            		<apex:pageBlockSectionItem >
+            			<apex:outputLabel value="Term Date of Cost/Therapy" />
+            			<apex:outputPanel >
+            				<div class="requiredInput">
+								<div class="requiredBlock"></div>
+           						<apex:inputField value="{!fundingSource.Term_Date_of_Cost_therapy_Auth__c}" id="funding_costTherapyTermDate"/>
+            				</div>
+            			</apex:outputPanel>
+            		</apex:pageBlockSectionItem>
+<!--             		<apex:inputField value="{!fundingSource.Term_Date_of_Cost_therapy_Auth__c}" /> -->
             	</apex:pageBlocksection>
             </apex:pageBlock>
 			
 			<apex:pageBlock title="COSTS PER DAY" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" >
+				<div id="costperdayErrors" />
 				<apex:pageBlockSection columns="2" >
 					<apex:pageblocksectionItem >
 						<apex:outputlabel value="Staffing Ratio 1:1" styleClass="labelCol" />
 						<apex:outputPanel >
-							<apex:SelectRadio value="{!fundingSource.Staffing_Ratio_1_1__c}" >
-								<apex:selectOption itemLabel="Yes" itemvalue="Yes" />
-								<apex:selectOption itemLabel="No" itemValue="No" />
-							</apex:SelectRadio>
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+								<apex:inputField value="{!fundingSource.Staffing_Ratio_1_1__c}" id="funding_oneoneRatio" />
+							</div>
 						</apex:outputPanel>
+<!-- 						<apex:outputPanel > -->
+<!-- 							<apex:SelectRadio value="{!fundingSource.Staffing_Ratio_1_1__c}" > -->
+<!-- 								<apex:selectOption itemLabel="Yes" itemvalue="Yes" /> -->
+<!-- 								<apex:selectOption itemLabel="No" itemValue="No" /> -->
+<!-- 							</apex:SelectRadio> -->
+<!-- 						</apex:outputPanel> -->
 					</apex:pageblocksectionItem>
 					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="Number of Hrs. Expected" styleClass="labelCol" />
@@ -1778,10 +1815,10 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:panelGrid columns="3" style="margin-left: 50px;">
 					<apex:panelGroup >
 						<apex:outputlabel value="DME" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.DME__c}" style="width:100px;margin-left:109px;"/>
+						<apex:inputField value="{!fundingSource.DME__c}" style="width:100px;margin-left:109px;" id="DMECost"/>
 					</apex:panelGroup>
 					<apex:panelGroup >
-						<apex:selectRadio value="{!fundingSource.DME_Calculation_Type__c}" >
+						<apex:selectRadio value="{!fundingSource.DME_Calculation_Type__c}" id="dmeType" onchange="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}');">
 							<apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
 							<apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
 							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
@@ -1789,7 +1826,7 @@ END: Uncomment to have the element collapsed by default -->
 					</apex:panelGroup>
 					<apex:panelGroup >	
 						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.DME_Per_Day__c}" style="width:100px;"/>
+						<apex:inputField value="{!fundingSource.DME_Per_Day__c}" style="width:100px;" id="dmeperDay"/>
 					</apex:panelGroup>
 					
 					<apex:panelGroup >
@@ -1841,15 +1878,23 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:inputField value="{!fundingSource.Other_Per_Day__c}" style="width:100px;"/>
 					</apex:panelGroup>
 					
-<!-- 					<apex:panelGroup > -->
-<!-- 						<apex:outputLabel value="Other Cost Description" styleClass="labelCol" /> -->
-<!-- 						<apex:inputField value="{!fundingSource.Other_Cost_Description__c}" /> -->
-<!-- 					</apex:panelGroup> -->
+					<apex:panelGroup >
+						<apex:outputLabel value="Other Cost Description" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Other_Cost_Description__c}" />
+					</apex:panelGroup>
 				</apex:panelGrid>
 				
 			</apex:pageBlock>
 			
 			<apex:pageBlock title="THERAPY AUTHORIZATION" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" >
+				<div id="therapyAuthErrors" />
+				<apex:pageBlockSection columns="1" >
+					<apex:pagebLockSectionItem >
+						<apex:outputLabel Value="Total Authorized Therapy Units" style="margin-right:50px;" for="totalAuthUnits"/>
+						<apex:inputText value="{!fundingSource.Total_Authorized_Therapy_Units__c}" html-readonly="true" style="width: 100px;" id="totalAuthUnits"/>
+					</apex:pagebLockSectionItem>
+				</apex:pageBlockSection>
+			
 				<apex:panelGrid columns="3" >
 					<apex:panelGroup >
 						<apex:outputLabel value="OT Auth Units" styleClass="labelCol"/>
@@ -1866,7 +1911,7 @@ END: Uncomment to have the element collapsed by default -->
 					
 					<apex:panelGroup >
 						<apex:outputLabel value="PT Auth Units" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.PT_Auth_Units__c}" style="width:100px; margin-left:50px;"/>
+						<apex:inputField value="{!fundingSource.PT_Auth_units__c}" style="width:100px; margin-left:50px;"/>
 					</apex:panelGroup>
 					<apex:panelGroup style="margin-left: 20px;">
 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
@@ -1916,16 +1961,20 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:inputField value="{!fundingSource.Counselling_Days_Authorized_To__c}" />
 					</apex:panelGroup>
 					
-					<apex:panelGroup>
-						<apex:outputLabel value="Auth Units Grand Total" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.Auth_Units_Grand_Total__c}" style="width:100px;"/>
-					</apex:panelGroup>
-					<apex:panelGroup >
-						<apex:outputLabel value="Auth Excess Justification" />
-						<apex:inputTextArea value="{!fundingSource.Auth_Excess_Justification__c}" rows="3" cols="20"/>
-					</apex:panelGroup>
-					<apex:panelGroup ></apex:panelGroup>
+<!-- 					<apex:panelGroup > -->
+<!-- 						<apex:outputLabel value="Auth Units Grand Total" styleClass="labelCol" /> -->
+<!-- 						<apex:inputField value="{!fundingSource.Auth_Units_Grand_Total__c}" style="width:100px;"/> -->
+<!-- 					</apex:panelGroup> -->
+<!-- 					<apex:panelGroup > -->
+<!-- 						<apex:outputLabel value="Auth Excess Justification" /> -->
+<!-- 						<apex:inputTextArea value="{!fundingSource.Auth_Excess_Justification__c}" rows="3" cols="20"/> -->
+<!-- 					</apex:panelGroup> -->
+<!-- 					<apex:panelGroup ></apex:panelGroup> -->
 				</apex:panelgrid>
+				<apex:pageBlockSection Columns="1" >
+					<apex:inputText value="{!fundingSource.Auth_Units_Grand_Total__c}" label="Authorized Units Grand Total" html-readOnly="true"/>
+					<apex:inputTextArea value="{!fundingSource.Auth_Excess_Justification__c}" rows="3" cols="20" />
+				</apex:pageBlockSection>
 <!-- 				<apex:panelGrid columns="6" >	 -->
 <!-- 					<apex:panelGroup > -->
 <!-- 						<apex:outputLabel value="OT Auth Units" styleClass="labelCol" /><br/> -->
@@ -1936,7 +1985,7 @@ END: Uncomment to have the element collapsed by default -->
 <!-- 					</apex:panelGroup> -->
 <!-- 					<apex:panelGroup > -->
 <!-- 						<apex:inputField value="{!fundingSource.OT_Auth_Units__c}" style="width:100px;"/><br/> -->
-<!-- 						<apex:inputField value="{!fundingSource.PT_Auth_Units__c}" style="width:100px;"/><br/> -->
+<!-- 						<apex:inputField value="{!fundingSource.PT_Auth_units__c}" style="width:100px;"/><br/> -->
 <!-- 						<apex:inputField value="{!fundingSource.SLP_Auth_Units__c}" style="width:100px;"/><br/> -->
 <!-- 						<apex:inputField value="{!fundingSource.BIT_Auth_Units__c}" style="width:100px;"/><br/> -->
 <!-- 						<apex:inputField value="{!fundingSource.Counselling_Auth_Units__c}" style="width:100px;"/> -->
