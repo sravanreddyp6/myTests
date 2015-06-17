@@ -116,6 +116,7 @@ public with sharing class referralConversion_Controller {
                         r.State_Specific_ID_Name__c,
                         r.Services_Requested__c,
                         r.Service_Location__c,
+                        r.Service_Location__r.ProgramID__c,
                         r.Service_Location_Zip__c,
                         r.Service_Location_Street__c,
                         r.Service_Location_State__c,
@@ -632,7 +633,7 @@ public with sharing class referralConversion_Controller {
     if( referralRecordType.startsWith('Neuro') ){
 				list<Service_Code__c> Codes = [ SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c 
 														FROM Service_Code__c 
-														WHERE Program_Code__c = :newSA.Program_Code__c
+														WHERE Program_Code__c = :refCurr.Service_Location__r.ProgramID__c
 															AND ( end_date__c > :date.valueof(newSA.SA_Start_DateTime__c) or end_date__c = null ) ];
 				list<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new list<ServiceAssignment_ServiceCode_JO__c>();	
 				for(Service_Code__c item: Codes){
