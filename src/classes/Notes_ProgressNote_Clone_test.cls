@@ -1,4 +1,5 @@
-public with sharing class Notes_ProgressNote_Clone_test {
+@isTest
+private with sharing class Notes_ProgressNote_Clone_test {
     static testMethod void myUnitTest() {
         
         Contact testContact = new Contact(
@@ -36,7 +37,8 @@ public with sharing class Notes_ProgressNote_Clone_test {
           End_Time__c = datetime.newInstance(2012, 1, 1, 15, 0, 0),
           Person_Being_Served__c = testContact.Id,
           No_Approval_Needed__c = true,
-          Approval_Status__c = 'Approved'
+          Approval_Status__c = 'Approved',
+          Purpose_Service_is_Billable__c = false
         );
         insert testPN;
 
