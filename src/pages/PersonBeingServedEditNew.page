@@ -838,7 +838,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             <!-- added isNR for EB-430 by Amruth -->
-            <apex:pageBlock rendered="{!(vfVarIsCM || isNR)}">
+            <apex:pageBlock rendered="{!vfVarIsCM}">
             <a id="assistiveDevices" />            
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device"
