@@ -870,6 +870,9 @@ public with sharing class referral_Controller2 {
                 
             if (task.Subject == 'Schedule a Red Flag call (if applicable)') 
                     task.ActivityDate = task.ActivityDate + 15;
+            
+            if (task.Subject == '2nd Assessment by Specialist (RB, Behavior Specialist) if necessary'||task.Subject == 'Budget Approved by Business Director'||task.Subject == 'Written Rate Approval Received'||task.Subject == 'Admission Scheduled') 
+                	task.ActivityDate = null;
             insert task;
         }
         populateActivities();
