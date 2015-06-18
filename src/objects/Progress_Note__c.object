@@ -3243,7 +3243,7 @@ Neurostative IL role</description>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Counselling</fullName>
+                <fullName>Counseling</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -19262,7 +19262,7 @@ Neurostative IL role</description>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Counselling</fullName>
+                <fullName>Counseling</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -20559,6 +20559,582 @@ errors.push(&apos;If type of contact is face to face , then type of treatment ne
 }
 if(records[0].Service_Code__c != null &amp;&amp; curSvcCode[0].Service_Code__c == &apos;OTHER&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Other_Service_Code__c == null){ 
 errors.push(&apos;Please Enter the Service code Manually&apos;); 
+}
+// WVPN-21
+// Make the following fields required on finalization
+if (curRtype[0].DeveloperName == &apos;IN_FCT&apos;) {
+var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
+if (value == &apos;&apos;){
+errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
+}
+
+if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
+errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
+}
+value = &apos;{!JSENCODE(Progress_Note__c.Staff_Name__c)}&apos;;
+if (value == &apos;&apos;){
+errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
+}
+if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
+errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
+}
+}
+
+/*
+// CTEAE-78 - remove check for Auth 
+// CTEAE-51 require auth for AVATAR but not AZ notes
+var PBSQuery = sforce.connection.query(&quot;SELECT Id, Avatar_Source_System__c from Contact where id = &apos;{!Progress_Note__c.Person_Being_ServedId__c}&apos;&quot;); 
+var billingsystem = PBSQuery.getArray(&quot;records&quot;)[0].Avatar_Source_System__c;
+
+var admission_state = &apos;{! Progress_Note__c.Admission_State__c }&apos;;
+if(records[0].Authorization__c == null &amp;&amp; 
+billingsystem == &apos;AVATAR&apos; &amp;&amp; admission_state != &apos;AZ&apos;)
+{ 
+errors.push(&apos;A Progress Note cannot be finalized without an Authorization. Please select an Authorization from the list. If no authorizations are available, you may need to finalize this note later.&apos;); 
+} 
+*/
+
+//Check to see if there is a signature on file
+if ((curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) &amp;&amp; records[0].Number_of_Required_Signatures__c &gt; 0 &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
+errors.push(&apos;A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization. If you have esigned the document, hit refresh on the browser page and then click Finalize this Progress Note.&apos;);
+}
+
+if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apos;{!Progress_Note__c.Primary_Care_Provider_Name__c}&apos; ==&apos;&apos;){ 
+alerts.push( &apos;WARNING! A Primary Care provider name has not been entered&apos; ); 
+} 
+
+if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apos;{!Progress_Note__c.Primary_Care_Provider_NPI_Number__c}&apos; ==&apos;&apos;){ 
+alerts.push( &apos;WARNING! A Primary Care provider NPI name has not been entered&apos; ); 
+} 
+
+var shortTermGoalQuery = sforce.connection.query(&quot;SELECT Id, Progress_Note__c, Goal__c from ProgressNote_ActionPlanChildren_mjo__c where Progress_Note__c =&apos;{!Progress_Note__c.Id}&apos;&quot;);
+stg_data = shortTermGoalQuery.getArray(&quot;records&quot;); 
+
+var stg = false; 
+var intervention = false; 
+var objective = false; 
+
+for(var i=0;i&lt;stg_data.length;i++){ 
+if(stg_data[i].Goal__c != null){ 
+stg = true; 
+} 
+
+} 
+var ServiceAssignment = &apos;{!JSENCODE(Progress_Note__c.Service_Assignment__c)}&apos;; 
+//alert(&apos;{!Progress_Note__c.Service_Assignment__c}&apos;); 
+if(!stg &amp;&amp; ServiceAssignment.search(&quot;Asmt Only&quot;) == -1
+&amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must select a &quot;Goal&quot; before continuing.&apos;); 
+} 
+if({!ISBLANK( Progress_Note__c.Action_Plan__c )} &amp;&amp; ServiceAssignment.search(&quot;Asmt Only&quot;) == -1){ 
+errors.push(&apos;You must select a &quot;Plan&quot; before continuing.&apos;); 
+} 
+
+if({!ISBLANK(Progress_Note__c.Interventions__c)}
+&amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
+errors.push(&apos;You must populate the &quot;Intervention&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Progress__c)}
+&amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;NC_Wks_1_6_TFC&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
+errors.push(&apos;You must populate the &quot;Progress&quot; field before continuing.&apos;); 
+} 
+
+// WVPN-19 : Start
+if({!ISBLANK(Progress_Note__c.Primary_Diagnosis__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Diagnostic Code&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Staff_Name__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Staff Name&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Staff_Credentials__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Staff Credentials&quot; field before continuing.&apos;); 
+} 
+// WVPN-19 : End
+
+
+// EB-197: START
+if({!ISBLANK(Progress_Note__c.Notes_For_Next_Visit__c)}
+&amp;&amp; (curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; )) {
+errors.push(&apos;You must populate the &quot;Notes For Next Visit&quot; field before continuing.&apos;);
+}
+// EB-197: END
+
+// START: EB-210: NC TFC Progress Note flavor field requirements
+// 2014-12-06 - EB-262 - changed to embedded VF page so we need to query to get values
+var tfcFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, purpose_of_this_consultation__c, scheduling_status__c, foster_parents__c, topic_behavior_management__c, Topic_Diagnostic_Psycho_education__c, Topic_Family_Interactions__c, Topic_Life_Book_Development__c, Topic_Separation_Loss_and_Grief_Issues__c, Topic_Shared_Parenting__c, Topic_Successful_Adaptation__c, Topic_TFP_Rules_of_the_Road__c, Topic_Treatment_Goal_Review_PCP__c, Topic_Other__c, Topic_If_Other__c,PCP_Update_since_last_visit__c, Provided_to_reviewed_w_foster_parents__c, Coord_support_for_Mentor_child__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+records = tfcFields.getArray(&quot;records&quot;); 
+
+if( !records[0].Purpose_of_this_Consultation__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Purpose of this Consultation&quot; field before continuing.&apos;);
+}
+if( !records[0].Scheduling_Status__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Scheduling Status&quot; field before continuing.&apos;);
+}
+if( !records[0].Foster_Parents__c &amp;&amp; (curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;)) {
+errors.push(&apos;You must populate the &quot;Foster Parents&quot; field before continuing.&apos;);
+}
+
+if(records[0].Topic_Behavior_Management__c==&apos;false&apos; &amp;&amp; records[0].Topic_Diagnostic_Psycho_education__c==&apos;false&apos; &amp;&amp; records[0].Topic_Family_Interactions__c==&apos;false&apos; &amp;&amp; records[0].Topic_Life_Book_Development__c==&apos;false&apos; &amp;&amp; records[0].Topic_Other__c==&apos;false&apos; &amp;&amp; records[0].Topic_Separation_Loss_and_Grief_Issues__c==&apos;false&apos; &amp;&amp; records[0].Topic_Shared_Parenting__c==&apos;false&apos; &amp;&amp; records[0].Topic_Successful_Adaptation__c==&apos;false&apos; &amp;&amp; records[0].Topic_TFP_Rules_of_the_Road__c==&apos;false&apos; &amp;&amp; records[0].Topic_Treatment_Goal_Review_PCP__c==&apos;false&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) {
+errors.push(&apos;You must select at least one &quot;Clinical Consultation / Skill Enhancement Topic&quot; before continuing.&apos;);
+}
+if(records[0].Topic_Other__c==&apos;true&apos; &amp;&amp; !records[0].Topic_If_Other__c ){
+errors.push(&apos;If the &quot;Clinical Consultation / Skill Enhancement Topic&quot; option &quot;Other&quot; has been selected, then you must make an entry in the &quot;If Other&quot; field before continuing.&apos;);
+}
+if(!records[0].PCP_update_since_last_visit__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;PCP update since last visit?&quot; field before continuing.&apos;);
+}
+if( records[0].PCP_update_since_last_visit__c == &apos;Yes&apos; &amp;&amp; !records[0].Provided_to_reviewed_w_foster_parents__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;If the response to &quot;PCP update since last visit?&quot; is &quot;Yes,&quot; you must populate the &quot;Provided to/reviewed w/ foster parents?&quot; field before continuing.&apos;);
+}
+if( !records[0].Coord_support_for_Mentor_child__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Coord. support for Mentor &amp; child?&quot; field before continuing.&apos;);
+}
+// END: EB-210: NC TFC Progress Note flavor field requirements
+
+} 
+if(errors.length &lt;= 0){ 
+if(alerts.length &gt; 0){ 
+if(document.getElementById(&quot;alertDiv&quot;)){ 
+var alertDiv = document.getElementById(&quot;alertDiv&quot;); 
+alertDiv.setAttribute(&apos;style&apos;,&apos;display:none;&apos;); 
+alertDiv.innerHTML=&quot;&quot;; 
+window.location.href = &apos;/apex/Notes_ProgressNote_Approval?id={!Progress_Note__c.Id}&apos;; 
+}else{ 
+var alertDiv = document.createElement(&apos;div&apos;); 
+var alertListContainer = document.createElement(&apos;ul&apos;); 
+alertDiv.setAttribute(&apos;style&apos;,&apos;color:orange; font-size:18px; border:2px solid orange;margin-bottom:15px;&apos;); 
+alertDiv.setAttribute(&quot;id&quot;, &quot;alertDiv&quot;); 
+for (var i=0;i&lt;alerts.length;i++) 
+{ 
+var alertListItems = document.createElement(&apos;li&apos;); 
+alertListItems.appendChild(document.createTextNode(alerts[i])); 
+alertListContainer.appendChild(alertListItems); 
+} 
+alertDiv.appendChild(alertListContainer); 
+var headElm = document.getElementsByClassName(&quot;pbHeader&quot;); 
+headElm[0].appendChild(alertDiv); 
+} 
+}else{ 
+window.location.href = &apos;/apex/Notes_ProgressNote_Approval?id={!Progress_Note__c.Id}&apos;; 
+} 
+}else{ 
+if(document.getElementById(&quot;errorDiv&quot;)){ 
+var errorDiv = document.getElementById(&quot;errorDiv&quot;); 
+errorDiv.innerHTML=&quot;&quot;; 
+}else{ 
+var errorDiv = document.createElement(&apos;div&apos;); 
+} 
+
+var listContainer = document.createElement(&apos;ul&apos;); 
+errorDiv.setAttribute(&apos;style&apos;,&apos;color:red; font-size:18px; border:2px solid red;margin-bottom:15px;&apos;); 
+errorDiv.setAttribute(&quot;id&quot;, &quot;errorDiv&quot;); 
+for (var i=0;i&lt;errors.length;i++) 
+{ 
+var listItems = document.createElement(&apos;li&apos;); 
+listItems.appendChild(document.createTextNode(errors[i])); 
+listContainer.appendChild(listItems); 
+} 
+errorDiv.appendChild(listContainer); 
+
+var headElm = document.getElementsByClassName(&quot;pbHeader&quot;); 
+if(alerts.length &gt; 0){ 
+if(document.getElementById(&quot;alertDiv&quot;)){ 
+var alertDiv = document.getElementById(&quot;alertDiv&quot;); 
+alertDiv.innerHTML=&quot;&quot;; 
+}else{ 
+var alertDiv = document.createElement(&apos;div&apos;); 
+} 
+var alertListContainer = document.createElement(&apos;ul&apos;); 
+alertDiv.setAttribute(&apos;style&apos;,&apos;color:orange; font-size:18px; border:2px solid orange;margin-bottom:15px;&apos;); 
+alertDiv.setAttribute(&quot;id&quot;, &quot;alertDiv&quot;); 
+for (var i=0;i&lt;alerts.length;i++) 
+{ 
+var alertListItems = document.createElement(&apos;li&apos;); 
+alertListItems.appendChild(document.createTextNode(alerts[i])); 
+alertListContainer.appendChild(alertListItems); 
+} 
+alertDiv.appendChild(alertListContainer); 
+headElm[0].appendChild(alertDiv); 
+} 
+headElm[0].appendChild(errorDiv); 
+        <url>{!REQUIRESCRIPT(&quot;/soap/ajax/16.0/connection.js&quot;)} 
+{!REQUIRESCRIPT(&quot;/soap/ajax/20.0/apex.js&quot;)} 
+
+if (!(&apos;indexOf&apos; in Array.prototype)) { 
+Array.prototype.indexOf= function(find, i /*opt*/) { 
+if (i===undefined) i= 0; 
+if (i&lt;0) i+= this.length; 
+if (i&lt;0) i= 0; 
+for (var n= this.length; i&lt;n; i++) 
+if (i in this &amp;&amp; this[i]===find) 
+return i; 
+return -1; 
+}; 
+} 
+if (!(&apos;lastIndexOf&apos; in Array.prototype)) { 
+Array.prototype.lastIndexOf= function(find, i /*opt*/) { 
+if (i===undefined) i= this.length-1; 
+if (i&lt;0) i+= this.length; 
+if (i&gt;this.length-1) i= this.length-1; 
+for (i++; i--&gt;0;) /* i++ because from-argument is sadly inclusive */ 
+if (i in this &amp;&amp; this[i]===find) 
+return i; 
+return -1; 
+}; 
+} 
+
+if ( !document.getElementsByClassName ) { 
+document.getElementsByClassName = function( classname ) { 
+var elArray = []; 
+var tmp = document.getElementsByTagName(&quot;*&quot;); 
+var regex = new RegExp(&quot;(^|\s)&quot; + classname + &quot;(\s|$)&quot;); 
+for ( var i = 0; i &lt; tmp.length; i++ ) { 
+if ( regex.test(tmp[i].className) ) { 
+elArray.push(tmp[i]); 
+} 
+} 
+return elArray; 
+}; 
+} 
+
+
+var errors = []; 
+var alerts = []; 
+// CTEAE-78 - remove Auth check for NC and AZ
+/* 
+var authorization_types = [&amp;quot;NC - Child and Family Team&amp;quot;,&amp;quot;NC - IIH&amp;quot;,&amp;quot;NC - IMAPP&amp;quot;,&amp;quot;NC - OPT&amp;quot;]; 
+*/
+if( {! ISPICKVAL(Progress_Note__c.Status__c,&apos;Final&apos;)} ){ 
+alert(&apos;This Progress Note has already been Finalized&apos;); 
+} 
+else if({! ISPICKVAL(Progress_Note__c.Approval_Status__c,&apos;Pending&apos;)}){ 
+alert(&apos;This Progress Note is pending Approval&apos;); 
+} 
+else{ 
+if({! ISPICKVAL(Progress_Note__c.Service_Location__c,&apos;&apos;)}){ 
+errors.push(&apos;You must select a &quot;Service Location&quot; before continuing.&apos;); 
+} 
+if({! ISPICKVAL(Progress_Note__c.Type_of_Contact__c,&apos;&apos;)}){ 
+errors.push(&apos;You must select the &quot;Type of Contact&quot; before continuing.&apos;); 
+} 
+
+
+//Check to see if there is a Service Code selected 
+var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId,RecordType.name, Service_Code__c,Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c,Type__c,Staff_Name__c,Other_Service_Code__c ,Type_of_Contact__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+records = progressFields.getArray(&quot;records&quot;); 
+
+var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
+curRtype = recordTypeQuery.getArray(&quot;records&quot;);
+if(records[0].Service_Code__c != null ){
+var ServiceCodeQuery = sforce.connection.query(&quot;SELECT Id, Name, Service_Code__c from Service_Code__c where id = &apos;&quot; + records[0].Service_Code__c + &quot;&apos;&quot;);
+curSvcCode = ServiceCodeQuery.getArray(&quot;records&quot;); 
+}
+if(records[0].Service_Code__c == null &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
+errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
+} 
+if(records[0].Type__c == &apos;Co-Treatment&apos;&amp;&amp; records[0].Staff_Name__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos;){ 
+errors.push(&apos;You must enter the staff name if the type of treatment is co-treatment&apos;); 
+}
+if(records[0].Type__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Type_of_Contact__c == &apos;Face-To-Face&apos;){ 
+errors.push(&apos;If type of contact is face to face , then type of treatment needs to be selected&apos;); 
+}
+if(records[0].Service_Code__c != null &amp;&amp; curSvcCode[0].Service_Code__c == &apos;OTHER&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Other_Service_Code__c == null){ 
+errors.push(&apos;When Service Code = &quot;Other&quot; is selected, you must manually enter a code or description in the &quot;Other Service Code&quot; text box. &apos;); 
+}
+// WVPN-21
+// Make the following fields required on finalization
+if (curRtype[0].DeveloperName == &apos;IN_FCT&apos;) {
+var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
+if (value == &apos;&apos;){
+errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
+}
+
+if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
+errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
+}
+value = &apos;{!JSENCODE(Progress_Note__c.Staff_Name__c)}&apos;;
+if (value == &apos;&apos;){
+errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
+}
+if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
+errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
+}
+}
+
+/*
+// CTEAE-78 - remove check for Auth 
+// CTEAE-51 require auth for AVATAR but not AZ notes
+var PBSQuery = sforce.connection.query(&quot;SELECT Id, Avatar_Source_System__c from Contact where id = &apos;{!Progress_Note__c.Person_Being_ServedId__c}&apos;&quot;); 
+var billingsystem = PBSQuery.getArray(&quot;records&quot;)[0].Avatar_Source_System__c;
+
+var admission_state = &apos;{! Progress_Note__c.Admission_State__c }&apos;;
+if(records[0].Authorization__c == null &amp;&amp; 
+billingsystem == &apos;AVATAR&apos; &amp;&amp; admission_state != &apos;AZ&apos;)
+{ 
+errors.push(&apos;A Progress Note cannot be finalized without an Authorization. Please select an Authorization from the list. If no authorizations are available, you may need to finalize this note later.&apos;); 
+} 
+*/
+
+//Check to see if there is a signature on file
+if ((curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) &amp;&amp; records[0].Number_of_Required_Signatures__c &gt; 0 &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
+errors.push(&apos;A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization. If you have esigned the document, hit refresh on the browser page and then click Finalize this Progress Note.&apos;);
+}
+
+if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apos;{!Progress_Note__c.Primary_Care_Provider_Name__c}&apos; ==&apos;&apos;){ 
+alerts.push( &apos;WARNING! A Primary Care provider name has not been entered&apos; ); 
+} 
+
+if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apos;{!Progress_Note__c.Primary_Care_Provider_NPI_Number__c}&apos; ==&apos;&apos;){ 
+alerts.push( &apos;WARNING! A Primary Care provider NPI name has not been entered&apos; ); 
+} 
+
+var shortTermGoalQuery = sforce.connection.query(&quot;SELECT Id, Progress_Note__c, Goal__c from ProgressNote_ActionPlanChildren_mjo__c where Progress_Note__c =&apos;{!Progress_Note__c.Id}&apos;&quot;);
+stg_data = shortTermGoalQuery.getArray(&quot;records&quot;); 
+
+var stg = false; 
+var intervention = false; 
+var objective = false; 
+
+for(var i=0;i&lt;stg_data.length;i++){ 
+if(stg_data[i].Goal__c != null){ 
+stg = true; 
+} 
+
+} 
+var ServiceAssignment = &apos;{!JSENCODE(Progress_Note__c.Service_Assignment__c)}&apos;; 
+//alert(&apos;{!Progress_Note__c.Service_Assignment__c}&apos;); 
+if(!stg &amp;&amp; ServiceAssignment.search(&quot;Asmt Only&quot;) == -1
+&amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must select a &quot;Goal&quot; before continuing.&apos;); 
+} 
+if({!ISBLANK( Progress_Note__c.Action_Plan__c )} &amp;&amp; ServiceAssignment.search(&quot;Asmt Only&quot;) == -1){ 
+errors.push(&apos;You must select a &quot;Plan&quot; before continuing.&apos;); 
+} 
+
+if({!ISBLANK(Progress_Note__c.Interventions__c)}
+&amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
+errors.push(&apos;You must populate the &quot;Intervention&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Progress__c)}
+&amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;
+&amp;&amp; curRtype[0].DeveloperName != &apos;NC_Wks_1_6_TFC&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
+errors.push(&apos;You must populate the &quot;Progress&quot; field before continuing.&apos;); 
+} 
+
+// WVPN-19 : Start
+if({!ISBLANK(Progress_Note__c.Primary_Diagnosis__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Diagnostic Code&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Staff_Name__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Staff Name&quot; field before continuing.&apos;); 
+} 
+if({!ISBLANK(Progress_Note__c.Staff_Credentials__c)}
+&amp;&amp; curRtype[0].DeveloperName == &apos;OH_FCT&apos;){ 
+errors.push(&apos;You must populate the &quot;Staff Credentials&quot; field before continuing.&apos;); 
+} 
+// WVPN-19 : End
+
+
+// EB-197: START
+if({!ISBLANK(Progress_Note__c.Notes_For_Next_Visit__c)}
+&amp;&amp; (curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; )) {
+errors.push(&apos;You must populate the &quot;Notes For Next Visit&quot; field before continuing.&apos;);
+}
+// EB-197: END
+
+// START: EB-210: NC TFC Progress Note flavor field requirements
+// 2014-12-06 - EB-262 - changed to embedded VF page so we need to query to get values
+var tfcFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, purpose_of_this_consultation__c, scheduling_status__c, foster_parents__c, topic_behavior_management__c, Topic_Diagnostic_Psycho_education__c, Topic_Family_Interactions__c, Topic_Life_Book_Development__c, Topic_Separation_Loss_and_Grief_Issues__c, Topic_Shared_Parenting__c, Topic_Successful_Adaptation__c, Topic_TFP_Rules_of_the_Road__c, Topic_Treatment_Goal_Review_PCP__c, Topic_Other__c, Topic_If_Other__c,PCP_Update_since_last_visit__c, Provided_to_reviewed_w_foster_parents__c, Coord_support_for_Mentor_child__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+records = tfcFields.getArray(&quot;records&quot;); 
+
+if( !records[0].Purpose_of_this_Consultation__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Purpose of this Consultation&quot; field before continuing.&apos;);
+}
+if( !records[0].Scheduling_Status__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Scheduling Status&quot; field before continuing.&apos;);
+}
+if( !records[0].Foster_Parents__c &amp;&amp; (curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;)) {
+errors.push(&apos;You must populate the &quot;Foster Parents&quot; field before continuing.&apos;);
+}
+
+if(records[0].Topic_Behavior_Management__c==&apos;false&apos; &amp;&amp; records[0].Topic_Diagnostic_Psycho_education__c==&apos;false&apos; &amp;&amp; records[0].Topic_Family_Interactions__c==&apos;false&apos; &amp;&amp; records[0].Topic_Life_Book_Development__c==&apos;false&apos; &amp;&amp; records[0].Topic_Other__c==&apos;false&apos; &amp;&amp; records[0].Topic_Separation_Loss_and_Grief_Issues__c==&apos;false&apos; &amp;&amp; records[0].Topic_Shared_Parenting__c==&apos;false&apos; &amp;&amp; records[0].Topic_Successful_Adaptation__c==&apos;false&apos; &amp;&amp; records[0].Topic_TFP_Rules_of_the_Road__c==&apos;false&apos; &amp;&amp; records[0].Topic_Treatment_Goal_Review_PCP__c==&apos;false&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) {
+errors.push(&apos;You must select at least one &quot;Clinical Consultation / Skill Enhancement Topic&quot; before continuing.&apos;);
+}
+if(records[0].Topic_Other__c==&apos;true&apos; &amp;&amp; !records[0].Topic_If_Other__c ){
+errors.push(&apos;If the &quot;Clinical Consultation / Skill Enhancement Topic&quot; option &quot;Other&quot; has been selected, then you must make an entry in the &quot;If Other&quot; field before continuing.&apos;);
+}
+if(!records[0].PCP_update_since_last_visit__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;PCP update since last visit?&quot; field before continuing.&apos;);
+}
+if( records[0].PCP_update_since_last_visit__c == &apos;Yes&apos; &amp;&amp; !records[0].Provided_to_reviewed_w_foster_parents__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;If the response to &quot;PCP update since last visit?&quot; is &quot;Yes,&quot; you must populate the &quot;Provided to/reviewed w/ foster parents?&quot; field before continuing.&apos;);
+}
+if( !records[0].Coord_support_for_Mentor_child__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+errors.push(&apos;You must populate the &quot;Coord. support for Mentor &amp; child?&quot; field before continuing.&apos;);
+}
+// END: EB-210: NC TFC Progress Note flavor field requirements
+
+} 
+if(errors.length &lt;= 0){ 
+if(alerts.length &gt; 0){ 
+if(document.getElementById(&quot;alertDiv&quot;)){ 
+var alertDiv = document.getElementById(&quot;alertDiv&quot;); 
+alertDiv.setAttribute(&apos;style&apos;,&apos;display:none;&apos;); 
+alertDiv.innerHTML=&quot;&quot;; 
+window.location.href = &apos;/apex/Notes_ProgressNote_Approval?id={!Progress_Note__c.Id}&apos;; 
+}else{ 
+var alertDiv = document.createElement(&apos;div&apos;); 
+var alertListContainer = document.createElement(&apos;ul&apos;); 
+alertDiv.setAttribute(&apos;style&apos;,&apos;color:orange; font-size:18px; border:2px solid orange;margin-bottom:15px;&apos;); 
+alertDiv.setAttribute(&quot;id&quot;, &quot;alertDiv&quot;); 
+for (var i=0;i&lt;alerts.length;i++) 
+{ 
+var alertListItems = document.createElement(&apos;li&apos;); 
+alertListItems.appendChild(document.createTextNode(alerts[i])); 
+alertListContainer.appendChild(alertListItems); 
+} 
+alertDiv.appendChild(alertListContainer); 
+var headElm = document.getElementsByClassName(&quot;pbHeader&quot;); 
+headElm[0].appendChild(alertDiv); 
+} 
+}else{ 
+window.location.href = &apos;/apex/Notes_ProgressNote_Approval?id={!Progress_Note__c.Id}&apos;; 
+} 
+}else{ 
+if(document.getElementById(&quot;errorDiv&quot;)){ 
+var errorDiv = document.getElementById(&quot;errorDiv&quot;); 
+errorDiv.innerHTML=&quot;&quot;; 
+}else{ 
+var errorDiv = document.createElement(&apos;div&apos;); 
+} 
+
+var listContainer = document.createElement(&apos;ul&apos;); 
+errorDiv.setAttribute(&apos;style&apos;,&apos;color:red; font-size:18px; border:2px solid red;margin-bottom:15px;&apos;); 
+errorDiv.setAttribute(&quot;id&quot;, &quot;errorDiv&quot;); 
+for (var i=0;i&lt;errors.length;i++) 
+{ 
+var listItems = document.createElement(&apos;li&apos;); 
+listItems.appendChild(document.createTextNode(errors[i])); 
+listContainer.appendChild(listItems); 
+} 
+errorDiv.appendChild(listContainer); 
+
+var headElm = document.getElementsByClassName(&quot;pbHeader&quot;); 
+if(alerts.length &gt; 0){ 
+if(document.getElementById(&quot;alertDiv&quot;)){ 
+var alertDiv = document.getElementById(&quot;alertDiv&quot;); 
+alertDiv.innerHTML=&quot;&quot;; 
+}else{ 
+var alertDiv = document.createElement(&apos;div&apos;); 
+} 
+var alertListContainer = document.createElement(&apos;ul&apos;); 
+alertDiv.setAttribute(&apos;style&apos;,&apos;color:orange; font-size:18px; border:2px solid orange;margin-bottom:15px;&apos;); 
+alertDiv.setAttribute(&quot;id&quot;, &quot;alertDiv&quot;); 
+for (var i=0;i&lt;alerts.length;i++) 
+{ 
+var alertListItems = document.createElement(&apos;li&apos;); 
+alertListItems.appendChild(document.createTextNode(alerts[i])); 
+alertListContainer.appendChild(alertListItems); 
+} 
+alertDiv.appendChild(alertListContainer); 
+headElm[0].appendChild(alertDiv); 
+} 
+headElm[0].appendChild(errorDiv); 
+        <url>{!REQUIRESCRIPT(&quot;/soap/ajax/16.0/connection.js&quot;)} 
+{!REQUIRESCRIPT(&quot;/soap/ajax/20.0/apex.js&quot;)} 
+
+if (!(&apos;indexOf&apos; in Array.prototype)) { 
+Array.prototype.indexOf= function(find, i /*opt*/) { 
+if (i===undefined) i= 0; 
+if (i&lt;0) i+= this.length; 
+if (i&lt;0) i= 0; 
+for (var n= this.length; i&lt;n; i++) 
+if (i in this &amp;&amp; this[i]===find) 
+return i; 
+return -1; 
+}; 
+} 
+if (!(&apos;lastIndexOf&apos; in Array.prototype)) { 
+Array.prototype.lastIndexOf= function(find, i /*opt*/) { 
+if (i===undefined) i= this.length-1; 
+if (i&lt;0) i+= this.length; 
+if (i&gt;this.length-1) i= this.length-1; 
+for (i++; i--&gt;0;) /* i++ because from-argument is sadly inclusive */ 
+if (i in this &amp;&amp; this[i]===find) 
+return i; 
+return -1; 
+}; 
+} 
+
+if ( !document.getElementsByClassName ) { 
+document.getElementsByClassName = function( classname ) { 
+var elArray = []; 
+var tmp = document.getElementsByTagName(&quot;*&quot;); 
+var regex = new RegExp(&quot;(^|\s)&quot; + classname + &quot;(\s|$)&quot;); 
+for ( var i = 0; i &lt; tmp.length; i++ ) { 
+if ( regex.test(tmp[i].className) ) { 
+elArray.push(tmp[i]); 
+} 
+} 
+return elArray; 
+}; 
+} 
+
+
+var errors = []; 
+var alerts = []; 
+// CTEAE-78 - remove Auth check for NC and AZ
+/* 
+var authorization_types = [&amp;quot;NC - Child and Family Team&amp;quot;,&amp;quot;NC - IIH&amp;quot;,&amp;quot;NC - IMAPP&amp;quot;,&amp;quot;NC - OPT&amp;quot;]; 
+*/
+if( {! ISPICKVAL(Progress_Note__c.Status__c,&apos;Final&apos;)} ){ 
+alert(&apos;This Progress Note has already been Finalized&apos;); 
+} 
+else if({! ISPICKVAL(Progress_Note__c.Approval_Status__c,&apos;Pending&apos;)}){ 
+alert(&apos;This Progress Note is pending Approval&apos;); 
+} 
+else{ 
+if({! ISPICKVAL(Progress_Note__c.Service_Location__c,&apos;&apos;)}){ 
+errors.push(&apos;You must select a &quot;Service Location&quot; before continuing.&apos;); 
+} 
+if({! ISPICKVAL(Progress_Note__c.Type_of_Contact__c,&apos;&apos;)}){ 
+errors.push(&apos;You must select the &quot;Type of Contact&quot; before continuing.&apos;); 
+} 
+
+
+//Check to see if there is a Service Code selected 
+var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId,RecordType.name, Service_Code__c,Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c,Type__c,Staff_Name__c,Other_Service_Code__c ,Type_of_Contact__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+records = progressFields.getArray(&quot;records&quot;); 
+
+var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
+curRtype = recordTypeQuery.getArray(&quot;records&quot;);
+if(records[0].Service_Code__c != null ){
+var ServiceCodeQuery = sforce.connection.query(&quot;SELECT Id, Name, Service_Code__c from Service_Code__c where id = &apos;&quot; + records[0].Service_Code__c + &quot;&apos;&quot;);
+curSvcCode = ServiceCodeQuery.getArray(&quot;records&quot;); 
+}
+if(records[0].Service_Code__c == null &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
+errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
+} 
+if(records[0].Type__c == &apos;Co-Treatment&apos;&amp;&amp; records[0].Staff_Name__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos;){ 
+errors.push(&apos;You must enter the staff name if the type of treatment is co-treatment&apos;); 
+}
+if(records[0].Type__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Type_of_Contact__c == &apos;Face-To-Face&apos;){ 
+errors.push(&apos;If type of contact is face to face , then type of treatment needs to be selected&apos;); 
+}
+if(records[0].Service_Code__c != null &amp;&amp; curSvcCode[0].Service_Code__c == &apos;OTHER&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Other_Service_Code__c == null){ 
+errors.push(&apos;When Service Code = &quot;Other&quot; is selected, you must manually enter a code or description in the &quot;Other Service Code&quot; text box. &apos;); 
 }
 // WVPN-21
 // Make the following fields required on finalization
