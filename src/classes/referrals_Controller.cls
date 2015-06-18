@@ -1429,19 +1429,19 @@ public with sharing class referrals_Controller{
 			if (task.Subject == 'Schedule Assessment')
                 	task.ActivityDate = task.ActivityDate + 3;
 				
-            if (task.Subject == 'Complete Assessment')
+            else if (task.Subject == 'Complete Assessment')
                 	task.ActivityDate = task.ActivityDate + 7;
 				
-            if (task.Subject == 'Assessment follow-up with Referral Source')
+            else if (task.Subject == 'Assessment follow-up with Referral Source')
                 	task.ActivityDate = task.ActivityDate + 8;
 				
-            if (task.Subject == 'Upload CAT to iServe') 
+            else if (task.Subject == 'Upload CAT to iServe') 
                 	task.ActivityDate = task.ActivityDate + 15;
 				
-            if (task.Subject == 'Schedule a Red Flag call (if applicable)') 
+            else if (task.Subject == 'Schedule a Red Flag call (if applicable)') 
                 	task.ActivityDate = task.ActivityDate + 15;
                 	
-            if (task.Subject == '2nd Assessment by Specialist (RB, Behavior Specialist) if necessary'||task.Subject == 'Budget Approved by Business Director'||task.Subject == 'Written Rate Approval Received'||task.Subject == 'Admission Scheduled') 
+			else
                 	task.ActivityDate = null;
                 	
 			// We do not batch insert the tasks here because it leads to inconsistent
