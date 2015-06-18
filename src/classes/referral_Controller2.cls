@@ -660,14 +660,10 @@ public with sharing class referral_Controller2 {
                 }
 
             }
-            if(!CL){
-                messages.Add('Funding Source - Missing Primary Coverage level');
+            if(!CL || !PT){
+                messages.Add('One Funding Source must have both "Coverage Level" = "Primary" and any "Payer Type" selected');
                 hasReq = false;
-            }
-            if(!PT){
-                messages.Add('Funding Source - Missing Primary Payer Type');
-                hasReq = false;
-            }           
+            }       
             
             if(referralRecord.Diagnosis_I__c == null){
                 messages.Add('Primary Diagnosis');
