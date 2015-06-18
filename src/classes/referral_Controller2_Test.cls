@@ -108,7 +108,8 @@ public class referral_Controller2_Test{
             new Admission_Step__c(Name='5', Subject__c='Complete Assessment', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro5'),
             new Admission_Step__c(Name='6', Subject__c='Assessment follow-up with Referral Source', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro6'),
             new Admission_Step__c(Name='7', Subject__c='Upload CAT to iServe', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro7'),
-            new Admission_Step__c(Name='8', Subject__c='Schedule a Red Flag call (if applicable)', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro8')
+            new Admission_Step__c(Name='8', Subject__c='Schedule a Red Flag call (if applicable)', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro8'),
+            new Admission_Step__c(Name='9', Subject__c='Admission Scheduled', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro9')
         };
         Task[] tasks = [
             SELECT Id FROM Task WHERE WhatId = :rf.Id
@@ -117,6 +118,6 @@ public class referral_Controller2_Test{
         User u = [ SELECT ID FROM User ][0];
         controller.dummyTask.OwnerId = u.Id;
         controller.addAdmissionSteps();
-        System.assertEquals(oldNumTask + 8, controller.activities.size());
+        System.assertEquals(oldNumTask + 9, controller.activities.size());
     }
 }
