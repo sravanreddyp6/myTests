@@ -653,19 +653,19 @@ public with sharing class referral_Controller2 {
             boolean CL = false;
             for(Funding_Source__c fs :fundingSources){
                 if(fs.Type_of_Coverage__c == 'Primary'){
-                    CL = true;
+                    CL = true;   
                     if(fs.Payer_Type__c != null ){
-                        PT = true;
-                    }                   
+                    	PT = true;
+                	} 
                 }
 
             }
             if(!CL){
-                messages.Add('Primary Funding Source');
+                messages.Add('Funding Source - Missing Primary Coverage level');
                 hasReq = false;
             }
             if(!PT){
-                messages.Add('Primary Funding Source - Payer Type');
+                messages.Add('Funding Source - Missing Primary Payer Type');
                 hasReq = false;
             }           
             
