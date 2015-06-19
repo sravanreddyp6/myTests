@@ -50,8 +50,7 @@ public with sharing class IncompleteShiftDocReport {
 		}
 		shiftDocs = [
 			SELECT Id, Name, ServiceAssignment__r.Admission__r.Person_Being_Served__c,
-			       OwnerId, Shift_Start_Time__c, Shift_End_Time__c, ServiceAssignment__r.Status__c,
-			       ServiceAssignment__c
+			       OwnerId, Shift_Start_Time__c, Shift_End_Time__c, Status__c, ServiceAssignment__c
 			  FROM Evaluation__c
 			 WHERE (RecordType.Name = 'CMShiftAssessment' OR RecordType.Name = 'CNA Workbook')
 			   AND Shift_Start_Time__c <= :endDate.addDays(1)

@@ -32,7 +32,7 @@
 
 	<apex:pageMessages id="pageMessages" />
 	<apex:form id="mainForm">
-		<apex:pageBlock id="dateRangeBlock">
+		<apex:pageBlock id="dateRangeBlock" title="Incomplete Shift Documentations Report">
 			<apex:pageBlockButtons location="bottom">
 				<apex:commandButton value="Run Report" action="{!runReport}" status="pageProcessing" rerender="{!$Component.tableBlock}, pageMessages" oncomplete="setUpTable();" />
 			</apex:pageBlockButtons>
@@ -54,7 +54,7 @@
 				<apex:column headerValue="Shift End Date/Time">
 					<c:MilitaryDatetime dateTimeVal="{!shiftDoc.Shift_End_Time__c}" />
 				</apex:column>
-				<apex:column value="{!shiftDoc.ServiceAssignment__r.Status__c}" headerValue="Service Status" />
+				<apex:column value="{!shiftDoc.Status__c}" headerValue="Documentation Status" />
 				<apex:column value="{!shiftDoc.ServiceAssignment__c}" headerValue="Service Assignment" />
 			</apex:pageBlockTable>
 		</apex:pageBlock>
