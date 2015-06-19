@@ -116,7 +116,8 @@ public with sharing class AdmissionEditExtension {
     		admission.planned_discharge__c = '';
     		admission.discharged_to_desc__c = '';
     		admission.discharged_to_other__c = '';
-    		admission.referred_out_agency_name__c = '';
+    		if ( useDischargeSection )
+    			admission.referred_out_agency_name__c = '';
     		admission.discharged_to_subcategory__c = '';
     		admission.discharged_to_additional__c = '';
     		admission.discharged_reason__c = '';
