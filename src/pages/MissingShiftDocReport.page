@@ -1,0 +1,93 @@
+<apex:page controller="MissingShiftDocReport">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
+
+	<style>
+		.thinking{
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 1000;
+		}
+
+		.thinkingwheel{
+			position: absolute;
+			left:50%;
+			top:50%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
+	</style>
+
+	<script>
+		function setFocusOnLoad() {}
+	</script>
+
+	<apex:pageMessages id="pageMessages" />
+	<apex:form id="mainForm">
+		<apex:pageBlock id="dateRangeBlock" title="Missing Shift Documentations Report">
+			<apex:pageBlockButtons location="bottom">
+				<apex:commandButton value="Run Report" action="{!runReport}" status="pageProcessing" rerender="{!$Component.tableBlock}, pageMessages" oncomplete="setUpTable();" />
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection id="dateRangeBlockSection" columns="2">
+				<apex:inputField value="{!dummyEvaluation.Evaluation_Date__c}" label="Start Date" />
+				<apex:inputField value="{!dummyEvaluation.Dialysis_Onset__c}" label="End Date" />
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		<apex:pageBlock id="tableBlock">
+			<apex:pageBlockTable value="{!days}" var="day" id="dayTable" rendered="{!reportRan}">
+				<apex:column value="{!day.serviceAssignment.Admission__r.Person_Being_Served__c}" headerValue="Active Person Being Served" />
+				<apex:column headerValue="Missing Date">
+					<apex:outputText value="{0,date,MM/dd/yyyy}">
+						<apex:param value="{!day.day}"/>
+					</apex:outputText>
+				</apex:column>
+				<apex:column headerValue="Missing Documentation">
+					<ul>
+					<apex:outputText rendered="{!!day.hasNSD}">
+						<li>Nurse Shift Doc</li>
+					</apex:outputText>
+					<apex:outputText rendered="{!!day.hasCNA}">
+						<li>CNA Workbook</li>
+					</apex:outputText>
+					</ul>
+				</apex:column>
+				<apex:column headerValue="Service Name">
+					<a href="/{!day.ServiceAssignment.Id}">{!day.serviceAssignment.Name}</a>
+				</apex:column>
+				<apex:column headerValue="Service Start Date" value="{!day.serviceAssignment.Start_Date__c}" />
+				<apex:column headerValue="Program Detail" value="{!day.serviceAssignment.Program_Detail__c}" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:form>
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div  class="thinking">
+				<div class="thinkingwheel">
+					<span>
+						<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...
+					</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+
+	<script>
+		jQuery.noConflict();
+		jQuery(document).ready(function ($) {
+			'use strict';
+
+			window.setUpTable = function () {
+				$(document.getElementById('{!$Component.mainForm.tableBlock}')).find('table').dataTable();
+			};
+		});
+	</script>
+</apex:page>
