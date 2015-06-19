@@ -516,6 +516,19 @@
 
             </apex:pageBlockSection>
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
+                <apex:outputField value="{!Contact.Family_Member_Other__c}" />
+                <apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" />
+                
+                <apex:outputField value="{!Contact.VIP_Indicator__c}" />
+                <apex:outputField value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
+                <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
+                
+                <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" />                
+                <apex:outputField value="{!Contact.Advanced_Directives__c}" rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}" />                
+                <apex:outputField value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />                
+                
+                <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />                
+                <apex:outputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
 
 
 
