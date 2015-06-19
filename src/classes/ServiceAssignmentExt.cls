@@ -821,7 +821,7 @@ public without sharing class ServiceAssignmentExt {
 			diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
 		}
 		if ( currentrecord.Service_Location__c != null) {
-			serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
+			serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
 			currentProgramId = serviceLocation.programID__c;
 		}
 
@@ -1789,6 +1789,7 @@ public without sharing class ServiceAssignmentExt {
 		query = query.substring(0, query.length() - 2);
 		query += ' FROM Funding_Source__c WHERE Id=\'' + fundingSource.Id + '\' ORDER BY Type_of_Coverage__c LIMIT 1';
 		this.fundingSource = Database.query(query);
+		system.debug('Case Manager++++' +this.fundingSource.Case_Manager__c);
 	}
 
 	public void saveFundingSource() {
@@ -1814,6 +1815,29 @@ public without sharing class ServiceAssignmentExt {
 		this.fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
 	
+	public void finalizeFundingSource(){
+		try{
+			
+			this.fundingSource.Funding_Source_Status__c = 'Active Final';  //Need to Change When Approval is implemented - Sravan EB-435
+			upsert this.fundingSource;
+		}
+		catch (Exception e) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+		}
+		populateFundingSources();
+	}
+	
+	public void inactivateFundingSource(){
+		try{
+			
+			this.fundingSource.Funding_Source_Status__c = 'Inactive';  
+			upsert this.fundingSource;
+		}
+		catch (Exception e) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+		}
+		populateFundingSources();
+	}
 	//This method id needed to exactly determine the name of the recordtype since Recordtype names in Funding sources are different from the Operating group names  - Sravan 06/09/2015.
 	public string getfundingsourceRecordType(){
 		string opGroup = getOperatingGroup();
@@ -1831,7 +1855,7 @@ public without sharing class ServiceAssignmentExt {
 	private void populateFundingSources() {
 		this.fundingSources =
 				[select id, Payor__c, Funding_Source__c, Funding_Source_ID__c, Status__c, Service_Being_Funded__c, Comment__c,
-				 type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c, recordtype.name
+				 type_of_coverage__c, payer_name__c, Case_Manager__c, effective_date__c, termination_date__c, recordtype.name, Funding_Source_Status__c
 				 from Funding_Source__c
 				 where Service_Assignment__c = :this.theServAssign.Id
 				 order by Type_of_Coverage__c
