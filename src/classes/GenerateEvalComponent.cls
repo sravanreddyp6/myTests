@@ -421,6 +421,8 @@ public with sharing class GenerateEvalComponent {
         }
 
         String htmlTable2 = '<table style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
+        if (evalSecType == 'Head To Toe' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV')
+            htmlTable2 = '<table style="width:100%;"><tr><th></th><th></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
         integer i=0;
         for (String s : htmlControls){
             if (Math.mod(i, 4) == 0 )
