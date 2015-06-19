@@ -634,14 +634,14 @@
                                 </apex:outputPanel>
                                 <apex:outputText rendered="{! MOD(index, 2)==0 }" value="</tr><tr>" escape="false" />
 
-                                <apex:outputPanel layout="none" rendered="{! fundingSrcFldVals['More_than_1_5_Yrs_of_Disability__c']=='true' || fundingSrcFldVals['Patient_Over_64_Years_of_Age__c']=='true' }">
+                                <apex:outputPanel layout="none" rendered="{! fundingSrcFldVals['More_than_1_5_Yrs_of_Disability__c']==true || fundingSrcFldVals['Patient_Over_64_Years_of_Age__c']==true }">
                                     <td>
                                         <apex:outputlabel value="{!fundingSrcFldLbls['Patient_Over_64_Years_of_Age__c']}" styleclass="labelCol" />
                                     </td>
                                     <td>
-                                        <apex:outputText value="{!IF(fundingSrcFldVals['More_than_1_5_Yrs_of_Disability__c']=='true', 'More than 1.5 yrs of Disability', '') }" />
-                                        <apex:outputText value=", " rendered="{!fundingSrcFldVals['More_than_1_5_Yrs_of_Disability__c']=='true' && fundingSrcFldVals['Patient_Over_64_Years_of_Age__c']=='true' }" />
-                                        <apex:outputText value="{!IF(fundingSrcFldVals['Patient_Over_64_Years_of_Age__c']=='true', 'Patient Over 64 Years of Age', '') }" />
+                                        <apex:outputText value="{!IF(fundingSrcFldVals['More_than_1_5_Yrs_of_Disability__c']==true, 'More than 1.5 yrs of Disability', '') }" />
+                                        <apex:outputText value=", " rendered="{!fundingSrcFldVals['More_than_1_5_Yrs_of_Disability__c']==true && fundingSrcFldVals['Patient_Over_64_Years_of_Age__c']==true }" />
+                                        <apex:outputText value="{!IF(fundingSrcFldVals['Patient_Over_64_Years_of_Age__c']==true, 'Patient Over 64 Years of Age', '') }" />
                                     </td>
                                     <apex:variable var="index" value="{!index + 1}" />
                                 </apex:outputPanel>
