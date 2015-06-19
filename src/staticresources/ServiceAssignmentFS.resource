@@ -75,36 +75,6 @@
             if ($adjusterEmail.size()>0 && $adjusterEmail.val()!='' && !validateEmail($adjusterEmail.val())) {
                 errors.push('Adjustor Email does not seem to a valid email address');
             }
-            
-            //For EB-438 Sravan
-            
-            if($('[id$=funding_casemanagerName]').val() == ''){
-            	errors.push('Case Manager is Mandatory');
-            }
-            
-            if($('[id$=funding_costTherapyEffeciveDate]').val() == ''){
-            	errors.push('Effective Date of Cost/Therapy is Mandatory');
-            }
-             
-            if($('[id$=funding_costTherapyTermDate]').val() == ''){
-            	errors.push('Term Date of Cost/Therapy');
-            }
-            
-            if($('[id$=funding_oneoneRatio]').val() == ''){
-            	errors.push('Staffing Ratio 1:1 field is Mandatory');
-            }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            //End EB-438
-
             // Other validation
             var $referralStatus = $('[id$=referralStatus]');
             var $payerType = $('[id$=neuroPayerType]');
@@ -135,7 +105,6 @@
       }
 
 
-
     fundingSourceSaveHelper = function (referralRecordType) {
         fundingSourceClearMessages();
         var errors = validateFundingSource(referralRecordType);
@@ -146,9 +115,30 @@
             });
             fundingSourceScrollToTop();
         } else {
-            saveFundingSource();
+			saveFundingSource();
         }
     }
+	
+	fundingSourceFinalizeHelper = function (recordType, totalauthUnits, elSelector){
+		fundingSourceClearMessages();
+		var errors = validateFundingSource(recordType);
+		var authErrors = validateAuthCalculations();
+		var allErrors = authErrors.concat(errors);
+		var totalAuthstring = 'input[id*=' + elSelector + ']';
+		if (allErrors.length > 0) {
+			$('#fundingMessages').html('');
+			$.each(allErrors, function (index, error) {
+				$('#fundingMessages').append('<li class="error">' + error + '</li>');
+			});
+			fundingSourceScrollToTop();
+        } else {
+		console.log('tot units++'+ totalauthUnits);
+			$(totalAuthstring).val(parseFloat(totalauthUnits));
+			console.log('value++++++'+$(totalAuthstring).val(parseFloat(totalauthUnits)));
+			finalizeFundingSource();
+		}
+	}
+	
     fundingSourceScrollToTop = function (isSuccess) {
         if (isSuccess) {
             $('#fundingMessages').append('<li class="success">Save successful!</li>');
@@ -166,39 +156,157 @@
     }
     
     costperDay = function(ValueId, typeId, elSelector){
-    	console.log('type id is '+typeId);
-    	var idt = "+typeId+";
-    	var dayCost = $(document.getElementById(ValueId)).val();
-    	//var types = jQuery('input[id*=typeId]');
-    	var types = document.getElementsByName(idt);
+    	var dayCost  = $(document.getElementById(ValueId)).val();
     	var t = '';
-    	
-    	
+    	var typeString = 'input[id*=' + typeId + ']';
+    	var types = j$(typeString);
+		
     	for(var x= 0; x < types.length; x++){
     		if(types[x].checked){
     			t = types[x].value;
     		}
     	}
-    	
-    	/*$('input[id*=dmeType]').each(function (index, element) {
-					if ( $(element).checked )
-						t = $(element).val();
-				});*/
-    	
+
     	console.log('type is'+t);
     	
     	if(t == 'Yearly'){
-    		dayCost = dayCost/365;
+    		dayCost = parseFloat(dayCost)/365;
+			dayCost = Math.round(dayCost * 100)/100;
     	}
     	else if(t == 'Monthly'){
-    		dayCost = dayCost/30;
+    		dayCost = parseFloat(dayCost)/30.5;
+			dayCost = Math.round(dayCost * 100)/100
     	}
     	else if (t == 'Weekly'){
-    		dayCost = dayCost/7;
+    		dayCost = parseFloat(dayCost)/7;
+			dayCost = Math.round(dayCost * 100)/100
     	}
-    	
     	assignValue(elSelector,dayCost);
     
     }
+	
+	totalauthTherapyUnits = function(FSRate,ServiceLocationSum, FSHrs, FSDME, FSOther, FSMedication, FSNutritional, perproductiveUnit){
+		//var FSRate = $(document.getElementById(FSRate)).val();
+		//var SLsum = ServiceLocationSum;
+		//var FSHrs =  $(document.getElementById(FSHrs)).val();
+		//var FSDME = $(document.getElementById(FSDME)).val();
+		//var FSOther = $(document.getElementById(FSOther)).val();
+		//var FSMedication = $(document.getElementById(FSMedication)).val();
+		//var FSNutritional = $(document.getElementById(FSNutritional)).val();
+		//var perUnit =  perproductiveUnit;
+		
+		var totalUnits = 0;
+		var sum = 0;
+		
+		if(ServiceLocationSum > 0){
+				sum = sum + parseFloat(ServiceLocationSum);
+			}
+			if(FSHrs > 0){
+				sum = sum + parseFloat(FSHrs);
+			}
+			if(FSDME > 0){
+				sum = sum + parseFloat(FSDME);
+			}
+			if(FSOther > 0){
+				sum = sum + parseFloat(FSOther);
+			}
+			if(FSMedication > 0){
+				sum = sum + parseFloat(FSMedication);
+			}
+			if(FSNutritional > 0){
+				sum = sum + parseFloat(FSNutritional);
+			}
+			
+			totalUnits = parseFloat(FSRate) - sum;
+			totalUnits = totalUnits/parseFloat(perproductiveUnit);
+			totalUnits = Math.round(totalUnits);
+			console.log('before' +totalUnits);
+			//assignValue(elSelector,totalUnits);
+			return totalUnits;
+	}
+	
+	authUnitsTotal = function(OT, PT, SLP,BIT, Counselling, elSelector){
+		var OTUnits = $(document.getElementById(OT)).val();
+		var PTUnits = $(document.getElementById(PT)).val();
+		var SLPUnits = $(document.getElementById(SLP)).val();
+		var BITUnits = $(document.getElementById(BIT)).val();
+		var couUnits = $(document.getElementById(Counselling)).val();
+		
+		var sumTotal = 0;
+		$(elSelector).removeClass("grandTotal");
+		if(OTUnits > 0){
+			sumTotal = sumTotal + parseFloat(OTUnits);
+		}
+		if(PTUnits > 0){
+			sumTotal = sumTotal + parseFloat(PTUnits);
+		}
+		if(SLPUnits > 0){
+			sumTotal = sumTotal + parseFloat(SLPUnits);
+		}
+		if(BITUnits > 0){
+			sumTotal = sumTotal + parseFloat(BITUnits);
+		}
+		if(couUnits > 0){
+			sumTotal = sumTotal + parseFloat(couUnits);
+		}
+		
+		sumTotal = Math.round(sumTotal);		
+		assignValue(elSelector,sumTotal);
+	
+	}
+	validateauthUnitsTotal = function(){
+		var actualUnits = $('[id$=authGrandTotalUnits]').val();
+		var allowedUnits = $('[id$=totalAuthUnits]').val();
+		
+		if((actualUnits == '' && allowedUnits != '') || (actualUnits != '' && allowedUnits == '')){
+			return '1';
+		}
+		else if(allowedUnits < actualUnits){
+			return '2';
+		}
+
+	}
+	
+	validateAuthCalculations = function(){
+	
+		var authUnitErrors = [];
+		var term = $('[id$=funding_costTherapyTermDate]').val();
+		var effective = $('[id$=funding_costTherapyEffeciveDate]').val();
+		var today = new Date();
+		var termDate = new Date(term);
+		var effectiveDate = new Date(effective);
+		
+		if($('[id$=funding_casemanagerName]').val() == ''){
+            	authUnitErrors.push('Case Manager is Mandatory');
+		}
+		if(effective == ''){
+			authUnitErrors.push('Effective Date of Cost/Therapy is Mandatory');
+		}
+		if(term == ''){
+			authUnitErrors.push('Term Date of Cost/Therapy is Mandatory');
+		}
+	/*	if(effectiveDate > termDate){
+			authUnitErrors.push('Effective Date Should be less than or equal to Term Date');
+		}
+		if(termDate > today){
+			authUnitErrors.push('Term Date cannot be in future.');
+		}*/
+		
+		if($('[id$=funding_oneoneRatio]').val() == ''){
+			authUnitErrors.push('Staffing Ratio 1:1 field is Mandatory');
+		}
+		
+		if($('[id$=receivedRate]').val() == ''){
+			authUnitErrors.push('Rate is Mandatory for Calculating total Units');
+		}
+		/*if(FSHrs == ''){
+			authUnitErrors.push('Number of Hours is mandatory for calculating total Units');
+		}*/
+		
+		return authUnitErrors;
+	
+	}
+	
+	
     
 }) (jQuery.noConflict());
