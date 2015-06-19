@@ -639,15 +639,59 @@ public with sharing class referral_Controller2 {
 	public boolean checkRequiredFields(){
 		List<String> messages = new List<String>{};
 		boolean hasReq = false;
-		//PRI-189
-		if (personBeingRefRecord.First_Name__c == null) {
+		
+		
+			
+
+
+		// requirements to create a new PBS
+		if ( (string.valueOf(this.referralRecord.Person_Being_Served__c) == '' )) {
+			//PRI-189
+			if (personBeingRefRecord.First_Name__c == null) {
 			hasReq = false;
 			messages.Add( 'First Name');
 			}
+			// need last name, state of residence
+			if ( this.personBeingRefRecord.Last_Name__c == null) {
+				messages.Add( 'Last Name' );
+				//this.personBeingRefRecord.Last_Name__c.AddError('Last Name' );
+				hasReq = false;
+			}
+			//PRI-189
 			if (personBeingRefRecord.Gender__c == null) {
 			hasReq = false;
 			messages.Add( 'Gender');
 			}
+			if ( this.personBeingRefRecord.State__c == null ) {
+				messages.Add( ' Person Being Referred State' );
+				hasReq = false;
+			}
+
+			// dob and then if < 18 need a guardian
+			if ( this.personBeingRefRecord.Date_of_Birth__c == null ) {
+				messages.Add( 'Date of Birth' );
+				hasReq = false;
+			} else {
+
+				// get age, if < 18, need a guardian
+				if ( this.personBeingRefRecord.Age__c < 18 ) {
+					boolean hasGuardian = false;
+
+					for ( Related_Party__c rp : this.relParties ) {
+						if ( rp.Type__c == 'Guardian') {
+							hasGuardian = true;
+							break;
+						}
+					}
+
+					if ( !hasGuardian ) {
+						hasReq = false;
+						messages.Add( 'The person being referred is younger than 18 years old. Please add a person with the Type of Guardian to the Related Parties Section below.');
+					}
+				}
+
+			}
+		}
 
 		//start CTEAE-137
 		if(ReferralRecordType=='Cambridge North Carolina'){
@@ -707,46 +751,6 @@ public with sharing class referral_Controller2 {
 			}
 		}
 		//End EC-54
-
-		// requirements to create a new PBS
-		if ( (string.valueOf(this.referralRecord.Person_Being_Served__c) == '' )) {
-
-			// need last name, state of residence
-			if ( this.personBeingRefRecord.Last_Name__c == null) {
-				messages.Add( 'Last Name' );
-				this.personBeingRefRecord.Last_Name__c.AddError('Last Name' );
-				hasReq = false;
-			}
-			if ( this.personBeingRefRecord.State__c == null ) {
-				messages.Add( ' Person Being Referred State' );
-				hasReq = false;
-			}
-
-			// dob and then if < 18 need a guardian
-			if ( this.personBeingRefRecord.Date_of_Birth__c == null ) {
-				messages.Add( 'Date of Birth' );
-				hasReq = false;
-			} else {
-
-				// get age, if < 18, need a guardian
-				if ( this.personBeingRefRecord.Age__c < 18 ) {
-					boolean hasGuardian = false;
-
-					for ( Related_Party__c rp : this.relParties ) {
-						if ( rp.Type__c == 'Guardian') {
-							hasGuardian = true;
-							break;
-						}
-					}
-
-					if ( !hasGuardian ) {
-						hasReq = false;
-						messages.Add( 'The person being referred is younger than 18 years old. Please add a person with the Type of Guardian to the Related Parties Section below.');
-					}
-				}
-
-			}
-		}
 
 		// requirements for admission and service assignment: anticipated admission date, anticipated location
 		//Ec-110 Sravan 03/27/2014
