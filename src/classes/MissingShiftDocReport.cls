@@ -12,6 +12,7 @@ public with sharing class MissingShiftDocReport {
 	}
 
 	public void runReport() {
+		days = new Day[] {};
 		Boolean errorFound = false;
 		// We use the Evaluation_Date__c and Dialysis_Onset__c fields from the dummy SObject
 		// to model Start Date and End Date.
