@@ -333,20 +333,51 @@
                 
 				<apex:outputField value="{!admission.State__c}" />
 
-				<apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}">
+				<apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}" rendered="{! !useDischargeSection}">
 					<apex:param value="{!admission.Discharged_Date__c}" />
 				</apex:outputText>
-				<apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem rendered="{! !useDischargeSection}"/>
 				<!--  empty field -->
-				<apex:outputField value="{!admission.Discharged_Status__c}" />
-				<apex:pageBlockSectionItem />
+				<apex:outputField value="{!admission.Discharged_Status__c}" rendered="{! !useDischargeSection}"/>
+				<apex:pageBlockSectionItem rendered="{! !useDischargeSection}" />
 				<!--  empty field -->
-				<apex:outputField value="{!admission.Reason_for_Discharge__c}" />
+				<apex:outputField value="{!admission.Reason_for_Discharge__c}" rendered="{! !useDischargeSection}"/>
 
 			</apex:pageBlockSection>
 
 			<br />
-			<apex:pageBlockSection title="Referred-Out Details" collapsible="false">
+			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="false" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
+			<apex:outputField value="{!admission.discharged_date__c}" />
+			<apex:outputField value="{!admission.planned_discharge__c}" />
+			<apex:outputField value="{!admission.discharged_to_category__c}" />
+			<apex:outputField value="{!admission.discharged_to_desc__c}" />
+			<apex:outputField value="{!admission.discharged_to_subcategory__c}" />
+			<apex:outputField value="{!admission.discharged_to_other__c}" />
+			<apex:outputField value="{!admission.discharged_to_additional__c}" />
+			<apex:pageblocksectionitem >
+			<apex:outputLabel for="referredoutname" value="Facility Name" />
+			<apex:outputField id="referredoutname" value="{!admission.referred_out_agency_name__c}" />
+			</apex:pageblocksectionitem>
+			
+			<apex:outputText value="<hr />" escape="false" />
+            <apex:outputText value="<hr />" escape="false" />
+           	<apex:outputField value="{!admission.discharged_reason__c}" />
+                <apex:pageBlockSectionItem>
+                <apex:outputLabel value="Reason Other" />
+                <apex:outputField value="{!admission.reason_for_discharge__c}" />
+                </apex:pageBlockSectionItem>
+            <apex:outputField value="{!admission.discharged_reason_subcategory__c}" />
+            <apex:outputText value="" />
+            <apex:outputField value="{!admission.discharged_reason_additional__c}" />
+            <apex:outputText value="" />
+                
+            <apex:outputField value="{!admission.Additional_Discharge_info__c}" />
+            <apex:outputText value="" />
+			
+			
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection title="Referred-Out Details" collapsible="false" rendered="{! !useDischargeSection}">
 				<apex:outputText label="Referred-Out Date" value="{0, date, MM/dd/yyyy}">
 					<apex:param value="{!admission.Referred_Out_Date__c}" />
 				</apex:outputText>
