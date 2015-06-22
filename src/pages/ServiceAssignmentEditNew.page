@@ -2097,7 +2097,7 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:outputPanel>
 
 		<a id="Funding_Sources"></a>
-		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM && !newSA && canViewFundingSource}">
+		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!(vfVarIsCM || isNR) && !newSA && canViewFundingSource}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
 				<apex:actionStatus id="AddFundingSourceStatus">
