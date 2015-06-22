@@ -1,9 +1,11 @@
 public with sharing class AdmissionEditExtension {
     public Admission__c admission { get; set; }
     public Boolean showPersonalCard { get; set; }
+    public string admEffDateTime { get; set; }
     
 	// EC-185 - capturing service discharge info - only applicable for CM to start
     public boolean useDischargeSection { get; set; }
+    public string admDischargeDateTime { get; set; }
         
     public ApexPages.StandardController stdController;
     public AdmissionEditExtension(ApexPages.StandardController stdController) {
@@ -47,56 +49,74 @@ public with sharing class AdmissionEditExtension {
     
     public pageReference saveAdmission () {
 
+		
+						
 		setDischargeFields();
     		
 		List<string> messages = new List<string>();
-		    
+		try {
+			admission.Admission_Effective_DateTime__c = DateTime.parse(admEffDateTime);
+		}
+		catch (Exception e){
+			messages.add( 'Please enter a valid effective date and time.');
+		}
+
+	    if (! String.isBlank(admDischargeDateTime)) {
+	    	try {
+				system.debug('discharge datetime' + admDischargeDateTime);
+				admission.Discharged_Date_Time__c = DateTime.parse(admDischargeDateTime);
+			}
+			catch (Exception e){
+				messages.add('Please enter a valid discharge date and time.');
+			}
+ 	
+	    }
+	    
+	    
     	// EC-185 - if a discharge for CM, check required fields
     	if ( useDischargeSection && admission.status__c == 'Discharged') {
-    		
     		
     		admission.discharged_status__c = 'Neutral';
     		
     		
     		if ( admission.discharged_date_time__c == null )
-    			messages.add('Discharged Date/Time');
+    			messages.add('Please enter Discharged Date/Time');
     		else
     			admission.discharged_date__c = admission.discharged_date_time__c.date();
     			
     		if ( String.IsBlank(admission.planned_discharge__c))
-    			messages.add('Planned Discharge');		
+    			messages.add('Please enter Planned Discharge');		
 
 			if ( String.IsBlank(admission.discharged_to_category__c))	
-				messages.add('Discharged To');
+				messages.add('Please enter Discharged To');
 			
 			if ( String.IsBlank(admission.discharged_to_other__c) && admission.discharged_to_subcategory__c == 'Other') 
-				messages.add('Discharged To Other');   		
+				messages.add('Please enter Discharged To Other');   		
     		
     		if ( String.IsBlank(admission.referred_out_agency_name__c ) && admission.discharged_to_category__c == 'Another Facility')
-    			messages.add('Facility Name');
+    			messages.add('Please enter Facility Name');
     			
     		if ( String.IsBlank(admission.discharged_reason__c))
-    			messages.add('Discharged Reason');
+    			messages.add('Please enter Discharged Reason');
     		
     		if ( String.IsBlank(admission.reason_for_discharge__c)) {
     			if (admission.discharged_reason_subcategory__c == 'Other' || admission.discharged_reason_additional__c == 'Other') 
-					messages.add('Discharged Reason Other');   
+					messages.add('Please enter Discharged Reason Other');   
 				else
 					admission.reason_for_discharge__c = '.'; // allows it to save without validation error		
     		}
-	    	for ( String msg : messages )	{
-	    		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in the following fields to discharge the admission.'));
-	    		for ( string s : messages ) {
-               		ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, s));
-            	}	
-	    	}
-	    	
-	    	if ( messages.size() > 0)
-	    		return null;
-	    	
-	    } 
-	 
-	 	try {
+    	}
+    	for ( String msg : messages )	{
+    		for ( string s : messages ) {
+           		ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, s));
+        	}	
+    	}
+    	
+    	if ( messages.size() > 0)
+    		return null;
+    	
+	 		
+		try {	 		
 			upsert admission;
 			return new PageReference('/' + admission.id);
 		}
