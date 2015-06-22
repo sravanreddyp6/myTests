@@ -94,37 +94,6 @@
                 </div>           
             </apex:pageBlockButtons>
             
-            <apex:pageBlockSection columns="2" >
-            <apex:pageblocksectionitem rendered="{!editMode}">
-            	<apex:outputLabel value="Start Time" />
-            	<apex:outputPanel layout="none" >
-            	<div class="requiredInput"><div class="requiredBlock"></div>
-                <c:militarydatetime id="start" datetimeval="{!pn.Start_Time__c}" edit="{!editMode}" hiddenFieldId="starttime" datetimepickerid="start"/>
-                </div>
-                <apex:inputHidden id="starttime"  html-name="Start Time" value="{!noteStart_datetime}" />
-                </apex:outputPanel>
-                
-               </apex:pageblocksectionitem>
-               <apex:pageblocksectionitem rendered="{!editMode}">
-               <apex:outputLabel value="End Time" />
-               <apex:outputPanel layout="none">
-               <div class="requiredInput"><div class="requiredBlock"></div>
-                <c:militarydatetime id="end" datetimeval="{!pn.End_Time__c}" edit="{!editMode}" hiddenFieldId="endtime" datetimepickerid="end"/>
-                </div>
-                <apex:inputHidden id="endtime" value="{!noteEnd_datetime}" />
-                </apex:outputPanel>
-                </apex:pageblocksectionitem>
-            <apex:pageblocksectionitem rendered="{! !editMode}">
-            	<apex:outputLabel value="Start Time" />
-                <c:militarydatetime id="start" datetimeval="{!pn.Start_Time__c}" edit="{!editMode}" hiddenFieldId="starttime" datetimepickerid="start"/>
-               </apex:pageblocksectionitem>
-
-            <apex:pageblocksectionitem rendered="{! !editMode}">
-               <apex:outputLabel value="End Time" />
-                <c:militarydatetime id="end" datetimeval="{!pn.End_Time__c}" edit="{!editMode}" hiddenFieldId="endtime" datetimepickerid="end"/>
-                </apex:pageblocksectionitem>
-            </apex:pageBlockSection>
-
             
             <apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{!editMode}">
             	<apex:pageblocksectionitem>
@@ -143,34 +112,21 @@
             
             <apex:pageBlockSection title="System Information" collapsible="false">
                 <apex:outputField value="{!pn.createdbyid}"/>
-                <apex:outputField value="{!pn.lastmodifiedbyid}"/>
                 <apex:outputField value=" {!pn.CreatedDate}" />
-                <apex:outputField value=" {!pn.LastModifiedDate}" />
             </apex:pageBlockSection>
-	     <apex:pageBlocksection title="Shift Notes" collapsible="False" columns="1">
+	     <apex:pageBlocksection title="Prior Shift Notes" collapsible="False" columns="1">
+	     {!shortdescs}
             <apex:pageBlockTable value="{!pastnotes}" var="result" id="resultTable1" rendered="{! pastnotes != null && pastnotes.size>0}">
             
-                    <apex:column headerValue="Shift Start">
+                 <apex:column headerValue="Created Date " >
                         <nobr>
-                        <c:MilitaryDatetime dateTimeVal="{!result['start_time__c']}" /> 
-                        </nobr>
-                        <apex:facet name="header">Shift Start</apex:facet>
-                </apex:column>
-                
-                 <apex:column headerValue="Shift End" >
-                        <nobr>
-                        <c:MilitaryDatetime dateTimeVal="{!result['end_time__c']}" /> 
-                        </nobr>
-                        <apex:facet name="header">Shift End</apex:facet>
-                </apex:column>
-                    <apex:column value="{!result['narrative__c']}" />  
-                   <apex:column value="{!result['lastmodifiedby.name']}" />
-                 <apex:column headerValue="Last Modified Date" >
-                        <nobr>
-                        <c:MilitaryDatetime dateTimeVal="{!result['lastmodifieddate']}" /> 
+                        <c:MilitaryDatetime dateTimeVal="{!result['createddate']}" /> 
                         </nobr>
                         <apex:facet name="header">Last Modified</apex:facet>
                 </apex:column>
+                
+                    <apex:column value="{!shortdescs[result.id]}" />  
+                   <apex:column value="{!result['createdby.name']}" />
              
             </apex:pageBlockTable>
             </apex:pageBlocksection>

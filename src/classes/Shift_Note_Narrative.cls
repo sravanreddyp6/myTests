@@ -48,21 +48,10 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
         
     public pagereference mySave(){
 
-		if (string.isblank(noteStart_DateTime))
-			ApexPages.addMessage( new ApexPages.Message(ApexPages.severity.ERROR, 'Start Time is required'));
-		
-		if (string.isBlank(noteEnd_DateTime))
-			ApexPages.addMessage( new ApexPages.Message(ApexPages.severity.ERROR, 'End Time is required'));
-		
-		if (string.isBlank(note.narrative__c))
-			ApexPages.addMessage( new ApexPages.Message(ApexPages.severity.ERROR, 'Narrative text is required'));
-			
         try{
         	
-        	note.Start_Time__c = DateTime.parse(noteStart_DateTime);
-            note.End_Time__c = DateTime.parse(noteEnd_DateTime);
-            system.debug('start times: ' + note.start_time__c + ' (' + notestart_datetime + ')');
-            system.debug('end times: ' + note.end_time__c + ' (' + noteend_datetime + ')');
+        	note.Start_Time__c = DateTime.Now();
+            note.End_Time__c = DateTime.Now().AddMinutes(1);
             upsert note;
             return null;
             }
@@ -94,9 +83,19 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
     
     
     public List<Progress_note__c> pastnotes { get; private set; }
+    public Map<ID, string> shortdescs { get; private set; }
     private void setpastnotes () {
         
-       pastnotes = [ select id, start_time__c, end_time__c, narrative__c, lastmodifieddate, lastmodifiedby.name from progress_note__c where service_assignment__c = :note.service_assignment__c and recordtype.developername='Shift_Note' and id != :note.id order by lastmodifieddate desc]; 
+       pastnotes = [ select id, start_time__c, end_time__c, narrative__c, lastmodifieddate, lastmodifiedby.name from progress_note__c where service_assignment__c = :note.service_assignment__c and recordtype.developername='Shift_Note' and id != :note.id order by lastmodifieddate desc];
+        
+       string shorttext;
+       for ( Progress_note__c pn: pastnotes) {
+       		shorttext = pn.narrative__c;
+       		if ( shorttext.length() > 200)
+       			shorttext = shorttext.substring(0, 200);
+       			
+       		shortdescs.put( pn.id, shorttext);
+       }
     }        
     
     public PageReference handle(Id recordId, Id userId) {
