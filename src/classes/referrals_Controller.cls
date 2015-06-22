@@ -1433,8 +1433,27 @@ public with sharing class referrals_Controller{
 				Status = 'Not Started',
 				WhatId = referralRecord.Id,
 				OwnerId = dummyTask.OwnerId,
-				RecordTypeId = taskRecordType
+				RecordTypeId = taskRecordType,
+				ActivityDate = referralRecord.Referral_Date__c
 			);
+			if (task.Subject == 'Schedule Assessment')
+                	task.ActivityDate = task.ActivityDate + 3;
+				
+            else if (task.Subject == 'Complete Assessment')
+                	task.ActivityDate = task.ActivityDate + 7;
+				
+            else if (task.Subject == 'Assessment follow-up with Referral Source')
+                	task.ActivityDate = task.ActivityDate + 8;
+				
+            else if (task.Subject == 'Upload CAT to iServe') 
+                	task.ActivityDate = task.ActivityDate + 15;
+				
+            else if (task.Subject == 'Schedule a Red Flag call (if applicable)') 
+                	task.ActivityDate = task.ActivityDate + 15;
+                	
+			else
+                	task.ActivityDate = null;
+                	
 			// We do not batch insert the tasks here because it leads to inconsistent
 			// sorting order.
 			if (referralRecord.Id != null) {

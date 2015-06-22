@@ -80,7 +80,7 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
 				          RecordTypeId = rt.Id)
 			        );
 	       		}
-	       		 else if(pnsToInsertCounter==pnRecordTypes.size() && (rt.DeveloperName == 'NC_TFC' || rt.DeveloperName == 'NC_Wks_1_6_TFC')){
+	       		 else if(pnsToInsertCounter==pnRecordTypes.size() && (rt.DeveloperName == 'NC_TFC' || rt.DeveloperName == 'NC_Wks_1_6_TFC' || rt.DeveloperName == 'Therapy')){
 	       			pnsToInsert.add( 
 			       		  new Progress_Note__c(
 				          Service_Assignment__c = testServAssignment.Id, 
@@ -96,7 +96,7 @@ private class Notes_ProgressNote_Create_Flavor_PDFTEST {
 			        );
 	       			
 	       		}
-		        else if(pnsToInsertCounter!=pnRecordTypes.size() && (rt.DeveloperName == 'NC_TFC' || rt.DeveloperName == 'NC_Wks_1_6_TFC')){
+		        else if(pnsToInsertCounter!=pnRecordTypes.size() && (rt.DeveloperName == 'NC_TFC' || rt.DeveloperName == 'NC_Wks_1_6_TFC' || rt.DeveloperName == 'Therapy')){
 		       		  pnsToInsert.add( 
 			       		  new Progress_Note__c(
 				          Service_Assignment__c = testServAssignment.Id, 

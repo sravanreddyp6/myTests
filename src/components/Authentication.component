@@ -38,6 +38,12 @@
 		jQuery(document).ready(function($) {
 			"use strict";
 
+			$(document.getElementById("{!$Component.responseDialogMainBlock}")).on("keypress", function (event) {
+				if (event.which == 13) {  // Enter key was pressed
+					event.preventDefault();
+					$(document.getElementById("{!$Component.responseDialogMainBlock.esignButtons.esignButton}")).click();
+				}
+			});
 			<apex:outputPanel layout="none" rendered="{!objectId != null}">
 			window.authenticate{!uniqueId} = function () {
 				// Use this method if you pass in the objectId attribute
@@ -64,8 +70,8 @@
 	<apex:outputPanel id="authenticationDialog" style="display: none; {!formStyle}">
 		<apex:pageBlock title="Please enter your Username and Password" id="responseDialogMainBlock">
 			<apex:pageMessages id="authenticationMessages" />
-			<apex:pageBlockButtons location="bottom">
-				<apex:commandButton value="E-Sign" onClick="_auth{!uniqueId}(window.objectIdToEsign); return false;" />
+			<apex:pageBlockButtons location="bottom" id="esignButtons">
+				<apex:commandButton id="esignButton" value="E-Sign" onClick="_auth{!uniqueId}(window.objectIdToEsign); return false;" />
 				<apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.authenticationDialog}'); return false;" />
 				<apex:actionFunction name="_auth{!uniqueId}" action="{!authenticate}" rerender="authenticationMessages, {!rerender}" status="authenticationStatus" oncomplete="if (jQuery('[id$=authenticationMessages]').find('.message').eq(0).attr('class').indexOf('confirm') != -1) { {!oncomplete} }">
 					<apex:param name="objectId" assignTo="{!parentId}" value="" />

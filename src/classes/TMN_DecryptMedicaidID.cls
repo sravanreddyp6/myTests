@@ -26,9 +26,12 @@ public with sharing class TMN_DecryptMedicaidID {
             Attachment attachmentPDF = new Attachment();
             attachmentPDF.parentId = note.id;
             attachmentPDF.Name = note.name + '.pdf';
-            attachmentPDF.body = pageRef.getContentAsPDF();          
+            if (Test.IsRunningTest()){
+        		attachmentPDF.body = Blob.valueOf('UNIT.TEST');
+   			}else
+            	attachmentPDF.body = pageRef.getContentAsPDF();          
             
-                insert attachmentPDF;
+            insert attachmentPDF;
         
         tf=true;
  try {

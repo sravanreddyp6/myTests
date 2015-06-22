@@ -315,19 +315,6 @@ public without sharing class ServiceAssignmentExt {
 				fundingSource = new Funding_Source__c();
 				fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType());
 				fundingSource.Service_Assignment__c = this.theServAssign.Id;
-				/*if(getfundingsourceRecordType() == 'NeuroRestorative'){
-					for(Funding_Source__c fs: this.fundingsources){
-						if(fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
-							hasPrimaryActiveFS = true;
-							fundingCoverageOptions.add(new selectOption('Secondary','Secondary'));
-							fundingCoverageOptions.add(new selectoption('Tertiary','Tertiary'));
-							fundingCoverageOptions.add(new selectoption('Other','Other'));
-						}
-					}
-					
-					
-				}*/
-				
 			}
 			return fundingSource;
 		}
@@ -544,6 +531,7 @@ public without sharing class ServiceAssignmentExt {
 		populateSeizures();
 
 		setShiftDocPermissions();
+		canAddDiagnosis = Diagnosis__c.sObjectType.getDescribe().isCreateable();
 	}
 	// END: CONSTRUCTOR
 
@@ -1317,7 +1305,6 @@ public without sharing class ServiceAssignmentExt {
 		if (permissionSets.Contains('iServe_Tier_III')) {
 			canAddShiftDoc = true;
 			canAddCNA = true;
-			canAddDiagnosis = true;
 		}
 
 		if (permissionSets.Contains('iServe_Tier_I')) {
@@ -1781,6 +1768,10 @@ public without sharing class ServiceAssignmentExt {
 		return ref;
 	}
 
+	public boolean canCreateNote { get { 
+		Schema.DescribeSObjectResult oSchema = Progress_Note__c.sObjectType.getDescribe();
+		return oSchema.isCreateable();
+	}}
 	public boolean canCreateFundingSource { get {
 		Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
 		return oSchema.isCreateable();

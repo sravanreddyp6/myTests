@@ -565,12 +565,12 @@
 
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
-
+				<!-- Added by Amruth for EB-434 -->
 				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !isNR}" />
 				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !isNR}" />
-
-				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}" />
+				<!-- Added by Amruth for EB-434 -->
+				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR}" />
+				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR}" />
 
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
 				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR}">
@@ -987,10 +987,10 @@ END: Uncomment to have the element collapsed by default -->
 		<!--Diagnosis Section -->
 
 		<a name="Diag" id="Diag"></a>
-		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis && isNR}">
+		<apex:pageBlock id="pbDiagnosis" title="Diagnosis" rendered="{!showDiagnosis}">
 
 			<div class="pbHeaderButton">
-				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis && isNR}" onClick="showAddDiagnosis();return false;" />
+				<apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" />
 			</div>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -1073,7 +1073,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW}">
+        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW && !isNR}">
             <div class="pbHeaderButton">
 <!--             <apex:actionStatus id="AddSeizureStatus"> -->
 <!--                 <apex:facet name="start"> -->
@@ -1239,11 +1239,21 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputPanel id="newswsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
 				<apex:repeat value="{!uncheckedWeeks}" var="week">
-					<apex:commandLink action="{!newSkillWorksheet}" value="{!week.UserDate}">
+					<apex:commandLink action="{!newSkillWorksheet}" value="{!week.UserDate}" status="{!$Component.SkillWorksheet.skillworksheetStatus}" rerender="none">
 						<apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week" />
+<!-- 						<apex:actionStatus  -->
 					</apex:commandLink>
 					<br/>
 				</apex:repeat>
+				<apex:actionStatus id="skillworksheetStatus" >
+					<apex:facet name="start">
+					<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+					</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
 			</apex:outputPanel>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -1273,11 +1283,20 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputPanel id="newbwsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
 				<apex:repeat value="{!BehaviorMonthsAvailable}" var="week">
-					<apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}">
+					<apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}" rerender="none" status="{!$Component.BehaviorWorksheet.behaviorworksheetStatus}">
 						<apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week" />
 					</apex:commandLink>
 					<br/>
 				</apex:repeat>
+				<apex:actionStatus id="behaviorworksheetStatus" >
+					<apex:facet name="start">
+					<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+					</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
 			</apex:outputPanel>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -1425,26 +1444,26 @@ END: Uncomment to have the element collapsed by default -->
 
 		<!--  Notes section -->
 		<a name="Notes" id="Notes"></a>
-		<apex:pageBlock id="Notes" title="Notes" rendered="{! AND(!editSA, !vfVarIsCM)}">
+		<apex:pageBlock id="Notes" title="Notes" rendered="{! !editSA}">
 			<div class="pbHeaderButton">
 				<!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !vfVarIsCB}" value="Goal/Objective Documentation" />
-				<apex:commandButton rendered="{!ActivePlan.size = 1}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
+				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || vfVarIsCM)}" value="Goal/Objective Documentation" />
+				<apex:commandButton rendered="{!ActivePlan.size = 1 && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
 			</div>
 			<apex:pageBlockSection columns="1" collapsible="false">
 				<apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0)}">
 
-					<apex:column headerValue="Action" styleClass="editcol"><a href="/{!note.ID}/e">Edit</a>
+					<apex:column headerValue="Action" styleClass="editcol" rendered="{! !vfVarIsCM }"><a href="/{!note.ID}/e">Edit</a>
 					</apex:column>
 					<apex:column headerValue="Name">
 						<apex:outputLink value="/{!note.id}">
 							<apex:outputField value="{!note.name}" /></apex:outputLink>
 					</apex:column>
-					<apex:column headerValue="Action Plan">
+					<apex:column headerValue="Action Plan" rendered="{! !vfVarIsCM}">
 						<apex:outputLink value="/{!note.Action_Plan__c}">{!note.action_plan__r.name }</apex:outputLink>
 					</apex:column>
-					<apex:column value="{!note.Start_time__c }" />
-					<apex:column value="{!note.End_Time__c }" />
+					<apex:column value="{!note.Start_time__c }" rendered="{! !vfVarIsCM }"/>
+					<apex:column value="{!note.End_Time__c }" rendered="{! !vfVarIsCM }"/>
 					<apex:column value="{!note.createddate }" />
 					<apex:column value="{!note.createdby.name }" />
 				</apex:pageblockTable>
@@ -2078,7 +2097,7 @@ END: Uncomment to have the element collapsed by default -->
 		</apex:outputPanel>
 
 		<a id="Funding_Sources"></a>
-		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!(vfVarIsCM || isNR) && !newSA && canViewFundingSource}">
+		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM && !newSA && canViewFundingSource}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
 				<apex:actionStatus id="AddFundingSourceStatus">
@@ -2514,7 +2533,7 @@ END: Uncomment to have the element collapsed by default -->
 		            }
 		        });
 		    }
-		}
+		   }
 	</script>
 
 </apex:page>

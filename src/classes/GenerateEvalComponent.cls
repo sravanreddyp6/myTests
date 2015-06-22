@@ -90,6 +90,35 @@ public with sharing class GenerateEvalComponent {
                and visible__c = true
             order by category_sequence__c, sub_category_sequence__c, field_sequence__c
         ];
+        
+        //EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
+        if (evalSecType == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV'){
+            listEvalItems = [ select id,
+					                   htmlid__c,
+					                   field_name__c,
+					                   category__c,
+					                   category_sequence__c,
+					                   sub_category__c,
+					                   sub_category_sequence__c,
+					                   eval_type__r.name,
+					                   Field_Type__c,
+					                   Field_Sub_Type__c,
+					                   field_sequence__c,
+					                   required__c,
+					                   Length__c,
+					                   visibility_rules__c,
+					                   visibility_row_rules__c,
+					                   Dependent_Fields__c
+					              from eval__c
+					             where eval_type__r.name = :evalname
+					               and category__c =:cat
+					               and sub_category__c = :subcat
+					               and visible__c = true
+					               and (NOT htmlid__c like 'HeadtoToeDiagnosticsIVQuestion%')  
+					            order by category_sequence__c, sub_category_sequence__c, field_sequence__c
+					        ];
+        }
+        
         // create a map for easy access
         mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
         List<String> evalIds = new List<String>();
@@ -311,10 +340,10 @@ public with sharing class GenerateEvalComponent {
                     newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
                     	system.debug(mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm'));
-                        newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('yyyy/MM/dd HH:mm');
+                        newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm');
                         newHTMLfld  += '"';
                     } else if (e.Required__c) {
-                        newHTMLfld += 'value="' + Datetime.now().format('yyyy/MM/dd HH:mm');
+                        newHTMLfld += 'value="' + Datetime.now().format('MM/dd/yyyy HH:mm');
                         newHTMLfld  += '"';
                     }
                     newHTMLfld +=  '/></div></div></td>';
@@ -392,6 +421,8 @@ public with sharing class GenerateEvalComponent {
         }
 
         String htmlTable2 = '<table style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
+        if (evalSecType == 'Head To Toe' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV')
+            htmlTable2 = '<table style="width:100%;"><tr><th></th><th></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
         integer i=0;
         for (String s : htmlControls){
             if (Math.mod(i, 4) == 0 )
@@ -500,10 +531,11 @@ public with sharing class GenerateEvalComponent {
                     ev.Date_Time__c = Datetime.newInstance(Date.parse(formData.get(f)), Time.newInstance(0,0,0,0));
                 }
                 else if (ei.Field_Type__c == 'Datetime' ){
-                    ev.Date_Time__c = Datetime.valueOf(formData.get(f).replace('/','-')+':00');
+                    ev.Date_Time__c = Utility.getDateTimeFromString(formData.get(f) +':00');
                     if (EvalType == 'Head to Toe' || EvalType == 'CNA Workbook'){
                         Datetime evalShiftStartTime = [select Shift_Start_Time__c from Evaluation__c where ID = :evalId limit 1].Shift_Start_Time__c;
-                        if (evalShiftStartTime > ev.Date_Time__c || ev.Date_Time__c > Datetime.now() )  
+                        system.debug('ShiftStartTime: ' + evalShiftStartTime.format() + '  Entered time: ' + ev.Date_Time__c.format() );
+                        if (evalShiftStartTime > ev.Date_Time__c || ev.Date_Time__c > Datetime.now() )
                             throw new InvalidDateTimeValException('<li>Save failed!!! The date and time value for ' + ei.field_name__c + ' must be within the current shift start time and the current time.</li>');
                     }
                 }
