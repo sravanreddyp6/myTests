@@ -47,25 +47,33 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
         
     public pagereference mySave(){
 
+		if (string.isblank(noteStart_DateTime))
+			ApexPages.addMessage( new ApexPages.Message(ApexPages.severity.ERROR, 'Start Time is required'));
+		
+		if (string.isBlank(noteEnd_DateTime))
+			ApexPages.addMessage( new ApexPages.Message(ApexPages.severity.ERROR, 'End Time is required'));
+		
+		if (string.isBlank(note.narrative__c))
+			ApexPages.addMessage( new ApexPages.Message(ApexPages.severity.ERROR, 'Narrative text is required'));
+			
         try{
         	
         	note.Start_Time__c = DateTime.parse(noteStart_DateTime);
             note.End_Time__c = DateTime.parse(noteEnd_DateTime);
             system.debug('start times: ' + note.start_time__c + ' (' + notestart_datetime + ')');
             system.debug('end times: ' + note.end_time__c + ' (' + noteend_datetime + ')');
-            
             upsert note;
+            return null;
             }
             
-        
         catch(DMLException e){
             ApexPages.addMessages(e);
             return null;
         }
-                
-            PageReference ref =  new ApexPages.StandardController(note).view();
-            return ref;      
-    
+        catch(Exception e){
+            ApexPages.addMessages(e);
+            return null;
+        }
     }
     
     public pagereference myEdit(){
