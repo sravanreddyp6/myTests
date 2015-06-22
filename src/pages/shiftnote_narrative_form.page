@@ -77,15 +77,9 @@
         </apex:outputPanel>
             <apex:pageBlockButtons >
                 <div style="float: right" > 
-                    <apex:commandButton value="Edit"
-                                        action="{!myEdit}"  
-                                        rendered="{! !editMode && !pn.locked__c	}" 
-                                        reRender="myFrm" 
-                                        status="myStatus"
-                                        />                    
                     <apex:commandButton value="E-sign"
                     					action="{!mySave}"
-                                        onComplete="authenticate(); myCancel();" 
+                                        onComplete="authenticate();" 
                                         rendered="{! editMode && !pn.locked__c}"
                                         rerender="messages, authcomponent"
                                         status="myStatus"
@@ -101,16 +95,17 @@
             </apex:pageBlockButtons>
             
             <apex:pageBlockSection columns="2" >
-            <apex:pageblocksectionitem>
+            <apex:pageblocksectionitem rendered="{!editMode}">
             	<apex:outputLabel value="Start Time" />
-            	<apex:outputPanel layout="none">
+            	<apex:outputPanel layout="none" >
             	<div class="requiredInput"><div class="requiredBlock"></div>
                 <c:militarydatetime id="start" datetimeval="{!pn.Start_Time__c}" edit="{!editMode}" hiddenFieldId="starttime" datetimepickerid="start"/>
                 </div>
                 <apex:inputHidden id="starttime"  html-name="Start Time" value="{!noteStart_datetime}" />
                 </apex:outputPanel>
+                
                </apex:pageblocksectionitem>
-               <apex:pageblocksectionitem>
+               <apex:pageblocksectionitem rendered="{!editMode}">
                <apex:outputLabel value="End Time" />
                <apex:outputPanel layout="none">
                <div class="requiredInput"><div class="requiredBlock"></div>
@@ -119,7 +114,17 @@
                 <apex:inputHidden id="endtime" value="{!noteEnd_datetime}" />
                 </apex:outputPanel>
                 </apex:pageblocksectionitem>
+            <apex:pageblocksectionitem rendered="{! !editMode}">
+            	<apex:outputLabel value="Start Time" />
+                <c:militarydatetime id="start" datetimeval="{!pn.Start_Time__c}" edit="{!editMode}" hiddenFieldId="starttime" datetimepickerid="start"/>
+               </apex:pageblocksectionitem>
+
+            <apex:pageblocksectionitem rendered="{! !editMode}">
+               <apex:outputLabel value="End Time" />
+                <c:militarydatetime id="end" datetimeval="{!pn.End_Time__c}" edit="{!editMode}" hiddenFieldId="endtime" datetimepickerid="end"/>
+                </apex:pageblocksectionitem>
             </apex:pageBlockSection>
+
             
             <apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{!editMode}">
             	<apex:pageblocksectionitem>
@@ -183,7 +188,7 @@
     </apex:facet>  
     <apex:facet name="stop"> </apex:facet>         
 </apex:actionStatus> 
-<c:Authentication id="authcomponent" formId="{!$Component.myFrm}" title="E-Sign" handler="shift_note_narrative" objectId="{!pn.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');" />
+<c:Authentication id="authcomponent" formId="{!$Component.myFrm}" title="E-Sign" handler="shift_note_narrative" objectId="{!pn.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');closeAuthenticationDialog();window.location.href='{!retURL}';" />
 
 </apex:form>     
 </apex:page>

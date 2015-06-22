@@ -5,7 +5,7 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
     public string noteStart_DateTime {get;set;}
     public string noteEnd_DateTime {get;set;}
     
-    private string retURL;
+    public string retURL { get; private set;}
     
     public boolean canFinalize {get; set;}
     
@@ -40,7 +40,8 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
         
         setPastNotes();
         retURL = apexpages.currentpage().getparameters().get('retURL');
-		
+		if (String.isBlank( retURL ))
+			retURL = '/home';
         }
     
     

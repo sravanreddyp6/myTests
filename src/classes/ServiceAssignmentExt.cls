@@ -1757,6 +1757,10 @@ public without sharing class ServiceAssignmentExt {
 		return ref;
 	}
 
+	public boolean canCreateNote { get { 
+		Schema.DescribeSObjectResult oSchema = Progress_Note__c.sObjectType.getDescribe();
+		return oSchema.isCreateable();
+	}}
 	public boolean canCreateFundingSource { get {
 		Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
 		return oSchema.isCreateable();
