@@ -219,7 +219,7 @@
 						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
 					<apex:outputPanel rendered="{! canCreateNote }">
-						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!$CurrentPage.URL}">Add Narrative Shift Note</a><br />
+						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
