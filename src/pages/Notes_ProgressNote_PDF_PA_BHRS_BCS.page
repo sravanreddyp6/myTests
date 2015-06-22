@@ -1,0 +1,242 @@
+<apex:page standardController="Progress_Note__c" renderAs="pdf">
+ <head>
+   <style type="text/css">
+.dataTbTd{
+   1px solid black;
+    padding: 6px;
+}
+
+.BoldLabelLg {
+    font-size: 13px;
+    font-weight: bold;
+   
+}
+.BoldLabelLg1 {
+    font-size: 9px;
+    font-weight: bold;
+    width: 100px;
+    
+}
+.Header{
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+
+}
+.Lg {
+    font-size: 20px;
+    font-weight: bold;
+    
+
+}
+.alightRight2{
+    text-align: right;
+}
+
+.alignTop{
+    vertical-align: top;
+    
+}
+
+
+
+.inTbTdWidth {
+    width: 100px;
+    padding-right: 5px;
+}
+.tbCB{
+    
+    padding: 7px;
+    
+
+ }
+ 
+.smTxt{
+    font-size: 5pt;
+}
+.medTxt{
+
+    font-size: 16pt;
+    }
+.myTB{
+    width: 100%;
+    background-color:;
+   
+    
+}
+.myBorderTB{
+    width: 100%;
+    border: 1px solid black;
+    padding: 7px;
+}
+.myNonBorderStyle {
+    border: 0;
+}
+
+.innerTb{
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 90%;      
+    background-color: ;
+        
+}
+.innerTb2{
+    
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 290px; 
+    background-color: ;        
+}
+.shaded{
+    background-color:#ebebeb;
+    
+    } 
+.dataTable{
+    border: 1px solid black;
+
+}    
+</style>
+</head>
+
+<table class="myTB">
+<tr>
+<td  class="BoldLabelLg">Client Name:</td>
+<td>{!Progress_Note__c.Person_Being_Served__r.Name}</td> 
+<td colspan="2"  class="BoldLabelLg" >Pennsylvania Mentor</td>
+</tr>
+<tr>
+<td   class="BoldLabelLg">Staff Name</td>
+<td>{!Progress_Note__c.Createdby.name}</td> 
+<td   class="BoldLabelLg" >Type of Service</td>
+<td   class="BoldLabelLg" align="right">BHRS-BSC</td>
+</tr>
+</table>  
+<br/>
+<br/>
+<table class="myTB" cellspacing="" cellpadding="0" Width="100%" border="1" >
+<tr>
+<th  cellspacing="1" class="BoldLabelLg">Date of Service</th>
+<th  cellspacing="1" class="BoldLabelLg">Time of Service(From)</th>
+<th  cellspacing="1" class="BoldLabelLg">Time of Service(To)</th>
+<th  cellspacing="1" class="BoldLabelLg">Place of Service</th>
+<th  cellspacing="1" class="BoldLabelLg">Units of Service</th>
+<th cellspacing="1" class="BoldLabelLg1" width="50">Describe Nature of Service and Obtain Signature from Primary Guardian/Caretaker for each entry</th>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td> 
+<td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td> 
+<td><apex:outputField value="{!Progress_Note__c.End_Time__c}"/></td>   
+<td><apex:outputField value="{!Progress_Note__c.Service_Location__c}"/></td>   
+<td><apex:outputField value="{!Progress_Note__c.Units__c}"/></td>   
+<br/>
+<br/>
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="90" >
+<tr>
+<td   cellspacing="1" class="BoldLabelLg">Teacher/Caregiver Signature__________________________:</td>
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%">
+<br/>
+<br/>
+<tr>
+<td  cellspacing="1" class="Lg">Progress Note-Confidential</td>
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Persons Present During Service</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.People_Present__c}"/></td>  
+<br/>
+<br/>
+</tr>
+</table>
+<table class="myTB" cellspacing="" cellpadding="0" Width="100%" border="1">
+<tr>
+<th  class="BoldLabelLg">Long Term Objective</th>
+<th  class="BoldLabelLg">Short Term Goals</th>
+</tr>
+<tr>
+<td colspan="2"><apex:include pageName="progressnote_actionplan_embed_include"/></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Plan from Previous Session</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Progress__c}"/></td> 
+<br/>
+<br/>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Assessment of current challenges that the child/family are having</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}"/></td> 
+<br/>
+<br/>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Interventions used to address current challenges</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Interventions__c}"/></td> 
+<br/>
+<br/>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Skills transfrreed to consultee(teacher,tss,parent/guardian, ect.), and how transferred</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Skills_transferred_to_consultee__c}"/></td> 
+<br/>
+<br/>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Childs response to interventinos</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Persons_Response_to_Interventions__c}"/></td> 
+<br/>
+<br/>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Progress/Barriers towards treatment goals</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Progress__c}"/></td> 
+<br/>
+<br/>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Plan for next session</td>
+</tr>
+<tr>
+<td><apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}"/></td> 
+<br/>
+<br/>
+<br/>
+</tr>
+</table>
+<table class="myTB" cellspacing="2" cellpadding="0" Width="100%">
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Staff Signature/Degree:_________________</td>
+<td  cellspacing="1" class="BoldLabelLg" align="right">Date:_________</td>
+</tr>
+<tr>
+<td  cellspacing="1" class="BoldLabelLg">Supervisor Signature:__________________</td>
+<td  cellspacing="1" class="BoldLabelLg" align="right" >Date:________</td>
+</tr>
+</table>
+</apex:page>
