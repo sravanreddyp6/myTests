@@ -1,6 +1,6 @@
 public with sharing class MissingShiftDocReport {
 	public Boolean reportRan { get; set; }
-	public List<List<Day>> days { get; set; }
+	public transient List<List<Day>> days { get; set; }
 	// This is a dummy evaluation just so that we can bind inputFields for Start/End Date to an
 	// SObject Date fields for SF's datepicker.
 	public Evaluation__c dummyEvaluation { get; set; }
