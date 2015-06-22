@@ -83,9 +83,11 @@
                                         reRender="myFrm" 
                                         status="myStatus"
                                         />                    
-                    <apex:commandButton value="Save"  
-                                        action="{!mySave}"
-                                        rendered="{!editMode}" 
+                    <apex:commandButton value="E-sign"
+                    					action="{!mySave}"
+                                        onComplete="authenticate(); myCancel();" 
+                                        rendered="{! editMode && !pn.locked__c}"
+                                        rerender="messages, authcomponent"
                                         status="myStatus"
                                         />
                     <apex:commandButton value="Cancel"
@@ -94,11 +96,7 @@
                                         rendered="{!editMode}" 
                                         status="myStatus"
                                         />
-                    <apex:commandButton value="E-sign"
-                                        onClick="authenticate(); return false;" 
-                                        rendered="{! !editMode && !pn.locked__c}"
-                                        status="myStatus"
-                                        />                             
+                                                 
                 </div>           
             </apex:pageBlockButtons>
             
@@ -106,21 +104,32 @@
             <apex:pageblocksectionitem>
             	<apex:outputLabel value="Start Time" />
             	<apex:outputPanel layout="none">
+            	<div class="requiredInput"><div class="requiredBlock"></div>
                 <c:militarydatetime id="start" datetimeval="{!pn.Start_Time__c}" edit="{!editMode}" hiddenFieldId="starttime" datetimepickerid="start"/>
-                <apex:inputHidden id="starttime" value="{!noteStart_datetime}" />
+                </div>
+                <apex:inputHidden id="starttime"  html-name="Start Time" value="{!noteStart_datetime}" />
                 </apex:outputPanel>
                </apex:pageblocksectionitem>
                <apex:pageblocksectionitem>
                <apex:outputLabel value="End Time" />
                <apex:outputPanel layout="none">
+               <div class="requiredInput"><div class="requiredBlock"></div>
                 <c:militarydatetime id="end" datetimeval="{!pn.End_Time__c}" edit="{!editMode}" hiddenFieldId="endtime" datetimepickerid="end"/>
+                </div>
                 <apex:inputHidden id="endtime" value="{!noteEnd_datetime}" />
                 </apex:outputPanel>
                 </apex:pageblocksectionitem>
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{!editMode}">
-                <apex:inputField required="true" styleClass="txtarea" value="{!pn.Narrative__c}"/>
+            	<apex:pageblocksectionitem>
+            	<apex:outputLabel for="narr" value="Narrative Note" />
+            	<apex:outputPanel layout="none">
+            	<div class="requiredInput"><div class="requiredBlock"></div>
+            	<apex:inputField id="narr" styleClass="txtarea" value="{!pn.Narrative__c}"/>
+                </div>
+                </apex:outputPanel>
+                </apex:pageblocksectionitem>
             </apex:pageBlockSection>
     
             <apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{! !editMode}">
@@ -174,7 +183,7 @@
     </apex:facet>  
     <apex:facet name="stop"> </apex:facet>         
 </apex:actionStatus> 
-<c:Authentication formId="{!$Component.myFrm}" title="E-Sign" handler="shift_note_narrative" objectId="{!pn.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');" />
+<c:Authentication id="authcomponent" formId="{!$Component.myFrm}" title="E-Sign" handler="shift_note_narrative" objectId="{!pn.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');" />
 
 </apex:form>     
 </apex:page>
