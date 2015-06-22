@@ -1373,10 +1373,10 @@ END: Uncomment to have the element collapsed by default -->
 
 		<!--  Notes section -->
 		<a name="Notes" id="Notes"></a>
-		<apex:pageBlock id="Notes" title="Notes" rendered="{! AND(!editSA, !vfVarIsCM)}">
+		<apex:pageBlock id="Notes" title="Notes" rendered="{! !editSA}">
 			<div class="pbHeaderButton">
 				<!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR)}" value="Goal/Objective Documentation" />
+				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || vfVarIsCM)}" value="Goal/Objective Documentation" />
 				<apex:commandButton rendered="{!ActivePlan.size = 1}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
 			</div>
 			<apex:pageBlockSection columns="1" collapsible="false">
@@ -1388,7 +1388,7 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:outputLink value="/{!note.id}">
 							<apex:outputField value="{!note.name}" /></apex:outputLink>
 					</apex:column>
-					<apex:column headerValue="Action Plan">
+					<apex:column headerValue="Action Plan" rendered="{! !vfVarIsCM}">
 						<apex:outputLink value="/{!note.Action_Plan__c}">{!note.action_plan__r.name }</apex:outputLink>
 					</apex:column>
 					<apex:column value="{!note.Start_time__c }" />
