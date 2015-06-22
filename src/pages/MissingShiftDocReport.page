@@ -42,29 +42,55 @@
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 		<apex:pageBlock id="tableBlock">
-			<apex:pageBlockTable value="{!days}" var="day" id="dayTable" rendered="{!reportRan}">
-				<apex:column value="{!day.serviceAssignment.Admission__r.Person_Being_Served__c}" headerValue="Active Person Being Served" />
-				<apex:column headerValue="Missing Date">
-					<apex:outputText value="{0,date,MM/dd/yyyy}">
-						<apex:param value="{!day.day}"/>
-					</apex:outputText>
-				</apex:column>
-				<apex:column headerValue="Missing Documentation">
-					<ul>
-					<apex:outputText rendered="{!!day.hasNSD}">
-						<li>Nurse Shift Doc</li>
-					</apex:outputText>
-					<apex:outputText rendered="{!!day.hasCNA}">
-						<li>CNA Workbook</li>
-					</apex:outputText>
-					</ul>
-				</apex:column>
-				<apex:column headerValue="Service Name">
-					<a href="/{!day.ServiceAssignment.Id}">{!day.serviceAssignment.Name}</a>
-				</apex:column>
-				<apex:column headerValue="Service Start Date" value="{!day.serviceAssignment.Start_Date__c}" />
-				<apex:column headerValue="Program Detail" value="{!day.serviceAssignment.Program_Detail__c}" />
-			</apex:pageBlockTable>
+			<table id="dayTable" class="list">
+				<thead>
+					<tr class="headerRow">
+						<th>Active Person Being Served</th>
+						<th>Missing Date</th>
+						<th>Missing Documentation</th>
+						<th>Service Name</th>
+						<th>Service Start Date</th>
+						<th>Program Detail</th>
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!days}" var="partial_list" id="listWrapper">
+						<apex:repeat value="{!partial_list}" var="day">
+							<tr class="dataRow">
+								<td class="dataCell">
+									<a href="/{!day.serviceAssignment.Admission__r.Person_Being_Served__r.Id}">{!day.serviceAssignment.Admission__r.Person_Being_Served__r.Name}</a>
+								</td>
+								<td class="dataCell">
+									<apex:outputText value="{0,date,MM/dd/yyyy}">
+										<apex:param value="{!day.day}"/>
+									</apex:outputText>
+								</td>
+								<td class="dataCell">
+									<ul>
+									<apex:outputText rendered="{!!day.hasNSD}">
+										<li>Nurse Shift Doc</li>
+									</apex:outputText>
+									<apex:outputText rendered="{!!day.hasCNA}">
+										<li>CNA Workbook</li>
+									</apex:outputText>
+									</ul>
+								</td>
+								<td class="dataCell">
+									<a href="/{!day.ServiceAssignment.Id}">{!day.serviceAssignment.Name}</a>
+								</td>
+								<td class="dataCell">
+									<apex:outputText value="{0,date,MM/dd/yyyy}">
+										<apex:param value="{!day.serviceAssignment.Start_Date__c}"/>
+									</apex:outputText>
+								</td>
+								<td class="dataCell">
+									{!day.serviceAssignment.Program_Detail__c}
+								</td>
+							</tr>
+						</apex:repeat>
+					</apex:repeat>
+				</tbody>
+			</table>
 		</apex:pageBlock>
 	</apex:form>
 	<apex:actionStatus id="pageProcessing">

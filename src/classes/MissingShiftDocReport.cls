@@ -1,18 +1,18 @@
 public with sharing class MissingShiftDocReport {
 	public Boolean reportRan { get; set; }
-	public Day[] days { get; set; }
+	public List<List<Day>> days { get; set; }
 	// This is a dummy evaluation just so that we can bind inputFields for Start/End Date to an
 	// SObject Date fields for SF's datepicker.
 	public Evaluation__c dummyEvaluation { get; set; }
 
 	public MissingShiftDocReport() {
 		dummyEvaluation = new Evaluation__c();
-		days = new Day[] {};
+		days = new List<List<Day>>();
 		reportRan = false;
 	}
 
 	public void runReport() {
-		days = new Day[] {};
+		days = new List<List<Day>>();
 		Boolean errorFound = false;
 		// We use the Evaluation_Date__c and Dialysis_Onset__c fields from the dummy SObject
 		// to model Start Date and End Date.
@@ -52,7 +52,8 @@ public with sharing class MissingShiftDocReport {
 
 		Map<Id, Map<Date, Day>> saMap = new Map<Id, Map<Date, Day>>();
 		for (Service_Assignment__c serviceAssignment: [
-			SELECT Id, Name, Start_Date__c, Program_Detail__c, Admission__r.Person_Being_Served__c
+			SELECT Id, Name, Start_Date__c, Program_Detail__c,
+			       Admission__r.Person_Being_Served__r.Id, Admission__r.Person_Being_Served__r.Name
 			  FROM Service_Assignment__c
 			 WHERE Status__c = 'Active'
 			   AND Start_Date__c <= :endDate
@@ -90,6 +91,9 @@ public with sharing class MissingShiftDocReport {
 				}
 			}
 		}
+		Integer totalCounter = 0;
+		Integer listCounter = 0;
+
 		for (Id saId: saMap.keySet()) {
 			Day[] orderedDays = new Day[] {};  // We use this to make sure the result is sorted
 			for (Date d: saMap.get(saId).keySet()) {
@@ -99,7 +103,17 @@ public with sharing class MissingShiftDocReport {
 				}
 			}
 			orderedDays.sort();
-			days.addAll(orderedDays);
+			for (Day day: orderedDays) {
+				// We can't just add all the things in orderedDays to another list
+				// because that result is ridiculously big and we will run into the
+				// governer limit extremely quickly. This is a workaround for that issue.
+				listCounter = totalCounter / 999;
+				if (days.size() <= listCounter) {
+					days.add(new List<Day>());
+				}
+				days[listCounter].add(day);
+				totalCounter += 1;
+			}
 		}
 		reportRan = true;
 	}
