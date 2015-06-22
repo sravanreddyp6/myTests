@@ -323,7 +323,7 @@ public with sharing class EvalDynamicExt {
 		Savepoint sp2 = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
 
 		if(evalType == 'Residential' || evalType == 'CNA Workbook'){
-			
+
 			try{
 				// need to get record without sharing on in case CNA workbook was locked as part of approval process
 				NoSharingRecord nsr = new NoSharingRecord( thisEval.id);
@@ -534,16 +534,16 @@ public with sharing class EvalDynamicExt {
 			showRevise = false;
 			showShiftDone = false;
 
-			
+
 			if ( isUserOwner) {
 				// EC-198 - 06/10/2015 - show disregard for all statuses other than already diregarded!
-				system.debug( ' isuserowner is true, status is ' + thiseval.status__c); 
+				system.debug( ' isuserowner is true, status is ' + thiseval.status__c);
 				if ( thiseval.status__c != 'Disregard')
 					showDisregard = true;
 
-				
+
 				// show esign only for Draft
-				if ( thiseval.status__c == 'Draft') { 
+				if ( thiseval.status__c == 'Draft') {
 					showEsign = true;
 				}
 			}
@@ -553,7 +553,7 @@ public with sharing class EvalDynamicExt {
 			}
 		}
 
-		if (!isUserOwner && evalType != 'Restraint Event') {  // EC-153 Let other people finalize Restraint Events
+		if (!isUserOwner && evalType != 'Restraint Event') {  // EC-153 - Let other people finalize Restraint Events
 			showEsign=false;
 			showRevise = false;
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
@@ -564,9 +564,18 @@ public with sharing class EvalDynamicExt {
 					showEndOfShiftDON = true;
 				}
 			}
+			if (evalType == 'Residential') {  // EC-203 - Let other people revise Resident Assessment
+				List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id, Status__c, CreatedDate FROM Evaluations__r Where Id != :thisEval.Id AND Status__c != 'Disregard' AND RecordType.Name ='NursesAssessment' order by CreatedDate desc) FROM Service_Assignment__c WHERE Id=: SAID LIMIT 1];
+				if (thisEval.Status__c == 'Final Admission' && servAssign[0].Evaluations__r.Size() == 0){
+					showRevise = true;
+				} else if (thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r.Size() == 1){
+					showRevise = true;
+				} else if (thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r[0].Status__c == 'Final Revision' && thisEval.CreatedDate > servAssign[0].Evaluations__r[0].CreatedDate) {
+					showRevise = true;
+				}
+			}
 			return;
 		}
-
 
 		if(evalType == 'Residential'){
 			showshiftDone = false;
@@ -780,16 +789,16 @@ public with sharing class EvalDynamicExt {
 	public without sharing class NoSharingRecord {
 		private ID evalID;
 		public Evaluation__c theEval;
-		
+
 		public NoSharingRecord( ID theID ) {
 			evalID = theID;
 			theEval =(Evaluation__c)[ select id, status__c from evaluation__c where id = :evalID LIMIT 1];
-			
+
 		}
-		
+
 		public void setStatusAndSave( string newstatus) {
 			theEval.status__c = newstatus;
-			update theEval;			
+			update theEval;
 		}
 	}
 }
