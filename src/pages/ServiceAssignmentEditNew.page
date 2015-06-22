@@ -83,8 +83,11 @@
         #seizureMessages .error {
             color: red;
         }
-        .grandtotal{
-        	background: red;
+        .grandtotalwarning{
+        	background-color: red;
+        }
+        .grandtotalOk{
+        	background-color: none;
         }
 	</style>
 
@@ -162,7 +165,14 @@
 					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
 					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
 					
-				j$('[id$=totalAuthUnits]').val(tUnits);
+				j$('[id$=totalAuthUnits]').val(tUnits); 
+				
+					if(tUnits < parseFloat(j$('[id$=authGrandTotalUnits]').val())){
+						j$('[id$=authGrandTotalUnits]').addClass("grandtotalwarning");
+					}else{
+						j$('[id$=authGrandTotalUnits]').removeClass("grandtotalwarning");
+					}
+				
 			}
 		}
 		
@@ -331,11 +341,11 @@
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock2.addShiftDocStatus}" />
 	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!theServAssign.Id}" shiftType="CNA Workbook" onShowRerender="msgs, evaluationscna" status="{!$Component.myFRM.CNABlock.AddCNAStatus}" />
 	<apex:form id="myFRM">
-		<apex:actionFunction name="finalizeFundingSource" action="{!finalizeFundingSource}" status="saveFundingSourceStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
-		<apex:actionFunction name="fundingSourceInactivate" action="{!inactivateFundingSource}" status="saveFundingSourceStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
-		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry" />
-		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry" />
-		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry">
+		<apex:actionFunction name="finalizeFundingSource" action="{!finalizeFundingSource}" status="saveFundingSourceStatusforNR" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
+		<apex:actionFunction name="fundingSourceInactivate" action="{!inactivateFundingSource}" status="saveFundingSourceStatusforNR" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
+		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
+		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
+		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock">
 			<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 		</apex:actionFunction>
 		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1" />
@@ -1520,14 +1530,20 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageBlockSection>
 				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
-					<apex:inputField value="{!fundingSource.Funding_Source_Status__c}"  />
+					<apex:outputField value="{!fundingSource.Funding_Source_Status__c}"  />
 					<apex:pageBlockSectionItem />
                     <apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
                     <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
                     <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
                         <apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
                     </apex:outputText>
-                    <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
+                    <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" rendered="{!!hasPrimaryActiveFS}"/>
+                    <apex:pageBlockSectionItem rendered="{!hasPrimaryActiveFS}" >
+                    	<apex:outputlabel value="Coverage level" styleClass="labelCol"/>
+                    	<apex:selectList value="{!fundingSource.Type_of_Coverage__c}" size="1" >
+                    		<apex:selectoptions value="{!fundingCoverageOptions}" />
+                    	</apex:selectList>
+                    </apex:pageBlockSectionItem>
                     <apex:inputField value="{!fundingSource.Payer_Type__c}" id="neuroPayerType" html-data-rules="{&quot;VA - Pilot&quot;: [&quot;{!$Component.vaPilotClinicalNumber}&quot;]}" />
                     <apex:pageBlockSectionItem />
                     <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" />
@@ -2011,7 +2027,7 @@ END: Uncomment to have the element collapsed by default -->
 				
 			</apex:pageBlock>
 			
-			<apex:pageBlock title="THERAPY AUTH EXCESS APPROVAL" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="therapyApprovalBlock">
+			<apex:pageBlock title="THERAPY AUTH EXCESS APPROVAL" id="therapyApprovalBlock" rendered="false">
 				<apex:pageBlockSection columns="2" >
 					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="Authorization Excess Approved" styleClass="labelCol" />
@@ -2033,14 +2049,25 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageBlockSection>
 			</apex:pageBlock>
 
-			<apex:pageBlock >
-				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource}">
+			<apex:pageBlock id="fundingbuttonsBlock">
+				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType != 'NeuroRestorative'}" >
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
-					<apex:commandbutton id="finalizeFundingSource" value="Finalize" onClick="fundingSourceFinalize(); return false;" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
-					<apex:commandbutton id="inactivateFundingSource" value="Inactivate" onClick="inactivateFunding(); return false;" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}"/>
 					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
 					<apex:actionStatus id="saveFundingSourceStatus">
+						<apex:facet name="start">
+							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+						</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
+				</apex:pageblockButtons>
+				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType == 'NeuroRestorative'}" >
+					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
+					<apex:commandbutton id="finalizeFundingSource" value="Finalize" onClick="fundingSourceFinalize(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
+<!-- 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}"/> -->
+					<apex:commandbutton id="inactivateFundingSource" value="Inactivate" onClick="inactivateFunding(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Inactive'}" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
+					<apex:actionStatus id="saveFundingSourceStatusforNR">
 						<apex:facet name="start">
 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
 						</apex:facet>
@@ -2088,7 +2115,7 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0 && canEditFundingSource }">
 				<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
 				</apex:column>
-<!-- 				<apex:column value="{!fundingSource.Funding_Source_Status__c}" /> -->
+				<apex:column value="{!fundingSource.Funding_Source_Status__c}" />
 				<apex:column value="{!fundingSource.Type_of_Coverage__c}" />
 				<apex:column value="{!fundingSource.Payer_Name__c}" />
 				<apex:column value="{!fundingSource.Effective_Date__c}" />

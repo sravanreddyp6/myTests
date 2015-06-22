@@ -252,17 +252,23 @@
 		
 		sumTotal = Math.round(sumTotal);		
 		assignValue(elSelector,sumTotal);
+		
+		var exceeded = validateauthUnitsTotal();
+		if(exceeded == '1'){
+			j$('[id$=authGrandTotalUnits]').removeClass("grandtotalOk").addClass("grandtotalwarning");
+		}else{
+			j$('[id$=authGrandTotalUnits]').removeClass("grandtotalwarning").addClass("grandtotalOk");
+		}
 	
 	}
 	validateauthUnitsTotal = function(){
-		var actualUnits = $('[id$=authGrandTotalUnits]').val();
-		var allowedUnits = $('[id$=totalAuthUnits]').val();
+		var actualUnits = j$('[id$=authGrandTotalUnits]').val();
+		var allowedUnits = j$('[id$=totalAuthUnits]').val();
 		
-		if((actualUnits == '' && allowedUnits != '') || (actualUnits != '' && allowedUnits == '')){
+		if(actualUnits > allowedUnits){
 			return '1';
-		}
-		else if(allowedUnits < actualUnits){
-			return '2';
+		}else{
+			return '0';
 		}
 
 	}
