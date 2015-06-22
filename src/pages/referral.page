@@ -249,12 +249,27 @@
                 }
             }
         }
+        //EB-481
+		function validateFundingSource(){
+			var errors = '';
+			j$('#fundingMessages').html(errors);
+            if ( j$('span[id$=hasPrimaryFS]').text() == 'true' ) {
+	            if ( j$('select[id$=fundingEntry_coverage]').val() == 'Primary' ) {
+	            	errors += '<li>A Primary Funding Source has already been added, only one Primary Funding source is allowed</li>';  
+	            }   
+            }
+			
+			j$('#fundingMessages').html(errors);
+            return (errors == '');
+		}
 
         fundingSourceSave = function(isClose) {
             // We cant use Visualforce functions/variables in a Static Resource JS file,
             // so we have to pass it in here.
             closeFundingSource = isClose;
-            fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+            if( validateFundingSource() ){
+            	fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+            }
         }
 
         // ERC-96: Adding this for front end validation.
@@ -837,6 +852,7 @@
                     </apex:pageBlockSection>
                 </apex:pageBlock>
                 <apex:pageBlock title="Payer Detail" id="fundingSourcePayerDetailEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
+                    <apex:outputText value="{!hasPrimaryFS}" id="hasPrimaryFS" style="display:none;" / >
                     <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
                         <apex:outputText label="Full Name" value="{!IF(ISBLANK(personBeingRefRecord.Middle_Initial__c),personBeingRefRecord.First_Name__c &' '&personBeingRefRecord.Last_Name__c, personBeingRefRecord.First_Name__c &' ' &personBeingRefRecord.Middle_Initial__c &' '& personBeingRefRecord.Last_Name__c)}" />
                         <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
@@ -872,7 +888,7 @@
                         <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age__c})">
                             <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}" />
                         </apex:outputText>
-                        <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
+                        <apex:inputField value="{!fundingSource.Type_of_Coverage__c}"  id="fundingEntry_coverage" />
                         <apex:inputField value="{!fundingSource.Payer_Type__c}" id="neuroPayerType" html-data-rules="{&quot;VA - Pilot&quot;: [&quot;{!$Component.vaPilotClinicalNumber}&quot;]}" />
                         <apex:pageBlockSectionItem />
                         <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" />

@@ -55,8 +55,18 @@ public with sharing class referrals_Controller{
 	public List<Task> activities { get; set; }
 	public Agency_Involved_With_Individual__c agency { get; set; }
 	public List<Agency_Involved_With_Individual__c> agencies { get; set; }
+	
 	public Funding_Source__c fundingSource { get; set; }
 	public List<Funding_Source__c> fundingSources { get; set; }
+	//EB-481
+	public boolean gethasPrimaryFS(){
+		boolean tmp = false;	
+			for(Funding_Source__c fs : fundingSources){		
+				if(fs.Type_of_Coverage__c == 'Primary' ){tmp = true;}		
+			}	
+		return tmp;
+	}	
+	
 	public Boolean redFlagged { get; set; }
 	public Related_Party__c relParty {
 		get {

@@ -146,6 +146,17 @@ public with sharing class referral_Controller2 {
 
 	// shortcut used for WI CANS programs - need the ability to convert only some programs in order to do CANS.  This is the same code used on the Admission View page to show CANS button.
 	public boolean showCANS { get; set; }
+	
+	//EB-481
+	public boolean gethasPrimaryFS(){
+		boolean tmp = false;		
+		for(Funding_Source__c fs : fundingSources){		
+			if(fs.Type_of_Coverage__c == 'Primary' && fs.ID == fundingSource.id){tmp = false; break;}
+			if(fs.Type_of_Coverage__c == 'Primary' && fs.ID != fundingSource.id){tmp = true;}		
+		}		
+		return tmp;
+	}
+	
 	private void setshowCANS() {
     	
     	showCANS = false;
