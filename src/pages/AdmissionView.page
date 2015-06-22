@@ -347,31 +347,34 @@
 
 			<br />
 			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="false" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
-			<apex:outputField value="{!admission.discharged_date__c}" />
-			<apex:outputField value="{!admission.planned_discharge__c}" />
-			<apex:outputField value="{!admission.discharged_to_category__c}" />
-			<apex:outputField value="{!admission.discharged_to_desc__c}" />
-			<apex:outputField value="{!admission.discharged_to_subcategory__c}" />
-			<apex:outputField value="{!admission.discharged_to_other__c}" />
-			<apex:outputField value="{!admission.discharged_to_additional__c}" />
+			<apex:pageBlockSectionItem>
+			<apex:outputLabel value="Discharged Date/Time" />
+			<c:militaryDateTime datetimeval="{!admission.Discharged_Date_Time__c}" />
+			</apex:pageBlockSectionItem>
+			<apex:outputField value="{!admission.Planned_Discharge__c}" />
+			<apex:outputField value="{!admission.Discharged_To_Category__c}" />
+			<apex:outputField value="{!admission.Discharged_to_desc__c}" />
+			<apex:outputField value="{!admission.Discharged_To_Subcategory__c}" />
+			<apex:outputField value="{!admission.Discharged_to_other__c}" />
+			<apex:outputField value="{!admission.Discharged_To_Additional__c}" />
 			<apex:pageblocksectionitem >
 			<apex:outputLabel for="referredoutname" value="Facility Name" />
-			<apex:outputField id="referredoutname" value="{!admission.referred_out_agency_name__c}" />
+			<apex:outputField id="referredoutname" value="{!admission.Referred_Out_Agency_Name__c}" />
 			</apex:pageblocksectionitem>
 			
 			<apex:outputText value="<hr />" escape="false" />
             <apex:outputText value="<hr />" escape="false" />
-           	<apex:outputField value="{!admission.discharged_reason__c}" />
-                <apex:pageBlockSectionItem>
-                <apex:outputLabel value="Reason Other" />
-                <apex:outputField value="{!admission.reason_for_discharge__c}" />
-                </apex:pageBlockSectionItem>
-            <apex:outputField value="{!admission.discharged_reason_subcategory__c}" />
+           	<apex:outputField value="{!admission.Discharged_Reason__c}" />
+            <apex:outputField value="{!admission.Additional_Discharge_Info__c}" />
+            <apex:outputField value="{!admission.Discharged_Reason_Subcategory__c}" />
             <apex:outputText value="" />
-            <apex:outputField value="{!admission.discharged_reason_additional__c}" />
+            <apex:outputField value="{!admission.Discharged_Reason_Additional__c}" />
             <apex:outputText value="" />
+            <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Reason Other" />
+            <apex:outputField value="{!admission.Reason_for_Discharge__c}" />
+            </apex:pageBlockSectionItem>
                 
-            <apex:outputField value="{!admission.Additional_Discharge_info__c}" />
             <apex:outputText value="" />
 			
 			

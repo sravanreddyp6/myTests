@@ -30,7 +30,7 @@ var isDischarge = false;
     
 
 j$( document ).ready(function() {
-    setupDates(); 
+    //setupDates(); 
 });
 
 function setDischargeFlag () {
@@ -58,7 +58,7 @@ function setupDates() {
     <apex:pageMessages id="msgs"/>
         <apex:pageBlock title="Admission Edit" id="detail" mode="edit">
             <div class="pbHeaderButton" id="buttons">
-                <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" onClick="updateDates()" rerender="msgs, detail" onComplete="setDischargeFlag(); setupDates()"/>
+                <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" />
                 <apex:commandButton action="{!cancel}" value="Cancel"/>
             </div>
             <apex:pageBlockSection title="Information" id="info" columns="2">
@@ -67,20 +67,20 @@ function setupDates() {
                 <apex:outputLabel for="admstatus" value="Status" />
                 <apex:outputPanel >
                     <apex:inputField id="admStatus" value="{!admission.Status__c}" >
-                    <apex:actionSupport event="onchange" onsubmit="updateDates();" rerender="detail" action="{!setDischargeFields}" oncomplete="setDischargeFlag(); setupDates()"/>
+                    <apex:actionSupport event="onchange" rerender="detail" action="{!setDischargeFields}" />
                     </apex:inputField>
                 </apex:outputPanel>
                 </apex:pageblocksectionitem>
                 <apex:outputField value="{!admission.Person_Being_Served__c}" />
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Effective Date" />
-                    <apex:outputPanel >
-                        <div class="requiredInput">
-                            <div class="requiredBlock"></div>
-                            <apex:inputText id="admissionEffectiveDateTime" value=" {!admission.Admission_Effective_DateTime__c}" required="true" />
-                        </div>
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
+            		<apex:outputPanel layout="none">
+            		<div class="requiredInput"><div class="requiredBlock"></div>
+                	<c:militarydatetime id="effdatetime" datetimeval="{!admission.Admission_Effective_DateTime__c}" edit="true" hiddenFieldId="effdate" datetimepickerid="effdate"/>
+                </div>
+                <apex:inputHidden id="effdate"  value="{!admEffDateTime}" />
+                </apex:outputPanel>
+               </apex:pageblocksectionitem>
                 <apex:inputField value="{!admission.Network_Offering__c}" required="true" />
                 <apex:inputField value="{!admission.Discharged_Date__c}" rendered="{! !useDischargeSection }"/>
                 <apex:outputText value="" rendered="{! useDischargeSection }" />
@@ -91,22 +91,22 @@ function setupDates() {
             </apex:pageBlockSection>
             
             <apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="false" rendered="{! useDischargeSection && admission.status__c == 'Discharged'}" >
-            <apex:pageBlockSectionItem >
+                <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Discharged Date/Time" />
-                    <apex:outputPanel >
-                <div class="requiredInput">
-                    <div class="requiredBlock"></div>
-                    <apex:inputtext id="dischargeddatetime" value=" {!admission.Discharged_Date_Time__c}" />
+            		<apex:outputPanel layout="none">
+            		<div class="requiredInput"><div class="requiredBlock"></div>
+                	<c:militarydatetime id="dischargeddatetime" datetimeval="{!admission.Discharged_Date_Time__c}" edit="true" hiddenFieldId="dischargedate" datetimepickerid="dischargedate"/>
                 </div>
+                <apex:inputHidden id="dischargedate"  value="{!admDischargeDateTime}" />
                 </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                
+               </apex:pageblocksectionitem>
+
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Planned Discharge" />
                     <apex:outputPanel >
                 	<div class="requiredInput">
                     <div class="requiredBlock"></div>
-                	<apex:inputField value="{!admission.planned_discharge__c}" />
+                	<apex:inputField value="{!admission.Planned_Discharge__c}" />
                 
                 </div>
                 </apex:outputPanel>
@@ -138,22 +138,22 @@ function setupDates() {
                     <apex:outputPanel >
                 	<div class="requiredInput">
                     <div class="requiredBlock"></div>
-                	<apex:inputField value="{!admission.discharged_reason__c}" />
+                	<apex:inputField value="{!admission.Discharged_Reason__c}" />
                 
                 </div>
                 </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem>
+                <apex:inputField value="{!admission.Additional_Discharge_Info__c}" />
+                <apex:inputField value="{!admission.Discharged_Reason_Subcategory__c}" />
+                <apex:outputText value="" />
+                <apex:inputField value="{!admission.Discharged_Reason_Additional__c}" />
+                <apex:outputText value="" />
+                <apex:pageBlockSectionItem >
                 <apex:outputLabel value="Reason Other" />
-                <apex:inputField value="{!admission.reason_for_discharge__c}" />
+                <apex:inputField value="{!admission.Reason_for_Discharge__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:inputField value="{!admission.discharged_reason_subcategory__c}" />
-                <apex:outputText value="" />
-                <apex:inputField value="{!admission.discharged_reason_additional__c}" />
-                <apex:outputText value="" />
                 
-                <apex:inputField value="{!admission.Additional_Discharge_info__c}" />
                 <apex:outputText value="" />
             </apex:pageBlockSection>
             
