@@ -674,7 +674,10 @@ public with sharing class referral_Controller2 {
                 messages.Add('One Funding Source must have both "Coverage Level" = "Primary" and any "Payer Type" selected');
                 hasReq = false;
             }       
-            
+            if(personBeingRefRecord.Level_of_Education__c == null){
+                messages.Add('Highest Level of Education');
+                hasReq = false;             
+            }               
             if(referralRecord.Diagnosis_I__c == null){
                 messages.Add('Primary Diagnosis');
                 hasReq = false;             
