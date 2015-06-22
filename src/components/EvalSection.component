@@ -1,56 +1,93 @@
 <apex:component controller="GenerateEvalComponent">
-    <apex:attribute name="parentId" description="Id of the parent Evaluation record" type="Id" assignTo="{!evaluationId}" />
-    <apex:attribute name="pbsParentId" description="Id of the parent PBS record" type="Id" assignTo="{!pbsId}" />
-    <apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
-    <apex:attribute name="onEdit" description="The Javascript function to call when Edit is clicked" type="String" />
-    <apex:attribute name="formId" description="Id of the form element that includes this component" type="String" />
-    <apex:attribute name="uniqueId" description="Unique ID so we can differentiate JS functions" type="String" required="true" />
-    <apex:attribute name="isPdf" description="Boolean describing whether or not this is for a PDF rendering" type="Boolean" required="false" default="false" />
-    <apex:attribute name="rules" description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs." type="String" required="false" />
-    <apex:attribute name="onEntrySaveSuccess" description="The Javascript to call when an entry is successfully saved" type="String" required="false" />
+	<apex:attribute name="parentId"
+		description="Id of the parent Evaluation record" type="Id"
+		assignTo="{!evaluationId}" />
+	<apex:attribute name="pbsParentId"
+		description="Id of the parent PBS record" type="Id"
+		assignTo="{!pbsId}" />
+	<apex:attribute name="editEnabled"
+		description="Whether Edit functionality is enabled" type="Boolean"
+		default="true" />
+	<apex:attribute name="onEdit"
+		description="The Javascript function to call when Edit is clicked"
+		type="String" />
+	<apex:attribute name="formId"
+		description="Id of the form element that includes this component"
+		type="String" />
+	<apex:attribute name="uniqueId"
+		description="Unique ID so we can differentiate JS functions"
+		type="String" required="true" />
+	<apex:attribute name="isPdf"
+		description="Boolean describing whether or not this is for a PDF rendering"
+		type="Boolean" required="false" default="false" />
+	<apex:attribute name="rules"
+		description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
+		type="String" required="false" />
+	<apex:attribute name="onEntrySaveSuccess"
+		description="The Javascript to call when an entry is successfully saved"
+		type="String" required="false" />
 
-    <apex:attribute name="evaltype" description="Kind of eval" type="string" assignTo="{!evalname}" required="true" />
-    <apex:attribute name="category" description="Section of the Eval" type="string" assignTo="{!cat}" required="true" />
-    <apex:attribute name="subcategory" description="Sub-Section of the Eval" type="string" assignTo="{!subcat}" required="true" />
-    <apex:attribute name="subsubcategory" description="Section of the Eval" type="string" assignTo="{!subsubcat}" required="false" />
-    <apex:attribute name="evalSectionUuid" description="The identifier for the eval repeater section" type="string" assignTo="{!evalSectionId}" required="false" />
-    <apex:attribute name="evalSectionType" description="The type of the repeater section" type="string" required="false" />
+	<apex:attribute name="evaltype" description="Kind of eval"
+		type="string" assignTo="{!evalname}" required="true" />
+	<apex:attribute name="category" description="Section of the Eval"
+		type="string" assignTo="{!cat}" required="true" />
+	<apex:attribute name="subcategory"
+		description="Sub-Section of the Eval" type="string"
+		assignTo="{!subcat}" required="true" />
+	<apex:attribute name="subsubcategory" description="Section of the Eval"
+		type="string" assignTo="{!subsubcat}" required="false" />
+	<apex:attribute name="evalSectionUuid"
+		description="The identifier for the eval repeater section"
+		type="string" assignTo="{!evalSectionId}" required="false" />
+	<apex:attribute name="evalSectionType"
+		description="The type of the repeater section" type="string"
+		assignTo="{!evalSecType}" required="false" />
 
-    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
-    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
-    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
-    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
-    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
-    <apex:includeScript value="{!$Resource.AnnotoriousDev}" />
-    <apex:includeScript value="{!$Resource.AnotoJS}" />
-    <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
-    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript
+		value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript
+		value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:stylesheet
+		value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<apex:stylesheet
+		value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript
+		value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+	<apex:includeScript value="{!$Resource.AnnotoriousDev}" />
+	<apex:includeScript value="{!$Resource.AnotoJS}" />
+	<apex:stylesheet
+		value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 
-    <style>
-        tr.border_bottom td {
-            border-bottom: 1pt solid #F0F0EF;
-        }
+	<style>
+tr.border_bottom td {
+	border-bottom: 1pt solid #F0F0EF;
+}
 
-        td.text_right {
-            text-align: right;
-            float: right;
-        }
-    </style>
+td.text_right {
+	text-align: right;
+	float: right;
+}
+</style>
 
-    <form id="evalForm" method="post">
-        <apex:pageBlock rendered="{!cat != ''}">
-            <label class="labelCol">Created By:</label>{!evalSectionOwner}
-            <apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" rendered="{!editEnabled}">
-                <input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false;" />
-                <input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />
-            </apex:outputPanel>
-            <span id="evalSecValMsgs" style="color: red;"></span>
-            <apex:outputText value="{!htmlTable}" escape="false" />
-        </apex:pageBlock>
-    </form>
+	<form id="evalForm" method="post">
+		<apex:pageBlock rendered="{!cat != ''}">
+			<label class="labelCol">Created By:</label>{!evalSectionOwner}
+            <apex:outputPanel layout="block"
+				style="right: 10px;float: right;position: relative;"
+				rendered="{!editEnabled}">
+				<input class="btn" type="submit" value="Save" id="btnSave"
+					onclick="isModified=false;" />
+				<input class="btn" type="button" value="Cancel"
+					onclick="clearPanel(); return false;" />
+			</apex:outputPanel>
+			<span id="evalSecValMsgs" style="color: red;"></span>
+			<apex:outputText value="{!htmlTable}" escape="false" />
+		</apex:pageBlock>
+	</form>
 
-    <script>
+	<script>
         jQuery.noConflict();
 
         function addOrModifyAnnotation(annotation, isNew) {
@@ -216,7 +253,7 @@
                 format: 'm/d/Y',
                 closeOnDateSelect: true
             });
-            $('.datetimepicker').datetimepicker({});
+            $('.datetimepicker').datetimepicker({format:'m/d/Y H:i'});
 
 
             <apex:outputPanel layout="none" rendered="{!subcategory == 'Current Pain' || subcategory == 'Pain'}">
@@ -309,8 +346,9 @@
         });
     </script>
 
-    <apex:outputPanel layout="none" rendered="{! subcategory == 'Vitals Signs' || subcategory == 'Elimination - Bowel'}">
-     <script type="text/javascript">
+	<apex:outputPanel layout="none"
+		rendered="{! subcategory == 'Vitals Signs' || subcategory == 'Elimination - Bowel'}">
+		<script type="text/javascript">
 
         var lbs;
         var oz;
@@ -426,5 +464,5 @@
 
 
     </script>
-    </apex:outputPanel>
+	</apex:outputPanel>
 </apex:component>

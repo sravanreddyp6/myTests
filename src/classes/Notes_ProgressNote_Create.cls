@@ -9,7 +9,8 @@ public with sharing class Notes_ProgressNote_Create {
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public Id AZ_OPT_ID, SHIFT_NOTE_ID;
     public String pbsName { get; set; }
-    Public String AsmntOnly{get;set;}
+    Public Boolean AsmntOnly{get;set;}
+	private string usrOpGrp;
 
     public list<SelectOption> rtOptions = new list<SelectOption>();
     public list<SelectOption> getrtOptions(){return rtOptions ;}
@@ -22,7 +23,7 @@ public with sharing class Notes_ProgressNote_Create {
 
 //contructs
     public Notes_ProgressNote_Create(ApexPages.StandardController controller) {
-        AsmntOnly = 'No';
+        AsmntOnly = false;
         myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
         for (RecordType rt: myRTs) {
             if (rt.Name == 'AZ - OPT') {
@@ -45,6 +46,9 @@ public with sharing class Notes_ProgressNote_Create {
         pn = (Progress_Note__c) controller.getRecord();
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
         Service_Assignment__c sa = [select id, name, service_location__r.programid__c,recordtype.name from service_assignment__c where id = :saID LIMIT 1];
+
+       User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
+       usrOpGrp = currUser.Operating_Group__c;
         
         // If Progress Note is AZ-OPT, we have to default some fields here, but only for non-CM AZ
         if (myState == 'AZ') {
@@ -55,11 +59,14 @@ public with sharing class Notes_ProgressNote_Create {
                 pn.RecordTypeId = SHIFT_NOTE_ID;
             }
         }
-       User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
+        
+        // EC-196 - CM uses Shift Notes 
+        if ( usrOpGrp == 'Care Meridian')
+        	pn.RecordTypeId = SHIFT_NOTE_ID;
         
         //Added By Amruth for EB-436
         if(sa.recordtype.name == 'Assessment Only' && currUser != null && currUser.Operating_Group__c == 'NeuroRestorative'){
-            AsmntOnly = 'Yes';
+            AsmntOnly = true;
         }   
         
         
@@ -75,7 +82,10 @@ public with sharing class Notes_ProgressNote_Create {
         } else {
             // add error to page that shift note cannot be created
         }
-        loadData();
+        
+        //EC-196 - skip this step for CM
+        if (  usrOpGrp != 'Care Meridian')
+        	loadData();
     }
     public Notes_ProgressNote_Create() {
         
@@ -112,7 +122,7 @@ public with sharing class Notes_ProgressNote_Create {
             }
             
             //Added by Amruth
-            if(AsmntOnly== 'Yes' && thisRt.Name == 'Therapy'){
+            if( AsmntOnly && myname == 'therapy'){
                     SO = new SelectOption(thisRt.Id, thisRt.Name);
                     rtOptions.Add(SO);
             }
@@ -152,8 +162,15 @@ public with sharing class Notes_ProgressNote_Create {
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
         string retURL = ApexPages.currentPage().getParameters().get('retURL');
         if ( pn.RecordTypeId == SHIFT_NOTE_ID ) {
-            PageReference prShiftNote = Page.shiftnote_basic_form;
-            prShiftNote.getParameters().put('planID', planId);
+        	PageReference prShiftNote;
+        	
+        	// EC-196 - CM gets different shift note form
+        	if ( usrOpGrp == 'Care Meridian') {
+        		prShiftNote = Page.shiftnote_narrative_form;
+        	} else {
+				prShiftNote = Page.shiftnote_basic_form;
+	            prShiftNote.getParameters().put('planID', planId);
+        	}
             prShiftNote.getParameters().put('admID', admId);
             prShiftNote.getParameters().put('saID', saID);
             prShiftNote.getParameters().put('retURL', retURL);

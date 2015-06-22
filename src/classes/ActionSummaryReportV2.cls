@@ -17,6 +17,17 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public List<RestraintEvent> restraintEvents { get; set; }
 	public List<VitalsDetail> vitalsDetails { get; set; }
 
+    public DiagnosticsIvEvaluation diagnosticsIvEvaluation { get; set; }
+    public List<SelectOption> yesNoOptions {
+        get {
+            return new List<SelectOption> {
+                new SelectOption('Yes', 'Yes'),
+                new SelectOption('No', 'No')
+            };
+        }
+    }
+    public boolean isPICC { get; set; }
+
 	public List<Action_Summary__c> summaries { get; set; }
 
 	// Some constants for config purpose
@@ -94,7 +105,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		Map<Id, List<ObjectiveSkillResult>> finalizedSkillResultMap = new Map<Id, List<ObjectiveSkillResult>>();
 		Map<Id, List<ObjectiveBehaviorCountResult>> finalizedCountResultMap = new Map<Id, List<ObjectiveBehaviorCountResult>>();
 		Map<Id, List<ObjectiveNarrativeResult>> finalizedNarrativeResultMap = new Map<Id, List<ObjectiveNarrativeResult>>();
-
+        
 		Action_Plan_Summary_Result__c[] results = [
 			SELECT Id, Type__c, Data__c, Action_Plan_Summary__c
 			  FROM Action_Plan_Summary_Result__c
@@ -151,7 +162,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 					finalizedNarrativeResultMap.put(narrativeResult.objectiveId, new List<ObjectiveNarrativeResult>());
 				}
 				finalizedNarrativeResultMap.get(narrativeResult.objectiveId).add(narrativeResult);
-			}
+			} else if (result.Type__c == 'DiagnosticsIvEvaluation') {
+                diagnosticsIvEvaluation = new DiagnosticsIvEvaluation(result);
+            }
 		}
 
 		Map<Id, Action_Plan_Objective__c> objectives;
@@ -283,6 +296,11 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				systemSummaryResultMap.put(domain, new SystemSummaryResult(summary.Id, domain));
 			}
 		}
+		isPICC = getIsPiccDiagnosticsIV(summary);
+		if (diagnosticsIvEvaluation == null && isPICC) { 
+            diagnosticsIvEvaluation = new DiagnosticsIvEvaluation(summary.Id);
+        }
+		
 		summaries = [
 			SELECT Id, Name, Start_Date__c, End_Date__c, Status__c
 			  FROM Action_Summary__c
@@ -330,6 +348,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				resultsToUpdate.add(result.resultSObject);
 			}
 		}
+		
+		if (diagnosticsIvEvaluation != null) resultsToUpdate.add(diagnosticsIvEvaluation.updateData().resultSObject);
+		
 		upsert resultsToUpdate;
 		update summary;
 		return new PageReference('/' + summary.Id);
@@ -352,7 +373,12 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		summary.Finalized_Date__c = DateTime.now();
 		summary.Finalized_By__c = UserInfo.getUserId();
 
-		List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();
+		if (this.isPICC && (this.diagnosticsIvEvaluation.dressingChange == '' || this.diagnosticsIvEvaluation.externalCatheterLength == 0 || 
+		                      this.diagnosticsIvEvaluation.armCircumference == 0 || this.diagnosticsIvEvaluation.totalCatheterLength == 0 ) ){
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One of the field for Weekly PICC Evaluation is empty OR zero. Please fill in appropriate values to Finalize the weekly documentation.'));
+                return null;
+        }
+        List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();		
 		for (Seizure seizure: this.seizures) {
 			toInsert.add(new Action_Plan_Summary_Result__c(
 				Action_Plan_Summary__c = this.summary.Id,
@@ -968,4 +994,76 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			}
 		}
 	}
+
+    public class DiagnosticsIvEvaluation {
+        public Action_Plan_Summary_Result__c resultSObject { get; set; }    	
+		public String dressingChange { get; set; }
+		public Decimal externalCatheterLength { get; set; }
+		public Decimal armCircumference { get; set; }
+		public Decimal totalCatheterLength { get; set; }
+		public String sourceOfInformation { get; set; }
+		public String comment { get; set; }
+
+        public DiagnosticsIvEvaluation(String dressingChange, Decimal externalCatheterLength, Decimal armCircumference, Decimal totalCatheterLength, String sourceOfInformation, String comment) {
+            // This constructor is only used for JSON (de-)serializing. Don't
+            // use it for any other purpose
+            this.dressingChange = dressingChange;
+            this.externalCatheterLength = externalCatheterLength; 
+            this.armCircumference = armCircumference; 
+            this.totalCatheterLength = totalCatheterLength;
+            this.sourceOfInformation = sourceOfInformation;
+            this.comment = comment;             
+        }
+
+        public DiagnosticsIvEvaluation(Id summaryId) {
+            this.resultSObject = new Action_Plan_Summary_Result__c(
+                Action_Plan_Summary__c = summaryId,
+                Type__c = 'DiagnosticsIvEvaluation'
+            );
+        }
+        public DiagnosticsIvEvaluation(Action_Plan_Summary_Result__c resultSObject) {
+            this.resultSObject = resultSObject;
+            DiagnosticsIvEvaluation r = (DiagnosticsIvEvaluation) JSON.deserialize(resultSObject.Data__c, DiagnosticsIvEvaluation.class);
+            this.dressingChange = r.dressingChange;
+            this.externalCatheterLength = r.externalCatheterLength; 
+            this.armCircumference = r.armCircumference; 
+            this.totalCatheterLength = r.totalCatheterLength;
+            this.sourceOfInformation = r.sourceOfInformation;  
+            this.comment = r.comment;
+        }
+        public DiagnosticsIvEvaluation updateData() {
+            // Update the data field for the underlying Summary Result object
+            this.resultSObject.Data__c = JSON.serialize(new DiagnosticsIvEvaluation(
+                this.dressingChange, this.externalCatheterLength, this.armCircumference, this.totalCatheterLength, this.sourceOfInformation, this.comment));
+                return this;
+        }
+        
+    }	
+	
+    private boolean getIsPiccDiagnosticsIV(Action_Summary__c summary) {
+        //EC-169 : requirement - Question 11 will be added to the Summaries only 'when PICC is selected on a finalized PBS's Diagnostics/IV panel.
+        Map<Id, Evaluation__c> evaluations = new Map<Id, Evaluation__c>([
+            SELECT Id FROM Evaluation__c
+             WHERE ServiceAssignment__c = :summary.Service_Assignment__c
+               AND Head_to_toe_Status__c = 'Final'
+               AND Shift_Start_Time__c != null 
+               AND Shift_End_Time__c <= :summary.End_Date__c
+               AND Shift_Start_Time__c >= :summary.Start_Date__c
+        ]);
+        for (Eval_Value__c value: [
+                SELECT Id, Text_Under_250__c
+                  FROM Eval_Value__c
+                 WHERE What_Id__c IN :evaluations.keySet()
+                   AND Eval__r.Category__c = 'Diagnostics'
+                   AND Eval__r.Sub_Category__c = 'IV'
+                   AND Eval__r.htmlid__c = 'ivType'
+                   AND Eval__r.Visible__c = true
+            ]) {
+            if (value.Text_Under_250__c.contains('PICC')) {
+                return true;
+                break;
+            }
+        }
+        return false;
+    }	
 }

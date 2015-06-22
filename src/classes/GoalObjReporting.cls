@@ -225,7 +225,7 @@ public with sharing class GoalObjReporting {
 	
 	private List<Action_Plan_Objective__c > privateobjectives;
 	private Action_Plan_Objective__c currentobjective; 
-	private List<Table>  calcTables(){
+    @TestVisible private List<Table>  calcTables(){
 		Date firstDay = shiftStart.Date();
 		Date lastDay = getMinDateTime(shiftEnd, DateTime.Now()).date();
 		privateobjectives = new List<Action_Plan_Objective__c>{ thisObj };

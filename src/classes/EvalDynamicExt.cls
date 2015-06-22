@@ -323,9 +323,11 @@ public with sharing class EvalDynamicExt {
 		Savepoint sp2 = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
 
 		if(evalType == 'Residential' || evalType == 'CNA Workbook'){
-			thisEval.Status__c = 'Disregard';
+			
 			try{
-				update thisEval;
+				// need to get record without sharing on in case CNA workbook was locked as part of approval process
+				NoSharingRecord nsr = new NoSharingRecord( thisEval.id);
+				nsr.setStatusAndSave('Disregard');
 				PageReference pageRef = new PageReference('/apex/EvalDynamic?evalId='+thisEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
 				pageRef.setRedirect(true);
 				return pageRef;
@@ -525,15 +527,25 @@ public with sharing class EvalDynamicExt {
 
 		showApprove = false;
 		showEsign = false;
+		showDisregard = false;
 
 		// do this first because the approval buttons happen regardless of record ownership
 		if (evalType == 'CNA Workbook') {
 			showRevise = false;
 			showShiftDone = false;
 
-			if ( thiseval.status__c == 'Draft' && isUserOwner) {
-				showEsign = true;
-				showDisregard = true;
+			
+			if ( isUserOwner) {
+				// EC-198 - 06/10/2015 - show disregard for all statuses other than already diregarded!
+				system.debug( ' isuserowner is true, status is ' + thiseval.status__c); 
+				if ( thiseval.status__c != 'Disregard')
+					showDisregard = true;
+
+				
+				// show esign only for Draft
+				if ( thiseval.status__c == 'Draft') { 
+					showEsign = true;
+				}
 			}
 
 			if ( thiseval.status__c == 'Pending Approval' && isApprover) {
@@ -548,9 +560,7 @@ public with sharing class EvalDynamicExt {
 			showDisregard = false;
 
 			if (isDON) {
-				if (evalType == 'Head to Toe' && thisEval.Head_to_Toe_Status__c == 'Draft' && thisEval.Status__c == 'Draft') {  // EC-163
-					showEndOfShiftDON = true;
-				} else if (evalType == 'CNA Workbook' && thisEval.Status__c == 'Draft') {
+				if ((evalType == 'Head to Toe' || evalType == 'CNA Workbook') && thisEval.Status__c == 'Draft') {  // EC-163
 					showEndOfShiftDON = true;
 				}
 			}
@@ -765,4 +775,21 @@ public with sharing class EvalDynamicExt {
     	}
     }
 
+
+	// need this to get around the eval that is locked through approval process
+	public without sharing class NoSharingRecord {
+		private ID evalID;
+		public Evaluation__c theEval;
+		
+		public NoSharingRecord( ID theID ) {
+			evalID = theID;
+			theEval =(Evaluation__c)[ select id, status__c from evaluation__c where id = :evalID LIMIT 1];
+			
+		}
+		
+		public void setStatusAndSave( string newstatus) {
+			theEval.status__c = newstatus;
+			update theEval;			
+		}
+	}
 }

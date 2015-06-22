@@ -196,6 +196,74 @@
 					</table>
 				</apex:outputPanel>
 			</apex:pageBlockSection>
+			
+            <apex:pageBlockSection title="Weekly PICC Evaluation" columns="1" rendered="{! isPICC || diagnosticsIvEvaluation.resultSObject != null }">
+                <apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
+                    <table class="list" cellspacing="0" cellpadding="0" border="0">
+                        <thead>
+                            <tr class="headerRow">
+                                <th style="width: 70%; ">Procedure</th>
+                                <th style="width: 30%; ">Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr class="dataRow">
+                                    <td class="dataCell">
+										<table class="list" cellspacing="0" cellpadding="0" border="0">
+											<thead>
+												<tr class="headerRow">
+													<th style="width: 60%;"></th>
+													<th style="width: 40%;"></th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr class="dataRow">
+													<td class="dataCell"><apex:outputText value="Dressing change, external catheter length and resident&rsquo;s upper arm circumference measured <strong><u>weekly</u></strong> and prn." escape="false" />
+													</td>
+													<td class="dataCell"><apex:selectRadio value="{!diagnosticsIvEvaluation.dressingChange}" rendered="{!mode = 'edit'}">
+															<apex:selectOptions value="{!yesNoOptions}" />
+														</apex:selectRadio> <apex:outputText value="{!diagnosticsIvEvaluation.dressingChange}" rendered="{!mode != 'edit'}" /></td>
+												</tr>
+                                                <tr class="dataRow">
+                                                    <td class="dataCell, labelCol"><apex:outputText value="External Catheter Length" escape="false" /></td>
+                                                    <td class="dataCell">
+                                                    <apex:inputText value="{!diagnosticsIvEvaluation.externalCatheterLength}" rendered="{!mode = 'edit'}" />
+                                                    <apex:outputText value="{!diagnosticsIvEvaluation.externalCatheterLength}" rendered="{!mode != 'edit'}" /></td>
+                                                </tr>
+                                                <tr class="dataRow">
+                                                    <td class="dataCell, labelCol"><apex:outputText value="Arm Circumference" escape="false" /></td>
+                                                    <td class="dataCell">
+                                                    <apex:inputText value="{!diagnosticsIvEvaluation.armCircumference}" rendered="{!mode = 'edit'}" />
+                                                    <apex:outputText value="{!diagnosticsIvEvaluation.armCircumference}" rendered="{!mode != 'edit'}" /></td>
+                                                </tr>
+                                                <tr class="dataRow">
+                                                    <td class="dataCell, labelCol"><apex:outputText value="Total Length of Catheter Inserted (cm)" escape="false" /></td>
+                                                    <td class="dataCell">
+                                                    <apex:inputText value="{!diagnosticsIvEvaluation.totalCatheterLength}" rendered="{!mode = 'edit'}" />
+                                                    <apex:outputText value="{!diagnosticsIvEvaluation.totalCatheterLength}" rendered="{!mode != 'edit'}" /></td>
+                                                </tr>
+                                                <tr class="dataRow">
+                                                    <td class="dataCell, labelCol"><apex:outputText value="Source of Information" escape="false" /></td>
+                                                    <td class="dataCell">
+                                                    <apex:outputText value="<Auto populated via the E-Sign when Finalized>" rendered="{!summary.Status__c == 'Draft'}" />
+                                                    <apex:outputPanel layout="inline" rendered="{!summary.Status__c == 'Final'}" >
+                                                        <apex:outputField value="{!Action_Summary__c.Finalized_By__c}" /> @ <c:MilitaryDatetime dateTimeVal="{!summary.Finalized_Date__c}" />
+                                                    </apex:outputPanel> </td>
+                                                </tr>
+											</tbody>
+										</table>
+									</td>
+
+                                    <td class="dataCell">
+                                        <apex:inputTextArea style="width: 95%;" rows="8" value="{!diagnosticsIvEvaluation.comment}" rendered="{!mode = 'edit'}" />
+                                        <apex:outputText value="{!diagnosticsIvEvaluation.comment}" rendered="{!mode != 'edit'}" />
+                                    </td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+			
 			<apex:repeat value="{!objectiveMap}" var="objectiveType">
 				<apex:pageBlockSection title="{!objectiveType}" columns="1">
 					<apex:outputPanel layout="block" id="objectivePanel" style="clear: both; ">
