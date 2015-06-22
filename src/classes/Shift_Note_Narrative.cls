@@ -26,6 +26,8 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
         note.Healthcare_Medical_Note__c = true;
         
         editMode = false;
+        
+        system.debug('Edit mode' + editMode);
         canFinalize = false;
         if(apexpages.currentpage().getparameters().get('edit')=='1' && !note.locked__c){
             editMode= true;
@@ -37,13 +39,15 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
             note.RecordTypeid = [select id from recordtype where DeveloperName='Shift_Note' and SobjectType='Progress_Note__c' limit 1].id;
             note.Person_Being_served__c = [select person_being_served__c from admission__c where id = :apexpages.currentpage().getparameters().get('admID')].person_being_served__c;    
         } 
-        
+        system.debug('Edit mode' + editMode);
         setPastNotes();
         retURL = apexpages.currentpage().getparameters().get('retURL');
-		if (String.isBlank( retURL ))
+		if (String.isBlank( retURL )) {
 			retURL = '/home';
         }
-    
+        
+        system.debug('Edit mode' + editMode);
+    }
     
         
     public pagereference mySave(){
@@ -86,16 +90,20 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
     public Map<ID, string> shortdescs { get; private set; }
     private void setpastnotes () {
         
-       pastnotes = [ select id, start_time__c, end_time__c, narrative__c, lastmodifieddate, lastmodifiedby.name from progress_note__c where service_assignment__c = :note.service_assignment__c and recordtype.developername='Shift_Note' and id != :note.id order by lastmodifieddate desc];
-        
+       pastnotes = [ select id, start_time__c, end_time__c, narrative__c, createddate, createdbyid, createdby.name from progress_note__c where service_assignment__c = :note.service_assignment__c and recordtype.developername='Shift_Note' and id != :note.id order by lastmodifieddate desc];
+       shortdescs = new Map<ID, string>();
+       
        string shorttext;
        for ( Progress_note__c pn: pastnotes) {
        		shorttext = pn.narrative__c;
        		if ( shorttext.length() > 200)
-       			shorttext = shorttext.substring(0, 200);
+       			shorttext = shorttext.substring(0, 200) + '...';
        			
        		shortdescs.put( pn.id, shorttext);
        }
+       
+       system.debug('pastnotes' + pastnotes);
+       system.debug('shortdescs' + shortdescs);
     }        
     
     public PageReference handle(Id recordId, Id userId) {
