@@ -218,6 +218,9 @@
 					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
 						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
+					<apex:outputPanel rendered="{! canCreateNote }">
+						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!$CurrentPage.URL}">Add Narrative Shift Note</a><br />
+					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
 					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">

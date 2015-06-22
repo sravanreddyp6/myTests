@@ -82,7 +82,10 @@ public with sharing class Notes_ProgressNote_Create {
         } else {
             // add error to page that shift note cannot be created
         }
-        loadData();
+        
+        //EC-196 - skip this step for CM
+        if (  usrOpGrp != 'Care Meridian')
+        	loadData();
     }
     public Notes_ProgressNote_Create() {
         
