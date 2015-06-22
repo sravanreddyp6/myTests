@@ -1135,18 +1135,10 @@
         <picklist>
             <picklistValues>
                 <fullName>Active</fullName>
-                <default>false</default>
+                <default>true</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Inactive</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Pending Approval</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Needs Refinement</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -4161,6 +4153,9 @@
     <label>Funding Source</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>Referral__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -15502,7 +15497,7 @@
             <picklist>Funding_Source_Status__c</picklist>
             <values>
                 <fullName>Active</fullName>
-                <default>false</default>
+                <default>true</default>
             </values>
             <values>
                 <fullName>Active Final</fullName>
@@ -15510,14 +15505,6 @@
             </values>
             <values>
                 <fullName>Inactive</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Needs Refinement</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Pending Approval</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18125,5 +18112,11 @@
         <errorConditionFormula>AND(ISPICKVAL(Readmission__c, &apos;Yes&apos;), Prior_Pmt_Received__c == &apos;&apos;)</errorConditionFormula>
         <errorDisplayField>Prior_Pmt_Received__c</errorDisplayField>
         <errorMessage>Prior Payment Received is Required if Readmission is Yes</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Z_always</fullName>
+        <active>false</active>
+        <errorConditionFormula>1=1</errorConditionFormula>
+        <errorMessage>test</errorMessage>
     </validationRules>
 </CustomObject>

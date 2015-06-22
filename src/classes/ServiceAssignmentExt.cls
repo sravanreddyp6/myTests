@@ -27,8 +27,12 @@ public without sharing class ServiceAssignmentExt {
 	public string showServAssignCloseEditId {get; set; }
 	public string servAssignCloseEditId { get; set; }
 	public Service_Location__c serviceLocation { get; set; }
-
-
+	
+	
+	//for funding source coverage level
+	public list<selectoption> fundingCoverageOptions {get; set;}
+	public Boolean hasPrimaryActiveFS {get; set;}
+	
 	// Get/set info for contracts
 	public List<TMN_Contract__c> contractsForThisServAssignsState { get; set; }
 	public List<ServiceAssignment_Contract_JO__c> servAssignContractXrefs {get;set;}
@@ -311,6 +315,19 @@ public without sharing class ServiceAssignmentExt {
 				fundingSource = new Funding_Source__c();
 				fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType());
 				fundingSource.Service_Assignment__c = this.theServAssign.Id;
+				/*if(getfundingsourceRecordType() == 'NeuroRestorative'){
+					for(Funding_Source__c fs: this.fundingsources){
+						if(fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
+							hasPrimaryActiveFS = true;
+							fundingCoverageOptions.add(new selectOption('Secondary','Secondary'));
+							fundingCoverageOptions.add(new selectoption('Tertiary','Tertiary'));
+							fundingCoverageOptions.add(new selectoption('Other','Other'));
+						}
+					}
+					
+					
+				}*/
+				
 			}
 			return fundingSource;
 		}
@@ -438,6 +455,13 @@ public without sharing class ServiceAssignmentExt {
 		sadjos = [ SELECT Id, Name, Document__r.Phase_or_Level__c, File_Status__c FROM ServiceAssignment_Document_JO__c
 		           WHERE Service_Assignment__c = :theServAssign.Id AND Document__r.Type__c = 'Fidelity Document'];
 
+		fundingCoverageOptions = new List<SelectOption>();
+		fundingCoverageOptions.add(new SelectOption('','--None--'));
+		fundingCoverageOptions.add(new selectOption('Secondary','Secondary'));
+		fundingCoverageOptions.add(new selectoption('Tertiary','Tertiary'));
+		fundingCoverageOptions.add(new selectoption('Other','Other'));
+		hasPrimaryActiveFS = false;
+		
 		phaseSelectOptions = new List<SelectOption>();
 		phaseSelectOptions.add(new SelectOption('','--None--'));
 		Integer currentPhase = 0;
@@ -1778,6 +1802,18 @@ public without sharing class ServiceAssignmentExt {
 		fundingSource = new Funding_Source__c();
 		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		fundingSource.Service_Assignment__c = this.theServAssign.Id;
+		if(getfundingsourceRecordType() == 'NeuroRestorative'){
+			hasPrimaryActiveFS = false;
+			for(Funding_Source__c fs: this.fundingsources){
+				if(fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
+					hasPrimaryActiveFS = true;
+				/*	fundingCoverageOptions.add(new selectOption('Secondary','Secondary'));
+					fundingCoverageOptions.add(new selectoption('Tertiary','Tertiary'));
+					fundingCoverageOptions.add(new selectoption('Other','Other'));*/
+				}
+			}
+			
+		}
 	}
 
 	public void showEditFundingSource() {
@@ -1789,7 +1825,17 @@ public without sharing class ServiceAssignmentExt {
 		query = query.substring(0, query.length() - 2);
 		query += ' FROM Funding_Source__c WHERE Id=\'' + fundingSource.Id + '\' ORDER BY Type_of_Coverage__c LIMIT 1';
 		this.fundingSource = Database.query(query);
-		system.debug('Case Manager++++' +this.fundingSource.Case_Manager__c);
+		//set<Selectoption> dupeFilter = new Set<selectoption>();
+		if(getfundingsourceRecordType() == 'NeuroRestorative'){
+			hasPrimaryActiveFS = false;
+			for(Funding_Source__c fs: this.fundingsources){
+				if(this.fundingSource.Id != fs.Id && fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
+					hasPrimaryActiveFS = true;
+				}
+			}
+			
+		}
+		
 	}
 
 	public void saveFundingSource() {
@@ -1802,6 +1848,7 @@ public without sharing class ServiceAssignmentExt {
 		}
 
 		try {
+			this.fundingSource.Funding_Source_Status__c = 'Active';
 			upsert this.fundingSource;
 		}
 		catch (Exception e) {
