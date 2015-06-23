@@ -148,7 +148,7 @@
         }, 200);
     }
     fundingSourceClearMessages = function () {
-        $('#fundingMessages').html('');
+        j$('#fundingMessages').html('');
     }
     assignValue = function (elSelector, value) {
         var $el = $(document.getElementById(elSelector));
@@ -172,16 +172,19 @@
     	if(t == 'Yearly'){
     		dayCost = parseFloat(dayCost)/365;
 			dayCost = Math.round(dayCost * 100)/100;
+			assignValue(elSelector,dayCost);
     	}
     	else if(t == 'Monthly'){
     		dayCost = parseFloat(dayCost)/30.5;
 			dayCost = Math.round(dayCost * 100)/100
+			assignValue(elSelector,dayCost);
     	}
     	else if (t == 'Weekly'){
     		dayCost = parseFloat(dayCost)/7;
 			dayCost = Math.round(dayCost * 100)/100
+			assignValue(elSelector,dayCost);
     	}
-    	assignValue(elSelector,dayCost);
+    	//assignValue(elSelector,dayCost);
     
     }
 	
@@ -255,9 +258,9 @@
 		
 		var exceeded = validateauthUnitsTotal();
 		if(exceeded == '1'){
-			j$('[id$=authGrandTotalUnits]').removeClass("grandtotalOk").addClass("grandtotalwarning");
+			j$('[id$=authGrandTotalUnits]').addClass("grandtotalwarning");
 		}else{
-			j$('[id$=authGrandTotalUnits]').removeClass("grandtotalwarning").addClass("grandtotalOk");
+			j$('[id$=authGrandTotalUnits]').removeClass("grandtotalwarning");
 		}
 	
 	}
@@ -265,7 +268,7 @@
 		var actualUnits = j$('[id$=authGrandTotalUnits]').val();
 		var allowedUnits = j$('[id$=totalAuthUnits]').val();
 		
-		if(actualUnits > allowedUnits){
+		if(parseFloat(actualUnits) > parseFloat(allowedUnits)){
 			return '1';
 		}else{
 			return '0';
@@ -274,7 +277,6 @@
 	}
 	
 	validateAuthCalculations = function(){
-	
 		var authUnitErrors = [];
 		var term = $('[id$=funding_costTherapyTermDate]').val();
 		var effective = $('[id$=funding_costTherapyEffeciveDate]').val();
@@ -291,28 +293,63 @@
 		if(term == ''){
 			authUnitErrors.push('Term Date of Cost/Therapy is Mandatory');
 		}
-	/*	if(effectiveDate > termDate){
-			authUnitErrors.push('Effective Date Should be less than or equal to Term Date');
-		}
-		if(termDate > today){
-			authUnitErrors.push('Term Date cannot be in future.');
-		}*/
 		
 		if($('[id$=funding_oneoneRatio]').val() == ''){
 			authUnitErrors.push('Staffing Ratio 1:1 field is Mandatory');
 		}
 		
+		if($('[id$=hoursExpected]').val() == ''){
+			authUnitErrors.push('Number of Hours field is mandatory');
+		}
+		
 		if($('[id$=receivedRate]').val() == ''){
 			authUnitErrors.push('Rate is Mandatory for Calculating total Units');
 		}
-		/*if(FSHrs == ''){
-			authUnitErrors.push('Number of Hours is mandatory for calculating total Units');
-		}*/
+		
+		var otherCost = $('[id$=otherCost]').val();
+		if(parseFloat(otherCost) > 0 && $('[id$=otherCostDescription]').val() == ''){
+			authUnitErrors.push('Please enter the other cost description');
+		}
+		 
+		var Excess = validateauthUnitsTotal();
+		if(Excess == '1' && $('[id$=authExcessJustification]').val() == ''){
+			authUnitErrors.push('Please enter the Authorization Excess justification');
+		}
 		
 		return authUnitErrors;
 	
 	}
 	
+	onlyNos = function(e, t) {
+            try {
+                if (window.event) {
+                    var charCode = window.event.keyCode;
+                }
+                else if (e) {
+                    var charCode = e.which;
+                }
+                else { return true; }
+                if (charCode > 31 && (charCode < 49 || charCode > 57)) {
+                    return false;
+                }
+                return true;
+            }
+            catch (err) {
+                alert(err.Description);
+            }
+        }
+ 
+     isNumberwithDec = function (evt, obj) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            var value = obj.value;
+            var dotcontains = value.indexOf(".") != -1;
+            if (dotcontains)
+                if (charCode == 46) return false;
+            if (charCode == 46) return true;
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
 	
     
 }) (jQuery.noConflict());
