@@ -123,6 +123,17 @@
 		fundingSourceClearMessages();
 		var errors = validateFundingSource(recordType);
 		var authErrors = validateAuthCalculations();
+		
+		var otherCost = $('[id$=otherCost]').val();
+		if(parseFloat(otherCost) > 0 && $('[id$=otherCostDescription]').val() == ''){
+			authErrors.push('Please enter the other cost description');
+		}
+		 
+		var Excess = validateauthUnitsTotal();
+		if(Excess == '1' && $('[id$=authExcessJustification]').val() == ''){
+			authErrors.push('Please enter the Authorization Excess justification');
+		}
+		
 		var allErrors = authErrors.concat(errors);
 		var totalAuthstring = 'input[id*=' + elSelector + ']';
 		if (allErrors.length > 0) {
@@ -132,9 +143,8 @@
 			});
 			fundingSourceScrollToTop();
         } else {
-		console.log('tot units++'+ totalauthUnits);
+		
 			$(totalAuthstring).val(parseFloat(totalauthUnits));
-			console.log('value++++++'+$(totalAuthstring).val(parseFloat(totalauthUnits)));
 			finalizeFundingSource();
 		}
 	}
@@ -221,10 +231,12 @@
 			}
 			
 			totalUnits = parseFloat(FSRate) - sum;
-			totalUnits = totalUnits/parseFloat(perproductiveUnit);
+			if(parseFloat(perproductiveUnit) > 0){
+				totalUnits = totalUnits/parseFloat(perproductiveUnit);
+			}else{
+				totalUnits = totalUnits/1;
+			}
 			totalUnits = Math.round(totalUnits);
-			console.log('before' +totalUnits);
-			//assignValue(elSelector,totalUnits);
 			return totalUnits;
 	}
 	
@@ -305,15 +317,17 @@
 		if($('[id$=receivedRate]').val() == ''){
 			authUnitErrors.push('Rate is Mandatory for Calculating total Units');
 		}
-		
-		var otherCost = $('[id$=otherCost]').val();
-		if(parseFloat(otherCost) > 0 && $('[id$=otherCostDescription]').val() == ''){
-			authUnitErrors.push('Please enter the other cost description');
+		if($('[id$=DMECost]').val() != '' && !$("input[name*='dmeType']:checked").val()){
+			authUnitErrors.push('Please choose the calculation type for DME');
 		}
-		 
-		var Excess = validateauthUnitsTotal();
-		if(Excess == '1' && $('[id$=authExcessJustification]').val() == ''){
-			authUnitErrors.push('Please enter the Authorization Excess justification');
+		if($('[id$=medicationCost]').val() != '' && !$("input[name*='medicationType']:checked").val()){
+			authUnitErrors.push('Please choose the calculation type for Medication Costs');
+		}
+		if($('[id$=nutritionalCost]').val() != '' && !$("input[name*='nutritionalType']:checked").val()){
+			authUnitErrors.push('Please choose the calculation type for Nutritonal Cost');
+		}
+		if($('[id$=otherCost]').val() != '' && !$("input[name*='otherType']:checked").val()){
+			authUnitErrors.push('Please choose the calculation type for Other Cost');
 		}
 		
 		return authUnitErrors;
