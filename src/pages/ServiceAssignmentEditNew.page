@@ -2043,7 +2043,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageBlockSection Columns="1" id="grandtotalSection" >
 					<apex:outputPanel style="margin-right:30px;" >
 						<apex:outputLabel for="authGrandTotalUnits" value="Auth Units Grand Total" styleClass="labelCol" />
-						<apex:inputText value="{!fundingSource.Auth_Units_Grand_Total__c}"  id="authGrandTotalUnits" html-readonly="true" style="width:100px;"/>
+						<apex:inputText value="{!fundingSource.Auth_Units_Grand_Total__c}"  id="authGrandTotalUnits" html-readonly="true" style="width:100px;" styleClass="{!IF(fundingSource.Auth_Units_Grand_Total__c != null,If(VALUE(fundingSource.Auth_Units_Grand_Total__c) > VALUE(fundingSource.Total_Authorized_Therapy_Units__c), 'grandtotalwarning', 'none'), 'none')}"/>
 					</apex:outputPanel>
 					<apex:inputTextArea value="{!fundingSource.Auth_Excess_Justification__c}" rows="3" cols="20" id="authExcessJustification" />
 				</apex:pageBlockSection>
@@ -2077,25 +2077,14 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
 					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
-<!-- 					<apex:actionStatus id="saveFundingSourceStatus"> -->
-<!-- 						<apex:facet name="start"> -->
-<!-- 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
-<!-- 						</apex:facet> -->
-<!-- 						<apex:facet name="stop" /> -->
-<!-- 					</apex:actionStatus> -->
 				</apex:pageblockButtons>
+				
 				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType == 'NeuroRestorative'}" >
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
 					<apex:commandbutton id="finalizeFundingSource" value="Finalize" onClick="fundingSourceFinalize(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
 <!-- 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}"/> -->
 					<apex:commandbutton id="inactivateFundingSource" value="Inactivate" onClick="inactivateFunding(); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active' || fundingSource.Funding_Source_Status__c == 'Active Final'}" />
 					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
-<!-- 					<apex:actionStatus id="saveFundingSourceStatusforNR"> -->
-<!-- 						<apex:facet name="start"> -->
-<!-- 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
-<!-- 						</apex:facet> -->
-<!-- 						<apex:facet name="stop" /> -->
-<!-- 					</apex:actionStatus> -->
 				</apex:pageblockButtons>
 			</apex:pageBlock>
 		</apex:outputPanel>
@@ -2136,9 +2125,13 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockTable>
 
 			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0 && canEditFundingSource }">
-				<apex:column headerValue="Action" rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
-				</apex:column>
-				<apex:column headerValue="Action" rendered="{!fundingSource.Funding_Source_Status__c == 'Active Final' || fundingSource.Funding_Source_Status__c == 'Inactive'}"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; " >View</a>
+				<apex:column headerValue="Action" >
+					<apex:outputPanel rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}" >
+						<a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!fundingSource.Funding_Source_Status__c == 'Active Final' || fundingSource.Funding_Source_Status__c == 'Inactive'}">
+						<a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false;">View</a>
+					</apex:outputPanel>
 				</apex:column>
 				<apex:column value="{!fundingSource.Funding_Source_Status__c}" />
 				<apex:column value="{!fundingSource.Type_of_Coverage__c}" />
