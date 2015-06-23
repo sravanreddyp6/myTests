@@ -14,8 +14,14 @@ public class identityEditNew {
         set{myTMN.Operating_Group__c = value;}
     }
     
+    public String FN = System.currentPageReference().getParameters().get('FN');
+    public String LN = System.currentPageReference().getParameters().get('LN');
+    public String retURL = ApexPages.currentPage().getParameters().get('retURL');
+    
+    
     public identityEditNew() {
         Id id = ApexPages.currentPage().getParameters().get('id');
+        String retURL = ApexPages.currentPage().getParameters().get('retURL');
         TMNUser = (id == null) ? new TMN_User__c() : 
             [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Delegate_For__c,Email__c,Employee_Number__c,
@@ -24,11 +30,16 @@ public class identityEditNew {
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,
-            Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Work_City__c,Zip_Code__c 
+            Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,
+            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c 
             FROM TMN_User__c 
             WHERE Id = :id];
     
     if(TMNUser.Id == null){
+        TMNUser.First_Name__c = FN;
+        TMNUser.Last_Name__c = LN;
+        TMNUser.Preferred_First_Name__c = FN;
+        TMNUser.Preferred_Last_Name__c = LN;
         TMNUser.Manager_Name__c = aliasUser.Name;
         TMNUser.Work_State__c = aliasUser.Work_State__c;
         TMNUser.Alias__c = aliasUser.Alias__c;
@@ -70,7 +81,7 @@ public class identityEditNew {
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,
-            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c 
+            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c 
             FROM TMN_User__c 
             WHERE Name = :aliasName];
     
@@ -92,35 +103,54 @@ public class identityEditNew {
             ApexPages.addMessages(e);
             return null;
         }
-        //  After Save, navigate to the default view page:        
-        //Id id = ApexPages.currentPage().getParameters().get('id');
         Id id = TMNUser.Id;
-        PageReference viewPage = new PageReference('/apex/identity_view?id=' + id);
+        String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        PageReference viewPage = new PageReference('/apex/identity_view?id=' + id + '&retURL=' + retURL);
         viewPage.setRedirect(true);
         return viewPage;
     }
     
-    public PageReference goBack() {
+    public PageReference goEdit(){
         Id id = ApexPages.currentPage().getParameters().get('id');
-        if(id == null){
+        String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        PageReference editPage = new PageReference('/apex/identity_edittmnu?id=' + id + '&retURL=' + retURL);
+        editPage.setRedirect(true);
+        return editPage;
+    }
+    
+    public PageReference goCancel() {
+        Id id = ApexPages.currentPage().getParameters().get('id');
+        String retURL = ApexPages.currentPage().getParameters().get('retURL');
+//        if(id == null){
+//            PageReference cancelPage = new PageReference('/apex/identity_home');
+//            cancelPage.setRedirect(true);   
+//            return cancelPage;
+//        }
+        PageReference cancelPage = new PageReference(retURL);
+        cancelPage.setRedirect(true);   
+        return cancelPage;
+    }
+
+    public PageReference goBack() {
+        if(retURL == null){
             PageReference backPage = new PageReference('/apex/identity_home');
             backPage.setRedirect(true);   
             return backPage;
         }
-        PageReference backPage = new PageReference('/apex/identity_view?id=' + id);
+        PageReference backPage = new PageReference(retURL);
         backPage.setRedirect(true);   
         return backPage;
     }
     
-    public List<SelectOption> getItems() {
-        List<SelectOption> options = new List<SelectOption>();
-            options.add(new SelectOption('Care Meridian','Care Meridian'));
-            options.add(new SelectOption('Corporate','Corporate'));
-            options.add(new SelectOption('Cambridge','Hastings'));
-            options.add(new SelectOption('NeuroRestorative','NeuroRestorative'));
-            options.add(new SelectOption('Redwood','Redwood'));
-            return options;
-    }
+//    public List<SelectOption> getItems() {
+//        List<SelectOption> options = new List<SelectOption>();
+//            options.add(new SelectOption('Care Meridian','Care Meridian'));
+//            options.add(new SelectOption('Corporate','Corporate'));
+//            options.add(new SelectOption('Cambridge','Hastings'));
+//            options.add(new SelectOption('NeuroRestorative','NeuroRestorative'));
+//            options.add(new SelectOption('Redwood','Redwood'));
+//            return options;
+//    }
     
     public String[] getoperatingGroups() {
         return operatingGroups;
@@ -128,5 +158,16 @@ public class identityEditNew {
     
     public void setoperatingGroups(String[] operatingGroups) {
         this.operatingGroups = operatingGroups;
-    }    
+    } 
+//pop-up section    
+    public boolean displayPopup {get; set;}     
+    
+    public void closePopup() {        
+        displayPopup = false;    
+    }     
+    public void showPopup() {        
+        displayPopup = true;    
+    }
+//end pop-up section
+    
 }

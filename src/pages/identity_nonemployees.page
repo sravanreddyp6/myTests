@@ -1,49 +1,167 @@
 <apex:page controller="IdentityHomeController" sidebar="false" id="idNoEmpPage" tabStyle="TMN_User__c">
+
+    <style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            /* These are the 3 css properties you will need to change so the popup 
+            displays in the center of the screen. First set the width. Then set 
+            margin-left to negative half of what the width is. You can add 
+            the height property for a fixed size pop up if you want.*/
+            width: 1000px;
+            margin-left: -500px;
+            top:100px;
+        }
+        .popupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+
+    .block {
+        border-width: 10px 4px;
+        border-style: solid;
+        border-color: #0E5A8C;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        padding: 4px;
+        margin-bottom: 12px;
+        width: 230px;
+    }
+                    
+    .block-title {
+        color: #000000;
+        padding: 0 4px;
+        font-size: 1.25em;
+        font-weight: bold;
+    }       
+
+    .block-inner {
+        color: #000000;
+        padding: 0 4px;
+        font-size: 1em;
+        font-weight: bold;
+    }
+                             
+    </style>
+
+    <apex:panelGrid >                
+        <apex:panelGroup >
+            <apex:outputPanel layout="block" styleClass="block-title">
+                I Would Like to ...
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="block">
+                <apex:form styleClass="block-inner">
+                    <!--<apex:outputLink value="/apex/identity_home" rendered="{!hasAccess}"> View Recently Accessed Identities...</apex:outputLink><br />-->
+                    <apex:outputLink value="/apex/identity_delegate" rendered="{!hasAccess}"> Manage my Delegates...</apex:outputLink><br />
+                   <!-- <apex:outputLink value="/apex/identity_employees" rendered="{!isDelegate}">Maintain Employees...</apex:outputLink><br /> -->
+                    <!--<apex:outputLink value="/apex/identity_nonemployees" rendered="{!isDelegate}">Maintain Non-Employees...</apex:outputLink><br />-->
+                    <apex:outputLink value="/apex/identity_edit" rendered="{!$Profile.Name=='System Administrator'}">Manage TMN Users</apex:outputLink>
+                </apex:form>
+            </apex:outputPanel>
+        </apex:panelGroup>
+    </apex:panelGrid>
+    
     <apex:outputPanel >
-        <apex:outputLink value="/apex/identity_home"><h1>Back to Identity Home</h1></apex:outputLink>
         <apex:pageMessages />
     </apex:outputPanel>
-
-    <apex:pageBlock title="Non-Employee Search" id="blkSecNonEmpSrch" >
+    
+    <apex:outputPanel styleClass="inner-block" layout="block">
+    <apex:pageBlock title="Find or Create a New Identity Record" id="blkSecNonEmpSrch" >
         <apex:form id="frmNonEmpSrch" >  
                 <apex:inputText label="srchFN" value="{!srchFNameNonEmp}" html-placeholder="First Name"/>
                 <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
                 <apex:inputText label="srchLN" value="{!srchLNameNonEmp}" html-placeholder="Last Name"/>
                 <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
-                <apex:commandButton value="Search" action="{!nonEmpSearch}" id="srchBtn"/>                            
-                <apex:commandButton value="Create New Non-Employee" action="/apex/identity_editnew" disabled="{!btnDisable}" id="createBtn"/>    
+                <apex:commandButton value="Find or Create" action="{!nonEmpSearch}" id="srchBtn" />                               
         </apex:form>        
-    </apex:pageBlock>
+    <apex:pageBlockSection ></apex:pageBlockSection>
+    <apex:pageBlockSection columns="1" title="Workforce Reporting to Me" >
+        <apex:form >
+            <apex:pageBlockTable value="{!myWorkforce}" var="wf">
+                <apex:column headerValue="Action" >
+                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=wf.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Name" value="{!wf.Name}"/>
+                <apex:column headerValue="Person Type" value="{!wf.Current_Person_Type__c}"/>                
+                <!--<apex:column headerValue="Operating Group" value="{!wf.Operating_Group__c}"/>-->
+                <apex:column headerValue="Manager Name" value="{!wf.Manager_Name__c}" />           
+            </apex:pageBlockTable>
+        </apex:form>      
+    </apex:pageBlockSection>
 
-    <apex:pageBlock title="Non-Employee Search Results" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
-        <apex:form >
-            <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner">
-                <apex:column headerValue="Link" >
-                    <apex:outputLink value="{!URLFOR($Page.identity_view, '', [id=ner.id])}">View</apex:outputLink>
+        <apex:pageBlockSection columns="1" title="My Recently Edited Identities">
+            <apex:form >
+            <apex:pageBlockTable value="{!Records}" var="r">
+                <apex:column headerValue="Action" >
+                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=r.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>
                 </apex:column>
-                <apex:column headerValue="Name" value="{!ner.Name}"/>
-                <apex:column headerValue="Email" value="{!ner.Email__c}"/>
-                <apex:column headerValue="Operating Group" value="{!ner.Operating_Group__c}"/>                        
-                <apex:column headerValue="Manager Name" value="{!ner.Manager_Name__c}"/>
-                <apex:column headerValue="Manager Email" value="{!ner.Manager_Email__c}"/>           
+                <apex:column headerValue="Office" value="{!r.Work_State__c}" />
+                <apex:column headerValue="Name" value="{!r.Name}"/>
+                <apex:column headerValue="Email" value="{!r.Email__c}"/>
+                <apex:column headerValue="Office" value="{!r.Office_Phone__c}" />
+                <apex:column headerValue="Mobile" value="{!r.Mentor_Cell_Phone__c}" />
+                <apex:column headerValue="Person Type" value="{!r.Current_Person_Type__c}"/>                        
+                <apex:column headerValue="Manager Name" value="{!r.Manager_Name__c}"/>
+                <apex:column headerValue="Manager Email" value="{!r.Manager_Email__c}"/>           
             </apex:pageBlockTable>
-        </apex:form>    
-    </apex:pageBlock>
+            </apex:form>
+        </apex:pageBlockSection>
     
-    <apex:pageBlock title="My Non-Employees">
-        <apex:form >
-            <apex:pageBlockTable value="{!myNonEmployees}" var="ne">
-                <apex:column headerValue="Link" >
-                    <apex:outputLink value="{!URLFOR($Page.identity_view, '', [id=ne.id])}">View</apex:outputLink>
+        <apex:pageBlockSection columns="1" title="Workforce Attestation" id="wfBlock">
+            <apex:form >
+            <apex:pageBlockTable value="{!attestNonEmployees}" var="e">
+                <apex:column headerValue="Action" >
+                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=e.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink> &nbsp;
+                    <apex:commandLink value="Extend 30 Days" id="ExtCommand" action="{!add30Days}" rerender="wfBlock"> 
+                        <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
+                    </apex:commandLink>
                 </apex:column>
-                <apex:column headerValue="Name" value="{!ne.Name}"/>
-                <apex:column headerValue="Email" value="{!ne.Email__c}"/>
-                <apex:column headerValue="Operating Group" value="{!ne.Operating_Group__c}"/>                        
-                <apex:column headerValue="Manager Name" value="{!ne.Manager_Name__c}" />
-                <apex:column headerValue="Manager Email" value="{!ne.Manager_Email__c}" />           
+                <apex:column headerValue="Name" value="{!e.Name}"/>
+                <!--<apex:column headerValue="Operating Group" value="{!e.Operating_Group__c}"/>-->
+                <apex:column headerValue="Manager Name" value="{!e.Manager_Name__c}"/>
+                <apex:column headerValue="Last Day" value="{!e.Last_Day__c}"/>           
             </apex:pageBlockTable>
-        </apex:form>    
-    </apex:pageBlock>
-    
+            </apex:form>
+            </apex:pageBlockSection>               
+        </apex:pageBlock>  
+        </apex:outputPanel>
+
+    <apex:outputPanel id="srchpopup">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+                <apex:pageMessages />
+                <apex:form >
+                <apex:pageBlock title="Potential Matches" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
+                    <apex:pageBlockButtons location="Bottom">
+                        <apex:commandButton value="Cancel" action="{!closePopup}"/>
+                        <apex:commandButton value="Create New Identity Record" action="{!newTmnUser}" id="createBtn"/>
+                    </apex:pageBlockButtons>
+                    <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
+                        <apex:column headerValue="Action" >
+                        <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue="Name" value="{!ner.Name}"/>
+                        <apex:column headerValue="Email" value="{!ner.Email__c}"/>
+                        <apex:column headerValue="Person Type" value="{!ner.Current_Person_Type__c}"/>                        
+                        <apex:column headerValue="Manager Name" value="{!ner.Manager_Name__c}"/>
+                        <apex:column headerValue="Manager Email" value="{!ner.Manager_Email__c}"/>           
+                    </apex:pageBlockTable>    
+                </apex:pageBlock>
+                </apex:form>
+            </apex:outputPanel>
+    </apex:outputPanel>
     
 </apex:page>

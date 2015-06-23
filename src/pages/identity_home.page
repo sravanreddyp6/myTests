@@ -37,10 +37,9 @@
             </apex:outputPanel>
             <apex:outputPanel layout="block" styleClass="block">
                 <apex:form styleClass="block-inner">
+                    <apex:outputLink value="/apex/identity_nonemployees" rendered="{!isDelegate}">Maintain Non-Employees...</apex:outputLink><br />                
                     <apex:outputLink value="/apex/identity_delegate" rendered="{!hasAccess}"> Manage my Delegates...</apex:outputLink><br />
-                    <apex:outputLink value="/apex/identity_employees" rendered="{!isDelegate}">Maintain Employees...</apex:outputLink><br />       
-                    <apex:outputLink value="/apex/identity_nonemployees" rendered="{!isDelegate}">Maintain Non-Employees...</apex:outputLink><br />
-                    <apex:outputLink value="/apex/identity_attest" rendered="{!isDelegate}">Attest to my Non-Employees...</apex:outputLink><br />
+                   <!-- <apex:outputLink value="/apex/identity_employees" rendered="{!isDelegate}">Maintain Employees...</apex:outputLink><br /> -->
                     <apex:outputLink value="/apex/identity_edit" rendered="{!$Profile.Name=='System Administrator'}">Manage TMN Users</apex:outputLink>
                 </apex:form>
             </apex:outputPanel>
@@ -48,7 +47,7 @@
     </apex:panelGrid>
         <apex:panelGroup >
             <apex:outputPanel layout="block" styleClass="block-title">
-                Search for People ...
+                Search for Identity ...
             </apex:outputPanel>                                
             <apex:outputPanel layout="block">
                 <apex:form >
@@ -61,8 +60,9 @@
             </apex:outputPanel>               
             <apex:pageBlock title="Search Results" rendered="{!IF(tmnUserList=null,'false','true')}">
                 <apex:pageBlockTable value="{!tmnUserList}" var="sr">
-                    <apex:column headerValue="Link">
-                        <apex:outputLink value="{!URLFOR($Page.identity_view, '',[id=sr.id])}">View</apex:outputLink>
+                    <apex:column headerValue="Action">
+                    <!--    <apex:outputLink value="{!URLFOR($Page.identity_view, '',[id=sr.id])}">View</apex:outputLink> -->
+                        <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=sr.id,retURL=$Page.identity_home])}">View</apex:outputLink>
                     </apex:column>
                     <apex:column headerValue="First Name" value="{!sr.First_Name__c}"/>           
                     <apex:column headerValue="Last Name" value="{!sr.Last_Name__c}"/>
@@ -74,13 +74,16 @@
             </apex:pageBlock>
         </apex:panelGroup>                                            
     <apex:form >
-        <apex:pageBlock title="My Recently Viewed People">
+        <apex:pageBlock title="My Recently Viewed Identities">
             <apex:pageBlockTable value="{!Records}" var="r">
-                <apex:column headerValue="Link" >
-                    <apex:outputLink value="{!URLFOR($Page.identity_view, '', [id=r.id])}">View</apex:outputLink>
+                <apex:column headerValue="Action" >
+                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=r.id,retURL=$Page.identity_home])}">View</apex:outputLink>
                 </apex:column>
+                <apex:column headerValue="Office" value="{!r.Work_State__c}" />
                 <apex:column headerValue="Name" value="{!r.Name}"/>
                 <apex:column headerValue="Email" value="{!r.Email__c}"/>
+                <apex:column headerValue="Office" value="{!r.Office_Phone__c}" />
+                <apex:column headerValue="Cell" value="{!r.Mentor_Cell_Phone__c}" />
                 <apex:column headerValue="Operating Group" value="{!r.Operating_Group__c}"/>                        
                 <apex:column headerValue="Manager Name" value="{!r.Manager_Name__c}"/>
                 <apex:column headerValue="Manager Email" value="{!r.Manager_Email__c}"/>           
