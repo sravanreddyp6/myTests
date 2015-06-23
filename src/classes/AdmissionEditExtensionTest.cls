@@ -20,6 +20,8 @@ private class AdmissionEditExtensionTest {
         
         controller.useDischargeSection = false;
         controller.admission.status__c = 'Active';
+        controller.admEffDateTime = myData.theAdm.Admission_Effective_DateTime__c.format();
+        controller.admDischargeDateTime = '';
         controller.admission.Referred_Out_Agency_Name__c = 'Test Agency';
         controller.saveAdmission();
         msgList = ApexPages.getMessages();
@@ -31,6 +33,7 @@ private class AdmissionEditExtensionTest {
             SELECT Referred_Out_Agency_Name__c FROM Admission__c
             WHERE ID=:myData.theAdm.id
         ];
+        
         System.assertEquals('Test Agency', myData.theAdm.Referred_Out_Agency_Name__c);
         
         
