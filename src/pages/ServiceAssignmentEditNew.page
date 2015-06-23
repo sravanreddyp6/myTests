@@ -84,10 +84,7 @@
             color: red;
         }
         .grandtotalwarning{
-        	background-color: red;
-        }
-        .grandtotalOk{
-        	background-color: none;
+        	background-color: rgb(224, 102, 102);
         }
 	</style>
 
@@ -161,6 +158,7 @@
 				});
 				fundingSourceScrollToTop();
 	        }else{
+	        	j$('#fundingMessages').html('');
 				var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Sum_FS_Attributes__c}',
 					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
 					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
@@ -178,7 +176,7 @@
 		
 		
 		inactivateFunding = function(){
-			if(window.confirm('You will not be able to edit the funding source you inactivate it. Do you want to proceed?')){
+			if(window.confirm('You will not be able to edit the funding source once you inactivate it. Do you want to proceed?')){
 				fundingSourceInactivate();
 			}else{
 				return null;
@@ -341,11 +339,11 @@
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock2.addShiftDocStatus}" />
 	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!theServAssign.Id}" shiftType="CNA Workbook" onShowRerender="msgs, evaluationscna" status="{!$Component.myFRM.CNABlock.AddCNAStatus}" />
 	<apex:form id="myFRM">
-		<apex:actionFunction name="finalizeFundingSource" action="{!finalizeFundingSource}" status="saveFundingSourceStatusforNR" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
-		<apex:actionFunction name="fundingSourceInactivate" action="{!inactivateFundingSource}" status="saveFundingSourceStatusforNR" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
-		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
-		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
-		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock">
+		<apex:actionFunction name="finalizeFundingSource" action="{!finalizeFundingSource}" status="fundingSouceModalStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
+		<apex:actionFunction name="fundingSourceInactivate" action="{!inactivateFundingSource}" status="fundingSouceModalStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
+		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="fundingSouceModalStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
+		<apex:actionFunction name="showAddFundingSource" status="fundingSouceModalStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
+		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus">
 			<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 		</apex:actionFunction>
 		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1" />
@@ -1504,6 +1502,7 @@ END: Uncomment to have the element collapsed by default -->
 			  jQuery(document).ready(function ($) {
 			  	  setUpFields();
 	    		});   //end " 
+	    		
 		    </script>
 			<div id='fundingMessages'></div>
 			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' }">
@@ -1777,11 +1776,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageBlockSection columns="1" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:inputTextArea value="{!fundingSource.Comment__c}" label="Red Flag Comments" cols="80" />
 				</apex:pageBlockSection>
-				
-				
 			</apex:pageBlock>
-			
-			
 			
 			
 <!-- 			Added by Sravan for EB-435 -->
@@ -1888,7 +1883,8 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:panelGrid columns="3" style="margin-left: 50px;">
 					<apex:panelGroup >
 						<apex:outputlabel value="DME" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.DME__c}" style="width:100px;margin-left:109px;" id="DMECost" onblur="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}'); return false;"/>
+						<apex:inputField value="{!fundingSource.DME__c}" style="width:100px;margin-left:109px;" id="DMECost" onblur="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}'); return false;" 
+							 onkeypress="return isNumberwithDec(event,this)" />
 					</apex:panelGroup>
 					<apex:panelGroup >
 						<apex:selectRadio value="{!fundingSource.DME_Calculation_Type__c}" id="dmeType" onChange="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}'); return false;">
@@ -1904,7 +1900,8 @@ END: Uncomment to have the element collapsed by default -->
 					
 					<apex:panelGroup >
 						<apex:outputlabel value="Medication" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.Medication_Costs__c}" style="width:100px;margin-left:74px;" id="medicationCost" onblur="costperDay('{!$Component.medicationCost}', 'medicationType','{!$Component.medicationperDay}'); return false;"/>
+						<apex:inputField value="{!fundingSource.Medication_Costs__c}" style="width:100px;margin-left:74px;" id="medicationCost" onblur="costperDay('{!$Component.medicationCost}', 'medicationType','{!$Component.medicationperDay}'); return false;"
+							onkeypress="return isNumberwithDec(event,this)" />
 					</apex:panelGroup>
 					<apex:panelGroup >
 						<apex:selectRadio value="{!fundingSource.Medication_Cost_Calculation_Type__c}" id="medicationType" onChange="costperDay('{!$Component.medicationCost}', 'medicationType','{!$Component.medicationperDay}'); return false;" >
@@ -1920,7 +1917,8 @@ END: Uncomment to have the element collapsed by default -->
 					
 					<apex:panelGroup >
 						<apex:outputlabel value="Nutritional Supplements" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.Nutritional_Supplements_Cost__c}" style="width:100px;" id="nutritionalCost" onblur="costperDay('{!$Component.nutritionalCost}', 'nutritionalType','{!$Component.nutritionalPerDay}'); return false;"/>
+						<apex:inputField value="{!fundingSource.Nutritional_Supplements_Cost__c}" style="width:100px;" id="nutritionalCost" onblur="costperDay('{!$Component.nutritionalCost}', 'nutritionalType','{!$Component.nutritionalPerDay}'); return false;"
+							onkeypress="return isNumberwithDec(event,this)" />
 					</apex:panelGroup>
 					<apex:panelGroup >
 						<apex:selectRadio value="{!fundingSource.Nutritional_Supplements_Cost_Calculation__c}" id="nutritionalType" onChange="costperDay('{!$Component.nutritionalCost}', 'nutritionalType','{!$Component.nutritionalPerDay}'); return false;">
@@ -1937,7 +1935,8 @@ END: Uncomment to have the element collapsed by default -->
 					
 					<apex:panelGroup >
 						<apex:outputlabel value="Other" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.Other_Cost__c}" style="width:100px;margin-left:100px;" id="otherCost" onblur="costperDay('{!$Component.otherCost}', 'otherType','{!$Component.otherPerDay}'); return false;"/>
+						<apex:inputField value="{!fundingSource.Other_Cost__c}" style="width:100px;margin-left:100px;" id="otherCost" onblur="costperDay('{!$Component.otherCost}', 'otherType','{!$Component.otherPerDay}'); return false;"
+							onkeypress="return isNumberwithDec(event,this)" />
 					</apex:panelGroup>
 					<apex:panelGroup >
 						<apex:selectRadio value="{!fundingSource.Other_Cost_Calculation_Type__c}" id="otherType" onChange="costperDay('{!$Component.otherCost}', 'otherType','{!$Component.otherPerDay}'); return false;" >
@@ -1953,7 +1952,7 @@ END: Uncomment to have the element collapsed by default -->
 					
 					<apex:panelGroup >
 						<apex:outputLabel value="Other Cost Description" styleClass="labelCol" id="otherCostDescribe"/>
-						<apex:inputField value="{!fundingSource.Other_Cost_Description__c}" />
+						<apex:inputField value="{!fundingSource.Other_Cost_Description__c}" id="otherCostDescription"/>
 					</apex:panelGroup>
 				</apex:panelGrid>
 				
@@ -1971,7 +1970,8 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:panelGrid columns="3" >
 					<apex:panelGroup >
 						<apex:outputLabel value="OT Auth Units" styleClass="labelCol"/>
-						<apex:inputField value="{!fundingSource.OT_Auth_Units__c}" style="width:100px; margin-left:50px;" id="OTauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"/>
+						<apex:inputField value="{!fundingSource.OT_Auth_Units__c}" style="width:100px; margin-left:50px;" id="OTauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+							onkeypress="return onlyNos(event,this);" />
 					</apex:panelGroup>
 					<apex:panelGroup style="margin-left: 20px;">
 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
@@ -1984,7 +1984,8 @@ END: Uncomment to have the element collapsed by default -->
 					
 					<apex:panelGroup >
 						<apex:outputLabel value="PT Auth Units" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.PT_Auth_units__c}" style="width:100px; margin-left:50px;" id="PTauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"/>
+						<apex:inputField value="{!fundingSource.PT_Auth_units__c}" style="width:100px; margin-left:50px;" id="PTauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+								onkeypress="return onlyNos(event,this);" />
 					</apex:panelGroup>
 					<apex:panelGroup style="margin-left: 20px;">
 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
@@ -1997,7 +1998,8 @@ END: Uncomment to have the element collapsed by default -->
 					
 					<apex:panelGroup >
 						<apex:outputLabel value="SLP Auth Units"  styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.SLP_Auth_Units__c}" style="width:100px; margin-left:42px;" id="SLPauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"/>
+						<apex:inputField value="{!fundingSource.SLP_Auth_Units__c}" style="width:100px; margin-left:42px;" id="SLPauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+								onkeypress="return onlyNos(event,this);" />
 					</apex:panelGroup>
 					<apex:panelGroup style="margin-left: 20px;">
 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
@@ -2010,7 +2012,8 @@ END: Uncomment to have the element collapsed by default -->
 					
 					<apex:panelGroup >
 						<apex:outputLabel value="BIT Auth Units"  styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.BIT_Auth_Units__c}" style="width:100px; margin-left:46px;" id="BITauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"/>
+						<apex:inputField value="{!fundingSource.BIT_Auth_Units__c}" style="width:100px; margin-left:46px;" id="BITauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+								onkeypress="return onlyNos(event,this);" />
 					</apex:panelGroup>
 					<apex:panelGroup style="margin-left: 20px;">
 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" style="width:100px;"/>
@@ -2023,7 +2026,8 @@ END: Uncomment to have the element collapsed by default -->
 					
 					<apex:panelGroup >
 						<apex:outputLabel value="Counselling Auth Units"  styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.Counselling_Auth_Units__c}" style="width:100px;" id="CounsellingauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"/>
+						<apex:inputField value="{!fundingSource.Counselling_Auth_Units__c}" style="width:100px;" id="CounsellingauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+								onkeypress="return onlyNos(event,this);" />
 					</apex:panelGroup>
 					<apex:panelGroup style="margin-left: 20px;">
 						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
@@ -2073,29 +2077,29 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
 					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
-					<apex:actionStatus id="saveFundingSourceStatus">
-						<apex:facet name="start">
-							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-						</apex:facet>
-						<apex:facet name="stop" />
-					</apex:actionStatus>
+<!-- 					<apex:actionStatus id="saveFundingSourceStatus"> -->
+<!-- 						<apex:facet name="start"> -->
+<!-- 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
+<!-- 						</apex:facet> -->
+<!-- 						<apex:facet name="stop" /> -->
+<!-- 					</apex:actionStatus> -->
 				</apex:pageblockButtons>
 				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType == 'NeuroRestorative'}" >
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
 					<apex:commandbutton id="finalizeFundingSource" value="Finalize" onClick="fundingSourceFinalize(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
 <!-- 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}"/> -->
-					<apex:commandbutton id="inactivateFundingSource" value="Inactivate" onClick="inactivateFunding(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Inactive'}" />
+					<apex:commandbutton id="inactivateFundingSource" value="Inactivate" onClick="inactivateFunding(); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active' || fundingSource.Funding_Source_Status__c == 'Active Final'}" />
 					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
-					<apex:actionStatus id="saveFundingSourceStatusforNR">
-						<apex:facet name="start">
-							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-						</apex:facet>
-						<apex:facet name="stop" />
-					</apex:actionStatus>
+<!-- 					<apex:actionStatus id="saveFundingSourceStatusforNR"> -->
+<!-- 						<apex:facet name="start"> -->
+<!-- 							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
+<!-- 						</apex:facet> -->
+<!-- 						<apex:facet name="stop" /> -->
+<!-- 					</apex:actionStatus> -->
 				</apex:pageblockButtons>
 			</apex:pageBlock>
 		</apex:outputPanel>
-
+		
 		<a id="Funding_Sources"></a>
 		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!(vfVarIsCM || isNR) && !newSA && canViewFundingSource}">
 			<div class="pbHeaderButton">
@@ -2143,6 +2147,17 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Status__c}" />
 			</apex:pageBlockTable>
 		</apex:pageBlock>
+		
+<!-- 	common status for all actions on funding source -->
+		<apex:actionStatus id="fundingSouceModalStatus" >
+			<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+			</div>
+			</apex:facet>
+			<apex:facet name="stop" />
+		</apex:actionStatus>
 		<!-- end Funding sources section-->
 
 		<apex:pageBlock title="Referral Detail" rendered="{!referral != null }">
