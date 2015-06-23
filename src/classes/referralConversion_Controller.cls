@@ -212,6 +212,8 @@ public with sharing class referralConversion_Controller {
                 limit 1];
       if ( String.IsBlank(pBRRec.Legal_Guardianship_Status__c))
         pBRRec.Legal_Guardianship_Status__c = referralRecord.Legal_Guardian_Status__c;
+        
+        if(referralRecordType.startsWith('Neuro') && pBRRec.Level_of_Education__c == null ){ pBRRec.Level_of_Education__c = 'Unknown';}
     } catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         'The Person Being Referred record id specified is invalid. ' + e.getMessage()));
@@ -631,20 +633,20 @@ public with sharing class referralConversion_Controller {
     insert newSA;
     //EB-462
     if( referralRecordType.startsWith('Neuro') ){
-				list<Service_Code__c> Codes = [ SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c 
-														FROM Service_Code__c 
-														WHERE Program_Code__c = :refCurr.Service_Location__r.ProgramID__c
-															AND ( end_date__c > :date.valueof(newSA.SA_Start_DateTime__c) or end_date__c = null ) ];
-				list<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new list<ServiceAssignment_ServiceCode_JO__c>();	
-				for(Service_Code__c item: Codes){
-					ServiceAssignment_ServiceCode_JO__c servCodeXrefToSave = new ServiceAssignment_ServiceCode_JO__c(
-							Service_Code__c = item.Id,
-							Service_Assignment__c = newSA.Id
-							);
-					servCodeXrefsToSave.add(servCodeXrefToSave);
-				}
-	
-		if (servCodeXrefsToSave != null) {insert servCodeXrefsToSave;}
+                list<Service_Code__c> Codes = [ SELECT Id, Service_Code__c, Service_Value__c, Start_Date__c, End_Date__c, Program__c 
+                                                        FROM Service_Code__c 
+                                                        WHERE Program_Code__c = :refCurr.Service_Location__r.ProgramID__c
+                                                            AND ( end_date__c > :date.valueof(newSA.SA_Start_DateTime__c) or end_date__c = null ) ];
+                list<ServiceAssignment_ServiceCode_JO__c> servCodeXrefsToSave = new list<ServiceAssignment_ServiceCode_JO__c>();    
+                for(Service_Code__c item: Codes){
+                    ServiceAssignment_ServiceCode_JO__c servCodeXrefToSave = new ServiceAssignment_ServiceCode_JO__c(
+                            Service_Code__c = item.Id,
+                            Service_Assignment__c = newSA.Id
+                            );
+                    servCodeXrefsToSave.add(servCodeXrefToSave);
+                }
+    
+        if (servCodeXrefsToSave != null) {insert servCodeXrefsToSave;}
     }
     // if none of the diagnosis fields are blank or null, create new diagnosis record and link to SA
     if ( !String.isEmpty(refCurr.Axis_I__c) ||
