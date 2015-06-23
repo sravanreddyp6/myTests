@@ -146,15 +146,13 @@ function setupDates() {
                 
                 <apex:inputField value="{!admission.Additional_Discharge_Info__c}" />
                 <apex:inputField value="{!admission.Discharged_Reason_Subcategory__c}" />
-                <apex:outputText value="" />
-                <apex:inputField value="{!admission.Discharged_Reason_Additional__c}" />
-                <apex:outputText value="" />
                 <apex:pageBlockSectionItem >
                 <apex:outputLabel value="Reason Other" />
                 <apex:inputField value="{!admission.Reason_for_Discharge__c}" />
                 </apex:pageBlockSectionItem>
-                
+                <apex:inputField value="{!admission.Discharged_Reason_Additional__c}" />
                 <apex:outputText value="" />
+                
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Referred-Out Details" columns="1" rendered="{! !useDischargeSection }">
