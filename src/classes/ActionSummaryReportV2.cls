@@ -105,7 +105,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		Map<Id, List<ObjectiveSkillResult>> finalizedSkillResultMap = new Map<Id, List<ObjectiveSkillResult>>();
 		Map<Id, List<ObjectiveBehaviorCountResult>> finalizedCountResultMap = new Map<Id, List<ObjectiveBehaviorCountResult>>();
 		Map<Id, List<ObjectiveNarrativeResult>> finalizedNarrativeResultMap = new Map<Id, List<ObjectiveNarrativeResult>>();
-        
+
 		Action_Plan_Summary_Result__c[] results = [
 			SELECT Id, Type__c, Data__c, Action_Plan_Summary__c
 			  FROM Action_Plan_Summary_Result__c
@@ -297,10 +297,10 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			}
 		}
 		isPICC = getIsPiccDiagnosticsIV(summary);
-		if (diagnosticsIvEvaluation == null && isPICC) { 
+		if (diagnosticsIvEvaluation == null && isPICC) {
             diagnosticsIvEvaluation = new DiagnosticsIvEvaluation(summary.Id);
         }
-		
+
 		summaries = [
 			SELECT Id, Name, Start_Date__c, End_Date__c, Status__c
 			  FROM Action_Summary__c
@@ -348,9 +348,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				resultsToUpdate.add(result.resultSObject);
 			}
 		}
-		
+
 		if (diagnosticsIvEvaluation != null) resultsToUpdate.add(diagnosticsIvEvaluation.updateData().resultSObject);
-		
+
 		upsert resultsToUpdate;
 		update summary;
 		return new PageReference('/' + summary.Id);
@@ -373,12 +373,12 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		summary.Finalized_Date__c = DateTime.now();
 		summary.Finalized_By__c = UserInfo.getUserId();
 
-		if (this.isPICC && (this.diagnosticsIvEvaluation.dressingChange == '' || this.diagnosticsIvEvaluation.externalCatheterLength == 0 || 
+		if (this.isPICC && (this.diagnosticsIvEvaluation.dressingChange == '' || this.diagnosticsIvEvaluation.externalCatheterLength == 0 ||
 		                      this.diagnosticsIvEvaluation.armCircumference == 0 || this.diagnosticsIvEvaluation.totalCatheterLength == 0 ) ){
                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One of the field for Weekly PICC Evaluation is empty OR zero. Please fill in appropriate values to Finalize the weekly documentation.'));
                 return null;
         }
-        List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();		
+        List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();
 		for (Seizure seizure: this.seizures) {
 			toInsert.add(new Action_Plan_Summary_Result__c(
 				Action_Plan_Summary__c = this.summary.Id,
@@ -959,7 +959,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 					this.o2 = result.Number_No_Decimal__c;
 				} else if (result.Eval__r.Field_Name__c == 'Temperature') {
 					this.temperature = result.Text_Under_250__c;
-				} else if (result.Eval__r.Field_Name__c == 'Date' || result.Eval__r.Field_Name__c == 'Date/Time') {
+				} else if (result.Eval__r.Field_Name__c == 'Date' || result.Eval__r.Field_Name__c == 'Date/Time' || result.Eval__r.Field_Name__c == 'Observed Date/Time') {
 					this.dateTaken = result.Date_Time__c;
 				}
 				if (this.createdDate == null || result.CreatedDate < this.createdDate) {
@@ -996,7 +996,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	}
 
     public class DiagnosticsIvEvaluation {
-        public Action_Plan_Summary_Result__c resultSObject { get; set; }    	
+        public Action_Plan_Summary_Result__c resultSObject { get; set; }
 		public String dressingChange { get; set; }
 		public Decimal externalCatheterLength { get; set; }
 		public Decimal armCircumference { get; set; }
@@ -1008,11 +1008,11 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
             // This constructor is only used for JSON (de-)serializing. Don't
             // use it for any other purpose
             this.dressingChange = dressingChange;
-            this.externalCatheterLength = externalCatheterLength; 
-            this.armCircumference = armCircumference; 
+            this.externalCatheterLength = externalCatheterLength;
+            this.armCircumference = armCircumference;
             this.totalCatheterLength = totalCatheterLength;
             this.sourceOfInformation = sourceOfInformation;
-            this.comment = comment;             
+            this.comment = comment;
         }
 
         public DiagnosticsIvEvaluation(Id summaryId) {
@@ -1025,10 +1025,10 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
             this.resultSObject = resultSObject;
             DiagnosticsIvEvaluation r = (DiagnosticsIvEvaluation) JSON.deserialize(resultSObject.Data__c, DiagnosticsIvEvaluation.class);
             this.dressingChange = r.dressingChange;
-            this.externalCatheterLength = r.externalCatheterLength; 
-            this.armCircumference = r.armCircumference; 
+            this.externalCatheterLength = r.externalCatheterLength;
+            this.armCircumference = r.armCircumference;
             this.totalCatheterLength = r.totalCatheterLength;
-            this.sourceOfInformation = r.sourceOfInformation;  
+            this.sourceOfInformation = r.sourceOfInformation;
             this.comment = r.comment;
         }
         public DiagnosticsIvEvaluation updateData() {
@@ -1037,16 +1037,16 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
                 this.dressingChange, this.externalCatheterLength, this.armCircumference, this.totalCatheterLength, this.sourceOfInformation, this.comment));
                 return this;
         }
-        
-    }	
-	
+
+    }
+
     private boolean getIsPiccDiagnosticsIV(Action_Summary__c summary) {
         //EC-169 : requirement - Question 11 will be added to the Summaries only 'when PICC is selected on a finalized PBS's Diagnostics/IV panel.
         Map<Id, Evaluation__c> evaluations = new Map<Id, Evaluation__c>([
             SELECT Id FROM Evaluation__c
              WHERE ServiceAssignment__c = :summary.Service_Assignment__c
                AND Head_to_toe_Status__c = 'Final'
-               AND Shift_Start_Time__c != null 
+               AND Shift_Start_Time__c != null
                AND Shift_End_Time__c <= :summary.End_Date__c
                AND Shift_Start_Time__c >= :summary.Start_Date__c
         ]);
@@ -1065,5 +1065,5 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
             }
         }
         return false;
-    }	
+    }
 }
