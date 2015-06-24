@@ -31,7 +31,7 @@ public class identityEditNew {
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,
-            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c 
+            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c 
             FROM TMN_User__c 
             WHERE Id = :id];
     
@@ -49,10 +49,11 @@ public class identityEditNew {
         TMNUser.Business_Unit__c = aliasUser.Business_Unit__c;
         TMNUser.Current_Person_Type__c = 'Non-Employee';
         TMNUser.Work_City__c = aliasUser.Work_City__c;
-        TMNUser.Office_Location__c = aliasUser.Office_Location__c;
+        TMNUser.Office_Location_PickList__c = aliasUser.Office_Location_PickList__c;
         TMNUser.Service_Region__c = aliasUser.Service_Region__c;
         TMNUser.Service_Line__c = aliasUser.Service_Line__c;
         TMNUser.Zip_Code__c = aliasUser.Zip_Code__c;
+        TMNUser.BAA_Signed__c = aliasUser.BAA_Signed__c;
     }
         
     }
@@ -81,7 +82,7 @@ public class identityEditNew {
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,
-            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c 
+            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c  
             FROM TMN_User__c 
             WHERE Name = :aliasName];
     
