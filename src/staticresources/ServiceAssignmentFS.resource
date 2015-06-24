@@ -124,7 +124,7 @@
 		var errors = validateFundingSource(recordType);
 		var authErrors = validateAuthCalculations();
 		
-		var otherCost = $('[id$=otherCost]').val();
+		/*var otherCost = $('[id$=otherCost]').val();
 		if(parseFloat(otherCost) > 0 && $('[id$=otherCostDescription]').val() == ''){
 			authErrors.push('Please enter the other cost description');
 		}
@@ -132,7 +132,7 @@
 		var Excess = validateauthUnitsTotal();
 		if(Excess == '1' && $('[id$=authExcessJustification]').val() == ''){
 			authErrors.push('Please enter the Authorization Excess justification');
-		}
+		}*/
 		
 		var allErrors = authErrors.concat(errors);
 		var totalAuthstring = 'input[id*=' + elSelector + ']';
@@ -143,10 +143,32 @@
 			});
 			fundingSourceScrollToTop();
         } else {
-		
 			$(totalAuthstring).val(parseFloat(totalauthUnits));
-			finalizeFundingSource();
-		}
+			var finalErrors = [];
+			var Excess = validateauthUnitsTotal();
+			var otherCost = $('[id$=otherCost]').val();
+			if(Excess == '1'){
+				$('[id$=authGrandTotalUnits]').addClass("grandtotalwarning");
+			}else{
+				$('[id$=authGrandTotalUnits]').removeClass("grandtotalwarning");
+			}
+			if(parseFloat(otherCost) > 0 && $('[id$=otherCostDescription]').val() == ''){
+				finalErrors.push('Please enter the other cost description');
+			}
+			if(Excess == '1' && $('[id$=authExcessJustification]').val() == ''){
+				finalErrors.push('Please enter the Authorization Excess justification');
+			}
+			if (finalErrors.length > 0) {
+			$('#fundingMessages').html('');
+			$.each(finalErrors, function (index, error) {
+				$('#fundingMessages').append('<li class="error">' + error + '</li>');
+			});
+			fundingSourceScrollToTop();
+			}
+			else{
+				finalizeFundingSource();
+			}
+		}	
 	}
 	
     fundingSourceScrollToTop = function (isSuccess) {
