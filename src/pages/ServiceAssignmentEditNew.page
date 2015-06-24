@@ -1961,7 +1961,7 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:pageBlock title="THERAPY AUTHORIZATION" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="therapyAuthorizationBlock" >
 				<apex:pageBlockSection columns="1" id="therapyAuthorizationSection">
 					<apex:outputpanel style="margin-right:30px;" >
-						<apex:outputLabel for="totalAuthUnits" styleClass="labelCol">Total Auth Therapy Units</apex:outputLabel>
+						<apex:outputLabel for="totalAuthUnits" styleClass="labelCol">Total Weekly Auth Therapy Units</apex:outputLabel>
 						<apex:inputText value="{!fundingSource.Total_Authorized_Therapy_Units__c}"  style="width: 100px;" id="totalAuthUnits" html-readonly="true"/>
 						<apex:commandLink value="Calculate" styleClass="btn" style="margin-left:20px;" onclick="fundingCaltotalUnitsButton(); return false;" />
 					</apex:outputpanel>
@@ -2043,7 +2043,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageBlockSection Columns="1" id="grandtotalSection" >
 					<apex:outputPanel style="margin-right:30px;" >
 						<apex:outputLabel for="authGrandTotalUnits" value="Auth Units Grand Total" styleClass="labelCol" />
-						<apex:inputText value="{!fundingSource.Auth_Units_Grand_Total__c}"  id="authGrandTotalUnits" html-readonly="true" style="width:100px;" styleClass="{!IF(fundingSource.Auth_Units_Grand_Total__c != null,If(VALUE(fundingSource.Auth_Units_Grand_Total__c) > VALUE(fundingSource.Total_Authorized_Therapy_Units__c), 'grandtotalwarning', 'none'), 'none')}"/>
+						<apex:inputText value="{!fundingSource.Auth_Units_Grand_Total__c}"  id="authGrandTotalUnits" html-readonly="true" style="width:100px;" styleClass="{!IF(fundingSource.Auth_Units_Grand_Total__c != null && fundingSource.Total_Authorized_Therapy_Units__c != null,If(VALUE(fundingSource.Auth_Units_Grand_Total__c) > VALUE(fundingSource.Total_Authorized_Therapy_Units__c), 'grandtotalwarning', 'none'), 'none')}"/>
 					</apex:outputPanel>
 					<apex:inputTextArea value="{!fundingSource.Auth_Excess_Justification__c}" rows="3" cols="20" id="authExcessJustification" />
 				</apex:pageBlockSection>
