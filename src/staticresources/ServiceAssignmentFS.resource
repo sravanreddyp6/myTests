@@ -166,7 +166,11 @@
 			fundingSourceScrollToTop();
 			}
 			else{
-				finalizeFundingSource();
+				if(window.confirm('You will not be able to edit the funding source once you Finalize it. Do you want to proceed?')){
+					finalizeFundingSource();
+				}else{
+					return null;
+				}
 			}
 		}	
 	}

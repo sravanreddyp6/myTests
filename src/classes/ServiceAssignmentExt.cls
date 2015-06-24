@@ -1867,9 +1867,9 @@ public without sharing class ServiceAssignmentExt {
 	
 	public void inactivateFundingSource(){
 		try{
-			
-			this.fundingSource.Funding_Source_Status__c = 'Inactive';  
-			upsert this.fundingSource;
+			Funding_source__c fs = [SELECT Id, Funding_Source_Status__c FROM Funding_Source__c WHERE Id =:this.fundingSource.Id ]; // To make sure only Funding Status field is in scope.
+			fs.Funding_Source_Status__c = 'Inactive';  
+			update fs;
 		}
 		catch (Exception e) {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
