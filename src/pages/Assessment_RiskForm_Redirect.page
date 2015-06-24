@@ -1,0 +1,10 @@
+<apex:page standardController="Assessment__c"
+           extensions="Assessment_RiskForm_Redirect"
+           action="{!assessmentRedirect}">
+
+<apex:form id="myfrm">
+    <apex:inputhidden value="{!Assessment__c.Assessment_Type__r.Name}" />
+    <apex:inputhidden value="{!Assessment__c.Type__c}" />
+</apex:form>
+
+</apex:page>
