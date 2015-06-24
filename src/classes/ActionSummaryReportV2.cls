@@ -7,6 +7,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	// objective and all of its revised descendents (no matter how many degree
 	// of separations). The list also contains the parent objective itself
 	public Map<String, Map<Id, List<Objective>>> objectiveMap { get; set; }
+	private Map<Id, List<Action_Skill_Result__c>> objectiveToSkillResultMap;
+	private Map<Id, List<Action_Behavior_Result__c>> objectiveToBehaviorResultMap;
+	private Map<Id, List<Action_Narrative_Result__c>> objectiveToNarrativeResultMap;
 
 	public Map<Id, RecommendationSummaryResult> recommendationSummaryResultMap { get; set; }
 	public List<String> systemSummaryResultDomain { get; set; }
@@ -17,16 +20,16 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public List<RestraintEvent> restraintEvents { get; set; }
 	public List<VitalsDetail> vitalsDetails { get; set; }
 
-    public DiagnosticsIvEvaluation diagnosticsIvEvaluation { get; set; }
-    public List<SelectOption> yesNoOptions {
-        get {
-            return new List<SelectOption> {
-                new SelectOption('Yes', 'Yes'),
-                new SelectOption('No', 'No')
-            };
-        }
-    }
-    public boolean isPICC { get; set; }
+	public DiagnosticsIvEvaluation diagnosticsIvEvaluation { get; set; }
+	public List<SelectOption> yesNoOptions {
+		get {
+			return new List<SelectOption> {
+				new SelectOption('Yes', 'Yes'),
+				new SelectOption('No', 'No')
+			};
+		}
+	}
+	public boolean isPICC { get; set; }
 
 	public List<Action_Summary__c> summaries { get; set; }
 
@@ -82,6 +85,10 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		summary = (Action_Summary__c) controller.getRecord();
 
 		objectiveMap = new Map<String, Map<Id, List<Objective>>>();
+		objectiveToSkillResultMap = new Map<Id, List<Action_Skill_Result__c>>();
+		objectiveToBehaviorResultMap = new Map<Id, List<Action_Behavior_Result__c>>();
+		objectiveToNarrativeResultMap = new Map<Id, List<Action_Narrative_Result__c>>();
+
 
 		mode = ApexPages.currentPage().getParameters().get('mode');
 		if (mode == '' || mode == null) {
@@ -163,28 +170,15 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				}
 				finalizedNarrativeResultMap.get(narrativeResult.objectiveId).add(narrativeResult);
 			} else if (result.Type__c == 'DiagnosticsIvEvaluation') {
-                diagnosticsIvEvaluation = new DiagnosticsIvEvaluation(result);
-            }
+				diagnosticsIvEvaluation = new DiagnosticsIvEvaluation(result);
+			}
 		}
 
 		Map<Id, Action_Plan_Objective__c> objectives;
 		if (summary.Status__c != 'Final' && summary.Status__c != 'Disregard') {
 			objectives = new Map<Id, Action_Plan_Objective__c>([
 				SELECT Id, Former_Id__c, Type__c, Status__c, Description__c,
-				       CreatedDate, Effective_Date__c, Target_End_Date__c,
-				       (SELECT met_objective__c , Day__c, attempts__c
-				          FROM Action_skill_results__r
-				         WHERE Day__c <= :summary.End_Date__c
-				           AND Day__c >= :summary.Start_Date__c),
-				       (SELECT Day_time__c , Occurrences__c, Occurred__c
-				          FROM Action_Behavior_results__r
-				         WHERE Day_time__c <= :summary.End_Date__c.addDays(1)
-				           AND Day_time__c >= :summary.Start_Date__c),
-				       (SELECT Description__c, CreatedDate
-				          FROM Action_Narrative_results__r
-				         WHERE CreatedDate <= :summary.End_Date__c.addDays(1)
-				           AND CreatedDate >= :summary.Start_Date__c
-				        ORDER BY CreatedDate)
+				       CreatedDate, Effective_Date__c, Target_End_Date__c
 				  FROM Action_Plan_Objective__c
 				 WHERE Effective_Date__c <= :summary.End_Date__c
 				   AND Target_End_Date__c >= :summary.Start_Date__c
@@ -197,6 +191,49 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				         action_plan_goal__r.sort_order__c, action_plan_goal__c,
 				         sort_order__c
 			]);
+			// We have to query the results here separately instead of using nested queries because
+			// nested queries are prone to Invalid query locator error when the returned children
+			// dataset is big, which it is in this case.
+			for (Action_Skill_Result__c skillResult: [
+				SELECT Met_Objective__c , Day__c, Attempts__c, Action_Plan_Objective__c
+				  FROM Action_Skill_Result__c
+				 WHERE Day__c <= :summary.End_Date__c
+				   AND Day__c >= :summary.Start_Date__c
+				   AND Action_Plan_Objective__c IN :objectives.keySet()
+			]) {
+				if (!objectiveToSkillResultMap.containsKey(skillResult.Action_Plan_Objective__c)) {
+					objectiveToSkillResultMap.put(skillResult.Action_Plan_Objective__c,
+						new List<Action_Skill_Result__c>());
+				}
+				objectiveToSkillResultMap.get(skillResult.Action_Plan_Objective__c).add(skillResult);
+			}
+			for (Action_Behavior_Result__c behaviorResult: [
+				SELECT Day_time__c, Occurrences__c, Occurred__c, Action_Plan_Objective__c
+				  FROM Action_Behavior_Result__c
+				 WHERE Day_time__c <= :summary.End_Date__c.addDays(1)
+				   AND Day_time__c >= :summary.Start_Date__c
+				   AND Action_Plan_Objective__c IN :objectives.keySet()
+			]) {
+				if (!objectiveToBehaviorResultMap.containsKey(behaviorResult.Action_Plan_Objective__c)) {
+					objectiveToBehaviorResultMap.put(behaviorResult.Action_Plan_Objective__c,
+						new List<Action_Behavior_Result__c>());
+				}
+				objectiveToBehaviorResultMap.get(behaviorResult.Action_Plan_Objective__c).add(behaviorResult);
+			}
+			for (Action_Narrative_Result__c narrativeResult: [
+				SELECT Description__c, CreatedDate, Action_Plan_Objective__c
+				  FROM Action_Narrative_Result__c
+				 WHERE CreatedDate <= :summary.End_Date__c.addDays(1)
+				   AND CreatedDate >= :summary.Start_Date__c
+				   AND Action_Plan_Objective__c IN :objectives.keySet()
+				ORDER BY CreatedDate
+			]) {
+				if (!objectiveToNarrativeResultMap.containsKey(narrativeResult.Action_Plan_Objective__c)) {
+					objectiveToNarrativeResultMap.put(narrativeResult.Action_Plan_Objective__c,
+						new List<Action_Narrative_Result__c>());
+				}
+				objectiveToNarrativeResultMap.get(narrativeResult.Action_Plan_Objective__c).add(narrativeResult);
+			}
 			seizures = getSeizures(summary);
 			isolationEvents = getIsolationEvents(summary);
 			restraintEvents = getRestraintEvents(summary);
@@ -250,9 +287,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			Objective obj = new Objective(objectives.get(objectiveId));
 			objectiveParentToChildrenMap.get(parentObjectiveId).add(obj);
 			if (this.summary.Status__c == 'Draft') {
-				obj.populateSkillResults();
-				obj.populateBehaviorCountResults();
-				obj.populateNarrativeResults();
+				obj.populateSkillResults(objectiveToSkillResultMap.containsKey(objectiveId) ? objectiveToSkillResultMap.get(objectiveId) : null);
+				obj.populateBehaviorCountResults(objectiveToBehaviorResultMap.containsKey(objectiveId) ? objectiveToBehaviorResultMap.get(objectiveId) : null);
+				obj.populateNarrativeResults(objectiveToNarrativeResultMap.containsKey(objectiveId) ? objectiveToNarrativeResultMap.get(objectiveId) : null);
 			} else {
 				if (finalizedSkillResultMap.containsKey(objectiveId)) {
 					obj.skillResults = finalizedSkillResultMap.get(objectiveId);
@@ -298,8 +335,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		}
 		isPICC = getIsPiccDiagnosticsIV(summary);
 		if (diagnosticsIvEvaluation == null && isPICC) {
-            diagnosticsIvEvaluation = new DiagnosticsIvEvaluation(summary.Id);
-        }
+			diagnosticsIvEvaluation = new DiagnosticsIvEvaluation(summary.Id);
+		}
 
 		summaries = [
 			SELECT Id, Name, Start_Date__c, End_Date__c, Status__c
@@ -374,11 +411,12 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		summary.Finalized_By__c = UserInfo.getUserId();
 
 		if (this.isPICC && (this.diagnosticsIvEvaluation.dressingChange == '' || this.diagnosticsIvEvaluation.externalCatheterLength == 0 ||
-		                      this.diagnosticsIvEvaluation.armCircumference == 0 || this.diagnosticsIvEvaluation.totalCatheterLength == 0 ) ){
-                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'One of the field for Weekly PICC Evaluation is empty OR zero. Please fill in appropriate values to Finalize the weekly documentation.'));
-                return null;
-        }
-        List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();
+		                    this.diagnosticsIvEvaluation.armCircumference == 0 || this.diagnosticsIvEvaluation.totalCatheterLength == 0 ) ){
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+				'One of the field for Weekly PICC Evaluation is empty OR zero. Please fill in appropriate values to Finalize the weekly documentation.'));
+			return null;
+		}
+		List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();
 		for (Seizure seizure: this.seizures) {
 			toInsert.add(new Action_Plan_Summary_Result__c(
 				Action_Plan_Summary__c = this.summary.Id,
@@ -637,13 +675,16 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			this.narrativeResults = new List<ObjectiveNarrativeResult>();
 		}
 
-		public void populateSkillResults() {
+		public void populateSkillResults(List<Action_Skill_Result__c> results) {
 			Map<Date, Integer> metObjectiveMap = new Map<Date, Integer>();
 			Map<Date, Integer> notMetObjectiveMap = new Map<Date, Integer>();
 			Map<Date, Integer> percentMetObjectiveMap = new Map<Date, Integer>();
 			Set<Date> startDateSet = new Set<Date>();
 
-			for(Action_skill_result__c result: objectiveSObject.Action_skill_results__r) {
+			if (results == null) {
+				return;
+			}
+			for(Action_Skill_Result__c result: results) {
 				Date startMonth = Date.newInstance(result.Day__c.year(), result.Day__c.month(), 1);
 				if (!startDateSet.contains(startMonth)) {
 					startDateSet.add(startMonth);
@@ -683,11 +724,15 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			skillResults.sort();
 		}
 
-		public void populateBehaviorCountResults() {
+		public void populateBehaviorCountResults(List<Action_Behavior_Result__c> results) {
 			Map<Date, Integer> occurrenceMap = new Map<Date, Integer>();
 			Set<Date> startDateSet = new Set<Date>();
 
-			for(Action_behavior_result__c result: objectiveSObject.Action_Behavior_results__r) {
+			if (results == null) {
+				return;
+			}
+
+			for(Action_Behavior_Result__c result: results) {
 				Date startMonth = Date.newInstance(result.Day_time__c.yearGmt(), result.Day_time__c.monthGmt(), 1);
 				if (!startDateSet.contains(startMonth)) {
 					startDateSet.add(startMonth);
@@ -711,8 +756,11 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			countResults.sort();
 		}
 
-		public void populateNarrativeResults() {
-			for(Action_Narrative_result__c result: objectiveSObject.Action_Narrative_results__r) {
+		public void populateNarrativeResults(List<Action_Narrative_Result__c> results) {
+			if (results == null) {
+				return;
+			}
+			for(Action_Narrative_Result__c result: results) {
 				narrativeResults.add(
 					new ObjectiveNarrativeResult(
 						objectiveSObject.Id,
@@ -995,8 +1043,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		}
 	}
 
-    public class DiagnosticsIvEvaluation {
-        public Action_Plan_Summary_Result__c resultSObject { get; set; }
+	public class DiagnosticsIvEvaluation {
+		public Action_Plan_Summary_Result__c resultSObject { get; set; }
 		public String dressingChange { get; set; }
 		public Decimal externalCatheterLength { get; set; }
 		public Decimal armCircumference { get; set; }
@@ -1004,66 +1052,74 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		public String sourceOfInformation { get; set; }
 		public String comment { get; set; }
 
-        public DiagnosticsIvEvaluation(String dressingChange, Decimal externalCatheterLength, Decimal armCircumference, Decimal totalCatheterLength, String sourceOfInformation, String comment) {
-            // This constructor is only used for JSON (de-)serializing. Don't
-            // use it for any other purpose
-            this.dressingChange = dressingChange;
-            this.externalCatheterLength = externalCatheterLength;
-            this.armCircumference = armCircumference;
-            this.totalCatheterLength = totalCatheterLength;
-            this.sourceOfInformation = sourceOfInformation;
-            this.comment = comment;
-        }
+		public DiagnosticsIvEvaluation(String dressingChange, Decimal externalCatheterLength, Decimal armCircumference, Decimal totalCatheterLength, String sourceOfInformation, String comment) {
+			// This constructor is only used for JSON (de-)serializing. Don't
+			// use it for any other purpose
+			this.dressingChange = dressingChange;
+			this.externalCatheterLength = externalCatheterLength;
+			this.armCircumference = armCircumference;
+			this.totalCatheterLength = totalCatheterLength;
+			this.sourceOfInformation = sourceOfInformation;
+			this.comment = comment;
+		}
 
-        public DiagnosticsIvEvaluation(Id summaryId) {
-            this.resultSObject = new Action_Plan_Summary_Result__c(
-                Action_Plan_Summary__c = summaryId,
-                Type__c = 'DiagnosticsIvEvaluation'
-            );
-        }
-        public DiagnosticsIvEvaluation(Action_Plan_Summary_Result__c resultSObject) {
-            this.resultSObject = resultSObject;
-            DiagnosticsIvEvaluation r = (DiagnosticsIvEvaluation) JSON.deserialize(resultSObject.Data__c, DiagnosticsIvEvaluation.class);
-            this.dressingChange = r.dressingChange;
-            this.externalCatheterLength = r.externalCatheterLength;
-            this.armCircumference = r.armCircumference;
-            this.totalCatheterLength = r.totalCatheterLength;
-            this.sourceOfInformation = r.sourceOfInformation;
-            this.comment = r.comment;
-        }
-        public DiagnosticsIvEvaluation updateData() {
-            // Update the data field for the underlying Summary Result object
-            this.resultSObject.Data__c = JSON.serialize(new DiagnosticsIvEvaluation(
-                this.dressingChange, this.externalCatheterLength, this.armCircumference, this.totalCatheterLength, this.sourceOfInformation, this.comment));
-                return this;
-        }
+		public DiagnosticsIvEvaluation(Id summaryId) {
+			this.resultSObject = new Action_Plan_Summary_Result__c(
+					Action_Plan_Summary__c = summaryId,
+					Type__c = 'DiagnosticsIvEvaluation'
+					);
+		}
+		public DiagnosticsIvEvaluation(Action_Plan_Summary_Result__c resultSObject) {
+			this.resultSObject = resultSObject;
+			DiagnosticsIvEvaluation r = (DiagnosticsIvEvaluation) JSON.deserialize(resultSObject.Data__c, DiagnosticsIvEvaluation.class);
+			this.dressingChange = r.dressingChange;
+			this.externalCatheterLength = r.externalCatheterLength;
+			this.armCircumference = r.armCircumference;
+			this.totalCatheterLength = r.totalCatheterLength;
+			this.sourceOfInformation = r.sourceOfInformation;
+			this.comment = r.comment;
+		}
+		public DiagnosticsIvEvaluation updateData() {
+			// Update the data field for the underlying Summary Result object
+			this.resultSObject.Data__c = JSON.serialize(
+				new DiagnosticsIvEvaluation(
+					this.dressingChange,
+					this.externalCatheterLength,
+					this.armCircumference,
+					this.totalCatheterLength,
+					this.sourceOfInformation,
+					this.comment
+				)
+			);
+			return this;
+		}
 
-    }
+	}
 
-    private boolean getIsPiccDiagnosticsIV(Action_Summary__c summary) {
-        //EC-169 : requirement - Question 11 will be added to the Summaries only 'when PICC is selected on a finalized PBS's Diagnostics/IV panel.
-        Map<Id, Evaluation__c> evaluations = new Map<Id, Evaluation__c>([
-            SELECT Id FROM Evaluation__c
-             WHERE ServiceAssignment__c = :summary.Service_Assignment__c
-               AND Head_to_toe_Status__c = 'Final'
-               AND Shift_Start_Time__c != null
-               AND Shift_End_Time__c <= :summary.End_Date__c
-               AND Shift_Start_Time__c >= :summary.Start_Date__c
-        ]);
-        for (Eval_Value__c value: [
-                SELECT Id, Text_Under_250__c
-                  FROM Eval_Value__c
-                 WHERE What_Id__c IN :evaluations.keySet()
-                   AND Eval__r.Category__c = 'Diagnostics'
-                   AND Eval__r.Sub_Category__c = 'IV'
-                   AND Eval__r.htmlid__c = 'ivType'
-                   AND Eval__r.Visible__c = true
-            ]) {
-            if (value.Text_Under_250__c.contains('PICC')) {
-                return true;
-                break;
-            }
-        }
-        return false;
-    }
+	private boolean getIsPiccDiagnosticsIV(Action_Summary__c summary) {
+		//EC-169 : requirement - Question 11 will be added to the Summaries only 'when PICC is selected on a finalized PBS's Diagnostics/IV panel.
+		Map<Id, Evaluation__c> evaluations = new Map<Id, Evaluation__c>([
+			SELECT Id FROM Evaluation__c
+			 WHERE ServiceAssignment__c = :summary.Service_Assignment__c
+			   AND Head_to_toe_Status__c = 'Final'
+			   AND Shift_Start_Time__c != null
+			   AND Shift_End_Time__c <= :summary.End_Date__c
+			   AND Shift_Start_Time__c >= :summary.Start_Date__c
+		]);
+		for (Eval_Value__c value: [
+			SELECT Id, Text_Under_250__c
+			  FROM Eval_Value__c
+			 WHERE What_Id__c IN :evaluations.keySet()
+			   AND Eval__r.Category__c = 'Diagnostics'
+			   AND Eval__r.Sub_Category__c = 'IV'
+			   AND Eval__r.htmlid__c = 'ivType'
+			   AND Eval__r.Visible__c = true
+		]) {
+			if (value.Text_Under_250__c.contains('PICC')) {
+				return true;
+				break;
+			}
+		}
+		return false;
+	}
 }
