@@ -368,7 +368,7 @@
                     var charCode = e.which;
                 }
                 else { return true; }
-                if (charCode > 31 && (charCode < 49 || charCode > 57)) {
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
                     return false;
                 }
                 return true;

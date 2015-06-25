@@ -7,6 +7,9 @@
         <field>FK_$Service_Assignment__c.Person_Being_Served__c</field>
     </columns>
     <columns>
+        <field>Funding_Source__c.Case_Manager__c</field>
+    </columns>
+    <columns>
         <field>Funding_Source__c.Total_Authorized_Therapy_Units__c</field>
     </columns>
     <columns>
@@ -50,7 +53,7 @@
         <criteriaItems>
             <column>Funding_Source__c.Funding_Source_Status__c</column>
             <operator>equals</operator>
-            <value>Active Final</value>
+            <value>Active Final,Active</value>
         </criteriaItems>
     </filter>
     <format>Tabular</format>
@@ -62,8 +65,8 @@
     <reportType>CustomEntity$Funding_Source__c@Funding_Source__c.Service_Assignment__c</reportType>
     <scope>organization</scope>
     <showDetails>true</showDetails>
-    <sortColumn>Funding_Source__c.Counselling_Auth_Units__c</sortColumn>
-    <sortOrder>Asc</sortOrder>
+    <sortColumn>Funding_Source__c.Total_Authorized_Therapy_Units__c</sortColumn>
+    <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CUST_CREATED_DATE</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>
