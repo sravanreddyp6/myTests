@@ -992,7 +992,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		public DateTime dateTaken { get; set; }
 		public Decimal heartRate { get; set; }
 		public String bloodPressure { get; set; }
-		public Decimal o2 { get; set; }
+		public String o2 { get; set; }
 		public String temperature { get; set; }
 
 		public VitalsDetail(Eval_Value__c[] results) {
@@ -1004,8 +1004,12 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				} else if (result.Eval__r.Field_Name__c == 'Heart Rate') {
 					this.heartRate = result.Number_No_Decimal__c;
 				} else if (result.Eval__r.Field_Name__c == 'O2 Saturation' || result.Eval__r.Field_Name__c == 'O2 Sat') {
-					this.o2 = result.Number_No_Decimal__c;
-				} else if (result.Eval__r.Field_Name__c == 'Temperature') {
+					if (result.Text_Under_250__c != null && result.Text_Under_250__c != '') {
+						this.o2 = result.Text_Under_250__c;
+					} else if (result.Number_No_Decimal__c != null) {
+						this.o2 = String.valueOf(result.Number_No_Decimal__c);
+					}
+				} else if (result.Eval__r.Field_Name__c == 'Temperature' || result.Eval__r.Field_Name__c == 'Temperature (F)') {
 					this.temperature = result.Text_Under_250__c;
 				} else if (result.Eval__r.Field_Name__c == 'Date' || result.Eval__r.Field_Name__c == 'Date/Time' || result.Eval__r.Field_Name__c == 'Observed Date/Time') {
 					this.dateTaken = result.Date_Time__c;
