@@ -24,7 +24,11 @@ public with sharing class GoalObjRepeaters {
 					
 		SelectOption so;
 		for ( Action_Plan_objective__c o : ReportableBehaviorCObjectives( shiftStart.Date(), shiftEnd.Date())) {
-		
+			
+			// EC-197 do not show a link for blank descriptions
+			if ( string.isblank( o.description__c ))
+				continue;
+			
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
 		}
@@ -38,7 +42,9 @@ public with sharing class GoalObjRepeaters {
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableBehaviorDObjectives( shiftStart.Date(), shiftEnd.Date())) {
-			
+			// EC-197 do not show a link for blank descriptions
+			if ( string.isblank( o.description__c ))
+				continue;
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
 		}
@@ -53,7 +59,9 @@ public with sharing class GoalObjRepeaters {
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableSkillObjectives( shiftStart.Date(), shiftEnd.Date())) {
-			
+			// EC-197 do not show a link for blank descriptions
+			if ( string.isblank( o.description__c ))
+				continue;
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
 		}
@@ -68,7 +76,9 @@ public with sharing class GoalObjRepeaters {
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableNarrativeObjectives( shiftStart.Date(), shiftEnd.Date())) {
-			
+			// EC-197 do not show a link for blank descriptions
+			if ( string.isblank( o.description__c ))
+				continue;
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
 		}
@@ -187,8 +197,10 @@ public with sharing class GoalObjRepeaters {
 		
 		public objWrapper( ID id, String description, datetime effdate, datetime targetdate, string otype, string status) {
 			this.id = id;
-			if ( string.isBlank(description))
-				description = 'No description provided';
+			
+			// EC-197 - this should never happen but if it does, protect against exception
+			if ( String.isBlank( description))
+				description='No description provided';
 				
 			this.shortdesc = description.left(Math.min(description.length(), 47));
 			if ( description.length() > 47)
