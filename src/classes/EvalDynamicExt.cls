@@ -455,6 +455,8 @@ public with sharing class EvalDynamicExt {
 
 		if(evalType == 'Head to Toe'){
 			clonedEval.Head_to_toe_status__c = 'Draft';
+		} else if (evalType == 'Residential') {
+			clonedEval.OwnerId = UserInfo.getUserId();
 		}
 
     	insert clonedEval;
