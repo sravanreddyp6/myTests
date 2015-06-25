@@ -136,7 +136,6 @@ public with sharing class GoalObjRepeaters {
 				and Type__c = 'Behavior - Count'
 				and Status__c in ('In Progress', 'Revised', 'New')
 				and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
-				and description__c != ''
 				order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
 	}
 	
@@ -152,7 +151,6 @@ public with sharing class GoalObjRepeaters {
 					and Type__c = 'Behavior - Duration'
 					and Status__c in ('In Progress', 'Revised', 'New')
 					and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
-					and description = != ''
 				order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
 	}
 
@@ -168,7 +166,6 @@ public with sharing class GoalObjRepeaters {
 					and Type__c = 'Skill'
                     and Status__c in ('In Progress', 'Revised', 'New')
                     and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
-                    and description__c  != ''
                   order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
     }
     
@@ -185,7 +182,6 @@ public with sharing class GoalObjRepeaters {
 					and (Type__c = 'Narrative' )
 					and Status__c in ('In Progress', 'Revised', 'New')
 					and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
-					and description__c != ''
 				order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
 	}
 	
