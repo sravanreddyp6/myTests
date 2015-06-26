@@ -205,21 +205,24 @@
 
     	console.log('type is'+t);
     	
-    	if(t == 'Yearly' &&  parseFloat(dayCost) > 0 ){
+    	if(t == 'Yearly' &&  parseFloat(dayCost) >= 0 ){
     		dayCost = parseFloat(dayCost)/365;
 			dayCost = Math.round(dayCost * 100)/100;
 			assignValue(elSelector,dayCost);
     	}
-    	else if(t == 'Monthly' &&  parseFloat(dayCost) > 0 ){
+    	else if(t == 'Monthly' &&  parseFloat(dayCost) >= 0 ){
     		dayCost = parseFloat(dayCost)/30.5;
 			dayCost = Math.round(dayCost * 100)/100
 			assignValue(elSelector,dayCost);
     	}
-    	else if (t == 'Weekly' &&  parseFloat(dayCost) > 0){
+    	else if (t == 'Weekly' &&  parseFloat(dayCost) >= 0){
     		dayCost = parseFloat(dayCost)/7;
 			dayCost = Math.round(dayCost * 100)/100
 			assignValue(elSelector,dayCost);
     	}
+		else{
+			assignValue(elSelector,0);
+		}
     
     }
 	
