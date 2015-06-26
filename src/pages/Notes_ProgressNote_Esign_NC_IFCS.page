@@ -256,7 +256,8 @@ function validate() {
         line += fontsize;
         
         context.textAlign="left";
-        text = "Service Code: {!Progress_Note__c.Service_Code__r.Service_Code__c}";
+        // Edited with service value for EB-495
+        text = "Service Code: {!Progress_Note__c.Service_Code__r.Service_Value__c}";
         context.fillText(text, 2, line );
         line += fontsize;       
         
