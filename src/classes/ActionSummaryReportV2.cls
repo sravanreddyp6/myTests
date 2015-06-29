@@ -29,7 +29,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			};
 		}
 	}
-	public boolean isPICC { get; set; }
+	public String diagnosticsIvTypes { get; set; }
 
 	public List<Action_Summary__c> summaries { get; set; }
 
@@ -333,8 +333,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 				systemSummaryResultMap.put(domain, new SystemSummaryResult(summary.Id, domain));
 			}
 		}
-		isPICC = getIsPiccDiagnosticsIV(summary);
-		if (diagnosticsIvEvaluation == null && isPICC) {
+		diagnosticsIvTypes = getDiagnosticsIVs(summary);
+		if (diagnosticsIvEvaluation == null && (diagnosticsIvTypes.contains('PICC') || diagnosticsIvTypes.contains('CENTRAL')) ) {
 			diagnosticsIvEvaluation = new DiagnosticsIvEvaluation(summary.Id);
 		}
 
@@ -410,12 +410,20 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		summary.Finalized_Date__c = DateTime.now();
 		summary.Finalized_By__c = UserInfo.getUserId();
 
-		if (this.isPICC && (this.diagnosticsIvEvaluation.dressingChange == '' || this.diagnosticsIvEvaluation.externalCatheterLength == 0 ||
-		                    this.diagnosticsIvEvaluation.armCircumference == 0 || this.diagnosticsIvEvaluation.totalCatheterLength == 0 ) ){
+		if ( (diagnosticsIvTypes.contains('PICC') || diagnosticsIvTypes.contains('CENTRAL')) && 
+	         (this.diagnosticsIvEvaluation.dressingChange == '' || this.diagnosticsIvEvaluation.externalCatheterLength == 0 || this.diagnosticsIvEvaluation.totalCatheterLength == 0 ) ){
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-				'One of the field for Weekly PICC Evaluation is empty OR zero. Please fill in appropriate values to Finalize the weekly documentation.'));
+				'One of the field for Weekly IV Evaluation is empty OR zero. Please fill in appropriate values to Finalize the weekly documentation.'));
 			return null;
 		}
+		
+		if (diagnosticsIvTypes.contains('PICC') && this.diagnosticsIvEvaluation.armCircumference == 0 ) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+                'One of the field for Weekly IV Evaluation is empty OR zero. Please fill in appropriate values to Finalize the weekly documentation.'));
+            return null;
+        }
+        
+		
 		List<Action_Plan_Summary_Result__c> toInsert = new List<Action_Plan_Summary_Result__c>();
 		for (Seizure seizure: this.seizures) {
 			toInsert.add(new Action_Plan_Summary_Result__c(
@@ -1100,8 +1108,9 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 
 	}
 
-	private boolean getIsPiccDiagnosticsIV(Action_Summary__c summary) {
-		//EC-169 : requirement - Question 11 will be added to the Summaries only 'when PICC is selected on a finalized PBS's Diagnostics/IV panel.
+	private String getDiagnosticsIVs(Action_Summary__c summary) {
+		String vals = '';
+		//EC-169, 211 : requirement - Question 11 will be added to the Summaries only when PICC or Central is selected on a finalized PBS's Diagnostics/IV panel.
 		Map<Id, Evaluation__c> evaluations = new Map<Id, Evaluation__c>([
 			SELECT Id FROM Evaluation__c
 			 WHERE ServiceAssignment__c = :summary.Service_Assignment__c
@@ -1119,11 +1128,10 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			   AND Eval__r.htmlid__c = 'ivType'
 			   AND Eval__r.Visible__c = true
 		]) {
-			if (value.Text_Under_250__c.contains('PICC')) {
-				return true;
-				break;
+			if (value.Text_Under_250__c.toUpperCase().contains('PICC') || value.Text_Under_250__c.toUpperCase().contains('CENTRAL') ) {
+				vals += value.Text_Under_250__c.toUpperCase();
 			}
 		}
-		return false;
+		return vals;
 	}
 }
