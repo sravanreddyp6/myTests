@@ -1,0 +1,263 @@
+<apex:page id="PDM"  Controller="PDMController" >
+
+
+   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+      <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	
+	<apex:stylesheet value="{!URLFOR($Resource.pdm_bootstrap)}"/>    
+  
+<script type="text/javascript" language="javascript">
+    var j$ = jQuery.noConflict();
+    j$(document).ready(function() {
+		j$('table.dataTable').dataTable({
+			searching: false,
+				paging: false,
+				bInfo: false,
+			'aoColumnDefs': [{
+				'bSortable': false,
+				'aTargets': [0]
+			}],
+			sPaginationType: "full_numbers"
+		});
+		  j$('input[id$="ExportToExcel"]').prop('disabled', true);
+	});
+		
+	</script>
+
+	<style>
+     
+        .dataTable {
+			width: 100% !important;
+		}
+		.dataTables_filter {
+			float: right;
+			!important;
+		}
+		.dataTables_length {
+			width: 150px;
+			float: left;
+			!important;
+		}
+		.dataTables_info {
+			float: left;
+			width: 250px;
+			!important;
+		}
+		.dataTables_paginate {
+			float: right;
+			!important;
+		}
+
+.paginate_button {
+			margin-left: 5px;
+			border-radius: 12%;
+			width: 10px;
+			height: 8px;
+			padding: 0.5px;
+			background: #F8F8F8;
+			border: 1px solid #666;
+			color: #666;
+			text-align: center;
+			font: 10px Time New Roman, sans-serif;
+			cursor: pointer;
+		}
+		.paginate_active {
+			margin-left: 5px;
+			border-radius: 12%;
+			width: 10px;
+			height: 8px;
+			padding: 0.5px;
+			background: #7AC143;
+			border: 1px solid #666;
+			color: #666;
+			text-align: center;
+			font: 10px Times New Roman, sans-serif;
+			cursor: pointer;
+		}
+    
+        .search-text-input{
+            border-top:thin solid  #e5e5e5;
+            border-right:thin solid #e5e5e5;
+            border-bottom:0;
+            border-left:thin solid  #e5e5e5;
+            box-shadow:0px 1px 1px 1px #e5e5e5;
+            float:left;
+            height:27px;
+            margin:.8em 0 0 .5em; 
+            outline:0;
+            padding:.4em 0 .4em .6em; 
+            width:183px; 
+        }
+         
+        #button-holder{
+            background-color:#ffcc00;
+            border-top:thin solid #e5e5e5;
+            box-shadow:1px 1px 1px 1px #e5e5e5;
+            cursor:pointer;
+            float:left;
+            height:27px;
+            margin:11px 0 0 0;
+            text-align:center;
+            width:50px;
+        }
+         
+        #button-holder img{
+            margin:4px;
+            width:20px; 
+        }
+         
+	 .ui-autocomplete { 
+    position: absolute; 
+    cursor: default; 
+    height: 200px; 
+    overflow-y: scroll; 
+    overflow-x: hidden;
+    }
+         
+ </style>
+ <style type="text/css">
+    .ui-autocomplete-loading { background: white url('{!URLFOR($Resource.AjaxLoad)}') right center no-repeat; }
+</style>
+ 
+ <script type="text/javascript">
+ 	function openWin(url){
+		window.open(url);
+	}
+	
+ var sourcePage = 'https://c.cs41.visual.force.com/apex/TMNUser_JSON?core.apexpages.devmode.url=0';
+ j$(function() {
+   var txtVal =  j$('input[id$=searchLocation]');
+   	
+         j$('input[id$=searchLocation]').autocomplete({
+            source: function( request, response ) {
+
+                //Abort Ajax
+                var $this = j$(this);
+                var $element = j$(this.element);
+                var jqXHR = $element.data('jqXHR');
+                if(jqXHR)
+                    jqXHR.abort();
+
+                j$('input[id$=searchLocation]').addClass('ui-autocomplete-loading');
+                $element.data('jqXHR',j$.ajax({
+                    url: sourcePage+'&location='+txtVal.val(),
+                    dataType: "json",
+                    data: {
+                    },
+                    success: function( data ) {
+                    console.log('URL : '+sourcePage+'&location='+txtVal);
+                        response( j$.map( data , function( item ) {
+                            return {
+                                label: '<a>'+item.location+"</a><br />",
+                                value: item.location
+                            }
+                        }));
+                    },
+                    complete: function() {
+                        $this.removeData('jqXHR');
+                        j$('input[id$=searchLocation]').removeClass('ui-autocomplete-loading');
+                    }
+                })
+                );
+
+            },
+            focus: function() {
+                return false;
+            },
+            select: function(event, ui) {
+                var selectedObj = ui.item;
+                  j$('input[id$="ExportToExcel"]').prop('disabled', false)
+                searchByLocation(selectedObj.value);
+                return true;
+            }
+        }).data("autocomplete")._renderItem = autoCompleteRender;
+
+    });
+
+function autoCompleteRender(ul, item) {
+    return j$("<li></li>").data("item.autocomplete", item).append(item.label).appendTo(ul);
+}
+ 
+ </script>
+    <apex:form id="attForm">
+    <apex:actionFunction name="searchEmployee" action="{!searchEmployee}" reRender="datePanelContainer"/>
+    <apex:actionFunction name="searchByLocation" action="{!searchByLocation}" reRender="datePanelContainer" >
+        <apex:param name="selectedLocation" value=""/>
+        </apex:actionFunction>
+        <apex:pageBlock title="Phone Directory">
+  <table>
+  <tr> 
+  <th>Search Location</th> <th>&nbsp; </th>&nbsp; <th>&nbsp; </th> 
+  </tr>
+  <tr>
+  <td> <apex:inputText id="searchLocation" value="{!searchLocation}" Styleclass="search-text-input"/></td> <td>&nbsp; </td> <td>&nbsp; </td> <td> 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:inputText id="search-text-input" title="Search Employee..." Styleclass="search-text-input" value="{!searchEmployee}"/>
+<div id='button-holder'>
+<apex:image url="{!URLFOR($Resource.searchIcon)}" onClick="searchEmployee()"/>
+</div> 
+  </td>
+  </tr>
+  </table>
+  <span id="spanId"> </span>             
+<br/><br/><br/><br/><br/>
+
+ <apex:outputPanel id="datePanelContainer" >
+<apex:commandButton value="Export to Excel"  id="ExportToExcel" onclick="openWin('/apex/TMNUserLocationExcel?location={!searchLocation}'); return false;" />
+                <apex:pageBlockTable value="{!TMNUserList}" var="user" style="width: 100%;" styleClass="dataTable" id="Tabledata">
+                    <apex:column headerValue="Location">
+                    <apex:outputText value="{!user.Work_State__c}" />
+                    </apex:column>
+       				<apex:column headerValue="Name">
+                    <apex:outputText value="{!user.Name}" />
+                    </apex:column>
+                    <apex:column headerValue="Title">
+                    <apex:outputText value="{!user.Job_Title__c}" />
+                    </apex:column>
+                     <apex:column headerValue="Office">
+						<apex:outputField value="{!user.Office_Phone_number__c}">
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                    </apex:column>     
+                    <apex:column headerValue="Cell">
+						<apex:outputField value="{!user.Cell_Number__c}">
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                    </apex:column>
+                    <apex:column headerValue="Operating Group">
+                    <apex:outputText value="{!user.Operating_Group__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Manager">
+                    <apex:outputText value="{!user.Manager_Name__c}" />
+                    </apex:column>
+                </apex:pageBlockTable>
+        <div class="container">
+  <ul class="pager">
+    <apex:commandButton status="fetchStatus" reRender="datePanelContainer" value=" << Previous" action="{!previous}" disabled="{!!hasPrevious}" title=" << Previous"/>
+     <apex:outputText >{!(pageNumber * size)+1-size}-{!IF((pageNumber * size)>noOfRecords, noOfRecords,(pageNumber * size))} of {!noOfRecords}</apex:outputText>
+    <apex:commandButton status="fetchStatus" reRender="datePanelContainer" value="Next  >>" action="{!next}" disabled="{!!hasNext}" title="Next >>"/>
+    <apex:outputPanel style="color:#4AA02C;font-weight:bold">
+                    <apex:actionStatus id="fetchStatus" startText="Fetching..." stopText=""/>
+                </apex:outputPanel>
+  </ul>
+</div>
+		
+        </apex:outputPanel>
+        
+        <apex:pageBlockButtons >
+        <apex:commandButton action="{!save}" id="saveButton" value="Save" style="display:none" />
+        <apex:commandButton id="cancelButton" value="Cancel" style="display:none"/>
+    </apex:pageBlockButtons>
+    </apex:pageBlock>
+    
+        
+    
+    </apex:form>
+
+</apex:page>
