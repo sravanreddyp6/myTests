@@ -1,0 +1,53 @@
+<apex:component Controller="queryReport">
+<apex:attribute name="filterFor" type="String" required="true" description="the filter to place on the report list" assignTo="{!filter}"/>
+<apex:attribute name="TitleColor" type="String" required="false" description="Color of the Title" default="navy"/>
+<apex:attribute name="Title" type="String" required="false" description="Title of Pageblock Section Header" />
+<apex:attribute name="RemoveSfHeader" type="Boolean" required="false" default="false" description="Remove the SalesForce Header?" />
+<apex:attribute name="OpenInEdit" type="Boolean" required="false" default="false" description="Open the Report in Edit mode?" />
+
+<style>
+
+    .tmnListReportsName{
+        font-size: 14pt;
+        color: {!TitleColor};
+        padding-left: 20px;
+    }
+    .tmnListReportsDesc{
+        font-size: 10pt;
+        color: gray;
+        padding: 3px;
+        padding-left: 40px;
+        border-radius: 5px;
+    }
+    .tmnListReportsTbHead{
+        display: none;
+    }
+
+</style>
+
+
+  
+<apex:pageBlock title="{!Title}">
+    <apex:pageBlockTable value="{!rpts}"                            
+                            var="rr"  
+                             
+                            style="border-radius: 7px;" >    
+
+         <apex:column >
+             <apex:outputPanel styleClass="tmnListReportsName">
+             <!-- isdtp=nv will remove the salesforce header on the report -->
+                 <apex:outputLink rendered="{!!OpenInEdit}" style="color: {!TitleColor}" value="{!'/' + rr.id + IF(RemoveSfHeader,'?isdtp=nv','')}" target="_blank" title="View this Report" >{!rr.name}</apex:outputLink> 
+                 <apex:outputLink rendered="{!OpenInEdit}" style="color: {!TitleColor}" value="{!'/' + rr.id + '/e'}" target="_blank" title="View this Report" >{!rr.name}</apex:outputLink> 
+
+             </apex:outputPanel>          
+         <br/>
+             <apex:outputPanel layout="block" styleClass="tmnListReportsDesc">
+               {!MID(rr.description,LEN(filterFor),255)} 
+             </apex:outputPanel>
+
+           </apex:column>     
+    </apex:pageBlockTable>
+
+</apex:pageBlock>
+
+</apex:component>
