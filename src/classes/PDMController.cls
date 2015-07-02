@@ -5,8 +5,8 @@ public with sharing class PDMController {
    public ApexPages.StandardSetController setCon {
         get{
             if(setCon == null){
-                size = 1;
-                String queryString = 'Select Work_State__c, Office_Phone_Number__c,Cell_Number__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, Job_Title__c From TMN_User__c order by Office_Phone_Number__c';
+                size = 10;
+                String queryString = 'Select Work_State__c,Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, Job_Title__c From TMN_User__c order by Office_Phone__c';
                 setCon = new ApexPages.StandardSetController(Database.getQueryLocator(queryString));
                 setCon.setPageSize(size);
                 noOfRecords = setCon.getResultSize();
@@ -25,7 +25,7 @@ Public List<TMN_User__c> getTMNUserList(){
     }
 
 public void searchEmployee() {
- String queryString = 'Select Work_State__c, Office_Phone_Number__c,Cell_Number__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, Job_Title__c From TMN_User__c where Name like \'%' + searchEmployee +'%\'  order by Office_Phone_Number__c';
+ String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, Job_Title__c From TMN_User__c where Name like \'%' + searchEmployee +'%\'  order by Office_Phone__c';
                 setCon = new ApexPages.StandardSetController(Database.getQueryLocator(queryString));
                 setCon.setPageSize(size);
  noOfRecords = setCon.getResultSize();
@@ -35,7 +35,7 @@ public void searchEmployee() {
 public void searchByLocation () {
 	String location = Apexpages.currentPage().getParameters().get('selectedLocation');
     searchLocation = location;
- String queryString = 'Select Work_State__c, Office_Phone_Number__c,Cell_Number__c, Operating_Group__c, Name, Manager_Name__c,  Last_Name__c, Job_Title__c From TMN_User__c where Work_State__c like \'%' + location +'%\'  order by Office_Phone_Number__c';
+ String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c,  Last_Name__c, Job_Title__c From TMN_User__c where Work_State__c like \'%' + location +'%\'  order by Office_Phone__c';
                 setCon = new ApexPages.StandardSetController(Database.getQueryLocator(queryString));
                 setCon.setPageSize(size);
  noOfRecords = setCon.getResultSize();
