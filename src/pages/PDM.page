@@ -127,7 +127,7 @@
 		window.open(url);
 	}
 	
- var sourcePage = 'https://c.cs41.visual.force.com/apex/TMNUser_JSON?core.apexpages.devmode.url=0';
+ var sourcePage = 'https://test-iserve--sandboxajv--c.cs10.visual.force.com/apex/TMNUser_JSON?core.apexpages.devmode.url=0';
  j$(function() {
    var txtVal =  j$('input[id$=searchLocation]');
    	
@@ -217,14 +217,14 @@ function autoCompleteRender(ul, item) {
                     <apex:outputText value="{!user.Job_Title__c}" />
                     </apex:column>
                      <apex:column headerValue="Office">
-						<apex:outputField value="{!user.Office_Phone_number__c}">
+						<apex:outputField value="{!user.Office_Phone__c}">
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
                         hideOnEdit="editButton" event="ondblclick" 
                         changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                     </apex:column>     
                     <apex:column headerValue="Cell">
-						<apex:outputField value="{!user.Cell_Number__c}">
+						<apex:outputField value="{!user.Mentor_Cell_Phone__c}">
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
                         hideOnEdit="editButton" event="ondblclick" 
                         changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
