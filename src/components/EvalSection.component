@@ -43,21 +43,15 @@
 		description="The type of the repeater section" type="string"
 		assignTo="{!evalSecType}" required="false" />
 
-	<apex:includeScript
-		value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
-	<apex:includeScript
-		value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
-	<apex:stylesheet
-		value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-	<apex:stylesheet
-		value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
-	<apex:includeScript
-		value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
 	<apex:includeScript value="{!$Resource.AnnotoriousDev}" />
 	<apex:includeScript value="{!$Resource.AnotoJS}" />
-	<apex:stylesheet
-		value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 
 	<style>
@@ -155,17 +149,19 @@ td.text_right {
 
                 // Apply rules to input fields
                 $('#evalForm input').on("change", function(event) {
-                    applyShowHideRulesToField(event.target);
                     applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
                 });
                 $('#evalForm select').on("change", function(event) {
                     applyShowHideRulesToField(event.target);
                     applyRulesToField(event.target);
                 });
                 $('#evalForm input').each(function(_, target) {
-                    applyShowHideRulesToField(target);
-                    applyRulesToField(target);
+                    applyRulesToField(target);                
                 });
+                $('#evalForm input').each(function(_, target) {
+                    applyShowHideRulesToField(target);
+                });                
                 $('#evalForm select').each(function(_, target) {
                     applyShowHideRulesToField(target);
                     applyRulesToField(target);
