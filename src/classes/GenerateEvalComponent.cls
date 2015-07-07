@@ -20,8 +20,8 @@ public with sharing class GenerateEvalComponent {
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
 
-    List<Eval_Drop_Down__c> dd;
-    List<Eval__c> listEvalItems;
+    transient List<Eval_Drop_Down__c> dd;
+    transient List<Eval__c> listEvalItems;
 
     public transient string evalSectionOwner;
     public string getEvalSectionOwner(){

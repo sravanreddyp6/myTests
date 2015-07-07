@@ -57,7 +57,6 @@ public with sharing class EvalDynamicExt {
 		cat = ApexPages.currentPage().getParameters().get('Category');
 		subCat = ApexPages.currentPage().getParameters().get('SubCategory');
 		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
-		approvalHIstory = new List<ProcessInstanceHistory>();
 		refreshLateEntryNotes();
 		lateEntryNote = new Evaluation_Response__c(
 			RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note'),
@@ -73,7 +72,6 @@ public with sharing class EvalDynamicExt {
 		isUserOwner = false;
 		isApprover = false;
 
-		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
 		PermissionSetAssignment[] assignments = [
 		                                         SELECT Id, PermissionSet.Name
 		                                         FROM PermissionSetAssignment
@@ -726,8 +724,9 @@ public with sharing class EvalDynamicExt {
         return new PageReference('/apex/EvalApproval?id=' + evalID);
     }
 
-    public List<ProcessInstanceHistory> approvalHistory;
+    transient public List<ProcessInstanceHistory> approvalHistory;
     public List<ProcessInstanceHistory> getApprovalHistory () {
+    	approvalHIstory = new List<ProcessInstanceHistory>();    	
     	List<ProcessInstance> pi = [SELECT Id, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate  FROM StepsAndWorkitems order by createddate desc)
 									FROM ProcessInstance where  targetobjectid = :evalID
 									order by createddate desc];
