@@ -481,13 +481,19 @@ background-color: cornsilk;
             <apex:outputField value="{!Action_Plan__c.Service_Assignment__c}"/>   
             <apex:inputField value="{!Action_Plan__c.External_Plan__c}"/>     
             <apex:inputField id="plan_start_date" value="{!Action_Plan__c.Effective_Date__c}"/>
-            <apex:inputField id="plan_end_date" value="{!Action_Plan__c.Target_Date__c}"/>
+            <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Target Date" />
+            <apex:outputPanel >
+            	<apex:inputField id="plan_end_date" value="{!Action_Plan__c.Target_Date__c}"/>&nbsp; 
+            	<apex:outputLink value="#" id="lnkSetDates" onClick="setPlanDates();">Set Plan Dates Below</apex:outputLink>
+            </apex:outputPanel>
+            </apex:pageBlockSectionItem>
             <apex:outputField value="{!Action_Plan__c.Date_Service_Started__c}"/>
             <apex:outputField value="{!Action_Plan__c.Status__c}"/> 
             <apex:inputField value="{!Action_Plan__c.Baseline__c}"/>
-            <apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
             <apex:outputText value="" />
-            <apex:outputLink value="#" id="lnkSetDates" onClick="setPlanDates();">Set Plan Detail Dates</apex:outputLink>
+            
             </apex:pageBlockSectionItem>
         </apex:pageBlockSection> 
   

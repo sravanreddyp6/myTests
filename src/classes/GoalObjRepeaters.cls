@@ -10,11 +10,11 @@ public with sharing class GoalObjRepeaters {
 	}
 
 	public final List<String> objTypes;
-	public map <String, List<objWrapper>> objsByType { get { return getObjsbyType();} set; }
+	public map <String, List<objWrapper>> objsByType { get { if ( objsByType == null ) objsByType = getObjsByType(); return objsByType;} set; }
 	public List<SelectOption> fullObjectiveList;
 	public List<Action_Plan_Objective__c> objs { get; set;}
 	
-	public Map<string, List<objWrapper>> getObjsByType() {
+	private Map<string, List<objWrapper>> getObjsByType() {
 		Map<string, List<objWrapper>> ot = new Map<string, List<objWrapper>>();
 		if ( shiftStart == null )
 			shiftStart = datetime.now();
@@ -24,7 +24,11 @@ public with sharing class GoalObjRepeaters {
 					
 		SelectOption so;
 		for ( Action_Plan_objective__c o : ReportableBehaviorCObjectives( shiftStart.Date(), shiftEnd.Date())) {
-		
+			
+			// EC-197 do not show a link for blank descriptions
+			if ( string.isblank( o.description__c ))
+				continue;
+			
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
 		}
@@ -38,7 +42,9 @@ public with sharing class GoalObjRepeaters {
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableBehaviorDObjectives( shiftStart.Date(), shiftEnd.Date())) {
-			
+			// EC-197 do not show a link for blank descriptions
+			if ( string.isblank( o.description__c ))
+				continue;
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
 		}
@@ -53,7 +59,9 @@ public with sharing class GoalObjRepeaters {
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableSkillObjectives( shiftStart.Date(), shiftEnd.Date())) {
-			
+			// EC-197 do not show a link for blank descriptions
+			if ( string.isblank( o.description__c ))
+				continue;
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
 		}
@@ -68,7 +76,9 @@ public with sharing class GoalObjRepeaters {
 		objs = new List<objWrapper>();
 		
 		for ( Action_Plan_objective__c o : ReportableNarrativeObjectives( shiftStart.Date(), shiftEnd.Date())) {
-			
+			// EC-197 do not show a link for blank descriptions
+			if ( string.isblank( o.description__c ))
+				continue;
 			objw = new objWrapper( o.id, o.description__c, o.effective_date__c, o.target_end_date__c, o.type__c, o.status__c);	
 			objs.Add( objw );
 		}
@@ -84,30 +94,13 @@ public with sharing class GoalObjRepeaters {
 	}
 
 
-	public List<String> getObjTypes() {
+	public set<String> getObjTypes() {
 		
-		Date firstday = shiftStart.Date();
-		Date lastday = Date.Today();
-		if ( shiftEnd != null)
-			lastday = shiftEnd.Date();
-			
-		List<AggregateResult> ag = [ select type__c, count(id) from action_plan_objective__c 
-									where Action_Plan_Goal__r.Action_Plan__r.service_assignment__c = :saID
-									and (
-										 (effective_date__c > :firstDay  and effective_date__c <= :lastDay)
-										  or
-										 (effective_date__c <= :firstDay and target_end_date__c >= :firstday ) 
-									)
-									and Status__c in ('In Progress', 'Revised', 'New')
-									and action_plan_goal__r.action_plan__r.status__c = 'Active Final'
-									group by type__c
-									order by type__c];
-		
-		List<String> t = new List<String>();
-		for (AggregateResult a : ag) {
-			t.Add( (string)a.get('type__c'));
+		if ( objsByType == null ) {
+			objsByType = getObjsByType();
 		}
-		return t;
+		
+		return objsByType.keyset();
 		
 	}
 	private boolean IsTimeBased(Action_Plan_Objective__c objective){
@@ -187,8 +180,10 @@ public with sharing class GoalObjRepeaters {
 		
 		public objWrapper( ID id, String description, datetime effdate, datetime targetdate, string otype, string status) {
 			this.id = id;
-			if ( string.isBlank(description))
-				description = 'No description provided';
+			
+			// EC-197 - this should never happen but if it does, protect against exception
+			if ( String.isBlank( description))
+				description='No description provided';
 				
 			this.shortdesc = description.left(Math.min(description.length(), 47));
 			if ( description.length() > 47)

@@ -14,6 +14,7 @@
         }
         #fundingMessages {
             margin-bottom: 10px;
+            color: red;
         }
         #fundingMessages .error {
             color: red;
@@ -192,7 +193,19 @@
             j$('#activityErrors').html(errors);
             return (errors == '');
         }
-
+        //EB-481
+		function validateFundingSource(){
+			var errors = '';
+			j$('#fundingMessages').html(errors);
+            if ( j$('span[id$=hasPrimaryFS]').text() == 'true' ) {
+	            if ( j$('select[id$=fundingEntry_coverage]').val() == 'Primary' ) {
+	            	errors += '<li>A Primary Funding Source has already been added, only one Primary Funding source is allowed</li>';  
+	            }   
+            }
+			
+			j$('#fundingMessages').html(errors);
+            return (errors == '');
+		}
         function checkdate(value) {
             var validformat = /^\d{1,2}\/\d{1,2}\/\d{4}$/
             var returnval = false
@@ -246,7 +259,9 @@
             // We cant use Visualforce functions/variables in a Static Resource JS file,
             // so we have to pass it in here.
             closeFundingSource = isClose;
-            fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+            if( validateFundingSource() ) {
+            	fundingSourceSaveHelper('{!JSENCODE(ReferralRecordType)}');
+            }
         }
 
         //copies Agency fields from dialog for postback
@@ -768,6 +783,7 @@
             </script>
             <div id='fundingMessages'></div>
             <apex:pageBlock title="Add Funding Source" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative'}">
+            	
                 <apex:pageBlockSection columns="1" id="fundingSourceEntry">
                     <apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source" />
                     <apex:inputField value="{!fundingSource.Funding_Source_ID__c}" id="fundingEntry_SourceId" />
@@ -779,13 +795,14 @@
                 </apex:pageBlockSection>
             </apex:pageBlock>
             <apex:pageBlock title="Payer Detail" id="fundingSourcePayerDetailEntry" rendered="{!ReferralRecordType == 'CareMeridian' || ReferralRecordType == 'NeuroRestorative'}">
+                <apex:outputText value="{!hasPrimaryFS}" id="hasPrimaryFS" style="display:none;" / >
                 <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
                     <apex:outputField value="{!personBeingRefRecord.Full_Name__c}" />
                     <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
                     <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age_year__c} Years {!personBeingRefRecord.Age_month__c} Months {!personBeingRefRecord.Age_days__c} Days)">
                         <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}" />
                     </apex:outputText>
-                    <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
+                    <apex:inputField value="{!fundingSource.Type_of_Coverage__c}"  />
                     <apex:pageBlockSectionItem />
                     <apex:inputField value="{!fundingSource.Payer_Name__c}" />
                     <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
@@ -814,7 +831,7 @@
                     <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age_year__c} Years {!personBeingRefRecord.Age_month__c} Months {!personBeingRefRecord.Age_days__c} Days)">
                         <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}" />
                     </apex:outputText>
-                    <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
+                    <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" id="fundingEntry_coverage"/>
                     <apex:inputField value="{!fundingSource.Payer_Type__c}" id="neuroPayerType" html-data-rules="{&quot;VA - Pilot&quot;: [&quot;{!$Component.vaPilotClinicalNumber}&quot;]}" />
                     <apex:pageBlockSectionItem />
                     <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" />

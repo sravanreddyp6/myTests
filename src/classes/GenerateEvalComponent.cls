@@ -90,6 +90,35 @@ public with sharing class GenerateEvalComponent {
                and visible__c = true
             order by category_sequence__c, sub_category_sequence__c, field_sequence__c
         ];
+        
+        //EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
+        if (evalSecType == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV'){
+            listEvalItems = [ select id,
+					                   htmlid__c,
+					                   field_name__c,
+					                   category__c,
+					                   category_sequence__c,
+					                   sub_category__c,
+					                   sub_category_sequence__c,
+					                   eval_type__r.name,
+					                   Field_Type__c,
+					                   Field_Sub_Type__c,
+					                   field_sequence__c,
+					                   required__c,
+					                   Length__c,
+					                   visibility_rules__c,
+					                   visibility_row_rules__c,
+					                   Dependent_Fields__c
+					              from eval__c
+					             where eval_type__r.name = :evalname
+					               and category__c =:cat
+					               and sub_category__c = :subcat
+					               and visible__c = true
+					               and (NOT htmlid__c like 'HeadtoToeDiagnosticsIVQuestion%')  
+					            order by category_sequence__c, sub_category_sequence__c, field_sequence__c
+					        ];
+        }
+        
         // create a map for easy access
         mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
         List<String> evalIds = new List<String>();
@@ -392,6 +421,8 @@ public with sharing class GenerateEvalComponent {
         }
 
         String htmlTable2 = '<table style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
+        if (evalSecType == 'Head To Toe' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV')
+            htmlTable2 = '<table style="width:100%;"><tr><th></th><th></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
         integer i=0;
         for (String s : htmlControls){
             if (Math.mod(i, 4) == 0 )

@@ -13,11 +13,11 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
         Codes.clear();
         SelectOption SOtmp = new SelectOption('', '--None--');
         Codes.Add(SOtmp);
-        if(currentrecord.recordtype.name == 'Therapy'){
+        /*if(currentrecord.recordtype.name == 'Therapy'){
         	Id ServCodeId = [SELECT Id From Service_Code__c where Service_Code__c =: 'FAKE'][0].Id;
             SelectOption SOtmpTherapy = new SelectOption(ServCodeId, 'Other');
             Codes.Add(SOtmpTherapy);
-        }
+        }*/
             // CTEAE-88 look at note start date for effective service codes
             for(Service_code__c local : 
                     [SELECT Id, Service_Code__c, Service_Value__c From Service_Code__c

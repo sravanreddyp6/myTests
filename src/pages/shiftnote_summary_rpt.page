@@ -45,10 +45,10 @@
 <apex:actionFunction action="{!runPDF}" name="runPDF"/>
 
 <apex:pageBlock id="ShiftnoteSummaryRptPgBlk" title="Shift Note Summary Report">
-<apex:actionregion>
+<apex:actionregion >
 	
 	<apex:pageBlockSection columns="1">
-	<apex:pageBLockSectionItem>
+	<apex:pageBLockSectionItem >
 	<apex:outputPanel layout="none" id="buttonPanel">
        	<apex:commandButton value="Run" 
             action="{!runReport}" 
@@ -68,12 +68,12 @@
         	rendered="{!hasRunOnce}" />
     </apex:outputPanel>
        </apex:pageBLockSectionItem> 
-    
+  
     <apex:outputPanel >
        <apex:outputLabel styleclass="labelCol" value="Start Date" for="start_date" /> <apex:input type="auto" id="start_date" size="10"  label="Start Date" styleClass="datepicker" value="{! StartDate}" />
        <apex:outputLabel styleclass="labelCol" value="End Date" for="end_date" /> <apex:input type="auto" id="end_date" size="10"  label="End Date" styleClass="datepicker" value="{! EndDate}" />
     </apex:outputPanel>
-<apex:outputPanel>
+<apex:outputPanel rendered="{! (opGroup != 'Care Meridian' )}">
 		<apex:outputLabel styleClass="labelCol" value="Healthcare/Medical Note" />
            <apex:selectList size="1" value="{!HCMCfilter}" label="Healthcare/Medical Note">
            <apex:selectOption itemLabel="Both" itemValue=""></apex:selectOption>
@@ -119,7 +119,7 @@
        <a href="#" onclick="selectAllPBS();" >Select All</a>
        </div>
        <Br />
-       <apex:outputPanel>
+       <apex:outputPanel >
        <br />
        
               <apex:selectCheckboxes html-class="mytbl2" value="{!selectedPBS }" layout="pageDirection" id="chkPBS">
@@ -193,6 +193,7 @@
          </tr> 
          
          
+		<apex:outputPanel rendered="{! (opGroup != 'Care Meridian' )}">
          <tr>
              <td class="left_col">
                 Healthcare/Medical Note :
@@ -218,6 +219,7 @@
                  </apex:repeat>
              </td>
          </tr> 
+         </apex:outputPanel>
       </table>              
      </apex:pageBlock>                                
      </apex:repeat>

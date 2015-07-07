@@ -27,8 +27,12 @@ public without sharing class ServiceAssignmentExt {
 	public string showServAssignCloseEditId {get; set; }
 	public string servAssignCloseEditId { get; set; }
 	public Service_Location__c serviceLocation { get; set; }
-
-
+	
+	
+	//for funding source coverage level
+	public list<selectoption> fundingCoverageOptions {get; set;}
+	public Boolean hasPrimaryActiveFS {get; set;}
+	
 	// Get/set info for contracts
 	public List<TMN_Contract__c> contractsForThisServAssignsState { get; set; }
 	public List<ServiceAssignment_Contract_JO__c> servAssignContractXrefs {get;set;}
@@ -309,7 +313,7 @@ public without sharing class ServiceAssignmentExt {
 		get{
 			if (fundingSource == null) {
 				fundingSource = new Funding_Source__c();
-				fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian');
+				fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType());
 				fundingSource.Service_Assignment__c = this.theServAssign.Id;
 			}
 			return fundingSource;
@@ -317,12 +321,12 @@ public without sharing class ServiceAssignmentExt {
 		set; }
 	public List<Funding_Source__c> fundingSources { get; set; }
 
-	public String fundingSourceRecordType{
+	/*public String fundingSourceRecordType{
 		get{
 			return 'CareMeridian';
 		}
 		set;
-	}
+	}*/
 
 	// END:  Parent level properties with get/set methods.
 
@@ -439,6 +443,13 @@ public without sharing class ServiceAssignmentExt {
 		sadjos = [ SELECT Id, Name, Document__r.Phase_or_Level__c, File_Status__c FROM ServiceAssignment_Document_JO__c
 		           WHERE Service_Assignment__c = :theServAssign.Id AND Document__r.Type__c = 'Fidelity Document'];
 
+		fundingCoverageOptions = new List<SelectOption>();
+		fundingCoverageOptions.add(new SelectOption('','--None--'));
+		fundingCoverageOptions.add(new selectOption('Secondary','Secondary'));
+		fundingCoverageOptions.add(new selectoption('Tertiary','Tertiary'));
+		fundingCoverageOptions.add(new selectoption('Other','Other'));
+		hasPrimaryActiveFS = false;
+		
 		phaseSelectOptions = new List<SelectOption>();
 		phaseSelectOptions.add(new SelectOption('','--None--'));
 		Integer currentPhase = 0;
@@ -823,7 +834,7 @@ public without sharing class ServiceAssignmentExt {
 			diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
 		}
 		if ( currentrecord.Service_Location__c != null) {
-			serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
+			serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
 			currentProgramId = serviceLocation.programID__c;
 		}
 
@@ -1758,6 +1769,10 @@ public without sharing class ServiceAssignmentExt {
 		return ref;
 	}
 
+	public boolean canCreateNote { get { 
+		Schema.DescribeSObjectResult oSchema = Progress_Note__c.sObjectType.getDescribe();
+		return oSchema.isCreateable();
+	}}
 	public boolean canCreateFundingSource { get {
 		Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
 		return oSchema.isCreateable();
@@ -1777,8 +1792,20 @@ public without sharing class ServiceAssignmentExt {
 
 	public void showAddFundingSource() {
 		fundingSource = new Funding_Source__c();
-		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian'); 
+		fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		fundingSource.Service_Assignment__c = this.theServAssign.Id;
+		if(getfundingsourceRecordType() == 'NeuroRestorative'){
+			hasPrimaryActiveFS = false;
+			for(Funding_Source__c fs: this.fundingsources){
+				if(fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
+					hasPrimaryActiveFS = true;
+				/*	fundingCoverageOptions.add(new selectOption('Secondary','Secondary'));
+					fundingCoverageOptions.add(new selectoption('Tertiary','Tertiary'));
+					fundingCoverageOptions.add(new selectoption('Other','Other'));*/
+				}
+			}
+			
+		}
 	}
 
 	public void showEditFundingSource() {
@@ -1790,6 +1817,17 @@ public without sharing class ServiceAssignmentExt {
 		query = query.substring(0, query.length() - 2);
 		query += ' FROM Funding_Source__c WHERE Id=\'' + fundingSource.Id + '\' ORDER BY Type_of_Coverage__c LIMIT 1';
 		this.fundingSource = Database.query(query);
+		//set<Selectoption> dupeFilter = new Set<selectoption>();
+		if(getfundingsourceRecordType() == 'NeuroRestorative'){
+			hasPrimaryActiveFS = false;
+			for(Funding_Source__c fs: this.fundingsources){
+				if(this.fundingSource.Id != fs.Id && fs.Type_of_Coverage__c == 'Primary' && (fs.Funding_Source_Status__c == 'Active' || fs.Funding_Source_Status__c =='Active Final')){
+					hasPrimaryActiveFS = true;
+				}
+			}
+			
+		}
+		
 	}
 
 	public void saveFundingSource() {
@@ -1802,6 +1840,7 @@ public without sharing class ServiceAssignmentExt {
 		}
 
 		try {
+			this.fundingSource.Funding_Source_Status__c = 'Active';
 			upsert this.fundingSource;
 		}
 		catch (Exception e) {
@@ -1811,14 +1850,51 @@ public without sharing class ServiceAssignmentExt {
 
 		populateFundingSources();
 		this.fundingSource = new Funding_Source__c();
-		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource('CareMeridian'); 
+		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		this.fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
+	
+	public void finalizeFundingSource(){
+		try{
+			
+			this.fundingSource.Funding_Source_Status__c = 'Active Final';  //Need to Change When Approval is implemented - Sravan EB-435
+			upsert this.fundingSource;
+		}
+		catch (Exception e) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+		}
+		populateFundingSources();
+	}
+	
+	public void inactivateFundingSource(){
+		try{
+			Funding_source__c fs = [SELECT Id, Funding_Source_Status__c FROM Funding_Source__c WHERE Id =:this.fundingSource.Id ]; // To make sure only Funding Status field is in scope.
+			fs.Funding_Source_Status__c = 'Inactive';  
+			update fs;
+		}
+		catch (Exception e) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+		}
+		populateFundingSources();
+	}
+	//This method id needed to exactly determine the name of the recordtype since Recordtype names in Funding sources are different from the Operating group names  - Sravan 06/09/2015.
+	public string getfundingsourceRecordType(){
+		string opGroup = getOperatingGroup();
+		if(opGroup == 'Care Meridian'){
+			return 'CareMeridian';
+		}
+		else if(opGroup == 'NeuroRestorative'){
+			return 'NeuroRestorative';
+		}
+		else{
+			return null; //For now since Service Assignment level funding sources are supported only for CM and NR operating groups.
+		}
+	}
 
-	private void populateFundingSources() {
+	@testvisible private void populateFundingSources() {
 		this.fundingSources =
 				[select id, Payor__c, Funding_Source__c, Funding_Source_ID__c, Status__c, Service_Being_Funded__c, Comment__c,
-				 type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c, recordtype.name
+				 type_of_coverage__c, payer_name__c, Case_Manager__c, effective_date__c, termination_date__c, recordtype.name, Funding_Source_Status__c
 				 from Funding_Source__c
 				 where Service_Assignment__c = :this.theServAssign.Id
 				 order by Type_of_Coverage__c

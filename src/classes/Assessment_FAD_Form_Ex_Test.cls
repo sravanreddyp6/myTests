@@ -2,10 +2,10 @@
 private class Assessment_FAD_Form_Ex_Test {
 
     static testMethod void myUnitTest() {
-/*   COMMENTED OUT 5/15/14 BY J. GILLIAM TO GET US THROUGH MAY DEPLOYMENT    	*/
-    	User theCurrentUser = [ SELECT Id FROM User WHERE Id = :UserInfo.getUserId() ];
+/*   COMMENTED OUT 5/15/14 BY J. GILLIAM TO GET US THROUGH MAY DEPLOYMENT    	*/   	
+
+		User theCurrentUser = [ SELECT Id FROM User WHERE Id = :UserInfo.getUserId() ];
     	List<PermissionSet> thePermSets = [ SELECT Id FROM PermissionSet WHERE Name IN ('ESD_Notes_Organizer', 'ESD_Notes_Supervisor') ];
-    	
     	List<PermissionSetAssignment> thePermSetAssigns = new List<PermissionSetAssignment>();
     	List<PermissionSetAssignment> existingPermSetAssignsForUser = [ SELECT Id, PermissionSetId FROM PermissionSetAssignment WHERE AssigneeId = :theCurrentUser.Id ];
     	
@@ -21,7 +21,9 @@ private class Assessment_FAD_Form_Ex_Test {
     			thePermSetAssigns.add(new PermissionSetAssignment(PermissionSetId = p.Id, AssigneeId = theCurrentUser.Id));
     		}
     	}
+    	System.runAs ( theCurrentUser ) {
     	insert thePermSetAssigns;
+    	}
     	
         Assessment_Fad_TestData.createTestData();
         
@@ -61,9 +63,16 @@ private class Assessment_FAD_Form_Ex_Test {
         system.assertEquals(controller.mode,'edit');
 
 		controller.mapRes.get('PBS_Problem_Solving').Score__c = null;
-		controller.mapRes.get('CG_Could_Not_complete').Yes_No__c = true;
+		//controller.mapRes.get('CG_Could_Not_complete').Yes_No__c = true;
+		//controller.mapRes.get('PBS_Could_Not_complete').Yes_No__c = true;
+        
+		controller.myLock();	
+        
+        controller.myEdit();
+        system.assertEquals(controller.mode,'edit');
+        controller.mapRes.get('CG_Could_Not_complete').Yes_No__c = true;
 		controller.mapRes.get('PBS_Could_Not_complete').Yes_No__c = true;
-		controller.myLock();		
+        controller.myLock();
         //we're not answering any questions so the record should not lock		
 		system.assertEquals(assess.status__c, 'Open');
 		
@@ -87,15 +96,12 @@ private class Assessment_FAD_Form_Ex_Test {
 			
         controller.myLock();
         //now we have answered questions the record should lock
-        //system.assertEquals(assess.status__c, 'Locked');        
+        //system.assertEquals(assess.status__c, 'Locked');                
         
         controller.myCancel();
         assessment__c[] allassess = [select id from assessment__c];
         system.assertEquals(allassess.size(),0);
 
     }
-
-    
-
     
 }

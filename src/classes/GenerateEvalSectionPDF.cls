@@ -59,11 +59,12 @@ public with sharing class GenerateEvalSectionPDF {
 		approvalHistory = new List<ProcessInstanceHistory>();
 	
 		thisEval = [ select id, name, shift_start_time__c, shift_end_time__c, status__c, head_to_toe_status__c, owner.name from evaluation__c where id = :evaluationID LIMIT 1];
-			
-		GenerateGoalObjPDF goalscontroller = new GenerateGoalObjPDF();
-		goalscontroller.init( evaluationID, evalname);
-		objectives = goalscontroller.objectives;
-
+		
+		if (thisEval.shift_start_time__c != null && thisEval.shift_end_time__c != null) {	
+			GenerateGoalObjPDF goalscontroller = new GenerateGoalObjPDF();
+			goalscontroller.init( evaluationID, evalname);
+			objectives = goalscontroller.objectives;
+		}
         // Naming the PDF in case this controller is used for the PDF page
         String file;
         file = thisEval.Name+'.pdf';
@@ -274,7 +275,7 @@ public with sharing class GenerateEvalSectionPDF {
                 }  else if (e.Field_Type__c == 'Date') {
 					newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
 					if (mapEvalValues.ContainsKey( e.id )) 
-                        newHTMLfld += mapEvalValues.get(e.id).date_time__c; // output date format 
+                        newHTMLfld += mapEvalValues.get(e.id).date_time__c.Date().format(); // output date format 
                     newHTMLfld +=  '</div>';
 				} else if (e.Field_Type__c == 'Datetime') {
                     newHTMLfld = '<div style="display: table-row;"><label class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
@@ -333,6 +334,9 @@ public with sharing class GenerateEvalSectionPDF {
                     newHTMLfld += '<div id="' + e.htmlid__c + '" name="' + e.id + '" />';
                     newHTMLfld +=  '</div>';
                 }
+                
+               //EC-169 the questions 1 through 10 do NOT apply to the section if section Type is an activity log
+               if (mapEntries.get(entryId).entryType == 'Activity Log' && e.htmlid__c.contains('HeadtoToeDiagnosticsIVQuestion')) continue; 
                 
                htmlControls.add(newHtmlFld);
 				mapEvalEntryHTML.put( entryId, htmlControls );

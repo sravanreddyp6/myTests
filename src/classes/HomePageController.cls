@@ -10,6 +10,7 @@ public with sharing class HomePageController{
 	public String FrstName{get;set;}
 	public String LstName{get;set;}
 	public String objectName{get;set;}
+	
 
 	// List of permission sets that the user is assigned to
 	public String permissionSetString { get; set; }
@@ -53,6 +54,9 @@ public with sharing class HomePageController{
 
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
+	
+	// EC-196 - Shift notes
+	public Boolean canCreateNote { get; private set; }
 	//PBS object
 	public Boolean canSeePBS { get; private set; }
 
@@ -147,6 +151,9 @@ public with sharing class HomePageController{
 			canSeeShiftDoc = false;
 		}
 
+		oSchema = Progress_Note__c.sObjectType.getDescribe();
+		canCreateNote = oSchema.isCreateable();
+		
 		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();

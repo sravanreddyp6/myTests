@@ -55,8 +55,18 @@ public with sharing class referrals_Controller{
 	public List<Task> activities { get; set; }
 	public Agency_Involved_With_Individual__c agency { get; set; }
 	public List<Agency_Involved_With_Individual__c> agencies { get; set; }
+	
 	public Funding_Source__c fundingSource { get; set; }
 	public List<Funding_Source__c> fundingSources { get; set; }
+	//EB-481
+	public boolean gethasPrimaryFS(){
+		boolean tmp = false;	
+			for(Funding_Source__c fs : fundingSources){		
+				if(fs.Type_of_Coverage__c == 'Primary' ){tmp = true;}		
+			}	
+		return tmp;
+	}	
+	
 	public Boolean redFlagged { get; set; }
 	public Related_Party__c relParty {
 		get {
@@ -1471,8 +1481,27 @@ public void setAge () {
 				Status = 'Not Started',
 				WhatId = referralRecord.Id,
 				OwnerId = dummyTask.OwnerId,
-				RecordTypeId = taskRecordType
+				RecordTypeId = taskRecordType,
+				ActivityDate = referralRecord.Referral_Date__c
 			);
+			if (task.Subject == 'Schedule Assessment')
+                	task.ActivityDate = task.ActivityDate + 3;
+				
+            else if (task.Subject == 'Complete Assessment')
+                	task.ActivityDate = task.ActivityDate + 7;
+				
+            else if (task.Subject == 'Assessment follow-up with Referral Source')
+                	task.ActivityDate = task.ActivityDate + 8;
+				
+            else if (task.Subject == 'Upload CAT to iServe') 
+                	task.ActivityDate = task.ActivityDate + 15;
+				
+            else if (task.Subject == 'Schedule a Red Flag call (if applicable)') 
+                	task.ActivityDate = task.ActivityDate + 15;
+                	
+			else
+                	task.ActivityDate = null;
+                	
 			// We do not batch insert the tasks here because it leads to inconsistent
 			// sorting order.
 			if (referralRecord.Id != null) {
