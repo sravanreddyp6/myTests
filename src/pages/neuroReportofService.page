@@ -1,0 +1,42 @@
+<apex:page controller="neuroreportofserviceController" readOnly="true" >
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:sectionHeader subTitle="Neuro Report of Service" />
+    <script type="text/JavaScript">
+        function setFocusOnLoad() {}
+    
+    </script>
+    <apex:form >
+        <apex:pageBlock title="Search Criteria" >
+            <apex:pageBlockSection columns="1" >
+                <apex:inputField value="{!fSource.Effective_Date_of_Cost_therapy_Auth__c}" Label="Start Date" />
+                <apex:inputField value="{!fSource.Term_Date_of_Cost_therapy_Auth__c}" Label="End Date" />
+                <apex:inputField value="{!fSource.Case_Manager__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="Bottom" >
+                <apex:commandbutton value="Search" action="{!doSearch}" reRender="resultsBlock" status="searchStatus"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        <apex:actionStatus id="searchStatus" >
+            <apex:facet name="start">
+            <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+            <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+            </div>
+            </apex:facet>
+            <apex:facet name="stop" />
+        </apex:actionStatus>
+    </apex:form>
+    
+    <apex:pageBlock title="Results" id="resultsBlock">
+        <apex:pageBlockTable value="{!lineItems}" var="li" rendered="{!lineItems.size > 0}" >
+            <apex:column value="{!li.fundingSource.Id}" />
+            <apex:column value="{!li.fundingSource.Case_Manager__c}" />
+            <apex:column value="{!li.otRollup}" />
+            <apex:column value="{!li.fundingSource.OT_Auth_Units__c}" />
+            <apex:column value="{!li.ptRollup}" />
+            <apex:column value="{!li.fundingSource.PT_Auth_units__c}" />
+        </apex:pageBlockTable>
+        <apex:outputtext value="No results matching the Criteria" rendered="{!lineItems.size == 0}" />
+    </apex:pageBlock>
+
+</apex:page>
