@@ -576,11 +576,11 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:outputField value="{!personBeingRefRecord.Age__c}" />
+               <apex:outputText label="Age">{!age}</apex:outputText>
                 <apex:outputField value="{!personBeingRefRecord.Level_of_Education__c}" />
 
                 <apex:outputField value="{!personBeingRefRecord.Gender__c}" />
-                <apex:outputField value="{!personBeingRefRecord.SSN__c}" />
+              <!--   <apex:outputField value="{!personBeingRefRecord.SSN__c}" />  -->
             </apex:pageBlockSection>
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}">
                 <apex:outputField value="{!personBeingRefRecord.Additional_Information_Comments__c}" style="width: 90%;" />
@@ -626,7 +626,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-                <apex:outputField value="{!personBeingServedRecord.Age__c}" />
+                           <apex:outputText label="Age">{!age}</apex:outputText>
                 <apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" />
 
                 <apex:outputField value="{!personBeingServedRecord.Gender__c}" />
@@ -667,6 +667,7 @@
                     <apex:column value="{!relParty.Phone_2_Type__c}" />
                     <apex:column value="{!relParty.Status__c}" />
                     <apex:column value="{!relParty.Comments__c}" />
+                    <apex:column value="{!relParty.CreatedDate}" />
                 </apex:pageBlockTable>
 
                 <script type="text/javascript">
@@ -798,7 +799,7 @@
                 <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'CareMeridian'}">
                     <apex:outputField value="{!personBeingRefRecord.Full_Name__c}" />
                     <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age__c})">
+                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age_year__c} Years {!personBeingRefRecord.Age_month__c} Months {!personBeingRefRecord.Age_days__c} Days)">
                         <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}" />
                     </apex:outputText>
                     <apex:inputField value="{!fundingSource.Type_of_Coverage__c}"  />
@@ -827,7 +828,7 @@
                 <apex:pageBlockSection columns="2" rendered="{!ReferralRecordType == 'NeuroRestorative'}">
                     <apex:outputField value="{!personBeingRefRecord.Full_Name__c}" />
                     <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age__c})">
+                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!personBeingRefRecord.Age_year__c} Years {!personBeingRefRecord.Age_month__c} Months {!personBeingRefRecord.Age_days__c} Days)">
                         <apex:param value="{!personBeingRefRecord.Date_of_Birth__c}" />
                     </apex:outputText>
                     <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" id="fundingEntry_coverage"/>
@@ -844,14 +845,16 @@
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                     <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
-
+					<!-- 
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel for="insuredSSN" value="Insured SSN" />
                         <apex:outputPanel >
                             <apex:inputField value="{!fundingSource.Insured_SSN__c}" id="insuredSSN" />
                             <apex:commandLink value="Same as PBR" onclick="assignValue('{!$Component.insuredSSN}', '{!Referral__c.Person_Being_Referred__r.SSN__c}'); return false;" />
                         </apex:outputPanel>
+                        
                     </apex:pageBlockSectionItem>
+                     -->
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel for="insuredDOB" value="Insured DOB" />
                         <apex:outputPanel >
@@ -1356,7 +1359,27 @@
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:outputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}" />
-                <apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" />
+<!--                 <apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" /> -->
+                <apex:pageBlocksectionitem >
+					<apex:outputPanel >
+                		<apex:outputLabel value="Guardianship Type" />
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship Type" rendered="{!Referral__c.Guardianship_Type__c == 'Partial Guardianship/Conservatorship'}" />
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Legal/Guardianship Staus"  rendered="{!Referral__c.Legal_Guardian_Status__c != null}" />
+                	</apex:outputPanel>
+                	<apex:outputPanel >
+                		<apex:outputField value="{!Referral__c.Guardianship_Type__c}"  />
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Referral__c.Partial_Guardianship_Conservatorship__c}"  rendered="{!Referral__c.Guardianship_Type__c == 'Partial Guardianship/Conservatorship'}"/>
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Referral__c.Legal_Guardian_Status__c}" rendered="{!Referral__c.Legal_Guardian_Status__c != null}" />
+                	</apex:outputPanel>
+                </apex:pageBlocksectionitem>
                 <apex:outputField value="{!Referral__c.Evaluated_By_Internal__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:outputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge}" />
                 <apex:outputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
@@ -1859,6 +1882,7 @@
                     <apex:column value="{!agency.Address__c}" />
                     <apex:column value="{!agency.Phone__c}" />
                     <apex:column value="{!agency.Reason_for_Involvement__c}" />
+                    <apex:column value="{!agency.CreatedDate}" />
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
 
@@ -1885,6 +1909,7 @@
                     <apex:column value="{!fundingSource.Payor__c}" rendered="{!ReferralRecordType=='CareMeridian'}" />
                     <apex:column value="{!fundingSource.Status__c}" />
                     <apex:column value="{!fundingSource.Comment__c}" />
+                    <apex:column value="{!fundingSource.CreatedDate}" />
                 </apex:pageBlockTable>
 
                 <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!ReferralRecordType == 'CareMeridian'}">

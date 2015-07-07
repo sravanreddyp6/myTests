@@ -29,15 +29,19 @@
             setUpFields = function() {
                 $('body input').on("change", function(event) {
                     applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
                 });
                 $('body select').on("change", function(event) {
                     applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
                 });
                 $('body input').each(function(_, target) {
                     applyRulesToField(target);
+                    applyShowHideRulesToField(target);
                 });
                 $('body select').each(function(_, target) {
                     applyRulesToField(target);
+                    applyShowHideRulesToField(target);
                 });
             }
             setUpFields();
@@ -59,7 +63,7 @@
 
         //PRI-PRI-162
         function setUpTabOrder(){
-            console.log('start tab order');
+        	console.log('start tab order');
               j$('.setMailStateTab').focus(
                   function(){
                       j$('select[id$=MailingStateCode ]').attr("tabindex", 100);
@@ -298,7 +302,7 @@
             </div>
 
             <apex:pageBlockSection title="Person Being Served" showHeader="false" columns="2" collapsible="false" id="pbsOutPutsectionId">
-                <apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput"/>
+                <apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput" required="true"/>
                 <apex:inputField value="{!Contact.Race__c }" taborderhint="2" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Middle_Name__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Ethnicity_Picklist__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
@@ -321,9 +325,31 @@
                         <apex:inputField taborderhint="2" value="{!Contact.Sign_Language__c}"  />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:inputField value="{!Contact.Age__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
+                 <apex:outputText label="Age" value="{!Age}" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Level_of_Education__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
-                <apex:inputField value="{!Contact.Gender__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
+<!--                 <apex:inputField value="{!Contact.Gender__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/> -->
+                <apex:pageBlocksectionItem rendered="{! pbsEditModeOn }">
+			    	<apex:outputPanel styleClass="helpButton">
+			    		<apex:outputLabel value="Gender" styleClass="labelCol" />
+			    		<img src="/s.gif" id="HelpImage" alt="Select the person's legal gender" class="helpOrb" title="Select the person's legal gender" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
+			    		<br/>
+			    		<br/>
+			    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
+			    	</apex:outputPanel>
+			    	<apex:outputPanel >
+				    	<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" required="true"/>
+				    	<br/>
+				    	<br/>
+				    	<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}" />
+				    	<div class="requiredInput">
+							<div class="requiredBlock"></div>
+				    	<apex:inputFIeld value="{!Contact.Gender_Identity__c}" id="genderIdentity" />
+				    	</div>
+			    	</apex:outputPanel>
+    			</apex:pageBlocksectionItem>
                 
                 <!--  view -->
                 <apex:outputField value="{!Contact.FirstName}"  rendered="{! !pbsEditModeOn }"/>
@@ -351,124 +377,135 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>    
                 
-                <apex:outputField value="{!Contact.Age__c}" rendered="{! !pbsEditModeOn }"/>
+                <apex:outputText label="Age" value="{!Age}" rendered="{! !pbsEditModeOn }"/>
                 <apex:outputField value="{!Contact.Level_of_Education__c}" rendered="{! !pbsEditModeOn }"/>
                 <apex:outputField value="{!Contact.Gender__c}" rendered="{! !pbsEditModeOn }"/>
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem rendered="{!!pbsEditModeOn}" >
+			 		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/>
+	   				<apex:outputField value="{!Contact.Does_the_person_Identify__c}" />
+		   		</apex:pageBlockSectionItem>
+		   		<apex:pageBlockSectionItem />
+		   		<apex:pageBlockSectionItem rendered="{!!pbsEditModeOn && Contact.Does_the_person_Identify__c == 'Yes'}" >
+		   			<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" />			   		
+		   			<apex:outputField value="{!Contact.Gender_Identity__c}" />
+		   		</apex:pageBlockSectionItem>
+		   		
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection" rendered="{! pbsEditModeOn}">
-                <apex:inputField taborderhint="5" value="{!contact.Medicaid_ID__c }" />
-                <apex:inputField taborderhint="6" value="{!contact.Other_ID__c }" />
-                <apex:inputField taborderhint="5" value="{!contact.Avatar_ID__c }" />
-                <apex:inputField taborderhint="6" value="{!contact.Other_ID_Description__c }" />
-                <apex:inputField taborderhint="5" value="{!contact.Avatar_Source_System__c }" />
-                <apex:inputField taborderhint="6" value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA'}"/>
+				<apex:inputField taborderhint="5" value="{!contact.Medicaid_ID__c }" />
+				<apex:inputField taborderhint="6" value="{!contact.Other_ID__c }" />
+				<apex:inputField taborderhint="5" value="{!contact.Avatar_ID__c }" />
+				<apex:inputField taborderhint="6" value="{!contact.Other_ID_Description__c }" />
+				<apex:inputField taborderhint="5" value="{!contact.Avatar_Source_System__c }" />
+				<apex:inputField taborderhint="6" value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA'}"/>
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection_view" rendered="{! !pbsEditModeOn}">
-                <apex:outputField value="{!contact.Medicaid_ID__c }" />
-                <apex:outputField value="{!contact.Other_ID__c }" />
-                <apex:outputField value="{!contact.Avatar_ID__c }" />
-                <apex:outputField value="{!contact.Other_ID_Description__c }" />
-                <apex:outputField value="{!contact.Avatar_Source_System__c }" />
-                <apex:outputField value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA'}"/>
+				<apex:outputField value="{!contact.Medicaid_ID__c }" />
+				<apex:outputField value="{!contact.Other_ID__c }" />
+				<apex:outputField value="{!contact.Avatar_ID__c }" />
+				<apex:outputField value="{!contact.Other_ID_Description__c }" />
+				<apex:outputField value="{!contact.Avatar_Source_System__c }" />
+				<apex:outputField value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA'}"/>
             </apex:pageBlockSection>            
 
             <!--Contact Information Section-->
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputContactInfo">
 
 
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }" >
-                    <apex:outputLabel value="Mailing Street 1" for="Ma" />
-                    <apex:inputText tabindex="100" id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Other Street 1" for="os" />
-                    <apex:inputText tabindex="120" id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
-                </apex:pageBlockSectionItem>
-                <apex:inputField taborderhint="10" value="{!contact.Mailing_Street_2__c}" rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="12" value="{!contact.Other_Street_2__c}" rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="10" value="{!contact.MailingCity}" rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="12" value="{!contact.OtherCity}" rendered="{!  pbsEditModeOn}"/>
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Mailing Country" for="os" />
-                    <apex:inputField taborderhint="10" styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Other Country" for="os" />
-                    <apex:inputField taborderhint="12" styleclass="setOtherStateTab"  value="{!contact.OtherCountryCode}" label="Other Country" />
-                </apex:pageBlockSectionItem>
-                
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Mailing State/Province" for="os" />
-                    <apex:outputPanel >
-                        <apex:inputField id="MailingStateCode" taborderhint="10" html-class="testingTabs"  value="{!contact.MailingStateCode}" label="Mailing State/Province" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                
-                    
-                
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Other State/Province" for="os" />
-                    <apex:inputField taborderhint="12"  id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
-                </apex:pageBlockSectionItem>
-                <apex:inputField taborderhint="10" value="{!contact.MailingPostalCode}"  styleClass="setMailStateTab"  rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="12" styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="10" value="{!contact.Mailing_County__c}"  rendered="{!  pbsEditModeOn}" />
-                <apex:inputField taborderhint="12" value="{!contact.Other_County__c}"  rendered="{!  pbsEditModeOn}" />
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Phone" for="os" />
-                    <apex:inputField taborderhint="10" value="{!contact.HomePhone}" label="Other Country" />
-                </apex:pageBlockSectionItem>
-                <apex:inputField taborderhint="12" value="{!contact.OtherPhone}"  rendered="{!  pbsEditModeOn}" />
-                <apex:inputField taborderhint="10" value="{!contact.Email}"  rendered="{!  pbsEditModeOn}" />
-                <apex:inputField taborderhint="12" value="{!contact.Other_Contact_Information__c}"  rendered="{!  pbsEditModeOn}"  />
-                
-                <!-- view -->
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn }" >
-                    <apex:outputLabel value="Mailing Street 1" for="Ma" />
-                    <apex:outputField id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Other Street 1" for="os" />
-                    <apex:outputField id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
-                </apex:pageBlockSectionItem>
-                <apex:outputField value="{!contact.Mailing_Street_2__c}" rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField value="{!contact.Other_Street_2__c}" rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField value="{!contact.MailingCity}" rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField value="{!contact.OtherCity}" rendered="{!  !pbsEditModeOn}"/>
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Mailing Country" for="os" />
-                    <apex:outputField styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Other Country" for="os" />
-                    <apex:outputField styleclass="setOtherStateTab"  value="{!contact.OtherCountryCode}" label="Other Country" />
-                </apex:pageBlockSectionItem>
-                
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Mailing State/Province" for="os" />
-                    <apex:outputPanel >
-                        <apex:outputField id="MailingStateCode"  html-class="testingTabs"  value="{!contact.MailingStateCode}" label="Mailing State/Province" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                
-                    
-                
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Other State/Province" for="os" />
-                    <apex:outputField id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
-                </apex:pageBlockSectionItem>
-                <apex:outputField value="{!contact.MailingPostalCode}"  styleClass="setMailStateTab"  rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField value="{!contact.Mailing_County__c}"  rendered="{!  !pbsEditModeOn}" />
-                <apex:outputField value="{!contact.Other_County__c}"  rendered="{!  !pbsEditModeOn}" />
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Phone" for="os" />
-                    <apex:outputField value="{!contact.HomePhone}" label="Other Country" />
-                </apex:pageBlockSectionItem>
-                <apex:outputField value="{!contact.OtherPhone}"  rendered="{!  !pbsEditModeOn}" />
-                <apex:outputField value="{!contact.Email}"  rendered="{!  !pbsEditModeOn}" />
-                <apex:outputField value="{!contact.Other_Contact_Information__c}"  rendered="{!  !pbsEditModeOn}"  />
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }" >
+				    <apex:outputLabel value="Mailing Street 1" for="Ma" />
+				    <apex:inputText tabindex="100" id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Other Street 1" for="os" />
+				    <apex:inputText tabindex="120" id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:inputField taborderhint="10" value="{!contact.Mailing_Street_2__c}" rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="12" value="{!contact.Other_Street_2__c}" rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="10" value="{!contact.MailingCity}" rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="12" value="{!contact.OtherCity}" rendered="{!  pbsEditModeOn}"/>
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Mailing Country" for="os" />
+				    <apex:inputField taborderhint="10" styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Other Country" for="os" />
+				    <apex:inputField taborderhint="12" styleclass="setOtherStateTab"  value="{!contact.OtherCountryCode}" label="Other Country" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Mailing State/Province" for="os" />
+				    <apex:outputPanel >
+				        <apex:inputField id="MailingStateCode" taborderhint="10" html-class="testingTabs"  value="{!contact.MailingStateCode}" label="Mailing State/Province" />
+				    </apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				    
+				
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Other State/Province" for="os" />
+				    <apex:inputField taborderhint="12"  id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
+				</apex:pageBlockSectionItem>
+				<apex:inputField taborderhint="10" value="{!contact.MailingPostalCode}"  styleClass="setMailStateTab"  rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="12" styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="10" value="{!contact.Mailing_County__c}"  rendered="{!  pbsEditModeOn}" />
+				<apex:inputField taborderhint="12" value="{!contact.Other_County__c}"  rendered="{!  pbsEditModeOn}" />
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Phone" for="os" />
+				    <apex:inputField taborderhint="10" value="{!contact.HomePhone}" label="Other Country" />
+				</apex:pageBlockSectionItem>
+				<apex:inputField taborderhint="12" value="{!contact.OtherPhone}"  rendered="{!  pbsEditModeOn}" />
+				<apex:inputField taborderhint="10" value="{!contact.Email}"  rendered="{!  pbsEditModeOn}" />
+				<apex:inputField taborderhint="12" value="{!contact.Other_Contact_Information__c}"  rendered="{!  pbsEditModeOn}"  />
+				
+				<!-- view -->
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn }" >
+				    <apex:outputLabel value="Mailing Street 1" for="Ma" />
+				    <apex:outputField id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Other Street 1" for="os" />
+				    <apex:outputField id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!contact.Mailing_Street_2__c}" rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField value="{!contact.Other_Street_2__c}" rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField value="{!contact.MailingCity}" rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField value="{!contact.OtherCity}" rendered="{!  !pbsEditModeOn}"/>
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Mailing Country" for="os" />
+				    <apex:outputField styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Other Country" for="os" />
+				    <apex:outputField styleclass="setOtherStateTab"  value="{!contact.OtherCountryCode}" label="Other Country" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Mailing State/Province" for="os" />
+				    <apex:outputPanel >
+				        <apex:outputField id="MailingStateCode"  html-class="testingTabs"  value="{!contact.MailingStateCode}" label="Mailing State/Province" />
+				    </apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				    
+				
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Other State/Province" for="os" />
+				    <apex:outputField id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!contact.MailingPostalCode}"  styleClass="setMailStateTab"  rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField value="{!contact.Mailing_County__c}"  rendered="{!  !pbsEditModeOn}" />
+				<apex:outputField value="{!contact.Other_County__c}"  rendered="{!  !pbsEditModeOn}" />
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Phone" for="os" />
+				    <apex:outputField value="{!contact.HomePhone}" label="Other Country" />
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!contact.OtherPhone}"  rendered="{!  !pbsEditModeOn}" />
+				<apex:outputField value="{!contact.Email}"  rendered="{!  !pbsEditModeOn}" />
+				<apex:outputField value="{!contact.Other_Contact_Information__c}"  rendered="{!  !pbsEditModeOn}"  />
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Financial Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFinancialInfo"  rendered="{!showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo && pbsEditModeOn && !isNR}">
@@ -500,13 +537,34 @@
             <a name="AI" id="AI" />
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo" rendered="{! pbsEditModeOn}">
 
-                <apex:inputField taborderhint="20" value="{!Contact.Family_Member_Other__c}" />
-                <apex:inputField taborderhint="21" value="{!Contact.Legal_Guardianship_Status__c}" />
-                
-                <apex:inputField taborderhint="20" value="{!Contact.VIP_Indicator__c}" />
-                <apex:inputField taborderhint="21" value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
-                <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
-                
+				<apex:inputField taborderhint="20" value="{!Contact.Family_Member_Other__c}" />
+<!-- 				<apex:inputField taborderhint="21" value="{!Contact.Legal_Guardianship_Status__c}" /> -->
+<!-- 				Added by Sravan for PRI-164 05/13/2015 -->
+				<apex:pageBlocksectionitem >
+					<apex:outputPanel >
+                		<apex:outputLabel value="Guardianship Type" id="guardianshipTypeLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                	<apex:outputPanel >
+                		<apex:inputField value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
+                		<br/>
+                		<br/>
+                		<apex:inputField value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                </apex:pageBlocksectionitem>
+			
+				<apex:inputField taborderhint="20" value="{!Contact.VIP_Indicator__c}" />
+				<apex:inputField taborderhint="21" value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
+				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
+				
                 <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" />                
                 <apex:inputField taborderhint="20" value="{!Contact.Advanced_Directives__c}" rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}" />                
                 <apex:inputField taborderhint="21" value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />                
@@ -514,28 +572,44 @@
                 <apex:inputField taborderhint="20" value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />                
                 <apex:inputField taborderhint="21" value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
 
-            </apex:pageBlockSection>
+			</apex:pageBlockSection>
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
-                <apex:outputField value="{!Contact.Family_Member_Other__c}" />
-                <apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" />
-                
+				<apex:outputField value="{!Contact.Family_Member_Other__c}" />
+				<apex:pageBlocksectionitem >
+					<apex:outputPanel >
+                		<apex:outputLabel value="Guardianship Type" id="guardianshipTypeLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                	<apex:outputPanel >
+                		<apex:outputField value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                </apex:pageBlocksectionitem>
                 <apex:outputField value="{!Contact.VIP_Indicator__c}" />
-                <apex:outputField value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
-                <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
-                
+				<apex:outputField value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
+				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
+				
                 <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" />                
                 <apex:outputField value="{!Contact.Advanced_Directives__c}" rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}" />                
-                <apex:outputField value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />                
+                <apex:inputField value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />                
                 
                 <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />                
                 <apex:outputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
-
-
-
-            </apex:pageBlockSection>            
+			</apex:pageBlockSection>	
+					
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
-                <apex:pageBlockSectionItem />    
-                <apex:pageBlockSectionItem />    
+				<apex:pageBlockSectionItem />    
+				<apex:pageBlockSectionItem />    
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Created By" />
                     <apex:outputPanel layout="none">
@@ -563,7 +637,7 @@
 
             </apex:pageBlockSection>
             <!-- rearranged this section information for  EPRIQM-107  -->
-            <!--Family Information Section-->
+                       <!--Family Information Section-->
             <apex:pageBlockSection columns="2"  title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo" rendered="{!canViewFamilyInfo}">
                  <apex:inputfield taborderhint="30" value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
                  <apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
@@ -620,7 +694,7 @@
                     <apex:column headerValue="Action">
                         <apex:outputPanel rendered="{!$ObjectType.Related_Party__c.updateable}"> <a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a>
                         </apex:outputPanel>
-                    </apex:column>  
+                    </apex:column>	
                     <apex:column value="{!relParty.Type__c}" />
                     <apex:column value="{!relParty.Name}" />
                     <apex:column value="{!relParty.Address__c}" />
@@ -804,7 +878,7 @@
             </apex:pageBlock>
         </a>
             <a id="immunization"></a>
-            <apex:pageBlock rendered="{! ( Assessments_ChildImmune.size != null || contact.Age__c < 18) && vfVarIsCM}" >
+             <apex:pageBlock rendered="{! ( Assessments_ChildImmune.size != null || contact.Age__c < 18) && vfVarIsCM}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Child"
                                            formId="{!$Component.FormID}"
