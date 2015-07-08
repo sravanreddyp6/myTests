@@ -25,11 +25,19 @@ public with sharing class neuroreportofserviceController {
     		return null;
     	}*/
     	Datetime startdt = DateTime.newInstance( fSource.Effective_Date_of_Cost_therapy_Auth__c, Time.newInstance(0,0,0,0));
-        Datetime enddt = DateTime.newInstance ( fSource.Term_Date_of_Cost_therapy_Auth__c, Time.newInstance(0, 0, 0, 0));  
+        Datetime enddt = DateTime.newInstance ( fSource.Term_Date_of_Cost_therapy_Auth__c, Time.newInstance(0, 0, 0, 0)); 
+        Map<id, Decimal> otMap = new Map<id, Decimal>();
+    	Map<id, Decimal> ptMap = new Map<id, Decimal>();
+    	Map<id, Decimal> slpMap = new Map<id, Decimal>();
+    	Map<id, Decimal> bitMap = new Map<id, Decimal>();
+    	Map<id, Decimal> counsellingMap = new Map<id, Decimal>();
+    	
+        
     	SOQL = '';
-    	SOQL = 'SELECT Id, OT_Auth_Units__c, PT_Auth_Units__c, Service_Assignment__c, Case_Manager__c, Auth_Excess_Justification__c  FROM Funding_Source__c WHERE Funding_Source_Status__c IN :statuses AND Recordtype.Name = \'NeuroRestorative\'';
-    	SOQL = SOQL+ ' AND Effective_Date_of_Cost_therapy_Auth__c >= '+ startdt.format('yyyy-MM-dd');
-    	SOQL = SOQL+ ' AND Term_Date_of_Cost_therapy_Auth__c <= '+ enddt.format('yyyy-MM-dd');
+    	SOQL = 'SELECT Id, Name, OT_Auth_Units__c, PT_Auth_Units__c, BIT_Auth_Units__c,Counselling_Auth_Units__c,SLP_Auth_Units__c,Total_Authorized_Therapy_Units__c, Auth_Units_Grand_Total__c, Effective_Date_of_Cost_therapy_Auth__c, Term_Date_of_Cost_therapy_Auth__c, Service_Assignment__c,Service_Assignment__r.Person_being_Served__c, Case_Manager__c, Auth_Excess_Justification__c  FROM Funding_Source__c';
+    	SOQL = SOQL +' WHERE Funding_Source_Status__c IN :statuses AND Recordtype.Name = \'NeuroRestorative\'';
+    	SOQL = SOQL+ ' AND (Effective_Date_of_Cost_therapy_Auth__c >= '+ startdt.format('yyyy-MM-dd')+' AND Effective_Date_of_Cost_therapy_Auth__c <= '+ enddt.format('yyyy-MM-dd')+')';
+    	SOQL = SOQL+ ' AND (Term_Date_of_Cost_therapy_Auth__c <= '+ enddt.format('yyyy-MM-dd')+' AND Term_Date_of_Cost_therapy_Auth__c >= '+startdt.format('yyyy-MM-dd')+')';
     	
     	if(string.isNotBLANK(fSource.Case_Manager__c)){
     		string cm = string.valueOf(fSource.Case_Manager__c);
@@ -47,8 +55,7 @@ public with sharing class neuroreportofserviceController {
     		}
     	}
     	
-    	Map<id, Decimal> otMap = new Map<id, Decimal>();
-    	Map<id, Decimal> ptMap = new Map<id, Decimal>();
+    	
     	
     	
     	for(AggregateResult ar: [SELECT Sum(Units__c) units,Service_Assignment__c sa, Therapy_Discipline__c td FROM Progress_Note__c WHERE (Date_of_Service__c >= :fSource.Effective_Date_of_Cost_therapy_Auth__c AND  Date_of_Service__c <= :fSource.Term_Date_of_Cost_therapy_Auth__c) AND Type_of_Contact__c != 'No-Show' AND Recordtype.Name = 'Therapy' AND Therapy_Discipline__c != null AND Service_Assignment__c IN: servAssigns GROUP BY Service_Assignment__c, Therapy_Discipline__c]){
@@ -58,25 +65,30 @@ public with sharing class neuroreportofserviceController {
     		if((String)ar.get('td') == 'PT'){
     			ptMap.put((id)ar.get('sa'),(Decimal)ar.get('units'));
     		}
+    		if((String)ar.get('td') == 'SLP'){
+    			slpMap.put((id)ar.get('sa'),(Decimal)ar.get('units'));
+    		}
+    		if((String)ar.get('td') == 'BIT'){
+    			bitMap.put((id)ar.get('sa'),(Decimal)ar.get('units'));
+    		}
+    		if((String)ar.get('td') == 'Counseling'){
+    			counsellingMap.put((id)ar.get('sa'),(Decimal)ar.get('units'));
+    		}
+    		
     	}
     	
     	
     	for(Funding_Source__c fs: fundingMap.values()){
     		if(servAssigns.contains(fs.Service_Assignment__c)){
     			//servPNRollup spn = servPNMap.get(fs.Service_Assignment__c);
-    			lineitems.add(new lineitem(fs,ptMap.get(fs.Service_Assignment__c),otMap.get(fs.Service_Assignment__c)));
+    			lineitems.add(new lineitem(fs,otMap.get(fs.Service_Assignment__c),ptMap.get(fs.Service_Assignment__c), slpMap.get(fs.Service_Assignment__c),bitMap.get(fs.Service_Assignment__c),counsellingMap.get(fs.Service_Assignment__c)));
     		}else{
-    			lineitems.add(new lineitem(fs,0,0));
+    			lineitems.add(new lineitem(fs,0,0,0,0,0));
     		}
     	}
        
         return null;
     }
-    
-    
-    
-    
-    
     
     
     
@@ -106,17 +118,25 @@ public with sharing class neuroreportofserviceController {
    }*/
     
     
+    //Wrapper class to link funding sources and the rollup values from progress notes. Each line item will be a row in the report - Sravan - 07/08/15
     
     public class lineItem {
         
         public Funding_Source__c fundingSource {get;set;}
-        public Decimal ptRollup {get;set;}
         public Decimal otRollup {get;set;}
+        public Decimal ptRollup {get;set;}
+        public Decimal bitRollup {get; set;}
+        public Decimal slpRollup {get; set;}
+        public Decimal counsellingRollup {get; set;}
         
-        public lineItem(Funding_Source__c f, Decimal pt, Decimal ot){
+        
+        public lineItem(Funding_Source__c f, Decimal ot, Decimal pt,Decimal slp, Decimal bit, Decimal counselling){
             this.fundingSource = f;
             this.ptRollup = pt;
             this.otRollup = ot;
+            this.bitRollup = bit;
+            this.slpRollup = slp;
+            this.counsellingRollup = counselling;
             
         }
         

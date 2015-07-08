@@ -33,12 +33,25 @@
     
     <apex:pageBlock title="Results" id="resultsBlock">
         <apex:pageBlockTable value="{!lineItems}" var="li" rendered="{!lineItems.size != null}" >
-            <apex:column value="{!li.fundingSource.Id}" />
+            <apex:column value="{!li.fundingSource.Name}" />
+            <apex:column value="{!li.fundingSource.Service_Assignment__r.Person_Being_Served__c}" />
+            <apex:column value="{!li.fundingSource.Service_Assignment__c}" />
             <apex:column value="{!li.fundingSource.Case_Manager__c}" />
-            <apex:column value="{!li.otRollup}" />
+            <apex:column value="{!li.fundingSource.Total_Authorized_Therapy_Units__c}" />
+            <apex:column value="{!li.otRollup}" headerValue="Progress Notes OT"/>
             <apex:column value="{!li.fundingSource.OT_Auth_Units__c}" />
-            <apex:column value="{!li.ptRollup}" />
+            <apex:column value="{!li.ptRollup}" headerValue="Progress Notes PT"/>
             <apex:column value="{!li.fundingSource.PT_Auth_units__c}" />
+            <apex:column value="{!li.slpRollup}" headerValue="Prog Notes SLP" />
+            <apex:column value="{!li.fundingSource.SLP_Auth_Units__c}" />
+            <apex:column value="{!li.bitRollup}" headerValue="Prog Notes BIT" />
+            <apex:column value="{!li.fundingSource.BIT_Auth_Units__c}" />
+            <apex:column value="{!li.counsellingRollup}" headerValue="Prog Notes Counselling" />
+            <apex:column value="{!li.fundingSource.Counselling_Auth_Units__c}" />
+            <apex:column value="{!li.fundingSource.Auth_Units_Grand_Total__c}" />
+            <apex:column value="{!li.fundingSource.Auth_Excess_Justification__c}" />
+            <apex:column value="{!li.fundingSource.Effective_Date_of_Cost_therapy_Auth__c}" />
+            <apex:column value="{!li.fundingSource.Term_Date_of_Cost_therapy_Auth__c}" />
         </apex:pageBlockTable>
         <apex:outputtext value="No results matching the Criteria" rendered="{!lineItems.size == 0}" />
         <apex:outputtext value="{!SOQL}" />
