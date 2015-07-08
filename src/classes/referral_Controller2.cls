@@ -652,7 +652,41 @@ public with sharing class referral_Controller2 {
 		
 		
 			
+        //eb-428
+        if(referralRecordType == 'NeuroRestorative'){
+            boolean PT = false;
+            boolean CL = false;
+            for(Funding_Source__c fs :fundingSources){
+                if(fs.Type_of_Coverage__c == 'Primary'){
+                    CL = true;   
+                    if(fs.Payer_Type__c != null ){
+                    	PT = true;
+                	} 
+                }
 
+            }
+            if(!CL || !PT){
+                messages.Add('One Funding Source must have both "Coverage Level" = "Primary" and any "Payer Type" selected');
+                hasReq = false;
+            }                    
+            if(referralRecord.Diagnosis_I__c == null){
+                messages.Add('Primary Diagnosis');
+                hasReq = false;             
+            }   
+            if(referralRecord.Date_of_Injury__c == null){
+                messages.Add('Date of Injury');
+                hasReq = false;             
+            }
+            if(referralRecord.Cause_of_Injury_pick__c == null){
+                messages.Add('Cause of Injury');
+                hasReq = false;             
+            }   
+            if(referralRecord.Current_Location_Type__c == null){
+                messages.Add('Current Location Type');
+                hasReq = false;             
+            }                               
+        }
+        
 
 		// requirements to create a new PBS
 		if ( (string.valueOf(this.referralRecord.Person_Being_Served__c) == '' )) {
