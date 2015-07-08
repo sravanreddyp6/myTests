@@ -376,7 +376,7 @@ public with sharing class referral_Controller2 {
 
 	private void populateFundingSources() {
 		this.fundingSources = [
-			select id, Payor__c, Funding_Source__c, Funding_Source_ID__c, Status__c, Service_Being_Funded__c, Comment__c, Referral__c,
+			select id, Payor__c, Funding_Source__c, Payer_Type__c, Funding_Source_ID__c, Status__c, Service_Being_Funded__c, Comment__c, Referral__c,
 			       type_of_coverage__c, payer_name__c, effective_date__c, termination_date__c, CreatedDate
 			from Funding_Source__c
 			where Referral__c = :this.referralRecord.Id
