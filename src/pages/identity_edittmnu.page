@@ -40,7 +40,7 @@
                 </apex:pageblockButtons>            
                 <apex:pageBlockSection columns="2" title="{!TMNUser.Name} Information">
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true" taborderhint="1"/>
-					<apex:inputField label="Company Email" value="{!TMNUser.Email__c}" taborderhint="8"/>
+                    <apex:outputField label="Company Email" value="{!TMNUser.Email__c}"/>
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2"/>
                     <apex:inputField label="Personal Email" value="{!TMNUser.Personal_Email__c}" taborderhint="9"/>
                     <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true" taborderhint="3"/>
@@ -72,9 +72,8 @@
                     <apex:outputField label="City" value="{!TMNUser.Work_City__c}"/>
                 </apex:pageBlockSection>
                 <apex:PageBlockSection columns="2" title="Manager Information">                                                                                                                                                                                                                                        
-                    <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Name__c}" required="true" taborderhint="16"/>
-                    <apex:outputPanel />
-                    <apex:outputField label="Manager Email" value="{!TMNUser.Manager_Email__c}"/>                                                      
+                    <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="16"/>
+                    <!--<apex:outputField label="Manager Email" value="{!TMNUser.Manager_Email__c}"/> -->
                 </apex:pageBlockSection>
                 <apex:PageBlockSection columns="2">
                     <apex:pageBlockSectionItem />                                                                                                                                                                                                                                    

@@ -59,13 +59,13 @@
 
     <apex:panelGrid >                
         <apex:panelGroup >
-            <apex:outputPanel layout="block" styleClass="block-title">
+            <apex:outputPanel layout="block" styleClass="block-title" rendered="{!hasSubs}">
                 I Would Like to ...
             </apex:outputPanel>
-            <apex:outputPanel layout="block" styleClass="block">
+            <apex:outputPanel layout="block" styleClass="block" rendered="{!hasSubs}">
                 <apex:form styleClass="block-inner">
                     <!--<apex:outputLink value="/apex/identity_home" rendered="{!hasAccess}"> View Recently Accessed Identities...</apex:outputLink><br />-->
-                    <apex:outputLink value="/apex/identity_delegate" rendered="{!hasAccess}"> Manage my Delegates...</apex:outputLink><br />
+                    <apex:outputLink value="/apex/identity_delegate" rendered="{!hasSubs}"> Manage my Delegates...</apex:outputLink><br />
                    <!-- <apex:outputLink value="/apex/identity_employees" rendered="{!isDelegate}">Maintain Employees...</apex:outputLink><br /> -->
                     <!--<apex:outputLink value="/apex/identity_nonemployees" rendered="{!isDelegate}">Maintain Non-Employees...</apex:outputLink><br />-->
                     <apex:outputLink value="/apex/identity_edit" rendered="{!$Profile.Name=='System Administrator'}">Manage TMN Users</apex:outputLink>
@@ -78,8 +78,20 @@
         <apex:pageMessages />
     </apex:outputPanel>
     
-    <apex:outputPanel styleClass="inner-block" layout="block">
-    <apex:pageBlock title="Find or Create a New Identity Record" id="blkSecNonEmpSrch" >
+    <apex:outputPanel layout="block" styleClass="block-title" rendered="{!hasAccess}" >
+    <apex:form >
+        Manage Workforce on Behalf of:&nbsp;
+        <apex:selectList value="{!aliasName}" size="1" label="Delegation Selected">
+            <apex:actionSupport event="onchange" reRender="wfReports,wfAttest" />
+            <apex:selectOptions value="{!DelValues}" >
+            </apex:selectOptions>
+        </apex:selectList>
+    </apex:form>
+    </apex:outputPanel> 
+    <br/>
+    
+    <apex:outputPanel styleClass="inner-block" layout="block" rendered="{!hasAccess}">
+    <apex:pageBlock title="Find or Create" id="blkSecNonEmpSrch" >
         <apex:form id="frmNonEmpSrch" >  
                 <apex:inputText label="srchFN" value="{!srchFNameNonEmp}" html-placeholder="First Name"/>
                 <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
@@ -88,43 +100,41 @@
                 <apex:commandButton value="Find or Create" action="{!nonEmpSearch}" id="srchBtn" />                               
         </apex:form>        
     <apex:pageBlockSection ></apex:pageBlockSection>
-    <apex:pageBlockSection columns="1" title="Workforce Reporting to Me" >
+    <apex:pageBlockSection columns="1" title="Workforce Reporting to Me" id="wfReports" >
         <apex:form >
             <apex:pageBlockTable value="{!myWorkforce}" var="wf">
                 <apex:column headerValue="Action" >
-                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=wf.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>
+                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=wf.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Name" value="{!wf.Name}"/>
-                <apex:column headerValue="Person Type" value="{!wf.Current_Person_Type__c}"/>                
-                <!--<apex:column headerValue="Operating Group" value="{!wf.Operating_Group__c}"/>-->
-                <apex:column headerValue="Manager Name" value="{!wf.Manager_Name__c}" />           
+                <apex:column headerValue="Email" value="{!wf.Email__c}"/>
+                <apex:column headerValue="Title" value="{!wf.Professional_Title__c}"/>
+                <apex:column headerValue="Status" value="{!wf.Job_Status__c}"/>
+                <apex:column headerValue="Person Type" value="{!wf.Current_Person_Type__c}"/>                           
             </apex:pageBlockTable>
         </apex:form>      
     </apex:pageBlockSection>
 
-        <apex:pageBlockSection columns="1" title="My Recently Edited Identities">
+        <apex:pageBlockSection columns="1" title="My Recently Edited Workforce">
             <apex:form >
             <apex:pageBlockTable value="{!Records}" var="r">
                 <apex:column headerValue="Action" >
-                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=r.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>
+                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=r.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>
                 </apex:column>
-                <apex:column headerValue="Office" value="{!r.Work_State__c}" />
                 <apex:column headerValue="Name" value="{!r.Name}"/>
                 <apex:column headerValue="Email" value="{!r.Email__c}"/>
-                <apex:column headerValue="Office" value="{!r.Office_Phone__c}" />
-                <apex:column headerValue="Mobile" value="{!r.Mentor_Cell_Phone__c}" />
-                <apex:column headerValue="Person Type" value="{!r.Current_Person_Type__c}"/>                        
-                <apex:column headerValue="Manager Name" value="{!r.Manager_Name__c}"/>
-                <apex:column headerValue="Manager Email" value="{!r.Manager_Email__c}"/>           
+                <apex:column headerValue="Title" value="{!r.Professional_Title__c}" />
+                <apex:column headerValue="Status" value="{!r.Job_Status__c}"/>
+                <apex:column headerValue="Person Type" value="{!r.Current_Person_Type__c}"/>           
             </apex:pageBlockTable>
             </apex:form>
         </apex:pageBlockSection>
     
-        <apex:pageBlockSection columns="1" title="Workforce Attestation" id="wfBlock">
+        <apex:pageBlockSection columns="1" title="Workforce Attestation" id="wfAttest">
             <apex:form >
             <apex:pageBlockTable value="{!attestNonEmployees}" var="e">
                 <apex:column headerValue="Action" >
-                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=e.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink> &nbsp;
+                    <apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=e.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink> &nbsp;
                     <apex:commandLink value="Extend 30 Days" id="ExtCommand" action="{!add30Days}" rerender="wfBlock"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
@@ -151,17 +161,28 @@
                     </apex:pageBlockButtons>
                     <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
                         <apex:column headerValue="Action" >
-                        <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>
+                        <apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">View</apex:outputLink> 
+                        &nbsp;
+                        <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(ner.Current_Person_Type__c ='Employee','false','true')}">Edit</apex:outputLink>
+                        &nbsp;
+                        <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Provision</apex:outputLink>
                         </apex:column>
                         <apex:column headerValue="Name" value="{!ner.Name}"/>
-                        <apex:column headerValue="Email" value="{!ner.Email__c}"/>
-                        <apex:column headerValue="Person Type" value="{!ner.Current_Person_Type__c}"/>                        
+                        <apex:column headerValue="Title" value="{!ner.Professional_Title__c}"/>                                               
                         <apex:column headerValue="Manager Name" value="{!ner.Manager_Name__c}"/>
-                        <apex:column headerValue="Manager Email" value="{!ner.Manager_Email__c}"/>           
+                        <apex:column headerValue="Operating Group" value="{!ner.Operating_Group__c}"/>
+                        <apex:column headerValue="Person Type" value="{!ner.Current_Person_Type__c}"/> 
+                        <apex:column headerValue="Job Status" value="{!ner.Job_Status__c}"/>           
                     </apex:pageBlockTable>    
                 </apex:pageBlock>
                 </apex:form>
             </apex:outputPanel>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="block" styleClass="block-title" rendered="{!noAccess}" >
+    <apex:form >
+        You do not have access to any identities, or you are not assigned as a delegate.
+    </apex:form>
     </apex:outputPanel>
     
 </apex:page>
