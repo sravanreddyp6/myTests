@@ -1,19 +1,23 @@
-<apex:page controller="neuroreportofserviceController" readOnly="true" >
+<apex:page standardController="Funding_Source__c" extensions="neuroreportofserviceController" readOnly="true" >
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:includeScript value="{!$Resource.jquery}"/>
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	
     <apex:sectionHeader subTitle="Neuro Report of Service" />
     <script type="text/JavaScript">
         function setFocusOnLoad() {}
     
     </script>
     <apex:form >
+    	<apex:pageMessages id="msgs" />
         <apex:pageBlock title="Search Criteria" >
             <apex:pageBlockSection columns="1" >
-                <apex:inputField value="{!fSource.Effective_Date_of_Cost_therapy_Auth__c}" Label="Start Date" />
-                <apex:inputField value="{!fSource.Term_Date_of_Cost_therapy_Auth__c}" Label="End Date" />
+                <apex:inputField value="{!fSource.Effective_Date_of_Cost_therapy_Auth__c}"  required="true"/>
+                <apex:inputField value="{!fSource.Term_Date_of_Cost_therapy_Auth__c}"  required="true"/>
                 <apex:inputField value="{!fSource.Case_Manager__c}" />
             </apex:pageBlockSection>
             <apex:pageBlockButtons location="Bottom" >
-                <apex:commandbutton value="Search" action="{!doSearch}" reRender="resultsBlock" status="searchStatus"/>
+                <apex:commandbutton value="Search" action="{!doSearch}" reRender="resultsBlock,msgs" status="searchStatus"/>
             </apex:pageBlockButtons>
         </apex:pageBlock>
         <apex:actionStatus id="searchStatus" >
@@ -28,7 +32,7 @@
     </apex:form>
     
     <apex:pageBlock title="Results" id="resultsBlock">
-        <apex:pageBlockTable value="{!lineItems}" var="li" rendered="{!lineItems.size > 0}" >
+        <apex:pageBlockTable value="{!lineItems}" var="li" rendered="{!lineItems.size != null}" >
             <apex:column value="{!li.fundingSource.Id}" />
             <apex:column value="{!li.fundingSource.Case_Manager__c}" />
             <apex:column value="{!li.otRollup}" />
@@ -37,6 +41,7 @@
             <apex:column value="{!li.fundingSource.PT_Auth_units__c}" />
         </apex:pageBlockTable>
         <apex:outputtext value="No results matching the Criteria" rendered="{!lineItems.size == 0}" />
+        <apex:outputtext value="{!SOQL}" />
     </apex:pageBlock>
 
 </apex:page>
