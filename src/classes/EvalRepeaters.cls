@@ -74,20 +74,7 @@ public with sharing class EvalRepeaters {
 
 
 	private void buildEvalDataList( List<EvalRepeaterWrapper> workingEvals ) {
-		Evaluation__c[] parentEval = [ select id, ownerid, status__c, Has_Open_Assessment__c, head_to_toe_status__c from evaluation__c where id = :evaluationID ];
-		if ( parentEval.size() == 1) {
-			parentEvalOwnerID = parentEval[0].OwnerId;
-			parentEvalStatus = parentEval[0].status__c;
-			parentHasOpenAsmt = parentEval[0].Has_Open_Assessment__c;
-			parentShiftStatus = parentEval[0].Head_to_Toe_status__c;
-		}
-		else {
-			parentEvalOwnerID = null;
-			parentEvalStatus = 'Completed'; // don't allow entry on anything
-			parentHasOpenAsmt = false;
-		}
-
-
+		refreshParentEval();
 		numErrors = 0;
 		evalDataKeys = '';
                 
@@ -162,9 +149,25 @@ public with sharing class EvalRepeaters {
 		numErrors = 0;
 
         evalTypeId = [Select id from Eval_Type__c where name = :evalname and Category__c = :operatingGroup limit 1].id;
+        
+        refreshParentEval();
         initcanEditEvalType();
 	}
-
+	
+	private void refreshParentEval(){
+        Evaluation__c[] parentEval = [ select id, ownerid, status__c, Has_Open_Assessment__c, head_to_toe_status__c from evaluation__c where id = :evaluationID ];
+        if ( parentEval.size() == 1) {
+            parentEvalOwnerID = parentEval[0].OwnerId;
+            parentEvalStatus = parentEval[0].status__c;
+            parentHasOpenAsmt = parentEval[0].Has_Open_Assessment__c;
+            parentShiftStatus = parentEval[0].Head_to_Toe_status__c;
+        }
+        else {
+            parentEvalOwnerID = null;
+            parentEvalStatus = 'Completed'; // don't allow entry on anything
+            parentHasOpenAsmt = false;
+        }		
+	}
 
 	public Boolean canEditEvalType {get;set;}
 	// determines if this user can edit the given type of eval - used to show or hide the + button
