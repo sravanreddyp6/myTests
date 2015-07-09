@@ -4,8 +4,10 @@ public with sharing class EvalRepeaters {
 	public string evalname{get; set;}
 	public string operatingGroup{get; set;}
 
-    public boolean getAnyErrors() {return (numErrors > 0);}
-    public boolean getanyEmpty() { 
+    transient public boolean anyErrors;
+    public boolean getAnyErrors() {return (numErrors > 0);}    
+    transient public boolean anyEmpty;
+    public boolean getAnyEmpty() { 
         // for restraint assessment we need a special case to reduce the # of empties by 1 since you can't fill out the 2nd subcat
         //&& condition addded by Sravan as Restraint Event Should behave normally when the first section is filled out especially disabling the Complete button when Second section is empty
         if ( evalname == 'Restraint Event' && parentEvalStatus == 'Not Restrained')
