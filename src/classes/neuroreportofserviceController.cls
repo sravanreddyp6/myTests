@@ -105,8 +105,8 @@ public with sharing class neuroreportofserviceController {
     	if(selPrograms.size() >  0 && selPrograms[0] != ''){
     		
     		SOQL = SOQL + ' AND Service_Assignment__r.Program_Detail__c IN: selPrograms';
-    		ApexPages.addmessage(new ApexPages.message(ApexPages.severity.INFO, SOQL));
-    		ApexPages.addmessage(new ApexPages.message(ApexPages.severity.INFO, selPrograms[0]));
+    		//ApexPages.addmessage(new ApexPages.message(ApexPages.severity.INFO, SOQL));
+    		//ApexPages.addmessage(new ApexPages.message(ApexPages.severity.INFO, selPrograms[0]));
     		
     	}
     	
