@@ -1,29 +1,78 @@
 public with sharing class neuroreportofserviceController {
-    public transient List<lineItem> lineitems {get;set;}
+    public List<lineItem> lineitems {get;set;}
     public Funding_Source__c fSource {get; set;}
-    /*public Date startDate {get;set;}
-    public Date EndDate {get; set;}
-    public User caseManager {get; set;}*/
-    public string SOQL{get; set;}
+   // public string SOQL{get; set;}  
     private Apexpages.standardController controller;
     set<string> statuses = new Set<string>{'Active', 'Active Final'};
    
     public neuroreportofserviceController(Apexpages.StandardController controller){
         lineItems = new List<lineItem>();
         this.controller = controller;
+       
+      /*  if(!test.isRunningTest()){
+        	controller.addFields(new List<String>{'Service_Assignment__r.Program_Detail__c'});
+        }*/
         this.fSource = (Funding_Source__c)controller.getRecord();
+        getStateList();
+       	getProgramList();
+       	selStates = new List<String>();
+       	selPrograms = new List<String>();
         
     }
     
-    public pageReference doSearch(){
-    	/*if(fSource.Effective_Date_of_Cost_therapy_Auth__c == null){
-    		ApexPages.addmessage(new ApexPages.message(ApexPages.severity.WARNING,'Please enter Effective Date'));
-    		return null;
+    
+    public List<SelectOption> states { get;set; }
+    public List<SelectOption> programs { get; set; }
+    public List<String> selStates {get; set;}
+    public List<String> selPrograms {get; set;}
+    public string uiselStates { get; set;}
+    public string uiselProgs { get; set; }
+    private transient List<ServiceLocPrograms> proglistStates;
+    public transient String prgmsWithStates;
+    
+    public String getPrgmsWithStates() {
+    	return JSON.serialize(proglistStates);
+    } 
+    
+    
+    
+    private List<SelectOption> getStateList() {
+    	
+    	states = new List<selectoption>();
+    	List<AggregateResult> statelist = [ select state__c, count(id) from service_location__c where state__c <> '' group by state__c order by state__c ];
+    	string statecode = '';
+    	
+    	// look up in custom settings table to get state name
+    	
+    	for (AggregateResult ag : statelist )
+    	{
+    	    statecode = (string)ag.get('state__c');
+    		states.Add( new selectOption( statecode, statecode) ) ;
     	}
-    	if(fSource.Term_Date_of_Cost_therapy_Auth__c == null){
-    		ApexPages.addmessage(new ApexPages.message(ApexPages.severity.WARNING,'Please enter Term Date'));
-    		return null;
-    	}*/
+    
+    	return states;
+    }
+    
+     private List<SelectOption> getProgramList() {
+    	
+    	programs = new List<selectoption>();
+    	proglistStates = new List<ServiceLocPrograms>();
+    	List<Service_Location__c> proglist = [ select program__c, state__c from service_location__c where state__c <> '' order by program__c ];
+    	
+    	
+    	for (Service_Location__c sl : proglist )
+    	{
+    	    proglistStates.add(new ServiceLocPrograms(sl.program__c, sl.state__c));
+    		programs.Add( new selectOption( sl.Program__c, sl.program__c) ) ;
+    	}
+    	
+    	
+    	return programs;
+    }
+    
+    public pageReference doSearch(){
+    	
+    	  
     	Datetime startdt = DateTime.newInstance( fSource.Effective_Date_of_Cost_therapy_Auth__c, Time.newInstance(0,0,0,0));
         Datetime enddt = DateTime.newInstance ( fSource.Term_Date_of_Cost_therapy_Auth__c, Time.newInstance(0, 0, 0, 0)); 
         Map<id, Decimal> otMap = new Map<id, Decimal>();
@@ -31,9 +80,18 @@ public with sharing class neuroreportofserviceController {
     	Map<id, Decimal> slpMap = new Map<id, Decimal>();
     	Map<id, Decimal> bitMap = new Map<id, Decimal>();
     	Map<id, Decimal> counsellingMap = new Map<id, Decimal>();
+    	Map<string, Funding_Source__c> fundingMap = new Map<string, Funding_Source__c>();
+    	set<id> servAssigns = new set<id>();
     	
+    	if(fSource.Effective_Date_of_Cost_therapy_Auth__c > fSource.Term_Date_of_Cost_therapy_Auth__c){
+    		ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,'Term Date should be greater than Effective Date'));
+    		return null;
+    	}
+    	
+    	selStates = uiselStates.split(',');
+        selPrograms = uiselProgs.split(',');
         
-    	SOQL = '';
+    	string SOQL = '';
     	SOQL = 'SELECT Id, Name, OT_Auth_Units__c, PT_Auth_Units__c, BIT_Auth_Units__c,Counselling_Auth_Units__c,SLP_Auth_Units__c,Total_Authorized_Therapy_Units__c, Auth_Units_Grand_Total__c, Effective_Date_of_Cost_therapy_Auth__c, Term_Date_of_Cost_therapy_Auth__c, Service_Assignment__c,Service_Assignment__r.Person_being_Served__c, Case_Manager__c, Auth_Excess_Justification__c  FROM Funding_Source__c';
     	SOQL = SOQL +' WHERE Funding_Source_Status__c IN :statuses AND Recordtype.Name = \'NeuroRestorative\'';
     	SOQL = SOQL+ ' AND (Effective_Date_of_Cost_therapy_Auth__c >= '+ startdt.format('yyyy-MM-dd')+' AND Effective_Date_of_Cost_therapy_Auth__c <= '+ enddt.format('yyyy-MM-dd')+')';
@@ -43,10 +101,17 @@ public with sharing class neuroreportofserviceController {
     		string cm = string.valueOf(fSource.Case_Manager__c);
     		SOQL = SOQL+ ' AND Case_Manager__c = \''+fSource.Case_Manager__c+'\'';
     	}
+    	
+    	if(selPrograms.size() >  0 && selPrograms[0] != ''){
+    		
+    		SOQL = SOQL + ' AND Service_Assignment__r.Program_Detail__c IN: selPrograms';
+    		ApexPages.addmessage(new ApexPages.message(ApexPages.severity.INFO, SOQL));
+    		ApexPages.addmessage(new ApexPages.message(ApexPages.severity.INFO, selPrograms[0]));
+    		
+    	}
+    	
     	lineItems = new List<lineItem>();
     	List<Funding_Source__c> temp = Database.Query(SOQL);
-    	Map<string, Funding_Source__c> fundingMap = new Map<string, Funding_Source__c>();
-    	set<id> servAssigns = new set<id>();
     	
     	for(Funding_Source__c fs: temp){
     		if(fs.Auth_Excess_Justification__c != null){
@@ -56,9 +121,7 @@ public with sharing class neuroreportofserviceController {
     	}
     	
     	
-    	
-    	
-    	for(AggregateResult ar: [SELECT Sum(Units__c) units,Service_Assignment__c sa, Therapy_Discipline__c td FROM Progress_Note__c WHERE (Date_of_Service__c >= :fSource.Effective_Date_of_Cost_therapy_Auth__c AND  Date_of_Service__c <= :fSource.Term_Date_of_Cost_therapy_Auth__c) AND Type_of_Contact__c != 'No-Show' AND Recordtype.Name = 'Therapy' AND Therapy_Discipline__c != null AND Service_Assignment__c IN: servAssigns GROUP BY Service_Assignment__c, Therapy_Discipline__c]){
+    	for(AggregateResult ar: [SELECT Sum(Units__c) units,Service_Assignment__c sa, Therapy_Discipline__c td FROM Progress_Note__c WHERE (Date_of_Service__c >= :fSource.Effective_Date_of_Cost_therapy_Auth__c AND  Date_of_Service__c <= :fSource.Term_Date_of_Cost_therapy_Auth__c) AND Type_of_Contact__c != 'No-Show' AND Recordtype.Name = 'Therapy' AND Therapy_Discipline__c != null AND Disregard_Note__c = false AND Service_Assignment__c IN: servAssigns GROUP BY Service_Assignment__c, Therapy_Discipline__c]){
     		if((String)ar.get('td') == 'OT'){
     			otMap.put((id)ar.get('sa'),(Decimal)ar.get('units'));
     		}
@@ -86,10 +149,20 @@ public with sharing class neuroreportofserviceController {
     			lineitems.add(new lineitem(fs,0,0,0,0,0));
     		}
     	}
-       
+       	if(lineItems.size() == 0){
+       		ApexPages.addmessage(new ApexPages.message(ApexPages.severity.INFO,'No Matching Funding Sources found for the selected filter criteria'));
+    		return null;
+       	}
+       	
         return null;
     }
     
+    public pageReference exporttoExcel(){
+    	PageReference pg = new PageReference('/apex/neuroReportofServiceExcel');
+    	pg.setRedirect(false); // Sravan - So that the view state is transefered to the excel download page
+    	return pg;
+    	
+    }
     
     
   /* public class servPNRollup{
@@ -141,6 +214,15 @@ public with sharing class neuroreportofserviceController {
         }
         
         
+    }
+    
+    private class ServiceLocPrograms{
+    	String program;
+    	String state;
+    	ServiceLocPrograms(String program, String state){
+    		this.program = program;
+    		this.state = state;
+    	}
     }
 
 }
