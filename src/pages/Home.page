@@ -295,6 +295,27 @@
 				</apex:column>
 			</apex:pageBlockTable>
 		</apex:pageBlock>
+		
+		<apex:pageblock title="Incidents Created By Me" >
+			<apex:pageBlockButtons location="top" >
+				 <table width="100%">
+					<tr>
+					<td align="right">
+					<apex:selectList value="{!selectedIncident}" size="1">
+						<apex:selectOptions value="{!incidentTypes}" />
+						<apex:actionSupport event="onchange" action="{!displayIncidents}" rerender="incidentsTable" status="pageProcessing" />
+					</apex:selectList>
+					&nbsp;<apex:commandButton value="Create Incident" action="/setup/ui/recordtypeselect.jsp?ent=01IJ0000000AlwL&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2Fa1v%2Fe%3FretURL%3D%252Fa1v%252Fo"/>
+					</td>
+					</tr>
+				</table>
+			</apex:pageBlockButtons>
+			<apex:pageBlockTable value="{!myincidents}" var="i" id="incidentsTable"  >
+				<apex:column value="{!i.Id}" />
+				<apex:column value="{!i.Name}" />
+				<apex:column value="{!i.Status__c}" />
+			</apex:pageBlockTable>
+		</apex:pageblock>
 
 		<apex:pageBlock title="Approvals">
 			<!-- a href="/04i">View All</a> <br /> <br /--->

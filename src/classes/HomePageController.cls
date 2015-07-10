@@ -64,6 +64,12 @@ public with sharing class HomePageController{
 	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
 	public Map<Id, Boolean> hasShiftDocMap { get; set; }
 	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
+	
+	
+	//Incidents
+	public List<Incident__c> myIncidents {get; set;}
+	public string selectedIncident {get; set;}
+	
 
 	//Constructor
 	public HomePageController(){
@@ -157,6 +163,7 @@ public with sharing class HomePageController{
 		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();
+		displayIncidents();
 	}
 
 	private String parseProgram(String program) {
@@ -334,6 +341,30 @@ public with sharing class HomePageController{
 			this.cDate = cdate;
 			this.TType = Type;
 		}
+	}
+	
+	public List<selectOption> getIncidentTypes() {
+		List<SelectOption> Options = new List<SelectOption>();
+		Options.add(new SelectOption('All Incidents','All Incidents'));
+		Options.add(new SelectOption('PBS','PBS'));
+		Options.add(new SelectOption('Employee','Employee'));
+		Options.add(new SelectOption('Location','Location'));
+		Options.add(new SelectOption('Mentor','Mentor'));
+		
+		return options;
+	}
+
+	public void displayIncidents() {
+		Id userId = UserInfo.getUserId();
+		string SOQL = 'SELECT Id, NAME, Status__c FROM Incident__c WHERE OwnerId=: userId';
+		if(selectedIncident != null && selectedIncident != 'All Incidents'){
+			//rectype = Utility.getIncidentRecordType(selectedIncident);
+			SOQL = SOQL + ' AND Recordtype.Name= :selectedIncident';
+		
+		
+		}
+		//String orderStatement = '';
+		myIncidents = Database.query(SOQL);
 	}
 
 
