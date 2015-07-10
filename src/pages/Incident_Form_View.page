@@ -3,18 +3,16 @@
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <br/>
 <apex:form >
-    <apex:pageBlock >
-        <apex:pageBlockButtons >
-            <div style="float: right;">
-                <apex:CommandButton action="{!Edit}" value="Save" />
-                <apex:CommandButton  value="Review" />
-                <apex:CommandButton  value="Submit" />
-                <apex:CommandButton  value="Disregard" />
-            </div>
-        </apex:pageBlockButtons>
         <apex:pageBlock mode="mainDetail" title="Incident Details">
+        	<apex:pageBlockButtons location="top">
+	            <div style="float: right;">
+	                <apex:CommandButton value="Edit" action="{!edit}" />
+	                <apex:CommandButton  value="Review" />
+	                <apex:CommandButton  value="Submit" />
+	                <apex:CommandButton  value="Disregard" />
+	            </div>
+        	</apex:pageBlockButtons>
             <apex:pageBlockSection columns="2">
-            
                 <apex:outputField value="{!Incident__c.Occurred__c}" />
                 <apex:outputField value="{!Incident__c.Reported__c}" />
                 <apex:outputField value="{!Incident__c.First_Response__c}" />
@@ -42,10 +40,20 @@
                 <apex:outputField value="{!Incident__c.Internal_Investigation__c }" />
                 <apex:outputField value="{!Incident__c.Where_incident_occurred__c }" />
                 
-            
             </apex:pageBlockSection>
-        </apex:pageBlock>
     </apex:pageBlock>
+    
+    
+<!--     Use this for All ajax calls on this page -->
+    <apex:actionStatus id="incidentViewStatus">
+		<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+				</div>
+			</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
 </apex:form>
 
 </apex:page>
