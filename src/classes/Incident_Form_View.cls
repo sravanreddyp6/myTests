@@ -9,4 +9,24 @@ public with sharing class Incident_Form_View {
 		this.incident = (Incident__c)controller.getRecord();
 		
 	}
+	
+	public pageReference editIncident(){
+		
+		return null;
+	}
+	public pageReference disregardIncident(){
+		
+		
+		return null;
+	}
+	public pageReference submitIncident(){
+		
+		return null;
+	}
+	
+	public pagereference reviewIncident(){
+		
+		return null;
+	}
+	
 }
