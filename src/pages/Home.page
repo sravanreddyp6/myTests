@@ -312,7 +312,7 @@
 			</apex:pageBlockButtons>
 			<apex:pageBlockTable value="{!myincidents}" var="i" id="incidentsTable"  >
 				<apex:column value="{!i.Id}" />
-				<apex:column value="{!i.Name}" />
+				<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
 				<apex:column value="{!i.Status__c}" />
 			</apex:pageBlockTable>
 		</apex:pageblock>
