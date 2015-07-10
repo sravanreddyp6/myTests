@@ -72,6 +72,81 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Date_Occurred__c</fullName>
+        <description>Date/time the incident occurred</description>
+        <externalId>false</externalId>
+        <label>Date/Time Incident Occurred</label>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Date_Reported__c</fullName>
+        <description>Date/time incident was reported to TMN</description>
+        <externalId>false</externalId>
+        <label>Date/Time Reported</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>First_Response_Action_Taken_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>First Response Action Taken Other</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>First_Response_Action_Taken__c</fullName>
+        <externalId>false</externalId>
+        <label>First Response Action Taken</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Administered First Aid</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Assessed for Injury</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Called 911</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Consulted MENTOR nurse</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ER/Urgent Care Visit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Performed CPR</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Primary Care Physician Contact or Visit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
         <fullName>First_Response__c</fullName>
         <externalId>false</externalId>
         <label>First Response Action Taken</label>
@@ -127,30 +202,108 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Hospitalization_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Type of Hospitalization</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Psychiatric</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Hospitalized__c</fullName>
+        <externalId>false</externalId>
+        <label>Hospitalized</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Incident_Level__c</fullName>
+        <externalId>false</externalId>
+        <label>Incident Level</label>
+        <picklist>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Incident_Outcome__c</fullName>
+        <externalId>false</externalId>
+        <label>Incident Outcome</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Outcome value 1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Outcome value 2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Outcome value 3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Incident_Type_Detail__c</fullName>
         <externalId>false</externalId>
         <label>Incident Type Detail</label>
         <picklist>
-            <controllingField>Incident_Type__c</controllingField>
             <picklistValues>
                 <fullName>Detail value 1</fullName>
-                <controllingFieldValues>Value 1</controllingFieldValues>
-                <controllingFieldValues>Value 2</controllingFieldValues>
-                <controllingFieldValues>Value 3</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Detail value 2</fullName>
-                <controllingFieldValues>Value 1</controllingFieldValues>
-                <controllingFieldValues>Value 2</controllingFieldValues>
-                <controllingFieldValues>Value 3</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>Detail value 3</fullName>
-                <controllingFieldValues>Value 1</controllingFieldValues>
-                <controllingFieldValues>Value 2</controllingFieldValues>
-                <controllingFieldValues>Value 3</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -182,7 +335,8 @@
         </picklist>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Picklist</type>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
     </fields>
     <fields>
         <fullName>Internal_Investigation__c</fullName>
@@ -195,33 +349,6 @@
             </picklistValues>
             <picklistValues>
                 <fullName>No</fullName>
-                <default>false</default>
-            </picklistValues>
-            <sorted>false</sorted>
-        </picklist>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Picklist</type>
-    </fields>
-    <fields>
-        <fullName>Level__c</fullName>
-        <externalId>false</externalId>
-        <label>Incident Level</label>
-        <picklist>
-            <picklistValues>
-                <fullName>1</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>2</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>3</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>4</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -298,16 +425,6 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Occurred__c</fullName>
-        <description>Date/time the incident occurred</description>
-        <externalId>false</externalId>
-        <label>Date/Time Incident Occurred</label>
-        <required>true</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>DateTime</type>
-    </fields>
-    <fields>
         <fullName>Operating_Group__c</fullName>
         <description>operating group for this incident - depends on recordtype</description>
         <externalId>false</externalId>
@@ -378,20 +495,35 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Outcome__c</fullName>
+        <fullName>PBS_Arrest_Reason_Know__c</fullName>
         <externalId>false</externalId>
-        <label>Incident Outcome</label>
+        <label>PBS Arrest Reason Know</label>
         <picklist>
             <picklistValues>
-                <fullName>Outcome value 1</fullName>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Outcome value 2</fullName>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>PBS_Arrested__c</fullName>
+        <externalId>false</externalId>
+        <label>Was the PBS Arrested/Detained</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Outcome value 3</fullName>
+                <fullName>No</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -412,16 +544,6 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
-    </fields>
-    <fields>
-        <fullName>Reported__c</fullName>
-        <description>Date/time incident was reported to TMN</description>
-        <externalId>false</externalId>
-        <label>Date/Time Reported</label>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>DateTime</type>
     </fields>
     <fields>
         <fullName>Service_Assignment__c</fullName>
@@ -616,6 +738,41 @@
         <description>This recordtype is used to tag Employee type incidents linked to TMN User Object</description>
         <label>Employee</label>
         <picklistValues>
+            <picklist>First_Response_Action_Taken__c</picklist>
+            <values>
+                <fullName>Administered First Aid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Assessed for Injury</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Called 911</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Consulted MENTOR nurse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ER%2FUrgent Care Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Performed CPR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Primary Care Physician Contact or Visit</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>First_Response__c</picklist>
             <values>
                 <fullName>Administered First Aid</fullName>
@@ -663,6 +820,62 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Hospitalization_Type__c</picklist>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Psychiatric</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Hospitalized__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Incident_Level__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Incident_Outcome__c</picklist>
+            <values>
+                <fullName>Outcome value 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Outcome value 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Outcome value 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Incident_Type_Detail__c</picklist>
             <values>
                 <fullName>Detail value 1</fullName>
@@ -700,25 +913,6 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Level__c</picklist>
-            <values>
-                <fullName>1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>3</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>4</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -764,17 +958,24 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>Outcome__c</picklist>
+            <picklist>PBS_Arrest_Reason_Know__c</picklist>
             <values>
-                <fullName>Outcome value 1</fullName>
+                <fullName>No</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Outcome value 2</fullName>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>PBS_Arrested__c</picklist>
+            <values>
+                <fullName>No</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Outcome value 3</fullName>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -873,6 +1074,41 @@
         <description>This recordtype is used to tag Location type incidents linked to Service Location object</description>
         <label>Location</label>
         <picklistValues>
+            <picklist>First_Response_Action_Taken__c</picklist>
+            <values>
+                <fullName>Administered First Aid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Assessed for Injury</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Called 911</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Consulted MENTOR nurse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ER%2FUrgent Care Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Performed CPR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Primary Care Physician Contact or Visit</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>First_Response__c</picklist>
             <values>
                 <fullName>Administered First Aid</fullName>
@@ -920,6 +1156,62 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Hospitalization_Type__c</picklist>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Psychiatric</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Hospitalized__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Incident_Level__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Incident_Outcome__c</picklist>
+            <values>
+                <fullName>Outcome value 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Outcome value 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Outcome value 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Incident_Type_Detail__c</picklist>
             <values>
                 <fullName>Detail value 1</fullName>
@@ -957,25 +1249,6 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Level__c</picklist>
-            <values>
-                <fullName>1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>3</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>4</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1021,17 +1294,24 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>Outcome__c</picklist>
+            <picklist>PBS_Arrest_Reason_Know__c</picklist>
             <values>
-                <fullName>Outcome value 1</fullName>
+                <fullName>No</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Outcome value 2</fullName>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>PBS_Arrested__c</picklist>
+            <values>
+                <fullName>No</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Outcome value 3</fullName>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1130,6 +1410,41 @@
         <description>This recordtype is used to tag Mentor type incidents linked to TMN Contact Object</description>
         <label>Mentor</label>
         <picklistValues>
+            <picklist>First_Response_Action_Taken__c</picklist>
+            <values>
+                <fullName>Administered First Aid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Assessed for Injury</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Called 911</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Consulted MENTOR nurse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ER%2FUrgent Care Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Performed CPR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Primary Care Physician Contact or Visit</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>First_Response__c</picklist>
             <values>
                 <fullName>Administered First Aid</fullName>
@@ -1177,6 +1492,62 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Hospitalization_Type__c</picklist>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Psychiatric</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Hospitalized__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Incident_Level__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Incident_Outcome__c</picklist>
+            <values>
+                <fullName>Outcome value 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Outcome value 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Outcome value 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Incident_Type_Detail__c</picklist>
             <values>
                 <fullName>Detail value 1</fullName>
@@ -1214,25 +1585,6 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Level__c</picklist>
-            <values>
-                <fullName>1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>3</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>4</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1278,17 +1630,24 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>Outcome__c</picklist>
+            <picklist>PBS_Arrest_Reason_Know__c</picklist>
             <values>
-                <fullName>Outcome value 1</fullName>
+                <fullName>No</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Outcome value 2</fullName>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>PBS_Arrested__c</picklist>
+            <values>
+                <fullName>No</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Outcome value 3</fullName>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1387,6 +1746,41 @@
         <description>This recordtype is used to tag Incidents created at Service Assignment Level</description>
         <label>PBS</label>
         <picklistValues>
+            <picklist>First_Response_Action_Taken__c</picklist>
+            <values>
+                <fullName>Administered First Aid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Assessed for Injury</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Called 911</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Consulted MENTOR nurse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ER%2FUrgent Care Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Performed CPR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Primary Care Physician Contact or Visit</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>First_Response__c</picklist>
             <values>
                 <fullName>Administered First Aid</fullName>
@@ -1434,6 +1828,62 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Hospitalization_Type__c</picklist>
+            <values>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Psychiatric</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Hospitalized__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Incident_Level__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Incident_Outcome__c</picklist>
+            <values>
+                <fullName>Outcome value 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Outcome value 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Outcome value 3</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Incident_Type_Detail__c</picklist>
             <values>
                 <fullName>Detail value 1</fullName>
@@ -1471,25 +1921,6 @@
             </values>
             <values>
                 <fullName>Yes</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Level__c</picklist>
-            <values>
-                <fullName>1</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>2</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>3</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>4</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1535,17 +1966,24 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>Outcome__c</picklist>
+            <picklist>PBS_Arrest_Reason_Know__c</picklist>
             <values>
-                <fullName>Outcome value 1</fullName>
+                <fullName>No</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Outcome value 2</fullName>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>PBS_Arrested__c</picklist>
+            <values>
+                <fullName>No</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Outcome value 3</fullName>
+                <fullName>Yes</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
