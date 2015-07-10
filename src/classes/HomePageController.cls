@@ -356,7 +356,7 @@ public with sharing class HomePageController{
 
 	public void displayIncidents() {
 		Id userId = UserInfo.getUserId();
-		string SOQL = 'SELECT Id, NAME, Status__c FROM Incident__c WHERE OwnerId=: userId';
+		string SOQL = 'SELECT Id, NAME, Status__c, Recordtype.Name FROM Incident__c WHERE OwnerId=: userId';
 		if(selectedIncident != null && selectedIncident != 'All Incidents'){
 			//rectype = Utility.getIncidentRecordType(selectedIncident);
 			SOQL = SOQL + ' AND Recordtype.Name= :selectedIncident';
