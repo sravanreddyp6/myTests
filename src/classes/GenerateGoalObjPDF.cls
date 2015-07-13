@@ -166,6 +166,10 @@ public with sharing class GenerateGoalObjPDF {
 	}
 	
     @TestVisible private void calcTables( ){
+    	
+    	if ( behaviorList == null )
+    		return;
+    		
 		Date firstDay = shiftStart.Date();
 		Date lastDay = getMinDateTime(shiftEnd, DateTime.Now()).date();
 		List<Table> out = new List<Table>();
