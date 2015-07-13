@@ -116,11 +116,7 @@ var validateInput = function( ) {
                </apex:repeat>     
             </apex:column>
             <apex:column headerValue="Name">{!r.LastName}, {!r.FirstName}</apex:column>
-            <apex:column headerValue="Age">
-              <apex:outputText value="{0, number, 0}">
-                <apex:param value="{!r.Age}"/>
-              </apex:outputText>
-            </apex:column>
+            <apex:column headerValue="Age">     {!r.ageDetails}       </apex:column>
             <apex:column headerValue="Gender">{!r.gender}</apex:column>
             <apex:column headerValue="Address">
               <c:AddressDisplay Street1="{!r.Street1}"

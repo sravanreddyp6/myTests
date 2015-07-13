@@ -14,6 +14,7 @@ public class ReferralSearchResults implements Comparable {
   public Integer MatchedItems {get;set;}
   public Double Age {get;set;}
   public Id pbsonPBR {get;set;}
+  public String ageDetails {get;set;}
   public List<Referral__c> Referrals {
     get {
     	if (Referrals == null && (Type == 'Person Being Referred' || Type == 'Person Being Served')) {loadReferrals();}
@@ -37,6 +38,7 @@ public class ReferralSearchResults implements Comparable {
       this.Type = 'Person Being Referred';
       this.matchedItems = matchedNum;
       this.age = pbr.Age__c;
+      this.ageDetails = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);
       this.pbsonPBR = pbr.Person_Being_Served__c;
   }
   
@@ -53,7 +55,8 @@ public class ReferralSearchResults implements Comparable {
       this.id = pbs.Id;
       this.Type = 'Person Being Served';
       this.matchedItems = matchedNum;
-      this.age = pbs.Age__c;
+       this.age = pbs.Age__c;
+      this.ageDetails = Utility.getAge(pbs.Age_year__c,pbs.Age_month__c,pbs.Age_days__c);
   }
   
   // Implement the compareTo() method
