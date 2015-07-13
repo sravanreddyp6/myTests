@@ -718,7 +718,7 @@
             <apex:pageblockSection columns="1" title="State For Preferred Service" id="stateForPreferredService" rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
                 <apex:actionRegion >
                     <apex:inputField value="{!Referral__c.State_for_Preferred_Service__c}" required="{!referralRecordType!='NeuroRestorative'}" id="sfps">
-                        <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();" rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock" />
+                        <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();setUpFields();" rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock" />
                     </apex:inputField>
                 </apex:actionRegion>
             </apex:pageblockSection>
