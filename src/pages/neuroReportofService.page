@@ -142,9 +142,9 @@
                 <apex:inputField value="{!fSource.Effective_Date_of_Cost_therapy_Auth__c}"  required="true"/>
                 <apex:inputField value="{!fSource.Term_Date_of_Cost_therapy_Auth__c}"  required="true"/>
                 <apex:inputField value="{!fSource.Case_Manager__c}" />
-                <apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
 			        <apex:outputLabel for="statelist" value="State" />
-			        <apex:outputpanel>
+			        <apex:outputpanel >
 			        <table>
 			        <tr><td>
 			        <apex:selectList multiselect="true" size="5" label="State" id="statelist" style="width:100px">
@@ -162,9 +162,9 @@
 			        </apex:outputPanel>
 		        </apex:pageBlockSectionItem>
 		        <apex:pageBlockSectionItem />
-			        <apex:pageBlockSectionItem>
+			        <apex:pageBlockSectionItem >
 			        <apex:outputLabel for="statelist" value="Program" />
-			        <apex:outputpanel>
+			        <apex:outputpanel >
 			        <table>
 			        <tr><td> 
 			         <apex:selectList multiselect="true" size="5" label="Program" id="programlist" style="width:400px">
@@ -181,6 +181,12 @@
 			 		</table>
 			 		</apex:outputpanel>
 		 		</apex:pageBlockSectionItem>
+		 		
+		 		<apex:pageblockSectionItem >
+		 			<apex:outputLabel value="Include only No-Show Prog.Notes Units" />
+		 			<apex:inputcheckbox value="{!onlyNoshow}" />
+		 		
+		 		</apex:pageblockSectionItem>
                 
             </apex:pageBlockSection>
             <apex:pageBlockButtons location="Bottom" >
@@ -225,6 +231,6 @@
         </apex:pageBlockTable>
     </apex:pageBlock>
     
-    </apex:outputPanel >
+    </apex:outputPanel>
    </apex:form>
 </apex:page>
