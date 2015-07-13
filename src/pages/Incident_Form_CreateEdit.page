@@ -1,0 +1,52 @@
+<apex:page standardcontroller="Incident__c" Extensions="Incident_Form_CreateEdit" sidebar="false" docType="html-5.0" >
+
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<script>
+	function setFocusOnLoad() {} //to prevent fiocus from first date time field
+	
+</script>
+<br/>
+<apex:form >
+	<apex:pageBlock >
+		<apex:pageBlockButtons >
+			<div style="float: right;">
+				<apex:CommandButton action="{!Save}" value="Save" />
+				<apex:CommandButton action="{!Cancel}" value="Cancel" />
+			</div>
+		</apex:pageBlockButtons>
+		<apex:pageBlock mode="mainDetail" title="Incident Details">
+			<apex:pageBlockSection columns="2">
+			
+				<apex:inputField value="{!Incident__c.Date_Occurred__c}" />
+				<apex:inputField value="{!Incident__c.Date_Reported__c}" />
+				<apex:inputField value="{!Incident__c.First_Response_Action_Taken__c}" />
+				<apex:inputField value="{!Incident__c.Incident_Level__c}" />
+				<apex:inputField value="{!Incident__c.Incident_Outcome__c}" />
+				<apex:inputField value="{!Incident__c.Incident_Type__c}" />
+				<apex:inputField value="{!Incident__c.Incident_Type_Detail__c}" />
+				<apex:inputField value="{!Incident__c.Location__c}" />
+				<apex:inputField value="{!Incident__c.Mentor_present__c}" />
+				<apex:inputField value="{!Incident__c.TMN_Contact__c}" />
+				<apex:inputField value="{!Incident__c.Operating_Group__c}" />
+				<apex:inputField value="{!Incident__c.Original_Incident__c }" />
+				<apex:inputField value="{!Incident__c.Other_people__c }" />
+				<apex:inputField value="{!Incident__c.Others_Present_at_Time_of_Incident__c }" />
+				<apex:inputField value="{!Incident__c.Supervised__c }" />
+				<apex:inputField value="{!Incident__c.Prior_Revision__c }" />
+				<apex:inputField value="{!Incident__c.Service_Assignment__c }" />
+				<apex:inputField value="{!Incident__c.Community_Location__c }" />
+				<apex:inputField value="{!Incident__c.Other_Location__c }" />
+				<apex:inputField value="{!Incident__c.Staff_Present__c }" />
+				<apex:inputField value="{!Incident__c.TMN_User__c }" />
+				<apex:inputField value="{!Incident__c.State__c }" />
+				<apex:inputField value="{!Incident__c.Status__c }" />
+				<apex:inputField value="{!Incident__c.Network_Type__c }" />
+				<apex:inputField value="{!Incident__c.Internal_Investigation__c }" />
+				<apex:inputField value="{!Incident__c.Where_incident_occurred__c }" />
+				
+			
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:pageBlock>
+</apex:form>
+</apex:page>
