@@ -5,7 +5,7 @@
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && !isErrorDisplayed && Referral__c.Close_Reason__c != 'Admitted' && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning" ></apex:pageMessage>
     <style type="text/css">
         .dialogLoadingSpinner {
@@ -94,6 +94,19 @@
             background: #dddddd !important;
             color: gray !important;
         }
+        .refRequiedFields {
+        border: 2px solid #030202;
+        }
+        
+        .refRequiedFields1 {
+			  background-color: #961BC4;
+			  position: absolute;
+			  left: -4px;
+			  width: 3px;
+			  top: 1px;
+			  bottom: 1px;
+			}
+        
     </style>
 
     <script>
@@ -613,13 +626,13 @@
 
             <apex:pageBlockSection title="Person Being Referred" showHeader="true" columns="2" collapsible="false" id="PBRSection" rendered="{!ISNULL(personBeingServedRecord.id)}">
                 <!-- Rearranged these filed for EPRIQM-117  -->
-                        <apex:inputText value="{!personBeingRefRecord.First_Name__c}" tabindex="10"  required="{!ReferralRecordType =='NeuroRestorative'}" />
+                        <apex:inputText value="{!personBeingRefRecord.First_Name__c}" tabindex="10" styleclass = "refRequiedFields"  required="{!ReferralRecordType =='NeuroRestorative'}" />
                          <apex:inputField value="{!personBeingRefRecord.Race__c}"  taborderhint="2" />
                         <apex:inputText value="{!personBeingRefRecord.Middle_Initial__c}"   tabindex="10" />
                          <apex:inputField value="{!personBeingRefRecord.Ethnicity__c}"  taborderhint="2" />
-                        <apex:inputText value="{!personBeingRefRecord.Last_Name__c}"  tabindex="10" required="{!ReferralRecordType =='NeuroRestorative'}" />
+                        <apex:inputText value="{!personBeingRefRecord.Last_Name__c}"  tabindex="10"  styleclass = "refRequiedFields" required="{!ReferralRecordType =='NeuroRestorative'}" />
                 <apex:inputField value="{!personBeingRefRecord.Marital_Status__c}" taborderhint="2"  />
- 			<apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}" taborderhint="1"  />
+ 			<apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}" taborderhint="1"  styleclass = "refRequiedFields" />
                 <apex:pageBlockSectionItem helpText="{!$ObjectType.Person_Being_Referred__c.fields.Non_Verbal__c.inlineHelpText}">
                     <apex:outputText value="Primary Language" />
                     <apex:outputPanel styleClass="nowrap">
@@ -641,7 +654,22 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
-                <apex:inputField value="{!personBeingRefRecord.Gender__c}" taborderhint="1" />
+                       <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Gender" />
+                         <apex:outputPanel styleClass="requiredBlock" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                            <apex:inputField value="{!personBeingRefRecord.Gender__c}"  />
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Name" />
+                         <apex:outputPanel styleClass="refRequiedFields1" layout="block" >
+                            <apex:outputPanel styleClass="refRequiedFields1" layout="block" />
+                            <apex:inputText id="LastNameInput" tabindex="10" value="{!personBeingRefRecord.SSN__c}"  required="true" />
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputtext styleClass="refRequiedFields1" > Kiran </apex:outputtext>
+                <apex:inputField value="{!personBeingRefRecord.Gender__c}" styleclass = "refRequiedFields" taborderhint="1" />
                <!-- Removed for PRI-160   <apex:inputField value="{!personBeingRefRecord.SSN__c}" /> -->
             </apex:pageBlockSection>
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" rendered="{!ISNULL(personBeingServedRecord.id)}">
@@ -718,7 +746,7 @@
             <apex:pageblockSection columns="1" title="State For Preferred Service" id="stateForPreferredService" rendered="{!OR(!ISNULL(personBeingRefRecord.Id),!ISNULL(personBeingServedRecord.Id))}">
                 <apex:actionRegion >
                     <apex:inputField value="{!Referral__c.State_for_Preferred_Service__c}" required="{!referralRecordType!='NeuroRestorative'}" id="sfps">
-                        <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();" rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock" />
+                        <apex:actionSupport event="onchange" oncomplete="j$('select[id$=servicesRequested]').val('');setReferralRecordType();setUpFields();" rerender="placementRiskBlock, JuvBlockSection, PlacementHxBlockSection, HxBlock" />
                     </apex:inputField>
                 </apex:actionRegion>
             </apex:pageblockSection>
@@ -1481,7 +1509,7 @@
                 <apex:pageBlockSectionItem rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:inputHidden value="{!redFlagged}" id="redFlagged" />
                 <apex:inputField value="{!Referral__c.How_did_referral_come_in__c}" rendered="{!referralRecordType=='CareMeridian'}" />
-                <apex:inputField value="{!Referral__c.Referral_Date__c}" required="true" />
+                <apex:inputField value="{!Referral__c.Referral_Date__c}" required="true" styleclass = "refRequiedFields"  />
                 <!--apex:inputField value="{!ReferralRecordType}" onchange="setReferralRecordType();" required="true"/-->
                 <apex:pageblocksectionitem >
                     <apex:outputlabel for="referralStatus" value="Referral Status" />
@@ -2048,8 +2076,8 @@
             <apex:pageBlockSection title="Anticipated Admission Location Information" columns="1" collapsible="false" id="LocationInfo" >
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Anticipated Admission DateTime" />
-                    <apex:outputPanel layout="none">
-                        <c:MilitaryDatetime dateTimeVal="{!referralRecord.Anticipated_Admission_DateTime__c}" edit="true" hiddenFieldId="antAdmDate"/>
+                    <apex:outputPanel layout="none" styleclass = "refRequiedFields">
+                        <c:MilitaryDatetime dateTimeVal="{!referralRecord.Anticipated_Admission_DateTime__c}" edit="true" hiddenFieldId="antAdmDate"  />
                         <apex:inputHidden id="antAdmDate" value="{!referralRecord.Anticipated_Admission_DateTime__c}" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
