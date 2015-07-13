@@ -4,6 +4,7 @@ public with sharing class neuroreportofserviceController {
    // public string SOQL{get; set;}  
     private Apexpages.standardController controller;
     set<string> statuses = new Set<string>{'Active', 'Active Final'};
+    public Boolean onlyNoshow {get; set;}
    
     public neuroreportofserviceController(Apexpages.StandardController controller){
         lineItems = new List<lineItem>();
@@ -17,7 +18,7 @@ public with sharing class neuroreportofserviceController {
        	getProgramList();
        	selStates = new List<String>();
        	selPrograms = new List<String>();
-        
+        onlyNoshow = false;
     }
     
     
@@ -80,6 +81,7 @@ public with sharing class neuroreportofserviceController {
     	Map<id, Decimal> slpMap = new Map<id, Decimal>();
     	Map<id, Decimal> bitMap = new Map<id, Decimal>();
     	Map<id, Decimal> counsellingMap = new Map<id, Decimal>();
+    	List<AggregateResult> pnAggr = new List<AggregateResult>();
     	Map<string, Funding_Source__c> fundingMap = new Map<string, Funding_Source__c>();
     	set<id> servAssigns = new set<id>();
     	
@@ -120,8 +122,15 @@ public with sharing class neuroreportofserviceController {
     		}
     	}
     	
+    	if(onlyNoshow){
+    		pnAggr = [SELECT Sum(Units__c) units,Service_Assignment__c sa, Therapy_Discipline__c td FROM Progress_Note__c WHERE (Date_of_Service__c >= :fSource.Effective_Date_of_Cost_therapy_Auth__c AND  Date_of_Service__c <= :fSource.Term_Date_of_Cost_therapy_Auth__c) AND Type_of_Contact__c = 'No-Show' AND Recordtype.Name = 'Therapy' AND Therapy_Discipline__c != null AND Disregard_Note__c = false AND Service_Assignment__c IN: servAssigns GROUP BY Service_Assignment__c, Therapy_Discipline__c];
+    		
+    	}else{
+    		pnAggr = [SELECT Sum(Units__c) units,Service_Assignment__c sa, Therapy_Discipline__c td FROM Progress_Note__c WHERE (Date_of_Service__c >= :fSource.Effective_Date_of_Cost_therapy_Auth__c AND  Date_of_Service__c <= :fSource.Term_Date_of_Cost_therapy_Auth__c) AND Type_of_Contact__c != 'No-Show' AND Recordtype.Name = 'Therapy' AND Therapy_Discipline__c != null AND Disregard_Note__c = false AND Service_Assignment__c IN: servAssigns GROUP BY Service_Assignment__c, Therapy_Discipline__c];
+    	}
     	
-    	for(AggregateResult ar: [SELECT Sum(Units__c) units,Service_Assignment__c sa, Therapy_Discipline__c td FROM Progress_Note__c WHERE (Date_of_Service__c >= :fSource.Effective_Date_of_Cost_therapy_Auth__c AND  Date_of_Service__c <= :fSource.Term_Date_of_Cost_therapy_Auth__c) AND Type_of_Contact__c != 'No-Show' AND Recordtype.Name = 'Therapy' AND Therapy_Discipline__c != null AND Disregard_Note__c = false AND Service_Assignment__c IN: servAssigns GROUP BY Service_Assignment__c, Therapy_Discipline__c]){
+    	
+    	for(AggregateResult ar: pnAggr){
     		if((String)ar.get('td') == 'OT'){
     			otMap.put((id)ar.get('sa'),(Decimal)ar.get('units'));
     		}
