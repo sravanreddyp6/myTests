@@ -480,7 +480,7 @@ public pagereference mySave(){
                 	goalError = true;
                 }
                 else{
-                	planStuff.remove(g);
+                	//planStuff.remove(g);
                 }
             } 
         }   
