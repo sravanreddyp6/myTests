@@ -1,10 +1,10 @@
 <apex:page controller="HomePageController" sidebar="false" id="thePage">
-
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
+   
 
 	<style type="text/css">
 		.thinking {
@@ -305,7 +305,8 @@
 						<apex:selectOptions value="{!incidentTypes}" />
 						<apex:actionSupport event="onchange" action="{!displayIncidents}" rerender="incidentsTable" status="pageProcessing" />
 					</apex:selectList>
-					&nbsp;<apex:commandButton value="Create Incident" action="/setup/ui/recordtypeselect.jsp?ent=01IJ0000000AlwL&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2Fa1v%2Fe%3FretURL%3D%252Fa1v%252Fo"/>
+					&nbsp; <apex:commandbutton  onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" Value="Create Incident"/>
+<!-- 					<apex:commandButton value="Create Incident" action="/setup/ui/recordtypeselect.jsp?ent=01IJ0000000AlwL&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2Fa1v%2Fe%3FretURL%3D%252Fa1v%252Fo"/> -->
 					</td>
 					</tr>
 				</table>
@@ -316,6 +317,23 @@
 				<apex:column value="{!i.Status__c}" />
 			</apex:pageBlockTable>
 		</apex:pageblock>
+		
+		<apex:outputPanel id="incidentTypeModal" style="display:none;" layout="block">
+			<apex:pageBlock >
+			<apex:pageBlockSection columns="1" >
+		        	<apex:selectRadio value="{!userChosenIncident}" layout="pageDirection" >
+		        		<apex:selectoption itemValue="PBS" itemLabel="PBS" /><br/>
+		        		<apex:selectoption itemValue="Location" itemLabel="Location" />
+		        		<apex:selectoption itemValue="Employee" itemLabel="Employee" />
+		        		<apex:selectoption itemValue="Mentor" itemLabel="Mentor" />
+		        	</apex:selectRadio>
+		    </apex:pageBlockSection>
+		    <apex:pageblockButtons location="bottom" >
+				<apex:commandbutton value="Continue" action="{!createIncident}" rerender="" status="pageProcessing"/>
+				<apex:commandButton value="Cancel" />		    
+		    </apex:pageblockButtons>
+		   </apex:pageBlock> 
+		</apex:outputPanel> 
 
 		<apex:pageBlock title="Approvals">
 			<!-- a href="/04i">View All</a> <br /> <br /--->
@@ -433,7 +451,7 @@
 
 		jQuery(document).ready(function($) {
 			anno.addHandler('onSelectionCompleted', function () {
-				$('.annotorious-editor').css('z-index', '999999');
+				$('.annotorious-editor').css('z-index', '999999');	
 			});
 			window.initiateSearch = function () {
 				var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;

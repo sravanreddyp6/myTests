@@ -67,8 +67,10 @@ public with sharing class HomePageController{
 	
 	
 	//Incidents
+	public string userChosenIncident {get; set;}
 	public List<Incident__c> myIncidents {get; set;}
 	public string selectedIncident {get; set;}
+
 	
 
 	//Constructor
@@ -365,6 +367,13 @@ public with sharing class HomePageController{
 		}
 		//String orderStatement = '';
 		myIncidents = Database.query(SOQL);
+	}
+	
+	public pageReference createIncident(){
+		PageReference pr = new pagereference('/apex/Incident_Form_CreateEdit');
+		pr.getParameters().put('RecordTypeId', Utility.getIncidentRecordType(userChosenIncident));
+		return pr;
+		
 	}
 
 
