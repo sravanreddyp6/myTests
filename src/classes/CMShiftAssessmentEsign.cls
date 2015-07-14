@@ -1,17 +1,12 @@
 public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction {
 	public PageReference handle(Id recordId, Id userId) {
 		string recId = string.valueOf(recordId);
-		Evaluation__c assessment = [SELECT Id, Status__c,Head_to_toe_Status__c,Is_Being_Signed__c, Is_Signed__c,Shift_Start_time__c, Shift_End_time__c, Recordtype.Name, ServiceAssignment__c FROM Evaluation__c WHERE id=: recordId];
+		Evaluation__c assessment = [SELECT Id, OwnerId, Status__c,Head_to_toe_Status__c,Is_Being_Signed__c, Is_Signed__c,Shift_Start_time__c, Shift_End_time__c, Recordtype.Name, ServiceAssignment__c FROM Evaluation__c WHERE id=: recordId];
 		list<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r Where Status__c != 'Disregard' AND Recordtype.Name ='NursesAssessment' order by createdDate asc) FROM Service_Assignment__c WHERE Id=: assessment.ServiceAssignment__c LIMIT 1];
 		List<Assessment__c> asmtsforRestraints = new List<Assessment__c>();
 		if(assessment.Recordtype.name == 'CMShiftAssessment' && assessment.Head_to_toe_Status__c == 'Draft'){
 			assessment.Head_to_Toe_Status__c = 'Final';  // When finalize head to toe button is clicked
 			assessment.Head_to_Toe_Signed_At__c = System.Now();
-			if (assessment.OwnerId != UserInfo.getUserId()) {  // EC-163
-				assessment.Status__c = 'End of Shift';
-				assessment.Signed_At__c = System.now();
-				assessment.Signed_By__c = UserInfo.getUserId();
-			}
 		} else if(assessment.Recordtype.name == 'CMShiftAssessment' && assessment.Head_to_toe_Status__c == 'Final'){
 			assessment.Status__c = 'Completed'; // When Done button is clicked.
 			assessment.Signed_At__c = system.Now();
@@ -47,11 +42,6 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
 					}
 				}
 			}
-		} else if (assessment.RecordType.Name == 'CNA Workbook') {
-			// This only happens when a DON ends a shift
-			assessment.Signed_At__c = System.now();
-			assessment.Signed_By__c = UserInfo.getUserId();
-			assessment.Status__c = 'Final';
 		}
 		update assessment;
 		if(asmtsforRestraints.size() > 0){

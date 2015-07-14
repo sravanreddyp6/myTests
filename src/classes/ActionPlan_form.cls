@@ -925,12 +925,16 @@ public pagereference mySave(){
         public clsGoal(Action_Plan_Goal__c tmpGoal, string key){
             commonlyConstructed(tmpGoal, '_' + key);
         }          
-        public void commonlyConstructed(Action_Plan_Goal__c tmpGoal, string key){
+       public void commonlyConstructed(Action_Plan_Goal__c tmpGoal, string key){
                 isNew = false;
                 deleteMe = false;
+             Integer len = 5;
+            Blob blobKey = crypto.generateAesKey(128);
+            String Randomkey = EncodingUtil.convertToHex(blobKey);
+            String RandomCharKey = Randomkey.substring(0,len);
                 theGoal = tmpGoal;  
                 string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');
-                tmpIdOfGoal = 'zg' + shortnow + key;
+                tmpIdOfGoal = 'zg' + shortnow + key + RandomCharKey ;
                 //EncodingUtil.ConvertTohex(b);           
                 if(theGoal.id == null){
                     isNew = true;
@@ -969,10 +973,14 @@ public pagereference mySave(){
                 isNew = false;
                 isParentNew = false;
                 deleteMe = false;
+                  Integer len = 5;
+            Blob blobKey = crypto.generateAesKey(128);
+            String Randomkey = EncodingUtil.convertToHex(blobKey);
+            String RandomCharKey = Randomkey.substring(0,len);
                 theObj = tmpObj;
                 GoalID = parentID;
                 string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');  
-                tmpIdOfObj  =  'zo' + shortnow + key;
+                tmpIdOfObj  =  'zo' + shortnow + key + RandomCharKey;
                 //EncodingUtil.ConvertTohex(b); 
                 if(isGoalNew){
                     isParentNew = true;

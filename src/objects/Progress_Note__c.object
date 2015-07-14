@@ -2259,6 +2259,19 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Other_Service_Code__c</fullName>
+        <description>for therapy record type
+Neurostative IL role</description>
+        <externalId>false</externalId>
+        <label>Other Service Code</label>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Other_Type_of_Activity__c</fullName>
         <externalId>false</externalId>
         <label>Other Type of Activity</label>
@@ -2887,6 +2900,10 @@ If this is selected, please fill out the appropriate check boxes to the right.</
                 <fullName>Other</fullName>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>Office/TRAC</fullName>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <trackHistory>false</trackHistory>
@@ -3208,6 +3225,50 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Therapy_Discipline__c</fullName>
+        <description>Used for neurorestorative il role and used for therapy record type</description>
+        <externalId>false</externalId>
+        <label>Therapy Discipline</label>
+        <picklist>
+            <picklistValues>
+                <fullName>PT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SLP</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Counseling</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>BIT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Recreation Therapy</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Woodshop</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Productive Activity</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Thought_Process_Orientation__c</fullName>
         <externalId>false</externalId>
         <label>Thought Process/Orientation</label>
@@ -3401,6 +3462,30 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Type__c</fullName>
+        <description>created for NeuroRestorative IL role and rec type called &quot;Therapy&quot;</description>
+        <externalId>false</externalId>
+        <label>Type of Treatment</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Type_of_Activity__c</fullName>
         <externalId>false</externalId>
         <label>Type of Activity</label>
@@ -3467,6 +3552,14 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </picklistValues>
             <picklistValues>
                 <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Conference</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Telehealth</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -4280,6 +4373,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -4949,6 +5057,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5638,6 +5761,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -6323,6 +6461,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -6978,6 +7131,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7655,6 +7823,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -8309,6 +8492,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8972,6 +9170,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -9627,6 +9840,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -10274,6 +10502,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10929,6 +11172,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>On-Going Assessment and Planning</fullName>
@@ -11551,6 +11809,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12240,6 +12513,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -12917,6 +13205,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -13564,6 +13867,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14241,6 +14559,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -14900,6 +15233,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -15547,6 +15895,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16206,6 +16569,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -16857,6 +17235,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -17504,6 +17897,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18189,6 +18597,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -18243,6 +18666,722 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
             <values>
                 <fullName>Team</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Service__c</picklist>
+            <values>
+                <fullName>Family</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Therapy</fullName>
+        <active>true</active>
+        <description>Progress Note for NeuroRestorative IL</description>
+        <label>Therapy</label>
+        <picklistValues>
+            <picklist>Appearance__c</picklist>
+            <values>
+                <fullName>Casually Dressed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Disheveled</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Well Groomed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Approval_Status__c</picklist>
+            <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bypass</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Needs Refinement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Submitted</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Pending</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Recalled by User</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Area_Family_Functioning__c</picklist>
+            <values>
+                <fullName>Affective Involvement</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Affective Responsiveness</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Behavior Control</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Communication</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Problem Solving</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Role Performance</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Behavior_Functioning__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Behavior__c</picklist>
+            <values>
+                <fullName>Agitated</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Calm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cooperative</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Fidgety</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Silly</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Uncooperative</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Child_Transported_Today__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Code__c</picklist>
+            <values>
+                <fullName>11</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>12</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>21</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>99</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Collateral_Contact__c</picklist>
+            <values>
+                <fullName>Biological Parent</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Client%27s School</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Juvenile Justice Case MGR%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Communication__c</picklist>
+            <values>
+                <fullName>Normal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Quiet</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Talkative</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>DYFS_Contacted__c</picklist>
+            <values>
+                <fullName>Case Worker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hotline</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Eye_Contact__c</picklist>
+            <values>
+                <fullName>Fair</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Good</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Poor</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Level_of_Participation__c</picklist>
+            <values>
+                <fullName>Easily engaged</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Refused</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Resistant</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medical_Condition__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Medication_Informant__c</picklist>
+            <values>
+                <fullName>Assessed Medication Supply</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reported by Consumer</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reported by Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Mood_Affect__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Mood__c</picklist>
+            <values>
+                <fullName>Anxious</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Happy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sad</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>New_Issues_Presented__c</picklist>
+            <values>
+                <fullName>CA Updated Required</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Issue Resolved</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>None Reported</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>PCP_update_since_last_visit__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Phases_of_Service_Delivery__c</picklist>
+            <values>
+                <fullName>Phase 1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phase 4</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Procedure_Code_MA__c</picklist>
+            <values>
+                <fullName>H2019-HN</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>H2019-HO</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Provided_to_reviewed_w_foster_parents__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Purpose_Nature_of_Service__c</picklist>
+            <values>
+                <fullName>Care Coordination</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Collateral Contacts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Member Outreach</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Member Transportation by Staff</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Telephone Crisis Response</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Purpose_of_this_Consultation__c</picklist>
+            <values>
+                <fullName>Follow Up for Specific Need or Event</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Routine Monitoring</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Risk_Factors__c</picklist>
+            <values>
+                <fullName>DENIED</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hx of</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>None Observed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Scheduling_Status__c</picklist>
+            <values>
+                <fullName>Planned Visit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unannounced Visit</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_1__c</picklist>
+            <values>
+                <fullName>GT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>HQ</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_2__c</picklist>
+            <values>
+                <fullName>99</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>UK</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Code_Modifier_3__c</picklist>
+            <values>
+                <fullName>HR</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Frequency__c</picklist>
+            <values>
+                <fullName>Bi-Weekly %28IIH %26 Day Treatment%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Monthly %28TFC%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Location__c</picklist>
+            <values>
+                <fullName>Community</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Home</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Office%2FTRAC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>School</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Region_del__c</picklist>
+            <values>
+                <fullName>Central Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cleveland Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Piedmont Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Triad Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Triangle Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>West Piedmont Region</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Winston Salem Region</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Signs_of_Decompensation__c</picklist>
+            <values>
+                <fullName>No signs of decomposition</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not able to assess at this time</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Final</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Substance_Abuse__c</picklist>
+            <values>
+                <fullName>NA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Taking_Medication_as_Prescribed__c</picklist>
+            <values>
+                <fullName>Not able to assess at this time</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not taking medication as prescribed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes taking medication as prescribed</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Therapy_Discipline__c</picklist>
+            <values>
+                <fullName>BIT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Counseling</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Productive Activity</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Recreation Therapy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>SLP</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Woodshop</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Thought_Process_Orientation__c</picklist>
+            <values>
+                <fullName>No Significant Changes Reported or Observed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Notable</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Thought_Process__c</picklist>
+            <values>
+                <fullName>Illogical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Logical</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Activity__c</picklist>
+            <values>
+                <fullName>Caregiver Education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Case Management Activities</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>On-Going Assessment and Planning</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>PCP-Development %28I%26O%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Skill Building</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Therapy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Weekly Team Meeting</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Type_of_Contact__c</picklist>
+            <values>
+                <fullName>Conference</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Face-To-Face</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Phone</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Team</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Telehealth</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18847,6 +19986,21 @@ If this is selected, please fill out the appropriate check boxes to the right.</
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Type__c</picklist>
+            <values>
+                <fullName>Co-Treatment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Group</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Individual</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type_of_Activity__c</picklist>
             <values>
                 <fullName>Caregiver Education</fullName>
@@ -19021,12 +20175,12 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <errorMessage>Non-Payable Outcome checkbox is checked but no outcomes have been selected. Please select an outcome.</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>NC_TFC_Notes_Must_Be_Non_Billable</fullName>
+        <fullName>NC_TFC_Must_Be_Non_Billable</fullName>
         <active>true</active>
         <description>A validation rule to insure that Progress Notes with the &quot;NC - TFC&quot; or &quot;NC - Wks 1-6 TFC&quot; record types have Purpose_Service_is_Billable__c value of false.</description>
-        <errorConditionFormula>AND(OR(RecordType.DeveloperName = &apos;NC_TFC&apos;, RecordType.DeveloperName = &apos;NC_Wks_1_6_TFC&apos;), Purpose_Service_is_Billable__c = true)</errorConditionFormula>
+        <errorConditionFormula>AND(OR(RecordType.DeveloperName = &apos;NC_TFC&apos;, RecordType.DeveloperName = &apos;NC_Wks_1_6_TFC&apos;), Purpose_Service_is_Billable__c = true )</errorConditionFormula>
         <errorDisplayField>Purpose_Service_is_Billable__c</errorDisplayField>
-        <errorMessage>For NC - TFC and NC - Wks 1-6 TFC Progress Notes, the Purpose/Service is Billable field must be unchecked.  Please uncheck that field and try again.</errorMessage>
+        <errorMessage>For NC - TFC, NC - Wks 1-6 TFC, the Purpose/Service is Billable field must be unchecked.  Please uncheck that field and try again.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>No_future_dates</fullName>
@@ -19072,6 +20226,20 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <errorConditionFormula>AND(NOT(ISPICKVAL(Approval_Status__c, &quot;Pending&quot;)),  OwnerId = &apos;00GU0000001RJzX&apos;)</errorConditionFormula>
         <errorDisplayField>OwnerId</errorDisplayField>
         <errorMessage>Can&apos;t assign a Progress Note to the Approval Queue unless the record has been submitted and Approval Status is &quot;Pending&quot;.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Therapy_must_be_non_billable</fullName>
+        <active>true</active>
+        <description>For Therapy record type the Purpose/Service billable must be unchecked.</description>
+        <errorConditionFormula>AND(RecordType.DeveloperName = &apos;Therapy&apos;, ISNEW(),  Purpose_Service_is_Billable__c = true )</errorConditionFormula>
+        <errorDisplayField>Purpose_Service_is_Billable__c</errorDisplayField>
+        <errorMessage>For Therapy, the Purpose/Service is Billable field must be unchecked. Please un check that field and try again.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Type_of_Treatment</fullName>
+        <active>false</active>
+        <errorConditionFormula>And(ISPICKVAL( Type_of_Contact__c , &apos;Face-to-Face&apos;),ISBLANK(TEXT(Type__c)))</errorConditionFormula>
+        <errorMessage>If type Of Contact is Face-To-Face ,Type of tratment needs to be selected.</errorMessage>
     </validationRules>
     <webLinks>
         <fullName>AZ_Create_PDF</fullName>
@@ -19368,38 +20536,48 @@ errors.push(&apos;You must select a &quot;Service Location&quot; before continui
 if({! ISPICKVAL(Progress_Note__c.Type_of_Contact__c,&apos;&apos;)}){ 
 errors.push(&apos;You must select the &quot;Type of Contact&quot; before continuing.&apos;); 
 } 
- 
+
 
 //Check to see if there is a Service Code selected 
-var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, Service_Code__c, Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId,RecordType.name, Service_Code__c,Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c,Type__c,Staff_Name__c,Other_Service_Code__c ,Type_of_Contact__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
 records = progressFields.getArray(&quot;records&quot;); 
 
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
-curRtype = recordTypeQuery.getArray(&quot;records&quot;); 
-
-if(records[0].Service_Code__c == null){ 
+curRtype = recordTypeQuery.getArray(&quot;records&quot;);
+if(records[0].Service_Code__c != null ){
+var ServiceCodeQuery = sforce.connection.query(&quot;SELECT Id, Name, Service_Code__c from Service_Code__c where id = &apos;&quot; + records[0].Service_Code__c + &quot;&apos;&quot;);
+curSvcCode = ServiceCodeQuery.getArray(&quot;records&quot;); 
+}
+if(records[0].Service_Code__c == null &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
 errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
 } 
-
-
+if(records[0].Type__c == &apos;Co-Treatment&apos;&amp;&amp; records[0].Staff_Name__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos;){ 
+errors.push(&apos;You must enter the staff name if the type of treatment is co-treatment&apos;); 
+}
+if(records[0].Type__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Type_of_Contact__c == &apos;Face-To-Face&apos;){ 
+errors.push(&apos;If type of contact is face to face , then type of treatment needs to be selected&apos;); 
+}
+if(records[0].Service_Code__c != null &amp;&amp; curSvcCode[0].Service_Code__c == &apos;OTHER&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Other_Service_Code__c == null){ 
+errors.push(&apos;When Service Code = &quot;Other&quot; is selected, you must manually enter a code or description in the &quot;Other Service Code&quot; text box. &apos;); 
+}
 // WVPN-21
 // Make the following fields required on finalization
 if (curRtype[0].DeveloperName == &apos;IN_FCT&apos;) {
 var value = &apos;{!Progress_Note__c.FCT_Phase_at_Note_Creation__c}&apos;;
- if (value == &apos;&apos;){
-    errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
-   }
- 
- if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
-    errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
-   }
- value = &apos;{!JSENCODE(Progress_Note__c.Staff_Name__c)}&apos;;
- if (value == &apos;&apos;){
-    errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
-   }
- if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
-    errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
-   }
+if (value == &apos;&apos;){
+errors.push(&apos;You must select a &quot;FCT Phase of Treatment&quot; before continuing.&apos;);
+}
+
+if ({!ISBLANK(Progress_Note__c.People_Present__c)}){
+errors.push(&apos;You must enter a value in &quot;People Present&quot; before continuing.&apos;);
+}
+value = &apos;{!JSENCODE(Progress_Note__c.Staff_Name__c)}&apos;;
+if (value == &apos;&apos;){
+errors.push(&apos;You must select a value for &quot;Staff Name&quot; before continuing.&apos;); 
+}
+if({!ISPICKVAL(Progress_Note__c.Area_Family_Functioning__c,&apos;&apos;)}){ 
+errors.push(&apos;You must select the &quot;Area of Family Functioning&quot; before continuing.&apos;); 
+}
 }
 
 /*
@@ -19412,22 +20590,24 @@ var admission_state = &apos;{! Progress_Note__c.Admission_State__c }&apos;;
 if(records[0].Authorization__c == null &amp;&amp; 
 billingsystem == &apos;AVATAR&apos; &amp;&amp; admission_state != &apos;AZ&apos;)
 { 
-errors.push(&apos;A Progress Note cannot be finalized without an Authorization.  Please select an Authorization from the list.  If no authorizations are available, you may need to finalize this note later.&apos;); 
+errors.push(&apos;A Progress Note cannot be finalized without an Authorization. Please select an Authorization from the list. If no authorizations are available, you may need to finalize this note later.&apos;); 
 } 
 */
 
 //Check to see if there is a signature on file
 if ((curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) &amp;&amp; records[0].Number_of_Required_Signatures__c &gt; 0 &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
-    errors.push(&apos;A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization. If you have esigned the document, hit refresh on the browser page and then click Finalize this Progress Note.&apos;);
+errors.push(&apos;A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization. If you have esigned the document, hit refresh on the browser page and then click Finalize this Progress Note.&apos;);
 }
 
 if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apos;{!Progress_Note__c.Primary_Care_Provider_Name__c}&apos; ==&apos;&apos;){ 
 alerts.push( &apos;WARNING! A Primary Care provider name has not been entered&apos; ); 
 } 
 
+if(curRtype[0].DeveloperName == &apos;NC_OPT_Progress_Note&apos; &amp;&amp; &apos;{!Progress_Note__c.Primary_Care_Provider_NPI_Number__c}&apos; ==&apos;&apos;){ 
+alerts.push( &apos;WARNING! A Primary Care provider NPI name has not been entered&apos; ); 
+} 
 
-
-var shortTermGoalQuery = sforce.connection.query(&quot;SELECT Id, Progress_Note__c, Goal__c from ProgressNote_ActionPlanChildren_mjo__c where Progress_Note__c =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+var shortTermGoalQuery = sforce.connection.query(&quot;SELECT Id, Progress_Note__c, Goal__c from ProgressNote_ActionPlanChildren_mjo__c where Progress_Note__c =&apos;{!Progress_Note__c.Id}&apos;&quot;);
 stg_data = shortTermGoalQuery.getArray(&quot;records&quot;); 
 
 var stg = false; 
@@ -19453,13 +20633,13 @@ errors.push(&apos;You must select a &quot;Plan&quot; before continuing.&apos;);
 
 if({!ISBLANK(Progress_Note__c.Interventions__c)}
 &amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
-&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;){ 
+&amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
 errors.push(&apos;You must populate the &quot;Intervention&quot; field before continuing.&apos;); 
 } 
 if({!ISBLANK(Progress_Note__c.Progress__c)}
 &amp;&amp; curRtype[0].DeveloperName != &apos;IN_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;MA_FCT&apos;
 &amp;&amp; curRtype[0].DeveloperName != &apos;MD_FCT&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;OH_FCT&apos;
-&amp;&amp; curRtype[0].DeveloperName != &apos;NC_Wks_1_6_TFC&apos;){ 
+&amp;&amp; curRtype[0].DeveloperName != &apos;NC_Wks_1_6_TFC&apos; &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
 errors.push(&apos;You must populate the &quot;Progress&quot; field before continuing.&apos;); 
 } 
 
@@ -19494,7 +20674,7 @@ records = tfcFields.getArray(&quot;records&quot;);
 if( !records[0].Purpose_of_this_Consultation__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
 errors.push(&apos;You must populate the &quot;Purpose of this Consultation&quot; field before continuing.&apos;);
 }
-if( !records[0].Scheduling_Status__c  &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
+if( !records[0].Scheduling_Status__c &amp;&amp; curRtype[0].DeveloperName == &apos;NC_TFC&apos;) {
 errors.push(&apos;You must populate the &quot;Scheduling Status&quot; field before continuing.&apos;);
 }
 if( !records[0].Foster_Parents__c &amp;&amp; (curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;)) {
