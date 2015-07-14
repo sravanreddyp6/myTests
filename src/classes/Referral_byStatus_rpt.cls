@@ -11,7 +11,7 @@ public with sharing class Referral_byStatus_rpt {
     
     public pageReference run(){
         Referral_results = [select id, name,  Name_PBR__c, Street_1__c ,  
-                                    Street_2__c,  city__c, Person_Being_Referred__r.age__c, 
+                                    Street_2__c,  city__c, Person_Being_Referred__r.age__c, Person_Being_Referred__r.Age_year__c,Person_Being_Referred__r.Age_month__c,Person_Being_Referred__r.Age_days__c,
                                     Person_Being_Referred__r.Gender__c, Mobility__c , 
                                     Referral_Date__c, Service_Location__r.name , 
                                     Service_Location_Program__c ,  Referral_Status__c , Referral_Name__c ,  
@@ -25,6 +25,12 @@ public with sharing class Referral_byStatus_rpt {
                                         AND
                                         Referral_Status__c = :Status
                                     ] ;    
+                                    
+             	for (Referral__c ref:Referral_results) {
+             		ref.Person_Being_Referred__r.Age_month__c  = Utility.getAge(String.valueOf(ref.Person_Being_Referred__r.Age_year__c),ref.Person_Being_Referred__r.Age_month__c,ref.Person_Being_Referred__r.Age_days__c);
+             	}                         
+                                    
+                                    
         return null;
     }
 }

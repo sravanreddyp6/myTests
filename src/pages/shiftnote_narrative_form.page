@@ -96,7 +96,7 @@
             
             
             <apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{!editMode}">
-            	<apex:pageblocksectionitem>
+            	<apex:pageblocksectionitem >
             	<apex:outputLabel for="narr" value="Narrative Note" />
             	<apex:outputPanel layout="none">
             	<div class="requiredInput"><div class="requiredBlock"></div>
@@ -143,7 +143,7 @@
     </apex:facet>  
     <apex:facet name="stop"> </apex:facet>         
 </apex:actionStatus> 
-<c:Authentication id="authcomponent" formId="{!$Component.myFrm}" title="E-Sign" handler="shift_note_narrative" objectId="{!pn.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');closeAuthenticationDialog();window.location.href='{!retURL}';" />
+<c:Authentication id="authcomponent" formId="{!$Component.myFrm}" title="E-Sign" handler="Shift_Note_Narrative" objectId="{!pn.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');closeAuthenticationDialog();window.location.href='{!retURL}';" />
 
 </apex:form>     
 </apex:page>

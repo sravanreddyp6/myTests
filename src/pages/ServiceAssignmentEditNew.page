@@ -1452,13 +1452,13 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:pageBlockSection columns="1" collapsible="false">
 				<apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0)}">
 
-					<apex:column headerValue="Action" styleClass="editcol" rendered="{! !vfVarIsCM }"><a href="/{!note.ID}/e">Edit</a>
+					<apex:column headerValue="Action" styleClass="editcol"><a href="/{!note.ID}/e">Edit</a>
 					</apex:column>
 					<apex:column headerValue="Name">
 						<apex:outputLink value="/{!note.id}">
 							<apex:outputField value="{!note.name}" /></apex:outputLink>
 					</apex:column>
-					<apex:column headerValue="Action Plan" rendered="{! !vfVarIsCM}">
+					<apex:column headerValue="Action Plan">
 						<apex:outputLink value="/{!note.Action_Plan__c}">{!note.action_plan__r.name }</apex:outputLink>
 					</apex:column>
 					<apex:column value="{!note.Start_time__c }" rendered="{! !vfVarIsCM }"/>
@@ -1494,6 +1494,21 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 		<!-- end FAD Assessments -->
+		
+		<!-- Incidents Section -->
+		<a name="Incidents" id="incidents"></a>
+		<apex:pageblock id="incidentsBlock" title="Incidents" >
+			<div class="pbHeaderButton">
+				<apex:commandButton value="Create Incident" action="{!createIncident}" status="fundingSouceModalStatus" rerender="none"/>
+			</div>
+			<apex:outputText value="No Incidents to display" rendered="{!(incidents.size=0)}" />
+			<apex:pageblockTable value="{!incidents}" var="i" rendered="{!(incidents.size!=0)}">
+				<apex:column value="{!i.Id}" />
+				<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
+			</apex:pageblockTable>
+		</apex:pageblock>
+		
+		<!-- End Incidents Section -->
 
 
 		<!--  Funding Sources section -->
@@ -1521,7 +1536,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
 					<apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
 					<!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
+					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!age})">
 						<apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
 					</apex:outputText>
 					<apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
@@ -1576,7 +1591,7 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                     <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
-
+		<!-- 
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel for="insuredSSN" value="Insured SSN" />
                         <apex:outputPanel >
@@ -1584,6 +1599,7 @@ END: Uncomment to have the element collapsed by default -->
                             <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredSSN}', '{!theServAssign.Person_Being_Served__r.SSN__c}'); return false;" />
                         </apex:outputPanel>
                     </apex:pageBlockSectionItem>
+             -->        
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel for="insuredDOB" value="Insured DOB" />
                         <apex:outputPanel >
@@ -2112,6 +2128,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Payor__c}" rendered="{!fundingSourceRecordType=='CareMeridian'}" />
 				<apex:column value="{!fundingSource.Status__c}" />
 				<apex:column value="{!fundingSource.Comment__c}" />
+				<apex:column value="{!fundingSource.CreatedDate}" />
 			</apex:pageBlockTable>
 
 			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0 && canEditFundingSource }">
@@ -2544,7 +2561,7 @@ END: Uncomment to have the element collapsed by default -->
 		            }
 		        });
 		    }
-		   }
+		}
 	</script>
 
 </apex:page>

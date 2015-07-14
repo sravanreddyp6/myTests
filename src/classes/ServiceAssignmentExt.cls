@@ -307,8 +307,8 @@ public without sharing class ServiceAssignmentExt {
 
 	}
 
-	public list<Funding_Source__c> referralFundingsources {get { return [select id, name, funding_source__c,Type_of_Coverage__c, Payer_Name__c, recordtype.name, service_being_funded__c, Effective_Date__c,Termination_Date__c,Status__c,Comment__c from funding_source__C where service_Assignment__C = null and Referral__c = :referral.id];} set;}
-
+	public list<Funding_Source__c> referralFundingsources {get { return [select id, CreatedDate, name, funding_source__c,Type_of_Coverage__c, Payer_Name__c, recordtype.name, service_being_funded__c, Effective_Date__c,Termination_Date__c,Status__c,Comment__c from funding_source__C where service_Assignment__C = null and Referral__c = :referral.id];} set;}
+	
 	public Funding_Source__c fundingSource {
 		get{
 			if (fundingSource == null) {
@@ -331,6 +331,7 @@ public without sharing class ServiceAssignmentExt {
 	// END:  Parent level properties with get/set methods.
 
 
+	public String age {set;get{	return Utility.getAge(theServAssign.Person_Being_Served__r.Age_year__c,theServAssign.Person_Being_Served__r.Age_month__c,theServAssign.Person_Being_Served__r.Age_days__c);	}}
 	public String getSaStrStartDateTime(){
 		String strstartDt = '';
 		if (theServAssign.SA_Start_DateTime__c != null)
@@ -389,7 +390,7 @@ public without sharing class ServiceAssignmentExt {
 			                 End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName,Admission__r.Person_Being_Served__r.FirstName, Phase__c, Phase_of_Treatment__c, Program__c,
 			                 Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
 			                 Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
-			                 Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
+			                 Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c,Person_Being_Served__r.Age_month__c,Person_Being_Served__r.Age_year__c,Person_Being_Served__r.Age_days__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
 			                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
 			                 FROM Service_Assignment__c
 			                 WHERE Id = :controller.getid()];
@@ -1788,6 +1789,27 @@ public without sharing class ServiceAssignmentExt {
 		return oSchema.isAccessible();
 
 	} }
+	
+	//Incidents creation
+	
+	public pageReference createIncident(){
+		PageReference pr = new pageReference('/apex/Incident_Form_createEdit');
+		pr.getParameters().put('RecordTypeId',Utility.getIncidentRecordType('PBS'));
+		pr.getParameters().put('SAid',this.theServAssign.Id);
+		
+		return pr;
+		
+	}
+	
+	public List<Incident__c> incidents{get{
+		if(incidents == null){
+			incidents = [SELECT Id, Recordtype.name, Status__c FROM Incident__c WHERE Service_Assignment__c =: this.theServAssign.Id];
+		}
+			return incidents;
+	}
+		
+		set;	
+	}
 
 	public void showAddFundingSource() {
 		fundingSource = new Funding_Source__c();

@@ -114,7 +114,7 @@ public with sharing class NeuroEvaluationEditController {
         serializedAnnotations = JSON.serialize(annotations);
         currentRelatedParty = new Related_Party__c();
         pbr = [
-            SELECT ID, Date_of_Birth__c FROM Person_Being_Referred__c
+            SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c FROM Person_Being_Referred__c
             WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
         ];
         ref = [
@@ -136,7 +136,10 @@ public with sharing class NeuroEvaluationEditController {
         if(!String.isBlank(this.evaluation.Neuro_Pain_Alleviating_Factors__c)) {
             selectedPainAlleviators = this.evaluation.Neuro_Pain_Alleviating_Factors__c.split(';');
         }
+        this.age = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);
     }
+    
+    public string age{set;get;}
 
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
@@ -195,6 +198,9 @@ public with sharing class NeuroEvaluationEditController {
     }
 
     public PageReference save() {
+    	if(pbr.Date_of_Birth__c!=null){
+        setAge();
+        }
         return this.save(false);
     }
 
@@ -212,9 +218,53 @@ public with sharing class NeuroEvaluationEditController {
             System.debug('Save successful!');
             selectedTab = nextTab;
         }
+        if(pbr.Date_of_Birth__c!=null){
+        setAge();
+        }
         return null;
     }
+public void setAge () {
+  Date birthday = pbr.Date_of_Birth__c;
+    Date today = Date.today();
+    Integer years =  today.year() - birthday.year();
+    Integer currMonth = Today.month();
+	Integer birthMonth = birthday.month();
+	Integer months = currMonth - birthMonth;
+    Integer days = 0;       
+			      if (months < 0)
+			      {
+			         years--;
+			         months = 12 - birthMonth + currMonth;
+			      } else if (months == 0 && Today.day() < birthDay.day())
+			      {
+			         years--;
+			         months = 11;
+			      }
+			  if(Today.day() < birthDay.day()){
+			       months--;
+			      }    
+    	if (Today.day() > birthDay.day())
+			          days = Today.day() - birthDay.day();
+			       else if (Today.day() < birthDay.day())
+			       {
+			          days = Date.daysInMonth(Today.year(), Today.month() -1) - birthDay.day() + Today.day();
+			       } else
+			       {
+			          days = 0;
+			          if (months == 12)
+			          {
+			             years++;
+			             months = 0;
+			          }
+			       }
 
+	this.pbr.Age_year__c = years;
+	this.pbr.Age_month__c = String.valueOf(months);
+	this.pbr.Age_days__c = String.valueOf(days);
+	this.pbr.Age__c = years;
+	this.age = Utility.getAge(String.valueOf(this.pbr.Age_year__c),this.pbr.Age_month__c,this.pbr.Age_days__c);
+	update this.pbr;
+}
     /**
      * This method needs to know about whether the request is ready for submission,
      * and also the currently selected tab, because we need to group validation
