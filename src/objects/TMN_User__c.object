@@ -514,6 +514,17 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Office_Flag__c</fullName>
+        <externalId>false</externalId>
+        <label>Office_Flag</label>
+        <length>10</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Office_Location_2__c</fullName>
         <externalId>false</externalId>
         <label>Office Location 2</label>
@@ -571,10 +582,32 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Organizational_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Organizational_Name</label>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Pay_Basis__c</fullName>
         <externalId>false</externalId>
         <label>Pay Basis</label>
         <length>25</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Pay_Period__c</fullName>
+        <externalId>false</externalId>
+        <label>Pay Period</label>
+        <length>20</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -688,6 +721,17 @@
         <externalId>false</externalId>
         <label>Recruiter Name</label>
         <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SAL_OT__c</fullName>
+        <externalId>false</externalId>
+        <label>SAL_OT</label>
+        <length>20</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -999,7 +1043,7 @@
         <fullName>Last_day_cannot_be_before_first_day</fullName>
         <active>true</active>
         <description>Evaluates the last day value and ensures it is after the first day (start date)</description>
-        <errorConditionFormula>Last_Day__c  &lt;  Hire_Date__c</errorConditionFormula>
+        <errorConditionFormula>Last_Day__c  &lt;  Hire_Date__c &amp;&amp;  ISNULL(Last_Day__c) =False</errorConditionFormula>
         <errorMessage>Please correct the End Date. End Date cannot be before the Start Date.</errorMessage>
     </validationRules>
 </CustomObject>
