@@ -111,6 +111,9 @@
 	// will be shown/hidden.
 	window.applyShowHideRulesToField = function(element) {
 		var $element = $(element);
+        if ($element.prop('disabled')) {
+            return;
+        }
 		if ($element.attr('multiple') == 'multiple' && !$element.attr('id').endsWith('_selected') & !$element.attr('id').endsWith('_unselected')) {
 			// This is the hidden select field for multi-picklist that gets
 			// populated automagically by Salesforce when items are moved from
