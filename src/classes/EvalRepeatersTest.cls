@@ -49,14 +49,16 @@ private class EvalRepeatersTest {
         
         system.assert([select id from eval_value__c].size() > 0 );
         
+        Test.setCurrentPage(Page.EvalDynamic);
+        Apexpages.currentPage().getParameters().put('evalID', evaluation.id);
+        Apexpages.currentPage().getParameters().put('evaltype', evlTyp.Name);
+        Apexpages.currentPage().getParameters().put('opGrp', 'Care Meridian');
+        
         EvalRepeaters evalRepeaters = new EvalRepeaters();
-        evalRepeaters.evalname = evlTyp.Name;
-        evalRepeaters.evaluationID = evaluation.id;
-        evalRepeaters.operatingGroup = 'Care Meridian';
                                                 
         system.assert(evalRepeaters.getEvals().size() > 0 );
-        system.assert(!evalRepeaters.anyErrors);
-        system.assert(evalRepeaters.anyEmpty);
+        system.assert(!evalRepeaters.getAnyErrors());
+        system.assert(evalRepeaters.getAnyEmpty());
     }
     
 }
