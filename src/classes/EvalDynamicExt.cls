@@ -93,7 +93,7 @@ public with sharing class EvalDynamicExt {
 			isTierIII = false;
 		}
 
-		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Signed_By__r.Name, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
+ 		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Signed_By__r.Name, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
 
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
@@ -302,7 +302,7 @@ public with sharing class EvalDynamicExt {
     	//Roll back all the DML operations in case of any failure in the process of Cloning. 04/4/2015 8:00 PM
     	Savepoint sp = Database.setSavepoint();
     		try{
-    			Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian');
+    			Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian', PBSId);
     			PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
     			pg.setRedirect(true);
     			return pg;
@@ -346,7 +346,7 @@ public with sharing class EvalDynamicExt {
 			try{
 
 				update thisEval;
-				Evaluation__c clonedShift = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian');
+				Evaluation__c clonedShift = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian', PBSId);
 				PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedShift.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
 	    		pg.setRedirect(true);
 	    		return pg;
@@ -441,7 +441,7 @@ public with sharing class EvalDynamicExt {
 	}
 
 	//Generic Clone functionality to copy Eval Value records.
-	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup){
+	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup, ID pbsID){
 
 		Evaluation__c currentEval = eval;
 		id currentEvalId = currentEval.Id;
@@ -457,7 +457,18 @@ public with sharing class EvalDynamicExt {
 			clonedEval.OwnerId = UserInfo.getUserId();
 		}
 
+		Contact thisPBS = [ select firstname, lastname from contact where id = :pbsID];
+		
+    	string pbsLastName = thisPBS.LastName != null ? thisPBS.LastName : '' ;
+		string pbsFirstinitial = thisPBS.FirstName != null ? thisPBS.FirstName.substring(0, 1) : '';
+		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
+		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
+
+		clonedEval.name = resAsmtName;
     	insert clonedEval;
+    	
+    	
+    	
 
     	//Creation of Assessment records is specific to Residential Assessment. Not required in in Head to Toe!!
     	if(evalType == 'Residential') {
