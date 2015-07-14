@@ -737,6 +737,12 @@ public with sharing class referral_Controller2 {
 			}
 		}
 
+		if(referralRecord.Guardianship_Type__c!=null && referralRecord.Guardianship_Type__c.contains('Partial Guardianship') && (referralRecord.Partial_Guardianship_Conservatorship__c == null || String.IsBlank(referralRecord.Partial_Guardianship_Conservatorship__c))){
+		messages.Add( '\'Partial Guardianship/Conservatorship Type\' is required if Guardianship Type is Partial' );
+		hasReq = false;
+		}
+
+
 		//start CTEAE-137
 		if(ReferralRecordType=='Cambridge North Carolina'){
 			if(referralRecord.Payer_Medical_Record_Number__c == null ){
