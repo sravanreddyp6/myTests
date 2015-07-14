@@ -1789,6 +1789,27 @@ public without sharing class ServiceAssignmentExt {
 		return oSchema.isAccessible();
 
 	} }
+	
+	//Incidents creation
+	
+	public pageReference createIncident(){
+		PageReference pr = new pageReference('/apex/Incident_Form_createEdit');
+		pr.getParameters().put('RecordTypeId',Utility.getIncidentRecordType('PBS'));
+		pr.getParameters().put('SAid',this.theServAssign.Id);
+		
+		return pr;
+		
+	}
+	
+	public List<Incident__c> incidents{get{
+		if(incidents == null){
+			incidents = [SELECT Id, Recordtype.name, Status__c FROM Incident__c WHERE Service_Assignment__c =: this.theServAssign.Id];
+		}
+			return incidents;
+	}
+		
+		set;	
+	}
 
 	public void showAddFundingSource() {
 		fundingSource = new Funding_Source__c();

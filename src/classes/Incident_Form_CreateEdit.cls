@@ -5,7 +5,13 @@ public with sharing class Incident_Form_CreateEdit {
 	
 	public Incident_Form_CreateEdit(ApexPages.StandardController controller) {
 		incident = (Incident__c)controller.getRecord();
-		incident.RecordtypeId = recTypeId;
+		if(recTypeId != null){
+			incident.RecordtypeId = recTypeId;
+		}
+		if(SAid != null){
+			incident.Service_Assignment__c = SAid;
+		}
+		
 		loadPage();
 	}
 	public void loadPage(){

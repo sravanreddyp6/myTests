@@ -1494,6 +1494,21 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 		<!-- end FAD Assessments -->
+		
+		<!-- Incidents Section -->
+		<a name="Incidents" id="incidents"></a>
+		<apex:pageblock id="incidentsBlock" title="Incidents" >
+			<div class="pbHeaderButton">
+				<apex:commandButton value="Create Incident" action="{!createIncident}" status="fundingSouceModalStatus" rerender="none"/>
+			</div>
+			<apex:outputText value="No Incidents to display" rendered="{!(incidents.size=0)}" />
+			<apex:pageblockTable value="{!incidents}" var="i" rendered="{!(incidents.size!=0)}">
+				<apex:column value="{!i.Id}" />
+				<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
+			</apex:pageblockTable>
+		</apex:pageblock>
+		
+		<!-- End Incidents Section -->
 
 
 		<!--  Funding Sources section -->
