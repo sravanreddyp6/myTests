@@ -1,0 +1,42 @@
+<apex:page controller="TMNLocation" contentType="application/vnd.ms-excel#TMNUserLocation-{!today()}.xls">
+	<table id="responses" class="list">
+		<thead>
+			<tr class="headerRow">
+				<th>Location</th>
+				<th>Name</th>
+				<th>Title</th>
+				<th>Office</th>
+				<th>Cell</th>
+				<th>Operating Group</th>
+				<th>Manager</th>
+			</tr>
+		</thead>
+		<tbody>
+			<apex:repeat value="{!locationList}" var="user" id="listWrapper">
+					<tr class="dataRow">
+						<td class="dataCell">
+							{!user.Work_State__c}
+						</td>
+						<td class="dataCell">
+							{!user.Name}
+						</td>
+						<td class="dataCell">
+							{!user.Job_Title__c}
+						</td>
+						<td class="dataCell">
+							{!user.Office_Phone__c}
+						</td>
+						<td class="dataCell">
+							{!user.Mentor_Cell_Phone__c}
+						</td>
+						<td class="dataCell">
+							{!user.Operating_Group__c}
+						</td>
+						<td class="dataCell">
+							{!user.Manager_Name__c}
+						</td>
+					</tr>
+				</apex:repeat>
+		</tbody>
+	</table>
+</apex:page>
