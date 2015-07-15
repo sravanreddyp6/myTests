@@ -102,7 +102,7 @@ public with sharing class IdentityHomeController {
                    Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c,Last_Day__c,Current_Person_Type__c 
                    FROM TMN_User__c 
                    WHERE Manager_Email__c=:aliasName 
-                   AND Current_Person_Type__c NOT IN ('Employee')
+                   AND Current_Person_Type__c NOT IN ('Active Employee')
                    AND Last_Day__c<=:endDate
                    ORDER BY Last_Day__c ASC];
         return attestNonEmployees;
@@ -124,7 +124,7 @@ public with sharing class IdentityHomeController {
         myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c 
                        FROM TMN_User__c 
                        WHERE Manager_Email__c=:aliasName 
-                       AND Current_Person_Type__c IN ('Employee')
+                       AND Current_Person_Type__c IN ('Active Employee')
                        AND Job_Status__c IN ('Active') ];
         return myEmployees;    
     }
@@ -144,10 +144,10 @@ public with sharing class IdentityHomeController {
     public List<SelectOption> getDelValues(){
         List<SelectOption> dl = new List<SelectOption>();
         if(mySubordinates.size()>0){
-            dl.add(new SelectOption(tmnName,'Myself'));    
+            dl.add(new SelectOption(tmnEmail,'Myself'));    
         }
-        for(TMN_User_Delegate__c td:[SELECT Delegate_for_Name__c,TMN_Delegate_For__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c =:tmnId AND Delegation_Complete__c = FALSE]){
-            dl.add(new SelectOption(td.Delegate_for_Name__c,td.Delegate_for_Name__c));
+        for(TMN_User_Delegate__c td:[SELECT Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c =:tmnId AND Delegation_Complete__c = FALSE]){
+            dl.add(new SelectOption(td.Delegate_for_Email__c,td.Delegate_for_Name__c));
         }
         return dl;
     }
