@@ -100,6 +100,86 @@
         </displayedFields>
         <label>NewForm</label>
     </fieldSets>
+    <fieldSets>
+        <fullName>NewFormAZOPT</fullName>
+        <description>On the New AZ OPT page with a fewer clicks.</description>
+        <displayedFields>
+            <field>Start_Time__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>End_Time__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Total_Time__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Service_Location__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Type_of_Contact__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Purpose_Service_is_Billable__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Units__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>People_Present__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Is_Note_Late__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Status__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Sleep_Check_Conducted__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Interventions__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Progress__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Notes_For_Next_Visit__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Next_Appt_Date_Time__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>NewFormAZOPT</label>
+    </fieldSets>
     <fields>
         <fullName>Abuse_Disclosure_Type__c</fullName>
         <externalId>false</externalId>
@@ -3462,6 +3542,19 @@ Neurostative IL role</description>
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Type_Of_Note__c</fullName>
+        <description>For AZ OPT To show the field on the detail page layout</description>
+        <externalId>false</externalId>
+        <formula>RecordType.Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Type Of Note</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Type__c</fullName>
         <description>created for NeuroRestorative IL role and rec type called &quot;Therapy&quot;</description>
         <externalId>false</externalId>
@@ -3534,6 +3627,10 @@ Neurostative IL role</description>
         <inlineHelpText>Meeting type that took place.</inlineHelpText>
         <label>Type of Contact</label>
         <picklist>
+            <picklistValues>
+                <fullName>No-Show</fullName>
+                <default>false</default>
+            </picklistValues>
             <picklistValues>
                 <fullName>Face-To-Face</fullName>
                 <default>false</default>
@@ -19370,6 +19467,10 @@ Neurostative IL role</description>
             </values>
             <values>
                 <fullName>Face-To-Face</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No-Show</fullName>
                 <default>false</default>
             </values>
             <values>
