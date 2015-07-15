@@ -18,10 +18,6 @@ public with sharing class CmPersonBillingRpt {
     //map with the data fields for each section. 
     transient public map<String, EvalValWrapper> evalSectionsMap {get; set;}
     
-    
-    transient public Component.c.EvaluationResponseTablePdfNoCntroller myDy {get; set;}
-                                                    
-    
     public CmPersonBillingRpt(){
         evaluationsMap = new map<Id, Evaluation__c>();
         nsdEvalIds = new list<Id>();
@@ -93,13 +89,10 @@ public with sharing class CmPersonBillingRpt {
         	evalSectionsMap.get(ev.eval_section_id__c).mapEvalValues.put(ev.eval__c, ev);	
         }        
 
-
-        //prepare variables needed to convert the eval_value__c into its string representation
         buildResourceMap();  
         buildMapEvalItems();
         buildEvalResposesMap();
-        
-                
+        buildCnaApprovalHistoryMap();
                 
         // Parse the Eval_Value__c to the list of strings.
         for (String evalSec : evalSectionsMap.keySet()){
@@ -117,11 +110,12 @@ public with sharing class CmPersonBillingRpt {
         		pdf.getParameters().put('id',i);
         		summaryHTMLSource.put(i, pdf.getContent().toString());
         	}
-        }        
+        }
+        
         // Naming the PDF in case this controller is used for the PDF page
-        String file = sa[0].person_being_served__r.LastName +'.pdf';
+        String file = sa[0].person_being_served__r.LastName +' NsdCnaWeeklySummaries for ' + StartDate.format() + ' to ' + EndDate.format() + '.pdf';
         file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
-        Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename="'+file+'"');                
+        Apexpages.currentPage().getHeaders().put('content-disposition', 'attachment; filename="'+file+'"');                
         
     }
     
@@ -220,8 +214,23 @@ public with sharing class CmPersonBillingRpt {
         	}
         }
         
-        
     }
+    
+    transient public map<id, list<ProcessInstanceHistory>> cnaApprovalHistoryMap {get;set;}
+    private void buildCnaApprovalHistoryMap() {
+    	cnaApprovalHistoryMap = new map<id, list<ProcessInstanceHistory>>();
+        for (Id cna : cnaEvalIds) {
+            cnaApprovalHistoryMap.put(cna, new list<ProcessInstanceHistory>());
+        }        
+        for ( ProcessInstance p : [SELECT Id, targetobjectid, (SELECT Id, actorid, actor.name, StepStatus, Comments, createddate 
+                                                                 FROM StepsAndWorkitems ORDER BY createddate desc)
+                                      FROM ProcessInstance
+                                     WHERE targetobjectid IN :cnaEvalIds
+                                     ORDER BY createddate desc] ) {
+            cnaApprovalHistoryMap.get(p.targetobjectid).addAll(p.stepsandworkitems);
+        }
+    }
+    
         
     public class EvalValWrapper {
         public string entryid {get;set;}
