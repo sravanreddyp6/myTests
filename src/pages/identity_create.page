@@ -53,7 +53,9 @@
                     <apex:outputPanel ></apex:outputPanel>
                     <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7"/>
                 </apex:pageBlockSection>
-                <apex:pageBlockSection columns="2" title="Management Hierarchy">                                                                                                                           
+                <apex:pageBlockSection columns="2" title="Management Hierarchy">
+                    <apex:inputField label="Alias" value="{!TMNUser.Alias__c}" required="true" taborderhint="17"/>
+                    <apex:inputField label="Service Line" value="{!TMNUser.Service_Line__c}" taborderhint="16"/>                                                                                                                           
                     <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="13">
                         <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
                         <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
@@ -61,10 +63,8 @@
                         <apex:selectOption itemValue="Cambridge" itemLabel="Hastings"/>                       
                         <apex:selectOption itemValue="NeuroRestorative" itemLabel="NeuroRestorative"/>
                         <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
-                    </apex:selectList>
-                    <apex:inputField label="Service Line" value="{!TMNUser.Service_Line__c}" taborderhint="16"/>
-                    <apex:inputField label="Business Unit" value="{!TMNUser.Business_Unit__c}" taborderhint="14"/>
-                    <apex:inputField label="Alias" value="{!TMNUser.Alias__c}" required="true" taborderhint="17"/>                                                            
+                    </apex:selectList>                    
+                    <apex:inputField label="Business Unit" value="{!TMNUser.Business_Unit__c}" taborderhint="14"/>                                                                                
                     <apex:inputField label="Service Region" value="{!TMNUser.Service_Region__c}" taborderhint="15"/>                                                                
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2" title="Location">
@@ -124,9 +124,8 @@
                     <apex:inputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" required="true" taborderhint="19" />
                     <apex:inputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" required="true" taborderhint="23"/>
                     <apex:inputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" taborderhint="20"/>
-                    <apex:outputPanel ></apex:outputPanel>                                                  
-                    <apex:inputField label="City" value="{!TMNUser.Work_City__c}" required="true" taborderhint="21"/>
-                    <apex:outputPanel ></apex:outputPanel>
+                    <apex:inputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}"/>                                                  
+                    <apex:inputField label="City" value="{!TMNUser.Work_City__c}" required="true" taborderhint="21"/>                  
                 </apex:pageBlockSection>
                 <apex:PageBlockSection columns="2" title="Manager Information">                                                                                                                                                                                                                                        
                     <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="24"/>
