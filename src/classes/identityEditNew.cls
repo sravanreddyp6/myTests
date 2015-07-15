@@ -65,17 +65,6 @@ public class identityEditNew {
     public String tmnName = t.Name;
     public String tmnId = t.Id;
     public String tmnOG = t.Operating_Group__c;
-
-//    String aliasName = getaliasName();
-//    String getaliasName(){
-//        if (String.isEmpty(tmnDelegateFor)){
-//            aliasName=tmnName;
-//        }else{
-//            TMN_User__c alias = [SELECT Id, Name, Operating_Group__c,Manager_Name__c FROM TMN_User__c WHERE Id=:tmnDelegateFor LIMIT 1];
-//            aliasName = alias.Name;        
-//        }
-//        return aliasName;    
-//    }
     
     TMN_User__c aliasUser = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,
@@ -86,9 +75,8 @@ public class identityEditNew {
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,Manager_Lookup__c, 
             Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c  
             FROM TMN_User__c 
-            WHERE Name = :aliasName];
-    
-    
+            WHERE Email__c = :aliasName];
+     
     public PageReference save() {
         ID managerId = TMNUser.Manager_Lookup__c;
         TMN_User__c managerInfo = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
