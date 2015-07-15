@@ -457,14 +457,15 @@ public with sharing class EvalDynamicExt {
 			clonedEval.OwnerId = UserInfo.getUserId();
 		}
 
+		// EC-235 - rename the assessment on revise - needs new owner name and date of creation
 		Contact thisPBS = [ select firstname, lastname from contact where id = :pbsID];
-		
     	string pbsLastName = thisPBS.LastName != null ? thisPBS.LastName : '' ;
 		string pbsFirstinitial = thisPBS.FirstName != null ? thisPBS.FirstName.substring(0, 1) : '';
 		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
 		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-
 		clonedEval.name = resAsmtName;
+			
+		
     	insert clonedEval;
     	
     	
