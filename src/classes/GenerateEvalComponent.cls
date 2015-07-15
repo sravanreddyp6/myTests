@@ -173,7 +173,7 @@ public with sharing class GenerateEvalComponent {
 
         // get any populated values for this eval and section
         List<Eval_Value__c> listEvalValues = [
-            select id, boolean__c, currency__c, date_time__c, number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c, lastmodifiedby.name, lastmodifieddate from eval_value__c
+            select id, boolean__c, currency__c, date_time__c, number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c from eval_value__c
              where eval__c in :listEvalItems
                and what_id__c = :evaluationID
                and what_id_object__c = 'Evaluation__c'
