@@ -1497,7 +1497,7 @@ END: Uncomment to have the element collapsed by default -->
 		
 		<!-- Incidents Section -->
 		<a name="Incidents" id="incidents"></a>
-		<apex:pageblock id="incidentsBlock" title="Incidents" >
+		<apex:pageblock id="incidentsBlock" title="Incidents" rendered="{!!editSA}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Create Incident" action="{!createIncident}" status="fundingSouceModalStatus" rerender="none"/>
 			</div>
