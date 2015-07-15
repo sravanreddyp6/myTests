@@ -102,7 +102,7 @@ public with sharing class IdentityHomeController {
                    Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c,Last_Day__c,Current_Person_Type__c 
                    FROM TMN_User__c 
                    WHERE Manager_Email__c=:aliasName 
-                   AND Current_Person_Type__c NOT IN ('Active Employee')
+                   AND Current_Person_Type__c NOT IN ('Active Employee','Termed Employee')
                    AND Last_Day__c<=:endDate
                    ORDER BY Last_Day__c ASC];
         return attestNonEmployees;
