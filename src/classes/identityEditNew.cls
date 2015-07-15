@@ -90,15 +90,19 @@ public class identityEditNew {
     
     
     public PageReference save() {
-            if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c == null){
-                TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
-            }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c == null){
-                TMNUser.Name = TMNUser.Preferred_First_Name__c + ' ' + TMNUser.Last_Name__c;
-            }else if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c != null){
-                TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Preferred_Last_Name__c;
-            }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c != null){
-                TMNUser.Name = TMNUser.Preferred_First_Name__c + ' ' + TMNUser.Preferred_Last_Name__c;
-            }
+        ID managerId = TMNUser.Manager_Lookup__c;
+        TMN_User__c managerInfo = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
+        TMNUser.Manager_Email__c = managerInfo.Email__c;
+        TMNUser.Manager_Name__c = managerInfo.Name;
+        if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c == null){
+            TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
+        }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c == null){
+            TMNUser.Name = TMNUser.Preferred_First_Name__c + ' ' + TMNUser.Last_Name__c;
+        }else if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c != null){
+            TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Preferred_Last_Name__c;
+        }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c != null){
+            TMNUser.Name = TMNUser.Preferred_First_Name__c + ' ' + TMNUser.Preferred_Last_Name__c;
+        }
              
         try {
             upsert(TMNUser);

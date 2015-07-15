@@ -17,7 +17,7 @@ public with sharing class IdentityHomeController {
     public List<TMN_User_Delegate__c> myDelegation {get; set;}
     public TMN_User__c theTMNUser {get; set;}
     public ID selectedID {get; set;}
-    public Boolean displayPopup {get; set;}     
+    public Boolean displayPopup {get; set;}   
     
     Date currentDate = Date.today();
     Date endDate = currentDate.addDays(30);
@@ -58,11 +58,11 @@ public with sharing class IdentityHomeController {
         System.debug('myDelegation Count is ' + myDelegation.size());
         
         aliasName = getAliasNameValue();
-        System.Debug('Value of aliasName is ' + aliasName);
+        System.Debug('Value of aliasName is ' + aliasName);       
                                                                                                                                                                                                          
     }
 
-    // Metod used to set aliasName value on page load.
+    // Method used to set aliasName value on page load.
     String aliasNameValue; 
     String getAliasNameValue(){
         if(mySubordinates.isEmpty()){
@@ -82,7 +82,7 @@ public with sharing class IdentityHomeController {
         System.debug('Value of aliasNameValue is ' + aliasNameValue);
         return aliasNameValue;
     }
-
+    
     //Get list of people the user is assigned delegation rights for.
     List<TMN_User_Delegate__c> delegateFor;
     public List<TMN_User_Delegate__c> getDelegateFor(){
@@ -103,7 +103,8 @@ public with sharing class IdentityHomeController {
                    FROM TMN_User__c 
                    WHERE Manager_Name__c=:aliasName 
                    AND Current_Person_Type__c NOT IN ('Employee')
-                   AND Last_Day__c<=:endDate ORDER BY Last_Day__c ASC];
+                   AND Last_Day__c<=:endDate
+                   ORDER BY Last_Day__c ASC];
         return attestNonEmployees;
     }
 
@@ -123,7 +124,8 @@ public with sharing class IdentityHomeController {
         myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c 
                        FROM TMN_User__c 
                        WHERE Manager_Name__c=:aliasName 
-                       AND Current_Person_Type__c IN ('Employee') ];
+                       AND Current_Person_Type__c IN ('Employee')
+                       AND Job_Status__c IN ('Active') ];
         return myEmployees;    
     }
     
@@ -367,6 +369,30 @@ public with sharing class IdentityHomeController {
         
     public void showPopup() {        
         displayPopup = true;    
+    }
+
+    public Boolean displayInfo {get; set;}
+    public void showInfo(){
+        displayInfo = true;
+    }
+    public void closeInfo(){
+        displayInfo = false;
+    }
+
+    public PageReference viewTmnUser(){
+        theTMNUser = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
+                            Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,
+                            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Identity_ID__c,Job_Level__c,Job_Status__c,Job_Title__c,
+                            Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
+                            Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
+                            Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
+                            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,
+                            Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
+                            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c 
+                            FROM TMN_User__c 
+                            WHERE Id =:selectedID];                   
+        showInfo();
+        return null;
     }
          
 }

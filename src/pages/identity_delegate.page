@@ -78,6 +78,23 @@
         </apex:form>
     </apex:pageBlockSection>
     </apex:outputPanel>        
+
+    <apex:outputPanel id="curDelSec">      
+    <apex:pageBlockSection title="Current Delegates" columns="1" id="delBlock" rendered="{!myDelegates.size != 0}" >
+        <apex:form id="delForm" >
+            <apex:pageBlockTable value="{!myDelegates}" var="del" id="delTable">
+                <apex:column headerValue="Action">
+                    <apex:commandLink value="Remove Delegate" id="delCommand" action="{!removeDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel">
+                        <apex:param value="{!del.Id}" assignTo="{!selectedID}" name="delIdParam"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Name" value="{!del.Name}"/>
+                <apex:column headerValue="Delegate For" value="{!del.Delegate_for_Name__c}"/>           
+                <apex:column headerValue="Time Assigned" value="{!del.Time_Assigned__c}"/>                       
+            </apex:pageBlockTable> 
+        </apex:form>        
+    </apex:pageBlockSection>
+    </apex:outputPanel>
     
     <apex:outputPanel id="myAvlDel">
     <apex:pageBlockSection title="My Available Delegates" columns="1" id="empBlock">
@@ -95,23 +112,6 @@
                 <apex:column headerValue="Operating Group" value="{!e.Operating_Group__c}"/>          
             </apex:pageBlockTable>
         </apex:form>
-    </apex:pageBlockSection>
-    </apex:outputPanel>
-
-    <apex:outputPanel id="curDelSec">      
-    <apex:pageBlockSection title="Current Delegates" columns="1" id="delBlock" rendered="{!myDelegates.size != 0}" >
-        <apex:form id="delForm" >
-            <apex:pageBlockTable value="{!myDelegates}" var="del" id="delTable">
-                <apex:column headerValue="Action">
-                    <apex:commandLink value="Remove Delegate" id="delCommand" action="{!removeDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel">
-                        <apex:param value="{!del.Id}" assignTo="{!selectedID}" name="delIdParam"/>
-                    </apex:commandLink>
-                </apex:column>
-                <apex:column headerValue="Name" value="{!del.Name}"/>
-                <apex:column headerValue="Delegate For" value="{!del.Delegate_for_Name__c}"/>           
-                <apex:column headerValue="Time Assigned" value="{!del.Time_Assigned__c}"/>                       
-            </apex:pageBlockTable> 
-        </apex:form>        
     </apex:pageBlockSection>
     </apex:outputPanel>
     

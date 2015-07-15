@@ -55,21 +55,20 @@
                     
                </apex:pageBlockSection>
                <apex:pageBlockSection columns="2" title="Management Hierarchy" >
-                    <apex:outputField label="Operating Group" value="{!TMNUser.Operating_Group__c}"/>
-                    <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/>                                                                                                                                           
-                    <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>
                     <apex:inputField label="Alias" value="{!TMNUser.Alias__c}" taborderhint="13"/>
-                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>
-                    <apex:inputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}" taborderhint="14" />
+                    <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/> 
+                    <apex:outputField label="Operating Group" value="{!TMNUser.Operating_Group__c}"/>                                                                                                                                                              
+                    <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                    
+                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>                    
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2" title="Location">
                     <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" required="true" taborderhint="15"/>
                     <apex:outputField label="State" value="{!TMNUser.Work_State__c}" />    
                     <apex:outputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" />
                     <apex:outputField label="Zip Code" value="{!TMNUser.Zip_Code__c}"/>
-                    <apex:outputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}"/>                                        
-                    <apex:outputPanel ></apex:outputPanel>                                                  
-                    <apex:outputField label="City" value="{!TMNUser.Work_City__c}"/>
+                    <apex:outputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}"/>
+                    <apex:inputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}" taborderhint="14" />                                                                                         
+                    <apex:outputField label="City" value="{!TMNUser.Work_City__c}"/>                    
                 </apex:pageBlockSection>
                 <apex:PageBlockSection columns="2" title="Manager Information">                                                                                                                                                                                                                                        
                     <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="16"/>
