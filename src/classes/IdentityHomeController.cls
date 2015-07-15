@@ -47,7 +47,7 @@ public with sharing class IdentityHomeController {
                         
         mySubordinates = [SELECT Id 
                           FROM TMN_User__c 
-                          WHERE Manager_Name__c=:tmnName];
+                          WHERE Manager_Email__c=:tmnEmail];
         System.debug('mySubordinates Count is ' + mySubordinates.size());
 
         myDelegation = [SELECT Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c,Delegation_Complete__c
@@ -67,17 +67,17 @@ public with sharing class IdentityHomeController {
     String getAliasNameValue(){
         if(mySubordinates.isEmpty()){
             if(myDelegation.isEmpty()){
-                aliasNameValue = tmnName;
+                aliasNameValue = tmnEmail;
             }else{
                 TMN_User_Delegate__c ud = [SELECT Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c,Delegation_Complete__c
                                    FROM TMN_User_Delegate__c 
                                    WHERE TMN_Delegate_Name__c =:tmnId
                                    AND Delegation_Complete__c = FALSE
                                    LIMIT 1];
-                aliasNameValue = ud.Delegate_for_Name__c;
+                aliasNameValue = ud.Delegate_for_Email__c;
             }
         }else{
-            aliasNameValue = tmnName;
+            aliasNameValue = tmnEmail;
         }
         System.debug('Value of aliasNameValue is ' + aliasNameValue);
         return aliasNameValue;
@@ -101,7 +101,7 @@ public with sharing class IdentityHomeController {
                    Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,
                    Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c,Last_Day__c,Current_Person_Type__c 
                    FROM TMN_User__c 
-                   WHERE Manager_Name__c=:aliasName 
+                   WHERE Manager_Email__c=:aliasName 
                    AND Current_Person_Type__c NOT IN ('Employee')
                    AND Last_Day__c<=:endDate
                    ORDER BY Last_Day__c ASC];
@@ -123,7 +123,7 @@ public with sharing class IdentityHomeController {
     public List<TMN_User__c> getMyEmployees() {
         myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c 
                        FROM TMN_User__c 
-                       WHERE Manager_Name__c=:aliasName 
+                       WHERE Manager_Email__c=:aliasName 
                        AND Current_Person_Type__c IN ('Employee')
                        AND Job_Status__c IN ('Active') ];
         return myEmployees;    
@@ -134,7 +134,7 @@ public with sharing class IdentityHomeController {
     public List<TMN_User__c> getmyWorkforce() {
         myWorkforce = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c 
                        FROM TMN_User__c 
-                       WHERE  Manager_Name__c=:aliasName
+                       WHERE  Manager_Email__c=:aliasName
                        AND Job_Status__c IN ('Active','Pending')
                        ORDER BY Last_Name__c ASC];        
         return myWorkforce;
