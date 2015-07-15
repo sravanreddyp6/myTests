@@ -229,6 +229,17 @@ public Map<String, String> fieldMap { get; set; }
         set;
     }
     
+    
+    public List<Incident__c> incidents{ 	
+    	get{
+    		if(incidents == null){
+    			incidents = [SELECT ID, NAME, Recordtype.Name, CreatedDate FROM Incident__c WHERE Service_Assignment__r.Person_being_served__c = :pbsId];	
+    		}
+    		return incidents;
+    	}
+    	set;
+    }
+    
     private void populateRelParties() {
     try {
         this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c,
