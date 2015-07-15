@@ -68,6 +68,8 @@ td.text_right {
 	<form id="evalForm" method="post">
 		<apex:pageBlock rendered="{!cat != ''}">
 			<label class="labelCol">Created By:</label>{!evalSectionOwner}
+ 			<br /><label class="labelCol">Last Modified By:</label>{!evalSectionLastMod}
+ 		
             <apex:outputPanel layout="block"
 				style="right: 10px;float: right;position: relative;"
 				rendered="{!editEnabled}">
@@ -78,9 +80,9 @@ td.text_right {
 			</apex:outputPanel>
 			<span id="evalSecValMsgs" style="color: red;"></span>
 			<apex:outputText value="{!htmlTable}" escape="false" />
+			
 		</apex:pageBlock>
 	</form>
-
 	<script>
         jQuery.noConflict();
 

@@ -11,6 +11,7 @@ public with sharing class GenerateEvalComponent {
         }
         set;
     }
+    
     public string cat {get; set;}
     public string subcat{get; set;}
     public string subsubcat{get; set;}
@@ -39,7 +40,26 @@ public with sharing class GenerateEvalComponent {
         }
         return str;
     }
-
+    
+    public transient string evalSectionLastMod;
+    public string getevalSectionLastMod() {
+    	String str = '';
+    	if ( String.IsBlank( evalSectionId))
+    		return str;
+    	else {
+    		try {
+    			List<Eval_Value__c> evs = [ select lastmodifieddate, lastmodifiedby.name from eval_value__c where eval_section_id__c = :evalSectionId order by lastmodifieddate desc LIMIT 1];
+    			if ( evs.size() == 1 )
+    				return evs[0].lastmodifiedby.name + ' @ ' +  evs[0].lastmodifieddate.format('MM/dd/yyyy HH:mm');
+    			else
+    				return str;
+    		} catch (Exception e) {
+    			system.debug(e);
+    			return '';
+    		}
+    	}
+    }
+    
 
     public transient boolean hasErros { get; private set;}
 
@@ -58,6 +78,7 @@ public with sharing class GenerateEvalComponent {
     }
 
     public GenerateEvalComponent( ) {
+    	
         mapEvalItems = new Map<ID, Eval__c>();
         mapEvalValues = new Map<ID, Eval_Value__c>();
         hasErros = false;
@@ -152,7 +173,7 @@ public with sharing class GenerateEvalComponent {
 
         // get any populated values for this eval and section
         List<Eval_Value__c> listEvalValues = [
-            select id, boolean__c, currency__c, date_time__c, number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c from eval_value__c
+            select id, boolean__c, currency__c, date_time__c, number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c, lastmodifiedby.name, lastmodifieddate from eval_value__c
              where eval__c in :listEvalItems
                and what_id__c = :evaluationID
                and what_id_object__c = 'Evaluation__c'
@@ -161,10 +182,13 @@ public with sharing class GenerateEvalComponent {
                and Eval__r.Sub_Category__c = :subcat
         ];
 
+
         // create a map by eval id
         mapEvalValues = new Map<ID, Eval_Value__c>();
-        for ( Eval_Value__c ev: listEvalValues )
+        for ( Eval_Value__c ev: listEvalValues ) {
             mapEvalValues.put( ev.eval__c, ev);
+        }
+        
 
         // system.debug( 'Populated values:' + mapEvalValues );
         String newHtmlLbl = '';
