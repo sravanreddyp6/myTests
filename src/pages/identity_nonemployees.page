@@ -176,7 +176,7 @@
                         </apex:commandLink>
                         <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">View</apex:outputLink>-->
                         &nbsp;
-                        <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(ner.Current_Person_Type__c ='Employee','false','true')}">Edit</apex:outputLink>
+                        <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(ner.Current_Person_Type__c ='Active Employee','false','true')}">Edit</apex:outputLink>
                         &nbsp;
                         <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Provision</apex:outputLink>
                         </apex:column>
