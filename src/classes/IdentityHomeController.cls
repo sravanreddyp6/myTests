@@ -18,6 +18,9 @@ public with sharing class IdentityHomeController {
     public TMN_User__c theTMNUser {get; set;}
     public ID selectedID {get; set;}
     public Boolean displayPopup {get; set;}   
+    private Integer totalRecs = 0;
+    private Integer offsetSize = 0;
+    private Integer limitSize= 10;
     
     Date currentDate = Date.today();
     Date endDate = currentDate.addDays(30);
@@ -264,26 +267,42 @@ public with sharing class IdentityHomeController {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter a first name, last name or both.'));
         }else if (srchFNameDel.length()<2 && srchLNameDel.length()<2){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
-        }else if (String.IsNotBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){   
+        }else if (String.IsNotBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
+            totalRecs = [SELECT COUNT()
+                         FROM TMN_User__c
+                         WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                         AND Current_Person_Type__c IN ('Active Employee')];   
             searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                     FROM TMN_User__c 
                                     WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                    AND Current_Person_Type__c IN ('Active Employee') 
-                                    LIMIT 15];              
+                                    AND Current_Person_Type__c IN ('Active Employee')
+                                    LIMIT :LimitSize OFFSET :OffsetSize];              
         }else if (String.IsBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
+            totalRecs = [SELECT COUNT()
+                         FROM TMN_User__c
+                         WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
+                         AND Current_Person_Type__c IN ('Active Employee')];
             searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                     FROM TMN_User__c 
                                     WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
-                                    AND Current_Person_Type__c IN ('Active Employee') 
-                                    LIMIT 15];                              
+                                    AND Current_Person_Type__c IN ('Active Employee')
+                                    LIMIT :LimitSize OFFSET :OffsetSize];                              
         }else if (String.IsNotBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
+            totalRecs = [SELECT COUNT()
+                         FROM TMN_User__c 
+                         WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
+                         OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                         OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                         OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2))
+                         AND Current_Person_Type__c IN ('Active Employee')];
             searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                     FROM TMN_User__c 
                                     WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
                                     OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                     OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                     OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2))
-                                    AND Current_Person_Type__c IN ('Active Employee') LIMIT 15];
+                                    AND Current_Person_Type__c IN ('Active Employee')
+                                    LIMIT :LimitSize OFFSET :OffsetSize];
               if(searchDelegateResult.isEmpty()) {
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found.')); 
               }              
@@ -306,12 +325,16 @@ public with sharing class IdentityHomeController {
         }else if (srchFNameNonEmp.length()<2 && srchLNameNonEmp.length()<2){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
             btnDisable = true;
-        }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){   
+        }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
+            totalRecs = [SELECT COUNT()
+                         FROM TMN_User__c 
+                         WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                         AND Current_Person_Type__c NOT IN ('Active Employee')];   
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                   FROM TMN_User__c 
                                   WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                  AND Current_Person_Type__c NOT IN ('Active Employee') 
-                                  LIMIT 15];
+                                  AND Current_Person_Type__c NOT IN ('Active Employee')
+                                  LIMIT :LimitSize OFFSET :OffsetSize];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
@@ -320,11 +343,15 @@ public with sharing class IdentityHomeController {
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
               }              
         }else if (String.IsBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
+            totalRecs = [SELECT COUNT()
+                         FROM TMN_User__c 
+                         WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
+                         AND Current_Person_Type__c NOT IN ('Active Employee')];
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                   FROM TMN_User__c 
                                   WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
-                                  AND Current_Person_Type__c NOT IN ('Active Employee') 
-                                  LIMIT 15];
+                                  AND Current_Person_Type__c NOT IN ('Active Employee')
+                                  LIMIT :LimitSize OFFSET :OffsetSize];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
@@ -333,14 +360,21 @@ public with sharing class IdentityHomeController {
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
               }                              
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
+            totalRecs = [SELECT COUNT()
+                         FROM TMN_User__c 
+                         WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
+                         OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                         OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                         OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
+                         AND Current_Person_Type__c NOT IN ('Active Employee')];
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                   FROM TMN_User__c 
                                   WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
                                   OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                   OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                   OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
-                                  AND Current_Person_Type__c NOT IN ('Active Employee') 
-                                  LIMIT 15];
+                                  AND Current_Person_Type__c NOT IN ('Active Employee')
+                                  LIMIT :LimitSize OFFSET :OffsetSize];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
@@ -392,6 +426,7 @@ public with sharing class IdentityHomeController {
           }
     } 
 
+    //Popups show and close methods
     public void closePopup() {        
         displayPopup = false;    
     } 
@@ -408,6 +443,7 @@ public with sharing class IdentityHomeController {
         displayInfo = false;
     }
 
+    //View TMN User Record
     public PageReference viewTmnUser(){
         theTMNUser = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
                             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,
@@ -423,6 +459,37 @@ public with sharing class IdentityHomeController {
         showInfo();
         return null;
     }
+
+    //Pagination navigation methods
+    public void FirstPage(){
+        OffsetSize = 0;
+    }
+    
+    public void previous(){
+        OffsetSize = OffsetSize - LimitSize;
+    }
+    
+    public void next(){
+        OffsetSize = OffsetSize + LimitSize;
+    }
+    
+    public void LastPage(){
+        OffsetSize = totalrecs - math.mod(totalRecs,LimitSize);
+    }
+
+    public boolean getprev(){
+        if(OffsetSize == 0)
+        return true;
+        else
+        return false;
+    }
+
+    public boolean getnxt(){
+        if((OffsetSize + LimitSize) > totalRecs)
+            return true;
+        else
+            return false;
+    }    
          
 }
 //Script to update Soundex Keys
