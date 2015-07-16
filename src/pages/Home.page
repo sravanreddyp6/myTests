@@ -166,21 +166,32 @@
 			display it */
 			display: none;
 		}
+		
+		
 
 	</style>
+	<apex:outputPanel layout="none" rendered="{!OperatingGroup == 'Redwood' && BEGINS($UserRole.DeveloperName, 'IA')}">
+	<style>
+		[id$=serviceAssignmentTable] tr td:nth-child(2), [id$=serviceAssignmentTable] tr th:nth-child(2) {
+			/* This column is not displayed for RW */
+			display: none;
+		}
+	</style>
+	</apex:outputPanel>
 
 	<apex:form id="mainForm">
 		<apex:pageMessages id="pageMessages" />
-
 		<br />
-		<apex:outputPanel layout="none" rendered="{!OperatingGroup != 'Care Meridian'}">
+		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' || 
+													OperatingGroup = 'NeuroRestorative' ||
+													(AND(OperatingGroup = 'Redwood', !BEGINS($UserRole.DeveloperName, 'IA')))}">
 			<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
 			<apex:inputText title="First Name" value="{!FrstName}" id="FName" />
 			<apex:outputLabel for="{!$Component.LName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
 			<apex:inputText title="Last Name" value="{!LstName}" id="LName" />
 			<apex:commandButton style="margin-left: 10px; " id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
 		</apex:outputPanel>
-		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Care Meridian'}">
+		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Care Meridian' || (AND(OperatingGroup = 'Redwood', BEGINS($UserRole.DeveloperName, 'IA')))}">
 			<apex:outputLabel for="{!$Component.PbsSearchFirstName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
 			<apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
 			<apex:outputLabel for="{!$Component.PbsSearchLastName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
@@ -196,7 +207,7 @@
 			<c:HomePageComponents objectName="Contract Management" />
 			<c:HomePageComponents objectName="Documents" />
 		</apex:outputPanel>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!AND(OperatingGroup == 'Care Meridian', canSeePBS)}">
+		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}">
 			<apex:pageBlockSection columns="2">
 				<apex:selectList id="selectprograms" value="{!selectedAlias}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
@@ -211,7 +222,7 @@
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
-				<apex:column headerValue="View Current Shift">
+				<apex:column headerValue="View Current Shift" >
 					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
 						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
@@ -233,19 +244,18 @@
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" />
-<!-- 						<apex:selectOption itemValue="/{!serviceAssignment.Action_Plans__r[0].Id}" itemLabel="Current Action Plan" rendered="{!serviceAssignment.Action_Plans__r.size > 0}" /> -->
+						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Nurses Shift Documentation" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Nurses Shift Documentation" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" />
 					</apex:selectList>
@@ -331,6 +341,9 @@
 			<apex:param name="evalSectionType" value="" />
 			<apex:param name="canEdit" value="" />
 			<apex:param name="evalId" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="pageProcessing">
+			<apex:param name="saId" value="" assignTo="{!currsaID}" />
 		</apex:actionFunction>
 	</apex:form>
 	<div id="shiftDocActionDialog"></div>
@@ -494,6 +507,7 @@
 				var latestShiftDocId = $selectElement.data('latest-shift-doc-id');
 				var latestCNAWorkbookId = $selectElement.data('latest-cna-workbook-id');
 				var selectedValue = $selected.val();
+				var selectedText = $selected.text();
 				if (selectedValue == 'createShiftDoc') {
 					showAddShiftDocModal(serviceAssignmentId);
 				} else if (selectedValue.indexOf('shiftDocAction-') == 0) {
@@ -506,6 +520,13 @@
 					var category = selectedValue.replace('cnaWorkbookAction-', '').split('~')[0];
 					var subcategory = selectedValue.replace('cnaWorkbookAction-', '').split('~')[1];
 					createPanel('CNA Workbook', category, subcategory, null, 'Activity Log', true, latestCNAWorkbookId);
+				} 
+				// IADAY-9 - RW actions are navigations to new pages
+				else if ( selectedText == 'Create Action Plan') {
+					makeNewPlan(selectedValue);
+				}
+				else if ( selectedText == 'Create Shift Note' || selectedText == 'Add Behavior Data' || selectedText == 'Add Skill Data') {
+					window.location.href= selectedValue;
 				}
 				event.preventDefault();
 			});
