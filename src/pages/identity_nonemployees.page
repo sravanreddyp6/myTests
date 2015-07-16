@@ -144,7 +144,7 @@
                     <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink>
-                     &nbsp;                    
+                     &nbsp;&#124;&nbsp;                    
                     <apex:commandLink value="Extend 30 Days" id="ExtCommand" action="{!add30Days}" rerender="wfBlock"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
@@ -175,9 +175,9 @@
                             <apex:param value="{!ner.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                         </apex:commandLink>
                         <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">View</apex:outputLink>-->
-                        &nbsp;
+                        &nbsp;&#124;&nbsp;
                         <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(ner.Current_Person_Type__c ='Active Employee','false','true')}">Edit</apex:outputLink>
-                        &nbsp;
+                        &nbsp;&#124;&nbsp;
                         <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Provision</apex:outputLink>
                         </apex:column>
                         <apex:column headerValue="Name" value="{!ner.Name}"/>
