@@ -63,7 +63,7 @@
     <apex:outputPanel id="delSrchSec">    
     <apex:pageBlockSection title="Delegate Search Results" columns="1" id="srchBlock" rendered="{!IF(searchDelegateResult=null,'false','true')}">
         <apex:form id="srchForm">
-            <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" id="srchTable">
+            <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" id="details">
                 <apex:column headerValue="Action" >
                     <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel"> 
                         <apex:param value="{!dr.Id}" assignTo="{!selectedID}" name="addSrchIdParam"/>
@@ -75,6 +75,10 @@
                 <apex:column headerValue="Manager" value="{!dr.Manager_Name__c}"/>
                 <apex:column headerValue="Operating Group" value="{!dr.Operating_Group__c}"/>                         
             </apex:pageBlockTable>
+                <apex:commandButton value="First Page" rerender="details" action="{!FirstPage}" disabled="{!prev}"/>
+                <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!prev}"/>
+                <apex:commandButton value="Next" rerender="details" action="{!next}" disabled="{!nxt}"/>
+                <apex:commandButton value="Last Page" rerender="details" action="{!LastPage}" disabled="{!nxt}"/>
         </apex:form>
     </apex:pageBlockSection>
     </apex:outputPanel>        
