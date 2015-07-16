@@ -161,18 +161,18 @@
 
     <apex:outputPanel id="srchpopup">
         <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
-            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
-                <apex:pageMessages />
+            <apex:outputPanel styleClass="custPopup" id="details" layout="block" rendered="{!displayPopUp}">
+               <apex:pageMessages /> 
                 <apex:form >
-                <apex:pageBlock title="Potential Matches" id="details" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
+                <apex:pageBlock title="Potential Matches" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
                     <apex:pageBlockButtons location="Bottom">
                         <apex:commandButton value="Cancel" action="{!closePopup}"/>
                         <apex:commandButton value="Create New Identity Record" action="{!newTmnUser}" id="createBtn"/>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <apex:commandButton value="First Page" rerender="details" action="{!FirstPage}" disabled="{!prev}"/>
-                        <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!prev}"/>
-                        <apex:commandButton value="Next" rerender="details" action="{!next}" disabled="{!nxt}"/>
-                        <apex:commandButton value="Last Page" rerender="details" action="{!LastPage}" disabled="{!nxt}"/>
+                        <apex:commandButton value="First Page" rerender="details" action="{!FirstPageNE}" disabled="{!prev}"/>
+                        <apex:commandButton value="Previous" rerender="details" action="{!previousNE}" disabled="{!prev}"/>
+                        <apex:commandButton value="Next" rerender="details" action="{!nextNE}" disabled="{!nxt}"/>
+                        <apex:commandButton value="Last Page" rerender="details" action="{!LastPageNE}" disabled="{!nxt}"/>
                     </apex:pageBlockButtons>
                     <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
                         <apex:column headerValue="Action" >

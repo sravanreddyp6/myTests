@@ -300,9 +300,8 @@ public with sharing class IdentityHomeController {
                                     WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
                                     OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                     OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                    OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2))
-                                    AND Current_Person_Type__c IN ('Active Employee')
-                                    LIMIT :LimitSize OFFSET :OffsetSize];
+                                    OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
+                                    AND Current_Person_Type__c IN ('Active Employee') LIMIT :LimitSize OFFSET :OffsetSize];
               if(searchDelegateResult.isEmpty()) {
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found.')); 
               }              
@@ -461,27 +460,51 @@ public with sharing class IdentityHomeController {
     }
 
     //Pagination navigation methods
-    public void FirstPage(){
+    public void FirstPageNE(){
         OffsetSize = 0;
+        nonEmpSearch();
     }
     
-    public void previous(){
+    public void previousNE(){
         OffsetSize = OffsetSize - LimitSize;
+        nonEmpSearch();
     }
     
-    public void next(){
+    public void nextNE(){
         OffsetSize = OffsetSize + LimitSize;
+        nonEmpSearch();
     }
     
-    public void LastPage(){
+    public void LastPageNE(){
         OffsetSize = totalrecs - math.mod(totalRecs,LimitSize);
+        nonEmpSearch();
+    }
+
+    public void FirstPageDel(){
+        OffsetSize = 0;
+        delSearch();
+    }
+    
+    public void previousDel(){
+        OffsetSize = OffsetSize - LimitSize;
+        delSearch();
+    }
+    
+    public void nextDel(){
+        OffsetSize = OffsetSize + LimitSize;
+        delSearch();
+    }
+    
+    public void LastPageDel(){
+        OffsetSize = totalrecs - math.mod(totalRecs,LimitSize);
+        delSearch();
     }
 
     public boolean getprev(){
         if(OffsetSize == 0)
-        return true;
+            return true;
         else
-        return false;
+            return false;
     }
 
     public boolean getnxt(){
