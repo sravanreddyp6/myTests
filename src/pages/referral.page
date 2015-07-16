@@ -117,6 +117,14 @@
 			setUpFields();
             enableDiagEff();
             setUpTabOrder();
+            if(j$('[id$=refSourceTypeFieldId]').val()=== 'Other'){
+        	j$('[id$=SourceTypeOtherId]').prop('disabled', false);
+        	j$('[id$=SourceTypeOtherDiv]').addClass('requiredInput');
+        	}else {
+        	j$('[id$=SourceTypeOtherId]').prop('disabled', true);
+        	j$('[id$=SourceTypeOtherDiv]').removeClass('requiredInput');
+        	}
+            
         });
     </script>
 
@@ -563,7 +571,18 @@
        
                    console.log('end tab order');    
         }
-        //end pri-162        
+        //end pri-162       
+        
+        
+        function enableOther() {
+        	if(j$('[id$=refSourceTypeFieldId]').val()=== 'Other'){
+        	j$('[id$=SourceTypeOtherId]').prop('disabled', false);
+        	j$('[id$=SourceTypeOtherDiv]').addClass('requiredInput');
+        	}else{
+        	j$('[id$=SourceTypeOtherId]').prop('disabled', true);
+        	j$('[id$=SourceTypeOtherDiv]').removeClass('requiredInput')
+        	}
+        }
     </script>
 <div id="theWholeForm">
     <apex:form id="referralForm">
@@ -1495,32 +1514,16 @@
 
                 <apex:pageBlockSectionItem />
 
-
-                <apex:pageBlockSectionItem >
-                    <apex:outputLabel for="refSourceTypeField" value="Referral Source Type" />
-                    <apex:actionRegion >
-                        <apex:inputField id="refSourceTypeField" value="{!Referral__c.Referral_Source_Type__c}" required="{!ReferralRecordType =='NeuroRestorative'}">
-                            <apex:actionStatus id="statusRefSourceType">
-                                <apex:facet name="start">
-                                    <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
-                                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-                                    </div>
-                                </apex:facet>
-                                <apex:facet name="stop"></apex:facet>
-                            </apex:actionStatus>
-                            <apex:actionSupport event="onchange" rerender="referralDetailBlock" status="statusRefSourceType" oncomplete="enableDiagEff();setUpFields();" />
-                        </apex:inputField>
-                    </apex:actionRegion>
+                      <apex:inputField id="refSourceTypeFieldId" value="{!Referral__c.Referral_Source_Type__c}" required="{!ReferralRecordType =='NeuroRestorative'}" onChange="enableOther()"/>
+                   		
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Other (Describe)" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" id="SourceTypeOtherDiv" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                     <apex:inputField id= "SourceTypeOtherId" value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" required="{!Referral__c.Referral_Source_Type__c=='Other'}"/>	
+                        </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-
-
-                <apex:pageBlockSectionItem >
-                    <apex:outputLabel for="refSourceTypeOtherField" value="Other (Describe)" />
-                    <apex:actionRegion >
-                        <apex:inputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" rendered="{!Referral__c.Referral_Source_Type__c!='Other'}" html-disabled="true" />
-                        <apex:inputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" required="{!Referral__c.Referral_Source_Type__c=='Other'}" rendered="{!Referral__c.Referral_Source_Type__c=='Other'}" />
-                    </apex:actionRegion>
-                </apex:pageBlockSectionItem>
+                
 
                 <!-- ERC-97: Start -->
                 <!-- <apex:inputField value="{!Referral__c.Agency_Name__c}" label="Referral Source" /> -->
