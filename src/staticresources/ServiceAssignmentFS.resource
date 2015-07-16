@@ -362,6 +362,23 @@
 	
 	}
 	
+	prnDS = function(slPRNDS, elselector){
+		var hours = $('[id$=hoursExpected]').val();
+		var slDs = slPRNDS;
+		console.log('I am in here');
+		console.log(hours);
+		console.log(elselector);
+		
+		if(hours > 0 && slDs  > 0){
+			console.log('i am in if loop');
+			assignValue(elselector,hours*slDs);
+		}else{
+			console.log('I am ion else loop');
+			assignValue(elselector, 0);
+		}
+	
+	}
+	
 	onlyNos = function(e, t) {
             try {
                 if (window.event) {
