@@ -75,10 +75,10 @@
                 <apex:column headerValue="Manager" value="{!dr.Manager_Name__c}"/>
                 <apex:column headerValue="Operating Group" value="{!dr.Operating_Group__c}"/>                         
             </apex:pageBlockTable>
-                <apex:commandButton value="First Page" rerender="details" action="{!FirstPage}" disabled="{!prev}"/>
-                <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!prev}"/>
-                <apex:commandButton value="Next" rerender="details" action="{!next}" disabled="{!nxt}"/>
-                <apex:commandButton value="Last Page" rerender="details" action="{!LastPage}" disabled="{!nxt}"/>
+                <apex:commandButton value="First Page" rerender="details" action="{!FirstPageDel}" disabled="{!prev}"/>
+                <apex:commandButton value="Previous" rerender="details" action="{!previousDel}" disabled="{!prev}"/>
+                <apex:commandButton value="Next" rerender="details" action="{!nextDel}" disabled="{!nxt}"/>
+                <apex:commandButton value="Last Page" rerender="details" action="{!LastPageDel}" disabled="{!nxt}"/>
         </apex:form>
     </apex:pageBlockSection>
     </apex:outputPanel>        
