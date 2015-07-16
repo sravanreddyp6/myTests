@@ -228,7 +228,7 @@
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
-					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
+					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!serviceAssignment.Action_Plans__r[0].Id}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
 						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="pbsActionButton" />
@@ -500,6 +500,7 @@
 				var admissionId = $selectElement.data('service-admission-id');
                 var personId = $selectElement.data('service-person-id');
                 var state = $selectElement.data('service-state-id');
+                var action = $selectElement.data('service-action-id');
 				var latestShiftDocId = $selectElement.data('latest-shift-doc-id');
 				var latestCNAWorkbookId = $selectElement.data('latest-cna-workbook-id');
 				var selectedValue = $selected.val();
@@ -512,7 +513,7 @@
 				} else if (selectedValue == 'createCNAWorkbook') {
 					showAddCNAWorkbookModal(serviceAssignmentId);
 				} else if(selectedValue=='createProgressNotes'){
-					var url = 'apex/Notes_Progressnote_AZ_OPT?Mode=New&ServAssignId='+serviceAssignmentId+'&admission='+admissionId+'&person='+personId+'&State='+state;
+					var url = 'apex/Notes_Progressnote_AZ_OPT?Mode=New&plan='+action+'&ServAssignId='+serviceAssignmentId+'&admission='+admissionId+'&person='+personId+'&State='+state;
 					$(location).attr('href',url);
                 }
 				else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
