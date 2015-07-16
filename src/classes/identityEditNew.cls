@@ -72,7 +72,7 @@ public class identityEditNew {
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
-            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Teleo_ID__c,Termination_Date__c,Manager_Lookup__c, 
+            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c, 
             Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
