@@ -142,7 +142,7 @@
 		}
 		
 		fundingSourceFinalize = function(){
-			 var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Sum_FS_Attributes__c}',
+			 var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Room_and_Board_Rate__c}','{!serviceLocation.PRN_DS_Per_Hour__c}',
 					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
 					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
 									
@@ -159,7 +159,7 @@
 				fundingSourceScrollToTop();
 	        }else{
 	        	j$('#fundingMessages').html('');
-				var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Sum_FS_Attributes__c}',
+				var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Room_and_Board_Rate__c}','{!serviceLocation.PRN_DS_Per_Hour__c}',
 					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
 					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
 					
