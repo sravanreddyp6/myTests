@@ -265,11 +265,25 @@ public with sharing class IdentityHomeController {
         }else if (srchFNameDel.length()<2 && srchLNameDel.length()<2){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
         }else if (String.IsNotBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){   
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c FROM TMN_User__c WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) AND Current_Person_Type__c IN ('Active Employee') LIMIT 15];              
+            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+                                    FROM TMN_User__c 
+                                    WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                                    AND Current_Person_Type__c IN ('Active Employee') 
+                                    LIMIT 15];              
         }else if (String.IsBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c FROM TMN_User__c WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) AND Current_Person_Type__c IN ('Active Employee') LIMIT 15];                              
+            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+                                    FROM TMN_User__c 
+                                    WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
+                                    AND Current_Person_Type__c IN ('Active Employee') 
+                                    LIMIT 15];                              
         }else if (String.IsNotBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c FROM TMN_User__c WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR First_Name_Soundex_Key__c = :generatedKey2 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) AND Current_Person_Type__c IN ('Active Employee') LIMIT 15];
+            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+                                    FROM TMN_User__c 
+                                    WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
+                                    OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                                    OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                                    OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2))
+                                    AND Current_Person_Type__c IN ('Active Employee') LIMIT 15];
               if(searchDelegateResult.isEmpty()) {
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found.')); 
               }              
@@ -293,7 +307,11 @@ public with sharing class IdentityHomeController {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
             btnDisable = true;
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){   
-            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c FROM TMN_User__c WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) AND Current_Person_Type__c NOT IN ('Active Employee') LIMIT 15];
+            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+                                  FROM TMN_User__c 
+                                  WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                                  AND Current_Person_Type__c NOT IN ('Active Employee') 
+                                  LIMIT 15];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
@@ -302,7 +320,11 @@ public with sharing class IdentityHomeController {
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
               }              
         }else if (String.IsBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
-            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c FROM TMN_User__c WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) AND Current_Person_Type__c NOT IN ('Active Employee') LIMIT 15];
+            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+                                  FROM TMN_User__c 
+                                  WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
+                                  AND Current_Person_Type__c NOT IN ('Active Employee') 
+                                  LIMIT 15];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
@@ -311,7 +333,14 @@ public with sharing class IdentityHomeController {
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
               }                              
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
-            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c FROM TMN_User__c WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR First_Name_Soundex_Key__c = :generatedKey2 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) AND Current_Person_Type__c NOT IN ('Active Employee') LIMIT 15];
+            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+                                  FROM TMN_User__c 
+                                  WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
+                                  OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                                  OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                                  OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
+                                  AND Current_Person_Type__c NOT IN ('Active Employee') 
+                                  LIMIT 15];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
