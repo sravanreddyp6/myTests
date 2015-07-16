@@ -11,7 +11,7 @@
             margin: 0 0 0 -488px;
             z-index: 101 !important;
             height:300px;
-            padding-top:35%;
+            padding-top:45%;
             
         }
 
@@ -122,7 +122,7 @@
 <apex:variable var="Pending" value="{!IF(Progress_Note__c.Approval_Status__c='Pending',True,False)}"/>
 <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:pagemessages ></apex:pagemessages>
-    <apex:form id="myFRM" >
+    <apex:form id="myFRM" ><apex:pagemessages ></apex:pagemessages>
     <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!insertedProgressNoteId}"/> 
     <script>
         function openPopUp(){
@@ -174,11 +174,12 @@
             input[name=piSubmit] { display: none;}
         </style>
         <br></br>
-        <apex:pageBlock >
+        <apex:pageBlock id="pblk">
+        <apex:pagemessages ></apex:pagemessages>
             <apex:commandButton id="saveButton"   value="Save"   action="{!save}"   style="margin-left:30%;display:none"/>
             <apex:commandButton id="cancelButton" value="Cancel" action="{!Cancel}" style="display:none"/>
             <apex:commandButton id="editButton" value="Edit"  action="{!Edit}" style="margin-left:30%;"/>
-            <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup" />
+            <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,pblk" />
             <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
             <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
             <apex:commandButton id="esign" value="E-Sign"  onClick="authenticate(); return false;"/>
@@ -323,6 +324,9 @@
          </apex:pageBlock>
     </apex:outputpanel>
     <apex:outputPanel id="tstpopup">
+    
+    
+    
         <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
         <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
             <apex:pageMessage rendered="{!hasOverlap}" severity="warning" title="Overlapping Notes Detected" strength="3" detail="Before submitting this note, please consider these other Progress Notes listed below whose times overlap the start and end date of this note." />
@@ -339,16 +343,16 @@
             </apex:pageBlock>
             <apex:pageBlock id="block" >
                 <apex:pageBlockButtons >
-                    <apex:commandButton value="Submit for Approval" action="{!myFinal}"  rendered="{!!thePN.No_Approval_Needed__c}"/>
+                    <apex:commandButton value="Submit for Approval" action="{!SubmitForApp}"  rendered="{!!thePN.No_Approval_Needed__c}"/>
                     <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
                     <apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
                     <apex:commandButton value="E-Sign"  action="{!closePopup}" oncomplete="authenticate(); return false;" rerender="tstpopup"/>
                 </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="1" >
                     <apex:pageMessages ></apex:pageMessages>
-                    <!--<apex:inputField value="{!thePN.No_Approval_Needed__c}">
-                        <apex:actionSupport event="onclick" reRender="block"/>                
-                    </apex:inputField>--><br></br>
+                    <apex:inputField value="{!thePN.Next_Approver__c}">
+                        <!--<apex:actionSupport event="onclick" reRender="block"/> -->               
+                    </apex:inputField><br></br>
                     <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
                         <center>Once you submit this record for approval,
                         <br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>

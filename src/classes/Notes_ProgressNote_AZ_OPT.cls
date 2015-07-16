@@ -40,7 +40,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public boolean hasOverlap {get { return (pnOverlap.size() > 0 && thePN.recordtype.developername == 'AZ_OPT');} }
     
     public void LoadData(Progress_Note__c tmp){
-        thePN = [select id, Name, No_Approval_Needed__c, Person_Being_Served__r.Name, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
+        thePN = [select id, Name, No_Approval_Needed__c, Person_Being_Served__r.Name,next_approver__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
         
       List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :thePN.id 
@@ -69,6 +69,24 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         pnOverlap.addall(samepbsNotes);
         pnOverlap.addall(diffpbsNotes);    
     }
+    
+    Public pagereference SubmitForApp(){
+        Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
+        req1.setComments('Submitting request for approval.');
+        req1.setObjectId(thePn.id);
+        req1.setSubmitterId(UserInfo.getUserId());
+        req1.setProcessDefinitionNameOrId('Progress_Notes_Approval');
+        req1.setSkipEntryCriteria(true);
+        list<id> listids = new list<id>();
+        listids.add(thePN.next_approver__c);
+        req1.setNextApproverIds(listids);
+        Approval.ProcessResult result = Approval.process(req1);
+        pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+thePn.id+'&sfdc.override=1');
+        pageref.setredirect(true);
+        return pageref;
+    }
+    
+    
     public PageReference myFinal(){
         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
         pageRef.getParameters().put('id', thePN.id);
@@ -104,12 +122,12 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public void closePopup() {        
         displayPopup = false;    
     }     
-    public void showPopup() { 
+    public pagereference showPopup() { 
         list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
                 Person_being_served__r.Name, start_time__c, end_time__c, status__c, recordtype.Name,Service_code__c,People_Present__c,
                 Interventions__c, progress__c,Notes_For_Next_Visit__c,Action_plan__c,
                 Owner.Name from Progress_Note__c
-                where id != :thePN.id];
+                where id =:thePn.Id];
         boolean HasGoal = false;
         List<ProgressNote_ActionPlanChildren_mjo__c> GoalList = [SELECT Id, Progress_Note__c, Goal__c from ProgressNote_ActionPlanChildren_mjo__c where Progress_Note__c =: thePN.id];
         for(ProgressNote_ActionPlanChildren_mjo__c p:GoalList){
@@ -117,12 +135,12 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 hasGoal = True ;
             }
         } 
-        if(!hasgoal || pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
-        pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||
-        pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null) {
-            if(!hasGoal){
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,''));   
-            }
+        if(/***!hasgoal || **/pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
+        pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || /**pnValidations[0].Service_code__c == Null ||**/
+        pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
+            //if(!hasGoal){
+            //    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a "Goal" before continuing.'));   
+            //}
             if(pnValidations[0].status__c == 'Final'){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This Progress Note has already been Finalized'));  
             }
@@ -135,28 +153,28 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             if(pnValidations[0].Service_Location__c == Null){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Location before continuing'));   
             }
-            if(pnValidations[0].Type_of_Contact__c == Null){
+            if(pnValidations[0].Type_of_Contact__c == Null ||pnValidations[0].Type_of_Contact__c == ''){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select the Type of Contact before continuing'));  
             }
-            if(pnValidations[0].Service_code__c == Null){
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));  
-            }
-            if(pnValidations[0].Interventions__c== Null){
+            //if(pnValidations[0].Service_code__c == Null){
+            //    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));  
+            //}
+            if(pnValidations[0].Interventions__c== Null|| pnValidations[0].Interventions__c== ''){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must populate the Intervention field before continuing.'));    
             }
             if(pnValidations[0].Notes_For_Next_Visit__c == Null){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must populate the Notes For Next Visit field before continuing.'));  
             }
-            if(pnValidations[0].progress__c == Null){
+            if(pnValidations[0].progress__c == Null|| pnValidations[0].progress__c == ''){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must populate the Progress field before continuing.'));  
-            }
-            displaypopup = false;
             
-                
+            }
+            return null;
         }
         else{
             displayPopup = true; 
             LoadData(thePN);
+            return null;
             
         }
     }
