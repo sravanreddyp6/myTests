@@ -54,6 +54,7 @@ public with sharing class HomePageController{
 
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
+	public Boolean canCreateProgressNotes { get; set; }
 	
 	// EC-196 - Shift notes
 	public Boolean canCreateNote { get; private set; }
@@ -150,6 +151,14 @@ public with sharing class HomePageController{
 		} else {
 			canSeeShiftDoc = false;
 		}
+		Map<id,UserRole> rolemap =new Map<id,UserRole>([SELECT DeveloperName,Id FROM UserRole]);
+        if((rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix_Clinical_Users'||rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix')&& OperatingGroup == 'Redwood'){
+          canCreateProgressNotes = true;
+          canSeeShiftDoc = false;
+          canSeeCNAWorkbook = false;
+        }
+        else
+          canCreateProgressNotes =false;
 
 		oSchema = Progress_Note__c.sObjectType.getDescribe();
 		canCreateNote = oSchema.isCreateable();
@@ -173,7 +182,7 @@ public with sharing class HomePageController{
 	public void updateProgramSelection() {
 		String query = '' +
 			'SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
-			'       Admission__r.Id, ' +
+			'       Admission__r.Id, Admission__r.State__c, ' +
 			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
 			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
@@ -222,6 +231,10 @@ public with sharing class HomePageController{
 				}
 				optionList.add(new SelectOption('', '-------------'));
 			}
+			if (canCreateProgressNotes) {
+                optionList.add(new SelectOption('createProgressNotes', 'Create New Progress Note'));
+                optionList.add(new SelectOption('', '-------------'));
+            }
 			if (canSeeCNAWorkbook) {
 				optionList.add(new SelectOption('createCNAWorkbook', 'Create New CNA Workbook'));
 				if (hasCNAWorkbookMap.get(serviceAssignment.Id) && cnaWorkbookMap.get(serviceAssignment.Id).OwnerId == UserInfo.getUserId()) {
