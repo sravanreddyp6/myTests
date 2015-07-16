@@ -173,8 +173,8 @@ public with sharing class HomePageController{
 	public void updateProgramSelection() {
 		String query = '' +
 			'SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
-			'       Admission__r.Id, ' +
-			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
+			'       Admission__r.Id, Admission__r.state__c, ' +
+			'       (SELECT Id FROM Action_Plans__r where status__c = \'Active Final\'), ' +
 			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
 			'WHERE Service_Location__r.Alias__c = :selectedAlias ' +
@@ -235,6 +235,25 @@ public with sharing class HomePageController{
 							'Add Activity Log Entry for ' + readableCompositeKey
 						));
 					}
+				}
+			}
+			
+			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
+			if ( operatingGroup == 'Redwood') {
+				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
+					optionList.add(new SelectOption(
+										Page.Notes_ProgressNote_Create.getUrl() + 
+										'?service_assignment=' + serviceAssignment.ID + 
+										'&plan=' + serviceAssignment.Action_Plans__r[0].Id + 
+										'&admission=' + serviceAssignment.Admission__r.Id + 
+										'&person=' + serviceAssignment.Person_Being_Served__r.Id + 
+										'&state=' + serviceAssignment.Admission__r.State__c +
+										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));
+					
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Behavior Data'));
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Skill Data'));
+				} else {
+					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
 				}
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
@@ -504,4 +523,32 @@ public with sharing class HomePageController{
 		}
 	}
 	// END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
+	
+	// IADAY-9 - to support creation of new plan from home page
+	public String currsaID { get; set; }
+	public pagereference NewPlan( ){
+		
+		// we only come into this function if there is no active final plan
+		// find out if there's an inactive draft we can view
+		List<Action_Plan__c> aplist = [ select id, status__c from Action_Plan__c where status__c = 'Inactive Draft' and service_assignment__c = :currsaID order by status__c, lastmodifieddate desc  LIMIT 1];
+		
+		
+		Action_plan__c AP; 
+		
+		// if an inactive plan exists, take them to that page to view
+		if ( aplist.size() == 1 ) {
+			AP = aplist[0];
+		} else {
+		 
+			AP = new Action_plan__c();
+			AP.Service_Assignment__c = currsaID;
+			insert AP;
+		}
+		
+		PageReference ref =  new ApexPages.StandardController(AP).view() ;
+		ref.getparameters().put('retURL', Apexpages.CurrentPage().getURL());
+		return ref;
+
+	}
+	
 }
