@@ -92,12 +92,15 @@ public with sharing class CmPersonBillingRpt {
         buildResourceMap();  
         buildMapEvalItems();
         buildEvalResposesMap();
-        buildCnaApprovalHistoryMap();
+        //buildCnaApprovalHistoryMap(); -- Kate said this need not be on the billing report, leaving it here in case if that changes.
                 
         // Parse the Eval_Value__c to the list of strings.
         for (String evalSec : evalSectionsMap.keySet()){
         	EvalValWrapper evalSecVal = evalSectionsMap.get(evalSec);        	
         	evalSecVal.prepareEvalValStr(this);
+            if (evalSecVal.evalType.equalsIgnoreCase(evalSecVal.entryType) && evalSecVal.entryType.equalsIgnoreCase('CNA Workbook') && evalSecVal.cat == 'Turns' && evalSecVal.subcat == 'Details') {
+               evalSecVal.prepareTurnsDetails();    
+            }
         }
 
 
@@ -113,9 +116,10 @@ public with sharing class CmPersonBillingRpt {
         }
         
         // Naming the PDF in case this controller is used for the PDF page
-        String file = sa[0].person_being_served__r.LastName +' NsdCnaWeeklySummaries for ' + StartDate.format() + ' to ' + EndDate.format() + '.pdf';
+        String file = sa[0].person_being_served__r.FirstName + ' ' + sa[0].person_being_served__r.LastName + '  ' + StartDate.format() + ' to ' + EndDate.format() + '.pdf';
         file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
-        Apexpages.currentPage().getHeaders().put('content-disposition', 'attachment; filename="'+file+'"');                
+        Apexpages.currentPage().getHeaders().put('content-disposition', 'attachment; filename="'+file+'"');
+        //Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename="'+file+'"');                        
         
     }
     
@@ -255,7 +259,13 @@ public with sharing class CmPersonBillingRpt {
             strEvalSections = new list<String>();
             mapEvalValues = new map<ID, Eval_Value__c>();
         }
-        
+
+        transient public TurnsChartController turnsChartComp {get;set;}
+        public void prepareTurnsDetails() {
+            this.turnsChartComp = new TurnsChartController();
+            turnsChartComp.setEvalID(this.parentEval); 
+        }
+                
         public void prepareEvalValStr(CmPersonBillingRpt parentObj){
             String newHTMLfld= '';
             String strval= '';
