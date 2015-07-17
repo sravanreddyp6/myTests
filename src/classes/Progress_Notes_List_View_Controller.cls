@@ -6,17 +6,17 @@ public with sharing class Progress_Notes_List_View_Controller {
     private integer prNum=0;
     public integer totalSize;
     public integer actualsize{get;set;}
-    public Progress_Notes_List_View_Controller (){totalSize = [select count() from Progress_Note__c];}
+    public Progress_Notes_List_View_Controller (){totalSize = [select count() from Progress_Note__c Limit 500];}
     public id selectedpnid{get;set;}
     public string notes='';
     public ApexPages.StandardSetController ProgressNoteController {
         get{
             if(ProgressNoteController == null && notes!=''){
-                Querystring='SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,CreatedBy.Name FROM Progress_Note__c where Name LIKE \'%'+String.escapeSingleQuotes(notes)+ '%\'';
+                Querystring='SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,CreatedBy.Name FROM Progress_Note__c where Name LIKE \'%'+String.escapeSingleQuotes(notes)+ '%\' ORDER BY Name Limit 500';
                 ProgressNoteController = new ApexPages.StandardSetController(Database.getQueryLocator(Querystring));
                 ProgressNoteController.setPageSize(pageSize);
                 actualsize  = ProgressNoteController.getrecords().size();
-                totalSize = [select count() from Progress_Note__c];
+                totalSize = [select count() from Progress_Note__c Limit 500];
                 prNum =1;
                 if(actualsize==0){
                     prNum = 0;
@@ -25,7 +25,7 @@ public with sharing class Progress_Notes_List_View_Controller {
                 }
             }
             if(ProgressNoteController == null){
-                Querystring= 'SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,CreatedBy.Name FROM Progress_Note__c ORDER BY CreatedDate ASC';
+                Querystring= 'SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,CreatedBy.Name FROM Progress_Note__c ORDER BY CreatedDate DESC Limit 500';
                 ProgressNoteController = new ApexPages.StandardSetController(Database.getQueryLocator(Querystring));
                 ProgressNoteController.setPageSize(pageSize);
                 actualsize  = ProgressNoteController.getrecords().size();

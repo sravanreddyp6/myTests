@@ -1,0 +1,49 @@
+<apex:page controller="Progress_Notes_List_View_Controller" sidebar="false" readOnly="true">
+    <script>
+    function dynamicsearch(){
+        searchresult(document.getElementById("searchbyname").value);
+    }    
+    </script>    
+    <apex:form >
+        <apex:actionFunction name="searchresult" action="{!searchProgressNotes}" reRender="ProgressnotesTable,pagination">
+            <apex:param name="progressnotename" value=""/>
+        </apex:actionFunction>
+        <apex:panelGrid id="details" width="100%"> 
+            <apex:actionStatus id="ajaxStatus" startText="Loading..."  stopText=""/>
+            <apex:pageBlock title="Progress Notes Log" id="results"> 
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!firstPage}" value="First" reRender="ProgressnotesTable,pagination"  status="ajaxStatus" />
+                    <apex:commandButton action="{!prev}" value="Previous" reRender="ProgressnotesTable,pagination"  status="ajaxStatus" />
+                    <apex:commandButton action="{!next}" value="Next" reRender="ProgressnotesTable,pagination"  status="ajaxStatus" />
+                    <apex:commandButton action="{!lastPage}" value="Last" reRender="ProgressnotesTable,pagination"  status="ajaxStatus" /> 
+                </apex:pageBlockButtons>
+                <div id="table_filter1">
+                    <b>Search&nbsp;</b>
+                    <input type="text" name="table_filter_box" placeholder="Progress Note Name" id="searchbyname" onkeyup="dynamicsearch();" />
+                </div>
+                <apex:pageBlockTable value="{!ProgressNotes}" var="pr" id="ProgressnotesTable">
+                    <apex:column >
+                        <apex:commandLink value="Edit" action="{!editcardnotes}" >
+                            <apex:param name="selectedid" value="{!pr.id}" assignTo="{!selectedpnid}"/>
+                        </apex:commandLink>
+                    </apex:column>
+                    <apex:column headerValue="Name" >
+                        <apex:commandLink value="{!pr.Name}" action="{!editcardnotes}" >
+                            <apex:param name="selectedid" value="{!pr.id}" assignTo="{!selectedpnid}"/>
+                        </apex:commandLink>
+                    </apex:column>
+                    <apex:column value="{!pr.CreatedDate}" headerValue="Created"/>
+                    <apex:column value="{!pr.Disregard_Note__c}" headerValue="Disregard"/>
+                    <apex:column value="{!pr.Start_Time__c}" headerValue="Start Time"/>
+                    <apex:column value="{!pr.End_Time__c}" headerValue="End Time"/>
+                    <apex:column value=" {!Left(pr.Progress__c,20)}" headerValue="Comments/Notes"  style="width:300px" id="comments" />
+                    <apex:column value="{!pr.CreatedBy.Name}" headerValue="User Name"/>
+                </apex:pageBlockTable>
+                <apex:outputPanel id="pagination">
+                    <apex:outputPanel style="float:right; padding-right:3.5cm; margin-top: 12px;"> Page  {!pageNumber} of {!totalPages} </apex:outputPanel> 
+                    <div id ="progress" style="padding-left:3cm; margin-top: 12px; ">{!progSize} - {!actualsize}  of  {!totalSize} </div>
+                </apex:outputPanel> 
+            </apex:pageBlock>
+        </apex:panelGrid>
+    </apex:form>
+</apex:page>
