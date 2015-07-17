@@ -346,7 +346,7 @@
                     <apex:commandButton value="Submit for Approval" action="{!SubmitForApp}"  rendered="{!!thePN.No_Approval_Needed__c}"/>
                     <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>
                     <apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
-                    <apex:commandButton value="E-Sign"  action="{!closePopup}" oncomplete="authenticate(); return false;" rerender="tstpopup"/>
+                    <!-- <apex:commandButton value="E-Sign"  action="{!closePopup}" oncomplete="authenticate(); return false;" rerender="tstpopup"/>  -->
                 </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="1" >
                     <apex:pageMessages ></apex:pageMessages>
