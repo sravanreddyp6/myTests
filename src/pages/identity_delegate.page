@@ -1,32 +1,75 @@
 <apex:page controller="IdentityHomeController" sidebar="false" id="idDelegatePage" tabStyle="TMN_User__c">
 
     <style type="text/css"> 
-    .block {
-        border-width: 10px 4px;
-        border-style: solid;
-        border-color: #0E5A8C;
-        -webkit-border-radius: 8px;
-        -moz-border-radius: 8px;
-        border-radius: 8px;
-        padding: 4px;
-        margin-bottom: 12px;
-        width: 230px;
-    }
-                    
-    .block-title {
-        color: #000000;
-        padding: 0 4px;
-        font-size: 1.25em;
-        font-weight: bold;
-    }       
-
-    .block-inner {
-        color: #000000;
-        padding: 0 4px;
-        font-size: 1em;
-        font-weight: bold;
-    }                               
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            /* These are the 3 css properties you will need to change so the popup 
+            displays in the center of the screen. First set the width. Then set 
+            margin-left to negative half of what the width is. You can add 
+            the height property for a fixed size pop up if you want.*/
+            width: 1000px;
+            margin-left: -500px;
+            top:100px;
+        }
+        .popupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .block {
+            border-width: 10px 4px;
+            border-style: solid;
+            border-color: #0E5A8C;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 12px;
+            width: 230px;
+        }                  
+        .block-title {
+            color: #000000;
+            padding: 0 4px;
+            font-size: 1.25em;
+            font-weight: bold;
+        }       
+        .block-inner {
+            color: #000000;
+            padding: 0 4px;
+            font-size: 1em;
+            font-weight: bold;
+        }                               
     </style>
+
+    <apex:actionStatus id="loadingBusy" stopText="">
+        <apex:facet name="start">
+            <div>
+                <div class="popupBackground" />
+                <div class="custPopup">
+                    <table border="0" width="100%" height="100%">
+                        <tr>
+                            <td align="center"><b>Please Wait</b></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><img src="{!$Resource.AjaxLoad}"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
 
     <apex:panelGrid >                
         <apex:panelGroup >
@@ -65,7 +108,7 @@
         <apex:form id="srchForm">
             <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" >
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel"> 
+                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel" status="loadingBusy"> 
                         <apex:param value="{!dr.Id}" assignTo="{!selectedID}" name="addSrchIdParam"/>
                     </apex:commandLink>
                 </apex:column>           
@@ -75,10 +118,10 @@
                 <apex:column headerValue="Manager" value="{!dr.Manager_Name__c}"/>
                 <apex:column headerValue="Operating Group" value="{!dr.Operating_Group__c}"/>                         
             </apex:pageBlockTable>
-                <apex:commandButton value="First Page" rerender="details" action="{!FirstPageDel}" disabled="{!prevDel}"/>
-                <apex:commandButton value="Previous" rerender="details" action="{!previousDel}" disabled="{!prevDel}"/>
-                <apex:commandButton value="Next" rerender="details" action="{!nextDel}" disabled="{!nxtDel}"/>
-                <apex:commandButton value="Last Page" rerender="details" action="{!LastPageDel}" disabled="{!nxtDel}"/>
+                <apex:commandButton value="First Page" rerender="details" action="{!FirstPageDel}" disabled="{!prevDel}" status="loadingBusy"/>
+                <apex:commandButton value="Previous" rerender="details" action="{!previousDel}" disabled="{!prevDel}" status="loadingBusy"/>
+                <apex:commandButton value="Next" rerender="details" action="{!nextDel}" disabled="{!nxtDel}" status="loadingBusy"/>
+                <apex:commandButton value="Last Page" rerender="details" action="{!LastPageDel}" disabled="{!nxtDel}" status="loadingBusy"/>
         </apex:form>
     </apex:pageBlockSection>
     </apex:outputPanel>        
@@ -88,7 +131,7 @@
         <apex:form id="delForm" >
             <apex:pageBlockTable value="{!myDelegates}" var="del" id="delTable">
                 <apex:column headerValue="Action">
-                    <apex:commandLink value="Remove Delegate" id="delCommand" action="{!removeDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel">
+                    <apex:commandLink value="Remove Delegate" id="delCommand" action="{!removeDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel" status="loadingBusy">
                         <apex:param value="{!del.Id}" assignTo="{!selectedID}" name="delIdParam"/>
                     </apex:commandLink>
                 </apex:column>
@@ -105,7 +148,7 @@
         <apex:form id="empForm" >
             <apex:pageBlockTable value="{!myEmployees}" var="e" id="empTable">
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel"> 
+                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel" status="loadingBusy"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
                 </apex:column>
