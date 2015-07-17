@@ -116,11 +116,11 @@
     <apex:pageBlockSection ></apex:pageBlockSection>
     
     <apex:outputPanel id="details">    
-    <apex:pageBlockSection title="Delegate Search Results" columns="1" id="srchBlock" rendered="{!IF(searchDelegateResult=null,'false','true')}">
+    <apex:pageBlockSection title="Delegate Search Results" columns="1" id="srchBlock" rendered="{!displayDelSrch}">
         <apex:form id="srchForm">
             <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" >
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
                         <apex:param value="{!dr.Id}" assignTo="{!selectedID}" name="addSrchIdParam"/>
                     </apex:commandLink>
                 </apex:column>           
@@ -143,7 +143,7 @@
         <apex:form id="delForm" >
             <apex:pageBlockTable value="{!myDelegates}" var="del" id="delTable">
                 <apex:column headerValue="Action">
-                    <apex:commandLink value="Remove Delegate" id="delCommand" action="{!removeDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel" status="loadingBusy">
+                    <apex:commandLink value="Remove Delegate" id="delCommand" action="{!removeDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy">
                         <apex:param value="{!del.Id}" assignTo="{!selectedID}" name="delIdParam"/>
                     </apex:commandLink>
                 </apex:column>
@@ -160,7 +160,7 @@
         <apex:form id="empForm" >
             <apex:pageBlockTable value="{!myEmployees}" var="e" id="empTable">
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
                 </apex:column>

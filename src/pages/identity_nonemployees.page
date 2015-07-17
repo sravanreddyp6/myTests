@@ -5,7 +5,7 @@
             background-color: white;
             border-width: 2px;
             border-style: solid;
-            z-index: 9999;
+            z-index: 9997;
             left: 50%;
             padding:10px;
             position: absolute;
@@ -38,7 +38,18 @@
             height: 100%;
             top: 0;
             left: 0;
-            z-index: 9998;
+            z-index: 9996;
+        }
+        .waitPopupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;            
         }
         .block {
             border-width: 10px 4px;
@@ -69,7 +80,7 @@
     <apex:actionStatus id="loadingBusy" stopText="">
         <apex:facet name="start">
             <div>
-                <div class="popupBackground" />
+                <div class="waitPopupBackground" />
                 <div class="waitPopup">
                     <table border="0" width="100%" height="100%">
                         <tr>

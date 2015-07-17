@@ -17,7 +17,8 @@ public with sharing class IdentityHomeController {
     public List<TMN_User_Delegate__c> myDelegation {get; set;}
     public TMN_User__c theTMNUser {get; set;}
     public ID selectedID {get; set;}
-    public Boolean displayPopup {get; set;}   
+    public Boolean displayPopup {get; set;}
+    public Boolean displayDelSrch {get; set;}   
     private Integer totalRecsNE = 0;
     private Integer offsetSizeNE = 0;
     private Integer limitSizeNE = 10;
@@ -237,6 +238,12 @@ public with sharing class IdentityHomeController {
         String delName = userDel[0].Name;
         String delEmail = userDel[0].Email__c;
         List<TMN_User_Delegate__c> userDup = [SELECT Id FROM TMN_User_Delegate__c WHERE TMN_Delegate_For__c =:tmnId AND TMN_Delegate_Name__c =:delId AND Delegation_Complete__c = FALSE];
+        searchDelegateResult.clear();
+        srchFNameDel = null;
+        srchLNameDel = null;
+        totalRecsDel = 0;
+        offsetSizeDel = 0;
+        closeDelSrch();
         if(delId==tmnId){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error,'You cannot assign yourself as a delegate! Please choose another person as your delegate.'));
         }else if(userDup.size()>0){
@@ -264,6 +271,7 @@ public with sharing class IdentityHomeController {
         generatedKey1 = Soundex.toSoundex(srchLNameDel);
         generatedKey2 = Soundex.toSoundex(srchFNameDel);
         doQueryDel();
+        showDelSrch();
     }
 
     //Delegate search      
@@ -415,6 +423,8 @@ public with sharing class IdentityHomeController {
 
     //Set parameters to pass to identityEditNew controller for record creation.      
     public PageReference newTmnUser() {
+        totalRecsNE = 0;
+        offsetSizeNE = 0;
         PageReference pageRef = Page.identity_create;
         pageRef.getParameters().put('FN', srchFNameNonEmp);
         pageRef.getParameters().put('LN', srchLNameNonEmp);
@@ -438,12 +448,24 @@ public with sharing class IdentityHomeController {
     } 
 
     //Popups show and close methods
-    public void closePopup() {        
+    public void closePopup() {
+        totalRecsNE = 0;
+        offsetSizeNE = 0;
+        srchFNameNonEmp = null;
+        srchLNameNonEmp = null;        
         displayPopup = false;    
     } 
         
     public void showPopup() {        
         displayPopup = true;    
+    }
+
+    public void showDelSrch(){
+        displayDelSrch = true;
+    }
+
+    public void closeDelSrch(){
+        displayDelSrch = false;
     }
 
     public Boolean displayInfo {get; set;}
