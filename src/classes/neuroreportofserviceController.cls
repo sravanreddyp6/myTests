@@ -116,10 +116,10 @@ public with sharing class neuroreportofserviceController {
     	List<Funding_Source__c> temp = Database.Query(SOQL);
     	
     	for(Funding_Source__c fs: temp){
-    		if(fs.Auth_Excess_Justification__c != null){
+    		//if(fs.Auth_Excess_Justification__c != null){
     			fundingMap.put(fs.Id+'~'+fs.Service_Assignment__c, fs);
     			servAssigns.add(fs.Service_Assignment__c);	
-    		}
+    		//}
     	}
     	
     	if(onlyNoshow){
