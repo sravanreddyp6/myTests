@@ -10,6 +10,7 @@ var gulp = require('gulp');
 var selenium = require('selenium-standalone');
 var mocha = require('gulp-spawn-mocha');
 var spawn = require('child_process').spawn;
+var manageUsers = require('./users.js').manageUsers;
 
 gulp.task('selenium', function (done) {
   selenium.install({
@@ -42,7 +43,11 @@ gulp.task("inspector", function (done) {
   done();
 });
 
-var deps = ["selenium"];
+gulp.task("manage-user", function (done) {
+  manageUsers(done);
+});
+
+var deps = ["manage-user", "selenium"];
 if (argv.debug) {
   deps.push("inspector");
 }
