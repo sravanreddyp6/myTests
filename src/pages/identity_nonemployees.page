@@ -17,6 +17,18 @@
             margin-left: -500px;
             top:100px;
         }
+        .waitPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            width: 100px;
+            margin-left: -50px;
+            top:100px;
+        }        
         .popupBackground{
             background-color:black;
             opacity: 0.20;
@@ -28,34 +40,49 @@
             left: 0;
             z-index: 9998;
         }
-
-    .block {
-        border-width: 10px 4px;
-        border-style: solid;
-        border-color: #0E5A8C;
-        -webkit-border-radius: 8px;
-        -moz-border-radius: 8px;
-        border-radius: 8px;
-        padding: 4px;
-        margin-bottom: 12px;
-        width: 230px;
-    }
-                    
-    .block-title {
-        color: #000000;
-        padding: 0 4px;
-        font-size: 1.25em;
-        font-weight: bold;
-    }       
-
-    .block-inner {
-        color: #000000;
-        padding: 0 4px;
-        font-size: 1em;
-        font-weight: bold;
-    }
+        .block {
+            border-width: 10px 4px;
+            border-style: solid;
+            border-color: #0E5A8C;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 12px;
+            width: 230px;
+        }                    
+        .block-title {
+            color: #000000;
+            padding: 0 4px;
+            font-size: 1.25em;
+            font-weight: bold;
+        }       
+        .block-inner {
+            color: #000000;
+            padding: 0 4px;
+            font-size: 1em;
+            font-weight: bold;
+        }
                              
     </style>
+
+    <apex:actionStatus id="loadingBusy" stopText="">
+        <apex:facet name="start">
+            <div>
+                <div class="popupBackground" />
+                <div class="waitPopup">
+                    <table border="0" width="100%" height="100%">
+                        <tr>
+                            <td align="center"><b>Please Wait</b></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><img src="{!$Resource.AjaxLoad}"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
 
     <apex:panelGrid >                
         <apex:panelGroup >
@@ -97,7 +124,7 @@
                 <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
                 <apex:inputText label="srchLN" value="{!srchLNameNonEmp}" html-placeholder="Last Name"/>
                 <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
-                <apex:commandButton value="Find or Create" action="{!nonEmpSearch}" id="srchBtn" />                               
+                <apex:commandButton value="Find or Create" action="{!nonEmpSearch}" id="srchBtn" status="loadingBusy" />                               
         </apex:form>        
     <apex:pageBlockSection ></apex:pageBlockSection>
     <apex:pageBlockSection columns="1" title="Workforce Reporting to Me" id="wfReports" >
@@ -105,7 +132,7 @@
             <apex:pageBlockTable value="{!myWorkforce}" var="wf">
                 <apex:column headerValue="Action" >
                     <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=wf.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>-->
-                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup"> 
+                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                         <apex:param value="{!wf.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink>                    
                 </apex:column>
@@ -123,7 +150,7 @@
             <apex:pageBlockTable value="{!Records}" var="r">
                 <apex:column headerValue="Action" >
                     <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=r.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>-->
-                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup"> 
+                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                         <apex:param value="{!r.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink>
                 </apex:column>
@@ -141,11 +168,11 @@
             <apex:pageBlockTable value="{!attestNonEmployees}" var="e">
                 <apex:column headerValue="Action" >
                     <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=e.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink> &nbsp;-->
-                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup"> 
+                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink>
                      &nbsp;&#124;&nbsp;                    
-                    <apex:commandLink value="Extend 30 Days" id="ExtCommand" action="{!add30Days}" rerender="wfBlock"> 
+                    <apex:commandLink value="Extend 30 Days" id="ExtCommand" action="{!add30Days}" rerender="wfBlock" status="loadingBusy"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
                 </apex:column>
@@ -169,14 +196,14 @@
                         <apex:commandButton value="Cancel" action="{!closePopup}"/>
                         <apex:commandButton value="Create New Identity Record" action="{!newTmnUser}" id="createBtn"/>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <apex:commandButton value="First Page" rerender="details" action="{!FirstPageNE}" disabled="{!prevNE}"/>
-                        <apex:commandButton value="Previous" rerender="details" action="{!previousNE}" disabled="{!prevNE}"/>
-                        <apex:commandButton value="Next" rerender="details" action="{!nextNE}" disabled="{!nxtNE}"/>
-                        <apex:commandButton value="Last Page" rerender="details" action="{!LastPageNE}" disabled="{!nxtNE}"/>
+                        <apex:commandButton value="First Page" rerender="details" action="{!FirstPageNE}" disabled="{!prevNE}" status="loadingBusy"/>
+                        <apex:commandButton value="Previous" rerender="details" action="{!previousNE}" disabled="{!prevNE}" status="loadingBusy"/>
+                        <apex:commandButton value="Next" rerender="details" action="{!nextNE}" disabled="{!nxtNE}" status="loadingBusy"/>
+                        <apex:commandButton value="Last Page" rerender="details" action="{!LastPageNE}" disabled="{!nxtNE}" status="loadingBusy"/>
                     </apex:pageBlockButtons>
                     <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
                         <apex:column headerValue="Action" >
-                        <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup"> 
+                        <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                             <apex:param value="{!ner.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                         </apex:commandLink>
                         <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">View</apex:outputLink>-->

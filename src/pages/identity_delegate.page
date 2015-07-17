@@ -17,6 +17,18 @@
             margin-left: -500px;
             top:100px;
         }
+        .waitPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            width: 100px;
+            margin-left: -50px;
+            top:100px;
+        }        
         .popupBackground{
             background-color:black;
             opacity: 0.20;
@@ -57,7 +69,7 @@
         <apex:facet name="start">
             <div>
                 <div class="popupBackground" />
-                <div class="custPopup">
+                <div class="waitPopup">
                     <table border="0" width="100%" height="100%">
                         <tr>
                             <td align="center"><b>Please Wait</b></td>
@@ -108,7 +120,7 @@
         <apex:form id="srchForm">
             <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" >
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details" status="loadingBusy"> 
                         <apex:param value="{!dr.Id}" assignTo="{!selectedID}" name="addSrchIdParam"/>
                     </apex:commandLink>
                 </apex:column>           

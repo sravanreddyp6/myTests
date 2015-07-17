@@ -222,6 +222,7 @@ public with sharing class IdentityHomeController {
                 userToRemove.Delegation_Complete__c = TRUE;
                 userToRemove.Time_Removed__c = datetime.now();
                 update userToRemove;
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Confirm, 'The delegate has been successfully removed.'));
             } catch(DmlException e) {
                 System.debug('An unexpected error has occurred: ' + e.getMessage());
                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error,'Error: ' + e.getMessage()));
@@ -250,11 +251,12 @@ public with sharing class IdentityHomeController {
                 userToAdd.Delegate_for_Email__c = tmnEmail;
                 userToAdd.Time_Assigned__c = datetime.now();
                 upsert (userToAdd);
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Confirm, 'The delegate has been successfully added.'));
             } catch(DmlException e) {
                 System.debug('An unexpected error has occurred: ' + e.getMessage());
                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error,'An unexpected error has occurred: ' + e.getMessage()));
             }
-        }             
+        }           
     }         
 
     //Method for delegate search.
@@ -311,6 +313,13 @@ public with sharing class IdentityHomeController {
         }
         return null;
     }       
+
+    //Clear delegate search
+    public void clearDelSrch(){
+        srchFNameDel = null;
+        srchLNameDel = null;
+        searchDelegateResult.clear();
+    }
 
     //Method for non-employee search
     public void nonEmpSearch(){
