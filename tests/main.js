@@ -1,4 +1,3 @@
-var configs = require("./configs.json");
 var webdriverio = require("webdriverio");
 var path = require("path");
 var options = {
@@ -37,15 +36,7 @@ module.exports = {
               });
           };
           require("./commands.js")(client, done);
-          client
-            .url("https://test.salesforce.com")
-            .setValue("input#username", configs.username)
-            .setValue("input#password", configs.password)
-            .click("button#Login")
-            .waitForVisible("a=ESD Home", defaultOperationTimeout)
-            .then(function () {
-              return tests[testName](client, done);
-            })
+          tests[testName](client, done)
             .then(function () {
               done();
             }, errorHandler);

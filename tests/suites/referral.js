@@ -1,13 +1,15 @@
 var chai = require('chai');
 var assert = chai.assert;
 var testSuite = require("../main.js").testSuite;
+var users = require("../users.js").accounts;
 
-var suiteTimeout = 2 * 60 * 1000;
+var suiteTimeout = 3 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
 testSuite("Referral", suiteTimeout, {
   "should create a Referral successfully": function(client, done) {
     return client
+      .logInAs(users["CM_Referral_Intaker"])
       .click("a=Create New Referral")
       .getSelectOptions('Race')
       .then(function(races) {
