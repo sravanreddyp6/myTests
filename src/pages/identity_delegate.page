@@ -60,10 +60,10 @@
                 
     <apex:pageBlockSection ></apex:pageBlockSection>
     
-    <apex:outputPanel id="delSrchSec">    
+    <apex:outputPanel id="details">    
     <apex:pageBlockSection title="Delegate Search Results" columns="1" id="srchBlock" rendered="{!IF(searchDelegateResult=null,'false','true')}">
         <apex:form id="srchForm">
-            <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" id="details">
+            <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" >
                 <apex:column headerValue="Action" >
                     <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel"> 
                         <apex:param value="{!dr.Id}" assignTo="{!selectedID}" name="addSrchIdParam"/>
