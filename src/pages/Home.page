@@ -224,7 +224,7 @@
 					</apex:column>
                 	<apex:column headerValue="View Note Log" rendered="{!canCreateProgressNotes}">
                     <apex:outputPanel rendered="{! canCreateProgressNotes}">
-                        <a href="retURL={!HTMLENCODE('apex/Progress_Notes_List_View')}">View Note Log</a><br />
+                        <a href="retURL={!HTMLENCODE('/apex/Progress_Notes_Log')}">View Note Log</a><br />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
@@ -236,7 +236,7 @@
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-						<apex:selectOption itemValue="/apex/Progress_Notes_List_View" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" />
+						<apex:selectOption itemValue="/apex/Progress_Notes_Log" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!NOT(canCreateProgressNotes)}"/>
@@ -513,7 +513,7 @@
 				} else if (selectedValue == 'createCNAWorkbook') {
 					showAddCNAWorkbookModal(serviceAssignmentId);
 				} else if(selectedValue=='createProgressNotes'){
-					var url = 'apex/Notes_Progressnote_AZ_OPT?Mode=New&plan='+action+'&ServAssignId='+serviceAssignmentId+'&admission='+admissionId+'&person='+personId+'&State='+state;
+					var url = '/apex/Notes_Progressnote_AZ_OPT?Mode=New&plan='+action+'&ServAssignId='+serviceAssignmentId+'&admission='+admissionId+'&person='+personId+'&State='+state;
 					$(location).attr('href',url);
                 }
 				else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
