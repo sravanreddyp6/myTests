@@ -169,10 +169,10 @@
                         <apex:commandButton value="Cancel" action="{!closePopup}"/>
                         <apex:commandButton value="Create New Identity Record" action="{!newTmnUser}" id="createBtn"/>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <apex:commandButton value="First Page" rerender="details" action="{!FirstPageNE}" disabled="{!prev}"/>
-                        <apex:commandButton value="Previous" rerender="details" action="{!previousNE}" disabled="{!prev}"/>
-                        <apex:commandButton value="Next" rerender="details" action="{!nextNE}" disabled="{!nxt}"/>
-                        <apex:commandButton value="Last Page" rerender="details" action="{!LastPageNE}" disabled="{!nxt}"/>
+                        <apex:commandButton value="First Page" rerender="details" action="{!FirstPageNE}" disabled="{!prevNE}"/>
+                        <apex:commandButton value="Previous" rerender="details" action="{!previousNE}" disabled="{!prevNE}"/>
+                        <apex:commandButton value="Next" rerender="details" action="{!nextNE}" disabled="{!nxtNE}"/>
+                        <apex:commandButton value="Last Page" rerender="details" action="{!LastPageNE}" disabled="{!nxtNE}"/>
                     </apex:pageBlockButtons>
                     <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
                         <apex:column headerValue="Action" >
