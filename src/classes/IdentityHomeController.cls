@@ -238,7 +238,6 @@ public with sharing class IdentityHomeController {
         String delName = userDel[0].Name;
         String delEmail = userDel[0].Email__c;
         List<TMN_User_Delegate__c> userDup = [SELECT Id FROM TMN_User_Delegate__c WHERE TMN_Delegate_For__c =:tmnId AND TMN_Delegate_Name__c =:delId AND Delegation_Complete__c = FALSE];
-        searchDelegateResult.clear();
         srchFNameDel = null;
         srchLNameDel = null;
         totalRecsDel = 0;
