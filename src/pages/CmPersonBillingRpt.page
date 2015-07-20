@@ -183,6 +183,7 @@ div.footer {
 			<div style="page-break-before: always;"></div>
 		</apex:repeat>
 		<!-- NSD -->
+		<apex:outputText value="None" rendered="{!nsdEvalIds.size==0}" />
 	</apex:pageblock>
 
 	<apex:pageblock title="CNA Workbooks">
@@ -268,6 +269,7 @@ div.footer {
 			</apex:pageblock>
 		</apex:repeat>
 		<!-- CNAs -->
+        <apex:outputText value="None" rendered="{!cnaEvalIds.size==0}" />
 	</apex:pageblock>
 
 	<apex:pageblock title="Weekly Summaries">
@@ -280,6 +282,7 @@ div.footer {
 				<div style="page-break-before: always;"></div>
 			</apex:outputPanel>
 		</apex:repeat>
+        <apex:outputText value="None" rendered="{!summaryIds.size==0}" />
 	</apex:pageblock>
 
 </body>
