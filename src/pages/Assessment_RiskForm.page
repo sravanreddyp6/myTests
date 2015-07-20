@@ -23,6 +23,7 @@
 
 <head>
 <style>
+.noDisplay{display: none;}
     body .bPageBlock[id*=main_detail] {
         margin-bottom: 5px;
     }
@@ -148,6 +149,13 @@ function scrollWindow()
 
 jQuery.noConflict();
 var j$ = jQuery.noConflict();
+j$( document ).ready(function() {
+	commonLoad();
+});
+function commonLoad(){
+  checkServiceNeedsDesc( j$('.Service_Needs_Support__c_input' ) );  
+  checkForShow( j$('.Individual_Rights_Review__c_input' ) ,'Yes', '.Individual_Rights_Review_Explain__c');
+}
 function toggleOptions( rb, divopt ) {
     if ( rb.value.toLowerCase() == 'presents a risk' )
         document.getElementById( divopt).style.display = 'block';
@@ -156,6 +164,45 @@ function toggleOptions( rb, divopt ) {
 };
 function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
+};
+function checkForShow(item1, isThis, toggleThis){
+	var toggleThisWrap = toggleThis + '_wrap';
+	var toggleThisInput = toggleThis + '_input'
+	if( j$(item1).val() == isThis ){j$(toggleThisWrap).removeClass('noDisplay');}
+	else{j$(toggleThisWrap).addClass('noDisplay'); j$(toggleThisInput).val('');}
+}
+function checkServiceNeedsDesc(item){
+console.log(item);
+var selected = j$(item).val() ;
+	if(selected == null){
+		j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay'); 
+		j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay');
+		j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay');
+		j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay');
+		j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay');
+		
+		j$('.Dsc_Day_Habilitation_Services__c_input').val('');
+		j$('.Dsc_Prevocational_Services__c_input').val('');
+		j$('.Dsc_Organizational_Employment_Services__c_input').val('');
+		j$('.Dsc_School_Transition_Services__c_input').val('');
+		j$('.Dsc_Private_Pay_Services__c_input').val('');
+	}
+	else{
+		if(selected.indexOf('Day Habilitation') > -1  ){console.log('Day'); j$('.Dsc_Day_Habilitation_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Day_Habilitation_Services__c_input').val(''); j$('.Dsc_Day_Habilitation_Services__c_wrap').addClass('noDisplay'); }
+			
+		if(selected.indexOf('Prevocational') > -1 ){console.log('Prevocational'); j$('.Dsc_Prevocational_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Prevocational_Services__c_input').val(''); j$('.Dsc_Prevocational_Services__c_wrap').addClass('noDisplay');}
+			
+		if(selected.indexOf('Organizational Employment') > -1 ){console.log('Organizational Employment'); j$('.Dsc_Organizational_Employment_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Organizational_Employment_Services__c_input').val(''); j$('.Dsc_Organizational_Employment_Services__c_wrap').addClass('noDisplay');}
+			
+		if(selected.indexOf('School Transition') > -1 ){console.log('School Transition'); j$('.Dsc_School_Transition_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_School_Transition_Services__c_input').val(''); j$('.Dsc_School_Transition_Services__c_wrap').addClass('noDisplay'); }
+			
+		if(selected.indexOf('Private Pay') > -1 ){console.log('Private Pay'); j$('.Dsc_Private_Pay_Services__c_wrap').removeClass('noDisplay');}
+			else{ j$('.Dsc_Private_Pay_Services__c_input').val(''); j$('.Dsc_Private_Pay_Services__c_wrap').addClass('noDisplay');}
+	}
 };
 </script>
 <script>function setFocusOnLoad() {}</script>
@@ -192,7 +239,7 @@ function toggleById(id, ms){
                 </apex:facet>  
                 <apex:facet name="stop">     </apex:facet>         
             </apex:actionStatus>     
-            <apex:commandButton action="{!myEdit}" value="Edit" reRender="myfrm" status="myStatus" rendered="{! mode='view' && (Assessment__c.Status__c = 'Inactive Draft') && canEditRisk }"/>&nbsp;
+            <apex:commandButton action="{!myEdit}" value="Edit" reRender="myfrm" oncomplete="commonLoad();" status="myStatus" rendered="{! mode='view' && (Assessment__c.Status__c = 'Inactive Draft') && canEditRisk }"/>&nbsp;
             <apex:commandButton action="{!mySave}" value="Save" reRender="myfrm" status="myStatus" rendered="{!mode='edit' || mode = 'new'}" />&nbsp; 
             <apex:commandButton action="{!myApprove}" value="Finalize" status="myStatus" rendered="{!mode='view' && (Assessment__c.Status__c = 'Inactive Draft' ) && canFinalize }" />&nbsp;
 
@@ -490,9 +537,9 @@ function toggleById(id, ms){
             </apex:outputPanel>
             <!-- If state not AZ ends -->
             
-            <apex:outputPanel layout="none" rendered="{!(mode!='summary' || displayLevel_Required_ResidentialServices.size >0) && Assessment__c.Admission__r.State__c != 'IA'}">
+            <apex:outputPanel layout="none" rendered="{!(mode!='summary' || displayLevel_Required_ResidentialServices.size >0) }">
 
-                <span class="risk-section-subhead">Level of Support Required for Residential Services</span>
+                <span class="risk-section-subhead">{! IF(Assessment__c.Admission__r.State__c == 'IA','Level of Support Required for Day Services' ,'Level of Support Required for Residential Services')}</span>
                 <apex:outputPanel rendered="{! displayLevel_Required_ResidentialServices.size==0  && mode !='edit'}"><br/>None</apex:outputPanel>
                                 
                 <apex:outputPanel layout="block" rendered="{!mode!='edit'}">
@@ -509,7 +556,11 @@ function toggleById(id, ms){
                 <apex:outputPanel rendered="{!mode='edit' && Assessment__c.Admission__r.State__c != 'AZ'}">
                     <apex:selectCheckboxes layout="pageDirection" value="{!Level_Required_ResidentialServices}" label="Level of Support Required for Residential Services" id="residentialServiceOptions">
                      <apex:selectOption itemValue="Support person on premises at all times when individual is home"
-                            itemLabel="Support person on premises at all times when individual is home" />
+                            itemLabel="Support person on premises at all times when individual is home"
+                            rendered="{! Assessment__c.Admission__r.State__c != 'IA'}" />
+                     <apex:selectOption itemValue="Support person on premises at all times when individual is on premises"
+                            itemLabel="Support person on premises at all times when individual is on premises"
+                            rendered="{! Assessment__c.Admission__r.State__c == 'IA'}" />                            
                         <apex:selectOption itemValue="Can be unsupervised at home for" itemEscaped="false"
                             itemLabel="Can be unsupervised at home for <br /><br /> &nbsp; &nbsp; &nbsp; &nbsp; <i>Specify details of alone time if there are specific limitations or plans associated with alone time under the 'Specific Plan' section below.</i>" />
                         <apex:selectOption itemValue="Can be unsupervised in the community for"
@@ -549,11 +600,94 @@ function toggleById(id, ms){
                 
                 
             </apex:outputPanel>
-            </apex:pageBlock>
+            
+            <!-- start IA extras -->
+            <apex:outputPanel rendered="{! mode=='edit' && Assessment__c.Admission__r.State__c == 'IA'}">
+            	<br/>
+				<span class="risk-section-subhead">Service Needs/Support (Describe needs for selected service(s))</span>
+				<br/>
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Service_Needs_Support__c_input" value="{!Assessment__c.Service_Needs_Support__c}" onChange="checkServiceNeedsDesc(this);"/>
+				<br/>
+				<apex:outputPanel layout="block" styleClass="Dsc_Prevocational_Services__c_wrap">
+				Describe Prevocational Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Prevocational_Services__c_input" value="{!Assessment__c.Dsc_Prevocational_Services__c}"/> 
+				</apex:outputPanel>
+				
+				<apex:outputPanel layout="block" styleClass="Dsc_Day_Habilitation_Services__c_wrap">
+				Describe Day Habilitation Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Day_Habilitation_Services__c_input" value="{!Assessment__c.Dsc_Day_Habilitation_Services__c}"/> 
+				</apex:outputPanel>
+				
+				<apex:outputPanel layout="block" styleClass="Dsc_Organizational_Employment_Services__c_wrap">
+				Describe Organizational Employment Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Organizational_Employment_Services__c_input" value="{!Assessment__c.Dsc_Organizational_Employment_Services__c}"/> 
+				</apex:outputPanel>
+				
+				<apex:outputPanel layout="block" styleClass="Dsc_School_Transition_Services__c_wrap">
+				Describe School Transition Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_School_Transition_Services__c_input" value="{!Assessment__c.Dsc_School_Transition_Services__c}"/> 
+				</apex:outputPanel>
+				
+				<apex:outputPanel layout="block" styleClass="Dsc_Private_Pay_Services__c_wrap">
+				Describe Private Pay Services	<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Dsc_Private_Pay_Services__c_input" value="{!Assessment__c.Dsc_Private_Pay_Services__c}"/>
+				</apex:outputPanel> 
+				
+				<br/>  
+				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>
+				<br/>
+				<apex:inputField rendered="{! mode =='edit'}" onChange="checkForShow(this, 'Yes', '.Individual_Rights_Review_Explain__c');" styleClass="Individual_Rights_Review__c_input" value="{!Assessment__c.Individual_Rights_Review__c}"/>			
+				<apex:outputPanel layout="block" styleClass="Individual_Rights_Review_Explain__c_wrap">
+				Explain<br/>			
+				<apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c_input" value="{!Assessment__c.Individual_Rights_Review_Explain__c}"/>
+				</apex:outputPanel>     
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{! mode!='edit' && Assessment__c.Admission__r.State__c == 'IA'}">
+            	<br/>
+				<span class="risk-section-subhead">Service Needs/Support (Describe needs for selected service(s))</span>
+				<br/>
+				<apex:outputField rendered="{! mode !='edit'}"  value="{!Assessment__c.Service_Needs_Support__c}"/>       
+				<br/><br/>
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Prevocational_Services__c != null}" layout="block" >
+				Describe Prevocational Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Prevocational_Services__c}"/>  
+				</apex:outputPanel>
+				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Day_Habilitation_Services__c != null}" layout="block" >
+				Describe Day Habilitation Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Day_Habilitation_Services__c}"/>  
+				</apex:outputPanel>
+				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Organizational_Employment_Services__c != null}" layout="block" >
+				Describe Organizational Employment Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Organizational_Employment_Services__c}"/>  
+				</apex:outputPanel>
+				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_School_Transition_Services__c != null}" layout="block" >
+				Describe School Transition Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_School_Transition_Services__c}"/>  
+				</apex:outputPanel>
+				
+				<apex:outputPanel rendered="{!Assessment__c.Dsc_Private_Pay_Services__c != null}" layout="block" >
+				Describe Private Pay Services	<br/>			
+				<apex:outputField value="{!Assessment__c.Dsc_Private_Pay_Services__c}"/>  
+				</apex:outputPanel> 
+				
+				<br/>  
+				<span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>
+				<br/>
+				<apex:outputText value="{!Assessment__c.Individual_Rights_Review__c}"/> 
+				<apex:outputPanel rendered="{!Assessment__c.Individual_Rights_Review_Explain__c != null}" layout="block" >
+				<br/>			
+				<apex:outputText value="{!Assessment__c.Individual_Rights_Review_Explain__c}"/>  
+				</apex:outputPanel>     
+            </apex:outputPanel>            
+            <!-- end IA extras -->
+			</apex:pageBlock>
          
         <div style="float:right">
         <apex:outputPanel rendered="{!!printmode}" >
-            <apex:commandButton action="{!myEdit}" value="Edit" reRender="myfrm" status="myStatus" rendered="{! mode='view' && Assessment__c.Status__c = 'Inactive Draft' && canEditRisk}"/>&nbsp;
+            <apex:commandButton action="{!myEdit}" value="Edit" oncomplete="commonLoad();" reRender="myfrm" status="myStatus" rendered="{! mode='view' && Assessment__c.Status__c = 'Inactive Draft' && canEditRisk}"/>&nbsp;
             <apex:commandButton action="{!mySave}" value="Save" reRender="myfrm" status="myStatus" rendered="{!mode='edit' || mode = 'new'}" />&nbsp; 
             <apex:commandButton action="{!myApprove}" value="Finalize" status="myStatus" rendered="{!mode='view' && (Assessment__c.Status__c = 'Inactive Draft') && canFinalize}" />&nbsp;
             <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{!(mode='view' && showConfirmationButton)}" >             
