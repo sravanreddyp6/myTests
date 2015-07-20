@@ -721,8 +721,8 @@
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
                
-               <apex:pageBlockSectionItem helpText="Gender is required to convert this referral to Admission">
-                    <apex:outputLabel value="Date of Birth" />
+               <apex:pageBlockSectionItem helpText="Select the person's legal gender.Gender is required to convert this referral to Admission">
+                    <apex:outputLabel value="Gender" />
                          <apex:outputPanel  layout="block" >
                             <apex:outputPanel  layout="block" />
                             <apex:inputField value="{!personBeingRefRecord.Gender__c}" taborderhint="1" styleclass="refRequiedFields"/>
