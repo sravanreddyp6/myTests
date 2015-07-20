@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Action Plan Objective</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Action Plan Objectives</value>
+    </caseValues>
+    <fields>
+        <label><!-- Action Plan Goal --></label>
+        <name>Action_Plan_Goal__c</name>
+        <relationshipLabel><!-- Action Plan Objectives --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Description --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- Effective Date --></label>
+        <name>Effective_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Former ID --></label>
+        <name>Former_ID__c</name>
+    </fields>
+    <fields>
+        <label><!-- Objective --></label>
+        <name>Original_ObjectiveID__c</name>
+        <relationshipLabel><!-- Action Plan Objectives --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Sort Order --></label>
+        <name>Sort_Order__c</name>
+    </fields>
+    <fields>
+        <label><!-- Status --></label>
+        <name>Status__c</name>
+        <picklistValues>
+            <masterLabel>Achieved</masterLabel>
+            <translation><!-- Achieved --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Discontinued</masterLabel>
+            <translation><!-- Discontinued --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>In Progress</masterLabel>
+            <translation><!-- In Progress --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>N/A</masterLabel>
+            <translation><!-- N/A --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>New</masterLabel>
+            <translation><!-- New --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Revised</masterLabel>
+            <translation><!-- Revised --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Services Ended Prior to Completion</masterLabel>
+            <translation><!-- Services Ended Prior to Completion --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Target Date --></label>
+        <name>Target_End_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Type --></label>
+        <name>Type__c</name>
+        <picklistValues>
+            <masterLabel>Behavior - Count</masterLabel>
+            <translation><!-- Behavior - Count --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Behavior - Duration</masterLabel>
+            <translation><!-- Behavior - Duration --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Skill</masterLabel>
+            <translation><!-- Skill --></translation>
+        </picklistValues>
+    </fields>
+    <startsWith>Consonant</startsWith>
+    <validationRules>
+        <errorMessage><!-- Description is required --></errorMessage>
+        <name>Description_Req</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Objective Effective Date must be on or after the Action Plan Effective Date --></errorMessage>
+        <name>Effective_b4_plan_effective_date</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Effective Date is required --></errorMessage>
+        <name>Effective_req</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Objective Status Description is required --></errorMessage>
+        <name>Status_Req</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Objective Status is required --></errorMessage>
+        <name>Status_Req_CB</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Target Date must be after Effective Date --></errorMessage>
+        <name>TargetDate_before_EfftiveDate</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Objective Target Date must be on or before the Action Plan Target Date --></errorMessage>
+        <name>Target_b4_plan_effective_date</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Target Date is required --></errorMessage>
+        <name>Target_req</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- Objective Type is required --></errorMessage>
+        <name>Type_Req</name>
+    </validationRules>
+</CustomObjectTranslation>
