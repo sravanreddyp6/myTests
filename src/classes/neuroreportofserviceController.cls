@@ -97,7 +97,7 @@ public with sharing class neuroreportofserviceController {
     	SOQL = 'SELECT Id, Name, OT_Auth_Units__c, PT_Auth_Units__c, BIT_Auth_Units__c,Counselling_Auth_Units__c,SLP_Auth_Units__c,Total_Authorized_Therapy_Units__c, Auth_Units_Grand_Total__c, Effective_Date_of_Cost_therapy_Auth__c, Term_Date_of_Cost_therapy_Auth__c, Service_Assignment__c,Service_Assignment__r.Person_being_Served__r.name, Case_Manager__c, Case_Manager__r.Name, Auth_Excess_Justification__c  FROM Funding_Source__c';
     	SOQL = SOQL +' WHERE Funding_Source_Status__c IN :statuses AND Recordtype.Name = \'NeuroRestorative\' AND Type_of_Coverage__c =\'Primary\'';
     	//SOQL = SOQL+ ' AND (Effective_Date_of_Cost_therapy_Auth__c >= '+ startdt.format('yyyy-MM-dd')+' AND Effective_Date_of_Cost_therapy_Auth__c <= '+ enddt.format('yyyy-MM-dd')+')';
-    	SOQL = SOQL+ ' AND Effective_Date_of_Cost_therapy_Auth__c <= '+ enddt.format('yyyy-MM-dd');
+    	SOQL = SOQL+ ' AND Effective_Date_of_Cost_therapy_Auth__c <= '+ enddt.format('yyyy-MM-dd'); //Michelle's Advise to display all FS that have the end date b/w the report dates and FS Start date less than report End date.
     	SOQL = SOQL+ ' AND (Term_Date_of_Cost_therapy_Auth__c <= '+ enddt.format('yyyy-MM-dd')+' AND Term_Date_of_Cost_therapy_Auth__c >= '+startdt.format('yyyy-MM-dd')+')';
     	
     	if(string.isNotBLANK(fSource.Case_Manager__c)){
@@ -169,7 +169,7 @@ public with sharing class neuroreportofserviceController {
     
     public pageReference exporttoExcel(){
     	PageReference pg = new PageReference('/apex/neuroReportofServiceExcel');
-    	pg.setRedirect(false); // Sravan - So that the view state is transefered to the excel download page
+    	pg.setRedirect(false); // Sravan - So that the view state is transferred to the excel download page
     	return pg;
     	
     }
