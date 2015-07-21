@@ -6,8 +6,6 @@ public with sharing class IncompleteShiftDocReportTests {
 		controller.dummyEvaluation.Evaluation_Date__c = Date.Today().addDays(1);
 		controller.dummyEvaluation.Dialysis_Onset__c = Date.Today().addDays(3);
 		controller.runReport(); // this will generate errors because of invalid start/end dates
-		controller.dummyEvaluation.Evaluation_date__c = Date.Today();
-		controller.dummyEvaluation.Dialysis_Onset__c = Date.Today().addDays(2);
 
 		// Generate test data here
 		TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
@@ -58,6 +56,16 @@ public with sharing class IncompleteShiftDocReportTests {
 			)
 		};
 
+		controller = new IncompleteShiftDocReport();
+		controller.leftSelectedPrograms.add((Id) controller.leftPrograms[0].getValue());
+		controller.addPrograms();
+		controller.rightSelectedPrograms.add((Id) controller.rightPrograms[0].getValue());
+		controller.removePrograms();
+		controller.leftSelectedPrograms.add((Id) controller.leftPrograms[0].getValue());
+		controller.addPrograms();
+		controller.dummyEvaluation.Evaluation_date__c = Date.Today();
+		controller.dummyEvaluation.Dialysis_Onset__c = Date.Today().addDays(2);
+		controller.selectedPbs = new Id[]{ myData.theSA.Id };
 		controller.runReport(); // this will run correctly
 		System.assertEquals(5, controller.shiftDocs.size());
 	}

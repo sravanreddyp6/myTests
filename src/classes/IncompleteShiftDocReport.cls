@@ -19,6 +19,9 @@ public with sharing class IncompleteShiftDocReport {
 		pbsList = new List<SelectOption>();
 		rightPrograms = new List<SelectOption>();
 		leftPrograms = new List<SelectOption>();
+		selectedPbs = new List<Id>();
+		leftSelectedPrograms = new List<Id>();
+		rightSelectedPrograms = new List<Id>();
 
 		for (AggregateResult program: [
 				SELECT service_location__r.id slID, service_location__r.Alias__c alias,
