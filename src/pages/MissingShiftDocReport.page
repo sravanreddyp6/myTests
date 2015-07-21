@@ -1,0 +1,203 @@
+<apex:page controller="MissingShiftDocReport">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
+
+	<style>
+		.thinking{
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 1000;
+		}
+
+		.thinkingwheel{
+			position: absolute;
+			left:50%;
+			top:50%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
+	</style>
+
+	<script>
+		function setFocusOnLoad() {}
+	</script>
+
+	<apex:pageMessages id="pageMessages" />
+	<apex:form id="mainForm">
+		<apex:pageBlock id="dateRangeBlock" title="Missing Shift Documentations Report">
+			<apex:pageBlockButtons location="bottom">
+				<apex:commandButton value="Run Report" action="{!runReport}" status="pageProcessing" rerender="{!$Component.tableBlock}, pageMessages" oncomplete="setUpTable();" />
+			</apex:pageBlockButtons>
+			<apex:outputPanel style="margin-bottom: 10px; " layout="block">
+				<apex:outputLabel styleclass="labelCol" value="Start Date" for="startDate" />
+				<apex:inputField value="{!dummyEvaluation.Evaluation_Date__c}" id="startDate" label="Start Date" />
+				<apex:outputLabel styleclass="labelCol" value="End Date" for="endDate" />
+				<apex:inputField value="{!dummyEvaluation.Dialysis_Onset__c}" id="endDate" label="End Date" />
+			</apex:outputPanel>
+			<apex:pageBlockSection id="programSection" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false">
+				<apex:outputpanel >
+					<table>
+						<tr>
+							<td>
+								<apex:selectList value="{!leftSelectedPrograms}" size="7" multiselect="true" style="min-width: 235px; ">
+									<apex:selectOptions value="{!leftPrograms}"/>
+								</apex:selectList>
+							</td>
+							<td style="vertical-align: middle">
+								<apex:commandButton value="add"
+									action="{!addPrograms}"
+									reRender="programSection, pbsSection"
+									status="pageProcessing"
+									oncomplete="setUpPBSTable()"
+									style="height: 25px; width: 35px;" />
+								<br/>
+								<apex:commandButton value="remove"
+									action="{!removePrograms}"
+									reRender="programSection, pbsSection"
+									status="pageProcessing"
+									oncomplete="setUpPBSTable()"
+								style="height: 25px; width: 50px;"/>
+							</td>
+							<td>
+								<apex:selectList value="{!rightSelectedPrograms}" size="7" multiselect="true" style="min-width:235px">
+									<apex:selectOptions value="{!rightPrograms}" />
+								</apex:selectList>
+							</td>
+						</tr>
+					</table>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection id="pbsSection" title="Person Being Served (Please select one or more names from the list. Type a name in the field below to filter the list.)" columns="1" collapsible="false">
+				<div style="position:relative; left:180px; top:10px; ">
+					<a href="#" onclick="clearAllPBS(); return false;">Clear</a>&nbsp;&nbsp;
+					<a href="#" onclick="selectAllPBS(); return false;">Select All</a>
+				</div>
+				<Br />
+				<apex:outputPanel >
+					<br />
+					<apex:selectCheckboxes html-class="pbsTable" value="{!selectedPBS}" layout="pageDirection" id="pbsCheckboxes">
+						<apex:selectOptions value="{!pbsList}"></apex:selectOptions>
+					</apex:selectCheckboxes>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		<apex:pageBlock id="tableBlock">
+			<table id="dayTable" class="list">
+				<thead>
+					<tr class="headerRow">
+						<th>Active Person Being Served</th>
+						<th>Missing Date</th>
+						<th>Missing Documentation</th>
+						<th>Service Name</th>
+						<th>Service Start Date</th>
+						<th>Program Detail</th>
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!days}" var="partial_list" id="listWrapper">
+						<apex:repeat value="{!partial_list}" var="day">
+							<tr class="dataRow">
+								<td class="dataCell">
+									<a href="/{!day.serviceAssignment.Admission__r.Person_Being_Served__r.Id}">{!day.serviceAssignment.Admission__r.Person_Being_Served__r.Name}</a>
+								</td>
+								<td class="dataCell">
+									<apex:outputText value="{0,date,MM/dd/yyyy}">
+										<apex:param value="{!day.day}"/>
+									</apex:outputText>
+								</td>
+								<td class="dataCell">
+									<ul>
+									<apex:outputText rendered="{!day.numNsdDone == 0}">
+										<li>2 Nurse Shift Documents (NSD)</li>
+									</apex:outputText>
+									<apex:outputText rendered="{!day.numNsdDone == 1}">
+										<li>1 Nurse Shift Document (NSD)</li>
+									</apex:outputText>
+									<apex:outputText rendered="{!day.numCnaDone == 0}">
+										<li>2 Certified Nurse Assistant Documents (CNA)</li>
+									</apex:outputText>
+									<apex:outputText rendered="{!day.numCnaDone == 1}">
+										<li>1 Certified Nurse Assistant Document (CNA)</li>
+									</apex:outputText>
+									</ul>
+								</td>
+								<td class="dataCell">
+									<a href="/{!day.ServiceAssignment.Id}">{!day.serviceAssignment.Name}</a>
+								</td>
+								<td class="dataCell">
+									<apex:outputText value="{0,date,MM/dd/yyyy}">
+										<apex:param value="{!day.serviceAssignment.Start_Date__c}"/>
+									</apex:outputText>
+								</td>
+								<td class="dataCell">
+									{!day.serviceAssignment.Program_Detail__c}
+								</td>
+							</tr>
+						</apex:repeat>
+					</apex:repeat>
+				</tbody>
+			</table>
+		</apex:pageBlock>
+	</apex:form>
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div  class="thinking">
+				<div class="thinkingwheel">
+					<span>
+						<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...
+					</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+
+	<script>
+		jQuery.noConflict();
+		jQuery(document).ready(function ($) {
+			'use strict';
+
+			window.setUpTable = function () {
+				$(document.getElementById('{!$Component.mainForm.tableBlock}')).find('table').dataTable();
+			};
+
+			window.setUpPBSTable = function () {
+				$('.pbsTable').dataTable({
+					"bFilter": true,
+					"bLengthChange": false,
+					"aoColumnDefs": [{
+						"sTitle": "Name",
+						"aTargets": [ 0 ]
+					}],
+					"fnDrawCallback": function (oSettings) {
+						$(oSettings.nTHead).hide();
+						$(oSettings.nTableWrapper).find(".dataTables_filter").css({
+							"float": "left",
+							"text-align": "left"
+						})
+					}
+				});
+			};
+
+			window.selectAllPBS = function () {
+				$('input[id *=pbsCheckboxes]').each(function(index,element) {
+					$(element).prop('checked', true);
+				});
+			};
+
+			window.clearAllPBS = function () {
+				$('input[id *=pbsCheckboxes]').each(function(index,element) {
+					$(element).prop('checked', false);
+				});
+			};
+		});
+	</script>
+</apex:page>
