@@ -53,9 +53,11 @@
                     <apex:outputPanel ></apex:outputPanel>
                     <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7"/>
                 </apex:pageBlockSection>
-                <apex:pageBlockSection columns="2" title="Management Hierarchy">
-                    <apex:inputField label="Alias" value="{!TMNUser.Alias__c}" required="true" taborderhint="17"/>
-                    <apex:inputField label="Service Line" value="{!TMNUser.Service_Line__c}" taborderhint="16"/>                                                                                                                           
+                <apex:pageBlockSection columns="2" title="Management Hierarchy" id="mngHier">
+                    <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" required="true" taborderhint="17">
+                       <!-- <apex:actionSupport event="onchange" reRender="mngHier" action="{!updateAliasInfo}"/> -->
+                    </apex:inputField>
+                    <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/>                                                                                                                           
                     <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="13">
                         <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
                         <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
@@ -64,8 +66,8 @@
                         <apex:selectOption itemValue="NeuroRestorative" itemLabel="NeuroRestorative"/>
                         <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
                     </apex:selectList>                    
-                    <apex:inputField label="Business Unit" value="{!TMNUser.Business_Unit__c}" taborderhint="14"/>                                                                                
-                    <apex:inputField label="Service Region" value="{!TMNUser.Service_Region__c}" taborderhint="15"/>                                                                
+                    <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                                                                                
+                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>                                                                  
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2" title="Location">
                     <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" required="true" taborderhint="18"/>    
