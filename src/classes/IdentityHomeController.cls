@@ -238,6 +238,7 @@ public with sharing class IdentityHomeController {
         String delName = userDel[0].Name;
         String delEmail = userDel[0].Email__c;
         List<TMN_User_Delegate__c> userDup = [SELECT Id FROM TMN_User_Delegate__c WHERE TMN_Delegate_For__c =:tmnId AND TMN_Delegate_Name__c =:delId AND Delegation_Complete__c = FALSE];
+        List<TMN_User_Delegate__c> delCount = [SELECT Id FROM TMN_User_Delegate__c WHERE TMN_Delegate_For__c =:tmnId AND Delegation_Complete__c = FALSE];
         srchFNameDel = null;
         srchLNameDel = null;
         totalRecsDel = 0;
@@ -247,6 +248,8 @@ public with sharing class IdentityHomeController {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error,'You cannot assign yourself as a delegate! Please choose another person as your delegate.'));
         }else if(userDup.size()>0){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, delName +' is already assigned as one of your delegates! Please choose another person as your delegate.'));
+        }else if(delCount.size()>4){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'You have the maximum allowed number of delegates! Please remove a current delegate to add ' + delName +'.'));
         }else{    
             try { 
                 userToAdd.Name = delName;      

@@ -1,6 +1,5 @@
 public class identityEditNew {
 
-    String[] operatingGroups = new String[]{};
     public TMN_User__c TMNUser { get; private set; }
     User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
     String userId = u.id;
@@ -44,17 +43,18 @@ public class identityEditNew {
         TMNUser.Preferred_Last_Name__c = LN;
         TMNUser.Manager_Lookup__c = aliasUser.Id;
         TMNUser.Work_State__c = aliasUser.Work_State__c;
-        TMNUser.Alias__c = aliasUser.Alias__c;
+        TMNUser.Alias__c = auAlias.Alias_unique__c;
+        TMNUser.Alias_Lookup__c = auAlias.Id;
         TMNUser.Manager_Name__c = aliasUser.Name;
         TMNUser.Manager_Email__c = aliasUser.Email__c;
         TMNUser.Operating_Group__c = aliasUser.Operating_Group__c;
         TMNUser.Office_Location__c = aliasUser.Office_Location__c;
-        TMNUser.Business_Unit__c = aliasUser.Business_Unit__c;
+        TMNUser.Business_Unit__c = auAlias.Alias_Business_Unit__c;
         TMNUser.Current_Person_Type__c = 'Non-Employee';
         TMNUser.Work_City__c = aliasUser.Work_City__c;
         TMNUser.Office_Location_PickList__c = aliasUser.Office_Location_PickList__c;
-        TMNUser.Service_Region__c = aliasUser.Service_Region__c;
-        TMNUser.Service_Line__c = aliasUser.Service_Line__c;
+        TMNUser.Service_Region__c = auAlias.Alias_Region__c;
+        TMNUser.Service_Line__c = auAlias.Alias_Service_Line__c;
         TMNUser.Zip_Code__c = aliasUser.Zip_Code__c;
         TMNUser.BAA_Signed__c = aliasUser.BAA_Signed__c;
     }
@@ -76,12 +76,23 @@ public class identityEditNew {
             Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
+            
+    Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
+                        FROM Alias__c 
+                        WHERE Alias_unique__c =: aliasUser.Alias__c];        
      
     public PageReference save() {
         ID managerId = TMNUser.Manager_Lookup__c;
+        ID aliasId = TMNUser.Alias_Lookup__c;
         TMN_User__c managerInfo = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
+        Alias__c aliasInfo = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name FROM Alias__c WHERE Id = :aliasID LIMIT 1];
         TMNUser.Manager_Email__c = managerInfo.Email__c;
         TMNUser.Manager_Name__c = managerInfo.Name;
+        TMNUser.Alias__c = aliasInfo.Alias_unique__c;
+        TMNUser.Alias_Lookup__c = aliasInfo.Id;
+        TMNUser.Business_Unit__c = aliasInfo.Alias_Business_Unit__c;
+        TMNUser.Service_Region__c = aliasInfo.Alias_Region__c;
+        TMNUser.Service_Line__c = aliasInfo.Alias_Service_Line__c;
         if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c == null){
             TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
         }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c == null){
@@ -104,6 +115,15 @@ public class identityEditNew {
         PageReference viewPage = new PageReference('/apex/identity_view?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
         viewPage.setRedirect(true);
         return viewPage;
+    }
+
+    public void updateAliasInfo(){
+        Alias__c a = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
+                      FROM Alias__c 
+                      WHERE Id =: TMNUser.Alias_Lookup__c];
+        TMNUser.Business_Unit__c = a.Alias_Business_Unit__c;
+        TMNUser.Service_Region__c = a.Alias_Region__c;
+        TMNUser.Service_Line__c = a.Alias_Service_Line__c;              
     }
     
     public static void setJobStatus(TMN_User__c[] jobstatus){
@@ -130,11 +150,6 @@ public class identityEditNew {
     public PageReference goCancel() {
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
-//        if(id == null){
-//            PageReference cancelPage = new PageReference('/apex/identity_home');
-//            cancelPage.setRedirect(true);   
-//            return cancelPage;
-//        }
         PageReference cancelPage = new PageReference(retURL);
         cancelPage.setRedirect(true);   
         return cancelPage;
@@ -150,24 +165,7 @@ public class identityEditNew {
         backPage.setRedirect(true);   
         return backPage;
     }
-    
-//    public List<SelectOption> getItems() {
-//        List<SelectOption> options = new List<SelectOption>();
-//            options.add(new SelectOption('Care Meridian','Care Meridian'));
-//            options.add(new SelectOption('Corporate','Corporate'));
-//            options.add(new SelectOption('Cambridge','Hastings'));
-//            options.add(new SelectOption('NeuroRestorative','NeuroRestorative'));
-//            options.add(new SelectOption('Redwood','Redwood'));
-//            return options;
-//    }
-    
-    public String[] getoperatingGroups() {
-        return operatingGroups;
-    }
-    
-    public void setoperatingGroups(String[] operatingGroups) {
-        this.operatingGroups = operatingGroups;
-    } 
+     
 //pop-up section    
     public boolean displayPopup {get; set;}     
     
