@@ -140,6 +140,22 @@ public with sharing class EvaluationResponseTableController {
             currentResponse.Time_Given__c = Utility.getDateTimeFromString(value+':00');
         }
     }
+     public String startDateTime {
+        get {
+            return currentResponse.Start_Date_Time__c == null ? null : Utility.getMilitarytimeNoSeconds(currentResponse.Start_Date_Time__c);
+        }
+        set {
+            currentResponse.Start_Date_Time__c = Utility.getDateTimeFromString(value+':00');
+        }
+    }
+     public String endDateTime {
+        get {
+            return currentResponse.End_Date_Time__c == null ? null : Utility.getMilitarytimeNoSeconds(currentResponse.End_Date_Time__c);
+        }
+        set {
+            currentResponse.End_Date_Time__c = Utility.getDateTimeFromString(value+':00');
+        }
+    }
     
     public string getAdultimmunizationReport(){
     	string theId;
@@ -171,6 +187,8 @@ public with sharing class EvaluationResponseTableController {
 		} else {
 			rtId = rt[0].ID;
 		}
+		system.debug( 'RTID:' + currentResponse.RecordtypeId + ',' + rtId);
+		
 		if(currentResponse.RecordTypeId == rtId){
 			if(currentResponse.Isolation_Event_Start_Date__c > currentResponse.Isolation_Event_End_Date__c){
 				currentResponse.addError( 'Isolation end date must be after the isolation start date!' );
@@ -182,6 +200,16 @@ public with sharing class EvaluationResponseTableController {
 			}
 		}
 		//      End EC-116
+		
+		// IADAY-10 - start and end dates must differ, no future dates
+		if(currentResponse.Start_Date_Time__c > currentResponse.End_Date_Time__c){
+				currentResponse.addError( 'End date must be after the start date!' );
+				hasError = true;
+			}
+		if(currentResponse.Start_Date_Time__c > DateTime.now() || currentResponse.End_Date_Time__c > DateTime.now()  ){
+				currentResponse.addError( 'Date and time cannot be in future!' );
+				hasError = true;
+			}
 
 		try {
 			hasError = false;
@@ -284,13 +312,15 @@ public with sharing class EvaluationResponseTableController {
 			lbl.value = columnsToHeadersMap.get(column);
 			if(reqFields.contains(column) ){lbl.styleClass = 'evalCompReqField';}
 
-			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c' || column == 'Time_Observed__c' || column == 'Time_Given__c'){
+			if ( column == 'Isolation_Event_Start_Date__c' || column == 'Isolation_Event_End_Date__c' || column == 'Time_Observed__c' || column == 'Time_Given__c' || column == 'Start_Date_Time__c' || column == 'End_Date_Time__c'){
 				Component.Apex.InputText dialogInput = new Component.Apex.InputText(id=column);
 				dialogInput.styleClass = 'militaryDateTime';
 				if (column == 'Isolation_Event_Start_Date__c' ) dialogInput.expressions.value = '{!isolationEventStartDate}';
 				else if (column == 'Isolation_Event_End_Date__c' ) dialogInput.expressions.value = '{!isolationEventEndDate}';
 				else if (column == 'Time_Observed__c' ) dialogInput.expressions.value = '{!timeObserved}';
 				else if (column == 'Time_Given__c' ) dialogInput.expressions.value = '{!timeGiven}';
+				else if (column == 'Start_Date_Time__c') dialogInput.expressions.value = '{!startDateTime}';
+				else if (column == 'End_Date_Time__c') dialogInput.expressions.value = '{!endDateTime}';
 				PBSI.childComponents.add(lbl);
 				PBSI.childComponents.add(dialogInput);
 			}else{
@@ -307,7 +337,7 @@ public with sharing class EvaluationResponseTableController {
 
 	private void fetchResponses(Id evaluationId, String responseType) {
 		if(numRows == null){numRows = 1000;}
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Evaluation__c = :evaluationId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
 				'\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc' ;
@@ -316,7 +346,7 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	private void fetchResponsesFromPBS(Id pbsId, String responseType) {
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Person_Being_Served__c = :pbsId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
 				'\' ORDER BY Date__c Desc NULLS LAST, CreatedDate Desc Limit ' + numRows;
@@ -326,10 +356,13 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	private void fetchResponsesFromServAssign(Id saId, String responseType) {
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
-				'\' ORDER BY Isolation_Event_Start_Date__c DESC NULLS LAST, CreatedDate Limit ' + numRows;
+				'\' ORDER BY ';
+		if ( responseType == 'Isolation Event') 
+			query += 'Isolation_Event_Start_Date__c DESC NULLS LAST, ';
+		query += ' CreatedDate Desc Limit ' + numRows;
 		system.debug('Serv Assign Query: ' + query);
 		responses = Database.query(query);
 		numberOfResponses = responses.size();
