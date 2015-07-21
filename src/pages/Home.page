@@ -372,6 +372,10 @@
 			<apex:param name="canEdit" value="" />
 			<apex:param name="evalId" value="" />
 		</apex:actionFunction>
+		<!-- Incident Creation for Service Assignment -->
+		<apex:actionFunction name="createPBStypeIncident" status="pageProcessing" rerender="none" action="{!createPBStypeIncident}" >
+			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
+		</apex:actionFunction>
 	</apex:form>
 	<div id="shiftDocActionDialog"></div>
 	<div id="searchResultDialog"></div>
@@ -546,7 +550,10 @@
 					var category = selectedValue.replace('cnaWorkbookAction-', '').split('~')[0];
 					var subcategory = selectedValue.replace('cnaWorkbookAction-', '').split('~')[1];
 					createPanel('CNA Workbook', category, subcategory, null, 'Activity Log', true, latestCNAWorkbookId);
+				} else if (selectedValue == 'createPBSIncident') {
+					createPBStypeIncident(serviceAssignmentId);
 				}
+					
 				event.preventDefault();
 			});
 

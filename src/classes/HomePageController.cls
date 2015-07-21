@@ -246,6 +246,9 @@ public with sharing class HomePageController{
 					}
 				}
 			}
+			// For incident Creation - Add Security if condition later since We don't have requirements now - Sravan 07/21/2015
+				optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
+			
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
 		List<AggregateResult> responses = [
@@ -374,6 +377,13 @@ public with sharing class HomePageController{
 		pr.getParameters().put('RecordTypeId', Utility.getIncidentRecordType(userChosenIncident));
 		return pr;
 		
+	}
+	
+	public pageReference createPBStypeIncident(){
+		PageReference pr = new pagereference('/apex/Incident_Form_CreateEdit');
+		pr.getParameters().put('RecordTypeId', Utility.getIncidentRecordType('PBS'));
+		pr.getParameters().put('SAid', serviceAssignmentIdForAction);
+		return pr;
 	}
 
 
