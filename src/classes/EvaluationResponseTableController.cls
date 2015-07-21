@@ -6,20 +6,20 @@ public with sharing class EvaluationResponseTableController {
 	public string password { get; set; }
 	public Boolean eSignable { get; set; }
 	public string labels{ get; set; }
-	
+
 	public Boolean canCreate { get {
 		Schema.DescribeSObjectResult oSchema = Evaluation_Response__c.sObjectType.getDescribe();
 		return oSchema.isCreateable();
 	}
 		set; }
-		
+
 	public Boolean canEdit { get {
 		Schema.DescribeSObjectResult oSchema = Evaluation_Response__c.sObjectType.getDescribe();
 		return oSchema.isUpdateable();
-		
+
 	}
 		 set; }
-	
+
 	public string currentUserOpGroup{get; set;}
 
 	public set<string> reqFields { get; set; }
@@ -156,26 +156,26 @@ public with sharing class EvaluationResponseTableController {
             currentResponse.End_Date_Time__c = Utility.getDateTimeFromString(value+':00');
         }
     }
-    
+
     public string getAdultimmunizationReport(){
     	string theId;
         theId= [select id, developername from report where developername = 'Immunization_for_PBS' limit 1].id;
-  
+
         return theId;
     }
-    
+
       public string getChildimmunizationReport(){
     	string theId;
         theId= [select id, developername from report where developername = 'Immunization_Child_for_PBS' limit 1].id;
-  
+
         return theId;
     }
-    
+
     public string getPBSName(){
     	string name;
     	name = [SELECT Name FROM Contact WHERE Id=: pbsId].Name;
     	return name;
-    	
+
     }
 	public void saveResponse() {
 		System.debug('saveResponse called, currentResponse: ' + currentResponse);
@@ -188,7 +188,7 @@ public with sharing class EvaluationResponseTableController {
 			rtId = rt[0].ID;
 		}
 		system.debug( 'RTID:' + currentResponse.RecordtypeId + ',' + rtId);
-		
+
 		if(currentResponse.RecordTypeId == rtId){
 			if(currentResponse.Isolation_Event_Start_Date__c > currentResponse.Isolation_Event_End_Date__c){
 				currentResponse.addError( 'Isolation end date must be after the isolation start date!' );
@@ -200,7 +200,7 @@ public with sharing class EvaluationResponseTableController {
 			}
 		}
 		//      End EC-116
-		
+
 		// IADAY-10 - start and end dates must differ, no future dates
 		if(currentResponse.Start_Date_Time__c > currentResponse.End_Date_Time__c){
 				currentResponse.addError( 'End date must be after the start date!' );
@@ -306,7 +306,7 @@ public with sharing class EvaluationResponseTableController {
 			// don't show the last mod details on the entry screen
 			if ( column == 'LastModifiedDate' || column == 'LastModifiedByID')
 				continue;
-				
+
 			Component.Apex.PageBlockSectionItem PBSI = new Component.Apex.PageBlockSectionItem();
 			Component.Apex.OutputLabel lbl = new Component.Apex.OutputLabel();
 			lbl.value = columnsToHeadersMap.get(column);
@@ -356,11 +356,11 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	private void fetchResponsesFromServAssign(Id saId, String responseType) {
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Isolation_Event_Start_Date__c, Isolation_Event_End_Date__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +
 				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
 				'\' ORDER BY ';
-		if ( responseType == 'Isolation Event') 
+		if ( responseType == 'Isolation Event')
 			query += 'Isolation_Event_Start_Date__c DESC NULLS LAST, ';
 		query += ' CreatedDate Desc Limit ' + numRows;
 		system.debug('Serv Assign Query: ' + query);
@@ -383,47 +383,47 @@ public with sharing class EvaluationResponseTableController {
 		columnsToHeadersMap = new Map<String, String>();
 		for (Schema.FieldSetMember column: columns) {
 
-			if(currentUserOpGroup == 'NeuroRestorative' && (column.getFieldPath() == 'Depth__c' || column.getFieldPath() == 'Exudate_Type_Odor_Amount__c' || column.getFieldPath() == 'Undermining_in_cm__c' || column.getFieldPath() == 'Tunneling_in_cm__c' || column.getFieldPath() =='Surrounding_Tissue_Color_and_Condition__c' 
+			if(currentUserOpGroup == 'NeuroRestorative' && (column.getFieldPath() == 'Depth__c' || column.getFieldPath() == 'Exudate_Type_Odor_Amount__c' || column.getFieldPath() == 'Undermining_in_cm__c' || column.getFieldPath() == 'Tunneling_in_cm__c' || column.getFieldPath() =='Surrounding_Tissue_Color_and_Condition__c'
 				|| column.getFieldPath() == 'Associated_Pain__c' || column.getFieldPath() == 'Time_Observed__c' ) && recordType == 'Pressure Ulcer Detail')
 				continue;
-				
+
 			columnsToFetch.add(column.getFieldPath());
-			
+
 			// check for custom label
 			string label = (string)column.getLabel();
 			Map<String,String> labelMap = new map<String, String>();
 			system.debug( labels);
-			
+
 			if (!string.isempty( labels)) {
 				labels= labels.unescapeHtml3();
 				list<FieldLabelVal> objs = (list<FieldLabelVal>) JSON.deserialize(labels, list<FieldLabelVal>.class);
-			
-				for(FieldLabelVal d : objs){ 
+
+				for(FieldLabelVal d : objs){
 			    	 labelMap.put(d.field, d.label);
 				}
 				system.debug( labelMap);
-			
+
 			}
-		
+
 			if ( labelMap.size() > 0 ) {
 				if ( labelMap.get( column.getFieldPath())!= null) {
-					
+
 					label = String.valueof(labelMap.get( column.getFieldPath()));
 					system.debug( 'found custom label for column.getFieldPath(): '  + label );
 				}
-			} 
+			}
 			columnsToHeadersMap.put(column.getFieldPath(), label);
 			if( column.getRequired() ){
 				reqFields.add( column.getFieldPath() );
 			}
 		}
 		return String.join(columnsToFetch, ', ');
-	
+
 	}
-	
+
 	public class FieldLabelVal{
 		public String field;
 		public String label;
 	}
-	
+
 }
