@@ -204,9 +204,10 @@ function complete(Signed) {
     <apex:outputpanel rendered="{!NewBlock}">
         <apex:pageBlock >
             <apex:pageBlockButtons >  
-                <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" rerender="myFRM"></apex:commandButton>
-                <apex:commandButton action="{!cancel}" value="Cancel"  ></apex:commandButton>  
-            </apex:pageBlockButtons>
+                <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" rendered="{!!inlinemode}" rerender="myFRM"></apex:commandButton>
+                <apex:commandButton action="{!saveModifiedProgressNote}" value="Save" rendered="{!inlinemode}"  ></apex:commandButton>
+				<apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}"></apex:commandButton> 
+                <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}"></apex:commandButton></apex:pageBlockButtons>
             <apex:pageBlockSection columns="1" >
                 <!-- hidden fields, values will be passed in the url -->    
                 <apex:outputPanel style="display:none;">
@@ -249,7 +250,7 @@ function complete(Signed) {
         <apex:pagemessages ></apex:pagemessages>
             <apex:commandButton id="saveButton"   value="Save"   action="{!save}"   style="margin-left:30%;display:none"/>
             <apex:commandButton id="cancelButton" value="Cancel" action="{!Cancel}" style="display:none"/>
-            <apex:commandButton id="editButton" value="Edit"  action="{!Edit}" style="margin-left:30%;"/>
+            <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" style="margin-left:30%;"/>
             <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,pblk" />
             <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
             <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
