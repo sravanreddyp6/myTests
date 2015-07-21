@@ -4,6 +4,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public Id theServAssignId { get; set; }
     public boolean editmode{get; set;}  
     public boolean savemode{get; set;}
+    public boolean inlinemode{get; set;}
     Public Id ActivePlanId{get;set;}
     public Admission__c admission { get; set; }
     public Id admissionId { get; set; }
@@ -522,6 +523,7 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
       
     public Notes_ProgressNote_AZ_OPT(ApexPages.StandardController controller){
         String dispMode = ApexPages.currentPage().getParameters().get('Mode');
+        inlinemode = false;
         if(dispMode == 'New'){
             NewBlock = true;
             AsmntOnly = false;
@@ -635,8 +637,78 @@ public list<Clinical_Catalog_Tree_Node__c > updateSelected(id eID){
         
         
         }
+   		else if (dispMode == 'Inlineedit'){
+            NewBlock = true;
+            inlinemode = true;
+            insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
+            pn = (Progress_Note__c) controller.getRecord();
+            progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+            this.thePN = pn;
+            pnOverlap = new List<Progress_Note__c>();
+            theServAssignId =  pnedit.Service_Assignment__c ;
+            pbsName = pnedit.Service_Assignment__r.Person_Being_Served__c;
+            admissionId = pnedit.Service_Assignment__r.Admission__c;  
+            ActivePlanId = pnedit.Action_Plan__c;
+            ContactName = pnedit.Service_Assignment__r.Person_Being_Served__r.Name;
+            myRTs = [select Name, Id, sObjectType, Description from RecordType where sObjectType = 'Progress_Note__c' ORDER BY Name];
+            for (RecordType rt: myRTs) {
+                if (rt.Name == 'AZ - OPT') {
+                    AZ_OPT_ID = rt.Id;
+                } 
+                if (rt.Name == 'Shift Note') {
+                    SHIFT_NOTE_ID = rt.Id;
+                }
+            }
+            if (pnedit.Service_Assignment__r.Admission__r.State__c == 'AZ') {
+                myState='AZ';
+                SelectOption SO;
+                pn.RecordTypeId = AZ_OPT_ID;
+                for (RecordType thisRT : myRTs){
+                    string myName = thisRT.Name;
+                    if(myName.contains(myState)){
+                        SO = new SelectOption(thisRt.Id, thisRt.Name);
+                        rtOptions.Add(SO);
+                    }
+                }
+                if ( pnedit.Service_Assignment__r.service_location__r.programid__c != '114165002') {
+                    pn.Number_of_Required_Signatures__c = 1;
+                    
+                } else {
+                    pn.RecordTypeId = SHIFT_NOTE_ID;
+                }
+                
+            }            
+        }
     }
     
+    public pagereference editInline(){
+        newBlock = false; 
+        pagereference pagref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Inlineedit&id='+ApexPages.currentPage().getParameters().get('id'));
+        pagref.setredirect(true);
+        return pagref;
+    } 
+    
+    public pagereference saveModifiedProgressNote(){
+       pn.recordtypeid = AZ_OPT_ID ; 
+       pn.Person_Being_Served__c = pbsName;
+       pn.admission__c = admissionId;
+       pn.Service_Assignment__c = theServAssignId;
+       pn.Action_Plan__c = ActivePlanId;
+       update pn;
+       insertedProgressNoteId = pn.Id;
+       newBlock = false;
+       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id);
+       pageref.setredirect(true);
+       return pageref;
+        
+    } 
+    
+    public pagereference cancelEditNote(){
+        newBlock = false; 
+       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&sfdc.override=1');
+        pageref.setredirect(true);
+        return pageref;
+    } 
     
     public pagereference saveProgressNote(){
        //pn.start_time__C = date.today();
