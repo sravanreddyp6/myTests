@@ -1,0 +1,273 @@
+<apex:component controller="GoalObjReporting" allowDML="true">
+    <apex:attribute name="sId" description="Id of the objective reporting on record" type="Id" assignTo="{!saId}" />
+    <apex:attribute name="oId" description="Id of the objective reporting on record" type="Id" assignTo="{!objId}" />
+    <apex:attribute name="rows" description="Number of rows on the page block" type="Integer" default="5" assignTo="{!numRows}" />           
+    <apex:attribute name="type" description="The type of this objective" type="String" required="false" assignTo="{!objType}" />
+	<apex:attribute name="startdate" description="The start date/time of this shift" type="datetime" required="true" assignTo="{!shiftStart}" />
+	<apex:attribute name="enddate" description="The end date/time of this shift" type="datetime" required="true" assignTo="{!shiftEnd}" />
+
+
+<style>
+        .checksheetdate { background-color: #c5d3ef; width:100%; line-height:3em; font-weight:bold; padding-left:10px }
+        .prompts { background-color:#ccccff; }
+        .objective { background-color:#fc9; padding:10px; border-top:1px solid black; border-left: 1px solid black; border-right:1px solid black}
+        .daysofweek { background-color:#ccc; text-align:center }
+        .inputheaders { background-color: #ffc; font-size:10px;}
+        
+      .occurrencesInput {
+            width: 30px;
+        }
+        .Mon {
+            border-left: 1px solid black;
+        }
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }
+        .btnhover{
+            z-index:1001;
+
+        }
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .buttonGroupHeading{
+            font-weight: bold;
+        }
+        .objectiveresulttype{
+            float: right;
+        }
+        .objectivePanel .inactive{
+            background-color: #e0e0e0;
+            }
+        .behaviortable tr:nth-child(even){
+            background-color: #fefefe;
+            }
+        table.list.listtable tr.headerRow.listheader th{
+            background-color: #99ccff;
+            padding: 8px;
+            border-bottom: 1px solid #9e9e9e;
+        }
+        .dataRow.row-odd{
+            background-color:#ffffff;
+        }
+        .dataRow.row-even{
+            background-color:#ececec;
+        }
+        </style>
+
+
+<!--  input panel -->
+
+<apex:form id="goalobjreportform">
+<apex:pageMessages id="goalobjmsgs" />
+<apex:pageblock >
+<apex:actionFunction name="saveResult" action="{!saveResult}" status="savestatus" rerender="resultTableWrappers, goalobjmsgs, goalobjreportform">
+	<apex:param name="currentResponseId" assignTo="{!currRespID}" value="" />
+	<apex:param name="currobjType" assignTo="{!objType}" value="" />
+</apex:actionFunction>
+
+<apex:actionregion >
+<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" >
+	<apex:actionStatus id="savestatus">
+		<apex:facet name="stop">
+			<apex:commandbutton styleclass="btn" value="Save" onClick="saveResult(); return false;" />
+		</apex:facet>
+		<apex:facet name="start">
+			<apex:commandButton value="Saving..." disabled="true" />
+		</apex:facet>
+	</apex:actionStatus>
+	<input class="btn" type="button" value="Cancel" onclick="clearPanel();"  />
+</apex:outputPanel>
+
+<apex:pageblockSection columns="1" rendered="{!thisobj.Type__c == 'Narrative'}">
+<apex:outputText value="{!thisObj.Description__c}" />
+<apex:pageBlockSectionItem >
+<apex:outputlabel for="timespan" value="Effective Dates" />
+<apex:outputText id="timespan" value="{! effdates  }" />
+</apex:pageBlockSectionItem> 
+<apex:pageblocksectionitem >
+<apex:outputlabel for="narrdesc" value="Narrative Note" />
+<apex:inputfield id="narrdesc" html-cols="80" value="{!currResult.currResultN.Description__c}"/>
+</apex:pageblocksectionitem>
+</apex:pageblockSection>
+
+<apex:pageblockSection columns="1" rendered="{!thisobj.Type__c == 'Skill'}">
+<apex:outputText value="{!thisObj.Description__c}" />
+<apex:pageBlockSectionItem >
+<apex:outputlabel for="timespan" value="Effective Dates" />
+<apex:outputText id="timespan" value="{! effdates  }" />
+</apex:pageBlockSectionItem> 
+
+<apex:pageblocksectionitem >
+<apex:outputlabel for="skillday" value="Day" />
+<apex:inputfield id="skillday" value="{!currResult.currResultS.Day__c}" />
+</apex:pageblocksectionitem>
+<apex:pageblocksectionitem >
+<apex:outputlabel for="attempts" value="Attempts" />
+<apex:inputfield id="attempts" value="{!currResult.currResultS.Attempts__c}" />
+</apex:pageblocksectionitem>
+<apex:pageblocksectionitem >
+<apex:outputlabel for="status" value="Prompt" />
+<apex:selectList id="status" value="{!currResult.currResultS.Status__c}" size="1">
+ 	<apex:selectOptions value="{!promptList}"/>
+ </apex:selectList>
+</apex:pageblocksectionitem>
+<apex:pageblocksectionitem >
+<apex:outputlabel for="initials" value="Initials" />
+<apex:inputfield id="initials" value="{!currResult.currResultS.Initials__c}"/>
+</apex:pageblocksectionitem>
+<apex:pageblocksectionitem >
+<apex:outputlabel for="metobj" value="Met Objective" />
+<apex:inputfield id="metobj" value="{!currResult.currResultS.Met_Objective__c}" />
+</apex:pageblocksectionitem>
+</apex:pageblockSection>
+
+
+<apex:pageblockSection columns="1" rendered="{! thisobj.Type__c == 'Behavior - Count' || thisobj.type__c == 'Behavior - Duration' }">
+<apex:outputText value="{!thisObj.Description__c}" />
+<apex:pageBlockSectionItem >
+<apex:outputlabel for="timespan" value="Effective Dates" />
+<apex:outputText id="timespan" value="{! effdates  }" />
+</apex:pageBlockSectionItem> 
+<apex:outputPanel id="behavior" layout="none">
+
+<apex:pageBlockSectionItem >
+<apex:repeat value="{!Tables}" var="table">
+
+<table style="border:1px solid black;width:100%;padding:0px; border-collapse:collapse" class="behaviortable" id="behaviorTable1">
+      <tr style="border-bottom:1px solid black;">
+         <th style="border-right:1px solid black;">Date</th>
+         
+      <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
+              <td class="daysofweek" >
+                  <apex:outputText value="{0, date, MMM dd}"><apex:param value="{!day}" /></apex:outputText>
+              </td>
+      </apex:repeat>
+      </tr>
+      <tr style="border-bottom:1px solid black;;">
+          <th style="border-right:1px solid black;">Time</th>
+      <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
+              <td class="daysofweek" >
+                  <apex:outputText value="{0, date,E}"><apex:param value="{!day}" /></apex:outputText>
+              </td>
+      </apex:repeat>
+      </tr>
+      <apex:repeat value="{!table.FirstKeys}" var="time">
+        <tr>
+            <td>{!table.rows[time].Header}</td>
+               <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
+                    <td style="text-align:center" class="{!table.rows[time].Items[day].DayofWeek + ' ' + IF(table.rows[time].Items[day].Active,'active', 'inactive')}">
+                        <apex:inputField value="{!table.rows[time].Items[day].DataObject.Occurrences__c}"
+                                rendered="{!editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
+                                styleClass="occurrencesInput"
+                                />
+                        <apex:inputField value="{!table.rows[time].Items[day].DataObject.Occurred__c}"
+                                rendered="{!editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
+                                styleClass="occurredInput"
+                                />
+                        <apex:outputField value="{!table.rows[time].Items[day].DataObject.Occurrences__c}"
+                                rendered="{!!editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
+                                styleClass="occurrencesOutput"
+                                />
+                        <apex:OutputField value="{!table.rows[time].Items[day].DataObject.Occurred__c}"
+                                rendered="{!!editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
+                                styleClass="occurredOutput"
+                                />
+                        <apex:outputText value="<br />" escape="false" rendered="{!table.rows[time].Items[day].DataObject.LastModifiedById != null}" />
+                        <apex:outputField value="{!table.rows[time].Items[day].DataObject.LastModifiedById}" styleClass="occurredOutput"/>
+                        <apex:outputText value="<br />" escape="false" rendered="{!table.rows[time].Items[day].DataObject.LastModifiedById != null}" />
+                        <c:MilitaryDatetime dateTimeVal="{!table.rows[time].Items[day].DataObject.LastModifiedDate}" /> 
+                   </td>
+              </apex:repeat>
+          </tr>
+      </apex:repeat>
+      </table>
+      
+      <br />
+     
+  </apex:repeat>
+</apex:pageBlockSectionItem>
+  </apex:outputPanel>
+
+</apex:pageblockSection>
+
+</apex:actionregion>
+</apex:pageblock>
+
+
+
+<!--  response panel  -->
+
+<Apex:pageblock title="Previous Results" rendered="{! NOT(BEGINS(thisobj.Type__c, 'Behavior'))}">
+<apex:actionFunction name="showEditResponse" action="{!showEditResponse}" immediate="true" status="loadingResponse" rerender="goalobjmsgs, narrdesc, skillday, attempts, initials, status, metobj" >
+	<apex:param name="currentResponseId" assignTo="{!currRespID}" value="" />
+	<apex:param name="currobjType" assignTo="{!objType}" value="" />
+</apex:actionFunction>
+<apex:outputPanel id="resultTableWrappers" >
+<apex:actionStatus id="loadingResponse">
+	<apex:facet name="start">
+	<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+	</apex:facet>
+	<apex:facet name="stop" />
+</apex:actionStatus>
+
+
+<apex:outputPanel id="resultTableWrapper1" rendered="{!thisobj.Type__c == 'Narrative'}">
+<apex:actionregion >
+
+            <apex:pageBlockTable value="{!narrativeresults}" var="result" id="resultTable1" rendered="{! narrativeresults.size>0}">
+            
+                <apex:column headerValue="Action" width="80px" >
+                    <apex:commandlink onclick="showEditResponse('{!result.Id}', 'Narrative'); return false;" rendered="{! AND (result.createdbyid == $User.Id, result.lastmodifieddate >= shiftStart) }" value="Edit" />
+                </apex:column>
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!result[column]}" rendered="{! column != 'lastmodifieddate' }" />  
+
+                    <apex:column headerValue="Last Modified Date" rendered="{! column == 'lastmodifieddate'}">
+                    	<nobr>
+	                	<c:MilitaryDatetime dateTimeVal="{!result[column]}" /> 
+	                	</nobr>
+	                	<apex:facet name="header">Last Modified</apex:facet>
+                </apex:column>
+                
+                </apex:repeat>
+             
+            </apex:pageBlockTable>
+            </apex:actionregion>
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel id="resultTableWrapper2" rendered="{!thisobj.Type__c == 'Skill'}">
+        <apex:actionregion >
+            <apex:pageBlockTable value="{!skillresults}" var="result" id="resultTable2" rendered="{! skillresults.size>0}">
+            
+                <apex:column headerValue="Action" width="80px" >
+                    <apex:commandlink onclick="showEditResponse('{!result.Id}', 'Skill'); return false;" rendered="{! AND (result.createdbyid == $User.Id, result.lastmodifieddate >= shiftStart) }" value="Edit" />
+                </apex:column>
+                <apex:repeat value="{!columnsToFetch}" var="column">
+                    <apex:column value="{!result[column]}" rendered="{! column != 'lastmodifieddate'}" />  
+
+                    <apex:column headerValue="Last Modified Date" rendered="{! column == 'lastmodifieddate'}">
+                    	<nobr>
+	                	<c:MilitaryDatetime dateTimeVal="{!result[column]}" /> 
+	                	</nobr>
+	                	<apex:facet name="header">Last Modified Date</apex:facet>
+                </apex:column>
+                </apex:repeat>
+              	
+         	</apex:pageBlockTable>
+         	</apex:actionregion>
+        </apex:outputPanel>
+ 
+</apex:outputPanel>    
+
+</Apex:pageblock>
+</apex:form>
+</apex:component>
