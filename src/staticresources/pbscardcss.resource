@@ -15,6 +15,6 @@
         .pbstitle { font-weight:bold; font-style:italic; color:#666666; line-height:24px; padding-left:5px }
         .pbsname {font-weight:bold;font-size:13pt; padding-left:5px; }
         
-        .breadcrumb, .breadcrumb a, .breadcrumb a.visited { color: #6699ff !important; text-decoration: none }
+        .breadcrumb, .breadcrumb a, .breadcrumb a.visited { color: #6699ff !important; text-decoration: none !important; font-size: 12px; line-height: normal !important;}
         .breadcrumb a:hover { text-decoration: underline }
         .stickBlueCard { position:fixed !important; top:0px; width:100%; z-index:100; left:0;}
