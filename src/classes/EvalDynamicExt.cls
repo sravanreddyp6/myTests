@@ -451,19 +451,20 @@ public with sharing class EvalDynamicExt {
 		clonedEval.Signed_At__c = null;
 		clonedEval.Head_to_toe_Signed_At__c = null;
 
+        // EC-235 - rename the assessment on revise - needs new owner name and date of creation
+        string assessmentName = '';
+        Contact thisPBS = [ select firstname, lastname from contact where id = :pbsID];
+        string pbsLastName = thisPBS.LastName != null ? thisPBS.LastName : '' ;
+        string pbsFirstinitial = thisPBS.FirstName != null ? thisPBS.FirstName.substring(0, 1) : '';
+        string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
 		if(evalType == 'Head to Toe'){
 			clonedEval.Head_to_toe_status__c = 'Draft';
+			assessmentName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString()) +' - '+'NSD'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
 		} else if (evalType == 'Residential') {
 			clonedEval.OwnerId = UserInfo.getUserId();
+			assessmentName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
 		}
-
-		// EC-235 - rename the assessment on revise - needs new owner name and date of creation
-		Contact thisPBS = [ select firstname, lastname from contact where id = :pbsID];
-    	string pbsLastName = thisPBS.LastName != null ? thisPBS.LastName : '' ;
-		string pbsFirstinitial = thisPBS.FirstName != null ? thisPBS.FirstName.substring(0, 1) : '';
-		string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
-		string resAsmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-		clonedEval.name = resAsmtName;
+		clonedEval.name = assessmentName;
 			
 		
     	insert clonedEval;
