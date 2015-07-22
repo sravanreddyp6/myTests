@@ -115,26 +115,26 @@ div.footer {
 			<apex:variable var="eval" value="{!evaluationsMap[nsdEvalId]}" />
 			<apex:pageblock title="{!eval.Name}">
 				<apex:pageblocksection collapsible="false" columns="2">
-					<apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="Nurse" />
 						<apex:outputText value="{!eval.Owner.Name}" />
 					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="Shift Status" />
 						<apex:outputText value="{!eval.Status__c}" />
 					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="Shift Start" />
 						<c:MilitaryDatetime datetimeval="{!eval.Shift_Start_Time__c}" />
 					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="Shift End" />
 						<c:MilitaryDatetime datetimeval="{!eval.Shift_End_Time__c}" />
 					</apex:pageBlockSectionItem>
 					</apex:pageBlockSection>
 
-					<apex:outputPanel
-						rendered="{! CONTAINS(mapEvalResposesCmponentsStr, (nsdEvalId+'~Late Entry Note'))}">
+                    <apex:variable var="lateNoteKey" value="{! nsdEvalId + '~Late Entry Note' }" />
+					<apex:outputPanel rendered="{!AND (NOT ISBLANK(mapEvalResposesCmponentsStr),  CONTAINS(mapEvalResposesCmponentsStr, lateNoteKey ) )}">
 						<c:EvaluationResponseTablePdfNoCntroller
 							responses="{!mapEvalResposes[nsdEvalId]['Late Entry Note']}"
 							columnsToFetch="{!mapEvalResposeFlds['Late Entry Note']}"
@@ -145,8 +145,7 @@ div.footer {
 					<apex:repeat value="{!evalValues[nsdEvalId]}" var="evalSecId">
 						<apex:variable var="evalSection"
 							value="{!evalSectionsMap[evalSecId]}" />
-						<apex:pageBlockSection
-							title="{!evalSection.cat } / {!evalSection.subcat} (Head to Toe)"
+						<apex:pageBlockSection title="{!evalSection.cat } / {!evalSection.subcat} (Head to Toe)"
 							collapsible="false" columns="2">
 
 							<apex:outputText style="font-style:italic"
@@ -154,23 +153,19 @@ div.footer {
 							<apex:outputText value="" />
 
 							<apex:repeat value="{!evalSection.strEvalSections}" var="fld">
-								<apex:pageBlockSectionItem>
+								<apex:pageBlockSectionItem >
 									<apex:outputText value="{!fld}" escape="false" />
 								</apex:pageBlockSectionItem>
 							</apex:repeat>
 
-							<apex:outputPanel
-								rendered="{! CONTAINS(mapEvalResposesCmponentsStr, (nsdEvalId+'~Wound Detail')) && evalSection.cat == 'Skin/Body' && evalSection.subcat == 'Wound Detail' }">
-								<c:EvaluationResponseTablePdfNoCntroller
-									responses="{!mapEvalResposes[nsdEvalId]['Wound Detail']}"
+							<apex:outputPanel rendered="{! CONTAINS(mapEvalResposesCmponentsStr, (nsdEvalId+'~Wound Detail')) && evalSection.cat == 'Skin/Body' && evalSection.subcat == 'Wound Detail' }">
+								<c:EvaluationResponseTablePdfNoCntroller responses="{!mapEvalResposes[nsdEvalId]['Wound Detail']}"
 									columnsToFetch="{!mapEvalResposeFlds['Wound Detail']}"
 									columnsToHeadersMap="{!mapEvalResposeFldLbls}"
 									type="Wound Detail" displayTitle="false" />
 							</apex:outputPanel>
-							<apex:outputPanel
-								rendered="{! CONTAINS(mapEvalResposesCmponentsStr, (nsdEvalId+'~Pressure Ulcer Detail')) && evalSection.cat == 'Skin/Body' && evalSection.subcat == 'Pressure Ulcer Details' }">
-								<c:EvaluationResponseTablePdfNoCntroller
-									responses="{!mapEvalResposes[nsdEvalId]['Pressure Ulcer Detail']}"
+							<apex:outputPanel rendered="{! CONTAINS(mapEvalResposesCmponentsStr, (nsdEvalId+'~Pressure Ulcer Detail')) && evalSection.cat == 'Skin/Body' && evalSection.subcat == 'Pressure Ulcer Details' }">
+								<c:EvaluationResponseTablePdfNoCntroller responses="{!mapEvalResposes[nsdEvalId]['Pressure Ulcer Detail']}"
 									columnsToFetch="{!mapEvalResposeFlds['Pressure Ulcer Detail']}"
 									columnsToHeadersMap="{!mapEvalResposeFldLbls}"
 									type="Pressure Ulcer Detail" displayTitle="false"
@@ -191,19 +186,19 @@ div.footer {
 			<apex:variable var="eval" value="{!evaluationsMap[cnaEvalId]}" />
 			<apex:pageblock title="{!eval.Name}">
 				<apex:pageblocksection collapsible="false" columns="2">
-					<apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="CNA" />
 						<apex:outputText value="{!eval.Owner.Name}" />
 					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="Status" />
 						<apex:outputText value="{!eval.Status__c}" />
 					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="Start Time" />
 						<c:MilitaryDatetime datetimeval="{!eval.Shift_Start_Time__c}" />
 					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
 						<apex:outputLabel value="End Time" />
 						<c:MilitaryDatetime datetimeval="{!eval.Shift_End_Time__c}" />
 					</apex:pageBlockSectionItem>
@@ -213,8 +208,7 @@ div.footer {
 					<apex:repeat value="{!evalValues[cnaEvalId]}" var="evalSecId">
 						<apex:variable var="evalSection"
 							value="{!evalSectionsMap[evalSecId]}" />
-						<apex:pageBlockSection
-							title="{!evalSection.cat } / {!evalSection.subcat} (CNA Workbook)"
+						<apex:pageBlockSection title="{!evalSection.cat } / {!evalSection.subcat} (CNA Workbook)"
 							collapsible="false" columns="2">
 
 							<apex:outputText style="font-style:italic"
@@ -222,7 +216,7 @@ div.footer {
 							<apex:outputText value="" />
 
 							<apex:repeat value="{!evalSection.strEvalSections}" var="fld">
-								<apex:pageBlockSectionItem>
+								<apex:pageBlockSectionItem >
 									<apex:outputText value="{!fld}" escape="false" />
 								</apex:pageBlockSectionItem>
 							</apex:repeat>
@@ -231,18 +225,15 @@ div.footer {
 						<apex:pageBlockSection title="Turns Summary" collapsible="false"
 							columns="1"
 							rendered="{! evalSection.entryType == 'CNA Workbook' && evalSection.cat == 'Turns' && evalSection.subcat == 'Details'}">
-							<apex:pageBlockTable
-								value="{!evalSection.turnsChartComp.turnsinnerkeys}"
+							<apex:pageBlockTable value="{!evalSection.turnsChartComp.turnsinnerkeys}"
 								var="turntype">
-								<apex:column>
+								<apex:column >
 									<apex:outputText value="{!turntype}" />
 								</apex:column>
-								<apex:repeat
-									value="{!evalSection.turnsChartComp.turnschartkeys}" var="hour">
+								<apex:repeat value="{!evalSection.turnsChartComp.turnschartkeys}" var="hour">
 
 									<apex:column headervalue="{!hour}" style="text-align:vertical">
-										<apex:repeat
-											value="{!evalSection.turnsChartComp.turnsChart[hour][turntype]}"
+										<apex:repeat value="{!evalSection.turnsChartComp.turnsChart[hour][turntype]}"
 											var="turnPanel">
 											<apex:outputText value="{!turnPanel.turnVal}" />
 											<br />
