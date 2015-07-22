@@ -5,6 +5,7 @@ public with sharing class EvaluationResponseTableController {
 	public string username { get; set; }
 	public string password { get; set; }
 	public Boolean eSignable { get; set; }
+
 	public string labels{ get; set; }
 
 	public Boolean canCreate { get {
@@ -179,6 +180,7 @@ public with sharing class EvaluationResponseTableController {
     }
 	public void saveResponse() {
 		System.debug('saveResponse called, currentResponse: ' + currentResponse);
+		hasError = false;
 		//      Start EC-116
 		ID rtId = null;
 		List<RecordType> rt = [select id from RecordType where DeveloperName = 'Isolation_Event' and sObjectType = 'Evaluation_Response__c' limit 1];
@@ -201,18 +203,47 @@ public with sharing class EvaluationResponseTableController {
 		}
 		//      End EC-116
 
-		// IADAY-10 - start and end dates must differ, no future dates
-		if(currentResponse.Start_Date_Time__c > currentResponse.End_Date_Time__c){
-				currentResponse.addError( 'End date must be after the start date!' );
-				hasError = true;
+		// IADAY-10 - date rules
+		if ( responseType == 'Time Log') {
+			// compare start and end dates
+			if ( currentResponse.End_Date_Time__c != null ) {
+				// end date after start
+				if((currentResponse.Start_Date_Time__c > currentResponse.End_Date_Time__c) ){
+					currentResponse.addError( 'End date must be after the start date.' );
+					hasError = true;
+				}
+				// must be same day
+				if (currentResponse.Start_date_Time__c.Date() != currentResponse.End_Date_Time__c.Date()) {
+					currentResponse.addError('Start and End times must occur on the same day.');
+					hasError = true;
+				}
+				// must be different
+				if (currentResponse.Start_Date_Time__c == currentResponse.End_Date_Time__c ) {
+					currentResponse.addError('Start and End times must be different.');
+					hasError = true;
+				}
 			}
-		if(currentResponse.Start_Date_Time__c > DateTime.now() || currentResponse.End_Date_Time__c > DateTime.now()  ){
-				currentResponse.addError( 'Date and time cannot be in future!' );
-				hasError = true;
+			// can't be in the future
+			if(currentResponse.Start_Date_Time__c > DateTime.now() || currentResponse.End_Date_Time__c > DateTime.now()  ){
+					currentResponse.addError( 'Date and time cannot be in future.' );
+					hasError = true;
 			}
-
+		
+			if (! hasError ) {
+				// check for date overlap with another event
+				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType)]; 
+				for ( Evaluation_Response__c tl : otherTimeLogs ) {
+					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currentResponse.start_date_time__c, currentResponse.end_date_time__c) ) {
+						currentResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
+						hasError = true;
+						break;
+					}
+				}
+			}
+		
+		} // end IADAY-10
 		try {
-			hasError = false;
+//			hasError = false;
 			// string tmp = getNecessaryColumns(responseType);
 			if(reqFields != null){
 				for(string rCol : reqFields){
@@ -226,7 +257,7 @@ public with sharing class EvaluationResponseTableController {
 				upsert currentResponse;
 			}
 		} catch (DMLException ex) {
-			hasError = true;
+		 	hasError = true;
 			system.debug(ex);
 			// SF will automatically create a PageMessage Error here, so we don't
 			// have to do anything
@@ -356,10 +387,11 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	private void fetchResponsesFromServAssign(Id saId, String responseType) {
-		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType) +
-				' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +
-				' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) +
-				'\' ORDER BY ';
+		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType);
+		if ( responseType != 'Isolation Event') 
+			query += ', Isolation_Event_End_Date__c, Isolation_Event_Start_Date__c ';
+		query += ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' + 
+		 		' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) + '\' ORDER BY ';
 		if ( responseType == 'Isolation Event')
 			query += 'Isolation_Event_Start_Date__c DESC NULLS LAST, ';
 		query += ' CreatedDate Desc Limit ' + numRows;
@@ -426,4 +458,23 @@ public with sharing class EvaluationResponseTableController {
 		public String label;
 	}
 
+	private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
+		
+		Boolean overlaps = false;
+		
+		if ( e1 == null ) // first set is not a range - can't compare
+			return overlaps;
+			
+		if ( s2 > s1 && s2 < e1 ) // starts within first timeframe
+			overlaps = true;
+		else {
+			if ( e2 != null ) {
+				if ( e2 > s1 && e2 < e1 ) // ends within first timeframe
+					overlaps = true;
+				else if ( s2 < s1 && e2 > e1) // covers first time span
+					overlaps = true;
+			}
+		}
+		return overlaps;
+	}
 }
