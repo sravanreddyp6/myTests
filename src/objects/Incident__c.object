@@ -120,7 +120,11 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Consulted MENTOR nurse</fullName>
+                <fullName>Consulted Outside Med/Psych Professional</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Consulted Network Nurse</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -129,6 +133,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Performed CPR</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Performed Choking Relief Maneuver</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -145,61 +153,6 @@
         <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
         <visibleLines>4</visibleLines>
-    </fields>
-    <fields>
-        <fullName>First_Response__c</fullName>
-        <externalId>false</externalId>
-        <label>First Response Action Taken</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Administered First Aid</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Assessed for Injury</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Called/Consulted with External Medical/Psychiatric Professional</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Called 911</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Consulted MENTOR nurse</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Emergency Behavioral Intervention</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>ER/Urgent Care Visit</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Performed CPR</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Performed Heimlich or other choking relief maneuver</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Primary Care Physician Contact of Visit</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Restraint</fullName>
-                <default>false</default>
-            </picklistValues>
-            <sorted>false</sorted>
-        </picklist>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Hospitalization_Type__c</fullName>
@@ -320,15 +273,39 @@
         <label>Incident Type</label>
         <picklist>
             <picklistValues>
-                <fullName>Value 1</fullName>
+                <fullName>Death of Person Being Served</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Value 2</fullName>
+                <fullName>Elopement of Person Being Served</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Value 3</fullName>
+                <fullName>Suicidal Person Being Served</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Sexual Assault by Person Being Served</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Physical Assault by Person Being Served</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Behavioral Incident</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medication Incident</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medical Incident</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Injury of Person Being Served</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -495,9 +472,9 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>PBS_Arrest_Reason_Know__c</fullName>
+        <fullName>PBS_Arrest_Reason_Known__c</fullName>
         <externalId>false</externalId>
-        <label>PBS Arrest Reason Know</label>
+        <label>PBS Arrest Reason Known</label>
         <picklist>
             <picklistValues>
                 <fullName>Yes</fullName>
@@ -665,6 +642,15 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Unknown_Date_Occurred__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Unknown Date Occurred</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Where_incident_occurred__c</fullName>
         <externalId>false</externalId>
         <label>Where did the incident occur?</label>
@@ -756,7 +742,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Consulted MENTOR nurse</fullName>
+                <fullName>Consulted Network Nurse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Consulted Outside Med%2FPsych Professional</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -772,54 +762,11 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Performed Choking Relief Maneuver</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Primary Care Physician Contact or Visit</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>First_Response__c</picklist>
-            <values>
-                <fullName>Administered First Aid</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Assessed for Injury</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Called 911</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Called%2FConsulted with External Medical%2FPsychiatric Professional</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Consulted MENTOR nurse</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>ER%2FUrgent Care Visit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Emergency Behavioral Intervention</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed CPR</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed Heimlich or other choking relief maneuver</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Primary Care Physician Contact of Visit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Restraint</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -897,15 +844,39 @@
         <picklistValues>
             <picklist>Incident_Type__c</picklist>
             <values>
-                <fullName>Value 1</fullName>
+                <fullName>Behavioral Incident</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Value 2</fullName>
+                <fullName>Death of Person Being Served</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Value 3</fullName>
+                <fullName>Elopement of Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Injury of Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical Incident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medication Incident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Physical Assault by Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Assault by Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Suicidal Person Being Served</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -962,7 +933,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>PBS_Arrest_Reason_Know__c</picklist>
+            <picklist>PBS_Arrest_Reason_Known__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -1092,7 +1063,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Consulted MENTOR nurse</fullName>
+                <fullName>Consulted Network Nurse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Consulted Outside Med%2FPsych Professional</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1108,54 +1083,11 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Performed Choking Relief Maneuver</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Primary Care Physician Contact or Visit</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>First_Response__c</picklist>
-            <values>
-                <fullName>Administered First Aid</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Assessed for Injury</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Called 911</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Called%2FConsulted with External Medical%2FPsychiatric Professional</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Consulted MENTOR nurse</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>ER%2FUrgent Care Visit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Emergency Behavioral Intervention</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed CPR</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed Heimlich or other choking relief maneuver</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Primary Care Physician Contact of Visit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Restraint</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1233,15 +1165,39 @@
         <picklistValues>
             <picklist>Incident_Type__c</picklist>
             <values>
-                <fullName>Value 1</fullName>
+                <fullName>Behavioral Incident</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Value 2</fullName>
+                <fullName>Death of Person Being Served</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Value 3</fullName>
+                <fullName>Elopement of Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Injury of Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical Incident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medication Incident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Physical Assault by Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Assault by Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Suicidal Person Being Served</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1298,7 +1254,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>PBS_Arrest_Reason_Know__c</picklist>
+            <picklist>PBS_Arrest_Reason_Known__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -1428,7 +1384,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Consulted MENTOR nurse</fullName>
+                <fullName>Consulted Network Nurse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Consulted Outside Med%2FPsych Professional</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1444,54 +1404,11 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Performed Choking Relief Maneuver</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Primary Care Physician Contact or Visit</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>First_Response__c</picklist>
-            <values>
-                <fullName>Administered First Aid</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Assessed for Injury</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Called 911</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Called%2FConsulted with External Medical%2FPsychiatric Professional</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Consulted MENTOR nurse</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>ER%2FUrgent Care Visit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Emergency Behavioral Intervention</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed CPR</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed Heimlich or other choking relief maneuver</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Primary Care Physician Contact of Visit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Restraint</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1569,15 +1486,39 @@
         <picklistValues>
             <picklist>Incident_Type__c</picklist>
             <values>
-                <fullName>Value 1</fullName>
+                <fullName>Behavioral Incident</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Value 2</fullName>
+                <fullName>Death of Person Being Served</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Value 3</fullName>
+                <fullName>Elopement of Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Injury of Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical Incident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medication Incident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Physical Assault by Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Assault by Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Suicidal Person Being Served</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1634,7 +1575,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>PBS_Arrest_Reason_Know__c</picklist>
+            <picklist>PBS_Arrest_Reason_Known__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -1764,7 +1705,11 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Consulted MENTOR nurse</fullName>
+                <fullName>Consulted Network Nurse</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Consulted Outside Med%2FPsych Professional</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -1780,54 +1725,11 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Performed Choking Relief Maneuver</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Primary Care Physician Contact or Visit</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>First_Response__c</picklist>
-            <values>
-                <fullName>Administered First Aid</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Assessed for Injury</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Called 911</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Called%2FConsulted with External Medical%2FPsychiatric Professional</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Consulted MENTOR nurse</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>ER%2FUrgent Care Visit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Emergency Behavioral Intervention</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed CPR</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed Heimlich or other choking relief maneuver</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Primary Care Physician Contact of Visit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Restraint</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1905,15 +1807,39 @@
         <picklistValues>
             <picklist>Incident_Type__c</picklist>
             <values>
-                <fullName>Value 1</fullName>
+                <fullName>Behavioral Incident</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Value 2</fullName>
+                <fullName>Death of Person Being Served</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Value 3</fullName>
+                <fullName>Elopement of Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Injury of Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medical Incident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medication Incident</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Physical Assault by Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sexual Assault by Person Being Served</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Suicidal Person Being Served</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -1970,7 +1896,7 @@
             </values>
         </picklistValues>
         <picklistValues>
-            <picklist>PBS_Arrest_Reason_Know__c</picklist>
+            <picklist>PBS_Arrest_Reason_Known__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>

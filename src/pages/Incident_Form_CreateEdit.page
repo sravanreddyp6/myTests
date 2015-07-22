@@ -57,7 +57,7 @@
                     <apex:outputLabel >Date/Time Incident Reported to The MENTOR Network</apex:outputLabel>
                     <apex:outputPanel >
                         <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="DateOccurred" dateTimeVal="{! IF(Incident__c.Date_Reported__c==null, NOW(), Incident__c.Date_Reported__c) }" datetimepickerid="DateOccurredInput"/>
-                        <apex:inputHidden value="{!Incident__c.Date_Occurred__c}" id="DateOccurred" />
+<!--                         <apex:inputHidden value="{!Incident__c.Date_Occurred__c}" id="DateOccurred" /> -->
                         <apex:inputHidden value="{!Incident__c.Date_Reported__c}" id="DateReported"/>                   
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
