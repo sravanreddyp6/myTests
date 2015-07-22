@@ -1,4 +1,5 @@
 <apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_AZ_OPT,Notes_ProgressNote_Svc_Code_Selection,progressnote_actionplan_embed_ex" id="mypage">
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 
 
 
@@ -207,7 +208,8 @@ function complete(Signed) {
                 <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" rendered="{!!inlinemode}" rerender="myFRM"></apex:commandButton>
                 <apex:commandButton action="{!saveModifiedProgressNote}" value="Save" rendered="{!inlinemode}"  ></apex:commandButton>
 				<apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}"></apex:commandButton> 
-                <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}"></apex:commandButton></apex:pageBlockButtons>
+                <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}"></apex:commandButton>
+            </apex:pageBlockButtons>
             <apex:pageBlockSection columns="1" >
                 <!-- hidden fields, values will be passed in the url -->    
                 <apex:outputPanel style="display:none;">
@@ -248,15 +250,17 @@ function complete(Signed) {
         <br></br>
         <apex:pageBlock id="pblk">
         <apex:pagemessages ></apex:pagemessages>
-            <apex:commandButton id="saveButton"   value="Save"   action="{!save}"   style="margin-left:30%;display:none"/>
-            <apex:commandButton id="cancelButton" value="Cancel" action="{!Cancel}" style="display:none"/>
-            <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" style="margin-left:30%;"/>
+            <apex:pageBlockButtons location="top" rendered="{!!Final}">
+	            <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" />
             <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,pblk" />
             <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
             <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
             <apex:commandButton id="esign" value="E-Sign"  onClick="complete('{!SignedDoc}'); return false;"/>
-            <br></br>
-            <br></br>
+            </apex:pageBlockButtons>
+            <apex:pageBlockButtons location="top" rendered="{!Final}">
+                <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
+                <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
+            </apex:pageBlockButtons>
             <apex:pageBlockSection columns="1">
             <apex:outputField value="{!Progress_Note__c.name}"/>
             <apex:outputField title="Type of Note" value="{!Progress_Note__c.recordtypeid}"/>
@@ -464,21 +468,11 @@ function complete(Signed) {
 
     <apex:outputpanel rendered="{!!NewBlock}">
         <div id="Taks">
-        <apex:relatedList list="OpenActivities"  subject="{!$CurrentPage.parameters.id}" />
-        </div>
-    
-    
-        <div id="History">
-        <apex:relatedList list="ActivityHistories"  subject="{!$CurrentPage.parameters.id}" />
+        <apex:relatedList title="Activity" list="OpenActivities"  subject="{!$CurrentPage.parameters.id}" />
         </div>
         
         <div id="Attachments">
-        <apex:relatedList list="CombinedAttachments"  subject="{!$CurrentPage.parameters.id}" />
-        </div>
-    </apex:outputpanel>
-    <apex:outputpanel rendered="{!!NewBlock}">
-        <div id="Approvals">
-        <apex:relatedList list="ProcessSteps"/>
+            <c:SObjectNotesAndAttachments parentPage="Notes_ProgressNote_AZ_OPT" parentId="{!$CurrentPage.parameters.id}" showAction="true" pbsId="{!pbsname}" servAssignId="{!theServAssignId}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
         </div>
     </apex:outputpanel>
     </apex:pageBlock>
