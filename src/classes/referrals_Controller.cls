@@ -1044,7 +1044,7 @@ public with sharing class referrals_Controller{
 		}
 		//End EC-54
 
-		if(referralRecord.Guardianship_Type__c.contains('Partial Guardianship') &&  String.IsBlank(referralRecord.Partial_Guardianship_Conservatorship__c)){
+		if(referralRecord.Guardianship_Type__c!=null && referralRecord.Guardianship_Type__c.contains('Partial Guardianship') &&  String.IsBlank(referralRecord.Partial_Guardianship_Conservatorship__c)){
 		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, '\'Partial Guardianship/Conservatorship Type\' is required if Guardianship Type is Partial' ));
 		return null;
 		}
