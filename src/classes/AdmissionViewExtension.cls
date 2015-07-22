@@ -14,6 +14,9 @@ public with sharing class AdmissionViewExtension {
     public boolean canCreatePlan{ get; set;}
     public boolean showCANS { get; private set; }
     
+    // EC-185 - capturing service discharge info - only applicable for CM to start
+    public boolean useDischargeSection { get; set; }
+    
     private void setisEditor() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
                 FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id ];
@@ -118,10 +121,13 @@ public with sharing class AdmissionViewExtension {
         this.admission = [
                 SELECT ID, Name, CreatedBy.Name, CreatedDate, LastModifiedBy.Name,
                            LastModifiedDate, Effective_Date__c, Admission_Effective_DateTime__c, Status__c,
-                           Discharged_Date__c,Person_Being_Served__c, Person_Being_Served__r.AccountID, person_being_served__r.Name,Person_Being_Served__r.OwnerId, person_being_served__r.LastName,
+                           Discharged_Date__c, Discharged_date_time__c, Person_Being_Served__c, Person_Being_Served__r.AccountID, person_being_served__r.Name,Person_Being_Served__r.OwnerId, person_being_served__r.LastName,
                            Network_Offering__c, Discharged_Status__c, Reason_for_Discharge__c, State__c,
                            Referred_Out_Date__c, Referred_Out_Agency_Name__c,
-                           Referred_Out_Reason__c,
+                           Referred_Out_Reason__c, Discharged_Reason__c,
+                           Planned_Discharge__c, Discharged_to_category__c, Discharged_to_subcategory__c, Discharged_to_additional__c, Discharged_to_other__c,
+                           Discharged_Reason_subcategory__c, Discharged_reason_additional__c, Additional_Discharge_Info__c,
+                           Discharged_to_desc__c,
                            (SELECT Name, Authorization_Status__c, Payer_Authorization_Date__c, Payer_Effective_Date__c, Payer_End_Date__c, Payer_Authorization_ID__c, Payer_Name__c, Number_Of_Authorized_Units__c, Remaining_Units__c FROM Authorized_Services__r),
                            (SELECT Name, Assessment_Date__c, Score__c, Owner.FirstName, Owner.LastName, Status__c FROM Assessments__r),
                            (SELECT Name, Person_Being_Served__r.Name, Status__c, Start_Date__c, SA_Start_DateTime__c, End_Date__c FROM Service_Agreements__r ORDER BY Status__c, Start_Date__c),
@@ -153,6 +159,8 @@ public with sharing class AdmissionViewExtension {
         setcanCreateSvc();
         setcanCreatePlan();
         setIsEditor();
+        
+        useDischargeSection =  (getOperatingGroup() == 'Care Meridian');
     }
 
     private Assessment__c[] fetchAssessments(String name, String admissionId) {

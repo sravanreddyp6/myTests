@@ -333,21 +333,48 @@ private class ServiceAssignmentExtTest {
     }
     
 	public testmethod static void showFundingSources(){
-        User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'CareMeridian');
+        User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Care Meridian');
         System.runAs(tester){ 
 			CreateObjects();
-	
 			ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
 			ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
-			controller.saveFundingSource();
 			controller.showAddFundingSource();
+			controller.fundingSource.Service_Assignment__c = ServAssign.Id;
+			controller.fundingSource.RecordtypeId =  Utility.getRecordTypeForFundingSource('CareMeridian');
 			controller.saveFundingSource();
+			//controller.showAddFundingSource();
+			//controller.saveFundingSource();
 			controller.fundingSource = controller.fundingSources.get(0);
 			controller.showEditFundingSource();
 			controller.saveFundingSource();
-			system.assert(controller.fundingSources.size() == 2, 'No funding sources');
+			system.assert(controller.fundingSources.size() == 1, 'No funding sources');
 		}
     }
+    
+    public testmethod static void showFundingSourcesNeuro(){
+        User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'NeuroRestorative');
+        System.runAs(tester){ 
+			CreateObjects();
+			ApexPages.StandardController sc = new ApexPages.StandardController( ServAssign );
+			ServiceAssignmentExt controller = new ServiceAssignmentExt( sc );
+			controller.getfundingsourceRecordType();
+			controller.showAddFundingSource();
+			controller.fundingSource.Service_Assignment__c = ServAssign.Id;
+			controller.fundingSource.RecordtypeId =  Utility.getRecordTypeForFundingSource('NeuroRestorative');
+			controller.saveFundingSource();
+			controller.populateFundingSources();
+			controller.fundingSource = controller.fundingSources.get(0);
+			controller.showEditFundingSource();
+			controller.finalizeFundingSource();
+			controller.fundingSource = controller.fundingSources.get(0);
+			controller.showEditFundingSource();
+			controller.inactivateFundingSource();
+			controller.fundingSource = controller.fundingSources.get(0);
+			system.assert(controller.fundingSource.Funding_Source_Status__c == 'Inactive',controller.fundingSource.Funding_Source_Status__c);
+			
+		}
+    }
+    
     
     
     private static void CreateObjects(){

@@ -102,7 +102,7 @@ private class ProgressNoteNotificationRunBatchTEST {
             Integer pnsToInsertCounter = 0;             
             
             for(RecordType rt : pnRecordTypes){
-                if(rt.DeveloperName != 'NC_TFC' && rt.DeveloperName != 'NC_Wks_1_6_TFC'){
+                if(rt.DeveloperName != 'NC_TFC' && rt.DeveloperName != 'NC_Wks_1_6_TFC' && rt.DeveloperName != 'Therapy'){
                       pnsToInsert.add( 
                         new Progress_Note__c(
                           Service_Assignment__c = testServAssignment.Id, 
@@ -130,7 +130,7 @@ private class ProgressNoteNotificationRunBatchTEST {
                           OwnerId = usr.Id)
                       ); 
                     }
-                if(rt.DeveloperName == 'NC_TFC' || rt.DeveloperName == 'NC_Wks_1_6_TFC'){
+                if(rt.DeveloperName == 'NC_TFC' || rt.DeveloperName == 'NC_Wks_1_6_TFC' || rt.DeveloperName == 'Therapy'){
                     pnsToInsert.add( 
                     new Progress_Note__c(
                       Service_Assignment__c = testServAssignment.Id, 

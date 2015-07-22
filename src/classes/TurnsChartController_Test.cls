@@ -1,4 +1,3 @@
-
 @isTest
 private class TurnsChartController_Test {
 
@@ -32,7 +31,7 @@ private class TurnsChartController_Test {
             else if(e.Field_Type__c == 'Date') 
                     val.value = '11/12/2013';
             else if(e.Field_Type__c == 'DateTime') 
-                    val.value = '2015/04/27 18:00';
+                    val.value = '04/27/2015 18:00';
             else if(e.Field_Type__c == 'String') {
                     val.value = 'Back';
             }                    
@@ -49,7 +48,7 @@ private class TurnsChartController_Test {
         system.assert([select id from eval_value__c].size() > 0 );
         
 	   TurnsChartController controller = new TurnsChartController();
-	   controller.evalID = evaluation.id;
+	   controller.setEvalID(evaluation.id);
 	   system.assertEquals( controller.turnsInnerKeys.size(), 6 );
     }
 }

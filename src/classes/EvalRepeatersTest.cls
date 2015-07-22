@@ -4,7 +4,7 @@ private class EvalRepeatersTest {
     static testMethod void myUnitTest() {
     	
     	TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
-        Evaluation__c evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id);
+        Evaluation__c evaluation = new Evaluation__c(Status__c = 'Draft', ServiceAssignment__c = myData.theSA.Id, shift_start_time__c = Datetime.newInstance(2015,04,27,0,0,0), shift_end_time__c = Datetime.newInstance(2015,05,2,0,0,0));
         insert evaluation;
         
         list<eval__c> evals = TMN_Generic_Core_TestData.getEvalTestRecords();
@@ -30,7 +30,7 @@ private class EvalRepeatersTest {
             else if(e.Field_Type__c == 'Date') 
                     val.value = '11/12/2013';
             else if(e.Field_Type__c == 'DateTime') 
-                    val.value = '2015/04/27 18:00';
+                    val.value = '04/27/2015 18:00';
             else if(e.Field_Type__c == 'Multiselect') {
                     val.value = 'TEST';
                     GenerateEvalComponent.FormKeyVal val1 = new GenerateEvalComponent.FormKeyVal();
@@ -49,14 +49,16 @@ private class EvalRepeatersTest {
         
         system.assert([select id from eval_value__c].size() > 0 );
         
+        Test.setCurrentPage(Page.EvalDynamic);
+        Apexpages.currentPage().getParameters().put('evalID', evaluation.id);
+        Apexpages.currentPage().getParameters().put('evaltype', evlTyp.Name);
+        Apexpages.currentPage().getParameters().put('opGrp', 'Care Meridian');
+        
         EvalRepeaters evalRepeaters = new EvalRepeaters();
-        evalRepeaters.evalname = evlTyp.Name;
-        evalRepeaters.evaluationID = evaluation.id;
-        evalRepeaters.operatingGroup = 'Care Meridian';
                                                 
         system.assert(evalRepeaters.getEvals().size() > 0 );
-        system.assert(!evalRepeaters.anyErrors);
-        system.assert(evalRepeaters.anyEmpty);
+        system.assert(!evalRepeaters.getAnyErrors());
+        system.assert(evalRepeaters.getAnyEmpty());
     }
     
 }
