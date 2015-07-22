@@ -566,7 +566,7 @@ public with sharing class EvalDynamicExt {
 			}
 		}
 
-		if (!isUserOwner && evalType != 'Restraint Event') {  // EC-153 - Let other people finalize Restraint Events
+		if (!isUserOwner && evalType != 'Restraint Event' && evalType != 'Residential') {  // EC-153 - Let other people finalize Restraint Events, EC-219 - Let other people edit Residential
 			showEsign=false;
 			showRevise = false;
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
@@ -575,16 +575,6 @@ public with sharing class EvalDynamicExt {
 			if (isDON) {
 				if ((evalType == 'Head to Toe' || evalType == 'CNA Workbook') && thisEval.Status__c == 'Draft') {  // EC-163
 					showEndOfShiftDON = true;
-				}
-			}
-			if (evalType == 'Residential') {  // EC-203 - Let other people revise Resident Assessment
-				List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id, Status__c, CreatedDate FROM Evaluations__r Where Id != :thisEval.Id AND Status__c != 'Disregard' AND RecordType.Name ='NursesAssessment' order by CreatedDate desc) FROM Service_Assignment__c WHERE Id=: SAID LIMIT 1];
-				if (thisEval.Status__c == 'Final Admission' && servAssign[0].Evaluations__r.Size() == 0){
-					showRevise = true;
-				} else if (thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r.Size() == 1){
-					showRevise = true;
-				} else if (thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r[0].Status__c == 'Final Revision' && thisEval.CreatedDate > servAssign[0].Evaluations__r[0].CreatedDate) {
-					showRevise = true;
 				}
 			}
 			return;
@@ -631,7 +621,13 @@ public with sharing class EvalDynamicExt {
 				showDisregard = true;
 
 			}
-
+			// if user is not tier iii don't display anything. This needs to be at the end because
+			// it trumps everything else.
+			if (!isTierIII) {
+				showEsign = false;
+				showRevise = false;
+				showDisregard = false;
+			}
 		}
 
 		if(evalType == 'Head to Toe'){

@@ -69,7 +69,7 @@ td.text_right {
 		<apex:pageBlock rendered="{!cat != ''}">
 			<label class="labelCol">Created By:</label>{!evalSectionOwner}
  			<br /><label class="labelCol">Last Modified By:</label>{!evalSectionLastMod}
- 		
+
             <apex:outputPanel layout="block"
 				style="right: 10px;float: right;position: relative;"
 				rendered="{!editEnabled}">
@@ -80,7 +80,7 @@ td.text_right {
 			</apex:outputPanel>
 			<span id="evalSecValMsgs" style="color: red;"></span>
 			<apex:outputText value="{!htmlTable}" escape="false" />
-			
+
 		</apex:pageBlock>
 	</form>
 	<script>
@@ -159,11 +159,11 @@ td.text_right {
                     applyRulesToField(event.target);
                 });
                 $('#evalForm input').each(function(_, target) {
-                    applyRulesToField(target);                
+                    applyRulesToField(target);
                 });
                 $('#evalForm input').each(function(_, target) {
                     applyShowHideRulesToField(target);
-                });                
+                });
                 $('#evalForm select').each(function(_, target) {
                     applyShowHideRulesToField(target);
                     applyRulesToField(target);
@@ -356,9 +356,9 @@ td.text_right {
         var cm;
 
         j$=jQuery.noConflict();
-        
+
         jQuery(document).ready(function($) {
-        
+
             // setup the auto calc
             if ( '{!subcategory}' == 'Vitals Signs') {
                 calculate($('#weightAtAdmission'), 'kg');
@@ -369,14 +369,14 @@ td.text_right {
         });
 
         function calculate(formField,type){
-      
+
           var kgfield;
           var lbfield;
           var ozfield;
           var cmfield;
           var ftfield;
           var infield;
-          
+
           if ( '{!subcategory}' == 'Vitals Signs') {
               kgfield = j$('[id=weightAtAdmission]');
               lbfield = j$('[id=weightAtAdmissionlb]');
@@ -397,7 +397,7 @@ td.text_right {
         if(type=='kg'){
             kg=kgfield.val();
             var kgtolbs = kg*2.2046226218488;
-            
+
             lbfield.val(Math.floor(kgtolbs));
             var newoz = (kgtolbs- Math.floor(kgtolbs)) * 16;
             ozfield.val(Math.round(newoz* 100) / 100);
