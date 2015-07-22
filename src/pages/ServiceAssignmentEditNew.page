@@ -5,6 +5,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.ServiceAssignmentFS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
 	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
@@ -13,6 +14,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+    <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
 
 	<style>
 		.dialogLoadingSpinner {
@@ -81,6 +83,9 @@
         #seizureMessages .error {
             color: red;
         }
+        .grandtotalwarning{
+        	background-color: rgb(224, 102, 102);
+        }
 	</style>
 
 	<c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}" parentPage="ServAssign" servAssignNew="{!newSA}" admId="{!admissionId}" />
@@ -135,7 +140,50 @@
 			closeFundingSource = isClose;
 			fundingSourceSaveHelper('{!JSENCODE(fundingSourceRecordType)}');
 		}
-
+		
+		fundingSourceFinalize = function(){
+			 var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Room_and_Board_Rate__c}','{!serviceLocation.PRN_DS_Per_Hour__c}',
+					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
+					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
+									
+			fundingSourceFinalizeHelper('{!JSENCODE(fundingSourceRecordType)}', tUnits, 'totalAuthUnits');
+		}
+		
+		fundingCaltotalUnitsButton = function(){
+			var authUnitErrors = validateAuthCalculations();
+			 if (authUnitErrors.length > 0) {
+				j$('#fundingMessages').html('');
+				j$.each(authUnitErrors, function (index, error) {
+					j$('#fundingMessages').append('<li class="error">' + error + '</li>');
+				});
+				fundingSourceScrollToTop();
+	        }else{
+	        	j$('#fundingMessages').html('');
+				var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Room_and_Board_Rate__c}','{!serviceLocation.PRN_DS_Per_Hour__c}',
+					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
+					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
+					
+				j$('[id$=totalAuthUnits]').val(tUnits); 
+				
+					if(tUnits < parseFloat(j$('[id$=authGrandTotalUnits]').val())){
+						j$('[id$=authGrandTotalUnits]').addClass("grandtotalwarning");
+					}else{
+						j$('[id$=authGrandTotalUnits]').removeClass("grandtotalwarning");
+					}
+				
+			}
+		}
+		
+		
+		inactivateFunding = function(){
+			if(window.confirm('You will not be able to edit the funding source once you inactivate it. Do you want to proceed?')){
+				fundingSourceInactivate();
+			}else{
+				return null;
+			}	
+			
+		}
+		
 		function loadFundingSource(fundingId) {
 			// This provides backward-compatibility with code the Appirio wrote
 			showEditFundingSource(fundingId);
@@ -152,6 +200,7 @@
 				j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').hide();
 			}
 		}
+		
 
 		function getToday() {
 			var today = new Date();
@@ -264,6 +313,25 @@
 		                 }
 		    });
         });
+        
+        jQuery(document).ready(function ($) {
+		        setUpFields = function () {
+		            $('body input').on("change", function (event) {
+		                applyRulesToField(event.target);
+		            });
+		            $('body select').on("change", function (event) {
+		                applyRulesToField(event.target);
+		            });
+		            $('body input').each(function (_, target) {
+		                applyRulesToField(target);
+		            });
+		            $('body select').each(function (_, target) {
+		                applyRulesToField(target);
+		            });
+		        }
+		        setUpFields();
+		    });   //end "
+        
 
 	</script>
 	<apex:pagemessages id="msgs" />
@@ -271,9 +339,11 @@
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock2.addShiftDocStatus}" />
 	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!theServAssign.Id}" shiftType="CNA Workbook" onShowRerender="msgs, evaluationscna" status="{!$Component.myFRM.CNABlock.AddCNAStatus}" />
 	<apex:form id="myFRM">
-		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="saveFundingSourceStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
-		<apex:actionFunction name="showAddFundingSource" status="AddFundingSourceStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs" />
-		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs">
+		<apex:actionFunction name="finalizeFundingSource" action="{!finalizeFundingSource}" status="fundingSouceModalStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
+		<apex:actionFunction name="fundingSourceInactivate" action="{!inactivateFundingSource}" status="fundingSouceModalStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
+		<apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="fundingSouceModalStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
+		<apex:actionFunction name="showAddFundingSource" status="fundingSouceModalStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
+		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus">
 			<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 		</apex:actionFunction>
 		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1" />
@@ -401,11 +471,11 @@
 				<apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
-				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !vfVarIsCM}" />
-				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !vfVarIsCM}" required="{!episodeReq}" />
+				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !(vfVarIsCM || isNR) }" />
+				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR)}" required="{!episodeReq}" />
 				<apex:pageblocksectionitem />
-				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
-				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM}">
+				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
+				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR}">
 					<apex:outputLabel value="Model" for="modelfield" />
 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
 				</apex:pageblocksectionitem>
@@ -443,7 +513,7 @@
 					<apex:actionregion >
 						<apex:outputPanel layout="block" styleClass="requiredInput">
 							<apex:outputpanel styleClass="requiredBlock" />
-							<c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}" parentName="{!serviceLocation.Name}" filters="name,city__c,state__c" return="ID, program__c,setting__c,service_value__c,phone__c,street__c,city__c,state__c,zip__c" />
+							<c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}" parentName="{!serviceLocation.Name}" filters="name,city__c,state__c" return="programid__c, setting__c, program__c, service_value__c,street__c,city__c,state__c,zip__c,phone__c" />
 						</apex:outputPanel>
 					</apex:actionregion>
 				</apex:pageBlockSectionItem>
@@ -493,28 +563,28 @@
 
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
+				<!-- Added by Amruth for EB-434 -->
+				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !isNR}" />
+				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !isNR}" />
+				<!-- Added by Amruth for EB-434 -->
+				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR}" />
+				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR}" />
 
-				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA}" />
-				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{! !editSA}" />
-
-				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA}" />
-
-				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM}" />
-				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM}">
+				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
+				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR}">
 					<apex:outputLabel value="Model" for="modelfield" />
 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
 				</apex:pageblocksectionitem>
 			</apex:pageBlockSection>
-
-			<apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM}">
-				<apex:pageBlockSectionItem rendered="{!editSA}">
+			
+			<apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR}">
+				<apex:pageBlockSectionItem rendered="{!editSA && !isNR}">
 					<apex:outputLabel value="Contract" />
 					<apex:selectList id="chooseContract" value="{!associatedContractID}" size="1" multiselect="false">
 						<apex:selectOptions value="{!contractsList}" />
 					</apex:selectList>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!!editSA}">
+				<apex:pageBlockSectionItem rendered="{!!editSA && !isNR}">
 					<apex:outputLabel value="Contract" />
 					<apex:outputText value="{!associatedContractName}" />
 				</apex:pageBlockSectionItem>
@@ -1001,7 +1071,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW}">
+        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW && !isNR}">
             <div class="pbHeaderButton">
 <!--             <apex:actionStatus id="AddSeizureStatus"> -->
 <!--                 <apex:facet name="start"> -->
@@ -1123,11 +1193,13 @@ END: Uncomment to have the element collapsed by default -->
 		<!--  Plan section -->
 		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="planstatus" />
 		<a name="Plan" id="Plan"></a>
-		<apex:pageBlock id="Plan" title="Action Plans" rendered="{! !AssessmentOnly && !editSA}">
+		<!--  Added isNR by Amruth for EB-434 -->
+		<apex:pageBlock id="Plan" title="Action Plans" rendered="{! (!AssessmentOnly || isNR) && !editSA}">
 			<div class="pbHeaderButton">
 				<apex:actionStatus id="planstatus">
 					<apex:facet name="stop">
-						<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
+					<!--  Added isNR by Amruth for EB-434 -->
+					<apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA && !isNR }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
 					</apex:facet>
 					<apex:facet name="start">
 						<apex:commandButton value="Loading..." disabled="true" />
@@ -1165,11 +1237,21 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputPanel id="newswsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
 				<apex:repeat value="{!uncheckedWeeks}" var="week">
-					<apex:commandLink action="{!newSkillWorksheet}" value="{!week.UserDate}">
+					<apex:commandLink action="{!newSkillWorksheet}" value="{!week.UserDate}" status="{!$Component.SkillWorksheet.skillworksheetStatus}" rerender="none">
 						<apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week" />
+<!-- 						<apex:actionStatus  -->
 					</apex:commandLink>
 					<br/>
 				</apex:repeat>
+				<apex:actionStatus id="skillworksheetStatus" >
+					<apex:facet name="start">
+					<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+					</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
 			</apex:outputPanel>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -1199,11 +1281,20 @@ END: Uncomment to have the element collapsed by default -->
 			</div>
 			<apex:outputPanel id="newbwsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
 				<apex:repeat value="{!BehaviorMonthsAvailable}" var="week">
-					<apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}">
+					<apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}" rerender="none" status="{!$Component.BehaviorWorksheet.behaviorworksheetStatus}">
 						<apex:param assignTo="{!worksheetStartDate}" value="{!week.ParsableDate}" name="week" />
 					</apex:commandLink>
 					<br/>
 				</apex:repeat>
+				<apex:actionStatus id="behaviorworksheetStatus" >
+					<apex:facet name="start">
+					<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+					<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+					</div>
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
 			</apex:outputPanel>
 			<apex:pageBlockSection columns="1" collapsible="false">
 
@@ -1348,29 +1439,53 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
 
 		</apex:pageBlock>
+		
+		<!--  Time Log section - IADAY-10 -->
+		
+		<a name="TimeLog" id="TimeLog"></a>
+		<apex:pageBlock id="TimeLog" title="Time Log Entries" rendered="{! !editSA && AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'))}">
+				<c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
+                                           type="Time Log"
+                                           formId="{!$Component.myFRM}"
+                                           uniqueId="Time_Log"
+                                           cols="1"
+                                           rows="5"
+                                           showtitle="false"
+                                           showDisregard="true"
+                                           eSign="true"
+                                           addEnabled="true"
+                                           editEnabled="true"
+                                           customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" />
+                                          
+            <apex:outputPanel >Showing the 5 most recent entries. Click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!theServAssign.Person_Being_served__c}&SA={!Service_Assignment__c.Id}&FS=Time Log" >here</apex:outputLink>&nbsp;to view all</apex:outputPanel>
+            </apex:pageBlock>
+             		
 
+	
+		<!--  end time log section  -->
 		<!--  Notes section -->
 		<a name="Notes" id="Notes"></a>
-		<apex:pageBlock id="Notes" title="Notes" rendered="{! AND(!editSA, !vfVarIsCM)}">
+		<apex:pageBlock id="Notes" title="Notes" rendered="{! !editSA}">
 			<div class="pbHeaderButton">
 				<!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !vfVarIsCB}" value="Goal/Objective Documentation" />
-				<apex:commandButton rendered="{!ActivePlan.size = 1}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
+				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || vfVarIsCM)}" value="Goal/Objective Documentation" />
+				<apex:commandButton rendered="{!ActivePlan.size = 1  && !vfVarIsCM && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
+				<apex:commandButton rendered="{! vfVarIsCM && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
 			</div>
 			<apex:pageBlockSection columns="1" collapsible="false">
 				<apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0)}">
 
-					<apex:column headerValue="Action" styleClass="editcol"><a href="/{!note.ID}/e">Edit</a>
+					<apex:column headerValue="Action" styleClass="editcol" rendered="{! !vfVarIsCM }"><a href="/{!note.ID}/e">Edit</a>
 					</apex:column>
 					<apex:column headerValue="Name">
 						<apex:outputLink value="/{!note.id}">
 							<apex:outputField value="{!note.name}" /></apex:outputLink>
 					</apex:column>
-					<apex:column headerValue="Action Plan">
+					<apex:column headerValue="Action Plan" rendered="{! !vfVarIsCM}">
 						<apex:outputLink value="/{!note.Action_Plan__c}">{!note.action_plan__r.name }</apex:outputLink>
 					</apex:column>
-					<apex:column value="{!note.Start_time__c }" />
-					<apex:column value="{!note.End_Time__c }" />
+					<apex:column value="{!note.Start_time__c }" rendered="{! !vfVarIsCM }"/>
+					<apex:column value="{!note.End_Time__c }" rendered="{! !vfVarIsCM }"/>
 					<apex:column value="{!note.createddate }" />
 					<apex:column value="{!note.createdby.name }" />
 				</apex:pageblockTable>
@@ -1407,8 +1522,14 @@ END: Uncomment to have the element collapsed by default -->
 		<!--  Funding Sources section -->
 		<!-- Add Funding Source modal. -->
 		<apex:outputPanel id="FundingSourceModal" style="display:none">
+			<script>
+			  jQuery(document).ready(function ($) {
+			  	  setUpFields();
+	    		});   //end " 
+	    		
+		    </script>
 			<div id='fundingMessages'></div>
-			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative'}">
+			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' }">
 				<apex:pageBlockSection columns="1" id="fundingSourceEntry">
 					<apex:inputField value="{!fundingSource.Funding_Source__c}" id="fundingEntry_Source" />
 					<apex:inputField value="{!fundingSource.Funding_Source_ID__c}" id="fundingEntry_SourceId" />
@@ -1449,46 +1570,58 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputField value="{!fundingSource.Policy_Holder__c}" />
 					<apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" id="policyHolderRelationship" />
 				</apex:pageBlockSection>
+				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
-					<apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
-					<!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
-					<apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
-						<apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
-					</apex:outputText>
-					<apex:inputField value="{!fundingSource.Type_of_Coverage__c}" />
-					<apex:inputField value="{!fundingSource.Payer_Type__c}" />
-					<apex:inputField value="{!fundingSource.Payer_Name__c}" />
-					<apex:inputField value="{!fundingSource.Payer_Phone__c}" />
-					<apex:pageBlockSectionItem >
-						<apex:outputLabel for="policyHolder" value="Policy Holder" />
-						<apex:outputPanel >
-							<apex:inputField value="{!fundingSource.Policy_Holder__c}" id="policyHolder" />
-							<apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.policyHolder}', '{!theServAssign.Person_Being_Served__r.Name}'); return false;" />
-						</apex:outputPanel>
-					</apex:pageBlockSectionItem>
-					<apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
+					<apex:outputField value="{!fundingSource.Funding_Source_Status__c}"  />
+					<apex:pageBlockSectionItem />
+                    <apex:outputField value="{!theServAssign.Person_Being_Served__r.Name}" />
+                    <!-- <apex:outputField value="{!personBeingRefRecord.Date_of_Birth__c}" /> -->
+                    <apex:outputText label="Date of Birth" value="{0, date, MM/dd/yyyy} ({!theServAssign.Person_Being_Served__r.Age__c})">
+                        <apex:param value="{!theServAssign.Person_Being_Served__r.Birthdate}" />
+                    </apex:outputText>
+                    <apex:inputField value="{!fundingSource.Type_of_Coverage__c}" rendered="{!!hasPrimaryActiveFS}"/>
+                    <apex:pageBlockSectionItem rendered="{!hasPrimaryActiveFS}" >
+                    	<apex:outputlabel value="Coverage level" styleClass="labelCol"/>
+                    	<apex:selectList value="{!fundingSource.Type_of_Coverage__c}" size="1" >
+                    		<apex:selectoptions value="{!fundingCoverageOptions}" />
+                    	</apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!fundingSource.Payer_Type__c}" id="neuroPayerType" html-data-rules="{&quot;VA - Pilot&quot;: [&quot;{!$Component.vaPilotClinicalNumber}&quot;]}" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.VA_Pilot_Clinical_Number__c}" id="vaPilotClinicalNumber" />
+                    <apex:inputField value="{!fundingSource.Payer_Name__c}" />
+                    <apex:inputField value="{!fundingSource.Payer_Phone__c}" />
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="policyHolder" value="Policy Holder" />
+                        <apex:outputPanel >
+                            <apex:inputField value="{!fundingSource.Policy_Holder__c}" id="policyHolder" />
+                            <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.policyHolder}', '{!theServAssign.Person_Being_Served__r.Name}'); return false;" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" />
 
-					<apex:pageBlockSectionItem >
-						<apex:outputLabel for="insuredSSN" value="Insured SSN" />
-						<apex:outputPanel >
-							<apex:inputField value="{!fundingSource.Insured_SSN__c}" id="insuredSSN" />
-							<apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredSSN}', '{!theServAssign.Person_Being_Served__r.SSN__c}'); return false;" />
-						</apex:outputPanel>
-					</apex:pageBlockSectionItem>
-					<apex:pageBlockSectionItem >
-						<apex:outputLabel for="insuredDOB" value="Insured DOB" />
-						<apex:outputPanel >
-							<apex:inputField value="{!fundingSource.Insured_DOB__c}" id="insuredDOB" />
-							<apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredDOB}', '{!theServAssign.Person_Being_Served__r.Birthdate}'); return false;" />
-						</apex:outputPanel>
-					</apex:pageBlockSectionItem>
-					<apex:inputField value="{!fundingSource.Policy_Number__c}" />
-					<apex:inputField value="{!fundingSource.Group_Number__c}" />
-				</apex:pageBlockSection>
-				<apex:pageBlockSection columns="1" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
-					<apex:inputField value="{!fundingSource.Additional_Coverage__c}" id="additionalCoverage" />
-					<apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
-				</apex:pageBlockSection>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="insuredSSN" value="Insured SSN" />
+                        <apex:outputPanel >
+                            <apex:inputField value="{!fundingSource.Insured_SSN__c}" id="insuredSSN" />
+                            <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredSSN}', '{!theServAssign.Person_Being_Served__r.SSN__c}'); return false;" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel for="insuredDOB" value="Insured DOB" />
+                        <apex:outputPanel >
+                            <apex:inputField value="{!fundingSource.Insured_DOB__c}" id="insuredDOB" />
+                            <apex:commandLink value="Same as PBS" onclick="assignValue('{!$Component.insuredDOB}', '{!theServAssign.Person_Being_Served__r.Birthdate}'); return false;" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!fundingSource.Policy_Number__c}" />
+                    <apex:inputField value="{!fundingSource.Group_Number__c}" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
+                    <apex:inputField value="{!fundingSource.Additional_Coverage__c}" id="additionalCoverage" />
+                    <apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
+                </apex:pageBlockSection>
+				
 
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian' }">
 					<apex:outputText value="Benefit Information" styleClass="modalSubheader" />
@@ -1561,6 +1694,9 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:pageBlockSectionItem />
 					<apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
 				</apex:pageBlockSection>
+				
+				
+				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:outputText value="Benefit Information" styleClass="modalSubheader" />
 					<apex:pageBlockSectionItem />
@@ -1574,7 +1710,7 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputField value="{!fundingSource.Out_patient_Visit_Limit__c}" />
 					<apex:inputField value="{!fundingSource.Deductible__c}" />
 					<apex:inputField value="{!fundingSource.Deductible_Met__c}" />
-					<apex:inputField value="{!fundingSource.Rate_of_Reimbursement__c}" />
+					<apex:inputField value="{!fundingSource.Rate_of_Reimbursement__c}"  />
 					<apex:inputField value="{!fundingSource.RoR_to_100_after_met_OOP_Max__c}" label="Rate of Reimbursement changes to 100% after OOP Max is met?" />
 					<apex:outputText value="SNF" styleClass="modalSubheader" />
 					<apex:pageBlockSectionItem />
@@ -1603,7 +1739,9 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
+			
 			<apex:pageBlock title="Red Flags" id="fundingSourceRedFlagsEntry" rendered="{!fundingSourceRecordType == 'CareMeridian' || fundingSourceRecordType == 'NeuroRestorative'}">
+				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
 					<apex:inputField value="{!fundingSource.Month_to_Month__c}" id="field_validation1" />
 					<apex:inputField value="{!fundingSource.Basis__c}" id="field_check1" />
@@ -1644,6 +1782,8 @@ END: Uncomment to have the element collapsed by default -->
 
 					<apex:pageBlockSectionItem />
 				</apex:pageBlockSection>
+				
+				
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:inputField value="{!fundingSource.Cobra__c}" id="field_validation20" />
 					<apex:inputField value="{!fundingSource.Payment_Detail__c}" id="field_check20" />
@@ -1661,24 +1801,331 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputTextArea value="{!fundingSource.Comment__c}" label="Red Flag Comments" cols="80" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
+			
+			
+<!-- 			Added by Sravan for EB-435 -->
+			<apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">       
+                <apex:pageBlockSection columns="2" id="fundingSourceAuthorizationDetailEntrySection">
+                    <apex:inputField value="{!fundingSource.Status__c}" />
+                    <apex:pageBlockSectionItem />
+                    <apex:outputText value="Request" styleClass="modalSubheader" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Requested_By__c}" />
+                    <apex:inputField value="{!fundingSource.Request_Date__c}" />
+                    <apex:inputField value="{!fundingSource.Request_Contact_Name__c}" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Request_Phone__c}" label="Phone" />
+                    <apex:inputField value="{!fundingSource.Request_Fax__c}" label="Fax" />
 
-			<apex:pageBlock >
-				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource}">
+                    <apex:outputText value="Received" styleClass="modalSubheader" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Given_By__c}" />
+                    <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
+                    <apex:inputField value="{!fundingSource.Days_Authorized__c}" />
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
+                    <apex:inputField value="{!fundingSource.Days_Authorized_To__c}" />
+                    <apex:inputField value="{!fundingSource.Received_Rate__c}" label="Rate" id="receivedRate" onkeypress="return isNumberwithDec(event,this)" />
+                    <apex:inputField value="{!fundingSource.Negotiated_Rate__c}" />
+                    <apex:inputField value="{!fundingSource.Internal_Contact__c}" />
+                    <apex:inputField value="{!fundingSource.Internal_Phone__c}" />
+                    <apex:inputField value="{!fundingSource.Internal_Fax__c}" />
+                    <apex:inputField value="{!fundingSource.Internal_Email__c}" id="payerCmEmail" />
+                    <apex:inputField value="{!fundingSource.NR_CM_Name__c}" />
+                    <apex:inputField value="{!fundingSource.NR_CM_Phone__c}" />
+                    <apex:inputField value="{!fundingSource.NR_CM_Fax__c}" />
+                    <apex:inputField value="{!fundingSource.NR_CM_Email__c}" id="nrCmEmail" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Name__c}" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Company__c}" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Phone__c}" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Fax__c}" />
+                    <apex:inputField value="{!fundingSource.Adjuster_Email__c}" id="adjuterEmail" />
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:inputTextArea value="{!fundingSource.Authorization_Comments__c}" cols="80" />
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            
+            <apex:pageBlock title="Costs & Therapy Authorization Details" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="CandTblock">
+            	<apex:pageBlocksection columns="2" >
+            		<apex:pageBlockSectionItem >
+            			<apex:outputLabel value="Case Manager" />
+            			<apex:outputPanel >
+            				<div class="requiredInput">
+								<div class="requiredBlock"></div>
+           						<apex:inputField value="{!fundingSource.Case_Manager__c}" id="funding_casemanagerName"/>
+            				</div>
+            			</apex:outputPanel>
+            		</apex:pageBlockSectionItem>
+            		<apex:pageBlockSectionItem >
+            			<apex:outputLabel value="Effective Date of Cost/Therapy" />
+            			<apex:outputPanel >
+            				<div class="requiredInput">
+								<div class="requiredBlock"></div>
+           						<apex:inputField value="{!fundingSource.Effective_Date_of_Cost_therapy_Auth__c}" id="funding_costTherapyEffeciveDate"/>
+            				</div>
+            			</apex:outputPanel>
+            		</apex:pageBlockSectionItem>
+<!--             		<apex:inputField value="{!fundingSource.Effective_Date_of_Cost_therapy_Auth__c}" /> -->
+            		<apex:pageBlockSectionitem />
+            		
+            		<apex:pageBlockSectionItem >
+            			<apex:outputLabel value="Term Date of Cost/Therapy" />
+            			<apex:outputPanel >
+            				<div class="requiredInput">
+								<div class="requiredBlock"></div>
+           						<apex:inputField value="{!fundingSource.Term_Date_of_Cost_therapy_Auth__c}" id="funding_costTherapyTermDate"/>
+            				</div>
+            			</apex:outputPanel>
+            		</apex:pageBlockSectionItem>
+<!--             		<apex:inputField value="{!fundingSource.Term_Date_of_Cost_therapy_Auth__c}" /> -->
+            	</apex:pageBlocksection>
+            </apex:pageBlock>
+			
+			<apex:pageBlock title="COSTS PER DAY" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="costperdayBlock">
+				<apex:pageBlockSection columns="1" id="costperdaySection">
+					<apex:pageblocksectionItem >
+						<apex:outputlabel value="Staffing Ratio 1:1" styleClass="labelCol" />
+						<apex:outputPanel style="margin-left: 20px;">
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+								<apex:inputField value="{!fundingSource.Staffing_Ratio_1_1__c}" id="funding_oneoneRatio" />
+							</div>
+						</apex:outputPanel>
+					</apex:pageblocksectionItem>
+					
+					<apex:pageBlockSectionItem id="hoursexpectedSectionItem">
+						<apex:outputLabel value="Number of Hrs. Expected" styleClass="labelCol" />
+						<apex:outputPanel >
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+							<apex:inputField value="{!fundingSource.Number_of_Hrs_Expected__c}" style="width:100px;" id="hoursExpected"  onChange="prnDS('{!servicelocation.PRN_DS_Per_Hour__c}','{!$Component.costperdayBlock.costperdaySection.prndsSectionItem.prnDs}'); return false;" />
+							</div>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					
+					
+					<apex:pageBlockSectionItem id="prndsSectionItem" >
+						<apex:outputLabel value="PRN DS" styleClass="labelCol" />
+						<apex:inputText value="{!fundingSource.PRN_DS__c}" style="width:100px;" id="prnDs" html-readonly="true" Label="PRN DS"/>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem />
+					
+				</apex:pageBlockSection>
+				
+				
+				
+				<apex:panelGrid columns="3" style="margin-left: 50px;">
+					<apex:panelGroup >
+						<apex:outputlabel value="DME" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.DME__c}" style="width:100px;margin-left:109px;" id="DMECost" onblur="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}'); return false;" 
+							 onkeypress="return isNumberwithDec(event,this)" />
+					</apex:panelGroup>
+					<apex:panelGroup >
+						<apex:selectRadio value="{!fundingSource.DME_Calculation_Type__c}" id="dmeType" onChange="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}'); return false;">
+							<apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+							<apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+						</apex:selectRadio>
+					</apex:panelGroup>
+					<apex:panelGroup >	
+						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+						<apex:inputText value="{!fundingSource.DME_Per_Day__c}" style="width:100px;" id="dmeperDay" html-readonly="true" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputlabel value="Medication" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Medication_Costs__c}" style="width:100px;margin-left:74px;" id="medicationCost" onblur="costperDay('{!$Component.medicationCost}', 'medicationType','{!$Component.medicationperDay}'); return false;"
+							onkeypress="return isNumberwithDec(event,this)" />
+					</apex:panelGroup>
+					<apex:panelGroup >
+						<apex:selectRadio value="{!fundingSource.Medication_Cost_Calculation_Type__c}" id="medicationType" onChange="costperDay('{!$Component.medicationCost}', 'medicationType','{!$Component.medicationperDay}'); return false;" >
+							<apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+							<apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+						</apex:selectRadio>
+					</apex:panelGroup>
+					<apex:panelGroup >	
+						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+						<apex:inputText value="{!fundingSource.Medication_Per_Day__c}" style="width:100px;" id="medicationperDay" html-readonly="true"/>
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputlabel value="Nutritional Supplements" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Nutritional_Supplements_Cost__c}" style="width:100px;" id="nutritionalCost" onblur="costperDay('{!$Component.nutritionalCost}', 'nutritionalType','{!$Component.nutritionalPerDay}'); return false;"
+							onkeypress="return isNumberwithDec(event,this)" />
+					</apex:panelGroup>
+					<apex:panelGroup >
+						<apex:selectRadio value="{!fundingSource.Nutritional_Supplements_Cost_Calculation__c}" id="nutritionalType" onChange="costperDay('{!$Component.nutritionalCost}', 'nutritionalType','{!$Component.nutritionalPerDay}'); return false;">
+							<apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+							<apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+						</apex:selectRadio>
+					</apex:panelGroup>
+					<apex:panelGroup >	
+						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+						<apex:inputText value="{!fundingSource.Nutritional_Supplements_Per_Day__c}" style="width:100px;" id="nutritionalPerDay" html-readonly="true"/>
+					</apex:panelGroup>
+					
+					
+					<apex:panelGroup >
+						<apex:outputlabel value="Other" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Other_Cost__c}" style="width:100px;margin-left:100px;" id="otherCost" onblur="costperDay('{!$Component.otherCost}', 'otherType','{!$Component.otherPerDay}'); return false;"
+							onkeypress="return isNumberwithDec(event,this)" />
+					</apex:panelGroup>
+					<apex:panelGroup >
+						<apex:selectRadio value="{!fundingSource.Other_Cost_Calculation_Type__c}" id="otherType" onChange="costperDay('{!$Component.otherCost}', 'otherType','{!$Component.otherPerDay}'); return false;" >
+							<apex:SelectOption itemLabel="WK" itemvalue="Weekly" />
+							<apex:Selectoption itemlabel="MO" itemvalue="Monthly" />
+							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
+						</apex:selectRadio>
+					</apex:panelGroup>
+					<apex:panelGroup >	
+						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
+						<apex:inputtext value="{!fundingSource.Other_Per_Day__c}" style="width:100px;" id="otherPerDay" html-readonly="true" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputLabel value="Other Cost Description" styleClass="labelCol" id="otherCostDescribe"/>
+						<apex:inputField value="{!fundingSource.Other_Cost_Description__c}" id="otherCostDescription"/>
+					</apex:panelGroup>
+				</apex:panelGrid>
+				
+			</apex:pageBlock>
+			
+			<apex:pageBlock title="THERAPY AUTHORIZATION" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="therapyAuthorizationBlock" >
+				<apex:pageBlockSection columns="1" id="therapyAuthorizationSection">
+					<apex:outputpanel style="margin-right:30px;" >
+						<apex:outputLabel for="totalAuthUnits" styleClass="labelCol">Total Weekly Auth Therapy Units</apex:outputLabel>
+						<apex:inputText value="{!fundingSource.Total_Authorized_Therapy_Units__c}"  style="width: 100px;" id="totalAuthUnits" html-readonly="true"/>
+						<apex:commandLink value="Calculate" styleClass="btn" style="margin-left:20px;" onclick="fundingCaltotalUnitsButton(); return false;" />
+					</apex:outputpanel>
+				</apex:pageBlockSection>
+			
+				<apex:panelGrid columns="3" >
+					<apex:panelGroup >
+						<apex:outputLabel value="OT Auth Units" styleClass="labelCol"/>
+						<apex:inputField value="{!fundingSource.OT_Auth_Units__c}" style="width:100px; margin-left:50px;" id="OTauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+							onkeypress="return onlyNos(event,this);" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.OT_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px; " >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.OT_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputLabel value="PT Auth Units" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.PT_Auth_units__c}" style="width:100px; margin-left:50px;" id="PTauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+								onkeypress="return onlyNos(event,this);" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.PT_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;" >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.PT_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputLabel value="SLP Auth Units"  styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.SLP_Auth_Units__c}" style="width:100px; margin-left:42px;" id="SLPauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+								onkeypress="return onlyNos(event,this);" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.SLP_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;" >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.SLP_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputLabel value="BIT Auth Units"  styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.BIT_Auth_Units__c}" style="width:100px; margin-left:46px;" id="BITauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+								onkeypress="return onlyNos(event,this);" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" style="width:100px;"/>
+						<apex:inputField value="{!fundingSource.BIT_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;" >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.BIT_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+					<apex:panelGroup >
+						<apex:outputLabel value="Counseling Auth Units"  styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Counselling_Auth_Units__c}" style="width:100px;" id="CounsellingauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
+								onkeypress="return onlyNos(event,this);" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;">
+						<apex:outputLabel value="Days Authorized From" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Counselling_Days_Authorized_From__c}" />
+					</apex:panelGroup>
+					<apex:panelGroup style="margin-left: 20px;" >
+						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
+						<apex:inputField value="{!fundingSource.Counselling_Days_Authorized_To__c}" />
+					</apex:panelGroup>
+					
+				</apex:panelgrid>
+				
+				<apex:pageBlockSection Columns="1" id="grandtotalSection" >
+					<apex:outputPanel style="margin-right:30px;" >
+						<apex:outputLabel for="authGrandTotalUnits" value="Auth Units Grand Total" styleClass="labelCol" />
+						<apex:inputText value="{!fundingSource.Auth_Units_Grand_Total__c}"  id="authGrandTotalUnits" html-readonly="true" style="width:100px;" styleClass="{!IF(fundingSource.Auth_Units_Grand_Total__c != null && fundingSource.Total_Authorized_Therapy_Units__c != null,If(VALUE(fundingSource.Auth_Units_Grand_Total__c) > VALUE(fundingSource.Total_Authorized_Therapy_Units__c), 'grandtotalwarning', 'none'), 'none')}"/>
+					</apex:outputPanel>
+					<apex:inputTextArea value="{!fundingSource.Auth_Excess_Justification__c}" rows="3" cols="20" id="authExcessJustification" />
+				</apex:pageBlockSection>
+				
+			</apex:pageBlock>
+			
+			<apex:pageBlock title="THERAPY AUTH EXCESS APPROVAL" id="therapyApprovalBlock" rendered="false">
+				<apex:pageBlockSection columns="2" >
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Authorization Excess Approved" styleClass="labelCol" />
+						<apex:outputPanel >
+							<apex:SelectRadio value="{!fundingSource.Authorization_Excess_Approved__c}" >
+								<apex:selectOption itemLabel="Yes" itemvalue="Yes" />
+								<apex:selectOption itemLabel="No" itemValue="No" />
+							</apex:SelectRadio>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Authorization Override Comments" />
+						<apex:inputField value="{!fundingSource.Authorization_Override_Comments__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectioNitem >
+						<apex:outputLabel value="Authorized By" />
+						<apex:inputField value="{!fundingsource.Authorization_Excess_Approved_By__c}" />
+					</apex:pageBlockSectioNitem>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+
+			<apex:pageBlock id="fundingbuttonsBlock">
+				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType != 'NeuroRestorative'}" >
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" />
 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
 					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
-					<apex:actionStatus id="saveFundingSourceStatus">
-						<apex:facet name="start">
-							<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-						</apex:facet>
-						<apex:facet name="stop" />
-					</apex:actionStatus>
+				</apex:pageblockButtons>
+				
+				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType == 'NeuroRestorative'}" >
+					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
+					<apex:commandbutton id="finalizeFundingSource" value="Finalize" onClick="fundingSourceFinalize(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
+<!-- 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}"/> -->
+					<apex:commandbutton id="inactivateFundingSource" value="Inactivate" onClick="inactivateFunding(); return false;" rendered="{!fundingSource.Funding_Source_Status__c == 'Active' || fundingSource.Funding_Source_Status__c == 'Active Final'}" />
+					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
 				</apex:pageblockButtons>
 			</apex:pageBlock>
 		</apex:outputPanel>
-
+		
 		<a id="Funding_Sources"></a>
-		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!vfVarIsCM && !newSA && canViewFundingSource}">
+		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!(vfVarIsCM || isNR) && !newSA && canViewFundingSource}">
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
 				<apex:actionStatus id="AddFundingSourceStatus">
@@ -1713,8 +2160,15 @@ END: Uncomment to have the element collapsed by default -->
 			</apex:pageBlockTable>
 
 			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0 && canEditFundingSource }">
-				<apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
+				<apex:column headerValue="Action" >
+					<apex:outputPanel rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}" >
+						<a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!fundingSource.Funding_Source_Status__c == 'Active Final' || fundingSource.Funding_Source_Status__c == 'Inactive'}">
+						<a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false;">View</a>
+					</apex:outputPanel>
 				</apex:column>
+				<apex:column value="{!fundingSource.Funding_Source_Status__c}" />
 				<apex:column value="{!fundingSource.Type_of_Coverage__c}" />
 				<apex:column value="{!fundingSource.Payer_Name__c}" />
 				<apex:column value="{!fundingSource.Effective_Date__c}" />
@@ -1723,6 +2177,17 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Status__c}" />
 			</apex:pageBlockTable>
 		</apex:pageBlock>
+		
+<!-- 	common status for all actions on funding source -->
+		<apex:actionStatus id="fundingSouceModalStatus" >
+			<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+			</div>
+			</apex:facet>
+			<apex:facet name="stop" />
+		</apex:actionStatus>
 		<!-- end Funding sources section-->
 
 		<apex:pageBlock title="Referral Detail" rendered="{!referral != null }">
@@ -2113,7 +2578,7 @@ END: Uncomment to have the element collapsed by default -->
 		            }
 		        });
 		    }
-		}
+		   }
 	</script>
 
 </apex:page>

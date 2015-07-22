@@ -18,6 +18,7 @@ public with sharing class shiftnote_summary_rpt {
     public list<SelectOption> getSelect2list(){ return select2list; }	
     public List<id> select2PrmIds {get; set;}
     
+    public string opGroup { get; private set; }
     
     public transient list<ProgressNote_ActionPlanChildren_mjo__c> note_plan_joins = new list<ProgressNote_ActionPlanChildren_mjo__c>();
     public list<ProgressNote_ActionPlanChildren_mjo__c> getNote_plan_joins(){
@@ -41,6 +42,9 @@ public with sharing class shiftnote_summary_rpt {
     }
 
     public shiftnote_summary_rpt() {   	
+    	
+    	opGroup = [ select operating_group__c from user where id = :UserInfo.getUserId()].operating_group__c;
+    	
 		List<AggregateResult> slPrgms = [SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
 										   FROM service_assignment__c 
 										  GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c 
@@ -145,6 +149,11 @@ public with sharing class shiftnote_summary_rpt {
            endDateTime = endDateTime.addDays(1);
            endDateTime = endDateTime.addseconds(-1);
        }
+       
+       // EC-196 - CM flag is always false for filtering out Healthcare/Medical note
+       if ( opGroup == 'Care Meridian')
+       		HCMCfilter = 'false';
+       	
        map<string, boolean> isHCfilter = new map<string, boolean>();
        isHCfilter.put('true', true);
        isHCfilter.put('false',false);

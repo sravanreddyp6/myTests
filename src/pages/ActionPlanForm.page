@@ -3,6 +3,7 @@
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.jQueryTabSlideOut, 'js/jquery.tabSlideOut.v1.3.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
 <apex:variable value="{! (Action_Plan__c.Service_Assignment__r.Admission__r.State__c == 'AZ' 
@@ -19,6 +20,8 @@
     function setFocusOnLoad() {}
 
     var j$ = jQuery.noConflict();
+    
+    
     
 function printpage(radioObj) {
 
@@ -106,6 +109,73 @@ function highlightButtons ( btype, sfid, on )
     }        
     
 }
+
+j$(document).ready(function($) {
+	$("[id$='dialog-alert-dates']").dialog({
+					resizable: false,
+	                draggable: false,
+					height: 150,
+					width: 600,
+					modal: true,
+					autoOpen: false,
+					buttons: {
+						OK: function() {
+	                        $( this ).dialog( "close" );
+						}
+				     },
+				});
+	
+	$("[id$='dialog-set-dates']").dialog({
+					resizable: false,
+	                draggable: false,
+					height: 200,
+					width: 600,
+					modal: true,
+					autoOpen: false,
+					buttons: {
+						Yes: function() {
+							
+	                        $( this ).dialog( "close" );
+	                        
+	                        // find all start dates
+    						var dtPlanStart = j$('input[id$=plan_start_date]').val();
+    						$('.startdate').each(function( index, elem ) {
+    							$(elem).val( dtPlanStart);
+    						});
+    			
+    						// find all end dates
+    						var dtPlanEnd = j$('input[id$=plan_end_date]').val();
+    						$('.enddate').each( function( index, elem ) {
+    							$(elem).val( dtPlanEnd);
+    						});
+    				
+    						$(this).dialog("close");
+    					},
+						
+						No: function() {
+							$(this).dialog("close");
+				     	}
+				     },
+				});
+				
+	setPlanDates = function(){
+    
+
+    	var dtPlanStart = $('input[id$=plan_start_date]').val();
+    	var dtPlanEnd = $('input[id$=plan_end_date]').val();
+    	
+    	// if either effective date or target date is empty, alert
+    	if ( dtPlanStart == '' || dtPlanEnd== '') {
+			$("[id$='dialog-alert-dates']").dialog("open");
+    	}
+		
+		else {	
+    		// confirm user knows what's entailed
+    		$("[id$='dialog-set-dates']").dialog("open");
+    		
+    	}
+   	}
+	});
  
 </script>
 <style>
@@ -410,13 +480,38 @@ background-color: cornsilk;
             <apex:outputField value="{!Action_Plan__c.Service_Assignment__r.Admission__c}"/>
             <apex:outputField value="{!Action_Plan__c.Service_Assignment__c}"/>   
             <apex:inputField value="{!Action_Plan__c.External_Plan__c}"/>     
-            <apex:inputField value="{!Action_Plan__c.Effective_Date__c}"/>
-            <apex:inputField value="{!Action_Plan__c.Target_Date__c}"/>
+            <apex:inputField id="plan_start_date" value="{!Action_Plan__c.Effective_Date__c}"/>
+            <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Target Date" />
+            <apex:outputPanel >
+            	<apex:inputField id="plan_end_date" value="{!Action_Plan__c.Target_Date__c}"/>&nbsp; 
+            	<apex:outputLink value="#" id="lnkSetDates" onClick="setPlanDates();">Set Plan Dates Below</apex:outputLink>
+            </apex:outputPanel>
+            </apex:pageBlockSectionItem>
             <apex:outputField value="{!Action_Plan__c.Date_Service_Started__c}"/>
             <apex:outputField value="{!Action_Plan__c.Status__c}"/> 
             <apex:inputField value="{!Action_Plan__c.Baseline__c}"/>
+            <apex:pageBlockSectionItem >
+            <apex:outputText value="" />
+            
+            </apex:pageBlockSectionItem>
         </apex:pageBlockSection> 
-        
+  
+<apex:outputPanel id="dialog-alert-dates" title="Missing Date" layout="block" style="display:none">
+		<apex:outputPanel layout="inline">
+			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+			</apex:outputPanel>
+			Please enter both Effective Date and Target Date on this plan.
+		</apex:outputPanel>
+	</apex:outputPanel>
+<apex:outputPanel id="dialog-set-dates" title="Set Plan Dates" layout="block" style="display:none">
+		<apex:outputPanel layout="inline">
+			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+			</apex:outputPanel>
+			Are you sure you want to overwrite all the plan dates below with the effective and target dates from the Action Plan? Keep in mind that you can change individual dates manually as needed before you finalize the Action Plan.
+		</apex:outputPanel>
+	</apex:outputPanel>
+	     
         <hr />
         
 <apex:commandButton style="float:right" action="{!addGoal}" rendered="{!editMode}" value="Add {!GoalAlias}" reRender="myFrm" status="myStatus"  oncomplete="gotoend('planend');"/>        
@@ -589,11 +684,11 @@ background-color: cornsilk;
                                                                         
                                 <apex:outputPanel layout="block" styleClass="innerLabel" > Effective Date</apex:outputPanel>
                                 <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" rendered="{!!editMode}"/>
-                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" rendered="{!editMode}"/>    
+                                <apex:inputField styleClass="startdate" value="{!planStuff[g].GoalObjs[o].theObj.Effective_Date__c}" rendered="{!editMode}"/>    
                                 
                                 <apex:outputPanel layout="block" styleClass="innerLabel" > Target Date</apex:outputPanel>
                                 <apex:outputField value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" rendered="{!!editMode}"/> 
-                                <apex:inputField value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" rendered="{!editMode}"/> 
+                                <apex:inputField styleClass="enddate" value="{!planStuff[g].GoalObjs[o].theObj.Target_End_Date__c}" rendered="{!editMode}"/> 
                                 
                                 
                                 <apex:outputPanel layout="block" styleClass="innerLabel" rendered="{! !hideObjType}" > Type</apex:outputPanel> 
@@ -645,11 +740,11 @@ background-color: cornsilk;
                                                                                     
                                             <apex:outputPanel layout="block" styleClass="innerLabel" > Start Date</apex:outputPanel>
                                             <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Start_Date__c}" rendered="{!!editMode}"/>
-                                            <apex:inputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Start_Date__c}" rendered="{!editMode}"/>  
+                                            <apex:inputField styleClass="startdate" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.Start_Date__c}" rendered="{!editMode}"/>  
 
                                             <apex:outputPanel layout="block" styleClass="innerLabel" >End Date</apex:outputPanel>
                                             <apex:outputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.End_Date__c}" rendered="{!!editMode}"/>
-                                            <apex:inputField value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.End_Date__c}" rendered="{!editMode}"/>                                               
+                                            <apex:inputField styleClass="enddate" value="{!planStuff[g].GoalObjs[o].ObjActs[a].theAction.End_Date__c}" rendered="{!editMode}"/>                                               
                                             
                                         </apex:panelGrid>                                           
                                         
@@ -678,10 +773,19 @@ background-color: cornsilk;
         <apex:pageBlockSection columns="1" collapsible="false" >
                 <apex:outputPanel id="newswsbtn" layout="block" style="display:none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >    
                     <apex:repeat value="{!uncheckedWeeks}" var="week">
-                         <apex:commandLink action="{!newWorksheet}" value="{!week.UserDate}" >
+                         <apex:commandLink action="{!newWorksheet}" value="{!week.UserDate}" status="skillworksheetStatus" rerender="none">
                                <apex:param assignTo="{!worksheetWeek}" value="{!week.ParsableDate}" name="week"  /> 
                          </apex:commandLink><br/>
                     </apex:repeat>
+                    <apex:actionStatus id="skillworksheetStatus" >
+						<apex:facet name="start">
+						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+						<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+							<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+						</div>
+						</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
                 </apex:outputPanel>
             <apex:pageBlockTable value="{!WeekResults}" var="skillWorksheet">
                 <apex:column headerValue="Action" styleClass="editcol"><a href="/apex/WeeklySkillTracking?id={!skillWorksheet.Id}">Edit</a></apex:column>
@@ -701,12 +805,20 @@ background-color: cornsilk;
         <apex:pageBlockSection columns="1" collapsible="false" >
                 <apex:outputPanel id="newbwsbtn" layout="block" style="display:none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4" >    
                     <apex:repeat value="{!BehaviorMonthsAvailable}" var="week">
-                         <apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}" >
+                         <apex:commandLink action="{!newBehaviorWorksheet}" value="{!week.UserDate}" rerender="none" status="behaviorworksheetStatus" >
                                <apex:param assignTo="{!worksheetWeek}" value="{!week.ParsableDate}" name="week"  /> 
                          </apex:commandLink><br/>
                     </apex:repeat>
+                    <apex:actionStatus id="behaviorworksheetStatus" >
+						<apex:facet name="start">
+						<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+						<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+							<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+						</div>
+						</apex:facet>
+						<apex:facet name="stop" />
+					</apex:actionStatus>
                 </apex:outputPanel>
-  
             <apex:pageBlockTable value="{!BehaviorWorksheets}" var="behaviorWorksheet">
                 <apex:column headerValue="Action" styleClass="editcol"><a href="/apex/BehaviorTracking?id={!behaviorWorksheet.Id}">Edit</a></apex:column>
                  <apex:column styleClass="datecol" headerValue="Start Date" >

@@ -10,6 +10,7 @@ public with sharing class HomePageController{
 	public String FrstName{get;set;}
 	public String LstName{get;set;}
 	public String objectName{get;set;}
+	
 
 	// List of permission sets that the user is assigned to
 	public String permissionSetString { get; set; }
@@ -28,7 +29,7 @@ public with sharing class HomePageController{
 
 	public String TypObj;
 
-	public Id selectedProgram { get; set; }
+	public String selectedAlias { get; set; }
 	public List<SelectOption> programslist { get; set; }
 	public Service_Assignment__c[] serviceAssignments { get; set; }
 
@@ -53,6 +54,9 @@ public with sharing class HomePageController{
 
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
+	
+	// EC-196 - Shift notes
+	public Boolean canCreateNote { get; private set; }
 	//PBS object
 	public Boolean canSeePBS { get; private set; }
 
@@ -80,22 +84,25 @@ public with sharing class HomePageController{
 			HAVING COUNT(service_location__r.id) > 0
 			ORDER BY service_location__r.programid__c, service_location__r.program__c
 		];
-		Set<String> allProgramSet = new Set<String>();
+		Set<String> allAliasSet = new Set<String>();
 		for (AggregateResult slPrgm : slPrgms) {
-			programslist.add(new SelectOption((Id)slPrgm.get('slID'), String.valueOf(slPrgm.get('alias')) + '-' + String.valueOf(slPrgm.get('prgm')) ));
-			allProgramSet.add((String) slPrgm.get('slID'));
+			String alias = (String) slPrgm.get('alias');
+			if (!allAliasSet.contains(alias)) {
+				programslist.add(new SelectOption(alias, alias + '-' + parseProgram(String.valueOf(slPrgm.get('prgm')))));
+			}
+			allAliasSet.add(alias);
 		}
-		Cookie initialProgramCookie = ApexPages.currentPage().getCookies().get('homePageInitialProgram-' + UserInfo.getUserId());
-		if (initialProgramCookie == null) {
+		Cookie initialAliasCookie = ApexPages.currentPage().getCookies().get('homePageInitialAlias-' + UserInfo.getUserId());
+		if (initialAliasCookie == null) {
 			if (programsList.size() > 0) {
-				selectedProgram = programslist[0].getValue();
+				selectedAlias = programslist[0].getValue();
 			}
 		} else {
-			String tmpId = initialProgramCookie.getValue();
-			if (tmpId != null && tmpId != '' && allProgramSet.contains(tmpId)) {
-				selectedProgram = tmpId;  // Because you can't assign null to an ID variable
+			String tmpId = initialAliasCookie.getValue();
+			if (tmpId != null && tmpId != '' && allAliasSet.contains(tmpId)) {
+				selectedAlias = tmpId;  // Because you can't assign null to an ID variable
 			} else if (programsList.size() > 0) {
-				selectedProgram = programslist[0].getValue();
+				selectedAlias = programslist[0].getValue();
 			}
 		}
 		// get list of repeatables
@@ -143,22 +150,34 @@ public with sharing class HomePageController{
 		} else {
 			canSeeShiftDoc = false;
 		}
-		System.debug('permissionSets: ' + permissionSets);
-		System.debug('permissionSetString: ' + permissionSetString);
 
+		oSchema = Progress_Note__c.sObjectType.getDescribe();
+		canCreateNote = oSchema.isCreateable();
+		
 		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();
 	}
 
+	private String parseProgram(String program) {
+		// EC-184
+		String[] parts = program.split('-', -1);
+		if (parts.size() == 5) {
+			// It should always get here as program strings follow Mentor CBF,
+			// but if it doesn't we should be careful and just return the string.
+			parts.remove(2);
+		}
+		return String.join(parts, '-');
+	}
+
 	public void updateProgramSelection() {
 		String query = '' +
 			'SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
-			'       Admission__r.Id, ' +
-			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
+			'       Admission__r.Id, Admission__r.state__c, ' +
+			'       (SELECT Id FROM Action_Plans__r where status__c = \'Active Final\'), ' +
 			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
-			'WHERE Service_Location__c = :selectedProgram ' +
+			'WHERE Service_Location__r.Alias__c = :selectedAlias ' +
 			(pbsOnlyShowActiveServiceAssignment ? 'AND Status__c=\'Active\' ': '') +
 			'ORDER BY Person_Being_Served__r.Name';
 		serviceAssignments = Database.query(query);
@@ -218,6 +237,25 @@ public with sharing class HomePageController{
 					}
 				}
 			}
+			
+			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
+			if ( operatingGroup == 'Redwood') {
+				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
+					optionList.add(new SelectOption(
+										Page.Notes_ProgressNote_Create.getUrl() + 
+										'?service_assignment=' + serviceAssignment.ID + 
+										'&plan=' + serviceAssignment.Action_Plans__r[0].Id + 
+										'&admission=' + serviceAssignment.Admission__r.Id + 
+										'&person=' + serviceAssignment.Person_Being_Served__r.Id + 
+										'&state=' + serviceAssignment.Admission__r.State__c +
+										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));
+					
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Behavior Data'));
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Skill Data'));
+				} else {
+					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
+				}
+			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
 		List<AggregateResult> responses = [
@@ -259,8 +297,8 @@ public with sharing class HomePageController{
 		ApexPages.currentPage().setCookies(
 			new Cookie[]{
 				new Cookie(
-					'homePageInitialProgram-' + UserInfo.getUserId(),
-					selectedProgram, null, 30*24*60*60, false
+					'homePageInitialAlias-' + UserInfo.getUserId(),
+					selectedAlias, null, 30*24*60*60, false
 				)
 			}
 		); //  set the cookie max age to a month
@@ -332,10 +370,8 @@ public with sharing class HomePageController{
 		return Options;
 	}
 	public void mineTasks(){
-		system.debug('came here');
 		Id userId = UserInfo.getUserId();
 		String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
-		system.debug('*********viewstsk'+viewstsk);
 		String orderStatement = '';
 		// NEVAL-56
 		Map<String, String> colNumToFieldMap = new Map<String, String>{
@@ -356,7 +392,6 @@ public with sharing class HomePageController{
 		} else {
 			orderStatement = ' order by ActivityDate desc, Priority';
 		}
-		System.debug('Order statement: ' + orderStatement);
 		if(viewstsk==null || viewstsk=='All Open'){
 			query+= orderStatement + ' limit 25';
 		}
@@ -411,7 +446,6 @@ public with sharing class HomePageController{
 	public PageReference getsearchNames() {
 		try {
 			if ((FrstName!=null && FrstName!='') || (LstName!=null && LstName!='')){
-				system.debug('coming here');
 				PageReference newocp= new PageReference('/apex/HomePage_Search?FirstNM='+FrstName+'&&LastNM='+LstName);
 				newocp.setRedirect(true);
 				return newocp;
@@ -441,9 +475,10 @@ public with sharing class HomePageController{
 
 	public void highlightSearchResultPBS() {
 		Service_Assignment__c[] serviceAssignments = [
-			SELECT Id, Person_Being_Served__r.Id, Service_Location__r.Id, Status__c
-			FROM Service_Assignment__c
-			WHERE Person_Being_Served__c = :searchResultPBS
+			SELECT Id, Person_Being_Served__r.Id, Service_Location__r.Id, Status__c,
+			       Service_Location__r.Alias__c
+			  FROM Service_Assignment__c
+			 WHERE Person_Being_Served__c = :searchResultPBS
 			ORDER BY Person_Being_Served__r.Name
 		];
 		// We can only choose one row to highlight, so let's focus on ones with
@@ -459,7 +494,7 @@ public with sharing class HomePageController{
 			}
 		}
 		if (highlightedSA != null) {
-			selectedProgram = highlightedSA.Service_Location__r.Id;
+			selectedAlias = highlightedSA.Service_Location__r.Alias__c;
 			if (pbsOnlyShowActiveServiceAssignment && highlightedSA.Status__c != 'Active') {
 				pbsOnlyShowActiveServiceAssignment = false;
 			}
@@ -488,4 +523,32 @@ public with sharing class HomePageController{
 		}
 	}
 	// END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
+	
+	// IADAY-9 - to support creation of new plan from home page
+	public String currsaID { get; set; }
+	public pagereference NewPlan( ){
+		
+		// we only come into this function if there is no active final plan
+		// find out if there's an inactive draft we can view
+		List<Action_Plan__c> aplist = [ select id, status__c from Action_Plan__c where status__c = 'Inactive Draft' and service_assignment__c = :currsaID order by status__c, lastmodifieddate desc  LIMIT 1];
+		
+		
+		Action_plan__c AP; 
+		
+		// if an inactive plan exists, take them to that page to view
+		if ( aplist.size() == 1 ) {
+			AP = aplist[0];
+		} else {
+		 
+			AP = new Action_plan__c();
+			AP.Service_Assignment__c = currsaID;
+			insert AP;
+		}
+		
+		PageReference ref =  new ApexPages.StandardController(AP).view() ;
+		ref.getparameters().put('retURL', Apexpages.CurrentPage().getURL());
+		return ref;
+
+	}
+	
 }

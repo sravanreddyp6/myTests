@@ -15,7 +15,25 @@ public with sharing class GoalObjReporting {
 		
 	public objResultWrapper currResult { get; set; }
 	
-	public list<SelectOption> promptList { get; private set;}
+	public transient list<SelectOption> promptList;
+    public list<SelectOption> getPromptList() { 
+		if (promptList == null) {
+			promptList = new List<SelectOption>();
+	        promptList.Add(new SelectOption('', '--None--'));   
+	        promptList.Add(new SelectOption('I','Independent'));
+	        promptList.Add(new SelectOption('V','Verbal'));
+	        promptList.Add(new SelectOption('M','Model'));
+	        promptList.Add(new SelectOption('PP','Partial Physical Assistance'));
+	        promptList.Add(new SelectOption('FP','Full Physical ASsistance'));
+	        promptList.Add(new SelectOption('D','Declined'));
+	        promptList.Add(new SelectOption('L','Leave/Absent'));
+	        promptList.Add(new SelectOption('S','Sick'));
+	        promptList.Add(new SelectOption('H','Hospitalized'));
+	        promptList.Add(new SelectOption('HL','Holiday')); 
+		}
+        return promptList;
+	}
+
 	
 	public transient List<Action_Narrative_Result__c> narrativeResults;
 	public transient List<Action_Skill_Result__c> skillResults; 
@@ -29,41 +47,26 @@ public with sharing class GoalObjReporting {
 		narrativeResults = new List<Action_Narrative_Result__c>();
 		skillResults = new List<Action_Skill_Result__c>();
 		currResult = new objResultWrapper();
-		promptList = new List<SelectOption>();
 	}
 	
 	
 	public void init ( ID thisID ) {	//get the type of objective this is
 		
 		if ( thisObj == null ||  thisID != thisObj.id ) {
-		List<Action_Plan_Objective__c> apo = [ select id, description__c, type__c, effective_date__c, target_end_date__c from action_plan_objective__c where id = :thisID];
-		system.debug( 'APO is' + apo);
-		if (apo.size() > 0) {
-			thisObj = apo[0];
-			objType = apo[0].type__c;	
-			effdates = apo[0].effective_date__c.format() + ' to ' + apo[0].target_end_date__c.format();
-			if (objType.startsWith('Behavior')) {
-				privateTables = null;
-				currResult = null;
+			List<Action_Plan_Objective__c> apo = [ select id, description__c, type__c, effective_date__c, target_end_date__c from action_plan_objective__c where id = :thisID];
+			system.debug( 'APO is' + apo);
+			if (apo.size() > 0) {
+				thisObj = apo[0];
+				objType = apo[0].type__c;	
+				effdates = apo[0].effective_date__c.format() + ' to ' + apo[0].target_end_date__c.format();
+				if (objType.startsWith('Behavior')) {
+					privateTables = null;
+					currResult = null;
+				}
+				else {
+					currResult = new objResultWrapper( objType, thisObj.id);
+				}
 			}
-			else {
-				currResult = new objResultWrapper( objType, thisObj.id);
-			}
-		}
-		// create list of prompt options
-		if ( promptList.size() == 0 ) {
-		promptList.Add(new SelectOption('', '--None--'));	
-		promptList.Add(new SelectOption('I','Independent'));
-		promptList.Add(new SelectOption('V','Verbal'));
-		promptList.Add(new SelectOption('M','Model'));
-		promptList.Add(new SelectOption('PP','Partial Physical Assistance'));
-		promptList.Add(new SelectOption('FP','Full Physical ASsistance'));
-		promptList.Add(new SelectOption('D','Declined'));
-		promptList.Add(new SelectOption('L','Leave/Absent'));
-		promptList.Add(new SelectOption('S','Sick'));
-		promptList.Add(new SelectOption('H','Hospitalized'));
-		promptList.Add(new SelectOption('HL','Holiday'));
-		}
 		}
 		
 	}
@@ -225,7 +228,7 @@ public with sharing class GoalObjReporting {
 	
 	private List<Action_Plan_Objective__c > privateobjectives;
 	private Action_Plan_Objective__c currentobjective; 
-	private List<Table>  calcTables(){
+    @TestVisible private List<Table>  calcTables(){
 		Date firstDay = shiftStart.Date();
 		Date lastDay = getMinDateTime(shiftEnd, DateTime.Now()).date();
 		privateobjectives = new List<Action_Plan_Objective__c>{ thisObj };

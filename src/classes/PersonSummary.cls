@@ -13,7 +13,7 @@ public with sharing class PersonSummary {
     private static final set<String> EMERGENCY_CONTACT_TYPES = new set<String>{'Guardian','Spouse','Parent','Family/Friends','Caregiver','Other'};
     private static final list<String> FUNDING_SOURCE_FIELDS = new list<String>{'Type_of_Coverage__c','Payer_Name__c','Policy_Type__c','TPA__c','TPA_Phone__c','Primary_Med_Ind_Phys_Group__c',
                                                                   'Primary_Med_Ind_Phys_Group_Phone__c','Network__c','Network_Phone__c','Verified_By__c','Payer_Verification_Date__c','Verified_With__c','Representing__c',
-                                                                  'Payer_Type__c','Call_Reference_Number__c', 'Policy_Number__c','Group_Name__c','Group_Number__c','Policy_Holder__c','Relationship_To_Patient__c',
+                                                                  'Funding_Source__c','Call_Reference_Number__c', 'Policy_Number__c','Group_Name__c','Group_Number__c','Policy_Holder__c','Relationship_To_Patient__c',
                                                                   'More_than_1_5_Yrs_of_Disability__c','Patient_Over_64_Years_of_Age__c','Comment__c'};
     public list<String> getFsFlds(){return FUNDING_SOURCE_FIELDS;}
     private static map<String, Integer> relPartyRank = new map<String, Integer>();
@@ -49,7 +49,7 @@ public with sharing class PersonSummary {
         fundingSrcFldLbls.put('Payer_Verification_Date__c', 'Payer Verification Date');
         fundingSrcFldLbls.put('Verified_With__c', 'Verify With');
         fundingSrcFldLbls.put('Representing__c', 'Representing (Payer)'); 
-        fundingSrcFldLbls.put('Payer_Type__c', ': Reference Phone');
+        fundingSrcFldLbls.put('Funding_Source__c', ': Reference Phone');
         fundingSrcFldLbls.put('Call_Reference_Number__c', ''); 
         fundingSrcFldLbls.put('Policy_Number__c', 'Policy ID #');
         fundingSrcFldLbls.put('Group_Name__c', 'Group Name');
@@ -107,7 +107,7 @@ public with sharing class PersonSummary {
                             
                             (select Type_of_Coverage__c, Payer_Name__c, Policy_Type__c, TPA__c, TPA_Phone__c, Primary_Med_Ind_Phys_Group__c, Primary_Med_Ind_Phys_Group_Phone__c,
                             Network__c, Network_Phone__c, Verified_By__c, Payer_Verification_Date__c, Verified_With__c, Representing__c, 
-                            Payer_Type__c, Call_Reference_Number__c, Policy_Number__c, Group_Name__c, Group_Number__c, Policy_Holder__c, Relationship_To_Patient__c,
+                            Funding_Source__c, Call_Reference_Number__c, Policy_Number__c, Group_Name__c, Group_Number__c, Policy_Holder__c, Relationship_To_Patient__c,
                             More_than_1_5_Yrs_of_Disability__c, Patient_Over_64_Years_of_Age__c, Comment__c
                             from Funding_Sources__r order by lastModifiedDate desc NULLS LAST limit 1)
                     from    Service_Assignment__c
