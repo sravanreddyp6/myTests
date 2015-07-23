@@ -60,11 +60,16 @@ function toggleByClass2(cls){
 </script>
 <script>
 function complete(Signed) {
-    if (Signed == 'Y') {
-        alert("Document Already E-Signed");
-    } else {
-        authenticate();
+    var srvcloc = '{!thePn.Service_Location__c}';
+    if(srvcloc == ''){
+        alert("Please select a service location before Esigning.")
     }
+    else{
+        if (Signed == 'Y') {
+            alert("Document Already E-Signed");
+        } else {
+            authenticate();
+        }
 }
 </script>
 <script type="text/javascript">
@@ -303,8 +308,6 @@ function keyselectedvalue(){
 <script type="text/javascript">
     isModified = false;
 </script>       
-    <apex:pageMessages ></apex:pageMessages>         
-    <apex:pageMessages ></apex:pageMessages>    
     <apex:outputPanel id="relatedTo">
         <apex:outputPanel layout="block" styleClass="frmRCol">
             <apex:outputPanel layout="block" rendered="true">
@@ -335,6 +338,9 @@ function keyselectedvalue(){
         <apex:pageBlock id="pblk">
         <apex:pagemessages ></apex:pagemessages>
             <apex:pageBlockButtons location="top" rendered="{!!Final}">
+            <apex:commandButton id="saveButton"   value="Save"   action="{!saveProgressNote}"   style="margin-left:22%;display:none;"/>
+            <apex:commandButton id="cancelButton" value="Cancel" action="{!Cancel}" style="display:none;"/>
+           
             <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" />
             <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,pblk" />
             <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
@@ -469,8 +475,6 @@ function keyselectedvalue(){
 <script type="text/javascript">
     isModified = false;
 </script>       
-    <apex:pageMessages ></apex:pageMessages>         
-    <apex:pageMessages ></apex:pageMessages>    
     <apex:outputPanel id="relatedToPgblk">
         <apex:outputPanel layout="block" styleClass="frmRCol">
             <apex:outputPanel layout="block" rendered="true">
@@ -565,12 +569,7 @@ function keyselectedvalue(){
     </apex:outputPanel>
               
 </apex:form>
-
-
-
-
-
-    <apex:outputpanel rendered="{!!NewBlock}">
+  <apex:outputpanel rendered="{!!NewBlock}">
         <div id="Taks">
         <apex:relatedList title="Activity" list="OpenActivities"  subject="{!$CurrentPage.parameters.id}" />
         </div>
