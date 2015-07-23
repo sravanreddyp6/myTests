@@ -1642,6 +1642,16 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>GoalIds_AZOPTPage__c</fullName>
+        <description>Contains the goalids to be opened when the progress note is clicked</description>
+        <externalId>false</externalId>
+        <label>GoalIds_AZOPTPage</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
         <fullName>Guardian_Name__c</fullName>
         <externalId>false</externalId>
         <formula>&quot;Guardian #1: &quot;+ Person_Being_Served__r.Guardian1_Name__c + &quot; &quot; + IF(Person_Being_Served__r.Guardian2_Name__c != null, &quot;Guardian #2: &quot; +  Person_Being_Served__r.Guardian2_Name__c, &quot;&quot;)</formula>
@@ -1734,6 +1744,7 @@
     <fields>
         <fullName>Interventions__c</fullName>
         <externalId>false</externalId>
+        <inlineHelpText>Any Interventions. – Required</inlineHelpText>
         <label>Interventions</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
@@ -2282,7 +2293,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <fullName>Notes_For_Next_Visit__c</fullName>
         <description>Describe goals for next meeting</description>
         <externalId>false</externalId>
-        <inlineHelpText>Any notes that may be helpful for the next visit.</inlineHelpText>
+        <inlineHelpText>Any notes that may be helpful for the next visit. – Required</inlineHelpText>
         <label>Notes For Next Visit</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
@@ -2628,7 +2639,7 @@ Neurostative IL role</description>
         <fullName>Progress__c</fullName>
         <description>Progress towards goals selected.</description>
         <externalId>false</externalId>
-        <inlineHelpText>Progress made towards goals selected.</inlineHelpText>
+        <inlineHelpText>Progress made towards goals selected. – Required</inlineHelpText>
         <label>Progress</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
