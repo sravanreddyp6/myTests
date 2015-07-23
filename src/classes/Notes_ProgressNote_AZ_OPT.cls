@@ -407,6 +407,12 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        pn.Service_Assignment__c = theServAssignId;
        pn.Action_Plan__c = ActivePlanId;
        pn.GoalIds_AZOPTPage__c = GoalsSelected;
+       
+       //ensure that we dont create a new note with the inactive action plan
+       if ([select id from Action_Plan__c where id = :ActivePlanId and Status__c='Active Final'].size() == 0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Cannot create note for action plan not in Active Final status.'));  
+            return null;
+       }
        system.debug('++++++++++++'+(pn.End_Time__c.getTime())/1000/60+ '-------------');
       		
        if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
