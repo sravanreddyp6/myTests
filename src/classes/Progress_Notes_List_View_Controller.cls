@@ -1,5 +1,4 @@
 public with sharing class Progress_Notes_List_View_Controller {
-    
     private String Querystring;
     private Integer pageSize =20;
     private integer counter=0; 
@@ -9,23 +8,51 @@ public with sharing class Progress_Notes_List_View_Controller {
     public Progress_Notes_List_View_Controller (){totalSize = [select count() from Progress_Note__c Limit 500];}
     public id selectedpnid{get;set;}
     public string notes='';
+    public string pbsname{get;set;}
+    public string saname{get;set;}
+    public boolean displayname{get;set;}
+    public boolean displaypbs{get;set;}
     public ApexPages.StandardSetController ProgressNoteController {
         get{
-            if(ProgressNoteController == null && notes!=''){
-                Querystring='SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,CreatedBy.Name FROM Progress_Note__c where Name LIKE \'%'+String.escapeSingleQuotes(notes)+ '%\' ORDER BY Name Limit 500';
-                ProgressNoteController = new ApexPages.StandardSetController(Database.getQueryLocator(Querystring));
-                ProgressNoteController.setPageSize(pageSize);
-                actualsize  = ProgressNoteController.getrecords().size();
-                totalSize = [select count() from Progress_Note__c Limit 500];
-                prNum =1;
-                if(actualsize==0){
-                    prNum = 0;
-                    totalSize = 0;
-                    counter= 0;
+            displaypbs = true;
+            if(Apexpages.currentPage().getParameters().get('PBSID') !=null ){
+                displayname = true;
+                id pbsid = Apexpages.currentPage().getParameters().get('PBSID');
+                pbsname = Apexpages.currentPage().getParameters().get('pbsname');
+                displaypbs =false;
+                if(ProgressNoteController == null){
+                    Querystring='SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,status__C,CreatedBy.Name,Service_Assignment__r.person_being_served__C,Person_Being_Served__r.name FROM Progress_Note__c where service_assignment__r.person_being_served__C = :pbsid ORDER BY Name Limit 500';
+                    ProgressNoteController = new ApexPages.StandardSetController(Database.getQueryLocator(Querystring));
+                    ProgressNoteController.setPageSize(pageSize);
+                    actualsize  = ProgressNoteController.getrecords().size();
+                    totalSize = [select count() from Progress_Note__c where service_assignment__r.person_being_served__C = :pbsid Limit 500];
+                    prNum =1;
+                    if(actualsize==0){
+                        prNum = 0;
+                        totalSize = 0;
+                        counter= 0;
+                    }
                 }
-            }
+            } else if(Apexpages.currentPage().getParameters().get('saID') !=null ){
+                displayname = false;
+                id said = Apexpages.currentPage().getParameters().get('saID');
+                saname = Apexpages.currentPage().getParameters().get('saname');
+                if(ProgressNoteController == null ){
+                    Querystring='SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,status__C,CreatedBy.Name,Service_Assignment__r.name  FROM Progress_Note__c where service_assignment__c = :said ORDER BY Name Limit 500';
+                    ProgressNoteController = new ApexPages.StandardSetController(Database.getQueryLocator(Querystring));
+                    ProgressNoteController.setPageSize(pageSize);
+                    actualsize  = ProgressNoteController.getrecords().size();
+                    totalSize = [select count() from Progress_Note__c where service_assignment__c = :said Limit 500];
+                    prNum =1;
+                    if(actualsize==0){
+                        prNum = 0;
+                        totalSize = 0;
+                        counter= 0;
+                    }
+                }
+            } 
             if(ProgressNoteController == null){
-                Querystring= 'SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,CreatedBy.Name FROM Progress_Note__c ORDER BY CreatedDate DESC Limit 500';
+                Querystring= 'SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,status__C,CreatedBy.Name FROM Progress_Note__c ORDER BY CreatedDate DESC Limit 500';
                 ProgressNoteController = new ApexPages.StandardSetController(Database.getQueryLocator(Querystring));
                 ProgressNoteController.setPageSize(pageSize);
                 actualsize  = ProgressNoteController.getrecords().size();
@@ -41,13 +68,16 @@ public with sharing class Progress_Notes_List_View_Controller {
         ProgressNoteController.first();
         counter = 0;
         prNum = 1;
-        actualsize= pageSize;
-    }
+        if(totalSize<pageSize){
+            actualsize=totalSize;
+        }else
+            actualsize= (counter/pageSize + 1)*pageSize;
+    } 
     
     public void lastPage()
     {
         ProgressNoteController.last();
-        counter = totalSize - math.mod(totalSize, pageSize);
+        counter = totalSize - math.mod(totalSize, pageSize);        
         prNum = (totalSize - math.mod(totalSize, pageSize))+1;
         actualsize = totalSize ;
     }
@@ -76,29 +106,6 @@ public with sharing class Progress_Notes_List_View_Controller {
             actualsize= (counter/pageSize + 1)*pageSize;
         }
     }
-    
-    public List<Progress_Note__c> getProgressNotes()
-    {
-        return (List<Progress_Note__c>)ProgressNoteController.getRecords();
-    }
-    
-    public PageReference editcardnotes(){
-        
-        PageReference pnPage = new PageReference('/apex/Notes_Progressnote_AZ_OPT?Mode=Edit&id='+selectedpnid);
-        pnPage.setRedirect(true);
-        return pnPage;
-    }
-    
-    public Pagereference searchProgressNotes(){
-        notes = Apexpages.currentPage().getParameters().get('progressnotename');
-        ProgressNoteController=null;
-        ProgressNoteController.setPageNumber(1);
-        if(actualsize>pageSize){
-            pageSize = actualsize;
-        }
-        return null;
-    }
-    
     public Integer getPageNumber() {
         if(totalSize==0){
             return counter/pageSize;
@@ -127,4 +134,27 @@ public with sharing class Progress_Notes_List_View_Controller {
         }
         
     }
+    
+    public List<Progress_Note__c> getProgressNotes()
+    {
+        return (List<Progress_Note__c>)ProgressNoteController.getRecords();
+    }
+    
+    public PageReference editcardnotes(){
+        
+        PageReference pnPage = new PageReference('/apex/Notes_Progressnote_AZ_OPT?Mode=Edit&id='+selectedpnid);
+        pnPage.setRedirect(true);
+        return pnPage;
+    }
+    
+    public Pagereference searchProgressNotes(){
+        notes = Apexpages.currentPage().getParameters().get('progressnotename');
+        ProgressNoteController=null;
+        ProgressNoteController.setPageNumber(1);
+        if(actualsize>pageSize){
+            pageSize = actualsize;
+        }
+        return null;
+    } 
+    
 }
