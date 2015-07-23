@@ -476,6 +476,7 @@ public pagereference mySave(){
         	}
             if(planStuff.get(g).theGoal.Description__c == null ){
             	planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');	
+            	goalError = true;
                 if( hasChildData ){
                 	planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');
                 	goalError = true;
