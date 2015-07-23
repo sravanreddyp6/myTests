@@ -224,7 +224,7 @@
 					</apex:column>
                 	<apex:column headerValue="View Note Log" rendered="{!canCreateProgressNotes}">
                     <apex:outputPanel rendered="{! canCreateProgressNotes}">
-                        <a href="retURL={!HTMLENCODE('/apex/Progress_Notes_Log')}">View Note Log</a><br />
+                        <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}">View Note Log</a><br />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
@@ -236,7 +236,7 @@
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-						<apex:selectOption itemValue="/apex/Progress_Notes_Log" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" />
+						 <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" /> 
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!NOT(canCreateProgressNotes)}"/>
