@@ -324,9 +324,10 @@
 		</apex:pageblock>
 		
 		<apex:outputPanel id="incidentTypeModal" style="display:none;" layout="block">
+			<div id="incidentMessages"></div>
 			<apex:pageBlock >
 			<apex:pageBlockSection columns="1" >
-		        	<apex:selectRadio value="{!userChosenIncident}" layout="pageDirection" >
+		        	<apex:selectRadio value="{!userChosenIncident}" layout="pageDirection" id="incidentslist">
 		        		<apex:selectoption itemValue="PBS" itemLabel="PBS" /><br/>
 		        		<apex:selectoption itemValue="Location" itemLabel="Location" />
 		        		<apex:selectoption itemValue="Employee" itemLabel="Employee" />
@@ -334,11 +335,28 @@
 		        	</apex:selectRadio>
 		    </apex:pageBlockSection>
 		    <apex:pageblockButtons location="bottom" >
-				<apex:commandbutton value="Continue" action="{!createIncident}" rerender="" status="pageProcessing"/>
+				<apex:commandbutton value="Continue" onclick="checkIncidentType(); return false;" />
 				<apex:commandButton value="Cancel" />		    
 		    </apex:pageblockButtons>
 		   </apex:pageBlock> 
 		</apex:outputPanel> 
+		<apex:actionFunction name="createIncident" action="{!createIncident}" status="pageProcessing"/>
+		<apex:actionfunction name="retriveServAssigns" action="{!servAssigns}"  reRender="servBlock" status="pageProcessing" />
+		
+		<apex:outputPanel id="saSearchModal" style="display:none;" layout="block" >
+			<apex:outputPanel layout="none" id="samodalBlock">
+				<apex:outputLabel for="{!$Component.FNameforSA}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
+				<apex:inputText title="First Name" value="{!SAfirstName}" id="FNameforSA" />
+				<apex:outputLabel for="{!$Component.LNameforSA}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
+				<apex:inputText title="Last Name" value="{!SAlastName}" id="LNameforSA" />
+				<apex:commandButton style="margin-left: 10px; " id="searchServAssigns" value="Find" onclick="searchServAssigns(); return false;"> </apex:commandButton>
+			</apex:outputPanel>
+			<apex:pageBlock id="servBlock">
+				<apex:pageBlocktable value="{!ServAssigns}" var="s" >
+					<apex:column value="{!s.Name}" headerValue="name"/>
+				</apex:pageBlocktable>
+			</apex:pageBlock>
+		</apex:outputPanel>
 
 		<apex:pageBlock title="Approvals">
 			<!-- a href="/04i">View All</a> <br /> <br /--->
@@ -428,10 +446,32 @@
 			}
 			return false;
 		}
+		
 	</script>
 
 	<script type="text/javascript">
-		jQuery.noConflict();
+		
+		checkIncidentType = function(){
+			 var incidentType = jQuery("input[name*='incidentslist']:checked").val();
+			 if(incidentType == 'PBS'){
+			 	openModalDialog('saSearchModal', 'div', 'Find Service Assignment', null, 1000, 'mainForm', false);
+			 }else{
+			 	createIncident();
+			 }
+		}
+		
+		searchServAssigns = function(){
+			var fname = document.getElementById("{!$Component.thePage.mainForm.FNameforSA}").value;
+			var lname = document.getElementById("{!$Component.thePage.mainForm.LNameforSA}").value;
+			if ((fname == null || fname == '') && (lname == null || lname == '')) {
+				alert('Please fill one of the search boxes before you click on find');
+			} else{
+				retriveServAssigns();
+			
+			}
+		
+		}
+		
 		jQuery.fn.dataTableExt.oApi.fnDisplayRow = function(oSettings, nRow) {
 			// Account for the "display" all case - row is already displayed
 			if (oSettings._iDisplayLength == -1) {
