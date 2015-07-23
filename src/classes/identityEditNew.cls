@@ -1,5 +1,7 @@
 public class identityEditNew {
 
+    Date currentDate = Date.today();
+    Date defaultLastDay = currentDate.addDays(120);
     public TMN_User__c TMNUser { get; private set; }
     User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
     String userId = u.id;
@@ -57,6 +59,7 @@ public class identityEditNew {
         TMNUser.Service_Line__c = auAlias.Alias_Service_Line__c;
         TMNUser.Zip_Code__c = aliasUser.Zip_Code__c;
         TMNUser.BAA_Signed__c = aliasUser.BAA_Signed__c;
+        TMNUser.Last_Day__c = defaultLastDay;
     }
         
     }
@@ -127,14 +130,14 @@ public class identityEditNew {
     }
     
     public static void setJobStatus(TMN_User__c[] jobstatus){
-        for (TMN_User__c t :jobstatus){
-            if(t.Hire_Date__c > Date.today()){
+        for (TMN_User__c t :jobstatus){                
+            if(t.Hire_Date__c > Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
                 t.Job_Status__c = 'Pending';
-            }else if(t.Hire_Date__c <= Date.today() && t.Last_Day__c >= Date.today()){
+            }else if(t.Hire_Date__c <= Date.today() && t.Last_Day__c >= Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
                 t.Job_Status__c = 'Active';
-            }else if(t.Last_Day__c < Date.today()){
-                t.Job_Status__c = 'Terminated';
-            }
+            }else if(t.Last_Day__c < Date.today() && t.Current_Person_Type__c == 'Non-Employee'){
+                t.Job_Status__c = 'Inactive';
+            }            
         }
     }
     
