@@ -1,4 +1,4 @@
-<apex:page id="PDM"  Controller="PDMController" >
+<apex:page id="PDM"  Controller="PDMController" sidebar="false">
 
 
    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
@@ -6,9 +6,9 @@
     <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
       <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
       <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
-	
+  <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />	
 	<apex:stylesheet value="{!URLFOR($Resource.pdm_bootstrap)}"/>    
-  
+  <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
 <script type="text/javascript" language="javascript">
     var j$ = jQuery.noConflict();
     j$(document).ready(function() {
@@ -16,13 +16,22 @@
 			searching: false,
 				paging: false,
 				bInfo: false,
+				"order": [[ 4, "asc" ]],
 			'aoColumnDefs': [{
-				'bSortable': false,
+				'bSortable': true,
 				'aTargets': [0]
 			}],
 			sPaginationType: "full_numbers"
 		});
 		  j$('input[id$="ExportToExcel"]').prop('disabled', true);
+		
+		  
+  j$('#saveButton').keypress(function(event){
+    if (event.keyCode == 10 || event.keyCode == 13) 
+        event.preventDefault();
+    
+  });
+
 	});
 		
 	</script>
@@ -51,63 +60,7 @@
 			!important;
 		}
 
-.paginate_button {
-			margin-left: 5px;
-			border-radius: 12%;
-			width: 10px;
-			height: 8px;
-			padding: 0.5px;
-			background: #F8F8F8;
-			border: 1px solid #666;
-			color: #666;
-			text-align: center;
-			font: 10px Time New Roman, sans-serif;
-			cursor: pointer;
-		}
-		.paginate_active {
-			margin-left: 5px;
-			border-radius: 12%;
-			width: 10px;
-			height: 8px;
-			padding: 0.5px;
-			background: #7AC143;
-			border: 1px solid #666;
-			color: #666;
-			text-align: center;
-			font: 10px Times New Roman, sans-serif;
-			cursor: pointer;
-		}
-    
-        .search-text-input{
-            border-top:thin solid  #e5e5e5;
-            border-right:thin solid #e5e5e5;
-            border-bottom:0;
-            border-left:thin solid  #e5e5e5;
-            box-shadow:0px 1px 1px 1px #e5e5e5;
-            float:left;
-            height:27px;
-            margin:.8em 0 0 .5em; 
-            outline:0;
-            padding:.4em 0 .4em .6em; 
-            width:183px; 
-        }
-         
-        #button-holder{
-            background-color:#ffcc00;
-            border-top:thin solid #e5e5e5;
-            box-shadow:1px 1px 1px 1px #e5e5e5;
-            cursor:pointer;
-            float:left;
-            height:27px;
-            margin:11px 0 0 0;
-            text-align:center;
-            width:50px;
-        }
-         
-        #button-holder img{
-            margin:4px;
-            width:20px; 
-        }
+
          
 	 .ui-autocomplete { 
     position: absolute; 
@@ -116,7 +69,84 @@
     overflow-y: scroll; 
     overflow-x: hidden;
     }
-         
+    
+  
+  		.sorting {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_both.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_disabled {
+			background: #f2f3f3 !important;
+		}
+
+          .dialogLoadingSpinner {
+            margin-left: 5px;
+        }
+        
+        .HeadButtons {
+  		float: left;
+  		position: relative;
+  		top: -25px;
+  		left: 700px;
+		}
+		
+		.HeadDiv {
+  		float: left;
+  		position: relative;
+  		top: -25px;
+  		left: 700px;
+		}
+		
+		
+		.warning {
+ 	 border-color: #f90;
+    display: block;
+	background-color: #ffc;
+  	border-style: solid;
+  	border-width: 1px;
+  	color: #000;
+  	padding: 6px 8px 6px 6px;
+  	margin: 4px 20px;
+  	vertical-align: middle;
+  }
+  
+ 
+ .headsection {
+   height: 70px;
+  	background-color: #99ccff;
+}
+ 	.floatCol {
+ 	float: right;
+ 	right: 100px;
+ 	margin-right: 400px;
+  	font-size: large;
+  	margin-top: -20px;
+ 	}
+ 	.floatCol1 {
+ 	right: 100px;
+ 	margin-right: 400px;
+  	font-size: large;
+ 	}
+	.buttonsClass{
+        margin-left: 150px;
+        }
+        
  </style>
  <style type="text/css">
     .ui-autocomplete-loading { background: white url('{!URLFOR($Resource.AjaxLoad)}') right center no-repeat; }
@@ -126,8 +156,9 @@
  	function openWin(url){
 		window.open(url);
 	}
-	
- var sourcePage = 'https://test-iserve--sandboxajv--c.cs10.visual.force.com/apex/TMNUser_JSON?core.apexpages.devmode.url=0';
+	 var currentUrl = window.location.href;
+	currentUrl = currentUrl.substring(0, currentUrl.indexOf("/pdm"));
+ var sourcePage = currentUrl +'/TMNUser_JSON?core.apexpages.devmode.url=0';
  j$(function() {
    var txtVal =  j$('input[id$=searchLocation]');
    	
@@ -148,7 +179,6 @@
                     data: {
                     },
                     success: function( data ) {
-                    console.log('URL : '+sourcePage+'&location='+txtVal);
                         response( j$.map( data , function( item ) {
                             return {
                                 label: '<a>'+item.location+"</a><br />",
@@ -180,58 +210,193 @@
 function autoCompleteRender(ul, item) {
     return j$("<li></li>").data("item.autocomplete", item).append(item.label).appendTo(ul);
 }
- 
- </script>
-    <apex:form id="attForm">
-    <apex:actionFunction name="searchEmployee" action="{!searchEmployee}" reRender="datePanelContainer"/>
-    <apex:actionFunction name="searchByLocation" action="{!searchByLocation}" reRender="datePanelContainer" >
-        <apex:param name="selectedLocation" value=""/>
-        </apex:actionFunction>
-        <apex:pageBlock title="Phone Directory">
-  <table>
-  <tr> 
-  <th>Search Location</th> <th>&nbsp; </th>&nbsp; <th>&nbsp; </th> 
-  </tr>
-  <tr>
-  <td> <apex:inputText id="searchLocation" value="{!searchLocation}" Styleclass="search-text-input"/></td> <td>&nbsp; </td> <td>&nbsp; </td> <td> 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:inputText id="search-text-input" title="Search Employee..." Styleclass="search-text-input" value="{!searchEmployee}"/>
-<div id='button-holder'>
-<apex:image url="{!URLFOR($Resource.searchIcon)}" onClick="searchEmployee()"/>
-</div> 
-  </td>
-  </tr>
-  </table>
-  <span id="spanId"> </span>             
-<br/><br/><br/><br/><br/>
 
- <apex:outputPanel id="datePanelContainer" >
-<apex:commandButton value="Export to Excel"  id="ExportToExcel" onclick="openWin('/apex/TMNUserLocationExcel?location={!searchLocation}'); return false;" />
+function  searchEmp() {
+ j$('input[id$="ExportToExcel"]').prop('disabled', true);
+}
+
+function searchL () {
+searchByLocation(j$('input[id$=searchLocation]').val());
+j$('input[id$="ExportToExcel"]').prop('disabled', false);
+}
+
+	
+	function nextData() {
+	j$('table.dataTable').dataTable({
+			searching: false,
+				paging: false,
+				bInfo: false,
+				"order": [[ 4, "asc" ]],
+			'aoColumnDefs': [{
+				'bSortable': true,
+				'aTargets': [0]
+			}],
+			sPaginationType: "full_numbers"
+		});
+		
+		if(j$('input[id$=searchLocation]').val()==null || j$('input[id$=searchLocation]').val().length == 0 ){
+		j$('input[id$="ExportToExcel"]').prop('disabled', false);
+		}
+	}
+
+
+  function AdvanceSearch() {
+  search(j$('[id$=city]').val(),j$('[id$=StateCode]').val(),j$('[id$=FirstName]').val(),j$('[id$=OperatingGroup]').val(),j$('[id$=LastName]').val(),j$('[id$=JobTitle]').val());
+  
+  }
+  function showAdvancedSearchModal(){
+        j$('[id*=AdvancedSearchModal]').dialog("open");
+ }
+ 
+ j$(function() {
+    j$('[id*=AdvancedSearchModal]').dialog({
+      resizable: false,
+      draggable: false,
+      height:180,
+      width : 750,
+      modal: true,
+      autoOpen: false
+      
+    });
+});
+  
+  function closeDialog () {
+  	j$('[id*=AdvancedSearchModal]').dialog("close");
+  	j$('[id$=city]').val('');
+  	j$('[id$=StateCode]').val('');j$('[id$=FirstName]').val('');j$('[id$=OperatingGroup]').val('');j$('[id$=LastName]').val('');j$('[id$=JobTitle]').val('');
+  }
+ </script>
+  <div class="headsection">
+  
+  			<div class= "floatCol1" >
+  			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main Office :  {!MainOffice}
+  			</div>
+  			<div class="floatCol">
+  			Service Center : {!ServiceCenter}
+  			</div>
+  			<div class= "floatCol1" >
+  			Human Resources : {!HumanResources}
+  			</div>
+  			<div class="floatCol">
+  			Test Label : {!TestLabel}
+  			</div>
+  </div>
+  <br/>
+    <apex:form id="attForm">
+    <apex:actionFunction name="searchEmployee" action="{!searchEmployee}" reRender="datePanelContainer" oncomplete="searchEmp()" status="showsearchEmployee" />
+    
+    <apex:actionFunction name="savePhone" action="{!save}" oncomplete="saveP()"/>
+    <apex:actionFunction name="searchByLocation" action="{!searchByLocation}" reRender="datePanelContainer" status="showsearchByLocation" >
+        <apex:param name="selectedLocation" value="" assignTo="{!searchLocation}"/>
+     </apex:actionFunction>
+      <apex:actionFunction name="BuildQuery" action="{!BuildQuery}" reRender="datePanelContainer" status="showsearchByLocation" oncomplete="nextData()">
+        <apex:param name="AlphaFilter" value="" assignTo="{!AlphaFilter}" />
+      </apex:actionFunction>   
+      
+       <apex:actionFunction name="search" action="{!search}" reRender="datePanelContainer" status="showsearchByLocation" >
+        <apex:param name="city" value="" assignTo="{!city}" />
+        <apex:param name="State" value="" assignTo="{!state}" />
+        <apex:param name="FirstName" value="" assignTo="{!firstName}" />
+        <apex:param name="OperatingGroup" value="" assignTo="{!operationGroup}" />
+        <apex:param name="LastName" value="" assignTo="{!lastName}" />
+        <apex:param name="JobTitle" value="" assignTo="{!searchTitle}" />
+      </apex:actionFunction>  
+      
+<apex:pageBlock title="Phone Directory" id="PhoneDirectory">
+ 
+<br/>
+
+    <apex:panelGrid columns="6" id="theGrid" styleClass="buttonsClass">
+        <apex:panelGroup >
+            <apex:outputLabel >Find A Location &nbsp; </apex:outputLabel>
+                    <apex:outputPanel layout="none" >
+    <apex:inputText id="searchLocation" value="{!searchLocation}"  html-placeholder="Filter Location..."   />    
+						    <a onClick="searchL();">
+						    <img valign="bottom" src="/s.gif"  class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Location Lookup " />
+						    </a>             
+	                    </apex:outputPanel>
+        </apex:panelGroup> 
+        <apex:outputText >&nbsp;&nbsp;&nbsp; </apex:outputText>
+
+<apex:panelGroup >
+    <apex:outputLabel >Find A Person &nbsp; </apex:outputLabel>
+                              <apex:inputText id="searchEmployee" title="Search Person..."   html-placeholder="Search Person..." value="{!searchEmployee}"/>
+                        <a onClick="searchEmployee();">
+						    <img valign="bottom" src="/s.gif"  class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Employee Lookup" />
+						    </a>  
+        </apex:panelGroup>
+        <apex:outputText >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputText>
+        <apex:panelGroup >
+          <apex:commandButton id="AdancedSearch" value="Adanced Search"  onClick="showAdvancedSearchModal(); return false;"  reRender="fullpage" />
+          <apex:commandButton value="Export to Excel"  id="ExportToExcel"   onclick="openWin('/apex/TMNUserLocationExcel?location={!searchLocation}'); return false;" rendered="{!TMNUserList.size>0}" />
+          </apex:panelGroup>
+    </apex:panelGrid>
+    
+<br/>
+ <apex:outputPanel id="fullpage">
+
+ <apex:outputPanel id="datePanelContainer"  >
+
+ 
+ <apex:outputPanel rendered="{!TMNUserList.size>0}" id="LocationInfomation" >
+ 
+ <div id="table_start_filter" >
+                Browse by Name
+                <a href="#" onClick="BuildQuery('A');" data-filter='[A]'>A</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('B');" data-filter='[B]'>B</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('C');" data-filter='[C]'>C</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('D');" data-filter='[D]'>D</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('E');" data-filter='[E]'>E</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('F');" data-filter='[F]'>F</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('G');" data-filter='[G]'>G</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('H');" data-filter='[H]'>H</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('I');" data-filter='[I]'>I</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('J');" data-filter='[J]'>J</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('K')';" data-filter='[K]'>K</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('L');" data-filter='[L]'>L</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('M');" data-filter='[M]'>M</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('N');" data-filter='[N]'>N</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('O');" data-filter='[O]'>O</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('P');" data-filter='[P]'>P</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('Q');" data-filter='[Q]'>Q</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('R');" data-filter='[R]'>R</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('S');" data-filter='[S]'>S</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('T');" data-filter='[T]'>T</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('U');" data-filter='[U]'>U</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('V');" data-filter='[V]'>V</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('W');" data-filter='[W]'>W</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('XYZ');" data-filter='[XYZ]'>XYZ</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('ALL');" class="active" data-filter='.'>All</a>
+            </div>
+            
                 <apex:pageBlockTable value="{!TMNUserList}" var="user" style="width: 100%;" styleClass="dataTable" id="Tabledata">
                     <apex:column headerValue="Location">
                     <apex:outputText value="{!user.Work_State__c}" />
                     </apex:column>
        				<apex:column headerValue="Name">
-                    <apex:outputText value="{!user.Name}" />
+                    <apex:outputText ><a href="mailto:{!user.Email__c}">{!user.Last_Name__c},{!user.First_Name__c}</a></apex:outputText>
                     </apex:column>
                     <apex:column headerValue="Title">
                     <apex:outputText value="{!user.Job_Title__c}" />
                     </apex:column>
+                    <apex:column headerValue="Operating Group">
+                    <apex:outputText value="{!user.Operating_Group__c}" />
+                    </apex:column>
                      <apex:column headerValue="Office">
 						<apex:outputField value="{!user.Office_Phone__c}">
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
-                        hideOnEdit="editButton" event="ondblclick" 
+                        hideOnEdit="cancelButton" event="ondblclick" 
                         changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
-                </apex:outputField>
-                    </apex:column>     
-                    <apex:column headerValue="Cell">
+                        </apex:outputField>
+                    </apex:column> 
+                    <apex:column headerValue="Office Extension">
+						<apex:outputField value="{!user.phone_ext__c}">
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="cancelButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        </apex:outputField>
+                    </apex:column>       
+                    <apex:column headerValue="Mobile ">
 						<apex:outputField value="{!user.Mentor_Cell_Phone__c}">
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
-                        hideOnEdit="editButton" event="ondblclick" 
+                        hideOnEdit="cancelButton" event="ondblclick" 
                         changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                     </apex:column>
-                    <apex:column headerValue="Operating Group">
-                    <apex:outputText value="{!user.Operating_Group__c}" />
+                    <apex:column headerValue="Fax">
+                    <apex:outputField value="{!user.fax__c}">
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="cancelButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
                     </apex:column>
                     <apex:column headerValue="Manager">
                     <apex:outputText value="{!user.Manager_Name__c}" />
@@ -239,24 +404,54 @@ function autoCompleteRender(ul, item) {
                 </apex:pageBlockTable>
         <div class="container">
   <ul class="pager">
-    <apex:commandButton status="fetchStatus" reRender="datePanelContainer" value=" << Previous" action="{!previous}" disabled="{!!hasPrevious}" title=" << Previous"/>
-     <apex:outputText >{!(pageNumber * size)+1-size}-{!IF((pageNumber * size)>noOfRecords, noOfRecords,(pageNumber * size))} of {!noOfRecords}</apex:outputText>
-    <apex:commandButton status="fetchStatus" reRender="datePanelContainer" value="Next  >>" action="{!next}" disabled="{!!hasNext}" title="Next >>"/>
+    <apex:commandButton id="previous" status="fetchStatus" reRender="datePanelContainer" value=" << Previous" action="{!previous}" disabled="{!!hasPrevious}" title=" << Previous" oncomplete="sortData()" />
+     <apex:outputText >&nbsp;&nbsp;{!(pageNumber * size)+1-size}-{!IF((pageNumber * size)>noOfRecords, noOfRecords,(pageNumber * size))} of {!noOfRecords}</apex:outputText>
+    <apex:commandButton id="next" status="fetchStatus" reRender="datePanelContainer" value="Next  >>"  action="{!next}" disabled="{!!hasNext}" title="Next >>" oncomplete="nextData()" />
     <apex:outputPanel style="color:#4AA02C;font-weight:bold">
                     <apex:actionStatus id="fetchStatus" startText="Fetching..." stopText=""/>
                 </apex:outputPanel>
   </ul>
 </div>
-		
-        </apex:outputPanel>
-        
-        <apex:pageBlockButtons >
+			 <div class="HeadButtons">
         <apex:commandButton action="{!save}" id="saveButton" value="Save" style="display:none" />
-        <apex:commandButton id="cancelButton" value="Cancel" style="display:none"/>
-    </apex:pageBlockButtons>
-    </apex:pageBlock>
-    
+        <apex:commandButton id="cancelButton" value="Cancel" style="display:none" oncomplete="cancelEdit()" reRender="datePanelContainer" />
+         </div>
+         <br/><br/><br/>
+        </apex:outputPanel>
+       
+       
+       <apex:outputPanel rendered="{!TMNUserList.size==0}" >
+       <div class="warning">
+        		No Data found for this search
+        		</div>
+       </apex:outputPanel> 
+       
+       </apex:outputPanel>
+       
+          <apex:outputPanel id="AdvancedSearchModal" title="Advanced Search" style="display:none">
+
+            <apex:pageBlock >
+  
+                
+        <apex:pageBlockSection showHeader="true" columns="2" collapsible="false" id="AdvanceSearch" >
         
+        <apex:inputtext value="{!city}" id="city"    label="City" />
+        <apex:inputtext value="{!state}" id="StateCode"    label="State" />
+        <apex:inputtext value="{!firstName}" id="FirstName"    label="First Name" />
+        <apex:inputtext value="{!operationGroup}" id="OperatingGroup"    label="Operating Group" />
+        <apex:inputtext value="{!lastName}" id="LastName"    label="Last Name" />
+        <apex:inputtext value="{!searchTitle}" id="JobTitle"    label="Job Title" />
+       </apex:pageBlockSection> 
+       <apex:pageblockButtons location="bottom">
+       <apex:commandButton id="search" onClick="AdvanceSearch()" value="Search"  reRender="datePanelContainer" oncomplete="closeDialog()"/> 	
+       <apex:commandButton id="cancel"  value="Cancel"  onclick="closeDialog()" /> 	
+       </apex:pageblockButtons>
+     </apex:pageBlock>
+        </apex:outputPanel>
+       
+       </apex:outputPanel> 
+    </apex:pageBlock>
+
     
     </apex:form>
 
