@@ -265,7 +265,7 @@ function keyselectedvalue(){
         <apex:pageBlock >
             <apex:pageBlockButtons > 
             
-            <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy" >
+            <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy,myFRM" >
             <apex:param name="selectedKey" value="" />
             </apex:actionFunction> 
             <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk"></apex:commandButton>
