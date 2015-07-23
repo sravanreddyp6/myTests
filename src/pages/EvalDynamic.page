@@ -281,7 +281,9 @@
 					<apex:outputPanel rendered="{!evalType == 'Residential'}">
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
 						<p>Status:{!thisEval.Status__c} (
-							<apex:outputText value="{!evalStatusDate}" />)</p>
+							<apex:outputText value="{!evalStatusDate}" />)
+							<apex:outputText rendered="{!AND(thisEval.Signed_By__c != '', thisEval.Signed_By__c != thisEval.OwnerId)}" value=" by: {!thisEval.Signed_By__r.Name}" />
+						</p>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!evalType == 'CNA Workbook'}">
