@@ -286,21 +286,21 @@ public with sharing class IdentityHomeController {
             totalRecsDel = [SELECT COUNT()
                          FROM TMN_User__c
                          WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                         AND Current_Person_Type__c IN ('Employee')];   
+                         AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];   
             searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                     FROM TMN_User__c 
                                     WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                    AND Current_Person_Type__c IN ('Employee')
+                                    AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
                                     LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];              
         }else if (String.IsBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
             totalRecsDel = [SELECT COUNT()
                          FROM TMN_User__c
                          WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
-                         AND Current_Person_Type__c IN ('Employee')];
+                         AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];
             searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                     FROM TMN_User__c 
                                     WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
-                                    AND Current_Person_Type__c IN ('Employee')
+                                    AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
                                     LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];                              
         }else if (String.IsNotBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
             totalRecsDel = [SELECT COUNT()
@@ -309,14 +309,15 @@ public with sharing class IdentityHomeController {
                          OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                          OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                          OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2))
-                         AND Current_Person_Type__c IN ('Employee')];
+                         AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];
             searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                     FROM TMN_User__c 
                                     WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
                                     OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                     OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                     OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
-                                    AND Current_Person_Type__c IN ('Employee') LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];
+                                    AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active')) 
+                                    LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];
               if(searchDelegateResult.isEmpty()) {
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found.')); 
               }              
@@ -350,11 +351,11 @@ public with sharing class IdentityHomeController {
             totalRecsNE = [SELECT COUNT()
                          FROM TMN_User__c 
                          WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                         AND Current_Person_Type__c NOT IN ('Employee')];   
+                         AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];   
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                   FROM TMN_User__c 
                                   WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                  AND Current_Person_Type__c NOT IN ('Employee')
+                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
             showPopup();
@@ -367,11 +368,11 @@ public with sharing class IdentityHomeController {
             totalRecsNE = [SELECT COUNT()
                          FROM TMN_User__c 
                          WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
-                         AND Current_Person_Type__c NOT IN ('Employee')];
+                         AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                   FROM TMN_User__c 
                                   WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
-                                  AND Current_Person_Type__c NOT IN ('Employee')
+                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
             showPopup();
@@ -387,14 +388,14 @@ public with sharing class IdentityHomeController {
                          OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                          OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                          OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
-                         AND Current_Person_Type__c NOT IN ('Employee')];
+                         AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                   FROM TMN_User__c 
                                   WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
                                   OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                   OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                   OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
-                                  AND Current_Person_Type__c NOT IN ('Employee')
+                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
             showPopup();
@@ -407,7 +408,8 @@ public with sharing class IdentityHomeController {
         return null;
     }      
 
-      // SOSL Search for TMN_Users on identity_home page.
+      // SOSL Search for TMN_Users on identity_home page. 
+      //Currently not used, but didn't want to remove in case of changes in requirements to bring it back.
     Public void tmnSearch() {
         tmnUserList = New List<TMN_User__c>();
         if(tmnSearchStr.length() > 2) {
