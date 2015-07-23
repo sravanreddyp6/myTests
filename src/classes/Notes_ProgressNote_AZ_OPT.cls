@@ -63,7 +63,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public boolean hasOverlap {get { return (pnOverlap.size() > 0 && thePN.recordtype.developername == 'AZ_OPT');} }
     
     public void LoadData(Progress_Note__c tmp){
-        thePN = [select id, Name, No_Approval_Needed__c, Person_Being_Served__r.Name,next_approver__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
+        thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,next_approver__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
         
       List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :thePN.id 
@@ -210,7 +210,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             ActivePlanId = ApexPages.currentPage().getParameters().get('plan');
         }else if (dispMode =='Edit'){
         	 insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
-             progress_note__c pn = [select Service_Assignment__c ,Signature_on_File__c,GoalIds_AZOPTPage__c ,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+             progress_note__c pn = [select Service_Assignment__c ,End_Time__c,Start_Time__c,Signature_on_File__c,GoalIds_AZOPTPage__c ,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
              this.thePN = pn;
              GoalsSelected = Apexpages.currentPage().getParameters().get('selectedKey');
              list<Id> GoalSelIds = New List<Id>();
@@ -326,7 +326,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             inlinemode = true;
             insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
            pn = (Progress_Note__c) controller.getRecord();
-            progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+            progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
           this.thePN = pn;
             pnOverlap = new List<Progress_Note__c>();
             theServAssignId =  pnedit.Service_Assignment__c ;
@@ -372,6 +372,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     } 
     
     public pagereference saveModifiedProgressNote(){
+       if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
+      		ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy')); 	
+       		return null;
+       }
        pn.recordtypeid = AZ_OPT_ID ; 
        pn.Person_Being_Served__c = pbsName;
        pn.admission__c = admissionId;
@@ -403,6 +407,13 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        pn.Service_Assignment__c = theServAssignId;
        pn.Action_Plan__c = ActivePlanId;
        pn.GoalIds_AZOPTPage__c = GoalsSelected;
+       system.debug('++++++++++++'+(pn.End_Time__c.getTime())/1000/60+ '-------------');
+      		
+       if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
+       	    system.debug('++++++++++++'+pn.End_Time__c.getTime()+ '-------------'+integer.valueof(pn.End_Time__c.getTime() - pn.Start_Time__c.getTime())*24*60);
+      		ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy')); 	
+       		return null;
+       }
        upsert pn;
        insertedProgressNoteId = pn.Id;
        newBlock = false;
@@ -543,7 +554,14 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         pickList.add(new SelectOption('Action','Action'));
     }
     
+    
     public pagereference saveProgressNote(){
+    	progress_note__c pn = [select Service_Assignment__c ,End_Time__c,Start_Time__c,Signature_on_File__c,GoalIds_AZOPTPage__c ,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+     	this.thePN = pn;
+        if(decimal.valueof((thePN.End_Time__c.getTime())/1000/60 - (thePN.Start_Time__c.getTime())/1000/60) > 120.0){
+      		ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy')); 	
+       		return null;
+       }
        return null;
     }
     
