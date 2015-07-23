@@ -69,8 +69,7 @@ public with sharing class CmBillingRpt {
                                                                             (SELECT ID  FROM Action_Summaries__r 
                                                                               WHERE Status__c = 'Final' 
                                                                                 AND Start_Date__c >= : StartDate  AND End_Date__c <= : EndDate )
-                                                                        FROM  Service_Assignment__c WHERE  Status__c = 'Active'
-                                                                         AND  service_location__r.id IN :selectedPrmIds
+                                                                        FROM  Service_Assignment__c WHERE service_location__r.id IN :selectedPrmIds
                                                                        ORDER  BY Person_Being_Served__r.Account.Lastname, Person_Being_Served__r.Account.Firstname, SA_Start_DateTime__c desc NULLS LAST] ) {
             if (sa.Evaluations__r.size() > 0 || sa.Action_Summaries__r.size() > 0) 
         	   PBSList.add(new SelectOption(sa.Person_Being_Served__r.id, 
