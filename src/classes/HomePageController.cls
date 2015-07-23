@@ -70,7 +70,9 @@ public with sharing class HomePageController{
 	public string userChosenIncident {get; set;}
 	public List<Incident__c> myIncidents {get; set;}
 	public string selectedIncident {get; set;}
-
+	public string SAfirstName {get; set;}
+	public string SAlastName {get; set;}
+	public List<Service_Assignment__c> ServAssigns {get; private set;}
 	
 
 	//Constructor
@@ -161,6 +163,8 @@ public with sharing class HomePageController{
 
 		oSchema = Progress_Note__c.sObjectType.getDescribe();
 		canCreateNote = oSchema.isCreateable();
+		
+		ServAssigns = new list<Service_Assignment__c>();
 		
 		updateProgramSelection();
 		checkTmnUserRecord();
@@ -385,7 +389,20 @@ public with sharing class HomePageController{
 		pr.getParameters().put('SAid', serviceAssignmentIdForAction);
 		return pr;
 	}
-
+	
+	public pagereference servAssigns(){
+		ServAssigns = new List<Service_Assignment__c>();
+		string criteria = HomePageSearchController.buildCriteria(SAlastName, SAfirstName, 'lastname', 'firstname');
+		String conQuery = 'select Id from Contact where ';
+		conQuery = conQuery+criteria;
+		system.debug('Query+++++++++++++'+conQuery);
+		List<Contact> pbsList = Database.Query(conQuery);
+		if(pbsList.size() > 0){
+			ServAssigns =  [SELECT Id, Name, Status__c FROM Service_Assignment__c WHERE Person_being_Served__c IN: pbslist];
+		}
+		
+		return null;
+	}
 
 	public List<SelectOption> getviewvalues() {
 		List<SelectOption> Options = new List<SelectOption>();
