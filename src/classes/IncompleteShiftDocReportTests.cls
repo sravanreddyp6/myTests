@@ -57,11 +57,11 @@ public with sharing class IncompleteShiftDocReportTests {
 		};
 
 		controller = new IncompleteShiftDocReport();
-		controller.leftSelectedPrograms.add((Id) controller.leftPrograms[0].getValue());
+		controller.leftSelectedPrograms.add((String) controller.leftPrograms[0].getValue());
 		controller.addPrograms();
-		controller.rightSelectedPrograms.add((Id) controller.rightPrograms[0].getValue());
+		controller.rightSelectedPrograms.add((String) controller.rightPrograms[0].getValue());
 		controller.removePrograms();
-		controller.leftSelectedPrograms.add((Id) controller.leftPrograms[0].getValue());
+		controller.leftSelectedPrograms.add((String) controller.leftPrograms[0].getValue());
 		controller.addPrograms();
 		controller.dummyEvaluation.Evaluation_date__c = Date.Today();
 		controller.dummyEvaluation.Dialysis_Onset__c = Date.Today().addDays(2);
