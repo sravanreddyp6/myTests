@@ -30,7 +30,7 @@ public with sharing class CmPersonBillingRpt {
         this.StartDate = Date.parse(ApexPages.CurrentPage().getParameters().get('StartDate'));
         this.EndDate = Date.parse(ApexPages.CurrentPage().getParameters().get('EndDate'));
 
-        list<Service_Assignment__c> sa = [SELECT  id, person_being_served__r.id, person_being_served__r.LastName, person_being_served__r.FirstName, person_being_served__r.Middle_Name__c,
+        list<Service_Assignment__c> sa = [SELECT  id, person_being_served__r.id, person_being_served__r.LastName, person_being_served__r.FirstName, person_being_served__r.Middle_Name__c, person_being_served__r.Avatar_ID__c,
 		                                          Service_Location__r.Name, Service_Location__r.Street__c, Service_Location__r.City__c, Service_Location__r.State__c, Service_Location__r.Zip__c,
 		                                          Service_Location__r.Setting__c, Service_Location__r.Phone__c, person_being_served__r.PBS_Identifier__c, person_being_served__r.Birthdate, 
 		                                          person_being_served__r.Marital_Status__c, person_being_served__r.Gender__c, person_being_served__r.Age__c,
@@ -46,12 +46,12 @@ public with sharing class CmPersonBillingRpt {
 		                                           ORDER BY Start_Date__c NULLS LAST)
                                           FROM    Service_Assignment__c
                                          WHERE    Person_Being_Served__c = : pbsId
-                                           AND    Status__c = 'Active'
                                          ORDER    BY SA_Start_DateTime__c DESC NULLS LAST];
         
         this.pbsName = sa[0].person_being_served__r.LastName + ', ' + 
             (String.isBlank(sa[0].person_being_served__r.FirstName) ?  '' : sa[0].person_being_served__r.FirstName) + ' ' + 
-            (String.isBlank(sa[0].person_being_served__r.Middle_Name__c) ?  '' : sa[0].person_being_served__r.Middle_Name__c);
+            (String.isBlank(sa[0].person_being_served__r.Middle_Name__c) ?  '' : sa[0].person_being_served__r.Middle_Name__c) +
+            (String.isBlank(sa[0].person_being_served__r.Avatar_ID__c) ?  '' : '(' + sa[0].person_being_served__r.Avatar_ID__c + ')' ) ;
         
         for (Service_Assignment__c s : sa) {
             for (Evaluation__c eval : s.Evaluations__r) {
@@ -211,7 +211,7 @@ public with sharing class CmPersonBillingRpt {
 
         for(String rspnseType : evalResponsesTypes){
         	for(Id parentEval : mapEvalResposes.keySet()){
-        		list<Evaluation_Response__c> responseList = mapEvalResposes.get(parentEval).get(rspnseType);        		
+        		list<Evaluation_Response__c> responseList = mapEvalResposes.get(parentEval).containsKey(rspnseType) ? mapEvalResposes.get(parentEval).get(rspnseType) : null ;		
         		if (responseList != null && responseList.size() > 0){
         			mapEvalResposesCmponentsStr += parentEval + '~' + rspnseType;
         		}
