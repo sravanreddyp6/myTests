@@ -4,7 +4,7 @@ public String location {set;get;}
 public List<TMN_User__c> locationList {set;get;}
 public  TMNLocation () {
 location = Apexpages.currentPage().getParameters().get('location');
-locationList = [Select Work_State__c,Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, Job_Title__c From TMN_User__c where Work_State__c  like  : '%' + location +  '%' order by Office_Phone__c];
+locationList = [Select Work_State__c,Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, Job_Title__c ,fax__c,phone_ext__c From TMN_User__c where Work_State__c  like  : '%' + location +  '%' order by Office_Phone__c];
 
 }
 	public  String searchLocation {set;get {
