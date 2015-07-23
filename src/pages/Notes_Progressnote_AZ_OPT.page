@@ -1,10 +1,5 @@
 <apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_AZ_OPT,Notes_ProgressNote_Svc_Code_Selection,progressnote_actionplan_embed_ex" id="mypage">
-    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-
-
-
-
-
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <!-- Added for Goal Starts-->
 <apex:includeScript value="{!$Resource.jquery}"/>
@@ -63,7 +58,7 @@ function toggleByClass2(cls){
 
 };
 </script>
-<Script>
+<script>
 function complete(Signed) {
     if (Signed == 'Y') {
         alert("Document Already E-Signed");
@@ -72,6 +67,64 @@ function complete(Signed) {
     }
 }
 </script>
+<script type="text/javascript">
+var isModified = false;
+var keysSelected ="";
+var nodeKey = null;    
+function recordChange(){
+    isModified = true;
+}
+function triggerNodeSelection(treeNode) {
+    if(treeNode.isSelected()&& treeNode.key.indexOf("a1A") > -1){
+        keysSelected = keysSelected + treeNode.key + ",";
+    }else{
+        if(keysSelected.indexOf(treeNode.key) > -1){
+            keysSelected = keysSelected.replace(treeNode.key+",", "");
+        }
+    }
+} 
+function keyselectedvalue(){
+    SelectedIds(keysSelected);
+}
+</script>
+<style>
+    .lcol{
+        width: 98%;
+        float: left;
+        //border: 1px solid black;
+        padding: 7px;
+    }
+    .rcol{
+        float: right;
+        width: 0%;
+        //border: 1px solid gray;
+        padding: 0px;
+    }
+    .txtArea{
+        width: 320px;
+        height: 60px;    
+    } 
+    .label{
+        margin:10px;
+        font-weight:bold;
+    }
+          
+    .breadcrumb {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    
+    .breadcrumb, .breadcrumb a, .breadcrumb a.visited {
+        color: #154890 !important;
+        text-decoration: none;
+    }
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+
+
 <apex:variable var="State" value="{!if(ISBLANK($CurrentPage.parameters.state) ,'',$CurrentPage.parameters.state)}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -193,9 +246,10 @@ function complete(Signed) {
 <apex:variable var="Final" value="{!IF(Progress_Note__c.Status__c='Final',True,False)}"/>
 <apex:variable var="Pending" value="{!IF(Progress_Note__c.Approval_Status__c='Pending',True,False)}"/>
 <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
+    <apex:form id="myFRM" >
     <apex:pagemessages ></apex:pagemessages>
-    <apex:form id="myFRM" ><apex:pagemessages ></apex:pagemessages>
-    <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
+   <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
+
     <script>
         function openPopUp(){
             var vars = '{!insertedProgressNoteId}';
@@ -204,10 +258,14 @@ function complete(Signed) {
     </script>       
     <apex:outputpanel rendered="{!NewBlock}">
         <apex:pageBlock >
-            <apex:pageBlockButtons >  
-                <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" rendered="{!!inlinemode}" rerender="myFRM"></apex:commandButton>
-                <apex:commandButton action="{!saveModifiedProgressNote}" value="Save" rendered="{!inlinemode}"  ></apex:commandButton>
-				<apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}"></apex:commandButton> 
+            <apex:pageBlockButtons > 
+            
+            <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy" >
+            <apex:param name="selectedKey" value="" />
+            </apex:actionFunction> 
+            <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk"></apex:commandButton>
+               <apex:commandButton action="{!saveModifiedProgressNote}" value="Save" rendered="{!inlinemode}" onclick="keyselectedvalue()" rerender="myFRM,relatedToPgblk"></apex:commandButton>
+                <apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}"></apex:commandButton> 
                 <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}"></apex:commandButton>
             </apex:pageBlockButtons>
             <apex:pageBlockSection columns="1" >
@@ -239,19 +297,45 @@ function complete(Signed) {
                 <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}"/>
             </apex:pageBlockSection>
         </apex:pageBlock>
+        <!-- Goal -->
+    <apex:outputPanel layout="block" styleClass="lcol">
+<apex:pageBlock id="eleyForm1" title="Goals & Objectives" >
+<script type="text/javascript">
+    isModified = false;
+</script>       
+    <apex:pageMessages ></apex:pageMessages>         
+    <apex:pageMessages ></apex:pageMessages>    
+    <apex:outputPanel id="relatedTo">
+        <apex:outputPanel layout="block" styleClass="frmRCol">
+            <apex:outputPanel layout="block" rendered="true">
+                        <apex:outputPanel id="tree3" layout="block">
+                            <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" mode="2" selectActionSignature="triggerNodeSelection(data.node);" ID_PageSideStorage="myKeys" allowInactiveNode="false" checkbox="true" TreeID="tree3" showIcons="false" debug="false" />
+                            <!--  <apex:inputHidden value="{!selectedKeys}" id="myKeys"/> -->     
+                        </apex:outputPanel>
+            </apex:outputPanel>               
+        </apex:outputPanel>
+    </apex:outputPanel>
+
+</apex:pageBlock>
+</apex:outputPanel>
+
+    
+    
+    <!-- Goal Ends -->
+        
     </apex:outputpanel>
     <apex:outputpanel rendered="{!!NewBlock}">
         <apex:outputPanel style="display: none;">
             <apex:outputField value="{!Progress_Note__c.recordtype.DeveloperName}" />
         </apex:outputPanel>
-        <style>
+     <style>
             input[name=piSubmit] { display: none;}
         </style>
         <br></br>
         <apex:pageBlock id="pblk">
         <apex:pagemessages ></apex:pagemessages>
             <apex:pageBlockButtons location="top" rendered="{!!Final}">
-	            <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" />
+            <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" />
             <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,pblk" />
             <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
             <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
@@ -378,18 +462,38 @@ function complete(Signed) {
     </apex:pageBlock>
     
     
-    <!-- Added for Goal Starts-->
-    <apex:outputPanel id="relatedTo">
+    <!-- Goal -->
+    
+    <apex:outputPanel layout="block" styleClass="lcol">
+<apex:pageBlock id="eleyForm" title="Goals & Objectives" >
+<script type="text/javascript">
+    isModified = false;
+</script>       
+    <apex:pageMessages ></apex:pageMessages>         
+    <apex:pageMessages ></apex:pageMessages>    
+    <apex:outputPanel id="relatedToPgblk">
         <apex:outputPanel layout="block" styleClass="frmRCol">
             <apex:outputPanel layout="block" rendered="true">
-                    <apex:outputPanel id="tree3" layout="block">
-                        <c:Fancy_Tree TreeString="{!formTree.Fancy_Tree_JSon_String_LongText}" mode="2" ID_PageSideStorage="myKeys" allowInactiveNode="false" TreeID="tree3" showIcons="false" debug="false" />
-                        <apex:inputHidden value="{!selectedKeys}" id="myKeys"/>       
-                    </apex:outputPanel>
+                        <apex:outputPanel id="tree3" layout="block">
+                            <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" mode="2" ID_PageSideStorage="myKeys" allowInactiveNode="false" checkbox="false" TreeID="tree3" showIcons="false" debug="false" />
+                            <!--  <apex:inputHidden value="{!selectedKeys}" id="myKeys"/> -->     
+                        </apex:outputPanel>
             </apex:outputPanel>               
         </apex:outputPanel>
     </apex:outputPanel>
-     <!--Added for Goal Ends-->
+
+</apex:pageBlock>
+</apex:outputPanel>
+
+    
+    
+    <!-- Goal Ends -->
+    
+    
+    
+    
+    
+    
     
     
     <apex:pageblock >
@@ -472,7 +576,7 @@ function complete(Signed) {
         </div>
         
         <div id="Attachments">
-            <c:SObjectNotesAndAttachments parentPage="Notes_ProgressNote_AZ_OPT" parentId="{!$CurrentPage.parameters.id}" showAction="true" pbsId="{!pbsname}" servAssignId="{!theServAssignId}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
+        <c:SObjectNotesAndAttachments parentPage="Notes_ProgressNote_AZ_OPT" parentId="{!$CurrentPage.parameters.id}" showAction="true" pbsId="{!pbsname}" servAssignId="{!theServAssignId}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
         </div>
     </apex:outputpanel>
     </apex:pageBlock>
