@@ -46,7 +46,6 @@ public with sharing class CmPersonBillingRpt {
 		                                           ORDER BY Start_Date__c NULLS LAST)
                                           FROM    Service_Assignment__c
                                          WHERE    Person_Being_Served__c = : pbsId
-                                           AND    Status__c = 'Active'
                                          ORDER    BY SA_Start_DateTime__c DESC NULLS LAST];
         
         this.pbsName = sa[0].person_being_served__r.LastName + ', ' + 
