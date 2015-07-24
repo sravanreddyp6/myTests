@@ -77,8 +77,14 @@ public with sharing class Progress_Notes_List_View_Controller {
     public void lastPage()
     {
         ProgressNoteController.last();
-        counter = totalSize - math.mod(totalSize, pageSize);        
+        counter = totalSize - math.mod(totalSize, pageSize);   
+        if(counter==totalSize){
+        	counter-= pageSize;
+        }      
         prNum = (totalSize - math.mod(totalSize, pageSize))+1;
+        if(prNum>totalSize){
+            prNum-=pageSize;
+        }
         actualsize = totalSize ;
     }
     
