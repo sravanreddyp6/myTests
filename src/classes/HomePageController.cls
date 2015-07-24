@@ -563,6 +563,9 @@ public with sharing class HomePageController{
 	
 	public pageReference saveResponse() {
 		
+		
+		hasError = false;
+		
 		// check for required fields
 		Map<string, string> columnsToHeadersMap = new Map<String, String>();
 		columnsToHeadersMap.put('start_date_time__c','Start Date/Time');
@@ -578,8 +581,8 @@ public with sharing class HomePageController{
 		}
 		
 		
-		system.debug('CURR:' + currResponse);
-		hasError = false;
+		//system.debug('CURR:' + currResponse);
+		
 		
 		// IADAY-10 - date rules
 		if ( responseType == 'Time Log') {
@@ -622,7 +625,7 @@ public with sharing class HomePageController{
 		} // end IADAY-10
 		try {
 			if(!hasError){
-				system.debug('CURR:' + currResponse);
+				//system.debug('CURR:' + currResponse);
 				upsert currResponse;
 				newResponse();
 			}
