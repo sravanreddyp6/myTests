@@ -54,9 +54,10 @@
                     <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7"/>
                     
                </apex:pageBlockSection>
-               <apex:pageBlockSection columns="2" title="Management Hierarchy" >
-                    <!--<apex:inputField label="Alias L" value="{!TMNUser.Alias_Lookup__c}" taborderhint="43"/>-->
-                    <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" taborderhint="13"/>
+               <apex:pageBlockSection columns="2" title="Management Hierarchy" id="aliasDetails" >
+                    <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" taborderhint="13">
+                        <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="aliasDetails"/>
+                    </apex:inputField>
                     <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/> 
                     <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="16">
                         <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>

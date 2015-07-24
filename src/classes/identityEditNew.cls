@@ -120,13 +120,16 @@ public class identityEditNew {
         return viewPage;
     }
 
-    public void updateAliasInfo(){
+    public pageReference updateAliasInfo(){
         Alias__c a = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
                       FROM Alias__c 
-                      WHERE Id =: TMNUser.Alias_Lookup__c];
+                      WHERE Id = :TMNUser.Alias_Lookup__c];
+        TMNUser.Alias__c = a.Alias_unique__c;
+        TMNUser.Alias_Lookup__c = a.Id;              
         TMNUser.Business_Unit__c = a.Alias_Business_Unit__c;
         TMNUser.Service_Region__c = a.Alias_Region__c;
-        TMNUser.Service_Line__c = a.Alias_Service_Line__c;              
+        TMNUser.Service_Line__c = a.Alias_Service_Line__c;
+        return null;              
     }
     
     public static void setJobStatus(TMN_User__c[] jobstatus){
