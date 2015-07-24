@@ -151,7 +151,7 @@
                                 <td width="25%"><b>Ethnicity:</b>&nbsp;
                                     <apex:OutputText value="{!con.Ethnicity_Picklist__c}" />
                                 </td>
-                                <apex:outputLabel rendered="{!(guardianCount!=null && guardianCount>0)}">
+                                <apex:outputLabel rendered="{!guardianCount>0}">
                                     <td width="25%"><b>Guardian:</b>&nbsp;
                                         <apex:OutputText value="{!con.Guardian1_Name__c}" />
                                     </td>
@@ -170,7 +170,7 @@
                                 <td width="25%"><b>Primary Language:</b>&nbsp;
                                     <apex:OutputText value="{!con.Primary_Language__c}" />
                                 </td>
-                                <apex:outputLabel rendered="{!(guardianCount!=null && guardianCount>0)}">
+                                <apex:outputLabel rendered="{!guardianCount>0}">
                                     <td width="25%"><b>Guardian Phone:</b>&nbsp;
                                         <apex:OutputText value="{!con.Guardian_Phone_Number__c}" />
                                     </td>
