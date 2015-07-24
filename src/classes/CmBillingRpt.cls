@@ -2,8 +2,8 @@ public with sharing class CmBillingRpt {
     public date StartDate {get; set;}
     public date EndDate {get; set;}
     public List<id> selectedPBS {get; set;}
-    public Set<SelectOption> PBSList = new Set<SelectOption>();
-    public Set<SelectOption> getPBSList(){ return PBSList ;}    
+    public List<SelectOption> PBSList = new List<SelectOption>();
+    public List<SelectOption> getPBSList(){ return PBSList ;}    
     public boolean hasRunOnce {get; set;}
 
     public list<SelectOption> programslist = new list<SelectOption>();
