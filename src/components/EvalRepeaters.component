@@ -36,7 +36,7 @@
                                 rendered="{! counter > 0}"  />
 
                             <a href="#" style="color:#781d7d;"
-                                onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','{!evaltype}', {! OR(evalType=='Residential', edata.ownerID == $User.Id) && ( (AND(parentEvalStatus == 'Draft', evalType != 'Head to Toe'))  || ( AND(parentShiftStatus == 'Draft', evalType == 'Head to Toe')) || ( AND(CONTAINS(evalType,'Restraint'), parentEvalStatus == 'Not Restrained')))}); return false;">
+                                onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','{!evaltype}', {! edata.ownerID == $User.Id && ( (AND(parentEvalStatus == 'Draft', evalType != 'Head to Toe'))  || ( AND(parentShiftStatus == 'Draft', evalType == 'Head to Toe')) || ( AND(CONTAINS(evalType,'Restraint'), parentEvalStatus == 'Not Restrained')))}); return false;">
                                 <apex:outputText value="{! edata.owner }" />&nbsp;@&nbsp;<apex:outputText value="{!edata.created24 }" />
                             </a>
                             <apex:variable var="counter" value="{!counter + 1}" />
@@ -78,7 +78,7 @@
                         <apex:outputPanel rendered="{!edata.sectiontype=='Activity Log'}">
                         	<!-- SSW made the links default to iServe purple based on k/k discussion -->
                             <a href="#" style="color:#781d7d;"
-                                onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log', {!AND(edata.ownerID == $User.Id, parentEvalStatus != 'Completed', parentEvalStatus != 'Disregard')}); return false;">
+                                onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log', {! (edata.ownerID == $User.Id)  && (parentEvalStatus != 'Completed') && (parentEvalStatus != 'Disregard')}); return false;">
                                 <apex:outputText value="{! edata.owner }" /> @ <apex:outputText value=" {!edata.created24}" />
                             </a>
                             <br />
