@@ -231,7 +231,7 @@ public with sharing class EvaluationResponseTableController {
 		
 			if (! hasError ) {
 				// check for date overlap with another event
-				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType)]; 
+				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currentResponse.Id]; 
 				for ( Evaluation_Response__c tl : otherTimeLogs ) {
 					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currentResponse.start_date_time__c, currentResponse.end_date_time__c) ) {
 						currentResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
@@ -394,6 +394,8 @@ public with sharing class EvaluationResponseTableController {
 		 		' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) + '\' ORDER BY ';
 		if ( responseType == 'Isolation Event')
 			query += 'Isolation_Event_Start_Date__c DESC NULLS LAST, ';
+		else if (responseType == 'Time Log')
+			query += 'Start_Date_Time__c DESC, End_Date_Time__c desc, ';
 		query += ' CreatedDate Desc Limit ' + numRows;
 		system.debug('Serv Assign Query: ' + query);
 		responses = Database.query(query);
@@ -465,7 +467,7 @@ public with sharing class EvaluationResponseTableController {
 		if ( e1 == null ) // first set is not a range - can't compare
 			return overlaps;
 			
-		if ( s2 > s1 && s2 < e1 ) // starts within first timeframe
+		if ( s2 >= s1 && s2 <= e1 ) // starts within first timeframe
 			overlaps = true;
 		else {
 			if ( e2 != null ) {

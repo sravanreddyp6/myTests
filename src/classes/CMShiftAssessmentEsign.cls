@@ -13,9 +13,11 @@ public with sharing class CMShiftAssessmentEsign implements AuthenticatedAction 
 		} else if(assessment.Recordtype.Name == 'NursesAssessment' && assessment.Id == servAssign[0].Evaluations__r[0].Id){
 			assessment.Status__c = 'Final Admission';
 			assessment.Signed_At__c = system.Now();
+			assessment.Signed_By__c = UserInfo.getUserId();
 		} else if(assessment.Recordtype.Name == 'NursesAssessment' && assessment.Id != servAssign[0].Evaluations__r[0].Id){
 			assessment.Status__c = 'Final Revision';
 			assessment.Signed_At__c = system.Now();
+			assessment.Signed_By__c = UserInfo.getUserId();
 		} else if(assessment.RecordType.name == 'RestraintEvent' && assessment.Status__c == 'Not Restrained') {
 			List<Eval_value__c> restraintAction = [SELECT Id, Text_Under_250__c,Eval__r.Field_Name__c, Date_Time__c FROM Eval_Value__c WHERE What_Id__c = :recId AND What_Id_Object__c = 'Evaluation__c' AND (Eval__r.Field_Name__c = 'Restraint Action' OR Eval__r.Field_Name__c ='Start Date/Time')];
 			if(restraintAction.size() > 0){
