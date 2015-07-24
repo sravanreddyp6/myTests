@@ -27,7 +27,7 @@ public with sharing class GenerateGoalObjPDF {
 		if ( eval == null)
 			return;
 		
-		if (eval.recordType.name.startsWith('Resident'))
+		if (eval.recordType.name.equals('NursesAssessment') || eval.recordType.name.equals('RestraintEvent'))
 			return;
 		
 		
