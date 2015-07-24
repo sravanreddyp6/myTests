@@ -224,19 +224,20 @@
 					</apex:column>
                 	<apex:column headerValue="View Note Log" rendered="{!canCreateProgressNotes}">
                     <apex:outputPanel rendered="{! canCreateProgressNotes}">
-                        <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}">View Note Log</a><br />
+                        <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&admission={!serviceAssignment.Admission__c}">View Note Log</a><br />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
-					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!serviceAssignment.Action_Plans__r[0].Id}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
+					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
+                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" /> 
 					</apex:selectList>
-					<apex:commandButton value="Go" styleClass="pbsActionButton" />
+					<apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!!canCreateProgressNotes}"/>
+                    <apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"/>
 				</apex:column>
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-						 <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" /> 
+						 <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}&admission={!serviceAssignment.Admission__c}&pbsID={!serviceAssignment.Person_Being_Served__c}" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" /> 
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!NOT(canCreateProgressNotes)}"/>

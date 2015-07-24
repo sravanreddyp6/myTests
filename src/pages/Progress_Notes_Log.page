@@ -1,5 +1,29 @@
-<apex:page controller="Progress_Notes_List_View_Controller" sidebar="false" readOnly="true">
+<apex:page controller="Progress_Notes_List_View_Controller"  readOnly="true">
+    <apex:includeScript value="{!$Resource.jquery}"/>    
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <style>  
+        /* Used to hide the default "tabs" in salesforce */
+        #tabContainer {
+        display: none;
+        }
+        
+        /* Hide the createNew section of the default salesforce sidebar */
+        #createNew {
+        display: none;
+        }
+        
+        /* Hide the Recent Items section of the default salesforce sidebar */
+        .recentItemModule {
+        display: none;
+        }
+        
+        /* Hide the Recycle Bin section of the default salesforce side bar */
+        .recycleBinModule{
+        display: none;
+        }
+    </style> 
     <script>
+    var j$ = jQuery.noConflict();
     function dynamicsearch(){
         searchresult(document.getElementById("searchbyname").value);
     }    
@@ -22,25 +46,40 @@
                     <apex:outputText value="{!saname}" rendered="{!NOT(displayname)}" style="padding-bottom:3.5cm"/> 
                     <apex:outputText value="{!pbsname}" rendered="{!NOT(displaypbs)}"/> 
                 </div>
-                <br></br>
-            <apex:pageBlockTable value="{!ProgressNotes}" var="pr" id="ProgressnotesTable" >
-                <apex:column headerValue="Created" >
-                    <apex:commandLink value="{!pr.CreatedDate}" action="{!editcardnotes}" >
-                        <apex:param name="selectedid" value="{!pr.id}" assignTo="{!selectedpnid}"/>
-                    </apex:commandLink>
-                </apex:column>
-                <apex:column value="{!pr.Start_Time__c}" headerValue="Start Time"/>
-                <apex:column value="{!pr.End_Time__c}" headerValue="End Time"/>
-                <apex:column value=" {!Left(pr.Progress__c,20)}" headerValue="Comments/Notes"  style="width:300px" id="comments" />
-                <apex:column value="{!pr.CreatedBy.Name}" headerValue="User Name"/>
-                <apex:column value="{!pr.Status__c}" headerValue="Status"/>
-                <apex:column value="{!pr.Disregard_Note__c}" headerValue="Disregard"/>
-            </apex:pageBlockTable>
-            <apex:outputPanel id="pagination">
-                <apex:outputPanel style="float:right; padding-right:3.5cm; margin-top: 12px;"> Page  {!pageNumber} of {!totalPages} </apex:outputPanel> 
-                <div id ="progress" style="padding-left:3cm; margin-top: 12px; ">{!progSize} - {!actualsize}  of  {!totalSize} </div>
-            </apex:outputPanel> 
-          </apex:pageBlock>
-    	</apex:panelGrid>
-	</apex:form>
+                <br />                
+                <apex:pageBlockTable value="{!ProgressNotes}" var="pr" id="ProgressnotesTable" >
+                    <apex:column headerValue="Created" >
+                        <apex:commandLink value="{!pr.CreatedDate}" action="{!editcardnotes}" >
+                            <apex:param name="selectedid" value="{!pr.id}" assignTo="{!selectedpnid}"/>
+                        </apex:commandLink>
+                    </apex:column>
+                    <apex:column value="{!pr.Start_Time__c}" headerValue="Start Time"/>
+                    <apex:column value="{!pr.End_Time__c}" headerValue="End Time"/>
+                    <apex:column value=" {!Left(pr.Progress__c,20)}" headerValue="Comments/Notes"  style="width:300px" id="comments" />
+                    <apex:column value="{!pr.CreatedBy.Name}" headerValue="User Name"/>
+                    <apex:column value="{!pr.Status__c}" headerValue="Status"/>
+                    <apex:column value="{!pr.Disregard_Note__c}" headerValue="Disregard"/>
+                </apex:pageBlockTable>
+                <apex:outputPanel id="pagination">
+                    <apex:outputPanel style="float:right; padding-right:3.5cm; margin-top: 12px;"> Page  {!pageNumber} of {!totalPages} </apex:outputPanel> 
+                    <div id ="progress" style="padding-left:3cm; margin-top: 12px; ">{!progSize} - {!actualsize}  of  {!totalSize} </div>
+                </apex:outputPanel> 
+            </apex:pageBlock>
+        </apex:panelGrid>
+    </apex:form>
+    <apex:pageBlock > 
+        <div id="blue-card-vertical">         
+            <c:PersonalRecord_Vertical pbsId="{!pbsid}" servAssignId="{!said}" parentPage="Progress_Notes_Log" servAssignNew="true" admId="{!admissionId}"/>
+        </div>
+        <script>
+        /* Shaun Added --> Use jQuery to put the blue card in the Default Salesforce Sidebar */ 
+        j$("#sidebarDiv").append(j$("#blue-card-vertical"));
+        
+        /* The Salesforce Sidebar is "sticky". So if it is close open it by default. */
+        j$(window).load(function() {
+            if (document.getElementById('handlebarContainer') && document.getElementById('handlebarContainer').title.indexOf('Close Sidebar') < 0)
+                document.getElementById('handlebarContainer').click();
+        });
+        </script>   
+    </apex:pageBlock>
 </apex:page>
