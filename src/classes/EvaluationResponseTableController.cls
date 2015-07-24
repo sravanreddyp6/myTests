@@ -101,7 +101,7 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	public PageReference showEditResponse() {
-		String query = 'SELECT ID, Disregard__c, eSigned_on__c, eSigned_By__c, ' + getNecessaryColumns(responseType) +
+		String query = 'SELECT ID, Disregard__c, eSigned_on__c, eSigned_By__c, service_assignment__c, ' + getNecessaryColumns(responseType) +
 				' FROM Evaluation_Response__c WHERE Id = :currentResponseId';
 		currentResponse = Database.query(query);
 		dialogShown = true;
@@ -179,8 +179,9 @@ public with sharing class EvaluationResponseTableController {
 
     }
 	public void saveResponse() {
-		System.debug('saveResponse called, currentResponse: ' + currentResponse);
+		
 		hasError = false;
+		
 		//      Start EC-116
 		ID rtId = null;
 		List<RecordType> rt = [select id from RecordType where DeveloperName = 'Isolation_Event' and sObjectType = 'Evaluation_Response__c' limit 1];
@@ -189,7 +190,7 @@ public with sharing class EvaluationResponseTableController {
 		} else {
 			rtId = rt[0].ID;
 		}
-		system.debug( 'RTID:' + currentResponse.RecordtypeId + ',' + rtId);
+		//system.debug( 'RTID:' + currentResponse.RecordtypeId + ',' + rtId);
 
 		if(currentResponse.RecordTypeId == rtId){
 			if(currentResponse.Isolation_Event_Start_Date__c > currentResponse.Isolation_Event_End_Date__c){
@@ -231,7 +232,8 @@ public with sharing class EvaluationResponseTableController {
 		
 			if (! hasError ) {
 				// check for date overlap with another event
-				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currentResponse.Id]; 
+				system.debug(currentresponse);
+				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currentResponse.Id and service_assignment__c = :currentResponse.service_assignment__c and disregard__c = false]; 
 				for ( Evaluation_Response__c tl : otherTimeLogs ) {
 					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currentResponse.start_date_time__c, currentResponse.end_date_time__c) ) {
 						currentResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
@@ -243,8 +245,8 @@ public with sharing class EvaluationResponseTableController {
 		
 		} // end IADAY-10
 		try {
-//			hasError = false;
-			// string tmp = getNecessaryColumns(responseType);
+			// hasError = false;
+			
 			if(reqFields != null){
 				for(string rCol : reqFields){
 					if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
@@ -463,7 +465,7 @@ public with sharing class EvaluationResponseTableController {
 	private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
 		
 		Boolean overlaps = false;
-		
+		system.debug( 'end date is: ' + e1 );
 		if ( e1 == null ) // first set is not a range - can't compare
 			return overlaps;
 			
@@ -477,6 +479,7 @@ public with sharing class EvaluationResponseTableController {
 					overlaps = true;
 			}
 		}
+		system.debug('overlaps: ' + overlaps + ', ' + s1 + e1 + s2 + e2 );
 		return overlaps;
 	}
 }

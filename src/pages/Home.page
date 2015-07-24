@@ -5,7 +5,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
-
+s
 	<style type="text/css">
 		.thinking {
 			opacity: 0.8;
@@ -218,6 +218,12 @@
 				</apex:inputCheckbox>
 			</apex:pageBlockSection>
 			<a id="pbsTable"></a>
+					<apex:outputPanel style="display: none; ">
+					
+						<apex:actionFunction name="showAddResponse" action="{!newResponse}" rerender="responseDialog" oncomplete="openModalDialog('responseDialog', 'div', 'Add Time Log', null, 1000, 'mainForm','false');" immediate="true">
+							<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
+						</apex:actionFunction>
+			</apex:outputPanel>
 			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable" html-data-highlighted-sa-id="{!highlightedServiceAssignmentId}">
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
@@ -264,11 +270,10 @@
 				<apex:column headerValue="saId">
 					{!serviceAssignment.Id}
 				</apex:column>
-			</apex:pageBlockTable>
+				
+		</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
-
-
 		<apex:pageBlock title="My Tasks">
 
 			<apex:pageBlockButtons location="Top">
@@ -305,7 +310,6 @@
 				</apex:column>
 			</apex:pageBlockTable>
 		</apex:pageBlock>
-
 		<apex:pageBlock title="Approvals">
 			<!-- a href="/04i">View All</a> <br /> <br /--->
 			<apex:pageBlockTable value="{!ListApprovals}" var="app" id="approvalTable" styleClass="dataTable">
@@ -345,9 +349,112 @@
 		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="pageProcessing">
 			<apex:param name="saId" value="" assignTo="{!currsaID}" />
 		</apex:actionFunction>
+		                 	
 	</apex:form>
 	<div id="shiftDocActionDialog"></div>
 	<div id="searchResultDialog"></div>
+	
+	<!-- Dialog Modal -->
+	
+	<div id="responseDialog" style="display:none;" >
+	<apex:outputpanel layout="none" rendered="{!(AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}" >
+		<script>
+			jQuery.noConflict();
+			jQuery(document).ready(function($) {
+			afterSave = function (dialogId, tagType, keepDialogOpen, functionToOpenNewDialog) {
+        	var $dialog = $(document.getElementById(dialogId));
+        	if ($dialog.find('.message').length == 0) {
+	            closeModalDialog(dialogId, tagType);
+            	if (keepDialogOpen) {
+	                (functionToOpenNewDialog)();
+            	}
+        	}
+    	}
+    	});
+
+		</script>
+		<apex:form id="logForm">
+		<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+		<apex:pageBlock id="responseDialogMainBlock">
+
+		<apex:pageblockButtons location="bottom">
+				<apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen, showAddResponse);"> 
+					<apex:param name="keepDialogOpen" value="" />
+				</apex:actionFunction>
+				<apex:actionStatus id="saveResponseStatus">
+					<apex:facet name="stop">
+						<apex:outputPanel id="buttons">
+							<apex:commandButton value="Save" onClick="saveResponse(false); return false;" />
+							<apex:commandButton value="Save & New" onClick="saveResponse(true); return false;" /> &nbsp;
+							<apex:commandButton value="Cancel" onClick="closeModalDialog('responseDialog', 'div'); return false;" />
+						</apex:outputPanel>
+					</apex:facet>
+					<apex:facet name="start">
+						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
+			</apex:pageblockButtons>
+			<apex:pageMessages id="responseDialogErrors" />
+			<apex:pageBlockSection>	
+			<apex:pageBlockSectionItem>
+			<apex:outputLabel value="Start Date/Time" />
+            	<apex:outputPanel layout="none">
+            		<div class="requiredInput"><div class="requiredBlock"></div>
+                	<c:militarydatetime id="logstart" edit="true" datetimeval="{!currResponse.start_date_time__c}" hiddenFieldId="timeLogStart" datetimepickerid="timeLogStart1"/>
+            	    </div>
+            	    <apex:inputHidden id="timeLogStart"  value="{!currResponse.start_date_time__c}"/>
+                </apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem>
+			<apex:outputLabel value="End Date/Time" />
+           		<apex:outputPanel layout="none">
+                	<c:militarydatetime id="logend" edit="true" datetimeval="{!currResponse.end_date_time__c}" hiddenFieldId="timeLogEnd" datetimepickerid="timeLogEnd1"/>
+               		<apex:inputHidden id="timeLogEnd"  value="{!currResponse.end_date_time__c}"/>
+                </apex:outputPanel>
+			</apex:pageBlockSectionItem>
+
+			<apex:pageBlockSectionItem>
+			
+			<apex:outputlabel value="Accompanied By"  />
+			<apex:outputpanel layout="none">
+			<div class="requiredInput"><div class="requiredBlock"></div>
+			<apex:inputField value="{! currResponse.tmn_user__c}" />
+			</div>
+			</apex:outputpanel>
+			</apex:pageBlockSectionItem>
+			
+			<apex:pageBlockSectionItem>
+			
+			<apex:outputlabel value="Location"/>
+			<apex:outputPanel layout="none">
+			<div class="requiredInput"><div class="requiredBlock"></div>
+			<apex:inputField value="{! currResponse.location__c}" />
+			</div>
+			</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			
+			<apex:pageBlockSectionItem>
+			<apex:outputlabel value="Narrative Note"  />
+			<apex:inputTextArea value="{! currResponse.narrative_note__c}" />
+			</apex:pageBlockSectionItem>
+			
+			
+			<apex:pageBlockSectionItem>
+			<apex:outputlabel value="Late Entry"  />
+			<apex:inputField value="{! currResponse.is_late_entry__c}" />
+			</apex:pageBlockSectionItem>
+			
+			</apex:pageBlockSection>
+			
+		</apex:pageBlock>
+	
+	</apex:form>
+    </apex:outputpanel>  
+	</div>
+	
+	
+	
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
 	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!serviceAssignmentIdForAction}" status="" shiftType="CNA Workbook" id="cnaWorkbookAddModal" />
 	<c:EvalSection id="evalSection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}"
@@ -528,6 +635,9 @@
 				else if ( selectedText == 'Create Shift Note' || selectedText == 'Add Behavior Data' || selectedText == 'Add Skill Data') {
 					window.location.href= selectedValue;
 				}
+				else if ( selectedText == 'Create Time Log Entry' ) { 
+					showAddResponse( serviceAssignmentId); 
+				}	
 				event.preventDefault();
 			});
 
