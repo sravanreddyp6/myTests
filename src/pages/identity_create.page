@@ -31,14 +31,14 @@
 
     </style>
     
-        <apex:form >
-            <apex:pageBlock title="TMN User" mode="edit" >
-                <apex:pageMessages />
+        <apex:form id="createForm" >
+            <apex:pageBlock title="TMN User" mode="edit" id="createBlock" >
+                <apex:pageMessages id="pageMsg"/>
                 <apex:pageblockButtons location="Bottom" >    
                     <apex:commandButton value="Save" action="{!Save}"/>
                     <apex:commandButton value="Cancel" action="{!goCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
                 </apex:pageblockButtons>            
-                <apex:pageBlockSection columns="2" title="Person Information">
+                <apex:pageBlockSection columns="2" title="Person Information" id="perInfo">
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true" taborderhint="1"/>
                     <apex:inputField label="Personal Email" value="{!TMNUser.Personal_Email__c}" type="email" taborderhint="8"/>
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2"/>
@@ -50,13 +50,14 @@
                     <apex:inputField label="Preferred Last Name" value="{!TMNUser.Preferred_Last_Name__c}" required="true" taborderhint="5"/>                    
                     <apex:inputField label="End Date" value="{!TMNUser.Last_Day__c}" required="false" taborderhint="12"/>
                     <apex:inputField label="Office Phone" value="{!TMNUser.Office_Phone__c}" type="tel" taborderhint="6"/>
-                    <apex:outputPanel ></apex:outputPanel>
+                    <apex:pageBlockSectionItem />
                     <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7"/>
                 </apex:pageBlockSection>
-                <apex:pageBlockSection columns="2" title="Management Hierarchy" id="mngHier">
-                    <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" required="true" taborderhint="17">
-                       <!-- <apex:actionSupport event="onchange" reRender="mngHier" action="{!updateAliasInfo}"/> -->
-                    </apex:inputField>
+                <apex:outputPanel id="aliasStuff">
+                <apex:pageBlockSection columns="2" title="Management Hierarchy" id="aliasInfo">
+                    <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" taborderhint="13">
+                        <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="aliasInfo"/>
+                    </apex:inputField>                    
                     <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/>                                                                                                                           
                     <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="13">
                         <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
@@ -67,9 +68,10 @@
                         <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
                     </apex:selectList>                    
                     <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                                                                                
-                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>                                                                  
+                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>                                                                     
                 </apex:pageBlockSection>
-                <apex:pageBlockSection columns="2" title="Location">
+                </apex:outputPanel>                
+                <apex:pageBlockSection columns="2" title="Location" id="locInfo">
                     <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" required="true" taborderhint="18"/>    
                     <apex:selectList label="State" value="{!TMNUser.Work_State__c}" size="1" required="true" tabindex="22">
                         <apex:selectOption itemValue="AL" itemLabel="Alabama"/>
@@ -129,10 +131,10 @@
                     <apex:inputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}"/>                                                  
                     <apex:inputField label="City" value="{!TMNUser.Work_City__c}" required="true" taborderhint="21"/>                  
                 </apex:pageBlockSection>
-                <apex:PageBlockSection columns="2" title="Manager Information">                                                                                                                                                                                                                                        
+                <apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo" >                                                                                                                                                                                                                                        
                     <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="24"/>
-                    <apex:outputPanel ></apex:outputPanel> 
-                    <apex:outputPanel ></apex:outputPanel>
+                    <apex:pageBlockSectionItem /> 
+                    <apex:pageBlockSectionItem />
                     <apex:inputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" taborderhint="25"/>                                                     
                 </apex:pageBlockSection>
             </apex:pageBlock>
