@@ -117,15 +117,21 @@
 		.warning {
  	 border-color: #f90;
     display: block;
-	background-color: #ffc;
+	background-color: #FFFFEA;
   	border-style: solid;
   	border-width: 1px;
   	color: #000;
   	padding: 6px 8px 6px 6px;
   	margin: 4px 20px;
   	vertical-align: middle;
+  	margin-left: 400px;
+  margin-right: 800px;
   }
   
+  .warning p{
+font-size: -webkit-xxx-large;!important;
+font-style: normal;  !important;
+  }
  
  .headsection {
    height: 70px;
@@ -181,7 +187,7 @@
                     success: function( data ) {
                         response( j$.map( data , function( item ) {
                             return {
-                                label: '<a>'+item.location+"</a><br />",
+                                label: '<a>'+item.location+"</a>",
                                 value: item.location
                             }
                         }));
@@ -265,6 +271,10 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
   	j$('[id$=city]').val('');
   	j$('[id$=StateCode]').val('');j$('[id$=FirstName]').val('');j$('[id$=OperatingGroup]').val('');j$('[id$=LastName]').val('');j$('[id$=JobTitle]').val('');
   }
+  
+  function exportExcel() {
+  openWin('/apex/TMNUserLocationExcel?location='+j$('[id$=searchLocation]').val());
+  }
  </script>
   <div class="headsection">
   
@@ -328,7 +338,7 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
         <apex:outputText >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputText>
         <apex:panelGroup >
           <apex:commandButton id="AdancedSearch" value="Adanced Search"  onClick="showAdvancedSearchModal(); return false;"  reRender="fullpage" />
-          <apex:commandButton value="Export to Excel"  id="ExportToExcel"   onclick="openWin('/apex/TMNUserLocationExcel?location={!searchLocation}'); return false;" rendered="{!TMNUserList.size>0}" />
+          <apex:commandButton value="Export to Excel"  id="ExportToExcel"   onclick="exportExcel(); return false;"  />
           </apex:panelGroup>
     </apex:panelGrid>
     
@@ -359,7 +369,7 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
             
                 <apex:pageBlockTable value="{!TMNUserList}" var="user" style="width: 100%;" styleClass="dataTable" id="Tabledata">
                     <apex:column headerValue="Location">
-                    <apex:outputText value="{!user.Work_State__c}" />
+                    <apex:outputText value="{!user.Work_City__c}" />
                     </apex:column>
        				<apex:column headerValue="Name">
                     <apex:outputText ><a href="mailto:{!user.Email__c}">{!user.Last_Name__c},{!user.First_Name__c}</a></apex:outputText>
@@ -420,9 +430,18 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
         </apex:outputPanel>
        
        
-       <apex:outputPanel rendered="{!TMNUserList.size==0}" >
+       <apex:outputPanel rendered="{!TMNUserList.size==0 && (errorMsg1 || errorMsg2 || errorMsg3)}" >
        <div class="warning">
-        		No Data found for this search
+       	<p > Uh-oh!</p> <BR/>
+        		<apex:outputText rendered="{!errorMsg1}">
+        		We don't have TMN office in that location
+        		</apex:outputText>
+        		<apex:outputText rendered="{!errorMsg2}">
+        		 Sorry! The person you are looking for does not exist in {!searchLocation}
+        		</apex:outputText>
+        		<apex:outputText rendered="{!errorMsg3}">
+        		Sorry! We cannot find the person you are looking for.
+        		</apex:outputText>
         		</div>
        </apex:outputPanel> 
        
