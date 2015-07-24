@@ -10,7 +10,6 @@ public with sharing class HomePageController{
 	public String FrstName{get;set;}
 	public String LstName{get;set;}
 	public String objectName{get;set;}
-	
 
 	// List of permission sets that the user is assigned to
 	public String permissionSetString { get; set; }
@@ -64,10 +63,15 @@ public with sharing class HomePageController{
 	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
 	public Map<Id, Boolean> hasShiftDocMap { get; set; }
 	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
-
+	
+	// IADAY-10 - support creation of Time Log entry from home page
+	public String responseType { get; set; }
+	public Boolean hasError { get; set; }
+	public Evaluation_Response__c currResponse { get; set; }
+	
 	//Constructor
 	public HomePageController(){
-
+		
 		//PBS object
 		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
 		canSeePBS = oSchema.isAccessible();
@@ -252,6 +256,7 @@ public with sharing class HomePageController{
 					
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Behavior Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Skill Data'));
+					optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
 				} else {
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
 				}
@@ -551,4 +556,103 @@ public with sharing class HomePageController{
 
 	}
 	
+	public void newResponse() {
+		responseType = 'Time Log';
+		currResponse = new Evaluation_Response__c( recordtypeID = Utility.getEvaluationResponseRecordType(responseType), service_assignment__c = serviceAssignmentIDforAction);
+	}
+	
+	public pageReference saveResponse() {
+		
+		// check for required fields
+		Map<string, string> columnsToHeadersMap = new Map<String, String>();
+		columnsToHeadersMap.put('start_date_time__c','Start Date/Time');
+		columnsToHeadersMap.put('end_date_time__c','End Date/Time');
+		columnsToHeadersMap.put('tmn_user__c','Accompanied By');
+		columnsToHeadersMap.put('location__c','Location');
+		
+		for(string rCol : new List<String>{'start_date_time__c', 'tmn_user__c', 'location__c'}){
+			if(currResponse.get(rCol) == null){
+				currResponse.addError( columnsToHeadersMap.get(rcol) + ' is required' );
+				hasError = true;
+			}
+		}
+		
+		
+		system.debug('CURR:' + currResponse);
+		hasError = false;
+		
+		// IADAY-10 - date rules
+		if ( responseType == 'Time Log') {
+			// compare start and end dates
+			if ( currResponse.End_Date_Time__c != null ) {
+				// end date after start
+				if((currResponse.Start_Date_Time__c > currResponse.End_Date_Time__c) ){
+					currResponse.addError( 'End date must be after the start date.' );
+					hasError = true;
+				}
+				// must be same day
+				if (currResponse.Start_date_Time__c.Date() != currResponse.End_Date_Time__c.Date()) {
+					currResponse.addError('Start and End times must occur on the same day.');
+					hasError = true;
+				}
+				// must be different
+				if (currResponse.Start_Date_Time__c == currResponse.End_Date_Time__c ) {
+					currResponse.addError('Start and End times must be different.');
+					hasError = true;
+				}
+			}
+			// can't be in the future
+			if(currResponse.Start_Date_Time__c > DateTime.now() || currResponse.End_Date_Time__c > DateTime.now()  ){
+					currResponse.addError( 'Date and time cannot be in future.' );
+					hasError = true;
+			}
+		
+			if (! hasError ) {
+				// check for date overlap with another event
+				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currResponse.Id and service_assignment__c = :currResponse.service_assignment__c and disregard__c = false]; 
+				for ( Evaluation_Response__c tl : otherTimeLogs ) {
+					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currResponse.start_date_time__c, currResponse.end_date_time__c) ) {
+						currResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
+						hasError = true;
+						break;
+					}
+				}
+			}
+		
+		} // end IADAY-10
+		try {
+			if(!hasError){
+				system.debug('CURR:' + currResponse);
+				upsert currResponse;
+				newResponse();
+			}
+		} catch (DMLException ex) {
+		 	hasError = true;
+			system.debug(ex);
+			// SF will automatically create a PageMessage Error here, so we don't
+			// have to do anything
+		}
+		return null;
+	}
+		
+	private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
+		
+		Boolean overlaps = false;
+		system.debug( 'Times:' + s1 + e1 + s2 + e2);
+		if ( e1 == null ) // first set is not a range - can't compare
+			return overlaps;
+			
+		if ( s2 >= s1 && s2 <= e1 ) // starts within first timeframe
+			overlaps = true;
+		else {
+			if ( e2 != null ) {
+				if ( e2 > s1 && e2 < e1 ) // ends within first timeframe
+					overlaps = true;
+				else if ( s2 < s1 && e2 > e1) // covers first time span
+					overlaps = true;
+			}
+		}
+		
+		return overlaps;
+	}
 }
