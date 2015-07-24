@@ -1,4 +1,33 @@
 <apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_AZ_OPT,Notes_ProgressNote_Svc_Code_Selection,progressnote_actionplan_embed_ex" id="mypage">
+
+
+   <!-- Shaun added this to get rid of the default Salesforce TABS -->
+   <style>  
+      
+      
+        /* Used to hide the default "tabs" in salesforce */
+        #tabContainer {
+            display: none;
+        }
+        
+        /* Hide the createNew section of the default salesforce sidebar */
+        #createNew {
+            display: none;
+        }
+
+        /* Hide the Recent Items section of the default salesforce sidebar */
+        .recentItemModule {
+            display: none;
+        }
+
+        /* Hide the Recycle Bin section of the default salesforce side bar */
+        .recycleBinModule{
+            display: none;
+        }
+        
+        
+   </style>  
+
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <!-- Added for Goal Starts-->
@@ -231,8 +260,9 @@ function popupDisplay(){
         function setFocusOnLoad() {};
     </script>
 
-    <c:PersonalRecord pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_ProgressNote_AZ_OPT" servAssignNew="true" admId="{!admissionId}"/>
-
+    <!-- Shaun changed this from PersonalRecord to PersonalRecordBreadCumbsOnly -->
+    <c:PersonalRecordBreadCrumbsOnly pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_ProgressNote_AZ_OPT" servAssignNew="true" admId="{!admissionId}"/>
+    
     <apex:pageBlock mode="mainDetail" id="mainData">
     <script type="text/javascript">
         j$ = jQuery.noConflict();
@@ -581,6 +611,14 @@ function popupDisplay(){
     </apex:outputPanel>
               
 </apex:form>
+
+
+        <div id="blue-card-vertical">         
+             <c:PersonalRecord_Vertical pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_ProgressNote_AZ_OPT" servAssignNew="true" admId="{!admissionId}"/>
+        </div>
+
+
+
   <apex:outputpanel rendered="{!!NewBlock}">
         <div id="Taks">
         <apex:relatedList title="Activity" list="OpenActivities"  subject="{!$CurrentPage.parameters.id}" />
@@ -602,4 +640,20 @@ function popupDisplay(){
             <apex:facet name="stop">
         </apex:facet> 
     </apex:actionStatus> 
+    
+    <script>
+    
+         
+        /* Shaun Added --> Use jQuery to put the blue card in the Default Salesforce Sidebar */ 
+        j$("#sidebarDiv").append(j$("#blue-card-vertical"));
+    
+    
+         /* The Salesforce Sidebar is "sticky". So if it is close open it by default. */
+         j$(window).load(function() {
+            if (document.getElementById('handlebarContainer') && document.getElementById('handlebarContainer').title.indexOf('Close Sidebar') < 0)
+                document.getElementById('handlebarContainer').click();
+         });
+    </script>       
+    
+    
 </apex:page>
