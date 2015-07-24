@@ -5,9 +5,9 @@ public with sharing class IncompleteShiftDocReport {
 	// SObject Date fields for SF's datepicker.
 	public Evaluation__c dummyEvaluation { get; set; }
 
-	public List<Id> leftSelectedPrograms { get; set; }
+	public List<String> leftSelectedPrograms { get; set; }
 	public List<SelectOption> leftPrograms { get; set; }
-	public List<Id> rightSelectedPrograms { get; set; }
+	public List<String> rightSelectedPrograms { get; set; }
 	public List<SelectOption> rightPrograms { get; set; }
 	public List<Id> selectedPBS { get; set; }
 	public List<SelectOption> pbsList { get; set; }
@@ -20,8 +20,8 @@ public with sharing class IncompleteShiftDocReport {
 		rightPrograms = new List<SelectOption>();
 		leftPrograms = new List<SelectOption>();
 		selectedPbs = new List<Id>();
-		leftSelectedPrograms = new List<Id>();
-		rightSelectedPrograms = new List<Id>();
+		leftSelectedPrograms = new List<String>();
+		rightSelectedPrograms = new List<String>();
 
 		for (AggregateResult program: [
 				SELECT service_location__r.id slID, service_location__r.Alias__c alias,
@@ -31,7 +31,7 @@ public with sharing class IncompleteShiftDocReport {
 				          service_location__r.Alias__c
 				HAVING COUNT(service_location__r.id) > 0
 				 ORDER BY service_location__r.program__c]) {
-			leftPrograms.add(new SelectOption((Id) program.get('slID'),
+			leftPrograms.add(new SelectOption((String) program.get('alias'),
 				String.valueOf(program.get('alias')) + '-' + String.valueOf(program.get('prgm')))
 			);
 		}
@@ -40,7 +40,7 @@ public with sharing class IncompleteShiftDocReport {
 	}
 
 	public void addPrograms() {
-		for (Id p: leftSelectedPrograms){
+		for (String p: leftSelectedPrograms){
 			for(Integer i=0; i < leftPrograms.size(); i++){
 				if (leftPrograms.get(i).getValue() == p) {
 					rightPrograms.add(new SelectOption(leftPrograms.get(i).getValue(),
@@ -54,7 +54,7 @@ public with sharing class IncompleteShiftDocReport {
 	}
 
 	public void removePrograms(){
-		for (Id p: rightSelectedPrograms){
+		for (String p: rightSelectedPrograms){
 			for(Integer i=0; i < rightPrograms.size(); i++){
 				if (rightPrograms.get(i).getValue() == p) {
 					leftPrograms.add(new SelectOption(rightPrograms.get(i).getValue(),
@@ -68,9 +68,9 @@ public with sharing class IncompleteShiftDocReport {
 	}
 
 	public void updateProgramSelections(){
-		List<Id> selectedProgramIds = new List<id>();
+		List<String> selectedAliases = new List<String>();
 		for (SelectOption so : rightPrograms){
-			selectedProgramIds.add(so.getValue());
+			selectedAliases.add(so.getValue());
 		}
 
 		pbsList.clear();
@@ -78,7 +78,7 @@ public with sharing class IncompleteShiftDocReport {
 				SELECT Id, Person_Being_Served__r.Account.Lastname,
 				       Person_Being_Served__r.Account.Firstname
 				  FROM Service_Assignment__c
-				 WHERE Service_Location__r.Id In :selectedProgramIds
+				 WHERE Service_Location__r.Alias__c In :selectedAliases
 				 ORDER BY Person_Being_Served__r.Account.Lastname,
 				          Person_Being_Served__r.Account.Firstname
 		]) {
