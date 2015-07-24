@@ -65,7 +65,9 @@ public with sharing class HomePageController{
 	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
 	public Map<Id, Boolean> hasShiftDocMap { get; set; }
 	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
-
+	public Map<Id, Boolean> saactionMap {get;set;}
+    public Map<Id, Id> saActiveactionMap {get;set;}
+    
 	//Constructor
 	public HomePageController(){
 
@@ -183,7 +185,7 @@ public with sharing class HomePageController{
 		String query = '' +
 			'SELECT Id,Name, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
 			'       Admission__r.Id, Admission__r.State__c, ' +
-			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
+			'       (SELECT Id, status__C FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
 			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
 			'WHERE Service_Location__r.Alias__c = :selectedAlias ' +
@@ -195,6 +197,19 @@ public with sharing class HomePageController{
 		cnaWorkbookMap = new Map<Id, Evaluation__c>();
 		hasShiftDocMap = new Map<Id, Boolean>();
 		hasCnaWorkbookMap = new Map<Id, Boolean>();
+        saactionMap = new Map<Id, Boolean>();
+        saActiveactionMap = new Map<Id,Id>();
+        for (Service_Assignment__c serviceAssignment: serviceAssignments) {
+            saactionMap.put(serviceAssignment.id,false);
+            saActiveactionMap.put(serviceAssignment.id,serviceAssignment.id);
+            for(Action_Plan__c ap:serviceAssignment.Action_Plans__r){
+                if(ap.Status__c == 'Active Final'){
+                    saactionMap.put(serviceAssignment.id,True);
+                    saActiveactionMap.put(serviceAssignment.id,ap.Id);
+                } 
+            }
+            
+        }
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
 			// Get the latest shift doc/CNA Workbook
 			shiftDocMap.put(serviceAssignment.Id, null);
