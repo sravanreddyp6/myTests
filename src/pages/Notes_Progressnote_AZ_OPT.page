@@ -60,9 +60,9 @@ function toggleByClass2(cls){
 </script>
 <script>
 function complete(Signed) {
-    var srvcloc = '{!thePn.Service_Location__c}';
-    if(srvcloc == ''){
-        alert("Please select a service location before Esigning.")
+    var srvcloc = '{!Progress_Note__c.Service_Location__c}';
+    if(srvcloc ==''){
+        alert("Please select a service location before Esigning.");
     }
     else{
         if (Signed == 'Y') {
@@ -70,6 +70,7 @@ function complete(Signed) {
         } else {
             authenticate();
         }
+    }
 }
 </script>
 <script type="text/javascript">
@@ -90,6 +91,10 @@ function triggerNodeSelection(treeNode) {
 } 
 function keyselectedvalue(){
     SelectedIds(keysSelected);
+}
+function popupDisplay(){
+    alert("Here");
+    ShowPopUpWindow();
 }
 </script>
 <style>
@@ -141,7 +146,7 @@ function keyselectedvalue(){
             margin: 0 0 0 -488px;
             z-index: 101 !important;
             height:300px;
-            padding-top:45%;
+            padding-top:30%;
             
         }
 
@@ -252,9 +257,9 @@ function keyselectedvalue(){
 <apex:variable var="Pending" value="{!IF(Progress_Note__c.Approval_Status__c='Pending',True,False)}"/>
 <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:form id="myFRM" >
-    <apex:pagemessages ></apex:pagemessages>
-   <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); location.reload(true); return false;" />
-
+    <!--<apex:pagemessages ></apex:pagemessages>-->
+   <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); popupDisplay(); return false;" />
+<!--  location.reload(true); -->
     <script>
         function openPopUp(){
             var vars = '{!insertedProgressNoteId}';
@@ -263,13 +268,17 @@ function keyselectedvalue(){
     </script>       
     <apex:outputpanel rendered="{!NewBlock}">
         <apex:pageBlock >
-            <apex:pageBlockButtons > 
+             <apex:pagemessages ></apex:pagemessages><apex:pageBlockButtons > 
             
             <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy,myFRM" >
             <apex:param name="selectedKey" value="" />
-            </apex:actionFunction> 
-            <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk"></apex:commandButton>
-               <apex:commandButton action="{!saveModifiedProgressNote}" value="Save" rendered="{!inlinemode}" onclick="keyselectedvalue()" rerender="myFRM,relatedToPgblk"></apex:commandButton>
+            </apex:actionFunction>
+            <apex:actionFunction action="{!showPopup}" name="ShowPopUpWindow" rerender="tstpopup,pblk" >
+            </apex:actionFunction>
+           
+             
+            <apex:commandButton action="{!saveProgressNote}" value="Save Prog" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk"></apex:commandButton>
+               <apex:commandButton action="{!saveModifiedProgressNote}" value="Save Modi" rendered="{!inlinemode}" onclick="keyselectedvalue()" rerender="myFRM,relatedToPgblk"></apex:commandButton>
                 <apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}"></apex:commandButton> 
                 <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}"></apex:commandButton>
             </apex:pageBlockButtons>
@@ -337,15 +346,15 @@ function keyselectedvalue(){
         <br></br>
         <apex:pageBlock id="pblk">
         <apex:pagemessages ></apex:pagemessages>
-            <apex:pageBlockButtons location="top" rendered="{!!Final}">
-            <apex:commandButton id="saveButton"   value="Save"   action="{!saveProgressNote}"   style="margin-left:22%;display:none;"/>
+        <apex:pageBlockButtons location="top" rendered="{!!Final}">
+            <apex:commandButton id="saveButton"   value="Save Inline"   action="{!saveProgressNoteInlineEdit}"   style="margin-left:22%;display:none;"/>
             <apex:commandButton id="cancelButton" value="Cancel" action="{!Cancel}" style="display:none;"/>
            
             <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" />
             <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,pblk" />
             <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
             <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
-            <apex:commandButton id="esign" value="E-Sign"  onClick="complete('{!SignedDoc}'); return false;"/>
+            <apex:commandButton id="esign" value="E-Sign"  onClick="complete('{!SignedDoc}'); return false;" />
             </apex:pageBlockButtons>
             <apex:pageBlockButtons location="top" rendered="{!Final}">
                 <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
@@ -386,6 +395,9 @@ function keyselectedvalue(){
             <apex:inlineEditSupport disabled="false" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
             </apex:outputField>
             
+            <apex:outputField value="{!Progress_Note__c.Is_Note_Late__c}">
+            <apex:inlineEditSupport disabled="false" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+            </apex:outputField>
             
             <apex:outputField value="{!Progress_Note__c.Disregard_Note__c}">
             </apex:outputField>
