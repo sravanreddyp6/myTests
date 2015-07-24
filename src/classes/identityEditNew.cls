@@ -25,10 +25,14 @@ public class identityEditNew {
     public identityEditNew() {
         Id id = ApexPages.currentPage().getParameters().get('ID');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
+            FROM Alias__c 
+            WHERE Alias_unique__c =: aliasUser.Alias__c];
+        
         TMNUser = (id == null) ? new TMN_User__c() : 
             [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,Alias_Lookup__c,
-            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Identity_ID__c,Job_Level__c,Job_Status__c,Job_Title__c,
+            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Level__c,Job_Status__c,Job_Title__c,
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
@@ -71,7 +75,7 @@ public class identityEditNew {
     
     TMN_User__c aliasUser = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,Alias_Lookup__c,
-            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Identity_ID__c,Job_Level__c,Job_Status__c,Job_Title__c,
+            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Level__c,Job_Status__c,Job_Title__c,
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
@@ -80,9 +84,9 @@ public class identityEditNew {
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
             
-    Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
-                        FROM Alias__c 
-                        WHERE Alias_unique__c =: aliasUser.Alias__c];        
+//    Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
+//                        FROM Alias__c 
+//                        WHERE Alias_unique__c =: aliasUser.Alias__c];        
      
     public PageReference save() {
         ID managerId = TMNUser.Manager_Lookup__c;
@@ -124,8 +128,7 @@ public class identityEditNew {
         Alias__c a = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
                       FROM Alias__c 
                       WHERE Id = :TMNUser.Alias_Lookup__c];
-        TMNUser.Alias__c = a.Alias_unique__c;
-        TMNUser.Alias_Lookup__c = a.Id;              
+        TMNUser.Alias__c = a.Alias_unique__c;              
         TMNUser.Business_Unit__c = a.Alias_Business_Unit__c;
         TMNUser.Service_Region__c = a.Alias_Region__c;
         TMNUser.Service_Line__c = a.Alias_Service_Line__c;
