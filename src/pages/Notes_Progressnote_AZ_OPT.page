@@ -628,6 +628,11 @@ function popupDisplay(){
         <c:SObjectNotesAndAttachments parentPage="Notes_ProgressNote_AZ_OPT" parentId="{!$CurrentPage.parameters.id}" showAction="true" pbsId="{!pbsname}" servAssignId="{!theServAssignId}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
         </div>
     </apex:outputpanel>
+    <apex:outputpanel rendered="{!!NewBlock}">
+        <div id="Approvals">
+        <apex:relatedList list="ProcessSteps"/>
+        </div>
+    </apex:outputpanel>
     </apex:pageBlock>
     <apex:actionStatus id="myStatus" >
         <apex:facet name="start">
