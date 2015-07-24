@@ -58,7 +58,14 @@
                     <!--<apex:inputField label="Alias L" value="{!TMNUser.Alias_Lookup__c}" taborderhint="43"/>-->
                     <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" taborderhint="13"/>
                     <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/> 
-                    <apex:outputField label="Operating Group" value="{!TMNUser.Operating_Group__c}"/>                                                                                                                                                              
+                    <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="16">
+                        <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
+                        <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
+                        <apex:selectOption itemValue="Corporate" itemLabel="Corporate"/>
+                        <apex:selectOption itemValue="Cambridge" itemLabel="Hastings"/>                       
+                        <apex:selectOption itemValue="NeuroRestorative" itemLabel="NeuroRestorative"/>
+                        <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
+                    </apex:selectList>                                                                                                                                                              
                     <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                    
                     <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>                    
                 </apex:pageBlockSection>

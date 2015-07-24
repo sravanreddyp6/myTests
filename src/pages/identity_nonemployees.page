@@ -174,12 +174,12 @@
             </apex:form>
         </apex:pageBlockSection>
     
-        <apex:pageBlockSection columns="1" title="Workforce Attestation" id="wfAttest">
+<!--        <apex:pageBlockSection columns="1" title="Workforce Attestation" id="wfAttest">
             <apex:form >
             <apex:pageBlockTable value="{!attestNonEmployees}" var="e">
                 <apex:column headerValue="Action" >
                     <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=e.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink> &nbsp;-->
-                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
+                 <!--   <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink>
                      &nbsp;&#124;&nbsp;                    
@@ -187,15 +187,15 @@
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
                 </apex:column>
-                <apex:column headerValue="Name" value="{!e.Name}"/>
+                <apex:column headerValue="Name" value="{!e.Name}"/> -->
                 <!--<apex:column headerValue="Operating Group" value="{!e.Operating_Group__c}"/>-->
-                <apex:column headerValue="Manager Name" value="{!e.Manager_Name__c}"/>
+               <!-- <apex:column headerValue="Manager Name" value="{!e.Manager_Name__c}"/>
                 <apex:column headerValue="Last Day" value="{!e.Last_Day__c}"/>           
             </apex:pageBlockTable>
             </apex:form>
-            </apex:pageBlockSection>               
+            </apex:pageBlockSection> -->               
         </apex:pageBlock>  
-        </apex:outputPanel>
+        </apex:outputPanel> 
 
     <apex:outputPanel id="srchpopup">
         <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>

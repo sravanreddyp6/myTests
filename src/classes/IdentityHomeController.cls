@@ -100,20 +100,20 @@ public with sharing class IdentityHomeController {
         return delegateFor;
     }
 
-    //Get list of records for employee attestation.
-    List<TMN_User__c> attestNonEmployees;
-    public List<TMN_User__c> getattestNonEmployees() {
-        attestNonEmployees = [SELECT Email__c,Employee_Number__c,Employee_Type__c,First_Name__c,
-                   Hire_Date__c,Id,Job_Status__c,Job_Title__c,Last_Name__c,Manager_Email__c,
-                   Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,
-                   Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c,Last_Day__c,Current_Person_Type__c 
-                   FROM TMN_User__c 
-                   WHERE Manager_Email__c=:aliasName 
-                   AND Current_Person_Type__c NOT IN ('Employee')
-                   AND Last_Day__c<=:endDate
-                   ORDER BY Last_Day__c ASC];
-        return attestNonEmployees;
-    }
+    //Get list of records for employee attestation. Currently not on page
+//    List<TMN_User__c> attestNonEmployees;
+//    public List<TMN_User__c> getattestNonEmployees() {
+//        attestNonEmployees = [SELECT Email__c,Employee_Number__c,Employee_Type__c,First_Name__c,
+//                   Hire_Date__c,Id,Job_Status__c,Job_Title__c,Last_Name__c,Manager_Email__c,
+//                   Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,
+//                   Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c,Last_Day__c,Current_Person_Type__c 
+//                   FROM TMN_User__c 
+//                   WHERE Manager_Email__c=:aliasName 
+//                   AND Current_Person_Type__c NOT IN ('Employee')
+//                   AND Last_Day__c<=:endDate
+//                   ORDER BY Last_Day__c ASC];
+//        return attestNonEmployees;
+//    }
 
     //Get list of assigned delegates for the user.    
     List<TMN_User_Delegate__c> myDelegates;        
@@ -410,20 +410,20 @@ public with sharing class IdentityHomeController {
 
       // SOSL Search for TMN_Users on identity_home page. 
       //Currently not used, but didn't want to remove in case of changes in requirements to bring it back.
-    Public void tmnSearch() {
-        tmnUserList = New List<TMN_User__c>();
-        if(tmnSearchStr.length() > 2) {
-            String searchStr1 = tmnSearchStr+'*';
-            String searchQuery = 'FIND\'' + searchStr1 + '\' IN NAME FIELDS RETURNING TMN_User__c(Email__c,Employee_Number__c,Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Status__c,Job_Title__c,Last_Name__c,Manager_Email__c,Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c WHERE Operating_Group__c =\''+tmnOG+'\')';
-            List<List <sObject>> searchList = search.query(searchQuery);
-            tmnUserList = ((List<TMN_User__c>)searchList[0]);
-                if(tmnUserList.size() == 0) {
-                    apexPages.addmessage(new apexpages.message(apexpages.severity.INFO, 'The search did not find any possible matches! Please check the name and try again.'));
-                }
-        } else {
-            apexPages.addmessage(new apexpages.message(apexpages.severity.WARNING, 'Please enter at least three characters to search.'));
-        }
-    }
+//    Public void tmnSearch() {
+//        tmnUserList = New List<TMN_User__c>();
+//        if(tmnSearchStr.length() > 2) {
+//            String searchStr1 = tmnSearchStr+'*';
+//            String searchQuery = 'FIND\'' + searchStr1 + '\' IN NAME FIELDS RETURNING TMN_User__c(Email__c,Employee_Number__c,Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Status__c,Job_Title__c,Last_Name__c,Manager_Email__c,Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c WHERE Operating_Group__c =\''+tmnOG+'\')';
+//            List<List <sObject>> searchList = search.query(searchQuery);
+//            tmnUserList = ((List<TMN_User__c>)searchList[0]);
+//                if(tmnUserList.size() == 0) {
+//                    apexPages.addmessage(new apexpages.message(apexpages.severity.INFO, 'The search did not find any possible matches! Please check the name and try again.'));
+//                }
+//        } else {
+//            apexPages.addmessage(new apexpages.message(apexpages.severity.WARNING, 'Please enter at least three characters to search.'));
+//        }
+//    }
 
     //Set parameters to pass to identityEditNew controller for record creation.      
     public PageReference newTmnUser() {
@@ -437,19 +437,19 @@ public with sharing class IdentityHomeController {
         return pageRef;
     }
 
-    //Add 30 days to end date for employee attestation      
-    public void add30Days() {
-        TMN_User__c userToExt;
-        try {
-              userToExt = [SELECT Id,Last_Day__c FROM TMN_User__c WHERE Id=:selectedId LIMIT 1];
-              Date curLDate = userToExt.Last_Day__c;
-              userToExt.Last_Day__c = curLDate.addDays(30);
-              update userToExt;
-          } catch(DmlException e) {
-              System.debug('An unexpected error has occurred: ' + e.getMessage());
-              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error,'Error: ' + e.getMessage()));
-          }
-    } 
+    //Add 30 days to end date for employee attestation Removed from Page     
+//    public void add30Days() {
+//        TMN_User__c userToExt;
+//        try {
+//              userToExt = [SELECT Id,Last_Day__c FROM TMN_User__c WHERE Id=:selectedId LIMIT 1];
+//              Date curLDate = userToExt.Last_Day__c;
+//              userToExt.Last_Day__c = curLDate.addDays(30);
+//              update userToExt;
+//          } catch(DmlException e) {
+//              System.debug('An unexpected error has occurred: ' + e.getMessage());
+//              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error,'Error: ' + e.getMessage()));
+//          }
+//    } 
 
     //Popups show and close methods
     public void closePopup() {
