@@ -49,16 +49,18 @@
                     <apex:outputPanel >
                         <apex:inputField id="unknownDate" value="{!Incident__c.Unknown_Date_Occurred__c}" />Unknown
                         <br/>
-                        <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="DateOccurred" dateTimeVal="{! IF(Incident__c.Date_Occurred__c==null, NOW(), Incident__c.Date_Occurred__c) }" datetimepickerid="DateOccurredInput"/>
-                        <apex:inputHidden value="{!Incident__c.Date_Occurred__c}" id="DateOccurred" />                  
+<!--                         <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="DateOccurred" dateTimeVal="{! IF(Incident__c.Date_Occurred__c==null, NOW(), Incident__c.Date_Occurred__c) }" datetimepickerid="DateOccurredInput"/> -->
+                        <apex:inputField value="{!Incident__c.Date_Occurred__c}" id="DateOccurred" />                  
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel >Date/Time Incident Reported to The MENTOR Network</apex:outputLabel>
                     <apex:outputPanel >
-                        <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="DateOccurred" dateTimeVal="{! IF(Incident__c.Date_Reported__c==null, NOW(), Incident__c.Date_Reported__c) }" datetimepickerid="DateOccurredInput"/>
+                    <!-- Commenting for now So Bridget Can test the functionality - Sravan -->
+<!--                         <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="DateOccurred" dateTimeVal="{! IF(Incident__c.Date_Reported__c==null, NOW(), Incident__c.Date_Reported__c) }" datetimepickerid="DateOccurredInput"/> -->
 <!--                         <apex:inputHidden value="{!Incident__c.Date_Occurred__c}" id="DateOccurred" /> -->
-                        <apex:inputHidden value="{!Incident__c.Date_Reported__c}" id="DateReported"/>                   
+<!--                         <apex:inputHidden value="{!Incident__c.Date_Reported__c}" id="DateReported"/>                    -->
+							<apex:inputfield value="{!Incident__c.Date_Reported__c}" id="DateReported" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                                 
