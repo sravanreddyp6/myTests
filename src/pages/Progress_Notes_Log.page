@@ -29,6 +29,7 @@
     }    
     </script>    
     <apex:form >
+        <c:PersonalRecordBreadCrumbsOnly pbsId="{!pbsid}" servAssignId="{!said}" parentPage="Progress_Notes_Log" servAssignNew="true" admId="{!admissionId}"/>
         <apex:actionFunction name="searchresult" action="{!searchProgressNotes}" reRender="ProgressnotesTable,pagination">
             <apex:param name="progressnotename" value=""/>
         </apex:actionFunction>

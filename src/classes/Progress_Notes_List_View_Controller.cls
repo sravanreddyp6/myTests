@@ -5,7 +5,6 @@ public with sharing class Progress_Notes_List_View_Controller {
     private integer prNum=0;
     public integer totalSize;
     public integer actualsize{get;set;}
-    public Progress_Notes_List_View_Controller (){totalSize = [select count() from Progress_Note__c Limit 500];}
     public id selectedpnid{get;set;}
     public string notes='';
     public string pbsname{get;set;}
@@ -15,15 +14,23 @@ public with sharing class Progress_Notes_List_View_Controller {
     public Id admissionId { get; set; }
     public Id pbsid { get; set; }
     public Id said { get; set; }
+    public Progress_Notes_List_View_Controller (){
+        said = Apexpages.currentPage().getParameters().get('saID');
+        pbsid = Apexpages.currentPage().getParameters().get('PBSID');
+        admissionId = Apexpages.currentPage().getParameters().get('admission');
+    }
     public ApexPages.StandardSetController ProgressNoteController {
         get{
             displaypbs = true;
+            said = Apexpages.currentPage().getParameters().get('saID');
+            pbsid = Apexpages.currentPage().getParameters().get('PBSID');
             admissionId = Apexpages.currentPage().getParameters().get('admission');
-            if(Apexpages.currentPage().getParameters().get('PBSID') !=null ){
-                displayname = true;
-                pbsid = Apexpages.currentPage().getParameters().get('PBSID');
+            if(Apexpages.currentPage().getParameters().get('PBSID') !=null  && Apexpages.currentPage().getParameters().get('pbsname')!=null){
                 pbsname = Apexpages.currentPage().getParameters().get('pbsname');
-                displaypbs =false;
+                if(pbsname!=''){
+                    displayname = true;
+                    displaypbs =false;
+                }  
                 if(ProgressNoteController == null){
                     Querystring='SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,status__C,CreatedBy.Name,Service_Assignment__r.person_being_served__C,Person_Being_Served__r.name FROM Progress_Note__c where service_assignment__r.person_being_served__C = :pbsid ORDER BY CreatedDate DESC Limit 500';
                     ProgressNoteController = new ApexPages.StandardSetController(Database.getQueryLocator(Querystring));
@@ -36,10 +43,9 @@ public with sharing class Progress_Notes_List_View_Controller {
                         totalSize = 0;
                         counter= 0;
                     }
-                }
-            } else if(Apexpages.currentPage().getParameters().get('saID') !=null ){
+                }                
+            } else if(Apexpages.currentPage().getParameters().get('saID') !=null&& Apexpages.currentPage().getParameters().get('saname') !=null){
                 displayname = false;
-                said = Apexpages.currentPage().getParameters().get('saID');
                 saname = Apexpages.currentPage().getParameters().get('saname');
                 if(ProgressNoteController == null ){
                     Querystring='SELECT id,Name,CreatedDate,Service_Assignment__c,Disregard_Note__c,Start_Time__c,End_Time__c,Progress__c,status__C,CreatedBy.Name,Service_Assignment__r.name  FROM Progress_Note__c where service_assignment__c = :said ORDER BY CreatedDate DESC Limit 500';
