@@ -256,10 +256,11 @@ public with sharing class HomePageController{
 					
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Behavior Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Skill Data'));
-					optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
 				} else {
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
 				}
+				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+				
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
