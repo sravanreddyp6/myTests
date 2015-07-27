@@ -6,7 +6,6 @@ public with sharing class Progress_Notes_List_View_Controller {
     public integer totalSize;
     public integer actualsize{get;set;}
     public id selectedpnid{get;set;}
-    public string notes='';
     public string pbsname{get;set;}
     public string saname{get;set;}
     public boolean displayname{get;set;}
@@ -163,14 +162,5 @@ public with sharing class Progress_Notes_List_View_Controller {
         return pnPage;
     }
     
-    public Pagereference searchProgressNotes(){
-        notes = Apexpages.currentPage().getParameters().get('progressnotename');
-        ProgressNoteController=null;
-        ProgressNoteController.setPageNumber(1);
-        if(actualsize>pageSize){
-            pageSize = actualsize;
-        }
-        return null;
-    } 
     
 }
