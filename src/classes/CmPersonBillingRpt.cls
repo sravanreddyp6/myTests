@@ -111,7 +111,7 @@ public with sharing class CmPersonBillingRpt {
         for(Id i : summaryIds) {
         	if (!summaryHTMLSource.containsKey(i)) {
         		pdf.getParameters().put('id',i);
-        		summaryHTMLSource.put(i, pdf.getContent().toString());
+        		summaryHTMLSource.put(i, Test.isRunningTest() ? 'TEST' : pdf.getContent().toString());
         	}
         }
         
