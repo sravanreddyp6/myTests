@@ -5,7 +5,6 @@
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
-s
 	<style type="text/css">
 		.thinking {
 			opacity: 0.8;
@@ -218,12 +217,7 @@ s
 				</apex:inputCheckbox>
 			</apex:pageBlockSection>
 			<a id="pbsTable"></a>
-					<apex:outputPanel style="display: none; ">
 					
-						<apex:actionFunction name="showAddResponse" action="{!newResponse}" rerender="responseDialog" oncomplete="openModalDialog('responseDialog', 'div', 'Add Time Log', null, 1000, 'mainForm','false');" immediate="true">
-							<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
-						</apex:actionFunction>
-			</apex:outputPanel>
 			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable" html-data-highlighted-sa-id="{!highlightedServiceAssignmentId}">
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
@@ -349,7 +343,10 @@ s
 		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="pageProcessing">
 			<apex:param name="saId" value="" assignTo="{!currsaID}" />
 		</apex:actionFunction>
-		                 	
+		<apex:actionFunction name="showAddResponse" action="{!newResponse}" rerender="responseDialog" oncomplete="openModalDialog('responseDialog', 'div', 'Add Time Log', null, 1000, 'mainForm','false');" immediate="true">
+			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
+		</apex:actionFunction>
+		              	
 	</apex:form>
 	<div id="shiftDocActionDialog"></div>
 	<div id="searchResultDialog"></div>
@@ -361,13 +358,13 @@ s
 		<script>
 			jQuery.noConflict();
 			jQuery(document).ready(function($) {
-			afterSave = function (dialogId, tagType, keepDialogOpen, functionToOpenNewDialog) {
+			afterSave = function (dialogId, tagType, keepDialogOpen, functionToOpenNewDialog, functionarg) {
         	var $dialog = $(document.getElementById(dialogId));
         	if ($dialog.find('.message').length == 0) {
-	            closeModalDialog(dialogId, tagType);
-            	if (keepDialogOpen) {
-	                (functionToOpenNewDialog)();
-            	}
+        		closeModalDialog(dialogId, tagType);
+	            if (keepDialogOpen) {
+	                (functionToOpenNewDialog)(functionarg);
+            	}            	
         	}
     	}
     	});
@@ -378,7 +375,7 @@ s
 		<apex:pageBlock id="responseDialogMainBlock">
 
 		<apex:pageblockButtons location="bottom">
-				<apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen, showAddResponse);"> 
+				<apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');"> 
 					<apex:param name="keepDialogOpen" value="" />
 				</apex:actionFunction>
 				<apex:actionStatus id="saveResponseStatus">
