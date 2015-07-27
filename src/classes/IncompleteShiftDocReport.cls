@@ -142,7 +142,7 @@ public with sharing class IncompleteShiftDocReport {
 			 WHERE Shift_Start_Time__c <= :endDate.addDays(1)
 			   AND Shift_End_Time__c >= :startDate
 			   AND ServiceAssignment__c IN :selectedPBS
-			   AND (((Status__c = 'Draft' OR Status__c = 'Completed') AND RecordType.Name = 'CMShiftAssessment')
+			   AND ((Status__c = 'Draft' AND RecordType.Name = 'CMShiftAssessment')
 			        OR ((Status__c = 'Draft' OR Status__c = 'Un-Approved') AND RecordType.Name = 'CNA Workbook'))
 		];
 		reportRan = true;
