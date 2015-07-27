@@ -390,6 +390,10 @@ public with sharing class HomePageController{
 		return pr;
 	}
 	
+	public string getpbsincidentRecType(){
+		return  Utility.getIncidentRecordType('PBS');
+	}
+	
 	public pagereference servAssigns(){
 		ServAssigns = new List<Service_Assignment__c>();
 		string criteria = HomePageSearchController.buildCriteria(SAlastName, SAfirstName, 'lastname', 'firstname');
@@ -398,11 +402,12 @@ public with sharing class HomePageController{
 		system.debug('Query+++++++++++++'+conQuery);
 		List<Contact> pbsList = Database.Query(conQuery);
 		if(pbsList.size() > 0){
-			ServAssigns =  [SELECT Id, Name, Status__c FROM Service_Assignment__c WHERE Person_being_Served__c IN: pbslist];
+			ServAssigns =  [SELECT Id, Name, Status__c, Alias__c, Program__c FROM Service_Assignment__c WHERE Person_being_Served__c IN: pbslist];
 		}
 		
 		return null;
 	}
+	
 
 	public List<SelectOption> getviewvalues() {
 		List<SelectOption> Options = new List<SelectOption>();

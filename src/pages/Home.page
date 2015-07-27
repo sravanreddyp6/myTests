@@ -354,9 +354,12 @@
 			<apex:pageBlock id="servBlock">
 				<apex:pageBlocktable value="{!ServAssigns}" var="s" >
 					<apex:column headerValue="Choose the Service Assignment">
-						<a href="/apex/Incident_Form_CreateEdit?SAId={!s.Id}">{!s.Name}</a>
+						<a href="/apex/Incident_Form_CreateEdit?SAId={!s.Id}&RecordtypeId={!pbsincidentRecType}">{!s.Name}</a>
 					</apex:column>
-				</apex:pageBlocktable>
+					<apex:column value="{!s.Status__c}" />
+					<apex:column value="{!s.Alias__c}" />
+					<apex:column value="{!s.Program__c}" />
+				</apex:pageBlocktable> 
 			</apex:pageBlock>
 		</apex:outputPanel>
 
