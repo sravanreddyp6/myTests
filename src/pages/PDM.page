@@ -102,8 +102,8 @@
         .HeadButtons {
   		float: left;
   		position: relative;
-  		top: -25px;
-  		left: 700px;
+  		top: -15px;
+  		left: 800px;
 		}
 		
 		.HeadDiv {
@@ -113,7 +113,9 @@
   		left: 700px;
 		}
 		
-		
+		.btn {
+		width: 125px;!important;
+		}
 		.warning {
  	 border-color: #f90;
     display: block;
@@ -206,6 +208,7 @@ font-style: normal;  !important;
             select: function(event, ui) {
                 var selectedObj = ui.item;
                   j$('input[id$="ExportToExcel"]').prop('disabled', false)
+                  j$('input[id$=searchEmployee]').val('');
                 searchByLocation(selectedObj.value);
                 return true;
             }
@@ -224,6 +227,7 @@ function  searchEmp() {
 function searchL () {
 searchByLocation(j$('input[id$=searchLocation]').val());
 j$('input[id$="ExportToExcel"]').prop('disabled', false);
+j$('input[id$=searchEmployee]').val('');
 }
 
 	
@@ -247,8 +251,12 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
 
 
   function AdvanceSearch() {
+  if(j$('[id$=city]').val().length==0 && j$('[id$=StateCode]').val().length == 0 && j$('[id$=FirstName]').val().length == 0 && j$('[id$=OperatingGroup]').val().length == 0 
+  && j$('[id$=LastName]').val().length == 0 && j$('[id$=JobTitle]').val().length == 0){
+ 	j$('[id$=modelError]').show(); 
+  }else {
   search(j$('[id$=city]').val(),j$('[id$=StateCode]').val(),j$('[id$=FirstName]').val(),j$('[id$=OperatingGroup]').val(),j$('[id$=LastName]').val(),j$('[id$=JobTitle]').val());
-  
+  }
   }
   function showAdvancedSearchModal(){
         j$('[id*=AdvancedSearchModal]').dialog("open");
@@ -270,6 +278,7 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
   	j$('[id*=AdvancedSearchModal]').dialog("close");
   	j$('[id$=city]').val('');
   	j$('[id$=StateCode]').val('');j$('[id$=FirstName]').val('');j$('[id$=OperatingGroup]').val('');j$('[id$=LastName]').val('');j$('[id$=JobTitle]').val('');
+  	j$('[id$=modelError]').hide();
   }
   
   function exportExcel() {
@@ -303,7 +312,7 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
         <apex:param name="AlphaFilter" value="" assignTo="{!AlphaFilter}" />
       </apex:actionFunction>   
       
-       <apex:actionFunction name="search" action="{!search}" reRender="datePanelContainer" status="showsearchByLocation" >
+       <apex:actionFunction name="search" action="{!search}" reRender="datePanelContainer" status="showsearchByLocation" oncomplete="closeDialog()" >
         <apex:param name="city" value="" assignTo="{!city}" />
         <apex:param name="State" value="" assignTo="{!state}" />
         <apex:param name="FirstName" value="" assignTo="{!firstName}" />
@@ -318,7 +327,7 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
 
     <apex:panelGrid columns="6" id="theGrid" styleClass="buttonsClass">
         <apex:panelGroup >
-            <apex:outputLabel >Find A Location &nbsp; </apex:outputLabel>
+            <apex:outputLabel >Find a Location &nbsp; </apex:outputLabel>
                     <apex:outputPanel layout="none" >
     <apex:inputText id="searchLocation" value="{!searchLocation}"  html-placeholder="Filter Location..."   />    
 						    <a onClick="searchL();">
@@ -329,7 +338,7 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
         <apex:outputText >&nbsp;&nbsp;&nbsp; </apex:outputText>
 
 <apex:panelGroup >
-    <apex:outputLabel >Find A Person &nbsp; </apex:outputLabel>
+    <apex:outputLabel >Find a Person &nbsp; </apex:outputLabel>
                               <apex:inputText id="searchEmployee" title="Search Person..."   html-placeholder="Search Person..." value="{!searchEmployee}"/>
                         <a onClick="searchEmployee();">
 						    <img valign="bottom" src="/s.gif"  class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Employee Lookup" />
@@ -369,7 +378,7 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
             
                 <apex:pageBlockTable value="{!TMNUserList}" var="user" style="width: 100%;" styleClass="dataTable" id="Tabledata">
                     <apex:column headerValue="Location">
-                    <apex:outputText value="{!user.Work_City__c}" />
+                    <apex:outputText >{!user.Work_City__c}&nbsp;{!user.Work_State_Code__c}</apex:outputText>
                     </apex:column>
        				<apex:column headerValue="Name">
                     <apex:outputText ><a href="mailto:{!user.Email__c}">{!user.Last_Name__c},{!user.First_Name__c}</a></apex:outputText>
@@ -381,13 +390,13 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
                     <apex:outputText value="{!user.Operating_Group__c}" />
                     </apex:column>
                      <apex:column headerValue="Office">
-						<apex:outputField value="{!user.Office_Phone__c}">
-                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+						<apex:outputField value="{!user.Office_Phone__c}" id="officePhone" >
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
                         hideOnEdit="cancelButton" event="ondblclick" 
                         changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                     </apex:column> 
-                    <apex:column headerValue="Office Extension">
+                    <apex:column headerValue="Extension">
 						<apex:outputField value="{!user.phone_ext__c}">
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
                         hideOnEdit="cancelButton" event="ondblclick" 
@@ -414,23 +423,23 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
                 </apex:pageBlockTable>
         <div class="container">
   <ul class="pager">
-    <apex:commandButton id="previous" status="fetchStatus" reRender="datePanelContainer" value=" << Previous" action="{!previous}" disabled="{!!hasPrevious}" title=" << Previous" oncomplete="sortData()" />
+    <apex:commandButton id="previous" status="fetchStatus" reRender="datePanelContainer" value=" << Previous " action="{!previous}" disabled="{!!hasPrevious}" title=" << Previous" oncomplete="nextData()" />
      <apex:outputText >&nbsp;&nbsp;{!(pageNumber * size)+1-size}-{!IF((pageNumber * size)>noOfRecords, noOfRecords,(pageNumber * size))} of {!noOfRecords}</apex:outputText>
-    <apex:commandButton id="next" status="fetchStatus" reRender="datePanelContainer" value="Next  >>"  action="{!next}" disabled="{!!hasNext}" title="Next >>" oncomplete="nextData()" />
+    <apex:commandButton id="next" status="fetchStatus" reRender="datePanelContainer" value="  Next >>  "  action="{!next}" disabled="{!!hasNext}" title="Next >>" oncomplete="nextData()" />
     <apex:outputPanel style="color:#4AA02C;font-weight:bold">
                     <apex:actionStatus id="fetchStatus" startText="Fetching..." stopText=""/>
                 </apex:outputPanel>
   </ul>
 </div>
 			 <div class="HeadButtons">
-        <apex:commandButton action="{!save}" id="saveButton" value="Save" style="display:none" />
-        <apex:commandButton id="cancelButton" value="Cancel" style="display:none" oncomplete="cancelEdit()" reRender="datePanelContainer" />
+        <apex:commandButton action="{!save}" id="saveButton" value="   Save    " style="display:none" />
+        <apex:commandButton id="cancelButton" value="   Cancel  " style="display:none" oncomplete="cancelEdit()" reRender="datePanelContainer" />
          </div>
          <br/><br/><br/>
         </apex:outputPanel>
        
        
-       <apex:outputPanel rendered="{!TMNUserList.size==0 && (errorMsg1 || errorMsg2 || errorMsg3)}" >
+       <apex:outputPanel rendered="{!TMNUserList.size==0 && (errorMsg1 || errorMsg2 || errorMsg3 || errorMsg4)}" >
        <div class="warning">
        	<p > Uh-oh!</p> <BR/>
         		<apex:outputText rendered="{!errorMsg1}">
@@ -440,6 +449,9 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
         		 Sorry! The person you are looking for does not exist in {!searchLocation}
         		</apex:outputText>
         		<apex:outputText rendered="{!errorMsg3}">
+        		Sorry! We cannot find the person you are looking for.
+        		</apex:outputText>
+        		<apex:outputText rendered="{!errorMsg4}">
         		Sorry! We cannot find the person you are looking for.
         		</apex:outputText>
         		</div>
@@ -461,8 +473,9 @@ j$('input[id$="ExportToExcel"]').prop('disabled', false);
         <apex:inputtext value="{!lastName}" id="LastName"    label="Last Name" />
         <apex:inputtext value="{!searchTitle}" id="JobTitle"    label="Job Title" />
        </apex:pageBlockSection> 
+       <div id="modelError" style="display:none"><p style="font-size:large;  color: red;">Please enter at least one search criteria </p> </div>
        <apex:pageblockButtons location="bottom">
-       <apex:commandButton id="search" onClick="AdvanceSearch()" value="Search"  reRender="datePanelContainer" oncomplete="closeDialog()"/> 	
+       <apex:commandButton id="search" onClick="AdvanceSearch()" value="Search"  reRender="datePanelContainer" /> 	
        <apex:commandButton id="cancel"  value="Cancel"  onclick="closeDialog()" /> 	
        </apex:pageblockButtons>
      </apex:pageBlock>

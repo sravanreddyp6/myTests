@@ -20,6 +20,7 @@ public String AlphaFilter {set;get;}
 public Boolean errorMsg1 {set;get;}
 public Boolean errorMsg2 {set;get;}
 public Boolean errorMsg3 {set;get;}
+public Boolean errorMsg4 {set;get;}
 private String tmlUserQuery;
 private List<TMN_User__c> TMNUserList {set;get;}
  private String searchName;
@@ -50,6 +51,10 @@ private List<TMN_User__c> TMNUserList {set;get;}
                 setCon = new ApexPages.StandardSetController(Database.getQueryLocator(tmlUserQuery));
                 setCon.setPageSize(size);
                 noOfRecords = setCon.getResultSize();
+                	if(noOfRecords==0 && searchName!=null && searchName.equals('AdvanceSearch')) {
+                	errorMsg4 = true;errorMsg1 = false;errorMsg3 = false;errorMsg2 = false;
+                	}
+                
             }
             return setCon;
         }set;
@@ -75,9 +80,9 @@ public void searchEmployee() {
  noOfRecords = setCon.getResultSize();
 			if(noOfRecords==0){
 				if(searchLocation!=null && searchLocation.length() > 0) {
-				errorMsg2 = true;errorMsg1 = false;errorMsg3 = false;
+				errorMsg2 = true;errorMsg1 = false;errorMsg3 = false;errorMsg4 = false;
 				}else {
-				errorMsg3 = true; errorMsg2 = false;errorMsg1 = false;
+				errorMsg3 = true; errorMsg2 = false;errorMsg1 = false;errorMsg4 = false;
 				}
 					
 				}
@@ -90,7 +95,7 @@ public void searchByLocation () {
                 setCon.setPageSize(size);
  noOfRecords = setCon.getResultSize();
 	if(noOfRecords==0){
-	errorMsg1 = true;errorMsg2 = false;errorMsg3 = false;
+	errorMsg1 = true;errorMsg2 = false;errorMsg3 = false;errorMsg4 = false;
 	}
 }
 	
@@ -137,6 +142,7 @@ public void searchByLocation () {
 				QueryWhere =  BuildWhere( QueryWhere , '  Job_Title__c like \'%' + searchTitle +'%\' ');
 				}
 			tmlUserQuery =  tmlUserQuery + QueryWhere + ' order by Office_Phone__c';
+			System.debug('tmlUserQuery is ' + tmlUserQuery);
         }
     }
 	
