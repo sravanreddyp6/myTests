@@ -16,6 +16,7 @@ public with sharing class Incident_Form_CreateEdit {
 		
 		
 		loadPage();
+		
 	}
 	public void loadPage(){
 		
