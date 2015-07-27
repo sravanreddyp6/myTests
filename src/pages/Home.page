@@ -317,6 +317,10 @@
 				</table>
 			</apex:pageBlockButtons>
 			<apex:pageBlockTable value="{!myincidents}" var="i" id="incidentsTable"  >
+				<apex:column headerValue="Action" >
+					<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>&nbsp;
+					<a href="/apex/Incident_Form_View?Id={!i.Id}">View</a>
+				</apex:column>
 				<apex:column value="{!i.Id}" />
 				<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
 				<apex:column value="{!i.Status__c}" />
