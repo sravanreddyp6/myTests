@@ -5,7 +5,7 @@ public with sharing class Incident_Form_CreateEdit {
     public ID recTypeId = apexpages.currentpage().getparameters().get('RecordtypeId'); 
     public string recordtypeName {get; set;}
     public boolean isNew{get; set;}
-    public string dateOccurred {get; set;} //for military time - Incident Occurred
+ //   public string dateOccurred {get; set;} //for military time - Incident Occurred
     public string dateReported {get; set;} //for militarytime - Incident reported
     
     public Incident_Form_CreateEdit(ApexPages.StandardController controller) {
@@ -38,13 +38,11 @@ public with sharing class Incident_Form_CreateEdit {
     }
     
     public pageReference saveIncident(){
-        if(hasErrors()){
-                return null;
-            }
+    	
         if( validateIncident(incident) ){return null;}
         try{
-            this.incident.Date_Occurred__c = Datetime.parse(dateOccurred);
-            this.incident.Date_Reported__C = Datetime.parse(dateReported);
+        //    this.incident.Date_Occurred__c = Datetime.parse(dateOccurred);
+           this.incident.Date_Reported__C = Datetime.parse(dateReported);
             upsert this.incident;
             //Pagereference pg = new pagereference('/apex/Incident_Form_View?Id='+this.Incident.Id);
             Pagereference pg = new pagereference('/'+this.Incident.Id);
@@ -69,7 +67,7 @@ public with sharing class Incident_Form_CreateEdit {
     }   
     set;}
     
-    public boolean hasErrors(){
+  /*  public boolean hasErrors(){
         Boolean foundError = false;
         if(this.incident.Unknown_Date_Occurred__c == false && dateOccurred == null){
             foundError = true;
@@ -77,9 +75,13 @@ public with sharing class Incident_Form_CreateEdit {
         }
         
         return foundError;
-    }
+    }*/
+    
     public boolean validateIncident(Incident__c incident){
-        boolean hasError = false;   
+        boolean hasError = false;
+		if(incident.Unknown_Date_Occurred__c == false && incident.Date_Occurred__c == null){
+            incident.Date_Occurred__c.addError('Date/time incident occurred is mandatory'); hasError = true;
+        }  
         if(incident.First_Reported_By__c == 'Employee' && incident.TMN_User__c == null){
             incident.TMN_User__c.addError('Employee requried'); hasError = true;
         }

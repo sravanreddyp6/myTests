@@ -63,13 +63,13 @@
        				<apex:outputLabel Value="Time is Approximate"  id="occurredApproximateLabel" />
        			</apex:outputPanel>
                    <apex:outputPanel >
-                       <apex:inputField id="dateUnknown" value="{!Incident__c.Unknown_Date_Occurred__c}" html-data-visibility-rules="{&quot;0&quot;: [&quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.dateOccurredmilitary}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximate}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.DateOccurredLabel}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximateLabel}&quot;]}"/>
+                       <apex:inputField id="dateUnknown" value="{!Incident__c.Unknown_Date_Occurred__c}" html-data-visibility-rules="{&quot;0&quot;: [&quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.dateOccurredmilitary}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximate}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.DateOccurredLabel}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximateLabel}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.DateOccurred}&quot;]}"/>
                      	&nbsp;
                        <div class="requiredInput">
 							<div class="requiredBlock"></div>
 						<c:MilitaryDatetime id="dateOccurredmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Occurred__c}" edit="true" hiddenFieldId="DateOccurred" datetimepickerid="DateOccurred"/>
                        </div>
-                       <apex:inputhidden id="DateOccurred" value="{!dateOccurred}" />
+                       <apex:inputhidden id="DateOccurred" value="{!Incident__c.Date_Occurred__c}" />
                        <br/>
                        <apex:inputField id="occurredApproximate" value="{!Incident__c.Occurred_Time_is_Approximate__c}" />        
                    </apex:outputPanel>
