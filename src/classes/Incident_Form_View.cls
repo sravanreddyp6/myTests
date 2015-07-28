@@ -22,8 +22,8 @@ public with sharing class Incident_Form_View {
 	
 	
 	public pageReference editIncident(){
-		
-		return null;
+		pageReference pg = new pageReference('/apex/Incident_Form_CreateEdit?id='+this.incident.Id);
+		return pg;
 	}
 	public pageReference disregardIncident(){
 		
