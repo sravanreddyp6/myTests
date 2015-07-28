@@ -5,8 +5,6 @@ public with sharing class Incident_Form_CreateEdit {
     public ID recTypeId = apexpages.currentpage().getparameters().get('RecordtypeId'); 
     public string recordtypeName {get; set;}
     public boolean isNew{get; set;}
- //   public string dateOccurred {get; set;} //for military time - Incident Occurred
-    public string dateReported {get; set;} //for militarytime - Incident reported
     
     public Incident_Form_CreateEdit(ApexPages.StandardController controller) {
         this.controller = controller;
@@ -41,8 +39,6 @@ public with sharing class Incident_Form_CreateEdit {
     	
         if( validateIncident(incident) ){return null;}
         try{
-        //    this.incident.Date_Occurred__c = Datetime.parse(dateOccurred);
-           this.incident.Date_Reported__C = Datetime.parse(dateReported);
             upsert this.incident;
             //Pagereference pg = new pagereference('/apex/Incident_Form_View?Id='+this.Incident.Id);
             Pagereference pg = new pagereference('/'+this.Incident.Id);
