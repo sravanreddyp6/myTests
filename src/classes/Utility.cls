@@ -277,6 +277,10 @@ public without sharing class Utility {
 	public static Id getIncidentRecordType(String recordTypeName){
 		return Schema.SObjectType.Incident__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
 	}
+	
+	public static string getIncidentRecordTypeName(Id recordTypeId){
+		return Schema.SObjectType.Incident__c.getRecordTypeInfosById().get(recordTypeId).Name;
+	}
 
 	public static string getStateCodeFromName ( String statename ) {
 		System.Debug(' getting state code for: ' + statename );
