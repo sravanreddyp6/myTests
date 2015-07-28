@@ -37,7 +37,7 @@ public with sharing class Incident_Form_CreateEdit {
     
     public pageReference saveIncident(){
     	
-        if( validateIncident(incident) ){return null;}
+        if( validateIncidentSave(incident) ){return null;}
         try{
             upsert this.incident;
             //Pagereference pg = new pagereference('/apex/Incident_Form_View?Id='+this.Incident.Id);
@@ -73,11 +73,8 @@ public with sharing class Incident_Form_CreateEdit {
         return foundError;
     }*/
     
-    public boolean validateIncident(Incident__c incident){
-        boolean hasError = false;
-		if(incident.Unknown_Date_Occurred__c == false && incident.Date_Occurred__c == null){
-            incident.Date_Occurred__c.addError('Date/time incident occurred is mandatory'); hasError = true;
-        }  
+    public boolean validateIncidentSave(Incident__c incident){
+        boolean hasError = false; 
         if(incident.First_Reported_By__c == 'Employee' && incident.TMN_User__c == null){
             incident.TMN_User__c.addError('Employee requried'); hasError = true;
         }
@@ -99,6 +96,13 @@ public with sharing class Incident_Form_CreateEdit {
                 
         return hasError;
         
-    }   
+    }  
+    public boolean validateIncidentSubmit(Incident__c incident){
+    	boolean hasError = false; 
+		if(incident.Unknown_Date_Occurred__c == false && incident.Date_Occurred__c == null){
+            incident.Date_Occurred__c.addError('Date/time incident occurred is mandatory'); hasError = true;
+        }  
+        return hasError; 
+    }
     
 }
