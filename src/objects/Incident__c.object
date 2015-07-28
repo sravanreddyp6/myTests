@@ -76,7 +76,7 @@
         <description>Date/time the incident occurred</description>
         <externalId>false</externalId>
         <label>Date/Time Incident Occurred</label>
-        <required>true</required>
+        <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>DateTime</type>
@@ -90,6 +90,58 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Date_Time_Currently_Unknown__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Date and Time Currently Unknown</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>External_Party__c</fullName>
+        <externalId>false</externalId>
+        <label>Specify External Party</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>First_Reported_By__c</fullName>
+        <externalId>false</externalId>
+        <label>First Reported to The MENTOR Network By</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Employee</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>External Party</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>First_Reported_Time_is_Approximate__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>First Reported Time is Approximate</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>First_Response_Action_Taken_Other__c</fullName>
@@ -152,7 +204,7 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
-        <visibleLines>4</visibleLines>
+        <visibleLines>5</visibleLines>
     </fields>
     <fields>
         <fullName>Hospitalization_Type__c</fullName>
@@ -313,7 +365,7 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>MultiselectPicklist</type>
-        <visibleLines>4</visibleLines>
+        <visibleLines>7</visibleLines>
     </fields>
     <fields>
         <fullName>Internal_Investigation__c</fullName>
@@ -402,6 +454,15 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Occurred_Time_is_Approximate__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Occurred Time is Approximate</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Operating_Group__c</fullName>
         <description>operating group for this incident - depends on recordtype</description>
         <externalId>false</externalId>
@@ -432,10 +493,12 @@
         <description>Field visible only if Where did the incident Occur = Other Location</description>
         <externalId>false</externalId>
         <label>Specify Other Location</label>
+        <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>TextArea</type>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Other_people__c</fullName>
@@ -727,6 +790,21 @@
         <active>true</active>
         <description>This recordtype is used to tag Employee type incidents linked to TMN User Object</description>
         <label>Employee</label>
+        <picklistValues>
+            <picklist>First_Reported_By__c</picklist>
+            <values>
+                <fullName>Employee</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>External Party</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>First_Response_Action_Taken__c</picklist>
             <values>
@@ -1049,6 +1127,21 @@
         <description>This recordtype is used to tag Location type incidents linked to Service Location object</description>
         <label>Location</label>
         <picklistValues>
+            <picklist>First_Reported_By__c</picklist>
+            <values>
+                <fullName>Employee</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>External Party</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>First_Response_Action_Taken__c</picklist>
             <values>
                 <fullName>Administered First Aid</fullName>
@@ -1369,6 +1462,21 @@
         <active>true</active>
         <description>This recordtype is used to tag Mentor type incidents linked to TMN Contact Object</description>
         <label>Mentor</label>
+        <picklistValues>
+            <picklist>First_Reported_By__c</picklist>
+            <values>
+                <fullName>Employee</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>External Party</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
         <picklistValues>
             <picklist>First_Response_Action_Taken__c</picklist>
             <values>
@@ -1691,6 +1799,21 @@
         <description>This recordtype is used to tag Incidents created at Service Assignment Level</description>
         <label>PBS</label>
         <picklistValues>
+            <picklist>First_Reported_By__c</picklist>
+            <values>
+                <fullName>Employee</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>External Party</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>First_Response_Action_Taken__c</picklist>
             <values>
                 <fullName>Administered First Aid</fullName>
@@ -1698,38 +1821,6 @@
             </values>
             <values>
                 <fullName>Assessed for Injury</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Called 911</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Consulted Network Nurse</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Consulted Outside Med%2FPsych Professional</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>ER%2FUrgent Care Visit</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed CPR</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Performed Choking Relief Maneuver</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Primary Care Physician Contact or Visit</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
