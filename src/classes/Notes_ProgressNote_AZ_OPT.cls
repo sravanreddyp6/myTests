@@ -103,11 +103,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         req1.setProcessDefinitionNameOrId('Progress_Notes_Approval');
         req1.setSkipEntryCriteria(true);
         list<id> listids = new list<id>();
-        listids.add(thePN.next_approver__c);
+        listids.add(PN.next_approver__c);
         req1.setNextApproverIds(listids);
         Approval.ProcessResult result = Approval.process(req1);
-        
-        pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+thePn.id+'&sfdc.override=1');
+        pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_Create_Flavor_PDF?id='+thePn.id+'&IsSubmitted=Yes');
         pageref.setredirect(true);
         return pageref;
     }
