@@ -1,8 +1,10 @@
 <apex:page standardcontroller="Incident__c" Extensions="Incident_Form_CreateEdit" sidebar="false" docType="html-5.0" >
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
-<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
-<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+	
 <script>
     function setFocusOnLoad() {} //to prevent fiocus from first date time field
 
@@ -34,10 +36,94 @@
     <apex:pageBlock >
         <apex:pageBlockButtons >
             <div style="float: right;">
-                <apex:CommandButton action="{!Save}" value="Save" />
+                <apex:CommandButton action="{!saveIncident}" value="Save" status="pageProcessing" reRender="msgs"/>
                 <apex:CommandButton action="{!Cancel}" value="Cancel" />
             </div>
         </apex:pageBlockButtons>
+        <apex:pageBlock mode="mainDetail" title="General Information" id="generalInfoBlock">
+        	<apex:pageBlockSection columns ="2" showHeader="false" >
+        		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
+        			<apex:outputLabel value="Which Current Service is Related to the Incident? " styleClass="labelCol" />
+        			<apex:outputField value="{!Incident__c.Service_Assignment__c }" />
+        		</apex:pageBlockSectionItem>
+        	</apex:pageBlockSection>
+       		<apex:pageBlockSection columns="2" id="incidentTimingSection" title="Incident Timing" showHeader="true" >
+       			<apex:pageBlockSectionItem id="timeSectionItem">
+       			<apex:outputPanel>
+       				<apex:outputLabel value="Date/Time Currently unknown" styleClass="labelCol" id="dateUnknownLabel"/>
+       				<br/>
+       				<br/>
+       				<apex:outputLabel  Value="Date/Time Incident Occurred" styleClass="labelCol" id="DateOccurredLabel"/>
+       				<br/>
+       				<br/>
+       				<apex:outputLabel Value="Time is Approximate" styleClass="labelCol" id="occurredApproximateLabel" />
+       			</apex:outputPanel>
+                   <apex:outputPanel >
+                       <apex:inputField id="dateUnknown" value="{!Incident__c.Unknown_Date_Occurred__c}" html-data-visibility-rules="{&quot;0&quot;: [&quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.dateOccurredmilitary}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximate}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.DateOccurredLabel}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximateLabel}&quot;]}"/>
+                     	&nbsp;
+                       <div class="requiredInput">
+							<div class="requiredBlock"></div>
+						<c:militarydatetime id="dateOccurredmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Occurred__c}" edit="true" hiddenFieldId="DateOccurred" datetimepickerid="DateOccurred"/>
+                       </div>
+                       <apex:inputhidden id="DateOccurred" value="{!dateOccurred}" />
+                       <br/>
+                       <apex:inputField id="occurredApproximate" value="{!Incident__c.Occurred_Time_is_Approximate__c}" />        
+                   </apex:outputPanel>
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem >
+               		<apex:outputPanel >
+               			<apex:outputLabel value="Date/Time Incident Reported to The MENTOR Network" styleClass="labelCol" />
+               			<br/>
+               			<br/>
+               			<apex:outputLabel value="Time is Approximate" styleClass="labelCol" />
+               		</apex:outputPanel>
+               		<apex:outputPanel >
+               			<c:militarydatetime id="dateReportedmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Reported__c}" edit="true" hiddenFieldId="DateReported" datetimepickerid="DateReported"/>
+               			<apex:inputHidden value="{!dateReported}" id="DateReported" />
+               			<br/>
+               			<br/>
+               			<apex:inputField value="{!Incident__c.First_Reported_Time_is_Approximate__c}" />
+               		</apex:outputPanel>
+               </apex:pageBlockSectionItem>
+       		</apex:pageBlockSection>
+       		
+       		
+       		<apex:pageBlockSection title="Incident Location" columns="1" showHeader="true" id="incidentLocationSection">
+       			<apex:pageBlockSectionItem id="incidentLocationItem">
+       				<apex:outputPanel >
+       					<apex:outputlabel value="Where did the incident occur?" id="whereOccurredLabel" styleClass="labelCol" />
+       					<br/>
+       					<br/>
+       					<apex:outputLabel value="Specify Community Location" id="communityLocationLabel" styleClass="labelCol" />
+       					<br/>
+       					<br/>
+       					<apex:outputLabel value="Specify Other Location" id="otherLlocationLabel" styleClass="labelCol" />
+       				</apex:outputPanel>
+       				<apex:outputPanel >
+ 						<apex:inputField value="{!Incident__c.Where_incident_occurred__c }" id="whereOccurred" />
+ 						<br/>
+ 						<br/>
+ 						<apex:inputField value="{!Incident__c.Community_Location__c }" id="communityLocation" />
+ 						<br/>
+ 						<br/>
+ 						<apex:inputField label="Specify Other Location" value="{!Incident__c.Other_Location__c }" id="otherLocation" />
+       				</apex:outputPanel>
+       			</apex:pageBlockSectionItem>
+       		</apex:pageBlockSection>
+       		
+       		
+        </apex:pageBlock>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         <apex:pageBlock mode="mainDetail" title="Incident Details" id="mainBlock">
             <apex:pageBlockSection columns="2" id="section1">
          
@@ -112,5 +198,15 @@
             </apex:pageBlockSection>
         </apex:pageBlock>
     </apex:pageBlock>
+    <!--     Use this for All ajax calls on this page -->
+    <apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+				</div>
+			</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
 </apex:form>
 </apex:page>
