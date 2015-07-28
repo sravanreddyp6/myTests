@@ -2,11 +2,16 @@ public with sharing class Incident_Form_View {
 	
 	private Apexpages.StandardController controller;
 	public Incident__c incident {get; set;}
+	public string recordtypeName {get; set;}
 
 	
 	public Incident_Form_View(Apexpages.StandardController controller){
 		this.Controller = controller;
+		if(!test.isRunningTest()){
+			controller.addFields(new list<string>{'Recordtype.name'});
+		}
 		this.incident = (Incident__c)controller.getRecord();
+		recordtypeName = this.incident.Recordtype.Name;
 	}
 	
 	//Making sure to issue a Query only if the type of the incident is 'PBS. Make sure servAssign == null before query, otherwise Query will be called whenever servAssign is referred in the Page

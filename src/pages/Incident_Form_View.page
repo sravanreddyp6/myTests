@@ -7,7 +7,7 @@
 <br/>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentView" admId="{!servAssign.Admission__c}" rendered="{!servAssign.Id != null}"/>
 <apex:form >
-        <apex:pageBlock mode="mainDetail" title="Incident Details">
+        <apex:pageBlock mode="mainDetail" title="General Information">
         	<apex:pageBlockButtons location="top">
 	            <div style="float: right;">
 	                <apex:CommandButton value="Edit" action="{!editIncident}" />
@@ -16,6 +16,12 @@
 	                <apex:CommandButton value="Disregard" />
 	            </div>
         	</apex:pageBlockButtons>
+        	<apex:pageBlocksection columns="1" showHeader="false">
+        		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
+        			<apex:outputLabel value="Which Current Service is Related to the Incident? " styleClass="labelCol" />
+        			<apex:outputField value="{!Incident__c.Service_Assignment__c }" />
+        		</apex:pageBlockSectionItem>
+        	</apex:pageBlocksection>
             <apex:pageBlockSection columns="2">
                 <apex:outputField label="Date/Time Incident Occurred" value="{!Incident__c.Date_Occurred__c}" />
                 <apex:outputField label="Date/Time Incident Reported to The MENTOR Network" value="{!Incident__c.Date_Reported__c}" />
@@ -30,7 +36,6 @@
                 <apex:outputField label="Other people information" value="{!Incident__c.Other_people__c }" />
                 <apex:outputField label="Others present at the time of the incident?" value="{!Incident__c.Others_Present_at_Time_of_Incident__c }" />
 
-                <apex:outputField label="Which current service is related to the incident? " value="{!Incident__c.Service_Assignment__c }" />
                 <apex:outputField label="Specify Community Location" value="{!Incident__c.Community_Location__c }" />
                 <apex:outputField label="Specify Other Location" value="{!Incident__c.Other_Location__c }" />
                 <apex:outputField label="Staff present at the time of the Incident?" value="{!Incident__c.Staff_Present__c }" />

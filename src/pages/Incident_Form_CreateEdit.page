@@ -47,20 +47,20 @@
         <apex:pageBlock mode="mainDetail" title="General Information" id="generalInfoBlock">
         	<apex:pageBlockSection columns="2" showHeader="false" >
         		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
-        			<apex:outputLabel value="Which Current Service is Related to the Incident? " styleClass="labelCol" />
+        			<apex:outputLabel value="Which Current Service is Related to the Incident? "  />
         			<apex:outputField value="{!Incident__c.Service_Assignment__c }" />
         		</apex:pageBlockSectionItem>
         	</apex:pageBlockSection>
        		<apex:pageBlockSection columns="2" id="incidentTimingSection" title="Incident Timing" showHeader="true" >
        			<apex:pageBlockSectionItem id="timeSectionItem">
        			<apex:outputPanel >
-       				<apex:outputLabel value="Date/Time Currently unknown" styleClass="labelCol" id="dateUnknownLabel"/>
+       				<apex:outputLabel value="Date/Time Currently unknown" id="dateUnknownLabel"/>
        				<br/>
        				<br/>
-       				<apex:outputLabel Value="Date/Time Incident Occurred" styleClass="labelCol" id="DateOccurredLabel"/>
+       				<apex:outputLabel Value="Date/Time Incident Occurred" id="DateOccurredLabel"/>
        				<br/>
        				<br/>
-       				<apex:outputLabel Value="Time is Approximate" styleClass="labelCol" id="occurredApproximateLabel" />
+       				<apex:outputLabel Value="Time is Approximate"  id="occurredApproximateLabel" />
        			</apex:outputPanel>
                    <apex:outputPanel >
                        <apex:inputField id="dateUnknown" value="{!Incident__c.Unknown_Date_Occurred__c}" html-data-visibility-rules="{&quot;0&quot;: [&quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.dateOccurredmilitary}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximate}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.DateOccurredLabel}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximateLabel}&quot;]}"/>
@@ -94,13 +94,15 @@
                     		</apex:outputPanel>
                     </apex:outputPanel>
                     
-                </apex:pageBlockSectionItem>                 
+                </apex:pageBlockSectionItem> 
+                <apex:pageBlockSectionitem />
+                <apex:pageBlockSectionitem />                
                <apex:pageBlockSectionItem >
                		<apex:outputPanel >
-               			<apex:outputLabel value="Date/Time Incident Reported to The MENTOR Network" styleClass="labelCol" />
+               			<apex:outputLabel value="Date/Time Incident Reported to The MENTOR Network" />
                			<br/>
                			<br/>
-               			<apex:outputLabel value="Time is Approximate" styleClass="labelCol" />
+               			<apex:outputLabel value="Time is Approximate"  />
                		</apex:outputPanel>
                		<apex:outputPanel >
                			<c:MilitaryDatetime id="dateReportedmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Reported__c}" edit="true" hiddenFieldId="DateReported" datetimepickerid="DateReported"/>
