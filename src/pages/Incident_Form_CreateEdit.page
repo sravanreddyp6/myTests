@@ -29,6 +29,10 @@
             setUpFields();
         }); 
 </script>
+<style>
+.sub-question-header{font-size:10pt; font-weight: bold; display: block; padding: 7px; color: #4a4a56;}
+
+</style>
 <br/>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentEdit" admId="{!servAssign.Admission__c}" rendered="{!servAssign.id != null}" />
 <apex:pagemessages id="msgs" />
@@ -41,7 +45,7 @@
             </div>
         </apex:pageBlockButtons>
         <apex:pageBlock mode="mainDetail" title="General Information" id="generalInfoBlock">
-        	<apex:pageBlockSection columns ="2" showHeader="false" >
+        	<apex:pageBlockSection columns="2" showHeader="false" >
         		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
         			<apex:outputLabel value="Which Current Service is Related to the Incident? " styleClass="labelCol" />
         			<apex:outputField value="{!Incident__c.Service_Assignment__c }" />
@@ -49,11 +53,11 @@
         	</apex:pageBlockSection>
        		<apex:pageBlockSection columns="2" id="incidentTimingSection" title="Incident Timing" showHeader="true" >
        			<apex:pageBlockSectionItem id="timeSectionItem">
-       			<apex:outputPanel>
+       			<apex:outputPanel >
        				<apex:outputLabel value="Date/Time Currently unknown" styleClass="labelCol" id="dateUnknownLabel"/>
        				<br/>
        				<br/>
-       				<apex:outputLabel  Value="Date/Time Incident Occurred" styleClass="labelCol" id="DateOccurredLabel"/>
+       				<apex:outputLabel Value="Date/Time Incident Occurred" styleClass="labelCol" id="DateOccurredLabel"/>
        				<br/>
        				<br/>
        				<apex:outputLabel Value="Time is Approximate" styleClass="labelCol" id="occurredApproximateLabel" />
@@ -63,13 +67,34 @@
                      	&nbsp;
                        <div class="requiredInput">
 							<div class="requiredBlock"></div>
-						<c:militarydatetime id="dateOccurredmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Occurred__c}" edit="true" hiddenFieldId="DateOccurred" datetimepickerid="DateOccurred"/>
+						<c:MilitaryDatetime id="dateOccurredmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Occurred__c}" edit="true" hiddenFieldId="DateOccurred" datetimepickerid="DateOccurred"/>
                        </div>
                        <apex:inputhidden id="DateOccurred" value="{!dateOccurred}" />
                        <br/>
                        <apex:inputField id="occurredApproximate" value="{!Incident__c.Occurred_Time_is_Approximate__c}" />        
                    </apex:outputPanel>
                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >First Reported to The MENTOR Network By</apex:outputLabel>
+                    <apex:outputPanel >
+                  		<apex:inputField html-data-visibility-rules="{&quot;Employee&quot;: [&quot;{!$Component.specify_emp_label}&quot;, &quot;{!$Component.specify_emp_input}&quot;], 
+                  					&quot;Mentor&quot;: [&quot;specify_mentor_label&quot;, &quot;{!$Component.specify_mentor_input}&quot;],
+                  					&quot;External Party&quot;: [&quot;{!$Component.specify_exp_label}&quot;, &quot;{!$Component.specify_exp_input}&quot;]}" 
+                  			value="{!Incident__c.First_Reported_By__c}" / >
+                  		
+                    		<apex:outputPanel id="specify_emp_label" layout="block"><apex:outputLabel styleClass="sub-question-header">Specify Employee</apex:outputLabel>
+                    			<apex:inputField id="specify_emp_input" value="{!Incident__c.TMN_User__c}" />
+                    		</apex:outputPanel>
+
+                    		<div id="specify_mentor_label"><apex:outputLabel styleClass="sub-question-header">Specify Mentor</apex:outputLabel>
+                    			<apex:inputField id="specify_mentor_input" value="{!Incident__c.TMN_Contact__c }" />
+							</div>                    	
+                    		<apex:outputPanel id="specify_exp_label" layout="block"><apex:outputLabel styleClass="sub-question-header">Specify External Party</apex:outputLabel>
+                    			<apex:inputField id="specify_exp_input" value="{!Incident__c.External_Party__c}" />                    		
+                    		</apex:outputPanel>
+                    </apex:outputPanel>
+                    
+                </apex:pageBlockSectionItem>                 
                <apex:pageBlockSectionItem >
                		<apex:outputPanel >
                			<apex:outputLabel value="Date/Time Incident Reported to The MENTOR Network" styleClass="labelCol" />
@@ -78,7 +103,7 @@
                			<apex:outputLabel value="Time is Approximate" styleClass="labelCol" />
                		</apex:outputPanel>
                		<apex:outputPanel >
-               			<c:militarydatetime id="dateReportedmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Reported__c}" edit="true" hiddenFieldId="DateReported" datetimepickerid="DateReported"/>
+               			<c:MilitaryDatetime id="dateReportedmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Reported__c}" edit="true" hiddenFieldId="DateReported" datetimepickerid="DateReported"/>
                			<apex:inputHidden value="{!dateReported}" id="DateReported" />
                			<br/>
                			<br/>
@@ -88,110 +113,146 @@
        		</apex:pageBlockSection>
        		
        		
-       		<apex:pageBlockSection title="Incident Location" columns="1" showHeader="true" id="incidentLocationSection">
-       			<apex:pageBlockSectionItem id="incidentLocationItem">
-       				<apex:outputPanel >
-       					<apex:outputlabel value="Where did the incident occur?" id="whereOccurredLabel" styleClass="labelCol" />
-       					<br/>
-       					<br/>
-       					<apex:outputLabel value="Specify Community Location" id="communityLocationLabel" styleClass="labelCol" />
-       					<br/>
-       					<br/>
-       					<apex:outputLabel value="Specify Other Location" id="otherLlocationLabel" styleClass="labelCol" />
-       				</apex:outputPanel>
-       				<apex:outputPanel >
- 						<apex:inputField value="{!Incident__c.Where_incident_occurred__c }" id="whereOccurred" />
- 						<br/>
- 						<br/>
- 						<apex:inputField value="{!Incident__c.Community_Location__c }" id="communityLocation" />
- 						<br/>
- 						<br/>
- 						<apex:inputField label="Specify Other Location" value="{!Incident__c.Other_Location__c }" id="otherLocation" />
-       				</apex:outputPanel>
-       			</apex:pageBlockSectionItem>
+
+       		<apex:pageBlockSection id="incidentLocationSection" title="Incident Location" columns="1" showHeader="true" >	
+                <apex:pageBlockSectionItem id="incidentLocationItem" helptext=" Select 'Residence' if the incident occurred at a Group Home, SNF, CLF, or Supported Living faciliy" >
+                    <apex:outputLabel >Where did the incident occur?</apex:outputLabel>
+                    <apex:outputPanel >
+ 						<apex:inputField value="{!Incident__c.Where_incident_occurred__c }" id="whereOccurred"
+ 						 		html-data-visibility-rules="{&quot;Community Location&quot;: [&quot;{!$Component.generalInfoBlock.incidentLocationSection.incidentLocationItem.communityLocation_label}&quot;, &quot;{!$Component.generalInfoBlock.incidentLocationSection.incidentLocationItem.communityLocation_input}&quot;],
+										&quot;Other Location&quot;: [&quot;{!$Component.otherIncidentLocation_label}&quot;, &quot;{!$Component.otherIncidentLocation_input}&quot;],
+										&quot;Day Program&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
+										&quot;Place of Employment&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
+										&quot;Program Office&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
+										&quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
+										&quot;School&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
+										&quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 										 
+                  						&quot;Vehicle&quot;: [&quot;{!$Component.otherIncidentLocation_label}&quot;, &quot;{!$Component.otherIncidentLocation_input}&quot;]}" />
+                    		<apex:outputPanel id="communityLocation_label" layout="block"><apex:outputLabel styleClass="labelCol, sub-question-header">Specify Community Location</apex:outputLabel>
+                    			<apex:inputField id="communityLocation_input" value="{!Incident__c.Community_Location__c }" />                    		
+                    		</apex:outputPanel>
+                    		<apex:outputPanel id="otherIncidentLocation_label" layout="block"><apex:outputLabel styleClass="labelCol, sub-question-header">Specify Other Location</apex:outputLabel>
+                    			<apex:inputField id="otherIncidentLocation_input" value="{!Incident__c.Other_Location__c }"  />                   		
+                    		</apex:outputPanel>  
+                    		
+                    		<apex:outputPanel id="incident_nettype_label" layout="block"><apex:outputLabel styleClass="labelCol, sub-question-header">Type</apex:outputLabel>
+                    			<apex:inputField id="incident_nettype_input" value="{!Incident__c.Network_Type__c}"  />                   		
+                    		</apex:outputPanel>                      		                  		                    	
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>         			
        		</apex:pageBlockSection>
        		
        		
         </apex:pageBlock>
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        <apex:pageBlock mode="mainDetail" title="Incident Details" id="mainBlock">
-            <apex:pageBlockSection columns="2" id="section1">
+        <apex:pageBlock mode="mainDetail" id="mainBlock" >
+            <apex:pageBlockSection Title="Incident Type" columns="2" id="section1">
          
-                <apex:inputField label="Incident Level" value="{!Incident__c.Incident_Level__c}" />
-                <apex:inputField value="{!Incident__c.Network_Type__c }" /> 
-                
-                <apex:pageBlockSectionItem >
-                    <apex:outputLabel >Date/Time Incident Occurred</apex:outputLabel>
+ 				<apex:pageBlockSectionItem >
+                    <apex:outputLabel >Was the Person Being Served hospitalized?</apex:outputLabel>
                     <apex:outputPanel >
-                        <apex:inputField id="unknownDate" value="{!Incident__c.Unknown_Date_Occurred__c}" />Unknown
-                        <br/>
-<!--                         <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="DateOccurred" dateTimeVal="{! IF(Incident__c.Date_Occurred__c==null, NOW(), Incident__c.Date_Occurred__c) }" datetimepickerid="DateOccurredInput"/> -->
-                        <apex:inputField value="{!Incident__c.Date_Occurred__c}" id="DateOccurred" />                  
+                 		<apex:inputField value="{!Incident__c.Hospitalized__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.hosp_type}&quot;, &quot;{!$Component.hosp_type_label}&quot;]}" />
+                 		<apex:outputLabel id="hosp_type_label" styleClass="sub-question-header">Type</apex:outputLabel>
+                 		<apex:inputField id="hosp_type" value="{!Incident__c.Hospitalization_Type__c}" />
                     </apex:outputPanel>
-                </apex:pageBlockSectionItem>
+                </apex:pageBlockSectionItem>   
                 <apex:pageBlockSectionItem >
-                    <apex:outputLabel >Date/Time Incident Reported to The MENTOR Network</apex:outputLabel>
+                    <apex:outputLabel >Was the Person Being Served Arrested/Detained?</apex:outputLabel>
                     <apex:outputPanel >
-                    <!-- Commenting for now So Bridget Can test the functionality - Sravan -->
-<!--                         <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="DateOccurred" dateTimeVal="{! IF(Incident__c.Date_Reported__c==null, NOW(), Incident__c.Date_Reported__c) }" datetimepickerid="DateOccurredInput"/> -->
-<!--                         <apex:inputHidden value="{!Incident__c.Date_Occurred__c}" id="DateOccurred" /> -->
-<!--                         <apex:inputHidden value="{!Incident__c.Date_Reported__c}" id="DateReported"/>                    -->
-							<apex:inputfield value="{!Incident__c.Date_Reported__c}" id="DateReported" />
+                 		<apex:inputField value="{!Incident__c.PBS_Arrested__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.pbs_arrested_label}&quot;, &quot;{!$Component.pbs_arrested}&quot;]}" />
+                 		<apex:outputLabel id="pbs_arrested_label" styleClass="sub-question-header">Reason Known?</apex:outputLabel>
+                 		<apex:inputField id="pbs_arrested" value="{!Incident__c.PBS_Arrest_Reason_Known__c}" />
                     </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                                
-                <apex:inputField label="Which of the following describe the events?" value="{!Incident__c.Incident_Type__c}" />
-                <apex:inputField label="Incident Type-Detailed list" value="{!Incident__c.Incident_Type_Detail__c}" />              
-                
-                <apex:inputField label="Staff present at the time of the Incident?" value="{!Incident__c.Staff_Present__c }" />
-                <apex:inputField id="where_incident" label="Where did the incident occur?" value="{!Incident__c.Where_incident_occurred__c }"  />    
-                <apex:inputField label="Specify Community Location" value="{!Incident__c.Community_Location__c }" id="communityLocation"/>
-                <apex:inputField label="Specify Other Location" value="{!Incident__c.Other_Location__c }" id="otherIncidentLocation" />
-                                
-                <apex:inputField label="First Response Action Taken" value="{!Incident__c.First_Response_Action_Taken__c}" />
-                
-                <apex:inputField label="Was the Person Being Served hospitalized?" value="{!Incident__c.Hospitalized__c}" />
-                <apex:inputField label="Type of Hospitalization" value="{!Incident__c.Hospitalization_Type__c}" />
-                <apex:inputField label="Was the Person Being Served Arrested/Detained?" value="{!Incident__c.PBS_Arrested__c}" />
-                <apex:inputField label="Reason Known?" value="{!Incident__c.PBS_Arrest_Reason_Known__c}" />
-                
-                
-                <apex:inputField label="Incident Outcome" value="{!Incident__c.Incident_Outcome__c}" />
-                <apex:inputField label="Mentor present at the time of the incident?" value="{!Incident__c.Mentor_present__c}" />
+                </apex:pageBlockSectionItem> 
+                                             
 
-                <apex:inputField label="Other people information" value="{!Incident__c.Other_people__c }" />
-                <apex:inputField label="Others present at the time of the incident?" value="{!Incident__c.Others_Present_at_Time_of_Incident__c }" />
-
-                <apex:inputField label="Which current service is related to the incident? " value="{!Incident__c.Service_Assignment__c }" />
+                <apex:outputPanel >
+                	<apex:outputLabel styleClass="sub-question-header" style="font-size: 91%;">Which of the following describe the events?</apex:outputLabel>
+                	<apex:outputPanel layout="block" style="float: left; padding-left: 100px;">
+                		<apex:inputField style="padding-left: 10px;" label="Which of the following describe the events?" value="{!Incident__c.Incident_Type__c}" />
+                	</apex:outputPanel>
+				</apex:outputPanel>
+			</apex:pageBlockSection>	
+			<apex:pageBlockSection title="First Response" columns="2">	
+                <apex:outputPanel >
+                    <apex:outputLabel styleClass="sub-question-header" style="font-size: 91%;">First Response Action Taken</apex:outputLabel>
+                    <apex:outputPanel layout="block" style="float: left; padding-left: 100px;">
+                		<apex:inputField value="{!Incident__c.First_Response_Action_Taken__c}" html-data-visibility-rules="{&quot;Other&quot;: [&quot;{!$Component.first_res_other_label}&quot;, &quot;{!$Component.first_res_other_input}&quot;]}" />
+                 		<apex:outputLabel id="first_res_other_label" styleClass="sub-question-header">Other</apex:outputLabel>
+                 		<apex:inputField id="first_res_other_input" value="{!Incident__c.First_Response_Action_Taken_Other__c}" />
+                    </apex:outputPanel>
+                </apex:outputPanel>  
                 
+                <apex:outputPanel /> 
+				
+			</apex:pageBlockSection>	
+			<apex:pageBlockSection title="People Involved" columns="2">	
+  
+                <apex:pageBlockSectionItem >
+                	<apex:outputLabel >Staff present at the time of the Incident?</apex:outputLabel>
+                	<apex:outputPanel >
+                		<apex:inputField label="Staff present at the time of the Incident?" value="{!Incident__c.Staff_Present__c }" 
+                			html-data-visibility-rules="{&quot;Yes&quot;: [&quot;staff_label&quot;, &quot;staff_input&quot;]}" />                 	
+                		
+                	</apex:outputPanel>
+                </apex:pageBlockSectionItem>                 
+                    
+                    <apex:outputPanel >
+                    <span id="staff_label" ><apex:outputLabel style="color: blue; cursor:pointer;">Add Staff</apex:outputLabel></span>
+                    <div id="staff_input">
+						info
+                    </div>
+                    </apex:outputPanel>
 
+
+
+                <apex:inputField label="Mentor present at the time of the incident?" value="{!Incident__c.Mentor_present__c}" 
+                	html-data-visibility-rules="{&quot;Yes&quot;: [&quot;mentor_label&quot;, &quot;mentor_input&quot;]}"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >
+                    <div id="mentor_label" ><apex:outputLabel style="color: blue; cursor:pointer;">Add Staff</apex:outputLabel></div>
+                    <div id="mentor_input">
+						info
+                    </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
+
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Others present at the time of the incident?</apex:outputLabel>
+                    <apex:outputPanel >
+                 		<apex:inputField value="{!Incident__c.Others_Present_at_Time_of_Incident__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.other_people_label}&quot;, &quot;{!$Component.other_people_input}&quot;]}" />
+
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>   
+                <apex:outputPanel >
+                 		<apex:outputLabel id="other_people_label" styleClass="sub-question-header">Other</apex:outputLabel>
+                 		<apex:inputField id="other_people_input" value="{!Incident__c.Other_people__c}" />                
+                </apex:outputPanel>             
                 
-
+			</apex:pageBlockSection>	
+			<apex:pageBlockSection title="Supervisor" columns="2">					
+    
+                <apex:inputField label="Incident Level" value="{!Incident__c.Incident_Level__c}" />  
+                <apex:outputPanel />    
+                <apex:inputField label="Incident Type-Detailed list" value="{!Incident__c.Incident_Type_Detail__c}" /> 
+                <apex:outputPanel /> 
                 <apex:inputField label="Was an Internal Investigation initiated?" value="{!Incident__c.Internal_Investigation__c }" />
-
+                <apex:outputPanel /> 
+                <apex:inputField label="Incident Outcome" value="{!Incident__c.Incident_Outcome__c}" />
+                
                 
                 <apex:pageBlockSectionItem />
                 <apex:pageBlockSectionItem />
-                
+                <!-- 
                 <apex:inputField value="{!Incident__c.Location__c}" />
-                <apex:inputField value="{!Incident__c.TMN_Contact__c}" />
+                
                 <apex:inputField value="{!Incident__c.Operating_Group__c}" />
                 <apex:inputField value="{!Incident__c.Original_Incident__c }" />                
                 <apex:inputField value="{!Incident__c.Supervised__c }" />
                 <apex:inputField value="{!Incident__c.Prior_Revision__c }" />               
-                <apex:inputField value="{!Incident__c.TMN_User__c }" />
                 <apex:inputField value="{!Incident__c.State__c }" />
                 <apex:inputField value="{!Incident__c.Status__c }" />
+                    --->                   
                 
                                         
             
