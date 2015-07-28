@@ -89,6 +89,9 @@ public with sharing class Progress_Notes_List_View_Controller {
         counter = totalSize - math.mod(totalSize, pageSize);   
         if(counter==totalSize){
         	counter-= pageSize;
+            if(counter<0){
+                counter=0;
+            }
         }      
         prNum = (totalSize - math.mod(totalSize, pageSize))+1;
         if(prNum>totalSize){
