@@ -48,17 +48,21 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public list<SelectOption> getrtOptions(){return rtOptions ;}
     public RecordType defaultRt { get; set; }
     private Final Progress_Note__c pn;
-    public boolean displayPopup {get; set;}        
+    public boolean displayPopup {get; set;} 
+    public boolean displayPopupFinalize{get; set;}        
     public Progress_Note__c thePN = new Progress_Note__c();
     public Progress_Note__c getthePN(){return thePN;}
     public List<Progress_Note__c> pnOverlap {get; set;} 
     public List<Progress_Note__c> overlappingProgressNote {get; set;} 
     // SHAUN-40 - update to only show overlap for AZ-OPT notes - 09/05/2014
     public boolean hasOverlap {get { return (pnOverlap.size() > 0 && thePN.recordtype.developername == 'AZ_OPT');} }
+    public void update_overlap(){
+        LoadData(thePN);    
+    }
     public void LoadData(Progress_Note__c tmp){
         thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,next_approver__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
         
-      List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
+      List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, start_time__c, end_time__c,next_approver__c, status__c, Owner.Name from Progress_Note__c 
               where id != :thePN.id 
               and Person_Being_Served__c = :thePN.Person_Being_Served__c
               and Admission__c = :thePN.Admission__c
@@ -71,7 +75,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 )
                 ];   
        //Added by Sravan to display the Progress Notes with overlapping time with a different PBS. EB-188 08/12/2014 12:26 PM      
-       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
+       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c,next_approver__c, Owner.Name from Progress_Note__c 
               where id != :thePN.id 
               and Person_Being_Served__c != :thePN.Person_Being_Served__c
               and Owner.Name = :thePN.Owner.Name
@@ -83,12 +87,15 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 ]; 
                 
         pnOverlap.addall(samepbsNotes);
-        pnOverlap.addall(diffpbsNotes);    
+        pnOverlap.addall(diffpbsNotes);
+        if(pnOverlap.size()>0){
+            displayPopupFinalize = true;
+            }
     }
     
     Public pagereference SubmitForApp(){
-        pn.locked__c = true;
-        upsert pn;
+        //pn.locked__c = true;
+        //upsert pn;
         Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
         req1.setComments('Submitting request for approval.');
         req1.setObjectId(thePn.id);
@@ -140,7 +147,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     }     
     public pagereference showPopup() { 
         list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
-                Person_being_served__r.Name, start_time__c, end_time__c, status__c, recordtype.Name,Service_code__c,People_Present__c,
+                Person_being_served__r.Name, start_time__c, end_time__c, status__c, recordtype.Name,Service_code__c,People_Present__c,next_approver__c, 
                 Interventions__c, progress__c,Notes_For_Next_Visit__c,Action_plan__c,Number_of_Required_Signatures__c ,Signature_on_File__c,
                 Owner.Name from Progress_Note__c
                 where id =:thePn.Id];
@@ -205,9 +212,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         if(dispMode!='Edit'){
             ActivePlanId = ApexPages.currentPage().getParameters().get('plan');
         }else if (dispMode =='Edit'){
+             displayPopupFinalize = false;
              insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
              pn = (Progress_Note__c) controller.getRecord();
-             progress_note__c pnedit = [select Service_Assignment__c ,owner.name,End_Time__c,Signature_on_File__c ,Start_Time__c,Service_Location__c,GoalIds_AZOPTPage__c ,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+             progress_note__c pnedit = [select Service_Assignment__c ,owner.name,End_Time__c,Signature_on_File__c ,Person_Being_Served__r.Name,next_approver__c,Start_Time__c,Service_Location__c,GoalIds_AZOPTPage__c ,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
              this.thePN = pn;
              GoalsSelected = Apexpages.currentPage().getParameters().get('selectedKey');
              list<Id> GoalSelIds = New List<Id>();
@@ -221,7 +229,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
              pbsName = pnedit.Service_Assignment__r.Person_Being_Served__c;
              admissionId = pnedit.Service_Assignment__r.Admission__c;  
              ActivePlanId = pnedit.Action_Plan__c;
-             
+             loaddata(pnedit);
              
              if(GoalsSelected!=null && GoalsSelected !=''){
                 GoalSelStrs = (GoalsSelected.split(','));
@@ -230,7 +238,6 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         }
         if(ActivePlanId != Null && dispMode!='Edit'){
             allgoals1 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r ) from Action_Plan_Goal__c where Action_Plan__c = :ActivePlanId Order BY Sort_Order__c];  
-            
             allObjectives = [select id, (select description__c, id from Action_Plan_Actions__r order by Sort_Order__c) from action_plan_objective__c where action_plan_goal__r.action_plan__c = :ActivePlanId] ;                               
             Map<id,Action_Plan_Goal__c> idGoalMap = New Map<id,Action_Plan_Goal__c>();    
                 for(Action_Plan_Goal__c g:allGoals1){
@@ -253,8 +260,6 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                     }
                 }
                 
-                
-                      
                 retrieveAllGoals();
         }else{}
         inlinemode = false;
@@ -328,7 +333,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             inlinemode = true;
             insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
            pn = (Progress_Note__c) controller.getRecord();
-            progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,owner.name,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+            progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,owner.name,Person_Being_Served__r.Name,next_approver__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
           this.thePN = pn;
             pnOverlap = new List<Progress_Note__c>();
             theServAssignId =  pnedit.Service_Assignment__c ;
@@ -337,7 +342,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             ActivePlanId = pnedit.Action_Plan__c;
             ContactName = pnedit.Service_Assignment__r.Person_Being_Served__r.Name;
             
-            List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
+            List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name,next_approver__c, Action_Plan__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId
               and Person_Being_Served__c = :pn.Person_Being_Served__c
               and Admission__c = :pn.Admission__c
@@ -351,7 +356,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 ]; 
                 System.debug('M--> K -->c'+ samepbsNotes );  
        //Added by Sravan to display the Progress Notes with overlapping time with a different PBS. EB-188 08/12/2014 12:26 PM      
-       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c, Ownerid from Progress_Note__c 
+       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,next_approver__c, end_time__c, status__c, Ownerid from Progress_Note__c 
               where id != :insertedprogressnoteId 
               and Person_Being_Served__c != :pn.Person_Being_Served__c
               and (
@@ -401,8 +406,8 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     } 
     
     public pagereference saveModifiedProgressNote(){
-    	overlappingProgressNote = new list<progress_note__c>();
-        List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
+        overlappingProgressNote = new list<progress_note__c>();
+        List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name,next_approver__c, Action_Plan__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId
               and Person_Being_Served__c = :pn.Person_Being_Served__c
               and Admission__c = :pn.Admission__c
@@ -416,7 +421,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 ]; 
                 System.debug('M--> K -->c'+ samepbsNotes );  
        //Added by Sravan to display the Progress Notes with overlapping time with a different PBS. EB-188 08/12/2014 12:26 PM      
-       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c, Ownerid from Progress_Note__c 
+       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,next_approver__c, end_time__c, status__c, Ownerid from Progress_Note__c 
               where Person_Being_Served__c != :pn.Person_Being_Served__c
               and (
                   (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
@@ -456,8 +461,16 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     }
     
     public pagereference RenderSelectedIds(){
-    	overlappingProgressNote = new list<progress_note__c>();
+        overlappingProgressNote = new list<progress_note__c>();
         GoalsSelected = Apexpages.currentPage().getParameters().get('selectedKey');
+        
+        insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
+        if(insertedProgressNoteId !=null){
+        progress_note__c pnedit2 = [select Service_Assignment__r.Admission__r.State__c,GoalIds_AZOPTPage__c,owner.name,Person_Being_Served__r.Name,next_approver__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+        list<Id> GoalSelIds = New List<Id>();
+        if(pnedit2.GoalIds_AZOPTPage__c!= null)
+        GoalsSelected = GoalsSelected + ',' + pnedit2.GoalIds_AZOPTPage__c;
+        }
         pn.recordtypeid = AZ_OPT_ID ;
         pn.Person_Being_Served__c = pbsName;
        pn.admission__c = admissionId;
@@ -466,7 +479,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        pn.GoalIds_AZOPTPage__c = GoalsSelected;
        List<Progress_Note__c> samepbsNotes = New List<Progress_Note__c>();
        if(insertedProgressnoteid!=Null){
-       		samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
+            samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c,next_approver__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId
               and Person_Being_Served__c = :pbsName
               and Admission__c = :admissionId
@@ -480,7 +493,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 ]; 
        }
        else{
-       		samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
+            samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,next_approver__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where Person_Being_Served__c = :pbsName
               and Admission__c = :admissionId
               and  Service_Assignment__c = :theServAssignId
@@ -491,10 +504,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )
                 )
                 ];
-       		}
-       	        //System.debug('M--> K -->c'+ samepbsNotes );  
+            }
+                //System.debug('M--> K -->c'+ samepbsNotes );  
        //Added by Sravan to display the Progress Notes with overlapping time with a different PBS. EB-188 08/12/2014 12:26 PM      
-       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
+       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,next_approver__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId 
               and Person_Being_Served__c != :pn.Person_Being_Served__c
               and (
@@ -571,6 +584,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                                 string curID2 = ob.id;
                                 string title2 = ob.description__c;
                                 TMN_Tree.node o_node= new TMN_Tree.node(curID2, title2);
+                                
                                 integer g_key = allGoals.root.getNode_Key(goalID );
                                 allGoals.root.nodes.get(g_key).nodes.add(o_node);
                                 objID =curID2;
@@ -599,6 +613,17 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
      
     
     public void retrieveAllGoals(){
+        String dispMode = ApexPages.currentPage().getParameters().get('Mode');
+        if (dispMode == 'Inlineedit'){
+            insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
+            progress_note__c pnedit2 = [select Service_Assignment__r.Admission__r.State__c,GoalIds_AZOPTPage__c,owner.name,Person_Being_Served__r.Name,next_approver__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+            list<Id> GoalSelIds = New List<Id>();
+            GoalsSelected = pnedit2.GoalIds_AZOPTPage__c;
+            if(GoalsSelected!=null && GoalsSelected !=''){
+                GoalSelStrs = (GoalsSelected.split(','));
+             }
+            
+        }            
         allGoals = new TMN_Tree();  
         nodes2 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r ) from Action_Plan_Goal__c where Action_Plan__c = :ActivePlanId Order BY Sort_Order__c];
         string goalID ='';
@@ -609,7 +634,15 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 string curID1 = n.id;
                 string title1 = n.description__c;
                 TMN_Tree.node g_node= new TMN_Tree.node(curID1, title1);
-                g_node.isFolder = true;
+                if(GoalSelStrs.size()>0){
+                    for(string str:GoalSelStrs ){
+                    system.debug('-------'+ str);
+                        if(str==curID1){
+                        g_node.isSelected = true;
+                        }
+                    }
+                }g_node.isFolder = true;
+                //g_node.isSelected = true;
                 allGoals.root.nodes.add(g_node);
                 goalID =curID1;
                 if(GoalObjMap !=null && GoalObjMap.get(n.Id)!=null ){
@@ -619,6 +652,8 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                             string curID2 = ob.id;
                             string title2 = ob.description__c;
                             TMN_Tree.node o_node= new TMN_Tree.node(curID2, title2);
+                            if(g_node.isSelected == true)
+                                o_node.isSelected = true;
                             integer g_key = allGoals.root.getNode_Key(goalID );
                             allGoals.root.nodes.get(g_key).nodes.add(o_node);
                             objID =curID2;
@@ -629,6 +664,8 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                                         string curID3 = actPln.id;
                                         string title3 = actPln.description__c;
                                         TMN_Tree.node a_node= new TMN_Tree.node(curID3, title3);
+                                        if(g_node.isSelected == true)
+                                            a_node.isSelected = true;
                                         integer g_key1 = allGoals.root.getNode_Key(goalID );
                                         integer o_key1 = allGoals.root.nodes.get(g_key).getNode_Key(objID);
                                         if(o_key1 != -1){
@@ -653,7 +690,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     }
     public pagereference saveProgressNoteInlineEdit(){
         overlappingProgressNote = new list<progress_note__c>();
-        List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
+        List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,next_approver__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId
               and Person_Being_Served__c = :pn.Person_Being_Served__c
               and Admission__c = :pn.Admission__c
@@ -667,7 +704,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 ]; 
                 System.debug('M--> K -->c'+ samepbsNotes );  
        //Added by Sravan to display the Progress Notes with overlapping time with a different PBS. EB-188 08/12/2014 12:26 PM      
-       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c, Ownerid from Progress_Note__c 
+       List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,next_approver__c, end_time__c, status__c, Ownerid from Progress_Note__c 
               where Person_Being_Served__c != :pn.Person_Being_Served__c
               and (
                   (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
@@ -691,7 +728,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     }
     
     public pagereference saveProgressNote(){
-    	 
+         
         if(overlappingProgressNote.size()>0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'An Overlap Exists -'+ overlappingProgressNote[0].Name));     
             return null;
