@@ -23,18 +23,29 @@ private class EvalDynamicExtTest {
         Apexpages.currentPage().getParameters().put('Category', 'TEST');
         Apexpages.currentPage().getParameters().put('SubCategory', 'TEST_TEST');
         extension =  new EvalDynamicExt();
-
-        System.assertEquals(true, extension.showEsign);
-        System.assertEquals(false, extension.showRevise);
-        System.assertEquals(true, extension.showDisregard);
-
+		
+		if ( extension.isTierIII ) {
+	        System.assertEquals(true, extension.showEsign);
+	        System.assertEquals(false, extension.showRevise);
+	        System.assertEquals(true, extension.showDisregard);
+        } else {
+  	        System.assertEquals(false, extension.showEsign);
+	        System.assertEquals(false, extension.showRevise);
+	        System.assertEquals(false, extension.showDisregard);
+        }      
         evaluation.Status__c = 'Final Admission';
         upsert evaluation;
 
         extension =  new EvalDynamicExt();
-        System.assertEquals(false, extension.showEsign);
-        System.assertEquals(true, extension.showRevise);
-        System.assertEquals(true, extension.showDisregard);
+        if ( extension.isTierIII ) {
+	        System.assertEquals(false, extension.showEsign);
+	        System.assertEquals(true, extension.showRevise);
+	        System.assertEquals(true, extension.showDisregard);
+        } else {
+  	        System.assertEquals(false, extension.showEsign);
+	        System.assertEquals(false, extension.showRevise);
+	        System.assertEquals(false, extension.showDisregard);
+        }      
 
         Matcher MyMatcher = militaryTimePattern.matcher(extension.getEvalStatusDate().substring(11));
         System.assert(MyMatcher.matches());
@@ -46,10 +57,15 @@ private class EvalDynamicExtTest {
         evaluation.Status__c = 'Final Revision';
         upsert evaluation;
 
-        extension =  new EvalDynamicExt();
-        System.assertEquals(false, extension.showEsign);
-        System.assertEquals(true, extension.showRevise);
-        System.assertEquals(true, extension.showDisregard);
+        if ( extension.isTierIII ) {
+	        System.assertEquals(false, extension.showEsign);
+	        System.assertEquals(true, extension.showRevise);
+	        System.assertEquals(true, extension.showDisregard);
+        } else {
+  	        System.assertEquals(false, extension.showEsign);
+	        System.assertEquals(false, extension.showRevise);
+	        System.assertEquals(false, extension.showDisregard);
+        }      
     }
     static testMethod void buttonsVisibilityHeadToToe() {
         TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
