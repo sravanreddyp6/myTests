@@ -41,14 +41,14 @@
         		 	<apex:outputLabel value="Date/Time Incident Reported to The MENTOR Network" />
         			<c:MilitaryDatetime dateTimeVal="{!Incident__c.Date_Reported__c}" />
         		 </apex:pageblockSectionItem>
-        		 <apex:pageBlockSectionItem  />
+        		 <apex:pageBlockSectionItem />
         		 <apex:outputField value="{!Incident__c.First_Reported_Time_is_Approximate__c}" label="Time is Approximate" />
         	</apex:pageBlockSection>
         	
         	<apex:pageBlockSection columns="1" showheader="true" title="Incident Location" >
         		<apex:outputField value="{!Incident__c.Where_incident_occurred__c }" />
-        		<apex:outputField value="{!Incident__C.Community_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Community Location'}" />
-        		<apex:outputField value="{!incident__c.Other_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Other Location'}" />
+        		<apex:outputField value="{!Incident__c.Community_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Community Location'}" />
+        		<apex:outputField value="{!Incident__c.Other_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Other Location'}" />
         		<apex:outputField value="{!Incident__c.Network_Type__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Day Program' || Incident__c.Where_incident_occurred__c == 'Place of Employment' ||
         				Incident__c.Where_incident_occurred__c == 'Program Office' || Incident__c.Where_incident_occurred__c == 'Residence' || Incident__c.Where_incident_occurred__c == 'School'}"/> 
         	</apex:pageBlockSection>
@@ -74,9 +74,23 @@
         		<apex:outputField label="Was an Internal Investigation initiated?" value="{!Incident__c.Internal_Investigation__c }" />
         		<apex:outputField label="Incident Outcome" value="{!Incident__c.Incident_Outcome__c}" />
         	</apex:pageBlockSection>
-        	
-        	
-        
+    </apex:pageBlock>
+    <apex:pageBlock title="Related People" >
+	    <div class="pbHeaderButton">
+	    </div>
+	       <apex:pageBlockTable styleclass="pbBody-list" value="{!relatedPeople}" var="relper" rendered="{!relatedpeople != null && relatedpeople.size > 0}">
+	       <apex:column headerValue="Type" value="{!relper.Person_Type__c}" />
+	       <apex:column headerValue="Name"> 
+	           <apex:outputLink value="/{!relper.Mentor__c}" rendered="{!relper.recordtype.name = 'Mentor'}">{!relper.mentor__r.name}</apex:outputLink>
+	           <apex:outputLink value="/{!relper.Staff_Member__c}" rendered="{!relper.recordtype.name = 'Staff'}" >{!relper.staff_member__r.name}</apex:outputLink>
+	           <apex:outputText value="/{!relper.Other_people__c}" rendered="{!relper.recordtype.name = 'Other'}" />
+	       </apex:column> 
+	       <apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
+	       <apex:column headerValue="Last Modified">
+	           <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
+	       </apex:column>
+	    
+	    </apex:pageBlockTable>
     </apex:pageBlock>
     
     
