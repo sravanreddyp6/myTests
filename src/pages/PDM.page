@@ -12,17 +12,7 @@
 <script type="text/javascript" language="javascript">
     var j$ = jQuery.noConflict();
     j$(document).ready(function() {
-		j$('table.dataTable').dataTable({
-			searching: false,
-				paging: false,
-				bInfo: false,
-				"order": [[ 4, "asc" ]],
-			'aoColumnDefs': [{
-				'bSortable': true,
-				'aTargets': [0]
-			}],
-			sPaginationType: "full_numbers"
-		});
+	
 		  j$('input[id$="ExportToExcel"]').prop('disabled', true);
 		
 		  
@@ -232,18 +222,6 @@ j$('input[id$=searchEmployee]').val('');
 
 	
 	function nextData() {
-	j$('table.dataTable').dataTable({
-			searching: false,
-				paging: false,
-				bInfo: false,
-				"order": [[ 4, "asc" ]],
-			'aoColumnDefs': [{
-				'bSortable': true,
-				'aTargets': [0]
-			}],
-			sPaginationType: "full_numbers"
-		});
-		
 		if(j$('input[id$=searchLocation]').val()==null || j$('input[id$=searchLocation]').val().length == 0 ){
 		j$('input[id$="ExportToExcel"]').prop('disabled', false);
 		}
@@ -251,6 +229,9 @@ j$('input[id$=searchEmployee]').val('');
 
 
   function AdvanceSearch() {
+  j$('[id*=AdvancedSearchModal]').dialog("close");
+       j$('[id$=searchEmployee]').val('');
+      j$('[id$=searchLocation]').val('');
   if(j$('[id$=city]').val().length==0 && j$('[id$=StateCode]').val().length == 0 && j$('[id$=FirstName]').val().length == 0 && j$('[id$=OperatingGroup]').val().length == 0 
   && j$('[id$=LastName]').val().length == 0 && j$('[id$=JobTitle]').val().length == 0){
  	j$('[id$=modelError]').show(); 
@@ -275,7 +256,6 @@ j$('input[id$=searchEmployee]').val('');
 });
   
   function closeDialog () {
-  	j$('[id*=AdvancedSearchModal]').dialog("close");
   	j$('[id$=city]').val('');
   	j$('[id$=StateCode]').val('');j$('[id$=FirstName]').val('');j$('[id$=OperatingGroup]').val('');j$('[id$=LastName]').val('');j$('[id$=JobTitle]').val('');
   	j$('[id$=modelError]').hide();
@@ -302,17 +282,17 @@ j$('input[id$=searchEmployee]').val('');
   </div>
   <br/>
     <apex:form id="attForm">
-    <apex:actionFunction name="searchEmployee" action="{!searchEmployee}" reRender="datePanelContainer" oncomplete="searchEmp()" status="showsearchEmployee" />
+    <apex:actionFunction name="searchEmployee" action="{!searchEmployee}" reRender="datePanelContainer" oncomplete="searchEmp()" status="TableUpdateStatus" />
     
     <apex:actionFunction name="savePhone" action="{!save}" oncomplete="saveP()"/>
-    <apex:actionFunction name="searchByLocation" action="{!searchByLocation}" reRender="datePanelContainer" status="showsearchByLocation" >
+    <apex:actionFunction name="searchByLocation" action="{!searchByLocation}" reRender="datePanelContainer" status="TableUpdateStatus" >
         <apex:param name="selectedLocation" value="" assignTo="{!searchLocation}"/>
      </apex:actionFunction>
-      <apex:actionFunction name="BuildQuery" action="{!BuildQuery}" reRender="datePanelContainer" status="showsearchByLocation" oncomplete="nextData()">
+      <apex:actionFunction name="BuildQuery" action="{!BuildQuery}" reRender="datePanelContainer" status="TableUpdateStatus" >
         <apex:param name="AlphaFilter" value="" assignTo="{!AlphaFilter}" />
       </apex:actionFunction>   
       
-       <apex:actionFunction name="search" action="{!search}" reRender="datePanelContainer" status="showsearchByLocation" oncomplete="closeDialog()" >
+       <apex:actionFunction name="search" action="{!search}" reRender="datePanelContainer"  oncomplete="closeDialog()" status="TableUpdateStatus">
         <apex:param name="city" value="" assignTo="{!city}" />
         <apex:param name="State" value="" assignTo="{!state}" />
         <apex:param name="FirstName" value="" assignTo="{!firstName}" />
@@ -372,70 +352,147 @@ j$('input[id$=searchEmployee]').val('');
                 <a href="#" onClick="BuildQuery('Q');" data-filter='[Q]'>Q</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('R');" data-filter='[R]'>R</a>&nbsp;|&nbsp;
                 <a href="#" onClick="BuildQuery('S');" data-filter='[S]'>S</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('T');" data-filter='[T]'>T</a>&nbsp;|&nbsp;
                 <a href="#" onClick="BuildQuery('U');" data-filter='[U]'>U</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('V');" data-filter='[V]'>V</a>&nbsp;|&nbsp;
-                <a href="#" onClick="BuildQuery('W');" data-filter='[W]'>W</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('XYZ');" data-filter='[XYZ]'>XYZ</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('W');" data-filter='[W]'>W</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('XYZ');" data-filter='[X]'>X</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('Y');" data-filter='[Y]'>Y</a>&nbsp;|&nbsp; <a href="#" onClick="BuildQuery('Z');" data-filter='[Z]'>Z</a>&nbsp;|&nbsp;
                 <a href="#" onClick="BuildQuery('ALL');" class="active" data-filter='.'>All</a>
             </div>
-            
-                <apex:pageBlockTable value="{!TMNUserList}" var="user" style="width: 100%;" styleClass="dataTable" id="Tabledata">
+             <apex:actionStatus id="TableUpdateStatus">
+            <!-- loading message -->
+            <apex:facet name="start">
+               <apex:outputPanel layout="block" styleClass="message infoM4">
+                  <apex:panelGrid columns="2" styleClass="messageTable" columnClasses="messageCell" style="padding:0px;margin:0px;">
+                     <apex:panelGroup >
+                        <img class="loading-icon" src="/img/loading32.gif" />
+                     </apex:panelGroup>
+                     <apex:panelGroup >
+                        <div class="messageText">Please wait...</div>
+                     </apex:panelGroup>
+                  </apex:panelGrid>
+               </apex:outputPanel>
+            </apex:facet>
+
+            <!-- Account table -->
+            <apex:facet name="stop">
+           <apex:pageBlockTable value="{!TMNUserList}" var="user" style="width: 100%;" styleClass="dataTable" id="Tabledata">
+                 
                     <apex:column headerValue="Location">
-                    <apex:outputText >{!user.Work_City__c}&nbsp;{!user.Work_State_Code__c}</apex:outputText>
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Work_City__c" assignTo="{!SortField}" />
+                            <apex:outputText value= "Location {!IF(SortField=='Work_City__c',IF(SortDirection='asc','▲','▼'),'')}"/>
+                    </apex:commandLink>
+                    </apex:facet>
+                        <apex:outputText >{!user.Work_City__c}&nbsp;{!user.Work_State_Code__c} </apex:outputText>
                     </apex:column>
-       				<apex:column headerValue="Name">
-                    <apex:outputText ><a href="mailto:{!user.Email__c}">{!user.Last_Name__c},{!user.First_Name__c}</a></apex:outputText>
+                <apex:column headerValue="Name">
+       				 <apex:facet name="header">
+       				   <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Last_Name__c" assignTo="{!SortField}" />
+                    <apex:outputText value="Name {!IF(SortField=='Last_Name__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                    </apex:commandLink>
+                    </apex:facet>
+                     <apex:outputText ><a href="mailto:{!user.Email__c}"> {!user.Last_Name__c},{!user.First_Name__c} </a></apex:outputText>
                     </apex:column>
-                    <apex:column headerValue="Title">
-                    <apex:outputText value="{!user.Job_Title__c}" />
+               
+               <apex:column headerValue="Title">
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Job_Title__c" assignTo="{!SortField}" />
+                    <apex:outputText value="Title {!IF(SortField=='Job_Title__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                    </apex:commandLink>
+                    </apex:facet>
+                     <apex:outputText value="{!user.Job_Title__c}" />
                     </apex:column>
-                    <apex:column headerValue="Operating Group">
-                    <apex:outputText value="{!user.Operating_Group__c}" />
+               <apex:column headerValue="Operating Group">
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Operating_Group__c" assignTo="{!SortField}" />
+                    <apex:outputText value="Operating Group {!IF(SortField=='Operating_Group__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                    </apex:commandLink>
+                    </apex:facet>
+                   <apex:outputText value="{!user.Operating_Group__c}" />
                     </apex:column>
-                     <apex:column headerValue="Office">
-						<apex:outputField value="{!user.Office_Phone__c}" id="officePhone" >
+               <apex:column headerValue="Office">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Office_Phone__c" assignTo="{!SortField}" />
+						<apex:outputText value=" Office {!IF(SortField=='Office_Phone__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                        </apex:commandLink>
+                     </apex:facet>   
+                   <apex:outputField value="{!user.Office_Phone__c}"  >
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
                         hideOnEdit="cancelButton" event="ondblclick" 
                         changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
                     </apex:column> 
-                    <apex:column headerValue="Extension">
-						<apex:outputField value="{!user.phone_ext__c}">
-                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+               <apex:column headerValue="Extension">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="phone_ext__c" assignTo="{!SortField}" />
+						<apex:outputText value=" Extension {!IF(SortField=='phone_ext__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                        </apex:commandLink>
+                     </apex:facet>   
+                   <apex:outputField value="{!user.phone_ext__c}"  >
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
                         hideOnEdit="cancelButton" event="ondblclick" 
                         changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                         </apex:outputField>
-                    </apex:column>       
-                    <apex:column headerValue="Mobile ">
-						<apex:outputField value="{!user.Mentor_Cell_Phone__c}">
-                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                    </apex:column> 
+               
+               <apex:column headerValue="Mobile">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Mentor_Cell_Phone__c" assignTo="{!SortField}" />
+						<apex:outputText value=" Mobile {!IF(SortField=='Mentor_Cell_Phone__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                        </apex:commandLink>
+                     </apex:facet>   
+                   <apex:outputField value="{!user.Mentor_Cell_Phone__c}" >
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
                         hideOnEdit="cancelButton" event="ondblclick" 
                         changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
-                </apex:outputField>
-                    </apex:column>
-                    <apex:column headerValue="Fax">
-                    <apex:outputField value="{!user.fax__c}">
-                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        </apex:outputField>
+                    </apex:column> 
+               <apex:column headerValue="Fax">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="fax__c" assignTo="{!SortField}" />
+						<apex:outputText value=" Fax {!IF(SortField=='fax__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                        </apex:commandLink>
+                     </apex:facet>   
+                   <apex:outputField value="{!user.fax__c}" id="officePhone" >
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
                         hideOnEdit="cancelButton" event="ondblclick" 
                         changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
-                </apex:outputField>
-                    </apex:column>
-                    <apex:column headerValue="Manager">
+                        </apex:outputField>
+                    </apex:column> 
+               <apex:column headerValue="Manager">
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Manager_Name__c" assignTo="{!SortField}" />
+                    <apex:outputText value="Manager {!IF(SortField=='Manager_Name__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                    </apex:commandLink>
+                    </apex:facet>
                     <apex:outputText value="{!user.Manager_Name__c}" />
                     </apex:column>
                 </apex:pageBlockTable>
-        <div class="container">
+ 
+		</apex:facet>
+</apex:actionStatus>
+       <div class="container">
   <ul class="pager">
-    <apex:commandButton id="previous" status="fetchStatus" reRender="datePanelContainer" value=" << Previous " action="{!previous}" disabled="{!!hasPrevious}" title=" << Previous" oncomplete="nextData()" />
+    <apex:commandButton id="previous" status="TableUpdateStatus" reRender="datePanelContainer" value=" << Previous " action="{!previous}" disabled="{!!hasPrevious}" title=" << Previous"/>
      <apex:outputText >&nbsp;&nbsp;{!(pageNumber * size)+1-size}-{!IF((pageNumber * size)>noOfRecords, noOfRecords,(pageNumber * size))} of {!noOfRecords}</apex:outputText>
-    <apex:commandButton id="next" status="fetchStatus" reRender="datePanelContainer" value="  Next >>  "  action="{!next}" disabled="{!!hasNext}" title="Next >>" oncomplete="nextData()" />
+    <apex:commandButton id="next" status="TableUpdateStatus" reRender="datePanelContainer" value="  Next >>  "  action="{!next}" disabled="{!!hasNext}" title="Next >>"  />
     <apex:outputPanel style="color:#4AA02C;font-weight:bold">
                     <apex:actionStatus id="fetchStatus" startText="Fetching..." stopText=""/>
                 </apex:outputPanel>
   </ul>
-</div>
-			 <div class="HeadButtons">
+</div> <div class="HeadButtons">
         <apex:commandButton action="{!save}" id="saveButton" value="   Save    " style="display:none" />
         <apex:commandButton id="cancelButton" value="   Cancel  " style="display:none" oncomplete="cancelEdit()" reRender="datePanelContainer" />
          </div>
          <br/><br/><br/>
+			
         </apex:outputPanel>
        
        
