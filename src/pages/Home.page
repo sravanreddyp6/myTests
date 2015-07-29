@@ -310,7 +310,7 @@
 						<apex:selectOptions value="{!incidentTypes}" />
 						<apex:actionSupport event="onchange" action="{!displayIncidents}" rerender="incidentsTable" status="pageProcessing" />
 					</apex:selectList>
-					&nbsp; <apex:commandbutton  onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" Value="Create Incident"/>
+					&nbsp; <apex:commandbutton onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" Value="Create Incident"/>
 <!-- 					<apex:commandButton value="Create Incident" action="/setup/ui/recordtypeselect.jsp?ent=01IJ0000000AlwL&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2Fa1v%2Fe%3FretURL%3D%252Fa1v%252Fo"/> -->
 					</td>
 					</tr>
@@ -321,7 +321,7 @@
 					<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>&nbsp;
 					<a href="/apex/Incident_Form_View?Id={!i.Id}">View</a>
 				</apex:column>
-				<apex:column value="{!i.Id}" />
+				<apex:column value="{!i.Name}" />
 				<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
 				<apex:column value="{!i.Status__c}" />
 			</apex:pageBlockTable>
@@ -332,7 +332,7 @@
 			<apex:pageBlock >
 			<apex:pageBlockSection columns="1" >
 		        	<apex:selectRadio value="{!userChosenIncident}" layout="pageDirection" id="incidentslist">
-		        		<apex:selectoption itemValue="PBS" itemLabel="PBS" /><br/>
+		        		<apex:selectoption itemValue="PBS" itemLabel="Person Being Served" /><br/>
 		        		<apex:selectoption itemValue="Location" itemLabel="Location" />
 		        		<apex:selectoption itemValue="Employee" itemLabel="Employee" />
 		        		<apex:selectoption itemValue="Mentor" itemLabel="Mentor" />
@@ -340,7 +340,7 @@
 		    </apex:pageBlockSection>
 		    <apex:pageblockButtons location="bottom" >
 				<apex:commandbutton value="Continue" onclick="checkIncidentType(); return false;" />
-				<apex:commandButton value="Cancel" />		    
+				<apex:commandButton value="Cancel" action="{!cancelincident}" />		    
 		    </apex:pageblockButtons>
 		   </apex:pageBlock> 
 		</apex:outputPanel> 
@@ -459,6 +459,15 @@
 	</script>
 
 	<script type="text/javascript">
+	
+		//disable enter key to prevent side effects
+		function stopRKey(evt) {
+			   var evt = (evt) ? evt : ((event) ? event : null);
+			   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+			   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+		}
+			
+		document.onkeypress = stopRKey;
 		
 		checkIncidentType = function(){
 			 var incidentType = jQuery("input[name*='incidentslist']:checked").val();
@@ -473,10 +482,9 @@
 			var fname = document.getElementById("{!$Component.thePage.mainForm.FNameforSA}").value;
 			var lname = document.getElementById("{!$Component.thePage.mainForm.LNameforSA}").value;
 			if ((fname == null || fname == '') && (lname == null || lname == '')) {
-				alert('Please fill one of the search boxes before you click on find');
+				alert('Please Enter First or Last Name');
 			} else{
 				retriveServAssigns();
-			
 			}
 		
 		}
@@ -676,6 +684,7 @@
 				});
 			};
 			reloadPBSTable();
+			
 		});
 	</script>
 	<apex:actionStatus id="pageProcessing">

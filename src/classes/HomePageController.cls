@@ -390,6 +390,13 @@ public with sharing class HomePageController{
 		return pr;
 	}
 	
+	public pageReference cancelIncident(){
+		PageReference pg = page.Home;
+		pg.SetRedirect(true);
+		return pg;
+		
+	}
+	
 	public string getpbsincidentRecType(){
 		return  Utility.getIncidentRecordType('PBS');
 	}
