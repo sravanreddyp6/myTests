@@ -53,7 +53,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     private Final Progress_Note__c pn;
     public boolean displayPopup {get; set;} 
     public boolean displayPopupFinalize{get; set;}        
-    public Progress_Note__c thePN = new Progress_Note__c();
+    public Progress_Note__c thePN = new Progress_Note__c(Start_Time__c=Datetime.now(),End_Time__c=Datetime.now());
     public Progress_Note__c getthePN(){return thePN;}
     public List<Progress_Note__c> pnOverlap {get; set;} 
     public List<Progress_Note__c> overlappingProgressNote {get; set;} 
@@ -338,7 +338,8 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             } else {
                 // add error to page that shift note cannot be created
             }
-            
+            pn.Start_Time__c = datetime.now();
+            pn.End_Time__c = datetime.now();
             loadData();
             if(Controller.getRecord()!= null) 
                 editmode= false;
