@@ -1244,6 +1244,12 @@ public with sharing class referrals_Controller{
 
 			upsert relParties;
 		}
+        else if(relParties != null && this.personBeingServedRecord.Id != null){
+            for (Related_Party__c rP : relParties) {
+                rP.Person_Being_Served__c = this.personBeingServedRecord.Id;
+            }
+            upsert relParties;        
+        }		
 	}
 
 	

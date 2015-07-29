@@ -9,6 +9,7 @@ public with sharing class referral_Controller_Helper{
                  from Related_Party__c where id = :relPartyId];
             return party;
      }
+     
     
     @RemoteAction
     public static Related_Party__c saveRelatedParty(string partyID, string Name, string PartyType, string Phone1, string Email, 
@@ -27,7 +28,23 @@ public with sharing class referral_Controller_Helper{
       upsert party;                                  
       return party;
    }
-    
+    @RemoteAction
+    public static Related_Party__c saveRelatedPartyFromPbsID(string partyID, string Name, string PartyType, string Phone1, string Email, 
+                                              string Address, string Phone2, string Phone1Type, string Phone2Type, string comments,
+                                              string PbsId, string pStatus) {
+      Related_Party__c party;                                        
+      if (String.isEmpty(partyID)) {
+         party = new Related_Party__c(Name=Name, Type__c=PartyType, Phone__c = Phone1, Email__c = Email, Address__c = Address, Status__c = pStatus,
+                                                    Phone_2__c = Phone2, Phone_1_Type__c = Phone1Type, Phone_2_Type__c = Phone2Type, Comments__c=Comments,
+                                                    Person_Being_Served__c = PbsId);
+      } else {
+         party = new Related_Party__c(Name=Name, Type__c=PartyType, Phone__c = Phone1, Email__c = Email, Address__c = Address, Status__c = pStatus,
+                                                    Phone_2__c = Phone2, Phone_1_Type__c = Phone1Type, Phone_2_Type__c = Phone2Type, Comments__c=Comments,
+                                                    Person_Being_Served__c = PbsId, ID = partyID);
+      }
+      upsert party;                                  
+      return party;
+   }    
     @RemoteAction
     public static Referral_Location__c loadReferralLocation(string locationId) {
         Referral_Location__c loc = [select Id, Name, Referral__c, service_location__c, service_location__r.Name, service_location__r.city__c, service_location__r.state__c, service_location__r.zip__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c,
@@ -40,10 +57,10 @@ public with sharing class referral_Controller_Helper{
     public static Referral_Location__c saveReferralLocation(string locID, string locUser, string locServiceLocation, string locStatus, string locRank, string referralId) {
       Referral_Location__c loc;     
       if ( String.isEmpty(locUser)) {
-      	locUser  = null;
+        locUser  = null;
       }
       if ( String.isEmpty(locRank)) {
-      	locRank  = null;
+        locRank  = null;
       }                                   
       if (String.isEmpty(locID)) {
          loc = new Referral_Location__c(User_Assigned__c = locUser, Service_Location__c= locServiceLocation, Status__c=locStatus, Referral__c=referralId, Rank__c = locRank);
