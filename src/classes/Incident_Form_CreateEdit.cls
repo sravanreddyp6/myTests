@@ -65,11 +65,11 @@ public with sharing class Incident_Form_CreateEdit {
     
     public boolean validateIncidentSave(Incident__c incident){
         boolean hasError = false; 
-        if(incident.First_Reported_By__c == 'Employee' && incident.TMN_User__c == null){
-            incident.TMN_User__c.addError('Staff requried'); hasError = true;
+        if(incident.First_Reported_By__c == 'Employee' && incident.First_Reported_Staff__c == null){
+            incident.First_Reported_Staff__c.addError('Staff requried'); hasError = true;
         }
-        if(incident.First_Reported_By__c == 'Mentor' && incident.TMN_Contact__c == null){
-            incident.TMN_Contact__c.addError('Mentor requried'); hasError = true;
+        if(incident.First_Reported_By__c == 'Mentor' && incident.First_Reported_Mentor__c == null){
+            incident.First_Reported_Mentor__c.addError('Mentor requried'); hasError = true;
         }  
         if(incident.First_Reported_By__c == 'External Party' && incident.External_Party__c == null){
             incident.External_Party__c.addError('External Party requried'); hasError = true;

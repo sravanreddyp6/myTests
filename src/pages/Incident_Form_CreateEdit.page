@@ -36,10 +36,36 @@
 				});
 				$('body select').each(function (_, target) {
 					applyRulesToField(target);
-				});                
+				}); 
+				evalFirstReportedField( jQuery('[id$=first_reported_by]'), true );               
             };
             setUpFields();
         }); 
+        
+function evalFirstReportedField(eley, leaveBlank){
+	console.log( jQuery(eley).val() );
+	jQuery('[id$=specify_emp_label]').addClass('noDisplay');
+	jQuery('[id$=specify_mentor_label]').addClass('noDisplay');
+	jQuery('[id$=specify_exp_label]').addClass('noDisplay');
+	if(!leaveBlank){
+		jQuery('[id$=specify_emp_input]').val('');
+		jQuery('[id$=specify_mentor_input]').val('');
+		jQuery('[id$=specify_exp_input]').val('');
+	}	
+	var v = jQuery(eley).val();
+	if(v == 'Employee'){
+		jQuery('[id$=specify_emp_label]').removeClass('noDisplay');
+	}
+	if(v == 'Mentor'){
+		jQuery('[id$=specify_mentor_label]').removeClass('noDisplay');
+	}
+	if(v == 'External Party'){
+		jQuery('[id$=specify_exp_label]').removeClass('noDisplay');
+	}	
+
+
+
+}        
 </script>
 <style>
 .sub-question-header{font-size:10pt; font-weight: bold; padding: 7px; padding-left:0px; color: #4a4a56;}
@@ -49,6 +75,7 @@
    color: White !important; 
 }
 .labelCol{min-width: 300px;}
+.noDisplay{display: none;}
 </style>
 <br/>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentEdit" admId="{!servAssign.Admission__c}" rendered="{!servAssign.id != null}" />
@@ -98,17 +125,17 @@
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel >First Reported to The MENTOR Network By</apex:outputLabel>
                     <apex:outputPanel >
-                  		<apex:inputField html-data-visibility-rules="{&quot;Employee&quot;: [&quot;{!$Component.specify_emp_label}&quot;, &quot;{!$Component.specify_emp_input}&quot;], 
+                  		<apex:inputField id="first_reported_by" onchange="evalFirstReportedField(this);" html-data-visibility-rules2="{&quot;Employee&quot;: [&quot;{!$Component.specify_emp_label}&quot;, &quot;{!$Component.specify_emp_input}&quot;], 
                   					&quot;Mentor&quot;: [&quot;specify_mentor_label&quot;, &quot;{!$Component.specify_mentor_input}&quot;],
                   					&quot;External Party&quot;: [&quot;{!$Component.specify_exp_label}&quot;, &quot;{!$Component.specify_exp_input}&quot;]}" 
                   			value="{!Incident__c.First_Reported_By__c}" / >
                   		
                     		<apex:outputPanel id="specify_emp_label"  styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="sub-question-header">Specify Employee</apex:outputLabel>
-                    			<apex:inputField id="specify_emp_input2" value="{!Incident__c.First_Reported_Staff__c}" />
+                    			<apex:inputField id="specify_emp_input" value="{!Incident__c.First_Reported_Staff__c}" />
                     		</apex:outputPanel>
 
                     		<div id="specify_mentor_label" class="sub-question-wrapper"><apex:outputLabel styleClass="sub-question-header">Specify Mentor</apex:outputLabel>
-                    			<apex:inputField id="specify_mentor_input2" value="{!Incident__c.First_Reported_Mentor__c }" />
+                    			<apex:inputField id="specify_mentor_input" value="{!Incident__c.First_Reported_Mentor__c }" />
 							</div>                    	
                     		<apex:outputPanel id="specify_exp_label"  styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="sub-question-header">Specify External Party</apex:outputLabel>
                     			<apex:inputField id="specify_exp_input" value="{!Incident__c.External_Party__c}" />                    		
