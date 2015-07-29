@@ -1914,7 +1914,7 @@ public without sharing class ServiceAssignmentExt {
 
 	@testvisible private void populateFundingSources() {
 		this.fundingSources =
-				[select id, Payor__c, Funding_Source__c, Funding_Source_ID__c, Status__c, Service_Being_Funded__c, Comment__c,
+				[select id, Payor__c, Funding_Source__c, Funding_Source_ID__c, Status__c, Service_Being_Funded__c, Comment__c, CreatedDate,
 				 type_of_coverage__c, payer_name__c, Case_Manager__c, effective_date__c, termination_date__c, recordtype.name, Funding_Source_Status__c
 				 from Funding_Source__c
 				 where Service_Assignment__c = :this.theServAssign.Id

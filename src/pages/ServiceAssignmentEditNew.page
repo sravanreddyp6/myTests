@@ -2144,6 +2144,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Termination_Date__c}" />
 				<apex:column value="{!fundingSource.Status__c}" />
 				<apex:column value="{!fundingSource.Comment__c}" />
+				<apex:column value="{!fundingSource.CreatedDate}" />
 			</apex:pageBlockTable>
 
 			<apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0 && canEditFundingSource }">
@@ -2160,8 +2161,9 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Payer_Name__c}" />
 				<apex:column value="{!fundingSource.Effective_Date__c}" />
 				<apex:column value="{!fundingSource.Termination_Date__c}" />
-				<apex:column value="{!fundingSource.Comment__c}" />
 				<apex:column value="{!fundingSource.Status__c}" />
+				<apex:column value="{!fundingSource.Comment__c}" />				
+				<apex:column value="{!fundingSource.CreatedDate}" />
 			</apex:pageBlockTable>
 		</apex:pageBlock>
 		
@@ -2219,6 +2221,7 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:column value="{!item.Termination_Date__c}" />
 					<apex:column value="{!item.Status__c}" />
 					<apex:column value="{!item.Comment__c}" />
+					<apex:column value="{!item.CreatedDate}" />
 				</apex:pageBlockTable>
 				<apex:outputText value="No records to display" rendered="{!(referralFundingsources == null || referralFundingsources.size = 0)}" />
 			</apex:pageBlockSection>
