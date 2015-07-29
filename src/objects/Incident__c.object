@@ -103,7 +103,7 @@
     <fields>
         <fullName>External_Party__c</fullName>
         <externalId>false</externalId>
-        <label>First Reported External Party</label>
+        <label>First Reported by External Party</label>
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
@@ -133,6 +133,32 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>First_Reported_Mentor__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>First Reported by Mentor</label>
+        <referenceTo>TMN_Contact__c</referenceTo>
+        <relationshipLabel>Incidents (First Reported Staff)</relationshipLabel>
+        <relationshipName>Incidents</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>First_Reported_Staff__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>First Reported by Staff</label>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Incidents (First Reported Staff)</relationshipLabel>
+        <relationshipName>Incidents1</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>First_Reported_Time_is_Approximate__c</fullName>
@@ -681,7 +707,7 @@
         <deleteConstraint>SetNull</deleteConstraint>
         <description>Filled in if mentor is subject of incident (not Mentor present at time of incident)</description>
         <externalId>false</externalId>
-        <label>First Reported Mentor</label>
+        <label>Mentor Related to Incident</label>
         <referenceTo>TMN_Contact__c</referenceTo>
         <relationshipLabel>Incidents</relationshipLabel>
         <relationshipName>Incidents_Mentor_as_Subject</relationshipName>
@@ -695,7 +721,7 @@
         <deleteConstraint>SetNull</deleteConstraint>
         <description>Used if Staff Member is subject of incident (not staff present at time of incident).</description>
         <externalId>false</externalId>
-        <label>First Reported Staff</label>
+        <label>Staff Related to Incident</label>
         <referenceTo>TMN_User__c</referenceTo>
         <relationshipLabel>Incidents</relationshipLabel>
         <relationshipName>Incidents</relationshipName>

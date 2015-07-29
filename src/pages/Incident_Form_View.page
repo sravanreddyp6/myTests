@@ -47,8 +47,8 @@
         		 	<apex:outputPanel >
         		 		<apex:outputField value="{!Incident__c.First_Reported_By__c}" />
         		 		<br/>
-						<apex:outputField value="{!Incident__c.TMN_User__c}" rendered="{!Incident__c.First_Reported_By__c == 'Employee'}" />
-						<apex:outputField value="{!Incident__c.TMN_Contact__c}" rendered="{!Incident__c.First_Reported_By__c == 'Mentor'}" />
+						<apex:outputField value="{!Incident__c.First_Reported_Staff__c}" rendered="{!Incident__c.First_Reported_By__c == 'Employee'}" />
+						<apex:outputField value="{!Incident__c.First_Reported_Mentor__c}" rendered="{!Incident__c.First_Reported_By__c == 'Mentor'}" />
 						<apex:outputField value="{!Incident__c.External_Party__c}" rendered="{!Incident__c.First_Reported_By__c == 'External Party'}" />       		 		
         		 	</apex:outputPanel>
         		 </apex:pageBlockSectionItem>
