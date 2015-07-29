@@ -5,10 +5,13 @@
 <!-- <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" /> -->
 <style>
 .sub-question-header{font-size:10pt; font-weight: bold; padding: 7px; padding-left:0px; color: #4a4a56;}
+/*
 .pbSubheader {
+
    background-color: #253e76 !important;  
    color: White !important; 
 }
+*/
 </style>
 <br/>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentView" admId="{!servAssign.Admission__c}" rendered="{!servAssign.Id != null}"/>
@@ -93,24 +96,24 @@
         		<apex:outputField label="Was an Internal Investigation initiated?" value="{!Incident__c.Internal_Investigation__c }" />
         		<apex:outputField label="Incident Outcome" value="{!Incident__c.Incident_Outcome__c}" />
         	</apex:pageBlockSection>
-    </apex:pageBlock>
-    <apex:pageBlock title="Related People" >
-	    <div class="pbHeaderButton">
-	    </div>
-	       <apex:pageBlockTable styleclass="pbBody-list" value="{!relatedPeople}" var="relper" rendered="{!relatedpeople != null && relatedpeople.size > 0}">
-	       <apex:column headerValue="Type" value="{!relper.Person_Type__c}" />
-	       <apex:column headerValue="Name"> 
-	           <apex:outputLink value="/{!relper.Mentor__c}" rendered="{!relper.recordtype.name = 'Mentor'}">{!relper.mentor__r.name}</apex:outputLink>
-	           <apex:outputLink value="/{!relper.Staff_Member__c}" rendered="{!relper.recordtype.name = 'Staff'}" >{!relper.staff_member__r.name}</apex:outputLink>
-	           <apex:outputText value="/{!relper.Other_people__c}" rendered="{!relper.recordtype.name = 'Other'}" />
-	       </apex:column> 
-	       <apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
-	       <apex:column headerValue="Last Modified">
-	           <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
-	       </apex:column>
-	    
-	    </apex:pageBlockTable>
-    </apex:pageBlock>
+		    <apex:pageBlockSection columns="1" title="Related People" collapsible="false" >
+			    <div class="pbHeaderButton">
+			    </div>
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!relatedPeople}" var="relper" rendered="{!relatedpeople != null && relatedpeople.size > 0}">
+					<apex:column headerValue="Type" value="{!relper.Person_Type__c}" />
+					<apex:column headerValue="Name"> 
+					    <apex:outputLink value="/{!relper.Mentor__c}" rendered="{!relper.recordtype.name = 'Mentor'}">{!relper.mentor__r.name}</apex:outputLink>
+					    <apex:outputLink value="/{!relper.Staff_Member__c}" rendered="{!relper.recordtype.name = 'Staff'}" >{!relper.staff_member__r.name}</apex:outputLink>
+					    <apex:outputText value="/{!relper.Other_people__c}" rendered="{!relper.recordtype.name = 'Other'}" />
+					</apex:column> 
+					<apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
+					<apex:column headerValue="Last Modified">
+					    <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
+					</apex:column>
+			    
+					</apex:pageBlockTable>
+			</apex:pageBlockSection>
+</apex:pageBlock>
     
     
 <!--     Use this for All ajax calls on this page -->
