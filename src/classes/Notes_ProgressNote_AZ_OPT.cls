@@ -17,7 +17,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     Public String SignedDoc {get;set;}
     Public String SrvcLoc {get;set;}
     Public list<sTRING> GoalSelStrs {get;set;}
+    Public list<sTRING> GoalSelStrsremvd {get;set;}
+    Public list<sTRING> GoaldeSelStrs {get;set;}
    public string GoalsSelected{get;set;}
+   public string GoalsdeSelected{get;set;}
    public Map<Id, GoalWrapper> treeModel = new Map<Id, GoalWrapper>();
    public list<action_plan_objective__c> allObjectives  = new list<action_plan_objective__c>();
    public list<action_plan_objective__c> getallObjectives (){return allObjectives ;}
@@ -112,10 +115,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     }
     
     
+    /** Removed --> Not being used in the page now
     public PageReference myFinal(){
         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
         pageRef.getParameters().put('id', thePN.id);
-        
         try{
             update thePN;
             return pageRef;
@@ -124,7 +127,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 thePN.addError(e.getMessage());
             }      
         return null;
-    }
+    }***/
     
     public PageReference disregardNote(){
         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_AddlActions');
@@ -205,8 +208,9 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         }
     }
     public Notes_ProgressNote_AZ_OPT(ApexPages.StandardController controller){
-         GoalsSelected='';overlappingProgressNote = new list<progress_note__c>();
+         GoalsSelected='';overlappingProgressNote = new list<progress_note__c>();GoalsDeSelected='';
          GoalSelStrs = New List<String>();
+         GoalSelStrsremvd = New List<String>();
          String dispMode = ApexPages.currentPage().getParameters().get('Mode');
         if(dispMode!='Edit'){
             ActivePlanId = ApexPages.currentPage().getParameters().get('plan');
@@ -217,6 +221,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
              progress_note__c pnedit = [select Service_Assignment__c ,owner.name,End_Time__c,Signature_on_File__c ,Person_Being_Served__r.Name,next_approver__c,Start_Time__c,Service_Location__c,GoalIds_AZOPTPage__c ,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
              this.thePN = pn;
              GoalsSelected = Apexpages.currentPage().getParameters().get('selectedKey');
+             GoalsDeSelected = Apexpages.currentPage().getParameters().get('DeselectedKey');
+             System.debug('******************GoalsSelected'+GoalsSelected);
+             System.debug('******************GoalsDeSelected'+GoalsDeSelected);
+             System.debug('888888888pnedit.GoalIds_AZOPTPage__c'+pnedit.GoalIds_AZOPTPage__c);
              list<Id> GoalSelIds = New List<Id>();
              if(GoalsSelected == null || GoalsSelected == '')
                 GoalsSelected = pnedit.GoalIds_AZOPTPage__c;
@@ -229,10 +237,27 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
              admissionId = pnedit.Service_Assignment__r.Admission__c;  
              ActivePlanId = pnedit.Action_Plan__c;
              loaddata(pnedit);
-             
+             if(GoalsDeSelected!=null && GoalsDeSelected !=''){
+                GoalDeSelStrs = (GoalsDeSelected.split(','));
+             }System.debug('******************GoalDeSelStrs'+GoalDeSelStrs);
              if(GoalsSelected!=null && GoalsSelected !=''){
                 GoalSelStrs = (GoalsSelected.split(','));
-                reformedittree(GoalSelStrs);
+                System.debug('******************GoalSelStrs'+GoalSelStrs);
+                if(GoalDeSelStrs!=Null){
+                    for(string s:GoalSelStrs){
+                        boolean deletethis = false;
+                        for(string str:GoalDeSelStrs){
+                            if(s==str){
+                              deletethis = true; //GoalSelStrs.remove(s);
+                            }
+                        }
+                        if(deletethis == false)
+                            GoalSelStrsremvd.add(s);
+                    }
+                }else{
+                		GoalSelStrsremvd.addall(GoalSelStrs);
+                }System.debug('******************'+GoalSelStrsremvd);
+                reformedittree(GoalSelStrsremvd);
              }
         }
         if(ActivePlanId != Null && dispMode!='Edit'){
@@ -446,11 +471,11 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        update pn;
        insertedProgressNoteId = pn.Id;
        newBlock = false;
-       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id +'&SelectedKey='+ GoalsSelected );
+       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id +'&SelectedKey='+ GoalsSelected +'&DeselectedKey='+ GoalsdeSelected );
        pageref.setredirect(true);
        return pageref;
         } 
-    } 
+    }  
     
     public pagereference cancelEditNote(){
         newBlock = false; 
@@ -462,14 +487,46 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public pagereference RenderSelectedIds(){
         overlappingProgressNote = new list<progress_note__c>();
         GoalsSelected = Apexpages.currentPage().getParameters().get('selectedKey');
-        
+        GoalsDeSelected = Apexpages.currentPage().getParameters().get('DeselectedKey');
+        system.debug('*******'+ GoalsSelected);
+        system.debug('*******'+ GoalsDeSelected);
         insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
         if(insertedProgressNoteId !=null){
         progress_note__c pnedit2 = [select Service_Assignment__r.Admission__r.State__c,GoalIds_AZOPTPage__c,owner.name,Person_Being_Served__r.Name,next_approver__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
         list<Id> GoalSelIds = New List<Id>();
-        if(pnedit2.GoalIds_AZOPTPage__c!= null)
-        GoalsSelected = GoalsSelected + ',' + pnedit2.GoalIds_AZOPTPage__c;
+        if(pnedit2.GoalIds_AZOPTPage__c!= null){
+        	if(GoalsSelected != Null && GoalsSelected != '')
+        		GoalsSelected = GoalsSelected + ',' + pnedit2.GoalIds_AZOPTPage__c;
+        	else
+        		GoalsSelected = pnedit2.GoalIds_AZOPTPage__c;
         }
+        if(GoalsSelected!=null && GoalsSelected !=''){
+        	GoalSelStrs = (GoalsSelected.split(','));
+        	System.debug('******************GoalSelStrs'+GoalSelStrs);
+        if(GoalsDeSelected!=null && GoalsDeSelected !=''){
+                GoalDeSelStrs = (GoalsDeSelected.split(','));
+        }System.debug('******************GoalDeSelStrs'+GoalDeSelStrs);
+             	if(GoalDeSelStrs!=Null){
+                    for(string s:GoalSelStrs){
+                        boolean deletethis = false;
+                        for(string str:GoalDeSelStrs){
+                            if(s==str){
+                              deletethis = true; //GoalSelStrs.remove(s);
+                            }
+                        }
+                        if(deletethis == false)
+                            GoalSelStrsremvd.add(s);
+                    }
+                }else{
+                		GoalSelStrsremvd.addall(GoalSelStrs);
+                }System.debug('******************'+GoalSelStrsremvd);
+        if(GoalSelStrsremvd.Size()>0){
+        	goalsSelected= '' ;
+    		for(string s: GoalSelStrsremvd){
+        		goalsSelected = goalsSelected + s + ',';
+        	}
+        }
+        }}
         pn.recordtypeid = AZ_OPT_ID ;
         pn.Person_Being_Served__c = pbsName;
        pn.admission__c = admissionId;
@@ -534,16 +591,20 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        upsert pn;
        insertedProgressNoteId = pn.Id;
        newBlock = false;
-       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&SelectedKey='+ GoalsSelected +'&sfdc.override=1');
+       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&SelectedKey='+ GoalsSelected +'&Deselectedkey='+ GoalsDeSelected +'&sfdc.override=1');
        pageref.setredirect(true);
        return pageref;     
       }      
-    }
     
+    }
     public void reformedittree(list<string> GoalSelStrs){
         if(GoalSelStrs.size()>0){
-                 
-            allGoals = new TMN_Tree();      
+           String strToUpdate ='';
+            for(string s: GoalSelStrs){
+                strToUpdate = strToUpdate + s+',';
+            } 
+            pn.GoalIds_AZOPTPage__c = strToUpdate ;   
+            allGoals = new TMN_Tree();     
             nodes2 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r ) from Action_Plan_Goal__c where Id In: GoalSelStrs Order BY Sort_Order__c];
             allgoals1 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r ) from Action_Plan_Goal__c where Action_Plan__c = :ActivePlanId Order BY Sort_Order__c];  
                 allObjectives = [select id, (select description__c, id from Action_Plan_Actions__r order by Sort_Order__c) from action_plan_objective__c where action_plan_goal__r.action_plan__c = :ActivePlanId] ;                               
