@@ -90,7 +90,9 @@ public with sharing class Incident_Form_CreateEdit {
         if( WhereTypes.contains(incident.Where_incident_occurred__c)  && incident.Network_Type__c == null){
             incident.Where_incident_occurred__c.addError('Type is required'); hasError = true;
         }       
-                
+ 		if( incident.First_Response_Action_Taken__c.contains('Other') && incident.First_Response_Action_Taken_Other__c == null){
+            incident.First_Response_Action_Taken_Other__c.addError('Other is required'); hasError = true;
+        }                  
         return hasError;
         
     }  
@@ -117,10 +119,7 @@ public with sharing class Incident_Form_CreateEdit {
         }      
  		if( incident.Mentor_present__c == null ){
             incident.Mentor_present__c.addError('Mentor Present is required'); hasError = true;
-        }     
- 		if( incident.Others_Present_at_Time_of_Incident__c == null ){
-            incident.Others_Present_at_Time_of_Incident__c.addError('Others Present is required'); hasError = true;
-        }                       
+        }                               
         return hasError; 
     }
     

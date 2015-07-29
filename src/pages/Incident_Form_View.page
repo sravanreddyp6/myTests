@@ -3,11 +3,18 @@
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <!-- <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" /> -->
 <!-- <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" /> -->
-
+<style>
+.sub-question-header{font-size:10pt; font-weight: bold; padding: 7px; padding-left:0px; color: #4a4a56;}
+.pbSubheader {
+   background-color: #253e76 !important;  
+   color: White !important; 
+}
+</style>
 <br/>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentView" admId="{!servAssign.Admission__c}" rendered="{!servAssign.Id != null}"/>
+<br/>
 <apex:form >
-        <apex:pageBlock mode="mainDetail" title="General Information">
+        <apex:pageBlock mode="detail" title="General Information">
         	<apex:pageBlockButtons location="top">
 	            <div style="float: right;">
 	                <apex:CommandButton value="Edit" action="{!editIncident}" />
@@ -16,36 +23,48 @@
 	                <apex:CommandButton value="Disregard" />
 	            </div>
         	</apex:pageBlockButtons>
-        	<apex:pageBlocksection columns="1" showHeader="false">
+        	<apex:pageBlocksection columns="1" showHeader="false" collapsible="false">
         		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
         			<apex:outputLabel value="Which Current Service is Related to the Incident? " />
         			<apex:outputField value="{!Incident__c.Service_Assignment__c }" />
         		</apex:pageBlockSectionItem>
         	</apex:pageBlocksection>
         	
-        	<apex:pageBlockSection columns="2" title="Incident Timing" showHeader="true" >
+        	<apex:pageBlockSection columns="1" title="Incident Timing" showHeader="true" collapsible="false" >
         		<apex:outputField value="{!Incident__c.Unknown_Date_Occurred__c}" label="Date/Time Currently unknown" rendered="{!Incident__c.Unknown_Date_Occurred__c}"/>
         		<apex:pageBlockSectionItem rendered="{!!Incident__c.Unknown_Date_Occurred__c}">
         			<apex:outputLabel value="Date/Time Incident Occurred" />
-        			<c:MilitaryDatetime dateTimeVal="{!Incident__c.Date_Occurred__c}" />
+        			<apex:outputPanel >
+        				<c:MilitaryDatetime dateTimeVal="{!Incident__c.Date_Occurred__c}" />
+        				<apex:outputPanel layout="block" rendered="{!Incident__c.Occurred_Time_is_Approximate__c}">        				
+        		 			<apex:outputField value="{!Incident__c.Occurred_Time_is_Approximate__c}" /> 
+        		 			<apex:outputLabel styleClass="sub-question-header" value="Time is Approximate" />      				
+        				</apex:outputPanel>
+        			</apex:outputPanel>
         		 </apex:pageBlockSectionItem>
-        		 <apex:outputField value="{!Incident__c.First_Reported_By__c}" />
-        		 <apex:outputField value="{!Incident__c.Occurred_Time_is_Approximate__c}" label="Time is Approximate" rendered="{!!Incident__c.Unknown_Date_Occurred__c}" />
-        		 <apex:pageBlockSectionItem rendered="{!Incident__c.Unknown_Date_Occurred__c}"/>
-        		 <apex:outputField value="{!Incident__c.TMN_User__c}" rendered="{!Incident__c.First_Reported_By__c == 'Employee'}" />
-        		 <apex:outputField value="{!Incident__c.TMN_Contact__c}" rendered="{!Incident__c.First_Reported_By__c == 'Mentor'}" />
-        		 <apex:outputField value="{!Incident__c.External_Party__c}" rendered="{!Incident__c.First_Reported_By__c == 'External Party'}" />
-        		 <apex:pageBlockSectionItem />
-        		 <apex:pageBlockSectionItem />
+        		 <apex:pageBlockSectionItem >
+        		 	<apex:outputLabel value="First Reported to The MENTOR Network By" />
+        		 	<apex:outputPanel >
+        		 		<apex:outputField value="{!Incident__c.First_Reported_By__c}" />
+        		 		<br/>
+						<apex:outputField value="{!Incident__c.TMN_User__c}" rendered="{!Incident__c.First_Reported_By__c == 'Employee'}" />
+						<apex:outputField value="{!Incident__c.TMN_Contact__c}" rendered="{!Incident__c.First_Reported_By__c == 'Mentor'}" />
+						<apex:outputField value="{!Incident__c.External_Party__c}" rendered="{!Incident__c.First_Reported_By__c == 'External Party'}" />       		 		
+        		 	</apex:outputPanel>
+        		 </apex:pageBlockSectionItem>
         		 <apex:pageblockSectionItem >
         		 	<apex:outputLabel value="Date/Time Incident Reported to The MENTOR Network" />
-        			<c:MilitaryDatetime dateTimeVal="{!Incident__c.Date_Reported__c}" />
+        		 	<apex:outputPanel >
+        				<c:MilitaryDatetime dateTimeVal="{!Incident__c.Date_Reported__c}" />
+        				<apex:outputPanel layout="block" rendered="{!Incident__c.First_Reported_Time_is_Approximate__c}" >        				
+        		 			<apex:outputField value="{!Incident__c.First_Reported_Time_is_Approximate__c}" /> 
+        		 			<apex:outputLabel styleClass="sub-question-header" value="Time is Approximate" />      				
+        				</apex:outputPanel>        				
+       				</apex:outputPanel>
         		 </apex:pageblockSectionItem>
-        		 <apex:pageBlockSectionItem />
-        		 <apex:outputField value="{!Incident__c.First_Reported_Time_is_Approximate__c}" label="Time is Approximate" />
         	</apex:pageBlockSection>
         	
-        	<apex:pageBlockSection columns="1" showheader="true" title="Incident Location" >
+        	<apex:pageBlockSection columns="1" showheader="true" title="Incident Location" collapsible="false" >
         		<apex:outputField value="{!Incident__c.Where_incident_occurred__c }" />
         		<apex:outputField value="{!Incident__c.Community_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Community Location'}" />
         		<apex:outputField value="{!Incident__c.Other_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Other Location'}" />
@@ -53,9 +72,9 @@
         				Incident__c.Where_incident_occurred__c == 'Program Office' || Incident__c.Where_incident_occurred__c == 'Residence' || Incident__c.Where_incident_occurred__c == 'School'}"/> 
         	</apex:pageBlockSection>
         	
-        	<apex:pageBlockSection columns="2" showheader="true" title="Incident Type" >
-        		<apex:outputField value="{!Incident__c.Hospitalized__c}" label="Was the Person Being Served hospitalized?" />
-        		<apex:outputField value="{!Incident__c.PBS_Arrested__c}" label="Was the Person Being Served hospitalized?" />
+        	<apex:pageBlockSection columns="2" showheader="true" title="Incident Type" collapsible="false" >
+        		<apex:outputField value="{!Incident__c.Hospitalized__c}" label="Was the Person Being Served hospitalized?"  rendered="false"/>
+        		<apex:outputField value="{!Incident__c.PBS_Arrested__c}" label="Was the Person Being Served hospitalized?"  rendered="false"/>
         		<apex:outputField value="{!Incident__c.Hospitalization_Type__c}" label="Type" rendered="{!Incident__c.Hospitalized__c == 'Yes'}"/>
         		<apex:pageBlockSectionitem rendered="{!Incident__c.Hospitalized__c == 'No'}" />
         		<apex:outputField value="{!Incident__c.PBS_Arrest_Reason_Known__c}" label="Reason Known?" rendered="{!Incident__c.PBS_Arrested__c == 'Yes'}"/>
@@ -63,12 +82,12 @@
         		<apex:outputField value="{!Incident__c.Incident_Type__c}" label="Which of the following describe the events?" />
         	</apex:pageBlockSection>
         	
-        	<apex:pageBlockSection columns="1" showHeader="true" title="First Response" >
+        	<apex:pageBlockSection columns="1" showHeader="true" title="First Response" collapsible="false" >
         		<apex:outputField value="{!Incident__c.First_Response_Action_Taken__c}" label="First Response Action Taken" />
         		<apex:outputField value="{!Incident__c.First_Response_Action_Taken_Other__c}" label="Other" rendered="{!contains(Incident__c.First_Response_Action_Taken__c,'Other')}"/>
         	</apex:pageBlockSection>
         	
-        	<apex:pageBlockSection columns="1" showHeader="true" title="SuperVisor" >
+        	<apex:pageBlockSection columns="1" showHeader="true" title="SuperVisor" collapsible="false" rendered="false" >
         		<apex:outputField value="{!Incident__c.Incident_Level__c}" label="Incident Level" />
         		<apex:outputField label="Incident Type-Detailed list" value="{!Incident__c.Incident_Type_Detail__c}" />
         		<apex:outputField label="Was an Internal Investigation initiated?" value="{!Incident__c.Internal_Investigation__c }" />
