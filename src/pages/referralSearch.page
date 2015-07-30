@@ -1,0 +1,148 @@
+<apex:page controller="referralResults_Controller" >
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<script>
+j$ = jQuery.noConflict();
+
+j$(document).ready(function() {
+	formatDate();
+});
+
+var validateInput = function( ) {
+
+	var fname = j$('input[id$=fname]');
+	var lname = j$('input[id$=lname]');
+	var dob = j$('input[id$=dob]');
+	var age = j$('input[id$=age]');
+	var refID = j$('input[id$=rid]');
+	
+	var errors = '';
+	j$('#searchErrors').html(errors);
+	
+	if ( refID.val() == '') {
+	
+		if ( fname.val() == '' && lname.val() == '' ) {
+			errors += "<li>First and last name cannot both be blank.";
+			}
+			
+		if ( dob.val() != '' && !Date.parse( dob.val())) {
+			errors += "<li>Please enter a valid date of birth.";
+		}
+		
+		if ( age.val() != '' && !j$.isNumeric(age.val()))  {
+			errors += "<li>Please enter a valid age.";
+		}	
+		
+		if ( errors != '' ) {
+			j$('#searchErrors').html(errors);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	return true;
+}
+	
+     function formatDate()
+     {
+     	var dob = j$('input[id$=dob]');
+     	var m, d, y;
+     	if (dob.val()) {
+               var args = (new Date(dob.val()).toISOString().split('T')[0]).split('-');
+               dob.val( args[1] + '/' + args[2] + '/' + args[0]);
+        }
+     }
+        
+
+
+</script>
+  
+  <apex:form id="referralForm">	
+    <apex:actionFunction name="searchRefs" action="{!searchRefs}" rerender="refResultsBlock, msgs" />
+ 
+    <apex:pageBlock mode="edit"  >
+    <apex:pageMessages id="msgs" />
+ 	<div id="searchErrors" style="color:red;padding:10px"/>
+      <apex:facet name="header">
+        <table cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td class="pbTitle">
+              <h2 class="mainTitle">Referral Search</h2>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
+          </table>
+      </apex:facet>
+	
+	  
+      <apex:pageblockButtons location="bottom">
+      	<input type="button" class="btn" id="cancel" value="Back" onclick="window.history.go({!submitCount});" />
+      </apex:pageblockButtons>
+
+      <apex:outputPanel layout="block">
+      <apex:pageBlockSection title="Search for..."
+                             columns="1"
+                             collapsible="false"
+                             id="PBRSection">
+         
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Referral Number</apex:outputLabel>
+            <apex:inputText value="{!referralNumber}" id="rid" />
+        </apex:pageBlockSectionItem>
+        <apex:inputText label="First Name" id="fname" value="{!personFirstName}" />
+        <apex:inputText label="Last Name" id="lname" value="{!personLastName}" />
+        
+        <apex:inputText label="Date of Birth" id="dob" value="{!personDOB}" size="10" onfocus="DatePicker.pickDate(false, this, false);" onBlur="return formatDate();" />
+       	<apex:inputText label="Age: Years" id="age" value="{!personAge}" />
+       	<apex:selectlist label="Gender" value="{!personGender}" id="gender" size="1">
+       		<apex:selectOptions value="{!genderList}" />
+     	</apex:selectlist>
+     	<apex:pageBlockSectionItem >
+     	<apex:outputLabel value="" />
+      	<apex:commandbutton action="{!searchRefs}" value="Search" onclick="return validateInput();" />
+      	</apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      </apex:outputPanel>
+
+      <apex:outputPanel id="refResultsBlock"
+                        layout="block">
+        <apex:pageBlockSection title="Search Results"
+             columns="1"
+             collapsible="false"
+             id="ResultsSection">
+          <apex:pageBlockTable value="{!refResults}" var="r">
+            <apex:column headerValue="Referrals">
+               <apex:repeat value="{!r.Referrals}" var="ref">
+                  <a href="/{!ref.id}">{!ref.Name}</a><br/>
+               </apex:repeat>     
+            </apex:column>
+            <apex:column headerValue="Name">{!r.LastName}, {!r.FirstName}</apex:column>
+            <apex:column headerValue="Age">     {!r.ageDetails}       </apex:column>
+            <apex:column headerValue="Gender">{!r.gender}</apex:column>
+            <apex:column headerValue="Address">
+              <c:AddressDisplay Street1="{!r.Street1}"
+                                Street2="{!r.Street2}"
+                                City="{!r.City}"
+                                State="{!r.State}"
+                                Zip="{!r.ZipCode}"/>
+            </apex:column>
+            <apex:column headerValue="Type">{!r.Type}</apex:column>
+            <apex:column headerValue="Action">
+              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Referred',r.pbsonPBR==null, canCreateReferral), 'true', 'false')}">
+                 <a href="/apex/referral?pbrID={!r.Id}">New Referral</a>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(AND(referralId == null,r.type == 'Person Being Served', canCreateReferral), 'true', 'false')}">
+                 <a href="/apex/referral?pbsID={!r.Id}">New Referral</a>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Referred', pbrId != r.ID, canUpdateReferral), 'true', 'false')}">
+                 <a href="/apex/referral?pbrID={!r.Id}&Id={!referralId}">Link Referral</a>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!IF(AND(referralId != null,r.type == 'Person Being Served', canUpdateReferral), 'true', 'false')}">
+                 <a href="/apex/referral?pbsID={!r.Id}&Id={!referralId}">Link Referral</a>
+              </apex:outputPanel>
+            </apex:column>
+        </apex:pageBlockTable>
+        </apex:pageBlockSection>
+      </apex:outputPanel>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>
