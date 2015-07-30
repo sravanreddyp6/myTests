@@ -66,10 +66,11 @@ public with sharing class HomePageController{
 	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
 	
 	
-	//Incidents
+	
+	//Incidents 
+	//public List<Incident__c> myIncidents {get; set;}
+	//public string selectedIncident {get; set;}
 	public string userChosenIncident {get; set;}
-	public List<Incident__c> myIncidents {get; set;}
-	public string selectedIncident {get; set;}
 	public string SAfirstName {get; set;}
 	public string SAlastName {get; set;}
 	public List<Service_Assignment__c> ServAssigns {get; private set;}
@@ -169,7 +170,7 @@ public with sharing class HomePageController{
 		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();
-		displayIncidents();
+		//displayIncidents();
 	}
 
 	private String parseProgram(String program) {
@@ -352,7 +353,7 @@ public with sharing class HomePageController{
 		}
 	}
 	
-	public List<selectOption> getIncidentTypes() {
+/*	public List<selectOption> getIncidentTypes() {
 		List<SelectOption> Options = new List<SelectOption>();
 		Options.add(new SelectOption('All Incidents','All Incidents'));
 		Options.add(new SelectOption('PBS','PBS'));
@@ -374,7 +375,7 @@ public with sharing class HomePageController{
 		}
 		//String orderStatement = '';
 		myIncidents = Database.query(SOQL);
-	}
+	}*/
 	
 	public pageReference createIncident(){
 		PageReference pr = new pagereference('/apex/Incident_Form_CreateEdit');
