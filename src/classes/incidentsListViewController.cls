@@ -1,4 +1,9 @@
 public with sharing class incidentsListViewController {
+	/*************************************************************************
+	@@@- Sravan Pinninti
+	@@@- Pagination have to be implemented after finalizing the columns to be displayed
+	@@@@ - Apply filters especially when all Incidents are Queried
+	****************************************************************************/
 	
 	public List<Incident__c> incidents {get; set;}
 	public string selectedIncident {get; set;}
