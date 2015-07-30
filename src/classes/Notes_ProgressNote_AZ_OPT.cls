@@ -229,7 +229,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
              if(GoalsSelected == null || GoalsSelected == '')
                 GoalsSelected = pnedit.GoalIds_AZOPTPage__c;
              else
-             	GoalsSelected = GoalsSelected +','+ pnedit.GoalIds_AZOPTPage__c;
+                GoalsSelected = GoalsSelected +','+ pnedit.GoalIds_AZOPTPage__c;
              SignedDoc = pnedit.Signature_on_File__c;
              SrvcLoc = pnedit.Service_Location__c;
              pnOverlap = new List<Progress_Note__c>();
@@ -527,6 +527,8 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             for(string s: GoalSelStrsremvd){
                 goalsSelected = goalsSelected + s + ',';
             }
+        }else{
+            goalsSelected = '';
         }
         }}
         pn.recordtypeid = AZ_OPT_ID ;
