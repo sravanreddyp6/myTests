@@ -113,8 +113,8 @@
 			
 			<apex:outputPanel layout="none" rendered="{!objectName=='Incidents'}">
 				<apex:commandLink  value="Create New Incident" onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" /><br/>
-				<a href="/apex/incidentsListView" >View My Incidents</a><br/>
-				<a href="/apex/incidentsListView">View All Incidents</a><br />
+				<a href="/apex/incidentsListView?flag=MY" >View My Incidents</a><br/>
+				<a href="/apex/incidentsListView?flag=ALL">View All Incidents</a><br />
 			</apex:outputPanel>
 
 			<a href="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</a>
