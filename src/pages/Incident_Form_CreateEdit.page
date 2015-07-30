@@ -73,21 +73,41 @@ function evalFirstReportedField(eley, leaveBlank){
 .labelCol{min-width: 300px;}
 .noDisplay{display: none;}
 
+.pbSubheader {
+   border-top: 1px solid #253e76 !important;
+   color: black !important; 
+   font-size: 11pt !important;
+}
 
+
+.TmnHeader{
+	background-color: #253e76 !important; 
+	width: 100%;
+	font-size:11pt !important;
+	font-weight: bold;
+	color: white;
+	margin-top: 15px;
+	margin-bottom: 2px;
+}
+.btn{
+	background-color: #7bc145 !important;
+	color: black !important;
+	font-size:10pt !important;
+}
 </style>
-<br/>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentEdit" admId="{!servAssign.Admission__c}" rendered="{!servAssign.id != null}" />
 <apex:pagemessages id="msgs" />
 <br/>
 <apex:form id="theForm" >
-    <apex:pageBlock mode="detail" >
+    <apex:pageBlock mode="maindetail" >
+
+        <apex:pageBlock mode="detail" title="General Information" id="generalInfoBlock">
         <apex:pageBlockButtons >
             <div style="float: right;">
                 <apex:CommandButton action="{!saveIncident}" value="Save" status="pageProcessing" reRender="theForm, msgs" oncomplete="setUpFields();"/>
                 <apex:CommandButton action="{!Cancel}" value="Cancel" />
             </div>
-        </apex:pageBlockButtons>
-        <apex:pageBlock mode="mainDetail" title="General Information" id="generalInfoBlock">
+        </apex:pageBlockButtons>        
         	<apex:pageBlockSection columns="1" showHeader="false" >
         		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
         			<apex:outputLabel value="Which Current Service is Related to the Incident? "  />
@@ -164,7 +184,8 @@ function evalFirstReportedField(eley, leaveBlank){
 										&quot;Program Office&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
 										&quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
 										&quot;School&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
-										&quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 										 
+										&quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
+										&quot;Place of Employment&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],  										 
                   						&quot;Vehicle&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;]}" />
                     		<apex:outputPanel id="communityLocation_label" styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="labelCol, sub-question-header">Specify Community Location</apex:outputLabel>
                     			<apex:inputField id="communityLocation_input" value="{!Incident__c.Community_Location__c }" />                    		
@@ -181,9 +202,7 @@ function evalFirstReportedField(eley, leaveBlank){
        		</apex:pageBlockSection>
        		
        		
-        </apex:pageBlock>
-        
-        <apex:pageBlock mode="mainDetail" id="mainBlock" >
+
             <apex:pageBlockSection Title="Incident Type" columns="2" id="section1"  collapsible="false">
          
  				<apex:pageBlockSectionItem rendered="false" >
@@ -256,7 +275,7 @@ function evalFirstReportedField(eley, leaveBlank){
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem> 
 
-                 <apex:pageBlockSectionItem helpText="Do not enter the full name of any other Person being Served involved in the incident. Initials are OK." >
+                 <apex:pageBlockSectionItem helpText="Do not enter the full name of any other Person Being Served involved in the incident. Initials are OK." >
                     <apex:outputLabel >Others present at the time of the incident?</apex:outputLabel>
                     <apex:outputPanel >
                  		<apex:inputField value="{!Incident__c.Others_Present_at_Time_of_Incident__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.other_people_label}&quot;, &quot;{!$Component.other_people_input}&quot;]}" />
