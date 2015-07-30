@@ -1,5 +1,7 @@
 <apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
-
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
     <style type="text/css">
         .custPopup{
             background-color: white;
@@ -28,11 +30,104 @@
             left: 0;
             z-index: 9998;
         }
-
+ .ui-autocomplete-loading { background: white url('{!URLFOR($Resource.AjaxLoad)}') right center no-repeat; }
+   
     </style>
+     <script type="text/javascript" >
     
+      var j$ = jQuery.noConflict(); 
+ var currentUrl = window.location.href;
+ currentUrl = currentUrl.substring(0, currentUrl.indexOf("/identity_create"));
+ var sourcePage = currentUrl +'/TMNUser_JSON?core.apexpages.devmode.url=0&identityPage=yes';
+ j$(function() {
+   var txtVal =  j$('input[id$=locationName]');
+   	
+         j$('input[id$=locationName]').autocomplete({
+            source: function( request, response ) {
+
+                //Abort Ajax
+                var $this = j$(this);
+                var $element = j$(this.element);
+                var jqXHR = $element.data('jqXHR');
+                if(jqXHR)
+                    jqXHR.abort();
+
+                j$('input[id$=locationName]').addClass('ui-autocomplete-loading');
+                $element.data('jqXHR',j$.ajax({
+                    url: sourcePage+'&location='+txtVal.val(),
+                    dataType: "json",
+                    data: {
+                    },
+                    success: function( data ) {
+                        response( j$.map( data , function( item ) {
+                            return {
+                                label: '<a>'+
+                                item.location+"<br />"+
+                                '<span style="font-size:0.8em;font-style:italic">'
+                                +item.location +', '+item.state +"</span></a>",
+                                value: item.location
+                            }
+                        }));
+                    },
+                    complete: function() {
+                        $this.removeData('jqXHR');
+                        j$('input[id$=locationName]').removeClass('ui-autocomplete-loading');
+                    }
+                })
+                );
+
+            },
+            focus: function() {
+                return false;
+            },
+            select: function(event, ui) {
+                var selectedObj = ui.item;
+                 // j$('input[id$="ExportToExcel"]').prop('disabled', false)
+                setLocationDetails(selectedObj.value);
+                return true;
+            }
+        }).data("autocomplete")._renderItem = autoCompleteRender;
+
+    });
+
+function autoCompleteRender(ul, item) {
+    return j$("<li></li>").data("item.autocomplete", item).append(item.label).appendTo(ul);
+}  
+    function checkUndefined(field) {
+        if (field !== undefined) {
+            return field;
+        }
+        return " ";
+    }
+    
+    function setLocationDetails(locationId) {
+                Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.identityEditNew.LocationDetails}',
+                locationId,
+                function (result, event) {
+                    if (event.status) { // Success
+                        j$('[id$=locationLine1]').text(checkUndefined(result.Office_Location__c));
+                        j$('[id$=locationLine2]').text(checkUndefined(result.Office_Location_2__c));
+                        j$('[id$=locationCity]').text(checkUndefined(result.Work_City__c));
+						j$('[id$=locationState]').text(checkUndefined(result.Work_State__c));                                                      
+                        j$('[id$=locationZip]').text(checkUndefined(result.Zip_Code__c));
+                        j$('[id$=hiddenlocationLine1]').val(checkUndefined(result.Office_Location__c))
+                        j$('[id$=hiddenlocationLine2]').val(checkUndefined(result.Office_Location_2__c))
+                        j$('[id$=hiddenlocationCity]').val(checkUndefined(result.Work_City__c))
+                        j$('[id$=hiddenlocationState]').val(checkUndefined(result.Work_State__c))
+                        j$('[id$=hiddenlocationZip]').val(checkUndefined(result.Zip_Code__c))
+                    } else if (event.type === 'exception') {
+                        console.log(event);
+                    } 
+                }
+            );
+
+    
+    }
+    
+    </script>  
         <apex:form id="createForm" >
-            <apex:pageBlock title="TMN User" mode="edit" id="createBlock" >
+             <apex:pageBlock title="TMN User" mode="edit" id="createBlock" >
                 <apex:pageMessages id="pageMsg"/>
                 <apex:pageblockButtons location="Bottom" >    
                     <apex:commandButton value="Save" action="{!Save}"/>
@@ -72,8 +167,8 @@
                 </apex:pageBlockSection>
                 </apex:outputPanel>                
                 <apex:pageBlockSection columns="2" title="Location" id="locInfo">
-                    <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" required="true" taborderhint="18"/>    
-                    <apex:selectList label="State" value="{!TMNUser.Work_State__c}" size="1" required="true" tabindex="22">
+                    <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" id="locationName" required="true" taborderhint="18"/>    
+                   <!--  <apex:selectList label="State" value="{!TMNUser.Work_State__c}" size="1" required="true" tabindex="22">
                         <apex:selectOption itemValue="AL" itemLabel="Alabama"/>
                         <apex:selectOption itemValue="AK" itemLabel="Alaska"/>
                         <apex:selectOption itemValue="AZ" itemLabel="Arizona"/>
@@ -129,7 +224,19 @@
                     <apex:inputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" required="true" taborderhint="23"/>
                     <apex:inputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" taborderhint="20"/>
                     <apex:inputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}"/>                                                  
-                    <apex:inputField label="City" value="{!TMNUser.Work_City__c}" required="true" taborderhint="21"/>                  
+                    <apex:inputField label="City" value="{!TMNUser.Work_City__c}" required="true" taborderhint="21"/>  -->   
+                    <apex:outputField label="State" value="{!TMNUser.Work_State__c}" id="locationState"/>
+                    <apex:outputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" id="locationLine1" />
+                    <apex:outputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" id="locationZip"/>
+                    <apex:outputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" id="locationLine2"/>
+                    <apex:outputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}"/>           
+                    <apex:outputField label="City" value="{!TMNUser.Work_City__c}" id="locationCity"/>     
+                    <apex:inputhidden value="{!TMNUser.Office_Location__c}" id="hiddenlocationLine1" />
+                    <apex:inputhidden value="{!TMNUser.Office_Location_2__c}" id="hiddenlocationLine2"/>
+                    <apex:inputhidden value="{!TMNUser.Zip_Code__c}" id="hiddenlocationZip"/>
+                    <apex:inputhidden value="{!TMNUser.Work_City__c}" id="hiddenlocationCity"/>  
+                    <apex:inputhidden value="{!TMNUser.Office_Location_PickList__c}"/>           
+                    <apex:inputhidden value="{!TMNUser.Work_State__c}" id="hiddenlocationState"/>
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo" >                                                                                                                                                                                                                                        
                     <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="24"/>

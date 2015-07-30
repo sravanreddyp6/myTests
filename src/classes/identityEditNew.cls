@@ -68,6 +68,11 @@ public class identityEditNew {
         
     }
     
+      @RemoteAction
+    public static TMN_User__c LocationDetails(String location) {
+       return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
+    }
+    
     TMN_User__c t = [SELECT Id, Name, Operating_Group__c,Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];
     public String tmnName = t.Name;
     public String tmnId = t.Id;
