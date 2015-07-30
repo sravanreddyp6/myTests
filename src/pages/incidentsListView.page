@@ -1,0 +1,16 @@
+<apex:page controller="incidentsListViewController">
+	
+	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	 <apex:sectionHeader subTitle="Incidents" />
+	<apex:pageBlock>
+		<apex:pageBlockTable value="{!incidents}" var="i" id="incidentsTable"  >
+			<apex:column headerValue="Action" >
+				<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>&nbsp;
+				<a href="/apex/Incident_Form_View?Id={!i.Id}">View</a>
+			</apex:column>
+			<apex:column value="{!i.Name}" />
+			<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
+			<apex:column value="{!i.Status__c}" />
+		</apex:pageBlockTable>
+	</apex:pageBlock>
+</apex:page>

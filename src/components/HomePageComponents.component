@@ -73,7 +73,7 @@
 	</style>
 	<apex:attribute name="objectName" type="string" description="this is the object name" required="true" />
 
-	<apex:outputPanel rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Person Being Served',PBSView,if(objectName=='TMN Contacts',TMNView,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,false))))))}">
+	<apex:outputPanel rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Person Being Served',PBSView,if(objectName=='TMN Contacts',TMNView,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,if(objectName=='Incidents',IncView,false)))))))}">
 
 	<div class="panel panel-success" style="display:inline-block; vertical-align:top">
 	<div class="panel-heading">{!objectName}</div>
@@ -109,6 +109,12 @@
 			<apex:outputPanel layout="none" rendered="{!objectName=='Documents'}">
 				<apex:outputText rendered="{!(DocCreate==true)}"><a href="/apex/Document_Edit?save_new=1">Create New Document</a><br /></apex:outputText>
 				<a href="/apex/DocumentListView">View All Documents</a><br />
+			</apex:outputPanel>
+			
+			<apex:outputPanel layout="none" rendered="{!objectName=='Incidents'}">
+				<apex:commandLink  value="Create New Incident" onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" /><br/>
+				<a href="/apex/incidentsListView" >View My Incidents</a><br/>
+				<a href="/apex/incidentsListView">View All Incidents</a><br />
 			</apex:outputPanel>
 
 			<a href="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</a>
