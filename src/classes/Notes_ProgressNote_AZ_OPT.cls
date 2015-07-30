@@ -160,12 +160,12 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 hasGoal = True ;
             }
         } 
-        if(/***!hasgoal || **/pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
+        if(!hasgoal || pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
         (pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0)||
-        pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null /**|| pnValidations[0].Service_code__c == Null **/||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
-            //if(!hasGoal){
-            //    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a "Goal" before continuing.'));   
-            //}
+        pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
+            if(!hasGoal){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a "Goal" before continuing.'));   
+            }
             if(pnValidations[0].status__c == 'Final'){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This Progress Note has already been Finalized'));  
             }
@@ -181,9 +181,9 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             if(pnValidations[0].Type_of_Contact__c == Null ||pnValidations[0].Type_of_Contact__c == ''){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select the Type of Contact before continuing'));  
             }
-            //if(pnValidations[0].Service_code__c == Null){
-             //   ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));  
-            //}
+            if(pnValidations[0].Service_code__c == Null){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));  
+            }
             if(pnValidations[0].Interventions__c== Null|| pnValidations[0].Interventions__c== ''){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must populate the Intervention field before continuing.'));    
             }
