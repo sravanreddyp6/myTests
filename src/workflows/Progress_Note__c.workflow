@@ -10,6 +10,24 @@
         <protected>false</protected>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>LockedFieldUpdate</fullName>
+        <field>Locked__c</field>
+        <literalValue>1</literalValue>
+        <name>LockedFieldUpdate</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>LockedFieldUpdateToFalse</fullName>
+        <field>Locked__c</field>
+        <literalValue>0</literalValue>
+        <name>LockedFieldUpdateToFalse</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>No_Approval_Needed_False</fullName>
         <field>No_Approval_Needed__c</field>
         <literalValue>0</literalValue>
