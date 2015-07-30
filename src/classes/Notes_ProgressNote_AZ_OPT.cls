@@ -106,7 +106,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         req1.setProcessDefinitionNameOrId('Progress_Notes_Approval');
         req1.setSkipEntryCriteria(true);
         list<id> listids = new list<id>();
-        listids.add(PN.next_approver__c);
+        listids.add(thePN.next_approver__c);
         req1.setNextApproverIds(listids);
         Approval.ProcessResult result = Approval.process(req1);
         pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_Create_Flavor_PDF?id='+thePn.id+'&IsSubmitted=Yes');
@@ -228,7 +228,8 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
              list<Id> GoalSelIds = New List<Id>();
              if(GoalsSelected == null || GoalsSelected == '')
                 GoalsSelected = pnedit.GoalIds_AZOPTPage__c;
-             
+             else
+             	GoalsSelected = GoalsSelected +','+ pnedit.GoalIds_AZOPTPage__c;
              SignedDoc = pnedit.Signature_on_File__c;
              SrvcLoc = pnedit.Service_Location__c;
              pnOverlap = new List<Progress_Note__c>();
@@ -255,7 +256,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                             GoalSelStrsremvd.add(s);
                     }
                 }else{
-                		GoalSelStrsremvd.addall(GoalSelStrs);
+                        GoalSelStrsremvd.addall(GoalSelStrs);
                 }System.debug('******************'+GoalSelStrsremvd);
                 reformedittree(GoalSelStrsremvd);
              }
@@ -472,7 +473,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        update pn;
        insertedProgressNoteId = pn.Id;
        newBlock = false;
-       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id +'&SelectedKey='+ GoalsSelected +'&DeselectedKey='+ GoalsdeSelected );
+       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id +'&SelectedKey='+ pn.GoalIds_AZOPTPage__c +'&DeselectedKey='+ GoalsdeSelected );
        pageref.setredirect(true);
        return pageref;
         } 
@@ -496,18 +497,18 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         progress_note__c pnedit2 = [select Service_Assignment__r.Admission__r.State__c,GoalIds_AZOPTPage__c,owner.name,Person_Being_Served__r.Name,next_approver__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
         list<Id> GoalSelIds = New List<Id>();
         if(pnedit2.GoalIds_AZOPTPage__c!= null){
-        	if(GoalsSelected != Null && GoalsSelected != '')
-        		GoalsSelected = GoalsSelected + ',' + pnedit2.GoalIds_AZOPTPage__c;
-        	else
-        		GoalsSelected = pnedit2.GoalIds_AZOPTPage__c;
+            if(GoalsSelected != Null && GoalsSelected != '')
+                GoalsSelected = GoalsSelected + ',' + pnedit2.GoalIds_AZOPTPage__c;
+            else
+                GoalsSelected = pnedit2.GoalIds_AZOPTPage__c;
         }
         if(GoalsSelected!=null && GoalsSelected !=''){
-        	GoalSelStrs = (GoalsSelected.split(','));
-        	System.debug('******************GoalSelStrs'+GoalSelStrs);
+            GoalSelStrs = (GoalsSelected.split(','));
+            System.debug('******************GoalSelStrs'+GoalSelStrs);
         if(GoalsDeSelected!=null && GoalsDeSelected !=''){
                 GoalDeSelStrs = (GoalsDeSelected.split(','));
         }System.debug('******************GoalDeSelStrs'+GoalDeSelStrs);
-             	if(GoalDeSelStrs!=Null){
+                if(GoalDeSelStrs!=Null){
                     for(string s:GoalSelStrs){
                         boolean deletethis = false;
                         for(string str:GoalDeSelStrs){
@@ -519,13 +520,13 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                             GoalSelStrsremvd.add(s);
                     }
                 }else{
-                		GoalSelStrsremvd.addall(GoalSelStrs);
+                        GoalSelStrsremvd.addall(GoalSelStrs);
                 }System.debug('******************'+GoalSelStrsremvd);
         if(GoalSelStrsremvd.Size()>0){
-        	goalsSelected= '' ;
-    		for(string s: GoalSelStrsremvd){
-        		goalsSelected = goalsSelected + s + ',';
-        	}
+            goalsSelected= '' ;
+            for(string s: GoalSelStrsremvd){
+                goalsSelected = goalsSelected + s + ',';
+            }
         }
         }}
         pn.recordtypeid = AZ_OPT_ID ;
@@ -592,7 +593,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        upsert pn;
        insertedProgressNoteId = pn.Id;
        newBlock = false;
-       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&SelectedKey='+ GoalsSelected +'&Deselectedkey='+ GoalsDeSelected +'&sfdc.override=1');
+       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&SelectedKey='+ pn.GoalIds_AZOPTPage__c +'&Deselectedkey='+ GoalsDeSelected +'&sfdc.override=1');
        pageref.setredirect(true);
        return pageref;     
       }      
