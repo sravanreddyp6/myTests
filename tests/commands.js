@@ -170,6 +170,22 @@ module.exports = function (client, done) {
       }, label)
       .then(function (result) { return result.value; });
   });
+  client.addCommand("getMultiSelectOptions", function (label) {
+	    return client
+	      .execute(injectJS)
+	      .executeAsync(function (label, doneAsync) {
+	        rtGetLabel(label, function ($labelEl) {
+	          rtFollowLabel($labelEl, label, function ($el) {
+	            var options = $el.find("> select option");
+	            if (options.length === 0) {
+	              throw new Error("Found label " + label + " but cannot find any select options associated with it.");
+	            }
+	            doneAsync(options.map(function (index, opt) { return opt.value; }));
+	          });
+	        });
+	      }, label)
+	      .then(function (result) { return result.value; });
+  }); 
   client.addCommand("chooseSelectOption", function (label, optionValue) {
     return client
       .execute(injectJS)
