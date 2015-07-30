@@ -1803,7 +1803,7 @@ public without sharing class ServiceAssignmentExt {
 	
 	public List<Incident__c> incidents{get{
 		if(incidents == null){
-			incidents = [SELECT Id, Recordtype.name, Status__c FROM Incident__c WHERE Service_Assignment__c =: this.theServAssign.Id];
+			incidents = [SELECT Id, Name, Recordtype.name, Status__c FROM Incident__c WHERE Service_Assignment__c =: this.theServAssign.Id];
 		}
 			return incidents;
 	}
