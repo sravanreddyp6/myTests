@@ -327,38 +327,13 @@
                 </apex:pageBlockSectionItem>
                  <apex:outputText label="Age" value="{!Age}" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Level_of_Education__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
-<!--                 <apex:inputField value="{!Contact.Gender__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/> -->
 				<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" required="true" rendered="{! pbsEditModeOn }" />
 				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" />
 				<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" rendered="{! pbsEditModeOn }" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}"
 					html-data-visibility-row-rules="true"/>
 				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }"/>
-<!-- 				<apex:pageBlockSectionitem rendered="{! pbsEditModeOn }" > -->
-<!-- 					<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel" /> -->
-					<apex:inputField value="{!Contact.Gender_Identity__c}" id="genderIdentity"  rendered="{! pbsEditModeOn }"/>
-<!-- 				</apex:pageBlockSectionitem> -->
-<!--                 <apex:pageBlocksectionItem rendered="{! pbsEditModeOn }"> -->
-<!-- 			    	<apex:outputPanel styleClass="helpButton"> -->
-<!-- 			    		<apex:outputLabel value="Gender" styleClass="labelCol" /> -->
-<!-- 			    		<img src="/s.gif" id="HelpImage" alt="Select the person's legal gender" class="helpOrb" title="Select the person's legal gender" /> -->
-<!-- 			    		<br/> -->
-<!-- 			    		<br/> -->
-<!-- 			    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" /> -->
-<!-- 			    		<br/> -->
-<!-- 			    		<br/> -->
-<!-- 			    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/> -->
-<!-- 			    	</apex:outputPanel> -->
-<!-- 			    	<apex:outputPanel > -->
-<!-- 				    	<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" required="true"/> -->
-<!-- 				    	<br/> -->
-<!-- 				    	<br/> -->
-<!-- 				    	<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}" /> -->
-<!-- 				    	<div class="requiredInput"> -->
-<!-- 							<div class="requiredBlock"></div> -->
-<!-- 				    	<apex:inputFIeld value="{!Contact.Gender_Identity__c}" id="genderIdentity" /> -->
-<!-- 				    	</div> -->
-<!-- 			    	</apex:outputPanel> -->
-<!--     			</apex:pageBlocksectionItem> -->
+				<apex:inputField value="{!Contact.Gender_Identity__c}" id="genderIdentity"  rendered="{! pbsEditModeOn }"/>
+
                 
                 <!--  view -->
                 <apex:outputField value="{!Contact.FirstName}"  rendered="{! !pbsEditModeOn }"/>

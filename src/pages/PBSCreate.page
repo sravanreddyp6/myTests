@@ -248,48 +248,13 @@ function stopRKey(evt) {
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Account.Age__pc}" taborderhint="1" />
                 <apex:inputField value="{!Account.Level_of_Education__pc}" taborderhint="2" />
-<!--                 <apex:inputField value="{!Account.Gender__pc}" taborderhint="1" /> -->
-			    <apex:pageBlocksectionItem >
-			    	<apex:outputPanel styleClass="helpButton">
-			    		<apex:outputLabel value="Gender" styleClass="labelCol" />
-			    		<img src="/s.gif" id="HelpImage" alt="Select the person's legal gender" class="helpOrb" title="Select the person's legal gender" />
-			    		<br/>
-			    		<br/>
-			    		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" />
-			    		<br/>
-			    		<br/>
-			    		<apex:outputLabel value="Describe Gender Identity" id="genderIdentityLabel"/>
-			    	</apex:outputPanel>
-			    	<apex:outputPanel >
-				    	<apex:inputField value="{!Account.Gender__pc}" taborderhint="1" required="true" />
-				    	<br/>
-				    	<br/>
-				    	<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}" />
-				    	<div class="requiredInput">
-							<div class="requiredBlock"></div>
-				    	<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity" />
-				    	</div>
-			    	</apex:outputPanel>
-			    </apex:pageBlocksectionItem>
-<!--    	<apex:inputField value="{!Account.Gender__pc}" /> -->
-<!--    	<apex:pageBlockSectionItem /> -->
-   	
-<!--    	<apex:pageBlockSectionItem > -->
-<!--  		<apex:outputLabel value="Does the person Identify with a gender other than legal gender selected?" styleClass="labelCol"/> -->
-<!--    		<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" onChange="showHideGender(); return false;"/> -->
-<!--    	</apex:pageBlockSectionItem> -->
-   	
-<!--    	<apex:pageBlockSectionItem /> -->
-   	
-<!--    	<apex:pageBlockSectionItem > -->
-<!--    		<apex:outputLabel value="Describe Gender Identity" styleClass="labelCol" id="genderIdentityLabel" /> -->
-<!--    		<apex:outputPanel > -->
-<!--    			<div class="requiredInput"> -->
-<!-- 				<div class="requiredBlock"></div> -->
-<!--    				<apex:inputFIeld value="{!Account.Gender_Identity__pc}" id="genderIdentity"/> -->
-<!--    			</div> -->
-<!--    		</apex:outputPanel> -->
-<!--    	</apex:pageBlockSectionItem> -->
+                
+                <apex:inputField value="{!Account.Gender__pc}" taborderhint="1" required="true" />
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}"
+					html-data-visibility-row-rules="true"/>
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Account.Gender_Identity__pc}" id="genderIdentity" />
   	
 </apex:pageBlockSection>
 
