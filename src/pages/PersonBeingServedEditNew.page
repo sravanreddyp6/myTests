@@ -865,7 +865,8 @@
                 <apex:pageBlockTable value="{!incidents}" var="i" rendered="{!incidents.size != 0}">
                 	<apex:column headerValue="Incident Number" >
                 		<a href="/{!i.id}" >{!i.Name}</a>
-                	</apex:column>	
+                	</apex:column>
+                	<apex:column value="{!i.Service_Assignment__c}" />
                     <apex:column value="{!i.Recordtype.Name}" headerValue="Type"/>
                     <apex:column value="{!i.createdDate}" />
                 </apex:pageBlockTable> 
