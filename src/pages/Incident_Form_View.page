@@ -21,12 +21,12 @@
 <br/>
 <apex:form >
         <apex:pageBlock mode="detail" title="General Information">
-        	<apex:pageBlockButtons location="top">
+        	<apex:pageBlockButtons >
 	            <div style="float: right;">
 	                <apex:CommandButton value="Edit" action="{!editIncident}" />
-	                <apex:CommandButton value="Review" />
-	                <apex:CommandButton value="Submit" />
-	                <apex:CommandButton value="Disregard" />
+	                <apex:CommandButton value="Review" rendered="false" />
+	                <apex:CommandButton value="Submit" rendered="false" />
+	                <apex:CommandButton value="Disregard" rendered="false" />
 	            </div>
         	</apex:pageBlockButtons>
         	<apex:pageBlocksection columns="1" showHeader="false" collapsible="false">
@@ -99,7 +99,7 @@
         		<apex:outputField label="Was an Internal Investigation initiated?" value="{!Incident__c.Internal_Investigation__c }" />
         		<apex:outputField label="Incident Outcome" value="{!Incident__c.Incident_Outcome__c}" />
         	</apex:pageBlockSection>
-		    <apex:pageBlockSection columns="1" title="Related People" collapsible="false" >
+		    <apex:pageBlockSection columns="1" title="People Involved" collapsible="false" >
 			    <div class="pbHeaderButton">
 			    </div>
 					<apex:pageBlockTable styleclass="pbBody-list" value="{!relatedPeople}" var="relper" rendered="{!relatedpeople != null && relatedpeople.size > 0}">

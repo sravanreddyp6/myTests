@@ -123,7 +123,7 @@ function evalFirstReportedField(eley, leaveBlank){
        			</apex:outputPanel>
                    <apex:outputPanel >
                        <div class="requiredInput">
-							<div class="requiredBlock"></div>
+							<div id="date_reqBlock" class="requiredBlock"></div>
 						<c:MilitaryDatetime id="dateOccurredmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Occurred__c}" edit="true" hiddenFieldId="DateOccurred" datetimepickerid="DateOccurred"/>
                        </div>
                        <apex:inputhidden id="DateOccurred" value="{!Incident__c.Date_Occurred__c}" />
@@ -131,8 +131,8 @@ function evalFirstReportedField(eley, leaveBlank){
                        
                        <div>
                        <apex:inputField id="dateUnknown" value="{!Incident__c.Unknown_Date_Occurred__c}" 
-                       	html-data-rules="{&quot;0&quot;: &quot;DateOccurred&quot;}"
-                       	html-data-visibility-rules="{&quot;0&quot;: [&quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximate}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximateLabel}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.DateOccurred}&quot;]}"/>                       
+                       	html-data-rules="{&quot;0&quot;: [&quot;DateOccurred&quot;]}"
+                       	html-data-visibility-rules="{&quot;0&quot;: [&quot;date_reqBlock&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximate}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.occurredApproximateLabel}&quot;, &quot;{!$Component.generalInfoBlock.incidentTimingSection.timeSectionItem.DateOccurred}&quot;]}"/>                       
                        	<apex:outputLabel value="Date/Time Currently Unknown" for="dateUnknown"  styleClass="sub-question-header" id="dateUnknownLabel"/>
                        </div>    
                        <div>
@@ -143,12 +143,12 @@ function evalFirstReportedField(eley, leaveBlank){
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel >First Reported to The MENTOR Network By</apex:outputLabel>
                     <apex:outputPanel >
-                  		<apex:inputField id="first_reported_by" onchange="evalFirstReportedField(this);" html-data-visibility-rules2="{&quot;Employee&quot;: [&quot;{!$Component.specify_emp_label}&quot;, &quot;{!$Component.specify_emp_input}&quot;], 
+                  		<apex:inputField id="first_reported_by" onchange="evalFirstReportedField(this);" html-data-visibility-rules2="{&quot;Staff&quot;: [&quot;{!$Component.specify_emp_label}&quot;, &quot;{!$Component.specify_emp_input}&quot;], 
                   					&quot;Mentor&quot;: [&quot;specify_mentor_label&quot;, &quot;{!$Component.specify_mentor_input}&quot;],
                   					&quot;External Party&quot;: [&quot;{!$Component.specify_exp_label}&quot;, &quot;{!$Component.specify_exp_input}&quot;]}" 
                   			value="{!Incident__c.First_Reported_By__c}" / >
                   		
-                    		<apex:outputPanel id="specify_emp_label"  styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="sub-question-header">Specify Employee</apex:outputLabel>
+                    		<apex:outputPanel id="specify_emp_label"  styleClass="sub-question-wrapper" layout="block"><apex:outputLabel styleClass="sub-question-header">Specify Staff</apex:outputLabel>
                     			<apex:inputField id="specify_emp_input" value="{!Incident__c.First_Reported_Staff__c}" />
                     		</apex:outputPanel>
 
@@ -223,23 +223,23 @@ function evalFirstReportedField(eley, leaveBlank){
                 </apex:pageBlockSectionItem> 
                                              
 
-                <apex:outputPanel >
-                	<apex:outputLabel styleClass="sub-question-header" style="font-size: 91%; display: block;">Which of the following describe the events?</apex:outputLabel>
-                	<apex:outputPanel layout="block" style="float: left; padding-left: 100px;">
+                <apex:pageBlockSectionItem >
+                	<apex:outputLabel >Which of the following describe the events?</apex:outputLabel>
+                	<apex:outputPanel >
                 		<apex:inputField style="padding-left: 10px;" label="Which of the following describe the events?" value="{!Incident__c.Incident_Type__c}" />
                 	</apex:outputPanel>
-				</apex:outputPanel>
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>	 
 			<apex:pageBlockSection title="First Response" columns="2" collapsible="false">	
-                <apex:outputPanel >
-                    <apex:outputLabel styleClass="sub-question-header" style="font-size: 91%; display: block;">First Response Action Taken</apex:outputLabel>
-                    <apex:outputPanel layout="block" style="float: left; padding-left: 100px;">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >First Response Action Taken</apex:outputLabel>
+                    <apex:outputPanel >
                 		<apex:inputField value="{!Incident__c.First_Response_Action_Taken__c}" html-data-visibility-rules="{&quot;Other&quot;: [&quot;{!$Component.first_res_other_label}&quot;, &quot;{!$Component.first_res_other_input}&quot;]}" />
                  		<br/>
                  		<apex:outputLabel id="first_res_other_label" styleClass="sub-question-header">Other</apex:outputLabel>
                  		<apex:inputField id="first_res_other_input" value="{!Incident__c.First_Response_Action_Taken_Other__c}" />
                     </apex:outputPanel>
-                </apex:outputPanel>  
+                </apex:pageBlockSectionItem>  
                 
                 <apex:outputPanel /> 
 				
