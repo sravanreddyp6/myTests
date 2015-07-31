@@ -5,10 +5,10 @@ var users = require("../users.js").accounts;
 var suiteTimeout = 3 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
-testSuite("rwAzReferral", suiteTimeout, {
-  "should create a Redwood AZ Referral successfully": function(client, done) {
+testSuite("rwInReferral", suiteTimeout, {
+  "should create a Redwood IN Referral successfully": function(client, done) {
     return client
-      .logInAs(users["RW_AZ_Referral_Intaker"])
+      .logInAs(users["RW_IN_Referral_Intaker"])
       .click("a=Create New Referral")
       .getSelectOptions('Race')
       .then(function(races) {
@@ -85,12 +85,12 @@ testSuite("rwAzReferral", suiteTimeout, {
       .chooseSelectOption("Ethnicity", "North American")
       .fillInputText("Last Name", "Vader")
       .chooseSelectOption("Marital Status", "Divorced")
-      // .fillInputText("Date of Birth", "7/7/1970")  // not working yet because there are 2 DOB fields on the page
+      .fillInputText("Date of Birth", "7/7/1970")
       .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
       .fillInputText("SSN", "111111111")
       .fillInputText("Additional Information / Comments", "Really hateful")
-      .chooseSelectOption("Mailing State/Province", "Arizona")
+      .chooseSelectOption("Mailing State/Province", "Indiana")
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       
@@ -102,7 +102,7 @@ testSuite("rwAzReferral", suiteTimeout, {
       .then(function(refSrcType) {
           assert.deepEqual(["", "Attorney", "Family", "Hospital Case Manager", 
                             "Independent Case Manager", "Internal", "Payor Case Manager",
-                            "Physician", "Rehab/Hospital", "School", "Self", "Social Worker", "Unknown", "Other"
+                            "Physician", "School", "Self", "Unknown", "Other"
                             ], refSrcType);
       })
       .getSelectOptions('Legal/Guardianship Status')
@@ -112,20 +112,8 @@ testSuite("rwAzReferral", suiteTimeout, {
       })
       .getMultiSelectOptions('Services Requested')
       .then(function(vals) {
-          assert.deepEqual(["ATC - Attendant Care", "DTA - Day Program", "DTS - Day Program Summer Children", "DTT - Day Program Afterschool", "H0004 - BH Counseling w/ Group",
-                            "H0018 - BH Group Home Daily", "H0034 - BH Medication/Training Support", "H0046 - BH Group Home Daily", "H2011 - Crisis Intervention", "H2014 - Training Skills",
-                            "H2017 - Psychosocial Rehab", "HAB - Habilitation Group Homes", "HAH - Habilitation", "HAI - Habilitation", "HBA - Host Home Habilitation", "HBC - Host Home Habilitation Children",
-                            "HID - Habilitation", "HSK - Housekeeping", "RBD - Host Home Room and Board", "RRB - Group Home Room and Board", "RSD - Respite Daily", "RSP - Respite", "T1013 - Interpreted Services",
-                            "T1016 - Case Management", "T1019 - Prsnal Services Non Residential", "T1020 - Personal Care", "TRA - Transportation", "HPD - Grp Home Habilitation Comm Protect" ], vals);
+          assert.deepEqual(["Behavioral Supports", "Day Services", "ICF/MR Group Home", "In-Home Services/supports", "Supported Living (24 hour)"], vals);
       })      
-      .getSelectOptions('Staffing Needs')
-      .then(function(vals) {
-          assert.deepEqual(["", "Night Sleep", "Night Awake"], vals);
-      })
-      .getSelectOptions('Staffing Ratio')
-      .then(function(vals) {
-          assert.deepEqual(["","1:1","1:2","1:3","1:4","Other"], vals);
-      })
       .getSelectOptions('Desired Living Environment')
       .then(function(vals) {
           assert.deepEqual(["", "ICF", "Supported Living", "Group Home", "With Family", "With Foster Family", "With Housemates", "Alone"], vals);
@@ -134,16 +122,14 @@ testSuite("rwAzReferral", suiteTimeout, {
       .then(function(vals) {
           assert.deepEqual(["", "Ambulatory", "Wheelchair", "Uses Walker" , "Uses Cane"], vals);
       })
-      .getSelectOptions('Gender Specific Staffing')
-      .then(function(vals) {
-          assert.deepEqual(["", "Male Preferred", "Female Preferred", "No Preference"], vals);
-      })      
-      .getMultiSelectOptions('Lift Transfer Assistance')
-      .then(function(vals) {
-          assert.deepEqual(["Able to Transfer", "Use of Hoyer Lift", "One Person Lift", "Two Person Lift" ], vals);
-      })      
+      .chooseSelectOption("Referral Source Type", "Other")
+      .waitForVisible("input[id$=refSourceTypeOtherField]", defaultOperationTimeout)      
+      .fillInputText("Other (Describe)", "Mentor2")
       .fillInputText("Referral Source", "Mentor")
       .fillInputText("Referrer Name", "Obi-wan Kennobi")
+      .fillInputText("Anticipated Admission DateTime", "07/31/2015 14:00")
+      
+      
       .click("input[value='Save Referral']")
       .waitForVisible("input[value=Edit]", defaultOperationTimeout)
       .url()
@@ -152,8 +138,16 @@ testSuite("rwAzReferral", suiteTimeout, {
       })
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
-    	 assert.notOk(isExisting, "Convert Button exists.");
-      })      
+    	 assert.ok(isExisting, "Convert Button exists.");
+      })
+      .getOutputText("Referral Source Type")
+      .then(function (refSrcTyp) {
+        assert.equal("Other", refSrcTyp);
+      })
+      .getOutputText("Referral Source Type Other Describe")
+      .then(function (refSrcTypOther) {
+        assert.equal("Mentor2", refSrcTypOther);
+      })
       .getOutputText("First Name")
       .then(function (firstName) {
         assert.equal("Darth", firstName);
@@ -170,5 +164,6 @@ testSuite("rwAzReferral", suiteTimeout, {
       .then(function (name) {
         assert.equal("Obi-wan Kennobi", name);
       });
+    
   }
 });

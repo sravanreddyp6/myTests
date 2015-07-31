@@ -137,6 +137,7 @@ module.exports = function (client, done) {
               throw new Error("No input field associated with label " + label + " can be found");
             }
             $inputEl.val(value);
+            $inputEl.trigger('blur');
             doneAsync();
           });
         });
@@ -201,6 +202,7 @@ module.exports = function (client, done) {
               throw new Error("Found label " + label + " but cannot find a select option with value " + optionValue);
             }
             $optionEl.prop("selected", true);
+            $selectEl.trigger('change');
             doneAsync();
           });
         });
