@@ -29,8 +29,8 @@ public with sharing class incidentsListViewController {
 	public List<selectOption> getIncidentTypes() {
 		List<SelectOption> Options = new List<SelectOption>();
 		Options.add(new SelectOption('All Incidents','All Incidents'));
-		Options.add(new SelectOption('PBS','PBS'));
-		Options.add(new SelectOption('Employee','Employee'));
+		Options.add(new SelectOption('PBS','Person Being Served'));
+		Options.add(new SelectOption('Staff','Staff'));
 		Options.add(new SelectOption('Location','Location'));
 		Options.add(new SelectOption('Mentor','Mentor'));
 		
