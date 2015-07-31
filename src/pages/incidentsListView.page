@@ -2,7 +2,7 @@
 	
 	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<apex:form>
-	<apex:pageBlock title="Incidents">
+	<apex:pageBlock title="{!IF(myIncidents, 'My Incidents','All Incidents')}">
 		<apex:pageBlockButtons location="top" > 
  				 <table width="100%"> 
 					<tr>

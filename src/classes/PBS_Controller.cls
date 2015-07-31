@@ -132,7 +132,7 @@ public pageReference savePBS() {
 	        	    'The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.'));  			 
   			} else if (e.getMessage().Contains('Gender Identity')) {
   			     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-	        	    'Gender Identity is required when the person Identify with a gender other than the legal gender is Yes'));  			 
+	        	    'Gender Identity is required when the person identifies with a gender other than the legal gender'));  			 
   			}
   				 
   			else {
