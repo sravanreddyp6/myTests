@@ -1504,10 +1504,11 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:outputText value="No Incidents to display" rendered="{!(incidents.size=0)}" />
 			<apex:pageblockTable value="{!incidents}" var="i" rendered="{!(incidents.size!=0)}">
 				<apex:column headerValue="Action" >
-					<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>&nbsp;
-					<a href="/apex/Incident_Form_View?Id={!i.Id}">View</a>
+					<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>
 				</apex:column>
-				<apex:column value="{!i.name}" />
+				<apex:column headerValue="Incident Number" >
+                		<a href="/{!i.id}" >{!i.Name}</a>
+               	</apex:column>
 				<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
 			</apex:pageblockTable>
 		</apex:pageblock>

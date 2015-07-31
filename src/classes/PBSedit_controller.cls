@@ -233,7 +233,7 @@ public Map<String, String> fieldMap { get; set; }
     public List<Incident__c> incidents{ 	
     	get{
     		if(incidents == null){
-    			incidents = [SELECT ID, NAME, Recordtype.Name, CreatedDate FROM Incident__c WHERE Service_Assignment__r.Person_being_served__c = :pbsId];	
+    			incidents = [SELECT ID, NAME, Recordtype.Name, Service_Assignment__c, CreatedDate FROM Incident__c WHERE Service_Assignment__r.Person_being_served__c = :pbsId];	
     		}
     		return incidents;
     	}
