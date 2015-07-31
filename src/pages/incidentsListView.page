@@ -17,10 +17,11 @@
 			</apex:pageBlockButtons>
 		<apex:pageBlockTable value="{!incidents}" var="i" id="incidentsTable"  >
 			<apex:column headerValue="Action" >
-				<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>&nbsp;
-				<a href="/apex/Incident_Form_View?Id={!i.Id}">View</a>
+				<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>
 			</apex:column>
-			<apex:column value="{!i.Name}" />
+			<apex:column headerValue="Incident Number" >
+                <a href="/{!i.id}" >{!i.Name}</a>
+             </apex:column>
 			<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
 			<apex:column value="{!i.Status__c}" />
 		</apex:pageBlockTable>
