@@ -65,6 +65,9 @@ public with sharing class Incident_Form_CreateEdit {
     
     public boolean validateIncidentSave(Incident__c incident){
         boolean hasError = false; 
+		if( incident.Unknown_Date_Occurred__c == false && incident.Date_Occurred__c == null ){
+            incident.Date_Occurred__c.addError('Date/time incident occurred is requried or select Unknown'); hasError = true;
+        }         
         if(incident.First_Reported_By__c == 'Employee' && incident.First_Reported_Staff__c == null){
             incident.First_Reported_Staff__c.addError('Staff requried'); hasError = true;
         }
