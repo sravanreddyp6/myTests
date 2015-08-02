@@ -5,6 +5,7 @@ public with sharing class Incident_Form_CreateEdit {
     public ID recTypeId = apexpages.currentpage().getparameters().get('RecordtypeId'); 
     public string recordtypeName {get; set;}
     public boolean isNew{get; set;}
+    public String personListJSON { get; set; }
     
     public Incident_Form_CreateEdit(ApexPages.StandardController controller) {
         this.controller = controller;
@@ -35,12 +36,16 @@ public with sharing class Incident_Form_CreateEdit {
         
     }
     
-    public pageReference saveIncident(){
+    public pageReference saveIncident( ){
     	
+    	system.debug('PERSON LIST' + personListJSON);
         if( validateIncidentSave(incident) ){return null;}
         try{
             upsert this.incident;
             //Pagereference pg = new pagereference('/apex/Incident_Form_View?Id='+this.Incident.Id);
+            // save the related people
+            saveRelatedPeople();
+            
             Pagereference pg = new pagereference('/'+this.Incident.Id);
             return pg;
         }
@@ -52,6 +57,17 @@ public with sharing class Incident_Form_CreateEdit {
         return null;
         
     }
+    
+    // adds new people to parent incident
+	private void saveRelatedPeople () {
+		List<Incident_Person__c> personList = (Incident_Person__c[])JSON.deserialize( personListJSON, List<Incident_Person__c>.class );
+		for ( Incident_Person__c ip : personList) {
+				ip.Incident__c = this.incident.id;
+				upsert ( ip );
+			}
+		}
+		
+    
     
     public Service_Assignment__c servAssign {get{
         if(servAssign == null && this.incident.Service_Assignment__c != null){ 
