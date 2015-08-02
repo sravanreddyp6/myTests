@@ -16,6 +16,8 @@ public Map<String, IncidentPersonWrapper> mapOther { get; private set;}
 public integer existingStaff { get; set; }
 public integer existingMentor { get; set; }
 public integer existingOther { get; set; }
+Private List<Incident_Person__c> newPeople;
+public String newPeopleJSON { get {	return JSON.serialize(newPeople);} set;}
 
 public IncidentPeople(Apexpages.StandardController controller){
 		
@@ -34,12 +36,14 @@ public IncidentPeople(Apexpages.StandardController controller){
 		
 	}
 	
+	
 // get list of people currently related and write to working list
 private void initrelatedPeople() {
 	
 		string PersonName;
 		
-		relExisting = new Map<String, IncidentPersonWrapper>();
+		newPeople = new List<Incident_Person__c>();	// list of new starts out empty
+		relExisting = new Map<String, IncidentPersonWrapper>(); //list of existing people
 		mapStaff = new Map<String, IncidentPersonWrapper>();
 		mapMentor  = new Map<String, IncidentPersonWrapper>();
 		mapOther  = new Map<String, IncidentPersonWrapper>();
@@ -94,28 +98,20 @@ private void initrelatedPeople() {
 // initialize current Person record
 public void newPerson( ) {
 	isEditing = false;
-	currPerson = new Incident_Person__c( person_type__c = personTypetoAdd, incident__c = incident.id);
-	system.debug('currPerson is (ADDING)' + currPerson);
-	
-	system.debug('inside newperson with relexisting=' + relexisting);
+	currPerson = new Incident_Person__c( person_type__c = personTypetoAdd, incident__c = incident.id, recordtypeid= rtMap.get(personTypeToAdd).id);
 }
 
 // get current record to edit
 public void editPerson () {
 	isEditing = true;
 	currPerson = relExisting.get(personToEditDelete).relatedPerson;
-	system.debug('currPerson is (EDITING) ' + currPerson);
 }
 
 public pageReference delPerson() {
-	system.debug('PERSON TO DELETE: '+ personToEditDelete );
-	system.debug('EXISTING BEFORE: ' + relExisting);
 	
 	removeFromTypeMap( personToEditDelete);
 	relExisting.remove( personToEditDelete );
-	
-	
-	system.debug('EXISTING AFTER: ' + relExisting);
+
 	return null;
 }
 
@@ -127,12 +123,25 @@ private void removeFromTypeMap( string keytoDel ) {
 	
 	if ( ipw.persontype == 'Other') {
 		mapOther.remove( keyToDel );
+		for (integer i = 0; i < newPeople.size(); i++) {
+			if (newPeople.get(i).other_people__c == currPerson.other_people__c )
+				newPeople.Remove( i );
+		}
 	}
 	else if ( ipw.persontype == 'Staff') {
 		mapStaff.remove( keyToDel );
+		for (integer i = 0; i < newPeople.size(); i++) {
+			if (newPeople.get(i).staff_member__c == currPerson.staff_member__c )
+				newPeople.Remove( i );
+		}
 	}
 	else if ( ipw.persontype == 'Mentor') {
 		mapMentor.remove( keyToDel );
+		for (integer i = 0; i < newPeople.size(); i++) {
+			if (newPeople.get(i).mentor__c == currPerson.mentor__c )
+				newPeople.Remove( i );
+		}
+		
 	}
 	
 }
@@ -222,6 +231,8 @@ public pageReference savePerson( ) {
 					
 				relExisting.put( ipw.editId, ipw);
 				addToTypeMap( ipw);
+				newPeople.Add( currPerson);
+				system.debug('new people:' + newPeople);
 				newPerson();
 			}
 		} catch (DMLException ex) {
@@ -231,6 +242,25 @@ public pageReference savePerson( ) {
 			// have to do anything
 		}
 		return null;
+	}
+	
+	// adds new people to parent incident
+	public void saveRelatedPeople (ID incId) {
+		
+		IncidentPersonWrapper ipw;
+		Incident_Person__c ip;
+		
+		for ( string ipwKey : relExisting.keyset()) {
+			
+			ipw = relExisting.get(ipwKey);
+			
+			if (ipw.isNew) {
+				ip = ipw.RelatedPerson;		
+				ip.Incident__c = incId;
+				upsert ( ip );
+			}
+		}
+		
 	}
 	
 	public class IncidentPersonWrapper {
