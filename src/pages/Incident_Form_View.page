@@ -107,7 +107,7 @@
 					<apex:column headerValue="Name"> 
 					    <apex:outputLink value="/{!relper.Mentor__c}" rendered="{!relper.recordtype.name = 'Mentor'}">{!relper.mentor__r.name}</apex:outputLink>
 					    <apex:outputLink value="/{!relper.Staff_Member__c}" rendered="{!relper.recordtype.name = 'Staff'}" >{!relper.staff_member__r.name}</apex:outputLink>
-					    <apex:outputText value="/{!relper.Other_people__c}" rendered="{!relper.recordtype.name = 'Other'}" />
+					    <apex:outputText value="{!relper.Other_people__c}" rendered="{!relper.recordtype.name = 'Other'}" />
 					</apex:column> 
 					<apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
 					<apex:column headerValue="Last Modified">
