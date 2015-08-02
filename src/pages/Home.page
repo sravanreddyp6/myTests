@@ -471,7 +471,10 @@
 		
 		checkIncidentType = function(){
 			 var incidentType = jQuery("input[name*='incidentslist']:checked").val();
-			 if(incidentType == 'PBS'){
+			 if(incidentType == null){
+			 	alert('Please choose an incident type before you continue');
+			 }
+			 else if(incidentType == 'PBS'){
 			 	openModalDialog('saSearchModal', 'div', 'Find Service Assignment', null, 1000, 'mainForm', false);
 			 }else{
 			 	createIncident();
