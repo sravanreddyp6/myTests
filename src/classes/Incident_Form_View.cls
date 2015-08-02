@@ -13,7 +13,7 @@ public with sharing class Incident_Form_View {
 		this.incident = (Incident__c)controller.getRecord();
 		recordtypeName = this.incident.Recordtype.Name;
 		
-		relatedPeople = [ select id, person_type__c, staff_member__c, staff_member__r.name, mentor__c, mentor__r.name, other_people__c, recordtype.name, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id];
+		relatedPeople = [ select id, person_type__c, staff_member__c, staff_member__r.name, mentor__c, mentor__r.name, other_people__c, recordtype.name, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id order by lastmodifieddate desc];
 	}
 	
 	//Making sure to issue a Query only if the type of the incident is 'PBS. Make sure servAssign == null before query, otherwise Query will be called whenever servAssign is referred in the Page
