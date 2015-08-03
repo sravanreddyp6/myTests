@@ -1,0 +1,150 @@
+<apex:component controller="nonemployeeAttestationController" allowDML="true" access="global">
+<apex:attribute type="Id" name="ManagerTMNID" assignTo="{!managerId}" Description="Enter Manager's User Id. Required cannot be enforced as the access level is global but this attribute is required"/>
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	
+	<html>
+		<style type="text/css">
+			body {font-family: Courier; size: 12pt;}
+
+			table {
+			border-width: 5px;
+			border-spacing: 5px;
+			border-style:inset;
+			border-color: #7AC143;
+			background-color: #FFFFFF;
+		}
+
+		td {
+			border-width: 1px;
+			padding: 4px;
+			border-style: solid;
+			border-color: #000000;
+			background-color: #FFFFF0;
+		}
+
+		th { 
+			color: #000000;
+			border-width: 1px ;
+			padding: 4px ;
+			border-style: solid ;
+			border-color: #000000;
+			background-color: #FFFFF0;
+		}
+		</style>
+		<body>
+			<P> Dear <i>{!manager.First_name__c} {!manager.Last_name__c}</i>, <br/> <br/>You are receiving this message because you are listed as the manager of member(s) listed below and their termination date is set to expire soon. </P>
+			<apex:dataTable value="{!employeeMap[1]}" var="one" id="oneTable"  styleClass="tableClass" rowClasses="odd,even" rendered="{!showOne}">
+				
+				<apex:facet name="caption">Employees Terminating Tomorrow</apex:facet>
+				<apex:column >
+					<apex:facet name="header">Action</apex:facet>
+					<a href="/apex/nonemployeeAttestation?managerId={!one.Manager_lookup__c}&employeeId={!one.Id}&flag=ninety">Extend 90 Days </a>
+					&nbsp;
+					<a href="/apex/nonemployeeAttestation?managerId={!one.Manager_lookup__c}&employeeId={!one.Id}&flag=thirty">Extend 30 Days </a>
+					&nbsp;
+					<a href="/apex/nonemployeeAttestation?managerId={!one.Manager_lookup__c}&employeeId={!one.Id}&flag=reject">Reject </a>
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">First Name</apex:facet>
+					<apex:outputText>{!one.First_Name__c}</apex:outputText> 
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">Last Name</apex:facet>
+					<apex:outputText>{!one.Last_name__c}</apex:outputText> 
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">Job title</apex:facet>
+					<apex:outputText>{!one.Job_title__c}</apex:outputText> 
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">Termination Date</apex:facet>
+					<apex:outputText Value=" {!one.Termination_Date__c}"/>
+				</apex:column>
+		</apex:dataTable>
+		<br/>
+		<br/>
+		<apex:dataTable value="{!employeeMap[7]}" var="Seven" id="sevenTable" rowClasses="odd,even" styleClass="TableClass"  rendered="{!showSeven}" >
+				
+				<apex:facet name="caption">Employees Terminating in 7 days</apex:facet>
+				
+				<apex:column >
+					<apex:facet name="header">Action</apex:facet>
+					<a href="/apex/nonemployeeAttestation?managerId={!Seven.Manager_lookup__c}&employeeId={!Seven.Id}&flag=ninety">Extend 90 Days </a>
+					&nbsp;
+					<a href="/apex/nonemployeeAttestation?managerId={!Seven.Manager_lookup__c}&employeeId={!Seven.Id}&flag=thirty">Extend 30 Days </a>
+					&nbsp;
+					<a href="/apex/nonemployeeAttestation?managerId={!Seven.Manager_lookup__c}&employeeId={!Seven.Id}&flag=reject">Reject </a>
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">First Name</apex:facet>
+					<apex:outputText>{!Seven.First_Name__c}</apex:outputText> 
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">Last Name</apex:facet>
+					<apex:outputText>{!Seven.Last_name__c}</apex:outputText> 
+				</apex:column>
+				<apex:column >
+					<apex:facet name="header">Job title</apex:facet>
+					<apex:outputText>{!Seven.Job_title__c}</apex:outputText> 
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">Termination Date</apex:facet>
+					<apex:outputText Value=" {!Seven.Termination_Date__c}"/>
+				</apex:column>
+		</apex:dataTable>
+		<br/>
+		<br/>
+		<apex:dataTable value="{!employeeMap[14]}" var="Fourteen" id="fourteenTable" rowClasses="odd,even" styleClass="TableClass" rendered="{!showFourteen}" >
+			
+			<apex:facet name="caption">Employees Terminating in 14 days</apex:facet>
+			
+			<apex:column >
+				<apex:facet name="header">Action</apex:facet>
+				<a href="/apex/nonemployeeAttestation?managerId={!Fourteen.Manager_lookup__c}&employeeId={!Fourteen.Id}&flag=ninety">Extend 90 Days </a>
+				&nbsp;
+				<a href="/apex/nonemployeeAttestation?managerId={!Fourteen.Manager_lookup__c}&employeeId={!Fourteen.Id}&flag=thirty">Extend 30 Days </a>
+				&nbsp;
+				<a href="/apex/nonemployeeAttestation?managerId={!Fourteen.Manager_lookup__c}&employeeId={!Fourteen.Id}&flag=reject">Reject </a>
+			</apex:column>
+				
+			<apex:column >
+				<apex:facet name="header">First Name</apex:facet>
+				<apex:outputText>{!Fourteen.First_Name__c}</apex:outputText> 
+			</apex:column>
+			
+			<apex:column >
+				<apex:facet name="header">Last Name</apex:facet>
+				<apex:outputText>{!Fourteen.Last_name__c}</apex:outputText> 
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Job title</apex:facet>
+				<apex:outputText>{!Fourteen.Job_title__c}</apex:outputText> 
+			</apex:column>
+			
+			<apex:column >
+				<apex:facet name="header">Termination Date</apex:facet>
+				<apex:outputText Value=" {!Fourteen.Termination_Date__c}"/>
+			</apex:column>
+		</apex:dataTable>
+		
+	</body>
+	</html>
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div class="thinking">
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
+
+</apex:component> 
