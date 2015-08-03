@@ -3,7 +3,10 @@ public with sharing class Incident_Form_View {
 	private Apexpages.StandardController controller;
 	public Incident__c incident {get; set;}
 	public string recordtypeName {get; set;}
-	public transient List<Incident_Person__c> relatedPeople { get; private set;}
+	public transient List<Incident_Person__c> relatedStaff { get; private set;}
+	public transient List<Incident_Person__c> relatedMentor { get; private set;}
+	public transient List<Incident_Person__c> relatedOther { get; private set;}
+	public transient List<Incident_Person__c>relatedPEople { get; private set;}
 	
 	public Incident_Form_View(Apexpages.StandardController controller){
 		this.Controller = controller;
@@ -13,7 +16,9 @@ public with sharing class Incident_Form_View {
 		this.incident = (Incident__c)controller.getRecord();
 		recordtypeName = this.incident.Recordtype.Name;
 		
-		relatedPeople = [ select id, person_type__c, staff_member__c, staff_member__r.name, mentor__c, mentor__r.name, other_people__c, recordtype.name, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id order by lastmodifieddate desc];
+		relatedStaff = [ select id, person_type__c, staff_member__c, staff_member__r.name, staff_member__r.employee_number__c, staff_member__r.job_title__c, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id and recordtype.name='Staff' order by createddate ];
+		relatedMentor = [ select id, person_type__c, mentor__c, mentor__r.full_name__c, mentor__r.name, mentor__r.role__c, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id and recordtype.name='Mentor' order by createddate ];
+		relatedOther= [ select id, person_type__c, other_people__c, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id and recordtype.name='Other' order by createddate ];
 	}
 	
 	//Making sure to issue a Query only if the type of the incident is 'PBS. Make sure servAssign == null before query, otherwise Query will be called whenever servAssign is referred in the Page
