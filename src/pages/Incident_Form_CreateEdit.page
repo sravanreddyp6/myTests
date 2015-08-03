@@ -265,7 +265,7 @@ function evalFirstReportedField(eley, leaveBlank){
 			
 			<apex:pageBlockSection columns="1" id="relStaffSection">
                     <apex:inputHidden id="jsonstring" value="{!newPeopleJSON}" />
-            <apex:pageBlockTable id="relStaff" value="{!mapStaff}" var="relper" rendered="{! incident__c.staff_present__c == 'Yes' && relExistingCount > 0}">
+            <apex:pageBlockTable id="relStaff" value="{!mapStaff}" var="relper" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relExistingCount > 0}">
             
             <apex:column headerValue="Action">
            		<apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
@@ -275,7 +275,7 @@ function evalFirstReportedField(eley, leaveBlank){
                <apex:outputLink value="/{!relExisting[relper].Staff}" >{!relExisting[relper].PersonName}</apex:outputLink>
            </apex:column> 
            <apex:column headerValue="Employee Number" value="{!relExisting[relper].EmpNum}" />
-           		
+           <apex:column headerValue="Title" value="{!relExisting[relper].Title}" />		
            <apex:column headerValue="Last Modified By">
            <apex:outputLink value="/{!relExisting[relper].lastmodifiedbyid}">{!relExisting[relper].LastModifiedBy}</apex:outputLink>
            </apex:column>
@@ -300,7 +300,7 @@ function evalFirstReportedField(eley, leaveBlank){
            
            <apex:pageBlockSection columns="1" id="relMentorSection">
 
-                  <apex:pageBlockTable id="relMentor" value="{!mapMentor}" var="relper" rendered="{! incident__c.mentor_present__c == 'Yes' && relExistingCount > 0}">
+                  <apex:pageBlockTable id="relMentor" value="{!mapMentor}" var="relper" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.mentor_present__c == 'Yes' && relExistingCount > 0}">
             
             <apex:column headerValue="Action">
            		<apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
@@ -309,6 +309,8 @@ function evalFirstReportedField(eley, leaveBlank){
            <apex:column headerValue="Name"> 
                <apex:outputLink value="/{!relExisting[relper].Mentor}" >{!relExisting[relper].PersonName}</apex:outputLink>
            </apex:column> 
+           <apex:column headerValue="Mentor Number" value="{!relExisting[relper].EmpNum}" />
+           <apex:column headerValue="Role" value="{!relExisting[relper].Title}" />		
            <apex:column headerValue="Last Modified By">
            <apex:outputLink value="/{!relExisting[relper].lastmodifiedbyid}">{!relExisting[relper].LastModifiedBy}</apex:outputLink>
            </apex:column>
@@ -335,7 +337,7 @@ function evalFirstReportedField(eley, leaveBlank){
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="1" id="relOtherSection">        
                 
-                  <apex:pageBlockTable id="relOther" value="{!mapOther}" var="relper" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' }">
+                  <apex:pageBlockTable id="relOther" value="{!mapOther}" var="relper" columnsWidth="10%,60%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' }">
             
             <apex:column headerValue="Action">
            		<apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
@@ -462,7 +464,7 @@ function evalFirstReportedField(eley, leaveBlank){
             </apex:pageblockButtons>
             <apex:pageMessages id="personDialogErrors" />
             
-            <apex:pageBlockSection> 
+            <apex:pageBlockSection columns="1"> 
             
             <apex:pageBlockSectionItem rendered="{!currPerson.Person_Type__c == 'Staff'}">
             <apex:outputLabel value="Staff Member" />
@@ -473,11 +475,15 @@ function evalFirstReportedField(eley, leaveBlank){
             <apex:outputLabel value="Mentor" />
             <apex:inputField value="{!currPerson.Mentor__c}" />
             </apex:pageBlockSectionItem>
-
+	
+			  
             <apex:pageBlockSectionItem  rendered="{!currPerson.Person_Type__c== 'Other'}" >
             <apex:outputLabel value="Describe Other Person or People" />
             <apex:inputField value="{!currPerson.Other_people__c}"  />
             </apex:pageBlockSectionItem>
+            
+            <apex:outputText value="Do not enter the full name of any other Person Being Served involved in the incident. Initials are OK." rendered="{!currPerson.Person_Type__c== 'Other'}" />
+            
             </apex:pageBlockSection>
         </apex:pageBlock>
     

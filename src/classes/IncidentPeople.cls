@@ -268,6 +268,7 @@ public pageReference savePerson( ) {
 		public string editId { get; set; }
 		public string PersonName { get; set; }
 		public string EmpNum { get; set; }
+		public string Title { get; set; }
 		public ID Mentor { get; set { mentor = value; updateMentorName( value ); editID = value; } }
 		public ID Staff { get; set { staff = value; updateStaffName( value ); editID = value;}}
 		public String Other { get; set { PersonName = value; editID = value; editID = value;}}
@@ -283,18 +284,21 @@ public pageReference savePerson( ) {
 		
 		private void updateMentorName( ID newID ) {
 			if ( isNew && newID != null) {
-			TMN_Contact__c newMentor = [ select id, name from tmn_contact__c where id=:newID ];		
+			TMN_Contact__c newMentor = [ select id, name, full_name__c,  role__c from tmn_contact__c where id=:newID ];		
 			if ( newMentor != null )
-				PersonName = newMentor.name;
+				PersonName = newMentor.full_name__c;
+				EmpNum = newMentor.name;
+				Title = newMentor.role__c;
 			}
 		}
 		
 		private void updateStaffName( ID newID ) {
 			if ( newID != null ) {
-			TMN_User__c  newUser = [ select id, name, employee_number__c from TMN_User__c where id=:newID ];		
+			TMN_User__c  newUser = [ select id, name, employee_number__c, job_title__c from TMN_User__c where id=:newID ];		
 			if ( newUser != null )
 				PersonName = newUser.name;
 				EmpNum = newUser.employee_number__c;
+				Title = newUser.job_title__c;
 			}
 		}
 		
