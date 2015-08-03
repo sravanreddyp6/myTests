@@ -82,16 +82,16 @@ public with sharing class Incident_Form_CreateEdit {
     public boolean validateIncidentSave(Incident__c incident){
         boolean hasError = false; 
 		if( incident.Unknown_Date_Occurred__c == false && incident.Date_Occurred__c == null ){
-            incident.Date_Occurred__c.addError('Date/time incident occurred is requried or select Unknown'); hasError = true;
+            incident.Date_Occurred__c.addError('Please provide date/time incident occurred or select unknown'); hasError = true;
         }         
         if(incident.First_Reported_By__c == 'Employee' && incident.First_Reported_Staff__c == null){
-            incident.First_Reported_Staff__c.addError('Staff requried'); hasError = true;
+            incident.First_Reported_Staff__c.addError('Staff required'); hasError = true;
         }
         if(incident.First_Reported_By__c == 'Mentor' && incident.First_Reported_Mentor__c == null){
-            incident.First_Reported_Mentor__c.addError('Mentor requried'); hasError = true;
+            incident.First_Reported_Mentor__c.addError('Mentor required'); hasError = true;
         }  
         if(incident.First_Reported_By__c == 'External Party' && incident.External_Party__c == null){
-            incident.External_Party__c.addError('External Party requried'); hasError = true;
+            incident.External_Party__c.addError('External Party required'); hasError = true;
         }              
         if(incident.Where_incident_occurred__c == 'Other Location' && incident.Other_Location__c == null){
             incident.Where_incident_occurred__c.addError('Other location is required'); hasError = true;
@@ -119,13 +119,13 @@ public with sharing class Incident_Form_CreateEdit {
     	boolean hasError = false; 
     	
 		if( incident.Unknown_Date_Occurred__c == false && incident.Date_Occurred__c == null ){
-            incident.Date_Occurred__c.addError('Date/time incident occurred is requried'); hasError = true;
+            incident.Date_Occurred__c.addError('Please provide date/time incident occurred or select unknown'); hasError = true;
         }  
 		if( incident.Date_Reported__c == null ){
-            incident.Date_Reported__c.addError('Date/time reported is requried'); hasError = true;
+            incident.Date_Reported__c.addError('Date/time reported is required'); hasError = true;
         }       
    		if( incident.First_Reported_By__c == null ){
-            incident.First_Reported_By__c.addError('First reported by is requried'); hasError = true;
+            incident.First_Reported_By__c.addError('First reported by is required'); hasError = true;
         } 
    		if( incident.Where_incident_occurred__c == null ){
             incident.Where_incident_occurred__c.addError('Where did the incident occur is required'); hasError = true;
