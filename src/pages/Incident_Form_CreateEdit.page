@@ -43,6 +43,17 @@
 				evalFirstReportedField( jQuery('[id$=first_reported_by]'), true );               
             };
             setUpFields();
+            
+            getJSONFieldVal = function() {
+         	
+         	var $field = $('[id$=jsonstring]');
+         	if ($field != null )
+         		return $field.val();
+         	else
+         			return '';
+         	};
+         
+         
         }); 
         
 function evalFirstReportedField(eley, leaveBlank){
@@ -66,6 +77,8 @@ function evalFirstReportedField(eley, leaveBlank){
 		jQuery('[id$=specify_exp_label]').removeClass('noDisplay');
 	}	
 
+
+ 	
 
 
 }        
@@ -109,7 +122,7 @@ function evalFirstReportedField(eley, leaveBlank){
         <apex:pageBlock mode="detail" title="General Information" id="generalInfoBlock">
         <apex:pageBlockButtons >
             <div style="float: right;">
-                <apex:CommandButton id="saveButton" onClick="debugger;saveIncident(getJSONFieldVal());" value="Save" status="pageProcessing" reRender="theForm, msgs" oncomplete="setUpFields();"/>
+                <apex:CommandButton id="saveButton" onClick="saveIncident(getJSONFieldVal());return false" value="Save" status="pageProcessing" reRender="theForm, msgs" />
                 <apex:CommandButton action="{!Cancel}" value="Cancel" />
             </div>
         </apex:pageBlockButtons>        
@@ -402,7 +415,7 @@ function evalFirstReportedField(eley, leaveBlank){
 			</apex:facet>
 		<apex:facet name="stop" />
 	</apex:actionStatus>
-	<apex:actionFunction name="saveIncident" action="{!saveIncident}" status="pageProcessing" reRender="theForm, msgs">
+	<apex:actionFunction name="saveIncident" action="{!saveIncident}" status="pageProcessing" reRender="theForm, msgs" oncomplete="setUpFields();">
         <apex:param name="incList" value="" assignTo="{!personListJSON}" />
     </apex:actionFunction>
 	
@@ -437,11 +450,7 @@ function evalFirstReportedField(eley, leaveBlank){
                 }               
             }
             
-            getJSONFieldVal = function() {
-            	var $field = $('[id$=jsonstring]');
-            	if ($field != null )
-            		return $field.val();
-            }
+           
         }
         });
 
