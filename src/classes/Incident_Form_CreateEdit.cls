@@ -38,7 +38,7 @@ public with sharing class Incident_Form_CreateEdit {
     
     public pageReference saveIncident( ){
     	
-    	system.debug('PERSON LIST' + personListJSON);
+    	
         if( validateIncidentSave(incident) ){return null;}
         try{
             upsert this.incident;
