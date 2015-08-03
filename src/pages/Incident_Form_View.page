@@ -100,20 +100,46 @@
         		<apex:outputField label="Incident Outcome" value="{!Incident__c.Incident_Outcome__c}" />
         	</apex:pageBlockSection>
 		    <apex:pageBlockSection columns="1" title="People Involved" collapsible="false" >
-			    <div class="pbHeaderButton">
-			    </div>
-					<apex:pageBlockTable styleclass="pbBody-list" value="{!relatedPeople}" var="relper" rendered="{!relatedpeople != null && relatedpeople.size > 0}">
-					<apex:column headerValue="Type" value="{!relper.Person_Type__c}" />
-					<apex:column headerValue="Name"> 
-					    <apex:outputLink value="/{!relper.Mentor__c}" rendered="{!relper.recordtype.name = 'Mentor'}">{!relper.mentor__r.name}</apex:outputLink>
-					    <apex:outputLink value="/{!relper.Staff_Member__c}" rendered="{!relper.recordtype.name = 'Staff'}" >{!relper.staff_member__r.name}</apex:outputLink>
-					    <apex:outputText value="{!relper.Other_people__c}" rendered="{!relper.recordtype.name = 'Other'}" />
-					</apex:column> 
-					<apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
-					<apex:column headerValue="Last Modified">
-					    <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
-					</apex:column>
-					</apex:pageBlockTable>
+
+				<apex:outputText value="{!Incident__c.staff_present__c}" />
+ 				
+			<apex:pageBlockTable id="relStaff" value="{!relatedStaff}" var="relper" columnsWidth="35%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relatedstaff != null && relatedstaff.size > 0}">
+            
+           <apex:column headerValue="Name" value="{!relper.staff_member__r.name}" /> 
+           <apex:column headerValue="Employee Number" value="{!relper.staff_member__r.employee_number__c}" />
+           <apex:column headerValue="Title" value="{!relper.staff_member__r.job_title__c}" />		
+           <apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
+           <apex:column headerValue="Last Modified">
+               <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
+           </apex:column> 
+        </apex:pageBlockTable>
+        
+        
+        <apex:outputText value="{!Incident__c.mentor_present__c}" />
+ 				
+			<apex:pageBlockTable id="relMentor" value="{!relatedMentor}" var="relper" columnsWidth="35%,15%,20%,15%,15%" rendered="{! incident__c.mentor_present__c == 'Yes' && relatedMentor != null && relatedMentor.size > 0}">
+            
+           <apex:column headerValue="Name" value="{!relper.mentor__r.full_name__c}" /> 
+           <apex:column headerValue="Mentor Number" value="{!relper.mentor__r.name}" />
+           <apex:column headerValue="Role" value="{!relper.mentor__r.role__c}" />		
+           <apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
+           <apex:column headerValue="Last Modified">
+               <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
+           </apex:column> 
+        </apex:pageBlockTable>
+        
+        <apex:outputText value="{!Incident__c.others_present_at_time_of_incident__c}" />
+ 				
+			<apex:pageBlockTable id="relOther" value="{!relatedOther}" var="relper" columnsWidth="70%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' && relatedOther != null && relatedOther.size > 0}">
+            
+           <apex:column headerValue="Name" value="{!relper.other_people__c}" /> 
+           <apex:column headerValue="Last Modified By" value="{!relper.lastmodifiedbyid}" />
+           <apex:column headerValue="Last Modified">
+               <c:MilitaryDatetime datetimeval="{!relper.lastmodifieddate}" edit="false" />
+           </apex:column> 
+        </apex:pageBlockTable>
+        
+        
 			</apex:pageBlockSection>
 </apex:pageBlock>
     
