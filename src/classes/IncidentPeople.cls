@@ -41,6 +41,8 @@ public IncidentPeople(Apexpages.StandardController controller){
 private void initrelatedPeople() {
 	
 		string PersonName;
+		string Title;
+		string empId;
 		
 		newPeople = new List<Incident_Person__c>();	// list of new starts out empty
 		relExisting = new Map<String, IncidentPersonWrapper>(); //list of existing people
@@ -49,7 +51,7 @@ private void initrelatedPeople() {
 		mapOther  = new Map<String, IncidentPersonWrapper>();
 		
 		if ( incident.id != null)
-			relatedPeople = [ select id, person_type__c, staff_member__c, staff_member__r.name, mentor__c, mentor__r.name, other_people__c, recordtype.name, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid, lastmodifiedby.name from incident_person__c where incident__c = :this.incident.id order by person_type__c, lastmodifieddate desc ];
+			relatedPeople = [ select id, person_type__c, staff_member__c, staff_member__r.name, staff_member__r.employee_number__c, staff_member__r.job_title__c, mentor__c, mentor__r.name, mentor__r.role__c, mentor__r.full_name__c, other_people__c, recordtype.name, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid, lastmodifiedby.name from incident_person__c where incident__c = :this.incident.id order by person_type__c, lastmodifieddate desc ];
 		else
 			relatedPeople = new List<Incident_Person__c>();
 			
@@ -64,17 +66,22 @@ private void initrelatedPeople() {
 			ipw.lastmodifieddate = rp.lastmodifieddate;
 			
 			if ( rp.person_type__c == 'Mentor') {
-				PersonName = rp.mentor__r.name;
+				ipw.PersonName = rp.mentor__r.full_name__c;
+				ipw.Title = rp.mentor__r.role__c;
+				ipw.EmpNum = rp.mentor__r.name;
 				ipw.mentor = rp.mentor__c;
+				
 				mapMentor.put( ipw.editID, ipw);
 			}
 			else if ( rp.person_type__c == 'Staff') {
-				PersonName = rp.staff_member__r.name;
+				ipw.PersonName = rp.staff_member__r.name;
+				ipw.EmpNum = rp.staff_member__r.employee_number__c;
+				ipw.Title = rp.staff_member__r.job_title__c;
 				ipw.staff= rp.staff_member__c;
 				mapStaff.put( ipw.editID, ipw);
 			} 
 			else if ( rp.person_type__c == 'Other') {
-				PersonName = rp.other_people__c;
+				ipw.PersonName = rp.other_people__c;
 				ipw.other = rp.other_people__c;
 				mapOther.put ( ipw.editID, ipw);
 			}
