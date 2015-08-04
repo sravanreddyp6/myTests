@@ -5,9 +5,9 @@ public with sharing class PDMController {
  public TMN_User__c curruser  {get{return [ select id,Work_State__c,Work_City__c  from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];} set;}
  
  public String MainOffice {get{return '999-999-9999';} set;}
- public String ServiceCenter {get{return '989-989-7888';} set;}
- public String HumanResources {get{return '999-999-9999';} set;}
- public String TestLabel {get{return '234-234-3434';} set;}
+ public String ServiceCenter {get{return '1-888-774-4872 Option #2';} set;}
+ public String HumanResources {get{return '1-888-774-4872 Option #3';} set;}
+ public String ItServiceCenter {get{return '1-888-774-4872 Option #1';} set;}
  public String fax {get{return '588-123-1234';} set;}
    
 public String firstName {get; set;}
@@ -30,6 +30,7 @@ public Boolean errorMsg1 {set;get;}
 public Boolean errorMsg2 {set;get;}
 public Boolean errorMsg3 {set;get;}
 public Boolean errorMsg4 {set;get;}
+public String searchingForQuery {set;get;}    
 private String tmlUserQuery;
 private List<TMN_User__c> TMNUserList {set;get;}
  private String searchName;
@@ -58,7 +59,6 @@ private List<TMN_User__c> TMNUserList {set;get;}
         get{
             if(setCon == null){
                 size = 50;
-                System.debug('tmlUserQuery is '+tmlUserQuery);
                 setCon = new ApexPages.StandardSetController(Database.getQueryLocator(tmlUserQuery));
                 setCon.setPageSize(size);
                 noOfRecords = setCon.getResultSize();
@@ -79,13 +79,15 @@ Public List<TMN_User__c> getTMNUserList(){
         }
         return Tlist;
     }
-
 public void searchEmployee() {
+	SortField = null;
+	SortDirection = null;
  String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, First_Name__c,Job_Title__c ,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c where Name like \'%' + searchEmployee +'%\' ';
     			if(searchLocation!=null && searchLocation.length() > 0) {
 				queryString =  queryString + ' and Work_City__c like \'%' + searchLocation +'%\' ';
 				}
-			queryString =  queryString + ' order by Office_Phone__c';
+    searchingForQuery = queryString;
+			queryString =  queryString + ' order by ' + SortField + ' ' + SortDirection;
                 setCon = new ApexPages.StandardSetController(Database.getQueryLocator(queryString));
                 setCon.setPageSize(size);
  noOfRecords = setCon.getResultSize();
@@ -101,8 +103,11 @@ public void searchEmployee() {
 }
 
 public void searchByLocation () {
- String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c,  Last_Name__c,First_Name__c, Job_Title__c,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c where Work_City__c like \'%' + searchLocation +'%\'  order by Office_Phone__c';
-		System.debug('queryString : '+queryString);
+	SortField = null;
+	SortDirection = null;
+ String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c,  Last_Name__c,First_Name__c, Job_Title__c,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c where Work_City__c like \'%' + searchLocation +'%\' ';
+searchingForQuery = queryString;
+    queryString =  queryString +  ' order by ' + SortField + ' ' + SortDirection;
                 setCon = new ApexPages.StandardSetController(Database.getQueryLocator(queryString));
                 setCon.setPageSize(size);
  noOfRecords = setCon.getResultSize();
@@ -110,7 +115,7 @@ public void searchByLocation () {
 	errorMsg1 = true;errorMsg2 = false;errorMsg3 = false;errorMsg4 = false;
 	}
 }
-	
+
 	   public void BuildQuery() {
         setCon = null;
         String locationSelected = curruser.Work_City__c;
@@ -126,14 +131,12 @@ public void searchByLocation () {
         
         tmlUserQuery = 'Select Work_State__c,Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, fax__c,';
      tmlUserQuery = tmlUserQuery +  + 'Last_Name__c, First_Name__c,Job_Title__c,Email__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c  where Work_City__c = \'' + locationSelected +'\' '; 
-        
-         if (AlphaFilter != 'All') {
+           if (AlphaFilter != 'All') {
             tmlUserQuery =  tmlUserQuery +' and (Last_Name__c LIKE \'' + AlphaFilter + '%\' OR First_Name__c  LIKE \'' + AlphaFilter + '%\' )' ;
-        }
+        	}
         tmlUserQuery += ' order by ' + SortField + ' ' + SortDirection;
-        
-        
-        if(searchName!=null && searchName.equals('AdvanceSearch')){
+
+           if(searchName!=null && searchName.equals('AdvanceSearch')){
         	locationSelected = null;
         String QueryWhere = '';
   tmlUserQuery = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, First_Name__c, Last_Name__c, Job_Title__c,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c ';
@@ -155,11 +158,17 @@ public void searchByLocation () {
 				if(searchTitle!=null && searchTitle.length() > 0) {
 				QueryWhere =  BuildWhere( QueryWhere , '  Job_Title__c like \'%' + searchTitle +'%\' ');
 				}
+            searchingForQuery =  tmlUserQuery + QueryWhere ;
 			tmlUserQuery =  tmlUserQuery + QueryWhere + ' order by Office_Phone__c';
-			
-			System.debug('tmlUserQuery is ' + tmlUserQuery);
         }
-        System.debug('tmlUserQuery is ' + tmlUserQuery);
+           if(searchingForQuery!=null) {
+       	      if (AlphaFilter != 'All') {
+            tmlUserQuery =  searchingForQuery +' and (Last_Name__c LIKE \'' + AlphaFilter + '%\' OR First_Name__c  LIKE \'' + AlphaFilter + '%\' )' ;
+              }else{
+                  tmlUserQuery =  searchingForQuery;
+              }
+               tmlUserQuery = tmlUserQuery + ' order by ' + SortField + ' ' + SortDirection;
+           }
     }
 	
 	 public void SortToggle() {
@@ -183,6 +192,8 @@ public void searchByLocation () {
         }
     }
 public void search () {
+	SortField = null;
+	SortDirection = null;
 	searchName ='AdvanceSearch';
 	BuildQuery();
 }
