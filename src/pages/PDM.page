@@ -13,7 +13,7 @@
     var j$ = jQuery.noConflict();
     j$(document).ready(function() {
 	
-		  j$('input[id$="ExportToExcel"]').prop('disabled', true);
+        //j$('input[id$="ExportToExcel"]').prop('disabled', true);
 		
 		  
   j$('#saveButton').keypress(function(event){
@@ -229,8 +229,13 @@ j$('input[id$=searchEmployee]').val('');
 
 
   function AdvanceSearch() {
-  j$('[id*=AdvancedSearchModal]').dialog("close");
-       j$('[id$=searchEmployee]').val('');
+      j$('[id*=AdvancedSearchModal]').dialog("close");
+      if(j$('[id$=city]').val().length>=3){
+       j$('input[id$="ExportToExcel"]').prop('disabled', false);
+      }
+	 j$('[id$=hiddenCity]').val(j$('[id$=city]').val());
+      j$('[id$=hiddenState]').val(j$('[id$=StateCode]').val());
+      j$('[id$=searchEmployee]').val('');
       j$('[id$=searchLocation]').val('');
   if(j$('[id$=city]').val().length==0 && j$('[id$=StateCode]').val().length == 0 && j$('[id$=FirstName]').val().length == 0 && j$('[id$=OperatingGroup]').val().length == 0 
   && j$('[id$=LastName]').val().length == 0 && j$('[id$=JobTitle]').val().length == 0){
@@ -256,28 +261,39 @@ j$('input[id$=searchEmployee]').val('');
 });
   
   function closeDialog () {
+	j$('[id*=AdvancedSearchModal]').dialog("close");      
   	j$('[id$=city]').val('');
   	j$('[id$=StateCode]').val('');j$('[id$=FirstName]').val('');j$('[id$=OperatingGroup]').val('');j$('[id$=LastName]').val('');j$('[id$=JobTitle]').val('');
   	j$('[id$=modelError]').hide();
   }
   
   function exportExcel() {
-  openWin('/apex/TMNUserLocationExcel?location='+j$('[id$=searchLocation]').val());
+     var url =  '/apex/TMNUserLocationExcel?';
+      
+      if(j$('[id$=searchLocation]').val().length>0){
+        url = url +'location='+j$('[id$=searchLocation]').val();
+      } else if(j$('[id$=hiddenCity]').val().length>0){
+        url = url +'location='+j$('[id$=hiddenCity]').val();
+      }
+      if(j$('[id$=hiddenState]').val().length>0){
+        url = url +'&state='+j$('[id$=hiddenState]').val();
+      }
+  openWin(url);
   }
  </script>
   <div class="headsection">
   
   			<div class= "floatCol1" >
-  			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main Office :  {!MainOffice}
+  			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main  Office :  1-617-790-4800
   			</div>
   			<div class="floatCol">
-  			Service Center : {!ServiceCenter}
+  			IT Service Center : {!ItServiceCenter}
   			</div>
   			<div class= "floatCol1" >
-  			Human Resources : {!HumanResources}
+  			Finance Service Center : {!ServiceCenter}
   			</div>
   			<div class="floatCol">
-  			Test Label : {!TestLabel}
+  			HR Service Center : {!HumanResources}
   			</div>
   </div>
   <br/>
@@ -301,7 +317,7 @@ j$('input[id$=searchEmployee]').val('');
         <apex:param name="JobTitle" value="" assignTo="{!searchTitle}" />
       </apex:actionFunction>  
       
-<apex:pageBlock title="Phone Directory" id="PhoneDirectory">
+<apex:pageBlock id="PhoneDirectory">
  
 <br/>
 
@@ -327,17 +343,17 @@ j$('input[id$=searchEmployee]').val('');
         <apex:outputText >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputText>
         <apex:panelGroup >
           <apex:commandButton id="AdancedSearch" value="Adanced Search"  onClick="showAdvancedSearchModal(); return false;"  reRender="fullpage" />
-          <apex:commandButton value="Export to Excel"  id="ExportToExcel"   onclick="exportExcel(); return false;"  />
+          <apex:commandButton value="Export to Excel"  id="ExportToExcel"  disabled="{!noOfRecords=0}" onclick="exportExcel(); return false;"  />
           </apex:panelGroup>
     </apex:panelGrid>
     
 <br/>
  <apex:outputPanel id="fullpage">
 
- <apex:outputPanel id="datePanelContainer"  >
+ <apex:outputPanel id="datePanelContainer">
 
- 
- <apex:outputPanel rendered="{!TMNUserList.size>0}" id="LocationInfomation" >
+ <apex:inputHidden value="{!noOfRecords}" id="noOfRecords"/>
+ <apex:outputPanel rendered="{! TMNUserList.size>0 || AlphaFilter!='ALL'}" id="LocationInfomation" >
  
  <div id="table_start_filter" >
                 Browse by Name
@@ -356,6 +372,13 @@ j$('input[id$=searchEmployee]').val('');
                 <a href="#" onClick="BuildQuery('Y');" data-filter='[Y]'>Y</a>&nbsp;|&nbsp; <a href="#" onClick="BuildQuery('Z');" data-filter='[Z]'>Z</a>&nbsp;|&nbsp;
                 <a href="#" onClick="BuildQuery('ALL');" class="active" data-filter='.'>All</a>
             </div>
+     <apex:outputPanel rendered="{! TMNUserList.size = 0 && AlphaFilter!='ALL' && NOT (errorMsg1 || errorMsg2 || errorMsg3 || errorMsg4  )}">
+                <div class="warning">
+                    <apex:outputText >
+                    Sorry! We cannot find the any data for this <b>{!AlphaFilter}</b> letter
+        		</apex:outputText>	
+                    </div>
+                </apex:outputPanel>
              <apex:actionStatus id="TableUpdateStatus">
             <!-- loading message -->
             <apex:facet name="start">
@@ -373,13 +396,13 @@ j$('input[id$=searchEmployee]').val('');
 
             <!-- Account table -->
             <apex:facet name="stop">
-           <apex:pageBlockTable value="{!TMNUserList}" var="user" style="width: 100%;" styleClass="dataTable" id="Tabledata">
+           <apex:pageBlockTable value="{!TMNUserList}" var="user" style="width: 100%;" styleClass="dataTable" id="Tabledata" rendered="{! TMNUserList.size>0}">
                  
                     <apex:column headerValue="Location">
                       <apex:facet name="header">
                         <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
                            <apex:param name="SortField" value="Work_City__c" assignTo="{!SortField}" />
-                            <apex:outputText value= "Location {!IF(SortField=='Work_City__c',IF(SortDirection='asc','▲','▼'),'')}"/>
+                            <apex:outputText value="Location {!IF(SortField=='Work_City__c',IF(SortDirection='asc','▲','▼'),'')}"/>
                     </apex:commandLink>
                     </apex:facet>
                         <apex:outputText >{!user.Work_City__c}&nbsp;{!user.Work_State_Code__c} </apex:outputText>
@@ -472,12 +495,15 @@ j$('input[id$=searchEmployee]').val('');
                     <apex:outputText value="Manager {!IF(SortField=='Manager_Name__c',IF(SortDirection='asc','▲','▼'),'')}" />
                     </apex:commandLink>
                     </apex:facet>
-                    <apex:outputText value="{!user.Manager_Name__c}" />
+                   <apex:outputText value="{!user.Manager_Name__c}" rendered="{!user.Manager_Name__c!='n/a'}" />
                     </apex:column>
                 </apex:pageBlockTable>
- 
+               
+ 				
 		</apex:facet>
 </apex:actionStatus>
+     
+     <apex:outputPanel rendered="{! TMNUserList.size>0 && NOT(errorMsg1 || errorMsg2 || errorMsg3 || errorMsg4  )}">
        <div class="container">
   <ul class="pager">
     <apex:commandButton id="previous" status="TableUpdateStatus" reRender="datePanelContainer" value=" << Previous " action="{!previous}" disabled="{!!hasPrevious}" title=" << Previous"/>
@@ -487,7 +513,9 @@ j$('input[id$=searchEmployee]').val('');
                     <apex:actionStatus id="fetchStatus" startText="Fetching..." stopText=""/>
                 </apex:outputPanel>
   </ul>
-</div> <div class="HeadButtons">
+           </div>
+	</apex:outputPanel>
+ <div class="HeadButtons">
         <apex:commandButton action="{!save}" id="saveButton" value="   Save    " style="display:none" />
         <apex:commandButton id="cancelButton" value="   Cancel  " style="display:none" oncomplete="cancelEdit()" reRender="datePanelContainer" />
          </div>
@@ -496,7 +524,7 @@ j$('input[id$=searchEmployee]').val('');
         </apex:outputPanel>
        
        
-       <apex:outputPanel rendered="{!TMNUserList.size==0 && (errorMsg1 || errorMsg2 || errorMsg3 || errorMsg4)}" >
+       <apex:outputPanel rendered="{!TMNUserList.size==0 && (errorMsg1 || errorMsg2 || errorMsg3 || errorMsg4  )}" >
        <div class="warning">
        	<p > Uh-oh!</p> <BR/>
         		<apex:outputText rendered="{!errorMsg1}">
@@ -509,22 +537,20 @@ j$('input[id$=searchEmployee]').val('');
         		Sorry! We cannot find the person you are looking for.
         		</apex:outputText>
         		<apex:outputText rendered="{!errorMsg4}">
-        		Sorry! We cannot find the person you are looking for.
+        		Sorry! We cannot find the any data for this Search. Please give relevant data.
         		</apex:outputText>
         		</div>
        </apex:outputPanel> 
-       
+     	  
+     
        </apex:outputPanel>
        
           <apex:outputPanel id="AdvancedSearchModal" title="Advanced Search" style="display:none">
-
             <apex:pageBlock >
-  
-                
         <apex:pageBlockSection showHeader="true" columns="2" collapsible="false" id="AdvanceSearch" >
-        
         <apex:inputtext value="{!city}" id="city"    label="City" />
-          <apex:selectList label="State"  size="1" value="{!state}" id="StateCode">
+         <apex:selectList label="State"  size="1" value="{!state}" id="StateCode">
+             			 <apex:selectOption itemValue="" itemLabel=""/>
                         <apex:selectOption itemValue="AL" itemLabel="Alabama"/>
                         <apex:selectOption itemValue="AK" itemLabel="Alaska"/>
                         <apex:selectOption itemValue="AZ" itemLabel="Arizona"/>
@@ -576,15 +602,18 @@ j$('input[id$=searchEmployee]').val('');
                         <apex:selectOption itemValue="WI" itemLabel="Wisconsin"/>
                         <apex:selectOption itemValue="WY" itemLabel="Wyoming"/>
                     </apex:selectList>   
-
         <apex:inputtext value="{!firstName}" id="FirstName"    label="First Name" />
         <apex:inputtext value="{!operationGroup}" id="OperatingGroup"    label="Operating Group" />
         <apex:inputtext value="{!lastName}" id="LastName"    label="Last Name" />
         <apex:inputtext value="{!searchTitle}" id="JobTitle"    label="Job Title" />
        </apex:pageBlockSection> 
+       <input type="hidden"  value="" id="hiddenCity"/>
+       <input type="hidden" value="" id="hiddenState"/>
+                
+		<apex:inputHidden value="{!searchingForQuery}"/>                
        <div id="modelError" style="display:none"><p style="font-size:large;  color: red;">Please enter at least one search criteria </p> </div>
        <apex:pageblockButtons location="bottom">
-       <apex:commandButton id="search" onClick="AdvanceSearch()" value="Search"  reRender="datePanelContainer" /> 	
+       <apex:commandButton id="search" onClick="AdvanceSearch(); return false;" value="Search"  reRender="datePanelContainer" /> 	
        <apex:commandButton id="cancel"  value="Cancel"  onclick="closeDialog()" /> 	
        </apex:pageblockButtons>
      </apex:pageBlock>
