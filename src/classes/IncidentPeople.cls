@@ -51,7 +51,7 @@ private void initrelatedPeople() {
 		mapOther  = new Map<String, IncidentPersonWrapper>();
 		
 		if ( incident.id != null)
-			relatedPeople = [ select id, person_type__c, staff_member__c, staff_member__r.name, staff_member__r.employee_number__c, staff_member__r.job_title__c, mentor__c, mentor__r.name, mentor__r.role__c, mentor__r.full_name__c, other_people__c, recordtype.name, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid, lastmodifiedby.name from incident_person__c where incident__c = :this.incident.id order by person_type__c, lastmodifieddate desc ];
+			relatedPeople = [ select id, title__c, person_type__c, staff_member__c, staff_member__r.name, staff_member__r.employee_number__c, staff_member__r.job_title__c, mentor__c, mentor__r.name, mentor__r.role__c, mentor__r.full_name__c, other_people__c, recordtype.name, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid, lastmodifiedby.name from incident_person__c where incident__c = :this.incident.id order by person_type__c, lastmodifieddate desc ];
 		else
 			relatedPeople = new List<Incident_Person__c>();
 			
