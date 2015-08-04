@@ -18,7 +18,7 @@ public with sharing class Incident_Form_View {
 		
 		relatedStaff = [ select id, person_type__c, staff_member__c, staff_member__r.name, staff_member__r.employee_number__c, staff_member__r.job_title__c, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id and recordtype.name='Staff' order by createddate ];
 		relatedMentor = [ select id, person_type__c, mentor__c, mentor__r.full_name__c, mentor__r.name, mentor__r.role__c, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id and recordtype.name='Mentor' order by createddate ];
-		relatedOther= [ select id, person_type__c, other_people__c, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id and recordtype.name='Other' order by createddate ];
+		relatedOther= [ select id, person_type__c, title__c, other_people__c, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid from incident_person__c where incident__c = :this.incident.id and recordtype.name='Other' order by createddate ];
 	}
 	
 	//Making sure to issue a Query only if the type of the incident is 'PBS. Make sure servAssign == null before query, otherwise Query will be called whenever servAssign is referred in the Page

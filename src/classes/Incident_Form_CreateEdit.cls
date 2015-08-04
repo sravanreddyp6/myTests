@@ -38,8 +38,9 @@ public with sharing class Incident_Form_CreateEdit {
     
     public pageReference saveIncident( ){
     	
-    	
-        if( validateIncidentSave(incident) ){return null;}
+    	// if we get an error return null.
+        if( validateIncidentSave(incident, (Incident_Person__c[])JSON.deserialize( personListJSON, List<Incident_Person__c>.class )) )
+        	{return null;}
         try{
             upsert this.incident;
             //Pagereference pg = new pagereference('/apex/Incident_Form_View?Id='+this.Incident.Id);
@@ -79,7 +80,7 @@ public with sharing class Incident_Form_CreateEdit {
     }   
     set;}
     
-    public boolean validateIncidentSave(Incident__c incident){
+    public boolean validateIncidentSave(Incident__c incident, List<Incident_Person__c> personList){
         boolean hasError = false; 
 		if( incident.Unknown_Date_Occurred__c == false && incident.Date_Occurred__c == null ){
             incident.Date_Occurred__c.addError('Please provide date/time incident occurred or select unknown'); hasError = true;
@@ -111,7 +112,29 @@ public with sharing class Incident_Form_CreateEdit {
         }       
  		if( incident.First_Response_Action_Taken__c != null && incident.First_Response_Action_Taken__c.contains('Other') && incident.First_Response_Action_Taken_Other__c == null){
             incident.First_Response_Action_Taken_Other__c.addError('Other is required'); hasError = true;
-        }                  
+        }   
+        boolean hasMentor = false;
+        boolean hasStaff = false;
+        boolean hasOther = false;
+        for(Incident_Person__c ip : personList ){
+        		system.debug('pp - ' + ip.person_type__c);
+        	if(ip.person_type__c =='Mentor'){hasMentor = true;}
+        	if(ip.person_type__c =='Staff'){hasStaff = true;}
+        	if(ip.person_type__c =='Other'){hasOther = true;}
+        }
+		for(Incident_Person__c ip :  [ select id, person_type__c from incident_person__c where incident__c = :incident.id ]){
+    		system.debug('pp - ' + ip.person_type__c);
+        	if(ip.person_type__c =='Mentor'){hasMentor = true;}
+        	if(ip.person_type__c =='Staff'){hasStaff = true;}
+        	if(ip.person_type__c =='Other'){hasOther = true;}			
+		}
+		
+		        
+        if(incident.Staff_Present__c == 'Yes' && !hasStaff){hasError = true; incident.Staff_Present__c.addError('Please add at least one Staff');}
+        
+        if(incident.Others_Present_at_Time_of_Incident__c == 'Yes' && !hasOther){hasError = true; incident.Others_Present_at_Time_of_Incident__c.addError('Please add at least one Other Person');}
+        
+        if(incident.Mentor_present__c == 'Yes' && !hasMentor){hasError = true; incident.Mentor_present__c.addError('Please add at least one Mentor');}               
         return hasError;
         
     }  

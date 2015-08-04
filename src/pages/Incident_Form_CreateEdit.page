@@ -88,7 +88,7 @@ function evalFirstReportedField(eley, leaveBlank){
 .sub-question-wrapper{padding: 7px; padding-left:0px;}
 .labelCol{min-width: 300px;}
 .noDisplay{display: none;}
-
+.helpText{z-index: 1100 !important;}
 .pbSubheader {
    border-top: 1px solid #253e76 !important;
    color: black !important; 
@@ -110,6 +110,8 @@ function evalFirstReportedField(eley, leaveBlank){
 	color: black !important;
 	font-size:10pt !important;
 }
+.sub-btn-wrapper{float: right;}
+
 .pop-up-msg{
     color: red;
     font-weight: bold;
@@ -257,7 +259,7 @@ function evalFirstReportedField(eley, leaveBlank){
                     <apex:outputPanel >
                 		<apex:inputField value="{!Incident__c.First_Response_Action_Taken__c}" html-data-visibility-rules="{&quot;Other&quot;: [&quot;{!$Component.first_res_other_label}&quot;, &quot;{!$Component.first_res_other_input}&quot;]}" />
                  		<br/>
-                 		<apex:outputLabel id="first_res_other_label" styleClass="sub-question-header">Other</apex:outputLabel>
+                 		<apex:outputLabel id="first_res_other_label" styleClass="sub-question-header">Specify Other Response</apex:outputLabel>
                  		<apex:inputField id="first_res_other_input" value="{!Incident__c.First_Response_Action_Taken_Other__c}" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>  
@@ -273,7 +275,7 @@ function evalFirstReportedField(eley, leaveBlank){
                         <apex:inputField label="Staff present at the time of the Incident?" value="{!Incident__c.Staff_Present__c }" 
                             html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.staff_label}&quot;]}" rendered="{!existingStaff = 0}"/>                   
                         <apex:outputField label="Staff present at the time of the Incident?" value="{!Incident__c.Staff_Present__c}" rendered="{!existingStaff > 0 }" />
-                        <apex:outputPanel id="staff_label" layout="inline">
+                        <apex:outputPanel id="staff_label" styleClass="sub-btn-wrapper" layout="inline">
                     		<apex:commandLink id="addStaff" styleClass="btn" value="" onclick="showAddPerson('Staff'); return false;">Add Staff Member</apex:commandLink>
                      	</apex:outputPanel>
                     </apex:outputPanel>
@@ -308,16 +310,16 @@ function evalFirstReportedField(eley, leaveBlank){
     	
     	<apex:pageBlockSection columns="1" id="mentorPresent">    
 	            <apex:pageBlockSectionItem >
-	            <apex:outputLabel value="Mentor present at the time of the incident?" />
-	            <apex:outputPanel >
-                <apex:inputField value="{!Incident__c.Mentor_present__c}" 
-                    html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.mentor_label}&quot;]}" rendered="{! existingMentor = 0}"/>
-                <apex:outputField value="{!Incident__c.Mentor_present__c}" rendered="{! existingMentor > 0}" /> 
-                <apex:outputPanel id="mentor_label" layout="inline" >
-                    <apex:commandLink styleClass="btn" id="addMentor" value="" onclick="showAddPerson('Mentor'); return false;">Add Mentor</apex:commandLink>
-                </apex:outputPanel>
-                
-                </apex:outputPanel>
+		            <apex:outputLabel value="Mentor(s) present at the time of the incident?" />
+		            <apex:outputPanel >
+		                <apex:inputField value="{!Incident__c.Mentor_present__c}" 
+		                    html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.mentor_label}&quot;]}" rendered="{! existingMentor = 0}"/>
+		                <apex:outputField value="{!Incident__c.Mentor_present__c}" rendered="{! existingMentor > 0}" /> 
+		                <apex:outputPanel id="mentor_label" styleClass="sub-btn-wrapper" layout="inline" >
+		                    <apex:commandLink styleClass="btn" id="addMentor" value="" onclick="showAddPerson('Mentor'); return false;">Add Mentor</apex:commandLink>
+		                </apex:outputPanel>
+	                
+	                </apex:outputPanel>
                 </apex:pageBlockSectionItem>
          </apex:pageBlockSection>
            
@@ -346,11 +348,11 @@ function evalFirstReportedField(eley, leaveBlank){
          
          		<apex:pageBlockSection columns="1" id="otherPresent">                     
                  <apex:pageBlockSectionItem >
-                    <apex:outputLabel >Others present at the time of the incident?</apex:outputLabel>
+                    <apex:outputLabel >Other(s) present at the time of the incident?</apex:outputLabel>
                     <apex:outputPanel >
                         <apex:inputField value="{!Incident__c.Others_Present_at_Time_of_Incident__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.other_label}&quot;]}" rendered="{!existingOther = 0}"/>
 						<apex:outputField value="{!Incident__c.Others_Present_at_Time_of_Incident__c}" rendered="{! existingOther > 0}"/>
-						<apex:outputPanel id="other_label" layout="inline">
+						<apex:outputPanel id="other_label" styleClass="sub-btn-wrapper" layout="inline">
 		                	<apex:commandLink styleClass="btn" id="addOther" value="" onclick="showAddPerson('Other'); return false;">Add Other Person</apex:commandLink>
 		                </apex:outputPanel>
                     </apex:outputPanel>
@@ -360,7 +362,7 @@ function evalFirstReportedField(eley, leaveBlank){
         </apex:pageBlockSection>
         <apex:pageBlockSection columns="1" id="relOtherSection">        
                 
-                  <apex:pageBlockTable id="relOther" value="{!mapOther}" var="relper" columnsWidth="10%,60%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' }">
+                  <apex:pageBlockTable id="relOther" value="{!mapOther}" var="relper" columnsWidth="10%,25%,35%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' }">
             
             <apex:column headerValue="Action">
            		<apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
@@ -369,6 +371,9 @@ function evalFirstReportedField(eley, leaveBlank){
            <apex:column headerValue="Name"> 
                <apex:outputText value="{!relExisting[relper].PersonName}" />
            </apex:column> 
+           <apex:column headerValue="Title"> 
+               <apex:outputText value="{!relExisting[relper].relatedPerson.Title__c}" />
+           </apex:column>           
            <apex:column headerValue="Last Modified By">
            <apex:outputLink value="/{!relExisting[relper].lastmodifiedbyid}">{!relExisting[relper].LastModifiedBy}</apex:outputLink>
            </apex:column>
@@ -469,7 +474,7 @@ function evalFirstReportedField(eley, leaveBlank){
                 </apex:actionFunction>
                 <apex:actionStatus id="savePersonStatus">
                     <apex:facet name="stop">
-                        <apex:outputPanel id="buttons">
+                        <apex:outputPanel style="float: right;" id="buttons">
                             <apex:commandButton value="Save" onClick="savePerson(false); return false;" />
                             <apex:commandButton value="Save & New" onClick="savePerson(true); return false;" /> &nbsp;
                             <apex:commandButton value="Cancel" onClick="closeModalDialog('personDialog', 'div'); return false;" />
@@ -498,10 +503,13 @@ function evalFirstReportedField(eley, leaveBlank){
             <apex:outputText styleClass="pop-up-msg" value="Do not enter the full name of any other Person Being Served involved in the incident. Initials are OK." rendered="{!currPerson.Person_Type__c== 'Other'}" />
  			  
             <apex:pageBlockSectionItem rendered="{!currPerson.Person_Type__c== 'Other'}" >
-            <apex:outputLabel value="Description" />
+            <apex:outputLabel value="Name (or PBS Initials)" />
             <apex:inputText value="{!currPerson.Other_people__c}"  />
             </apex:pageBlockSectionItem>
-            
+            <apex:pageBlockSectionItem helpText="Examples include: Friend, Roommate, Classmate, Mother, Father, Caregiver, Teacher, Community Member, Store Employee, etc." rendered="{!currPerson.Person_Type__c== 'Other'}" >
+            	<apex:outputLabel value="Title" />
+            	<apex:inputText value="{!currPerson.Title__c}"  />
+       		</apex:pageBlockSectionItem>
            
             </apex:pageBlockSection>
             
