@@ -1,8 +1,8 @@
 public class identityEditNew {
 
-    Date currentDate = Date.today();
+    Date currentDate = Date.today(); 
     Date defaultLastDay = currentDate.addDays(120);
-    public TMN_User__c TMNUser { get; private set; }
+    public TMN_User__c TMNUser { get;  set; }
     User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
     String userId = u.id;
     TMN_User__c myTMN = [SELECT Id, Name, Operating_Group__c, Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];   
@@ -14,7 +14,7 @@ public class identityEditNew {
         get{return (myTMN.Operating_Group__c);}
         set{myTMN.Operating_Group__c = value;}
     }
-    
+   public List<Attachment> newAttachments { get;  set; }
     public String FN = System.currentPageReference().getParameters().get('FN');
     public String LN = System.currentPageReference().getParameters().get('LN');
     public String retURL = ApexPages.currentPage().getParameters().get('retURL');
@@ -25,9 +25,9 @@ public class identityEditNew {
     public identityEditNew() {
         Id id = ApexPages.currentPage().getParameters().get('ID');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
-        Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
-            FROM Alias__c 
-            WHERE Alias_unique__c =: aliasUser.Alias__c];
+//        Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
+//            FROM Alias__c 
+//            WHERE Alias_unique__c =: aliasUser.Alias__c];
         
         TMNUser = (id == null) ? new TMN_User__c() : 
             [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
@@ -67,8 +67,7 @@ public class identityEditNew {
     }
         
     }
-    
-      @RemoteAction
+     @RemoteAction
     public static TMN_User__c LocationDetails(String location) {
        return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
@@ -89,9 +88,9 @@ public class identityEditNew {
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
             
-//    Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
-//                        FROM Alias__c 
-//                        WHERE Alias_unique__c =: aliasUser.Alias__c];        
+    Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
+                        FROM Alias__c 
+                        WHERE Alias_unique__c =: aliasUser.Alias__c];        
      
     public PageReference save() {
         ID managerId = TMNUser.Manager_Lookup__c;
@@ -128,7 +127,43 @@ public class identityEditNew {
         viewPage.setRedirect(true);
         return viewPage;
     }
+    public List<Attachment> attachments {set;get;}
+    public void addAttachment () {
+        system.debug('in addAttachment');
+        if(TMNUser.id != null) {
+            attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ]; 
+            for (Integer i=0;i<3;i++){
+                newAttachments.add(new Attachment() );
+            }
+        }else {
+             newAttachments.add(new Attachment() );
+             newAttachments.add(new Attachment() );
+             newAttachments.add(new Attachment() );
+        }
+             
+    }
 
+    public PageReference saveAttachment()
+    {
+        List<Attachment> toInsert=new List<Attachment>();
+        Integer index = 0;
+        for (Attachment newAtt : newAttachments)
+        {
+            
+            if (newAtt.Body!=null)
+            {
+                newAtt.parentId=TMNUser.id;
+                toInsert.add(newAtt);
+            }
+            index ++;
+        }
+        insert toInsert;
+        attachments=null;
+        return null;
+    }
+    
+    
+    
     public pageReference updateAliasInfo(){
         Alias__c a = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
                       FROM Alias__c 
