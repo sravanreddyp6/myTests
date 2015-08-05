@@ -281,7 +281,9 @@
 					<apex:outputPanel rendered="{!evalType == 'Residential'}">
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
 						<p>Status:{!thisEval.Status__c} (
-							<apex:outputText value="{!evalStatusDate}" />)</p>
+							<apex:outputText value="{!evalStatusDate}" />)
+							<apex:outputText rendered="{!AND(thisEval.Signed_By__c != '', thisEval.Signed_By__c != thisEval.OwnerId)}" value=" by: {!thisEval.Signed_By__r.Name}" />
+						</p>
 					</apex:outputPanel>
 
 					<apex:outputPanel rendered="{!evalType == 'CNA Workbook'}">
@@ -488,7 +490,7 @@
 							<apex:outputLabel value="Late Entry Note" />
 							<apex:outputPanel styleClass="requiredInput" layout="block" style="display: inline-block; ">
 								<apex:outputPanel styleClass="requiredBlock" layout="block" />
-								<apex:inputField id="lateEntryInput" value="{!lateEntryNote.Late_Entry_Note__c}" />
+								<apex:inputField id="lateEntryInput" value="{!lateEntryNote.Late_Entry_Note__c}" style="width: 200%; " />
 							</apex:outputPanel>
 						</apex:pageBlockSectionItem>
 					</apex:pageBlockSection>
@@ -512,7 +514,7 @@
 				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubitiLog" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Activity Log'}"
                 customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
 				<apex:pageBlockButtons location="bottom">
-					<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel(); return false;" />
+					<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel();refreshEvalRepeaters(); return false;" />
 				</apex:pageBlockButtons>
 			</apex:pageBlock>
 		</apex:form>

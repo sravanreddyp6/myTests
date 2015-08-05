@@ -11,6 +11,7 @@ public with sharing class GenerateEvalComponent {
         }
         set;
     }
+    
     public string cat {get; set;}
     public string subcat{get; set;}
     public string subsubcat{get; set;}
@@ -20,8 +21,8 @@ public with sharing class GenerateEvalComponent {
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
 
-    List<Eval_Drop_Down__c> dd;
-    List<Eval__c> listEvalItems;
+    transient List<Eval_Drop_Down__c> dd;
+    transient List<Eval__c> listEvalItems;
 
     public transient string evalSectionOwner;
     public string getEvalSectionOwner(){
@@ -39,7 +40,26 @@ public with sharing class GenerateEvalComponent {
         }
         return str;
     }
-
+    
+    public transient string evalSectionLastMod;
+    public string getevalSectionLastMod() {
+        String str = '';
+        if ( String.IsBlank( evalSectionId))
+            return str;
+        else {
+            try {
+                List<Eval_Value__c> evs = [ select lastmodifieddate, lastmodifiedby.name from eval_value__c where eval_section_id__c = :evalSectionId order by lastmodifieddate desc LIMIT 1];
+                if ( evs.size() == 1 )
+                    return evs[0].lastmodifiedby.name + ' @ ' +  evs[0].lastmodifieddate.format('MM/dd/yyyy HH:mm');
+                else
+                    return str;
+            } catch (Exception e) {
+                system.debug(e);
+                return '';
+            }
+        }
+    }
+    
 
     public transient boolean hasErros { get; private set;}
 
@@ -58,6 +78,7 @@ public with sharing class GenerateEvalComponent {
     }
 
     public GenerateEvalComponent( ) {
+        
         mapEvalItems = new Map<ID, Eval__c>();
         mapEvalValues = new Map<ID, Eval_Value__c>();
         hasErros = false;
@@ -94,29 +115,29 @@ public with sharing class GenerateEvalComponent {
         //EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
         if (evalSecType == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV'){
             listEvalItems = [ select id,
-					                   htmlid__c,
-					                   field_name__c,
-					                   category__c,
-					                   category_sequence__c,
-					                   sub_category__c,
-					                   sub_category_sequence__c,
-					                   eval_type__r.name,
-					                   Field_Type__c,
-					                   Field_Sub_Type__c,
-					                   field_sequence__c,
-					                   required__c,
-					                   Length__c,
-					                   visibility_rules__c,
-					                   visibility_row_rules__c,
-					                   Dependent_Fields__c
-					              from eval__c
-					             where eval_type__r.name = :evalname
-					               and category__c =:cat
-					               and sub_category__c = :subcat
-					               and visible__c = true
-					               and (NOT htmlid__c like 'HeadtoToeDiagnosticsIVQuestion%')  
-					            order by category_sequence__c, sub_category_sequence__c, field_sequence__c
-					        ];
+                                       htmlid__c,
+                                       field_name__c,
+                                       category__c,
+                                       category_sequence__c,
+                                       sub_category__c,
+                                       sub_category_sequence__c,
+                                       eval_type__r.name,
+                                       Field_Type__c,
+                                       Field_Sub_Type__c,
+                                       field_sequence__c,
+                                       required__c,
+                                       Length__c,
+                                       visibility_rules__c,
+                                       visibility_row_rules__c,
+                                       Dependent_Fields__c
+                                  from eval__c
+                                 where eval_type__r.name = :evalname
+                                   and category__c =:cat
+                                   and sub_category__c = :subcat
+                                   and visible__c = true
+                                   and (NOT htmlid__c like 'HeadtoToeDiagnosticsIVQuestion%')  
+                                order by category_sequence__c, sub_category_sequence__c, field_sequence__c
+                            ];
         }
         
         // create a map for easy access
@@ -161,10 +182,13 @@ public with sharing class GenerateEvalComponent {
                and Eval__r.Sub_Category__c = :subcat
         ];
 
+
         // create a map by eval id
         mapEvalValues = new Map<ID, Eval_Value__c>();
-        for ( Eval_Value__c ev: listEvalValues )
+        for ( Eval_Value__c ev: listEvalValues ) {
             mapEvalValues.put( ev.eval__c, ev);
+        }
+        
 
         // system.debug( 'Populated values:' + mapEvalValues );
         String newHtmlLbl = '';
@@ -275,16 +299,16 @@ public with sharing class GenerateEvalComponent {
                         }
                         if ( e.htmlid__c == 'weightAtAdmission') {
                             newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="weightAtAdmission">(kg) OR</label>';
-                            newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightAtAdmissionlb">(lb)</label>';
-                            newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" /> <label for="weightAtAdmissionoz">(oz)</label>';
+                            newHTMLfld += ' <span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightAtAdmissionlb">(lb)</label>';
+                            newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" /> <label for="weightAtAdmissionoz">(oz)</label></span>';
                         }  else if ( e.htmlid__c == 'kg') {
                             newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="kg" id="kgLabel2">(kg) OR</label>';
-                            newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightlb" id="weightlbLabel">(lb)</label>';
-                            newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" /> <label for="weightoz" id="weightozLabel">(oz)</label>';
+                            newHTMLfld += ' <span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightlb" id="weightlbLabel">(lb)</label>';
+                            newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" /> <label for="weightoz" id="weightozLabel">(oz)</label></span>';
                         } else if ( e.htmlid__c == 'heightAtAdmission') {
                             newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'cm\');" /> <label for="heightAtAdmission">(cm) OR</label>';
-                            newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionft"  size="6" name="" type="text" onkeyUp="return calculate(this, \'ft\');" /> <label for="heightAtAdmissionft">(ft)</label>';
-                            newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionin"  size="6" name="" type="text" onkeyUp="return calculate(this, \'inc\');" /> <label for="heightAtAdmissionin">(in)</label>';
+                            newHTMLfld += ' <span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionft"  size="6" name="" type="text" onkeyUp="return calculate(this, \'ft\');" /> <label for="heightAtAdmissionft">(ft)</label>';
+                            newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionin"  size="6" name="" type="text" onkeyUp="return calculate(this, \'inc\');" /> <label for="heightAtAdmissionin">(in)</label></span>';
                         } else {
                             newHTMLfld +=  '/>';
                         }
@@ -339,7 +363,7 @@ public with sharing class GenerateEvalComponent {
                     newHTMLfld += reqfldHTML;
                     newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                     if (mapEvalValues.ContainsKey( e.id )) {
-                    	system.debug(mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm'));
+                        system.debug(mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm'));
                         newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm');
                         newHTMLfld  += '"';
                     } else if (e.Required__c) {

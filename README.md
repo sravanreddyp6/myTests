@@ -7,6 +7,8 @@
 * [Set yourself up with Eclipse and BitBucket](https://wiki.thementornetwork.com/display/CM/Setup+Yourself+Up+with+BitBucket+and+Mercurial)
 * [How we manage our code repository](https://wiki.thementornetwork.com/display/CM/Code+Repository+Management+Home)
 * [Mercurial Tutorial](https://wiki.thementornetwork.com/display/CM/Mercurial+Scenarios)
+* [Regression Test Set Up](https://wiki.thementornetwork.com/display/IEADD/Regression+Tests+Set+Up)
+* [Regression Test Documentation](tests/README.md)
 
 
 ### Contribution guidelines ###
