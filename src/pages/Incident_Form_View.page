@@ -20,7 +20,7 @@
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentView" admId="{!servAssign.Admission__c}" rendered="{!servAssign.Id != null}"/>
 <br/>
 <apex:form >
-        <apex:pageBlock mode="detail" title="General Information">
+        <apex:pageBlock mode="detail" title="Incident Information">
         	<apex:pageBlockButtons >
 	            <div style="float: right;">
 	                <apex:CommandButton value="Edit" action="{!editIncident}" />
@@ -36,8 +36,8 @@
         		</apex:pageBlockSectionItem>
         	</apex:pageBlocksection>
         	
-        	<apex:pageBlockSection columns="1" title="Incident Timing" showHeader="true" collapsible="false" >
-        		<apex:outputField value="{!Incident__c.Unknown_Date_Occurred__c}" label="Date/Time Currently unknown" rendered="{!Incident__c.Unknown_Date_Occurred__c}"/>
+        	<apex:pageBlockSection columns="1" title="Timing" showHeader="true" collapsible="false" >
+        		<apex:outputField value="{!Incident__c.Unknown_Date_Occurred__c}" label="Date/Time Currently Unknown" rendered="{!Incident__c.Unknown_Date_Occurred__c}"/>
         		<apex:pageBlockSectionItem rendered="{!!Incident__c.Unknown_Date_Occurred__c}">
         			<apex:outputLabel value="Date/Time Incident Occurred" />
         			<apex:outputPanel >
@@ -70,7 +70,7 @@
         		 </apex:pageblockSectionItem>
         	</apex:pageBlockSection>
         	
-        	<apex:pageBlockSection columns="1" showheader="true" title="Incident Location" collapsible="false" >
+        	<apex:pageBlockSection columns="1" showheader="true" title="Location" collapsible="false" >
         		<apex:outputField value="{!Incident__c.Where_incident_occurred__c }" />
         		<apex:outputField value="{!Incident__c.Community_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Community Location'}" />
         		<apex:outputField value="{!Incident__c.Other_Location__c}" rendered="{!Incident__c.Where_incident_occurred__c == 'Other Location'}" />
@@ -78,7 +78,7 @@
         				Incident__c.Where_incident_occurred__c == 'Program Office' || Incident__c.Where_incident_occurred__c == 'Residence' || Incident__c.Where_incident_occurred__c == 'School'}"/> 
         	</apex:pageBlockSection>
         	
-        	<apex:pageBlockSection columns="2" showheader="true" title="Incident Type" collapsible="false" >
+        	<apex:pageBlockSection columns="2" showheader="true" title="Type" collapsible="false" >
         		<apex:outputField value="{!Incident__c.Hospitalized__c}" label="Was the Person Being Served hospitalized?"  rendered="false"/>
         		<apex:outputField value="{!Incident__c.PBS_Arrested__c}" label="Was the Person Being Served hospitalized?"  rendered="false"/>
         		<apex:outputField value="{!Incident__c.Hospitalization_Type__c}" label="Type" rendered="{!Incident__c.Hospitalized__c == 'Yes'}"/>
