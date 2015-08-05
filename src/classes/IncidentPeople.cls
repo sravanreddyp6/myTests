@@ -64,6 +64,7 @@ private void initrelatedPeople() {
 			ipw.lastmodifiedbyid = rp.lastmodifiedbyid;
 			ipw.lastmodifiedby = rp.lastmodifiedby.name;
 			ipw.lastmodifieddate = rp.lastmodifieddate;
+			ipw.relatedPerson = rp;
 			
 			if ( rp.person_type__c == 'Mentor') {
 				ipw.PersonName = rp.mentor__r.full_name__c;
