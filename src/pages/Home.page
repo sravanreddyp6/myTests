@@ -360,9 +360,11 @@
 					<apex:column headerValue="Choose the Service Assignment">
 						<a href="/apex/Incident_Form_CreateEdit?SAId={!s.Id}&RecordtypeId={!pbsincidentRecType}">{!s.Name}</a>
 					</apex:column>
-					<apex:column value="{!s.Status__c}" />
-					<apex:column value="{!s.Alias__c}" />
-					<apex:column value="{!s.Program__c}" />
+					<apex:column value="{!s.Person_being_Served__r.Name}" headerValue="Name"/>
+					<apex:column headerValue="Age" >
+						<c:ageCalculator years="{!s.Person_being_served__r.Age_year__c}" months="{!s.Person_being_served__r.Age_month__c}" days="{!s.Person_being_served__r.Age_days__c}" />
+					</apex:column>
+					<apex:column value="{!s.Program_Detail__c}" headerValue="Program Details"/>
 				</apex:pageBlocktable> 
 			</apex:pageBlock>
 		</apex:outputPanel>
@@ -475,7 +477,7 @@
 			 	alert('Please choose an incident type before you continue');
 			 }
 			 else if(incidentType == 'PBS'){
-			 	openModalDialog('saSearchModal', 'div', 'Find Service Assignment', null, 1000, 'mainForm', false);
+			 	openModalDialog('saSearchModal', 'div', 'Find Person Being Served', null, 1000, 'mainForm', false);
 			 }else{
 			 	createIncident();
 			 }

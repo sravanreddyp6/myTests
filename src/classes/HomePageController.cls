@@ -410,7 +410,7 @@ public with sharing class HomePageController{
 		system.debug('Query+++++++++++++'+conQuery);
 		List<Contact> pbsList = Database.Query(conQuery);
 		if(pbsList.size() > 0){
-			ServAssigns =  [SELECT Id, Name, Status__c, Alias__c, Program__c FROM Service_Assignment__c WHERE Person_being_Served__c IN: pbslist];
+			ServAssigns =  [SELECT Id, Name, Person_being_served__r.Name,Person_being_served__r.Age_year__c, Person_being_served__r.Age_month__c, Person_being_served__r.Age_days__c, Program_Detail__c FROM Service_Assignment__c WHERE Person_being_Served__c IN: pbslist AND Status__c = 'Active'];
 		}
 		
 		return null;
