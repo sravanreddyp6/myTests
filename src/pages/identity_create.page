@@ -41,7 +41,7 @@
  var sourcePage = currentUrl +'/TMNUser_JSON?core.apexpages.devmode.url=0&identityPage=yes';
  j$(function() {
    var txtVal =  j$('input[id$=locationName]');
-   	
+    
          j$('input[id$=locationName]').autocomplete({
             source: function( request, response ) {
 
@@ -109,7 +109,7 @@ function autoCompleteRender(ul, item) {
                         j$('[id$=locationLine1]').text(checkUndefined(result.Office_Location__c));
                         j$('[id$=locationLine2]').text(checkUndefined(result.Office_Location_2__c));
                         j$('[id$=locationCity]').text(checkUndefined(result.Work_City__c));
-						j$('[id$=locationState]').text(checkUndefined(result.Work_State__c));                                                      
+                        j$('[id$=locationState]').text(checkUndefined(result.Work_State__c));                                                      
                         j$('[id$=locationZip]').text(checkUndefined(result.Zip_Code__c));
                         j$('[id$=hiddenlocationLine1]').val(checkUndefined(result.Office_Location__c))
                         j$('[id$=hiddenlocationLine2]').val(checkUndefined(result.Office_Location_2__c))
@@ -148,12 +148,12 @@ function autoCompleteRender(ul, item) {
                     <apex:pageBlockSectionItem />
                     <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7"/>
                 </apex:pageBlockSection>
-                <apex:outputPanel id="aliasStuff">
-                <apex:pageBlockSection columns="2" title="Management Hierarchy" id="aliasInfo">
+                <apex:actionRegion >
+                <apex:pageBlockSection columns="2" title="Management Hierarchy" id="aliasBlock">                    
                     <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" taborderhint="13">
-                        <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="aliasInfo"/>
+                        <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="createForm"/>
                     </apex:inputField>                    
-                    <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/>                                                                                                                           
+                    <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}" id="servline"/>                                                                                                                           
                     <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="13">
                         <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
                         <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
@@ -162,10 +162,10 @@ function autoCompleteRender(ul, item) {
                         <apex:selectOption itemValue="NeuroRestorative" itemLabel="NeuroRestorative"/>
                         <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
                     </apex:selectList>                    
-                    <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                                                                                
-                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>                                                                     
+                    <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}" id="busunit"/>                                                                                
+                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}" id="servregion"/>                                                                                         
                 </apex:pageBlockSection>
-                </apex:outputPanel>                
+                </apex:actionRegion>               
                 <apex:pageBlockSection columns="2" title="Location" id="locInfo">
                     <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" id="locationName" required="true" taborderhint="18"/>    
                    <!--  <apex:selectList label="State" value="{!TMNUser.Work_State__c}" size="1" required="true" tabindex="22">
