@@ -221,7 +221,7 @@
 				'<tr>' +
 				'<th>Document Name</th>' +
 				'<th>Status</th>' +
-				'<th>Recieved Date</th>' +
+				'<th>Received Date</th>' +
 				'</tr>' +
 				'</thead>' +
 				'<tbody>';
@@ -347,9 +347,9 @@
 
 			<br />
 			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="false" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			<apex:outputLabel value="Discharged Date/Time" />
-			<c:militaryDateTime datetimeval="{!admission.Discharged_Date_Time__c}" />
+			<c:MilitaryDatetime datetimeval="{!admission.Discharged_Date_Time__c}" />
 			</apex:pageBlockSectionItem>
 			<apex:outputField value="{!admission.Planned_Discharge__c}" />
 			<apex:outputField value="{!admission.Discharged_To_Category__c}" />
@@ -443,7 +443,7 @@
 								<th>Recurrence</th>
 								<th>Due Date</th>
 								<th>Status</th>
-								<th>Recieved Date</th>
+								<th>Received Date</th>
 								<th width="15%">Comments</th>
 							</tr>
 						</thead>
@@ -521,7 +521,7 @@
 									<th>Due Date</th>
 									<th>Recurrence</th>
 									<th>Status</th>
-									<th>Recieved Date</th>
+									<th>Received Date</th>
 								</tr>
 							</thead>
 							<tbody></tbody>
@@ -568,7 +568,7 @@
 									</tr>
 									<tr>
 										<td>
-											<apex:outputText value="Recieved Date" styleClass="labelCol" />
+											<apex:outputText value="Received Date" styleClass="labelCol" />
 										</td>
 										<td>
 											<apex:inputField value="{!currrentAssocDoc.Status_Date__c}" id="currrentAssocDoc_Status_Date" />

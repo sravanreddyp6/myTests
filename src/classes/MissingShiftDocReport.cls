@@ -5,10 +5,89 @@ public with sharing class MissingShiftDocReport {
 	// SObject Date fields for SF's datepicker.
 	public Evaluation__c dummyEvaluation { get; set; }
 
+	public List<String> leftSelectedPrograms { get; set; }
+	public List<SelectOption> leftPrograms { get; set; }
+	public List<String> rightSelectedPrograms { get; set; }
+	public List<SelectOption> rightPrograms { get; set; }
+	public List<Id> selectedPBS { get; set; }
+	public List<SelectOption> pbsList { get; set; }
+
 	public MissingShiftDocReport() {
 		dummyEvaluation = new Evaluation__c();
 		days = new List<List<Day>>();
+
+		pbsList = new List<SelectOption>();
+		rightPrograms = new List<SelectOption>();
+		leftPrograms = new List<SelectOption>();
+		selectedPbs = new List<Id>();
+		leftSelectedPrograms = new List<String>();
+		rightSelectedPrograms = new List<String>();
+
+		for (AggregateResult program: [
+				SELECT service_location__r.id slID, service_location__r.Alias__c alias,
+				       service_location__r.program__c prgm
+				  FROM service_assignment__c
+				 GROUP BY service_location__r.id, service_location__r.program__c,
+				          service_location__r.Alias__c
+				HAVING COUNT(service_location__r.id) > 0
+				 ORDER BY service_location__r.program__c]) {
+			leftPrograms.add(new SelectOption((String) program.get('alias'),
+				String.valueOf(program.get('alias')) + '-' + String.valueOf(program.get('prgm')))
+			);
+		}
 		reportRan = false;
+	}
+
+	public void addPrograms() {
+		for (String p: leftSelectedPrograms){
+			for(Integer i=0; i < leftPrograms.size(); i++){
+				if (leftPrograms.get(i).getValue() == p) {
+					rightPrograms.add(new SelectOption(leftPrograms.get(i).getValue(),
+						leftPrograms.get(i).getLabel()));
+					leftPrograms.remove(i);
+					break;
+				}
+			}
+		}
+		updateProgramSelections();
+	}
+
+	public void removePrograms(){
+		for (String p: rightSelectedPrograms){
+			for(Integer i=0; i < rightPrograms.size(); i++){
+				if (rightPrograms.get(i).getValue() == p) {
+					leftPrograms.add(new SelectOption(rightPrograms.get(i).getValue(),
+						rightPrograms.get(i).getLabel()));
+					rightPrograms.remove(i);
+					break;
+				}
+			}
+		}
+		updateProgramSelections();
+	}
+
+	public void updateProgramSelections(){
+		List<String> selectedAliases = new List<String>();
+		for (SelectOption so : rightPrograms){
+			selectedAliases.add(so.getValue());
+		}
+
+		pbsList.clear();
+		for (Service_Assignment__c serviceAssignment: [
+				SELECT Id, Person_Being_Served__r.Account.Lastname,
+				       Person_Being_Served__r.Account.Firstname
+				  FROM Service_Assignment__c
+				 WHERE Service_Location__r.Alias__c In :selectedAliases
+				 ORDER BY Person_Being_Served__r.Account.Lastname,
+				          Person_Being_Served__r.Account.Firstname
+		]) {
+			pbsList.add(
+				new SelectOption(
+					serviceAssignment.Id,
+					serviceAssignment.Person_Being_Served__r.Account.Lastname + ', ' + serviceAssignment.Person_Being_Served__r.Account.Firstname
+				)
+			);
+		}
 	}
 
 	public void runReport() {
@@ -39,6 +118,13 @@ public with sharing class MissingShiftDocReport {
 				'Start Date cannot be later than End Date.')
 			);
 		}
+		if (selectedPbs.size() == 0) {
+			errorFound = true;
+			ApexPages.addMessage(new ApexPages.Message(
+				ApexPages.Severity.ERROR,
+				'You must choose at least 1 Person Being Served'
+			));
+		}
 		if (errorFound) {
 			return;
 		}
@@ -58,6 +144,7 @@ public with sharing class MissingShiftDocReport {
 			 WHERE Status__c = 'Active'
 			   AND Start_Date__c <= :endDate
 			   AND (End_Date__c >= :startDate OR End_Date__c = null)
+			   AND Id IN :selectedPbs
 		]) {
 			saMap.put(serviceAssignment.Id, new Map<Date, Day>());
 			for (Date day: dateRange) {
@@ -85,9 +172,9 @@ public with sharing class MissingShiftDocReport {
 				}
 				Day d = saMap.get(evaluation.ServiceAssignment__r.Id).get(i);
 				if (evaluation.RecordType.Name == 'CMShiftAssessment') {
-					d.hasNSD = true;
+					d.numNsdDone++;
 				} else {
-					d.hasCNA = true;
+					d.numCnaDone++;
 				}
 			}
 		}
@@ -98,7 +185,7 @@ public with sharing class MissingShiftDocReport {
 			Day[] orderedDays = new Day[] {};  // We use this to make sure the result is sorted
 			for (Date d: saMap.get(saId).keySet()) {
 				Day day = saMap.get(saId).get(d);
-				if (!day.hasNSD || !day.hasCNA) {
+				if (day.numNsdDone == 0 || day.numCnaDone == 0) {
 					orderedDays.add(day);
 				}
 			}
@@ -121,14 +208,14 @@ public with sharing class MissingShiftDocReport {
 	class Day implements Comparable {
 		public Service_Assignment__c serviceAssignment { get; set; }
 		public Date day { get; set; }
-		public Boolean hasCNA { get; set; }
-		public Boolean hasNSD { get; set; }
+		public Integer numCnaDone { get; set; }
+		public Integer numNsdDone { get; set; }
 
 		public Day(Service_Assignment__c serviceAssignment, Date day) {
 			this.serviceAssignment = serviceAssignment;
 			this.day = day;
-			this.hasCNA = false;
-			this.hasNSD = false;
+			this.numCnaDone = 0;
+			this.numNsdDone = 0;
 		}
 
 		public Integer compareTo(Object anotherDayObj) {
