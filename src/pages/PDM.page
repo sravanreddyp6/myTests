@@ -232,6 +232,8 @@ j$('input[id$=searchEmployee]').val('');
       j$('[id*=AdvancedSearchModal]').dialog("close");
       if(j$('[id$=city]').val().length>=3){
        j$('input[id$="ExportToExcel"]').prop('disabled', false);
+      }else{
+       j$('input[id$="ExportToExcel"]').prop('disabled', true);
       }
 	 j$('[id$=hiddenCity]').val(j$('[id$=city]').val());
       j$('[id$=hiddenState]').val(j$('[id$=StateCode]').val());
