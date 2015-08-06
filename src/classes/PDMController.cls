@@ -82,7 +82,7 @@ Public List<TMN_User__c> getTMNUserList(){
 public void searchEmployee() {
 	SortField = null;
 	SortDirection = null;
- String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, First_Name__c,Job_Title__c ,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c where Name like \'%' + searchEmployee +'%\'  ';
+ String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, First_Name__c,Job_Title__c ,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c where   (Last_Name__c LIKE \'' + searchEmployee + '%\' OR First_Name__c  LIKE \'' + searchEmployee + '%\' ) ';
     			if(searchLocation!=null && searchLocation.length() > 0) {
 				queryString =  queryString + ' and Work_City__c like \'%' + searchLocation +'%\' ';
 				}
@@ -141,25 +141,25 @@ searchingForQuery = queryString;
         String QueryWhere = '';
   tmlUserQuery = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, First_Name__c, Last_Name__c, Job_Title__c,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c ';
 				if(City!=null && City.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , '  Work_City__c like \'%' + City +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Work_City__c like \'' + City +'%\' ');
 				}
 				if(state!=null && state.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , '   Work_State_Code__c like \'%' + state +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Work_State_Code__c =\'' + state +'\' ');
 				}
 				if(firstName!=null && firstName.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , '  First_Name__c like \'%' + firstName +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'First_Name__c like \'' + firstName +'%\' ');
 				}
 				if(lastName!=null && lastName.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , '  Last_Name__c like \'%' + lastName +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Last_Name__c like \'' + lastName +'%\' ');
 				}
 				if(operationGroup!=null && operationGroup.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , '  Operating_Group__c like \'%' + operationGroup +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
 				}
 				if(searchTitle!=null && searchTitle.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , '  Job_Title__c like \'%' + searchTitle +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like ' + searchTitle +'%\' ');
 				}
             searchingForQuery =  tmlUserQuery + QueryWhere ;
-			tmlUserQuery =  tmlUserQuery + QueryWhere + ' order by Office_Phone__c';
+			tmlUserQuery =  tmlUserQuery + QueryWhere +  ' order by ' + SortField + ' ' + SortDirection + ' limit 10000';
         }
            if(searchingForQuery!=null) {
        	      if (AlphaFilter != 'All') {
@@ -179,6 +179,7 @@ searchingForQuery = queryString;
             AlphaFilter = 'All';
             SortFieldSave = SortField;
         }
+         searchName = null;
         // run the query again
         BuildQuery();
     }
