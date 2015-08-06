@@ -1,7 +1,8 @@
 <apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
-  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 
     <style type="text/css">
         .custPopup{
@@ -31,7 +32,7 @@
             left: 0;
             z-index: 9998;
         }
-	.ui-autocomplete-loading { background: white url('{!URLFOR($Resource.AjaxLoad)}') right center no-repeat; }
+    .ui-autocomplete-loading { background: white url('{!URLFOR($Resource.AjaxLoad)}') right center no-repeat; }
     </style>
     <script type="text/javascript" >
     
@@ -41,7 +42,7 @@
  var sourcePage = currentUrl +'/TMNUser_JSON?core.apexpages.devmode.url=0&identityPage=yes';
  j$(function() {
    var txtVal =  j$('input[id$=locationName]');
-   	
+    
          j$('input[id$=locationName]').autocomplete({
             source: function( request, response ) {
 
@@ -106,16 +107,12 @@ function autoCompleteRender(ul, item) {
                 locationId,
                 function (result, event) {
                     if (event.status) { // Success
-                        j$('[id$=locationLine1]').text(checkUndefined(result.Office_Location__c));
-                        j$('[id$=locationLine2]').text(checkUndefined(result.Office_Location_2__c));
-                        j$('[id$=locationCity]').text(checkUndefined(result.Work_City__c));
-						j$('[id$=locationState]').text(checkUndefined(result.Work_State__c));                                                      
-                        j$('[id$=locationZip]').text(checkUndefined(result.Zip_Code__c));
-                        j$('[id$=hiddenlocationLine1]').val(checkUndefined(result.Office_Location__c))
-                        j$('[id$=hiddenlocationLine2]').val(checkUndefined(result.Office_Location_2__c))
-                        j$('[id$=hiddenlocationCity]').val(checkUndefined(result.Work_City__c))
-                        j$('[id$=hiddenlocationState]').val(checkUndefined(result.Work_State__c))
-                        j$('[id$=hiddenlocationZip]').val(checkUndefined(result.Zip_Code__c))
+                        j$('[id$=locationLine1]').val(checkUndefined(result.Office_Location__c));
+                        j$('[id$=locationLine2]').val(checkUndefined(result.Office_Location_2__c));
+                        j$('[id$=locationCity]').val(checkUndefined(result.Work_City__c));
+                        j$('[id$=locationState]').val(checkUndefined(result.Work_State__c));                                                      
+                        j$('[id$=locationZip]').val(checkUndefined(result.Zip_Code__c));
+                        
                     } else if (event.type === 'exception') {
                         console.log(event);
                     } 
@@ -123,6 +120,28 @@ function autoCompleteRender(ul, item) {
             );
 
     
+    }
+    
+    
+        j$(function() {
+    j$('[id*=AttachmentsModel]').dialog({
+      resizable: false,
+      draggable: false,
+      height:180,
+      width : 750,
+      modal: true,
+      autoOpen: false
+    });
+});
+    
+    
+    function showAttchment() {
+       
+     j$('[id*=AttachmentsModel]').dialog("open");
+    }
+    
+    function closeDiglog() {
+    j$('[id*=AttachmentsModel]').dialog("close");
     }
     
     </script>      
@@ -149,6 +168,7 @@ function autoCompleteRender(ul, item) {
                     <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7"/>
                     
                </apex:pageBlockSection>
+               <apex:actionRegion >
                <apex:pageBlockSection columns="2" title="Management Hierarchy" id="aliasDetails" >
                     <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" taborderhint="13">
                         <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="aliasDetails"/>
@@ -165,29 +185,67 @@ function autoCompleteRender(ul, item) {
                     <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                    
                     <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>                    
                 </apex:pageBlockSection>
+                </apex:actionRegion>
                 <apex:pageBlockSection columns="2" title="Location">
                     <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" required="true" taborderhint="15" id="locationName"/>
-                    <apex:outputField label="State" value="{!TMNUser.Work_State__c}" id="locationState"/>
-                    <apex:outputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" id="locationLine1" />
-                    <apex:outputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" id="locationZip"/>
-                    <apex:outputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" id="locationLine2"/>
+                    <apex:inputField label="State" value="{!TMNUser.Work_State__c}" id="locationState"/>
+                    <apex:inputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" id="locationLine1" />
+                    <apex:inputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" id="locationZip"/>
+                    <apex:inputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" id="locationLine2"/>
                     <apex:inputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}" taborderhint="14" />            
-                    <apex:outputField label="City" value="{!TMNUser.Work_City__c}" id="locationCity"/>     
-                    <apex:inputhidden value="{!TMNUser.Office_Location__c}" id="hiddenlocationLine1" />
-                    <apex:inputhidden value="{!TMNUser.Office_Location_2__c}" id="hiddenlocationLine2"/>
-                    <apex:inputhidden value="{!TMNUser.Zip_Code__c}" id="hiddenlocationZip"/>
-                    <apex:inputhidden value="{!TMNUser.Work_City__c}" id="hiddenlocationCity"/>  
-                    <apex:inputhidden value="{!TMNUser.Office_Location_PickList__c}"/>           
-                    <apex:inputhidden value="{!TMNUser.Work_State__c}" id="hiddenlocationState"/>
+                    <apex:inputField label="City" value="{!TMNUser.Work_City__c}" id="locationCity"/>     
+                    
                 </apex:pageBlockSection>
-                <apex:PageBlockSection columns="2" title="Manager Information">                                                                                                                                                                                                                                        
-                    <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="16"/>
-                    <!--<apex:outputField label="Manager Email" value="{!TMNUser.Manager_Email__c}"/> -->
+                   
+                   <apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo" >                                                                                                                                                                                                                                        
+                    <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="24"/>
+                    <apex:pageBlockSectionItem /> 
+                    <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}" required="true" id="vendorList" ></apex:inputField>
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                    <input type="button"  value="Add Attachments"  onclick="showAttchment()"   />
+                    
+                          <apex:pageBlock title="Upload Attachments">
+                              {!newAttachments.size}
+                <apex:repeat value="{!newAttachments}" var="newAtt">
+                <apex:pageBlockSection columns="2" id="files">
+                    <apex:pageBlockSectionItem labelStyle="width: 10%">
+                        <apex:inputFile value="{!newAtt.body}" filename="{!newAtt.name}"/> 
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Description"/>
+                        <apex:inputText value="{!newAtt.Description}"/>
+                    </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
-                <apex:PageBlockSection columns="2">
-                    <apex:pageBlockSectionItem />                                                                                                                                                                                                                                    
-                    <apex:inputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" taborderhint="17"/>
-                </apex:pageBlockSection>                
+            </apex:repeat>  
+                              <apex:commandButton value="Upload" action="{!saveAttachment}"/>
+            <apex:commandButton value="Cancel" />
+                              
+                            
+            </apex:pageBlock>                  
+            <apex:outputPanel id="datePanelContainer">
+            <apex:pageBlock title="Existing Attachments"  >
+                <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
+                    <apex:column headerValue="Action">
+                        <apex:outputText > value="/apex/UpdateAttachment?docId={!attachment.ID}" >View </apex:outputText>
+                    </apex:column>
+                    <apex:column style="padding-right: 9px;" headerValue="Title">
+                    <apex:outputText >{!attachment.Name}</apex:outputText>
+                </apex:column>
+                <apex:column headerValue="Description">{!attachment.Description}</apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
+                  <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>
+                </apex:column>
+                 <apex:column style="padding-right: 9px;" headerValue="Created By">
+                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
+                </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </apex:outputPanel>
+
+                         
+                </apex:pageBlockSection>
+              
             </apex:pageBlock>
         </apex:form>
         
