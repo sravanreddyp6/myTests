@@ -135,6 +135,9 @@ searchingForQuery = queryString;
             tmlUserQuery =  tmlUserQuery +' and (Last_Name__c LIKE \'' + AlphaFilter + '%\' OR First_Name__c  LIKE \'' + AlphaFilter + '%\' )' ;
         	}
         tmlUserQuery += ' order by ' + SortField + ' ' + SortDirection + ' limit 10000';
+					if (AlphaFilter != 'All') {
+                 		searchName = null;
+                 } 
 
            if(searchName!=null && searchName.equals('AdvanceSearch')){
         	locationSelected = null;
