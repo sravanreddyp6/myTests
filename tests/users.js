@@ -196,6 +196,7 @@ var manageUsers = function (cb) {
           Salesforce_User_Account__c: userId,
           First_Name__c: userObj.first_name,
           Last_Name__c: userObj.last_name,
+          Name: userObj.first_name + " " + userObj.last_name,
           Operating_Group__c: userObj.operating_group
         };
       });
