@@ -93,7 +93,7 @@
   		float: left;
   		position: relative;
   		top: -15px;
-  		left: 800px;
+  		left: 600px;
 		}
 		
 		.HeadDiv {
@@ -325,7 +325,7 @@ j$('input[id$=searchEmployee]').val('');
         <apex:panelGroup >
             <apex:outputLabel >Find a Location &nbsp; </apex:outputLabel>
                     <apex:outputPanel layout="none" >
-    <apex:inputText id="searchLocation" value="{!searchLocation}"  html-placeholder="Filter Location..."   />    
+    <apex:inputText id="searchLocation" value="{!searchLocation}"  html-placeholder="Search City..."   />    
 						    <a onClick="searchL();">
 						    <img valign="bottom" src="/s.gif"  class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Location Lookup " />
 						    </a>             
@@ -548,7 +548,7 @@ j$('input[id$=searchEmployee]').val('');
           <apex:outputPanel id="AdvancedSearchModal" title="Advanced Search" style="display:none">
             <apex:pageBlock >
         <apex:pageBlockSection showHeader="true" columns="2" collapsible="false" id="AdvanceSearch" >
-        <apex:inputtext value="{!city}" id="city"    label="City" />
+        <apex:inputtext value="{!city}" id="city"   html-placeholder="Search City..."  label="City" />
          <apex:selectList label="State"  size="1" value="{!state}" id="StateCode">
              			 <apex:selectOption itemValue="" itemLabel=""/>
                         <apex:selectOption itemValue="AL" itemLabel="Alabama"/>
@@ -602,10 +602,10 @@ j$('input[id$=searchEmployee]').val('');
                         <apex:selectOption itemValue="WI" itemLabel="Wisconsin"/>
                         <apex:selectOption itemValue="WY" itemLabel="Wyoming"/>
                     </apex:selectList>   
-        <apex:inputtext value="{!firstName}" id="FirstName"    label="First Name" />
-        <apex:inputtext value="{!operationGroup}" id="OperatingGroup"    label="Operating Group" />
-        <apex:inputtext value="{!lastName}" id="LastName"    label="Last Name" />
-        <apex:inputtext value="{!searchTitle}" id="JobTitle"    label="Job Title" />
+        <apex:inputtext value="{!firstName}" id="FirstName"  html-placeholder="Search First Name..."   label="First Name" />
+        <apex:inputtext value="{!operationGroup}" id="OperatingGroup"   html-placeholder="Search Operating Group..."  label="Operating Group" />
+        <apex:inputtext value="{!lastName}" id="LastName"   html-placeholder="Search Last Name..."   label="Last Name" />
+        <apex:inputtext value="{!searchTitle}" id="JobTitle"   html-placeholder="Search Job Title..."   label="Job Title" />
        </apex:pageBlockSection> 
        <input type="hidden"  value="" id="hiddenCity"/>
        <input type="hidden" value="" id="hiddenState"/>
