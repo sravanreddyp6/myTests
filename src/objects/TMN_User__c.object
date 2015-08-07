@@ -48,7 +48,6 @@
     </actionOverrides>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>Added new Auto Inc</description>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>true</enableEnhancedLookup>
@@ -110,7 +109,6 @@
         <externalId>false</externalId>
         <label>Alias Lookup</label>
         <referenceTo>Alias__c</referenceTo>
-        <relationshipLabel>TMN Users</relationshipLabel>
         <relationshipName>TMN_Users</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
@@ -481,7 +479,6 @@
         <externalId>false</externalId>
         <label>Manager Lookup</label>
         <referenceTo>TMN_User__c</referenceTo>
-        <relationshipLabel>TMN Users</relationshipLabel>
         <relationshipName>TMN_Manager_Lookup</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
@@ -733,6 +730,18 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Program_String__c</fullName>
+        <description>Program String associated with the user.</description>
+        <externalId>false</externalId>
+        <label>Program String</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Recruiter_Email_Address__c</fullName>
         <externalId>false</externalId>
         <label>Recruiter Email Address</label>
@@ -835,7 +844,8 @@
     </fields>
     <fields>
         <fullName>TMN_Identity_Id__c</fullName>
-        <displayFormat>{000000}</displayFormat>
+        <description>changed to 600k to start</description>
+        <displayFormat>{0000000}</displayFormat>
         <externalId>false</externalId>
         <label>TMN_Identity_Id</label>
         <trackHistory>false</trackHistory>
@@ -884,6 +894,133 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Vendor_list__c</fullName>
+        <externalId>false</externalId>
+        <label>Vendor_list</label>
+        <picklist>
+            <picklistValues>
+                <fullName>ACCOUNTEMPS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>BEHAVIORAL STAFFING</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>COMPLETE STAFFING SOLUTIONS, INC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DELTA-T GROUP MASSACHUSETTS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>EAST COAST MEDICAL BILLING CONSULTANTS LLC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ELITE STAFFING, INC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>HAWKINS POINT PARTNERS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>INSIGHT GLOBAL, LLC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>INTEGRATED EMPLOYER SOLUTIONS, INC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>INTREPID SERVICES, LLC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>J &amp; J STAFFING RESOURCES</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>JW MICHAELS &amp; CO.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>KELLY SERVICES, INC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>KENNISON AND ASSOCIATES INC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>KIMCO STAFFING SERVICES, INC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>KROLL, BECKER &amp; WING, LLC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>LABUR PROFESSIONAL STAFFING, LLC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MEDICAL PROFESSIONALS</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MONUMENT DATA SOLUTIONS LLC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NINESTONE CORPORATION</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OFFICE TEAM</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>REHABILITATION ASSOCIATES MEDICAL GROUP</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SPHERION STAFFING, LLC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>STAFFING PLUS, INC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>THE NAGLER GROUP</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>US EDGE, INC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>WINTER, WYMAN HR CONTRACT SOLUTION INC.</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>WORKFORCE WALKER PERSONEL, LLC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OTHER</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Work_City__c</fullName>
@@ -971,7 +1108,7 @@
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>TMN User</label>
+    <label>TMNAccess</label>
     <listViews>
         <fullName>All</fullName>
         <columns>Current_Person_Type__c</columns>
@@ -1080,7 +1217,7 @@
         <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
-    <pluralLabel>TMN Users</pluralLabel>
+    <pluralLabel>TMNAccess</pluralLabel>
     <searchLayouts>
         <customTabListAdditionalFields>Email__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Employee_Number__c</customTabListAdditionalFields>

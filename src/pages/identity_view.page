@@ -1,4 +1,5 @@
-<apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c">   
+<apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c">
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />   
         <apex:form >
             <apex:pageBlock title="{!TMNUser.Name}" mode="view" >
                 <apex:pageMessages />
@@ -29,7 +30,8 @@
                     <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/>
                     <apex:outputField label="Operating Group" value="{!TMNUser.Operating_Group__c}" />
                     <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                     
-                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>                    
+                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>
+                    <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}"/>                    
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2" title="Location">
                     <apex:outputField label="Location Name" value="{!TMNUser.Location_Name__c}"/>

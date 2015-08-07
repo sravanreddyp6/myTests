@@ -131,7 +131,7 @@ function autoCompleteRender(ul, item) {
       width : 750,
       modal: true,
       autoOpen: false
-    });
+    }).parent().appendTo(j$('form[id$=identity_edittmnu]'));
 });
     
     
@@ -143,17 +143,72 @@ function autoCompleteRender(ul, item) {
     function closeDiglog() {
     j$('[id*=AttachmentsModel]').dialog("close");
     }
-    function showEditDialog (attId){
-        alert(attId);
-    j$('[id*=attachmentDeatils]').dialog("open");
-    }
+    
+    
+    // function showEditDialog (attId){
+           //     alert(attId);
+    // j$('[id*=attachmentDeatils]').dialog("open");
+    // }
     
     function closeEditDialog (){
       j$('[id*=attachmentDeatils]').dialog("close");
     }  
+    var attchmentId =''; 
+    function deleteFile(attId){
+        attchmentId = attId;
+        j$('[id*=dialog-confirm]').dialog("open");
+        alert(attchmentId);
+ }
+
+ j$(function() {
+    j$('[id*=dialog-confirm]').dialog({
+      resizable: false,
+      height:180,
+      modal: true,
+      autoOpen: false,
+      buttons: {
+        Yes: function() {
+            j$( this ).dialog( "close" );
+            alert(attchmentId)
+          deleteattachment(attchmentId);         
+        },
+        No: function() {
+            j$( this ).dialog( "close" );
+        }
+      }
+    });
+});
+  
+    
+  function showEditDialog (attId){
+    j$('[id*=attachmentDeatils]').dialog("open");
+      attachmentDeatils(attId);
+    }
+    
+    function closeEditDialog (){
+      j$('[id*=attachmentDeatils]').dialog("close");
+    } 
+    
+ j$(function() {
+    j$('[id*=attachmentDeatils]').dialog({
+      resizable: false,
+      draggable: false,
+      height:180,
+      width : 750,
+      modal: true,
+      autoOpen: false
+    });
+});
     
     </script>      
-        <apex:form >
+        <apex:form id="identity_edittmnu">
+       <apex:actionFunction name="attachmentDeatils" action="{!attachmentDeatils}"   >
+        <apex:param name="kiran" value="" assignTo="{!attchmentId}" />
+      </apex:actionFunction>  
+        <apex:actionFunction name="deleteattachment" action="{!deleteattachment}"  >
+        <apex:param name="attchmentId" value="" assignTo="{!attchmentId}" />
+      </apex:actionFunction>
+            
             <apex:pageBlock title="TMN User" mode="edit" >
                 <apex:pageMessages />
                 <apex:pageblockButtons location="Bottom" >    
@@ -191,7 +246,8 @@ function autoCompleteRender(ul, item) {
                         <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
                     </apex:selectList>                                                                                                                                                              
                     <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                    
-                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>                    
+                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>
+                    <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}"/>                    
                 </apex:pageBlockSection>
                 </apex:actionRegion>
                 <apex:pageBlockSection columns="2" title="Location">
@@ -212,9 +268,9 @@ function autoCompleteRender(ul, item) {
                     <apex:pageBlockSectionItem />
                     <apex:inputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
                     <input type="button"  value="Add Attachments"  onclick="showAttchment()"   />
-                    
+                     
+                       <apex:outputPanel id="AttachmentsModel" style="display:none">
                           <apex:pageBlock title="Upload Attachments">
-                              {!newAttachments.size}
                 <apex:repeat value="{!newAttachments}" var="newAtt">
                 <apex:pageBlockSection columns="2" id="files">
                     <apex:pageBlockSectionItem labelStyle="width: 10%">
@@ -235,7 +291,7 @@ function autoCompleteRender(ul, item) {
             <apex:pageBlock title="Existing Attachments"  >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Action">
-                      <a href= "#"   onClick="showEditDialog('{!attachment.id}')"> Edit</a> | Delete
+                       <a href= "#"   onClick="showEditDialog('{!attachment.id}')"> Edit</a> |<a href="#" onclick="deleteattachment('{!attachment.id}');return false;"> Delete </a> 
                     </apex:column>
                     <apex:column style="padding-right: 9px;" headerValue="Title">
                     <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
@@ -250,23 +306,49 @@ function autoCompleteRender(ul, item) {
                 </apex:pageBlockTable>
             </apex:pageBlock>
         </apex:outputPanel>
-				
-		<apex:outputPanel id="attachmentDeatils"  >
-           <apex:pageBlock >
-			
-			
-		<apex:pageblockButtons location="Bottom" >    
+
+                       </apex:outputPanel>                        
+                </apex:pageBlockSection>
+                    <apex:outputPanel id="ExistingAttachments">
+                  <apex:pageBlock title="Existing Attachments"  >
+                <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
+                    <apex:column headerValue="Action">
+                       <a href= "#"   onClick="showEditDialog('{!attachment.id}')"> Edit</a> |<a href="#" onclick="deleteFile('{!attachment.id}');return false;"> Delete </a> 
+                    </apex:column>
+                    <apex:column style="padding-right: 9px;" headerValue="Title">
+                    <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Description">{!attachment.Description}</apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
+                  <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>
+                </apex:column>
+                 <apex:column style="padding-right: 9px;" headerValue="Created By">
+                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
+                </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </apex:outputPanel>
+                
+                <apex:outputPanel id="attachmentDeatils"  style="display:none" title="Attachment Information">
+                     <apex:pageBlock >
+                        <apex:pageBlockSection columns="2">   
+                            <apex:outputText label="File Name">{!attDeatils.Name}</apex:outputText>
+                            <apex:inputText label="Description">{!attDeatils.Description}</apex:inputText>
+                            <apex:outputText label="Size">{!attDeatils.Name}</apex:outputText>
+                            <apex:outputText label="Attachment Owner">{!attDeatils.Owner.Name}</apex:outputText>
+                            <apex:outputText label="Created By">{!attDeatils.CreatedBy.Name}</apex:outputText>
+                            <apex:outputText label="Modified By">{!attDeatils.LastModifiedBy.name}</apex:outputText>
+                    </apex:pageBlockSection> 
+                         <apex:pageblockButtons location="Bottom" >    
                     <apex:commandButton value="Save"/>
                     <apex:commandButton value="Cancel"  />
                 </apex:pageblockButtons>  
-                </apex:pageBlock>
-			
-		</apex:outputPanel>
-
-                         
-                </apex:pageBlockSection>
-              
+            </apex:pageBlock>
+        </apex:outputPanel>
+                
             </apex:pageBlock>
         </apex:form>
-        
+        <div id="dialog-confirm" class="dialog" title="Delete Attachment?"  style="display:none">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Are you sure you want to delete this attachment?</p>
+    </div>
 </apex:page>

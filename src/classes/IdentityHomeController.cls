@@ -15,6 +15,7 @@ public with sharing class IdentityHomeController {
     public List<TMN_User__c> searchNonEmpResult {get; set;}
     public List<TMN_User__c> tmnUserList {get; set;}
     public List<TMN_User_Delegate__c> myDelegation {get; set;}
+    public List<PermissionSetAssignment> fullAccess {get; set;}
     public TMN_User__c theTMNUser {get; set;}
     public ID selectedID {get; set;}
     public Boolean displayPopup {get; set;}
@@ -64,6 +65,11 @@ public with sharing class IdentityHomeController {
                         LIMIT 1];
         System.debug('myDelegation Count is ' + myDelegation.size());
         
+        fullAccess = [SELECT PermissionSetId,PermissionSet.Name 
+                      FROM PermissionSetAssignment WHERE assignee.Id = :userId 
+                      AND PermissionSet.Name = 'TMN_Users_Full_Access' 
+                      LIMIT 1];
+                      
         aliasName = getAliasNameValue();
         System.Debug('Value of aliasName is ' + aliasName);       
                                                                                                                                                                                                          
@@ -495,7 +501,7 @@ public with sharing class IdentityHomeController {
                             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
                             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
                             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,
-                            Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
+                            Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,Program_String__c,
                             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c 
                             FROM TMN_User__c 
                             WHERE Id =:selectedID];                   
