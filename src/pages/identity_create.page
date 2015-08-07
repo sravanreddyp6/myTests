@@ -1,8 +1,8 @@
 <apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
-    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <style type="text/css">
         .custPopup{
             background-color: white;
@@ -126,6 +126,7 @@ function autoCompleteRender(ul, item) {
     
     }
     
+      
        j$(function() {
     j$('[id*=AttachmentsModel]').dialog({
       resizable: false,
@@ -134,7 +135,7 @@ function autoCompleteRender(ul, item) {
       width : 750,
       modal: true,
       autoOpen: false
-    });
+    }).parent().appendTo(j$('form[id$=createForm]'));
 });
     
     
@@ -181,7 +182,8 @@ function autoCompleteRender(ul, item) {
                         <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
                     </apex:selectList>                    
                     <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}" id="busunit"/>                                                                                
-                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}" id="servregion"/>                                                                                         
+                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}" id="servregion"/>
+                    <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}" id="prgstring"/>                                                                                         
                 </apex:pageBlockSection>
                 </apex:actionRegion>               
                 <apex:pageBlockSection columns="2" title="Location" id="locInfo">
@@ -256,15 +258,16 @@ function autoCompleteRender(ul, item) {
                     <apex:inputhidden value="{!TMNUser.Office_Location_PickList__c}"/>           
                     <apex:inputhidden value="{!TMNUser.Work_State__c}" id="hiddenlocationState"/>
                 </apex:pageBlockSection>
-                               <apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo" >                                                                                                                                                                                                                                        
+                 
+                  <apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo">                                                                                                                                                                                                                                        
                     <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="24"/>
                     <apex:pageBlockSectionItem /> 
                     <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}" required="true" id="vendorList" ></apex:inputField>
                     <apex:pageBlockSectionItem />
+                      <apex:outputPanel id="BAASection" style="display:none">
                     <apex:inputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
                     <apex:commandButton value="Add Attachments"  onclick="showAttchment();return false;"  />
-                    
-                    <apex:outputPanel id="AttachmentsModel" style="display:none">
+                                    <apex:outputPanel id="AttachmentsModel" style="display:none">
                           <apex:pageBlock title="Upload Attachments">
                 <apex:repeat value="{!newAttachments}" var="newAtt">
                 <apex:pageBlockSection columns="2" id="files">
@@ -280,29 +283,11 @@ function autoCompleteRender(ul, item) {
              <apex:commandButton value="Upload" action="{!saveAttachment}"/>
             <apex:commandButton value="Cancel" />                 
             </apex:pageBlock>                  
-            <apex:outputPanel id="datePanelContainer">
-            <apex:pageBlock title="Existing Attachments"  >
-                <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
-                    <apex:column headerValue="Action">
-                        <apex:outputText > value="/apex/UpdateAttachment?docId={!attachment.ID}" >View </apex:outputText>
-                    </apex:column>
-                    <apex:column style="padding-right: 9px;" headerValue="Title">
-                    <apex:outputText >{!attachment.Name}</apex:outputText>
-                </apex:column>
-                <apex:column headerValue="Description">{!attachment.Description}</apex:column>
-                <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
-                  <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>
-                </apex:column>
-                 <apex:column style="padding-right: 9px;" headerValue="Created By">
-                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
-                </apex:column>
-                </apex:pageBlockTable>
-            </apex:pageBlock>
-        </apex:outputPanel>
 
-                        
                     </apex:outputPanel>
+                   </apex:outputPanel>       
                 </apex:pageBlockSection>
+                 
             </apex:pageBlock>
         </apex:form>
         

@@ -19,7 +19,7 @@ public class identityEditNew {
     public String LN = System.currentPageReference().getParameters().get('LN');
     public String retURL = ApexPages.currentPage().getParameters().get('retURL');
     public String TAU = ApexPages.currentPage().getParameters().get('TAU'); 
-    
+    public String attchmentId {set;get;}
     public String aliasName = TAU;
     
     public identityEditNew() {
@@ -37,22 +37,22 @@ public class identityEditNew {
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
-            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,
+            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Program_String__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c
             FROM TMN_User__c 
             WHERE Id = :id];
-                 newAttachments = new List<ProxyAttachment>();
-                if(TMNUser.id!=null) {
-                                attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
-                         for(integer i = attachments.size(); i<3;i++){
-                                                newAttachments.add(new  ProxyAttachment(new Attachment())); 
-                        }                       
-                }else {
-                newAttachments.add(new  ProxyAttachment(new Attachment())); 
-                newAttachments.add(new ProxyAttachment(new Attachment()));
-                newAttachments.add(new ProxyAttachment(new Attachment()));
-                }
+         newAttachments = new List<ProxyAttachment>();
+        if(TMNUser.id!=null) {
+                attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
+             for(integer i = attachments.size(); i<5;i++){
+                        newAttachments.add(new  ProxyAttachment(new Attachment())); 
+            }           
+        }else {
+        newAttachments.add(new  ProxyAttachment(new Attachment())); 
+        newAttachments.add(new ProxyAttachment(new Attachment()));
+        newAttachments.add(new ProxyAttachment(new Attachment()));
+        }
  
     
     
@@ -70,6 +70,7 @@ public class identityEditNew {
         TMNUser.Operating_Group__c = aliasUser.Operating_Group__c;
         TMNUser.Office_Location__c = aliasUser.Office_Location__c;
         TMNUser.Business_Unit__c = auAlias.Alias_Business_Unit__c;
+        TMNUser.Program_String__c = auAlias.Alias_Description__c;
         TMNUser.Current_Person_Type__c = 'Non-Employee';
         TMNUser.Work_City__c = aliasUser.Work_City__c;
         TMNUser.Office_Location_PickList__c = aliasUser.Office_Location_PickList__c;
@@ -80,11 +81,34 @@ public class identityEditNew {
         TMNUser.Last_Day__c = defaultLastDay;
     }
         
+        
+        
     }
      @RemoteAction
     public static TMN_User__c LocationDetails(String location) {
        return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
+    
+    public  Attachment attDeatils {set;get;}
+ 
+    public  void attachmentDeatils() {
+       // attchmentId = apexpages.currentpage().getparameters().get('kiran');
+        System.debug('attchmentId : ' +attchmentId);
+       attDeatils =   [select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where id=:attchmentId order by createddate limit 1];
+    }
+
+    public  String deleteattachment() {
+        //System.debug('attchmentId:: ' + attchmentId);
+       Attachment att =    [select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where id=:attchmentId order by createddate limit 1];
+            try {
+                delete att;
+                attachments=null;
+        } catch(System.DMLException e) {
+            return null;
+        }
+        return  'true'; 
+    }
+
     
     TMN_User__c t = [SELECT Id, Name, Operating_Group__c,Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];
     public String tmnName = t.Name;
@@ -97,7 +121,7 @@ public class identityEditNew {
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
-            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c, 
+            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c,Program_String__c, 
             Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
@@ -118,6 +142,7 @@ public class identityEditNew {
         TMNUser.Business_Unit__c = aliasInfo.Alias_Business_Unit__c;
         TMNUser.Service_Region__c = aliasInfo.Alias_Region__c;
         TMNUser.Service_Line__c = aliasInfo.Alias_Service_Line__c;
+        TMNUser.Program_String__c = aliasInfo.Alias_Description__c;
         if(TMNUser.Preferred_First_Name__c == null && TMNUser.Preferred_Last_Name__c == null){
             TMNUser.Name = TMNUser.First_Name__c + ' ' + TMNUser.Last_Name__c;    
         }else if(TMNUser.Preferred_First_Name__c != null && TMNUser.Preferred_Last_Name__c == null){
@@ -129,9 +154,9 @@ public class identityEditNew {
         }
              
         try {
-                 saveAttachment();
-            upsert(TMNUser);
             
+            upsert(TMNUser);
+             saveAttachment();
         } catch(System.DMLException e) {
             ApexPages.addMessages(e);
             return null;
@@ -195,6 +220,7 @@ public class identityEditNew {
         TMNUser.Business_Unit__c = a.Alias_Business_Unit__c;
         TMNUser.Service_Region__c = a.Alias_Region__c;
         TMNUser.Service_Line__c = a.Alias_Service_Line__c;
+        TMNUser.Program_String__c = a.Alias_Description__c;
         return null;              
     }
     
