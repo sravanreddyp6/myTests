@@ -9,7 +9,7 @@
     .refwarning {
  	 border-color: #f90;
     display: block;
-	background-color: #ffc;
+	background-color: #7bc145;
   	border-style: solid;
   	border-width: 1px;
   	color: #000;
@@ -21,7 +21,7 @@
     <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && !isErrorDisplayed && Referral__c.Close_Reason__c != 'Admitted' && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning" ></apex:pageMessage>
     
     <div class="refwarning">
-        	<b>	First Name,Last Name,Date of Birth,Gender,State For Preferred Service,Referral Date,Anticipated Admission DateTime and Anticipated Service Location (Alias) required in order to convert this referral to Admission.</b>
+        	<b>Fields with this formatting are required by The MENTOR Network in order to convert the referral. Please note that the system may alert you to additional data that is required by your state or Operating Group.</b>
         		</div>
         		
 	<style type="text/css">
