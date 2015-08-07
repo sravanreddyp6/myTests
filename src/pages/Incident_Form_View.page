@@ -6,21 +6,44 @@
 <style>
 .sub-question-header{font-size:10pt; font-weight: bold; padding: 7px; padding-left:0px; color: #4a4a56;}
 .labelCol{min-width: 300px;}
+
+
+
+.pop-up-msg{
+    color: red;
+    font-weight: bold;
+}
 .btn{
-	background-color: #7bc145 !important;
-	color: black !important;
-	font-size:10pt !important;
+    background-color: #7bc145 !important;
+    color: black !important;
+    font-size:10pt !important;
 }
 .pbSubheader {
    border-top: 1px solid #253e76 !important;
+   background-color: transparent  !important;
    color: black !important; 
-   font-size: 11pt !important;
 }
+[id$="_firstHeader"] .pbSubheader{
+    background-color: #253e76 !important; 
+    width: 100%;
+    font-size:11pt !important;
+    font-weight: bold;
+    color: white !important;
+}
+[id$="_secondHeader"] .pbSubheader{
+   border-top: none !important;
+   background-color: transparent  !important;
+   color: black !important; 
+}
+.pbSubheader h1, .pbSubheader h2, .pbSubheader h3{   font-size: 11pt !important;}
+.labelCol label{color: black !important;}
+
+
 </style>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentView" admId="{!servAssign.Admission__c}" rendered="{!servAssign.Id != null}"/>
 <br/>
 <apex:form >
-        <apex:pageBlock mode="detail" title="Incident Information">
+        <apex:pageBlock mode="detail">
         	<apex:pageBlockButtons >
 	            <div style="float: right;">
 	                <apex:CommandButton value="Edit" action="{!editIncident}" />
@@ -29,14 +52,14 @@
 	                <apex:CommandButton value="Disregard" rendered="false" />
 	            </div>
         	</apex:pageBlockButtons>
-        	<apex:pageBlocksection columns="1" showHeader="false" collapsible="false">
+        	<apex:pageBlocksection id="_firstHeader" columns="1" title="Incident Information" collapsible="true">
         		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
         			<apex:outputLabel value="Which Current Service is Related to the Incident? " />
         			<apex:outputField value="{!Incident__c.Service_Assignment__c }" />
         		</apex:pageBlockSectionItem>
         	</apex:pageBlocksection>
         	
-        	<apex:pageBlockSection columns="1" title="Timing" showHeader="true" collapsible="false" >
+        	<apex:pageBlockSection id="_secondHeader" columns="1" title="Timing" showHeader="true" collapsible="false" >
         		<apex:outputField value="{!Incident__c.Unknown_Date_Occurred__c}" label="Date/Time Currently Unknown" rendered="{!Incident__c.Unknown_Date_Occurred__c}"/>
         		<apex:pageBlockSectionItem rendered="{!!Incident__c.Unknown_Date_Occurred__c}">
         			<apex:outputLabel value="Date/Time Incident Occurred" />
