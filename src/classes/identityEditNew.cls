@@ -14,15 +14,16 @@ public class identityEditNew {
         get{return (myTMN.Operating_Group__c);}
         set{myTMN.Operating_Group__c = value;}
     }
-   public List<Attachment> newAttachments { get;  set; }
+    public List<ProxyAttachment> newAttachments { get ; set; }
     public String FN = System.currentPageReference().getParameters().get('FN');
     public String LN = System.currentPageReference().getParameters().get('LN');
     public String retURL = ApexPages.currentPage().getParameters().get('retURL');
-    public String TAU = ApexPages.currentPage().getParameters().get('TAU');
+    public String TAU = ApexPages.currentPage().getParameters().get('TAU'); 
     
     public String aliasName = TAU;
     
     public identityEditNew() {
+                                    
         Id id = ApexPages.currentPage().getParameters().get('ID');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
 //        Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
@@ -38,9 +39,22 @@ public class identityEditNew {
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
-            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c 
+            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c
             FROM TMN_User__c 
             WHERE Id = :id];
+                 newAttachments = new List<ProxyAttachment>();
+                if(TMNUser.id!=null) {
+                                attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
+                         for(integer i = attachments.size(); i<3;i++){
+                                                newAttachments.add(new  ProxyAttachment(new Attachment())); 
+                        }                       
+                }else {
+                newAttachments.add(new  ProxyAttachment(new Attachment())); 
+                newAttachments.add(new ProxyAttachment(new Attachment()));
+                newAttachments.add(new ProxyAttachment(new Attachment()));
+                }
+ 
+    
     
     if(TMNUser.Id == null){
         TMNUser.First_Name__c = FN;
@@ -115,7 +129,9 @@ public class identityEditNew {
         }
              
         try {
+                 saveAttachment();
             upsert(TMNUser);
+            
         } catch(System.DMLException e) {
             ApexPages.addMessages(e);
             return null;
@@ -127,40 +143,47 @@ public class identityEditNew {
         viewPage.setRedirect(true);
         return viewPage;
     }
+    
     public List<Attachment> attachments {set;get;}
-    public void addAttachment () {
+    public PageReference addAttachment () {
+        attachments  = new List<Attachment>();  
+       // newAttachments = new List<Attachment>();  
         system.debug('in addAttachment');
         if(TMNUser.id != null) {
             attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ]; 
             for (Integer i=0;i<3;i++){
-                newAttachments.add(new Attachment() );
+                //newAttachments.add(new Attachment() );
             }
         }else {
-             newAttachments.add(new Attachment() );
-             newAttachments.add(new Attachment() );
-             newAttachments.add(new Attachment() );
+             //newAttachments.add(new Attachment() );
+            // newAttachments.add(new Attachment() );
+             //newAttachments.add(new Attachment() );
         }
-             
+                     return null;
     }
 
-    public PageReference saveAttachment()
-    {
-        List<Attachment> toInsert=new List<Attachment>();
-        Integer index = 0;
-        for (Attachment newAtt : newAttachments)
-        {
-            
-            if (newAtt.Body!=null)
-            {
-                newAtt.parentId=TMNUser.id;
-                toInsert.add(newAtt);
-            }
-            index ++;
+    public void saveAttachment()       {
+        System.debug('In saveAttachment');
+        System.debug('newAttachments.size :: ' + newAttachments.size());
+                List<Attachment> toInsert=new List<Attachment>();
+                Integer index = 0;
+                for (ProxyAttachment newProxyAtt : newAttachments)
+                {
+                        Attachment newAtt = newProxyAtt.getSObject();
+                        System.debug('newAtt Object ' + newAtt);
+                                System.debug('newAtt.Body ' + newAtt.body);
+                        System.debug('newAtt.Description ' + newAtt.Description);
+                        if (newAtt.Body!=null)
+                        {
+                                newAtt.parentId=TMNUser.id;
+                                toInsert.add(newAtt);
+                        }
+                        index ++;
+                }
+                insert toInsert;
+        System.debug('toInsert.size :: ' + toInsert.size());
+               
         }
-        insert toInsert;
-        attachments=null;
-        return null;
-    }
     
     
     
@@ -225,5 +248,21 @@ public class identityEditNew {
         displayPopup = true;    
     }
 //end pop-up section
+
+ private class ProxyAttachment {
+                private Attachment attachment;
+                public ID Id { get { return attachment.ID; } set { attachment.ID = value; } }
+                public ID ParentId { get { return attachment.ParentId; } set { attachment.ParentId = value; } }
+                public String Name { get { return attachment.Name; } set { attachment.Name = value; } }
+                public Blob Body { get { return attachment.Body; } set { attachment.Body = value; } }
+                public String Description { get { return attachment.Description; } set { attachment.Description = value; } }
+                public ProxyAttachment(Attachment attachment) {
+                        this.attachment = attachment;
+                }
+                public Attachment getSObject() {
+                        return attachment;
+                }
+        }
+ 
     
 }

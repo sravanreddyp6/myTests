@@ -143,6 +143,14 @@ function autoCompleteRender(ul, item) {
     function closeDiglog() {
     j$('[id*=AttachmentsModel]').dialog("close");
     }
+    function showEditDialog (attId){
+        alert(attId);
+    j$('[id*=attachmentDeatils]').dialog("open");
+    }
+    
+    function closeEditDialog (){
+      j$('[id*=attachmentDeatils]').dialog("close");
+    }  
     
     </script>      
         <apex:form >
@@ -227,10 +235,10 @@ function autoCompleteRender(ul, item) {
             <apex:pageBlock title="Existing Attachments"  >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Action">
-                        <apex:outputText > value="/apex/UpdateAttachment?docId={!attachment.ID}" >View </apex:outputText>
+                      <a href= "#"   onClick="showEditDialog('{!attachment.id}')"> Edit</a> | Delete
                     </apex:column>
                     <apex:column style="padding-right: 9px;" headerValue="Title">
-                    <apex:outputText >{!attachment.Name}</apex:outputText>
+                    <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Description">{!attachment.Description}</apex:column>
                 <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
@@ -242,6 +250,18 @@ function autoCompleteRender(ul, item) {
                 </apex:pageBlockTable>
             </apex:pageBlock>
         </apex:outputPanel>
+				
+		<apex:outputPanel id="attachmentDeatils"  >
+           <apex:pageBlock >
+			
+			
+		<apex:pageblockButtons location="Bottom" >    
+                    <apex:commandButton value="Save"/>
+                    <apex:commandButton value="Cancel"  />
+                </apex:pageblockButtons>  
+                </apex:pageBlock>
+			
+		</apex:outputPanel>
 
                          
                 </apex:pageBlockSection>
