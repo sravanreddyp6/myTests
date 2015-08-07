@@ -254,7 +254,7 @@ public with sharing class IdentityHomeController {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error,'You cannot assign yourself as a delegate! Please choose another person as your delegate.'));
         }else if(userDup.size()>0){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, delName +' is already assigned as one of your delegates! Please choose another person as your delegate.'));
-        }else if(delCount.size()>4){
+        }else if(delCount.size()>0){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'You have the maximum allowed number of delegates! Please remove a current delegate to add ' + delName +'.'));
         }else{    
             try { 
