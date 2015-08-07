@@ -1302,7 +1302,7 @@ public without sharing class ServiceAssignmentExt {
 			permissionSets.add(assignment.PermissionSet.Name);
 		}
 
-		if (permissionSets.Contains('iServe_Tier_III')) {
+		if (permissionSets.Contains('iServe_Tier_III') || permissionSets.Contains('iServe_Tier_II')) {
 			canAddShiftDoc = true;
 			canAddCNA = true;
 		}
