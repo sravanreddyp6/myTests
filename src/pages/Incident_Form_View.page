@@ -36,14 +36,14 @@
    color: black !important; 
 }
 .pbSubheader h1, .pbSubheader h2, .pbSubheader h3{   font-size: 11pt !important;}
-.labelCol {color: black !important;}
+.labelCol {color: black !important; border: none !important;}
 
 
 </style>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentView" admId="{!servAssign.Admission__c}" rendered="{!servAssign.Id != null}"/>
 <br/>
 <apex:form >
-        <apex:pageBlock mode="detail">
+        <apex:pageBlock mode="maindetail">
         	<apex:pageBlockButtons >
 	            <div style="float: right;">
 	                <apex:CommandButton value="Edit" action="{!editIncident}" />
