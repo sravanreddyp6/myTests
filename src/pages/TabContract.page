@@ -1,0 +1,88 @@
+<!--
+/////////////
+Uses custom VF components list repors and list docs to render reports and help documentation
+/////////////
+-->
+<apex:page recordSetVar="leads" standardController="TMN_Contract__c" showChat="true" >
+<style>
+    .tabcon{
+        font-zize: 14pt;
+        background-color: white;
+        border: none;  
+    }
+    .tabClass{
+        font-size: 15pt;
+        color: black;
+    }
+    .TabContractPadding{
+        padding: 12px;
+        width: 400px;
+    }
+    .mybody
+{
+background-image:url('paper.gif');
+background-color:#cccccc;
+}
+</style>
+
+<c:TMN_Tab_Style ActiveColor="#319431"
+ActiveFontColor="white" 
+ActiveTabStyleName="activeTab"
+
+effect="true"
+
+InactiveColor="#c3eac3"
+InactiveFontColor="black" 
+removeBorder="false"
+
+inActiveTabStyleName="inActiveTab" 
+hColor="#7eb47e"
+
+/>
+
+
+<apex:tabPanel headerSpacing="7" switchType="client" activeTabClass="activeTab" inactiveTabClass="inActiveTab" tabClass="tabClass" contentClass="tabcon" contentStyle="font-size:11pt; "  >
+<!-- switch type of the tabs with apex:enhancedList must not be 'client' noted error when rendering at times of switching back and forth between tabs -->
+    <apex:tab label="Views" switchType="ajax">
+        <apex:enhancedList customizable="true" height="600" type="TMN_Contract__c"/>
+    </apex:tab>
+    
+    <apex:tab label="Reports">   
+        <br/> 
+        <apex:panelGrid columns="2" rules="groups" columnClasses="TabContractPadding">  
+            <c:TMN_List_Reports filterFor="#cdb%" TitleColor="#097709" Title="Common" />
+            
+            <apex:outputPanel layout="block" >        
+                <apex:pageBlock title="Other">
+                    <apex:panelGrid columns="1">
+                        <apex:outputLink target="_blank" value="{!$Page.FieldMapContracts}">Field Map report</apex:outputLink>
+                        <apex:outputPanel layout="block" style="padding-left: 5px; color: gray;">Use this report to see the names of fields as they are displayed on reports</apex:outputPanel>                
+                        <br/> 
+                        <apex:outputLink target="_blank" value="/04i">Approval Request</apex:outputLink>
+                        <apex:outputPanel layout="block" style="padding-left: 5px; color: gray;"> See all items that require for your approval</apex:outputPanel>                
+                    
+                    </apex:panelGrid>                
+                </apex:pageBlock>    
+                        
+                <c:TMN_List_Reports filterFor="%#TMPcdb%" OpenInEdit="True" TitleColor="#097709" Title="Templates" />
+            </apex:outputPanel>
+        </apex:panelGrid>    
+    </apex:tab>
+    
+    <apex:tab label="Help" id="help">
+        <br/>
+        <apex:panelGrid columns="2" rules="groups" columnClasses="TabContractPadding">
+            <apex:panelGroup >
+                <c:TMN_List_Docs filterFor="Contract Database" TitleColor="#097709" Title="App"  />
+            </apex:panelGroup>
+            
+            <apex:panelGroup >
+                <c:TMN_List_Docs filterFor="Report" TitleColor="#097709" Title="Reporting"  />
+            </apex:panelGroup>
+        </apex:panelGrid>
+    </apex:tab>
+</apex:tabPanel>
+        
+   
+
+</apex:page>

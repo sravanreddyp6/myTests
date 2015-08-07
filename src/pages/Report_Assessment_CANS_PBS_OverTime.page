@@ -1,0 +1,174 @@
+<apex:page showHeader="true" sidebar="false" controller="Report_Assessment_CANS_PBS_OverTime" docType="html-5.0" readOnly="true">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery-ui.min.js')}" />
+
+<apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}"/>  
+
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/js/dataTables.tableTools.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/extensions/TableTools/css/dataTables.tableTools.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/development-bundle/themes/custom-green/jquery-ui.min.css')}"/>
+<style type="text/css">
+    .rowScore0{ background-color: white;}
+    .rowScore1{ background-color: rgba(255, 255, 0, 0.65);}
+    .rowScore2{ background-color: rgba(255, 165, 0, 0.65);}
+    .rowScore3{ background-color: rgba(255, 0, 0, 0.65);}
+    .groupHeader{background-color: rgb(229, 229, 229); font-weight: bold;}
+    
+    .chosen-single {
+		background-color: white !important;
+		background-image:none !important;
+		box-shadow:none !important;
+		border-radius:0px !important;
+	}
+	
+</style>
+<apex:form >
+<h1 style="font-size: 25px; padding: 9px; display: block;">CANS Over Time by Person Being Served (Table)</h1>
+<apex:pageBlock title="Filters" >
+    <apex:pageBlockSection columns="1">
+       <apex:selectList required="true" size="1" label="Person Being Served" value="{!selectedPBS}"  id="pbslist" styleclass="chosenSelect">
+           <apex:selectOptions value="{!optPBS}" />
+        </apex:selectList>     
+        <apex:selectList required="true" Value="{!SelectedCluster}" size="1" label="CANS Assessment Data">
+            <apex:selectOption itemLabel="All" itemValue="All"></apex:selectOption>
+            <apex:selectOption itemLabel="Behavior & Risk Cluster" itemValue="Behavior & Risk"></apex:selectOption>
+            <apex:selectOption itemLabel="Education Cluster" itemValue="Education"></apex:selectOption>
+            <apex:selectOption itemLabel="Well-Being Cluster" itemValue="Well-Being" ></apex:selectOption>
+        </apex:selectList>
+        <apex:pageBlockSectionItem >       
+            <apex:outputLabel ></apex:outputLabel>
+            <apex:commandButton value="Run" action="{!runRpt}" reRender="DATA_SET" status="myStatus"/>
+        </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+</apex:pageBlock>   
+</apex:form>
+
+
+<apex:outputPanel id="DATA_SET">
+<apex:pageMessages />
+<apex:pageBlock title="Results" rendered="{!selectedPBS != null}">
+<apex:pageBlockButtons >
+	<div style="float: right"><input class="btn" type="button" onclick="tableToExcel('rptDataTbl', 'CANS Over Time by Person Being Served (Table)')" value="Export to Excel" /></div>
+</apex:pageBlockButtons>
+<table id="rptDataTbl">
+<thead>
+    <tr>
+        <th>Interval</th>
+        <th>Domain</th>
+        <apex:repeat value="{!Columns}" var="col">
+            <th>
+            	<apex:outputLink value="/{!mapColumnAssess[col].id}" target="_blank"> 
+            		<apex:outputPanel rendered="{!mapColumnAssess[col].Interval__c != 'Quarterly'}">{!mapColumnAssess[col].Interval__c}</apex:outputPanel>
+            		<apex:outputPanel rendered="{!mapColumnAssess[col].Interval__c == 'Quarterly'}">Q&nbsp;{!mapColumnAssess[col].Quarter__c}</apex:outputPanel>
+            		 
+            		<br/>
+            		<apex:outputField value="{!mapColumnAssess[col].Assessment_Date__c}">
+            			
+            		</apex:outputField>
+            		</apex:outputLink>
+    		</th>
+        </apex:repeat>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>Overall Score</td>
+        <td></td>
+        <apex:repeat value="{!Columns}" var="col">
+            <td >{!mapOverallScore[col]}</td>
+        </apex:repeat>          
+    </tr>
+<apex:repeat value="{!QuestionsNumbersInScope}" var="row">
+    <tr>
+        <td>{!mapQuestions[row].Question_Title__c}</td>
+        <td>{!if(selectedCluster='All' , mapQuestions[row].Question_Domain__r.name, SelectedCluster)}</td>
+        <apex:repeat value="{!Columns}" var="col">
+            <td class="rowScore{!mapAnswers[TEXT(row)+col].rating__c}">{!mapAnswers[TEXT(row)+col].rating__c}</td>
+        </apex:repeat>  
+    </tr>
+</apex:repeat>
+</tbody>
+</table>    
+<script>
+
+
+j$ = jQuery.noConflict();
+
+j$(document).ready(function() {
+	console.log('started');
+	    
+    j$('#rptDataTbl').dataTable( {
+        "bPaginate": false,
+        "ordering": false, 
+        "bFilter": false, 
+        "bInfo" : false,
+        "columnDefs": [
+            { "visible": false, "targets": 1 }
+        ],
+        "order": [[ 1, 'asc' ]],
+        "displayLength": 25,
+        "drawCallback": function ( settings ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var last=null;
+ 
+            api.column(1, {page:'current'} ).data().each( function ( group, i ) {
+                if ( last !== group ) {
+                    j$(rows).eq( i ).before(
+                        '<tr class="group groupHeader"><td class="groupHeader" colspan="99">'+group+'</td></tr>'
+                    );
+ 
+                    last = group;
+                }
+            } );
+        }      
+    } );
+    
+
+} );
+
+</script>
+</apex:pageBlock>
+</apex:outputPanel>
+
+
+
+
+<script>
+j$ = jQuery.noConflict();
+	j$( document ).ready(function() {
+	j$('[id$=pbslist]').chosen();
+	});
+
+
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    table2=j$('[id$=' + table+']');
+    var ctx = {worksheet: name || 'Worksheet', table: table2[0].innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+    }
+  })();
+</script>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <style>
+            .fogBG{opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;}
+            .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;}
+        </style>
+        <div class="fogBG"/>
+        <div class="thinkingwheel">    
+            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+        </div> 
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus>
+</apex:page>

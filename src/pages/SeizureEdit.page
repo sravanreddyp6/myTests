@@ -1,0 +1,175 @@
+<apex:page title="Seizure" controller="SeizureExtension" standardStylesheets="true" sidebar="false">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+
+<style>
+    #seizureMessages .success {
+        color: green;
+    }
+    #seizureMessages .error {
+        color: red;
+    }
+</style>
+        
+<script type="text/javascript">
+    <!-- START: Trick VF into setting focus to top of page instead of to first input field  --> 
+
+</script>
+<c:PersonalRecord pbsId="{!pbsId}" parentPage="SeizureEdit" />
+
+<script>
+    function setFocusOnLoad() {}
+    j$ = jQuery.noConflict();
+    
+    function getToday() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        today = mm + '/' + dd + '/' + yyyy;
+        return today;
+    }
+
+    seizureSave = function(isClose) {
+        validateSeizure();
+    }
+    
+    getServiceAssignmentId = function(){
+        var saId ='';
+        if (j$('[id$=seizureEntry_ServiceAssignmentId]').val()){
+            saId = j$('[id$=seizureEntry_ServiceAssignmentId]').val();
+        }else if (isNaN(j$('[id$=seizureEntry_ServiceAssignment_lkid]').val())){
+            saId = j$('[id$=seizureEntry_ServiceAssignment_lkid]').val();
+        }
+        return saId;
+    }
+    
+    validateSeizure = function () {
+            var seizureErrors = [];
+            var startValue = j$('[id$=seizureEntry_startDateTime]').val();
+            var formatStart = new Date(moment(new Date(startValue)).format());
+            var endValue = j$('[id$=seizureEntry_endDateTime]').val();
+            var formatEnd = new Date(moment(new Date(endValue)).format());
+
+            j$('#seizureMessages').html('');
+            
+            if (getServiceAssignmentId() == '') {
+                seizureErrors.push('The Service Assignment is required.');
+            }
+            else if (startValue == '' && endValue == '') {
+                seizureErrors.push('The Date must contain a valid value. Please enter the date of the Seizure event.');
+            }
+            else if (startValue == '') {
+                seizureErrors.push('The Start Time must contain a valid value. Please enter a Start Time of the Seizure event.');
+            }
+            else if (endValue == '') {
+                seizureErrors.push('The End Time must contain a valid value. Please enter an End Time of the Seizure event.');
+            }
+            else if (formatStart >= formatEnd) {
+                seizureErrors.push('The End Time must come AFTER your Start Time. Please adjust the Start and End times.');
+            }
+            if (startValue.substring(0,10) > getToday()) {
+                seizureErrors.push('The Start Time cannot be in the future. Please adjust the Start Time of the Seizure event.');
+            }
+            if (j$('[id$=seizureEntry_observedBy]').val() == '') {
+                seizureErrors.push('The Observed By field must contain a value. Please enter the name of the individual who observed the event of the Seizure event.');
+            }
+            
+            if (seizureErrors.length > 0) {
+                j$.each(seizureErrors, function (index, error) {
+                    j$('#seizureMessages').append('<li class="error">' + error + '</li>');
+                });
+            } else {
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.SeizureExtension.findDuplicateSeizure}',
+                    startValue,
+                    endValue,
+                    getServiceAssignmentId(),
+                    j$('[id$=seizureEntry_Id]').val(),
+                    function(result, event){
+                        if (event.status) {
+                                if(result && ! j$('[id$=seizureEntry_duplicateEntry]').is(":checked") ){
+                                    j$('[id$=seizure-dialog-confirm]').dialog( "open" );
+                                } else {
+                                    j$("input[id$='saveSeizure']").click();
+                                }
+                        } else if (event.type === 'exception') {
+                            document.getElementById("seizureMessages").innerHTML = event.message;
+                        } else {
+                            document.getElementById("seizureMessages").innerHTML = event.message;
+                        }
+                    },
+                    {escape: true}
+                );
+            }
+        }
+        
+        seizureClearMessages = function () {
+            j$('#seizureMessages').html('');
+        }
+    
+        j$(function() {
+            j$('[id$=seizure-dialog-confirm]').dialog({
+                resizable:false,
+                height:180,
+                modal:true,
+                autoOpen:false,
+                buttons: { Yes: function() { j$(this).dialog( "close" ); j$("input[id$='saveSeizure']").click(); },
+                            No : function() { j$(this).dialog( "close" ); }
+                         }
+            });
+        });
+    
+</script>
+<br />
+
+<apex:pagemessages id="msgs" />
+<apex:form id="myFRM">
+<div id="seizureMessages"></div>
+    <apex:pageBlock title="New Seizure">
+
+        <apex:pageBlockSection columns="1">
+            <apex:inputField value="{!seizure.Service_Assignment__c}" id="seizureEntry_ServiceAssignment" rendered="{!seizure.Service_Assignment__c == null}" />
+            <apex:outputField value="{!seizure.Service_Assignment__c}" rendered="{!seizure.Service_Assignment__c != ''}"/>               
+            <apex:pageBlockSectionItem ><apex:outputLabel Value="Start Time"/>
+                <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem > <apex:outputLabel Value="End Time"/>
+                <c:MilitaryDateTimeWithSeconds shiftTop="20" edit="true" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+            </apex:pageBlockSectionItem>
+            <apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy" required="true" />
+            <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
+            <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
+        </apex:pageBlockSection>
+        
+            <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
+            <apex:inputHidden value="{!seizure.Service_Assignment__c}" id="seizureEntry_ServiceAssignmentId" rendered="{!seizure.Service_Assignment__c != ''}"/>
+            <apex:inputHidden value="{!seizureStart_DateTime}" id="seizureEntry_startDateTime" />
+            <apex:inputHidden value="{!seizureEnd_DateTime}" id="seizureEntry_endDateTime" />
+            <apex:inputHidden value="{!retUrl}"/>
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton id="saveSeizure" value="Save" action="{!saveSeizure}" style="display:none;"/>
+            <input id="saveSeizurebtn" type="button" class="btn" value="Save" onclick="seizureSave(true);"/>
+<!--             <input id="saveAndNewSeizurebtn" type="button" class="btn"  value="Save & New" onclick="seizureSave(false);"/> -->
+<!--             <apex:commandButton id="cancelSeizure" value="Cancel" action="{!backMethod}" immediate="true"/> -->
+            <apex:commandButton id="cancelSeizure" value="Cancel" onclick="window.history.go(-1);"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+
+</apex:form>
+<apex:outputPanel id="seizure-dialog-confirm" title="Confirm save" layout="block">
+    <apex:outputPanel layout="inline">
+        <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />
+        There is already an existing Seizure for the overlapping time, this could be a duplicate entry. Do you still want to Save?
+    </apex:outputPanel>
+</apex:outputPanel>
+        
+</apex:page>
