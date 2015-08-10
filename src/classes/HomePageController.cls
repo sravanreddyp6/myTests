@@ -66,6 +66,10 @@ public with sharing class HomePageController{
 	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
 	
 	
+	// IADAY-10 - support creation of Time Log entry from home page
+	public String responseType { get; set; }
+	public Boolean hasError { get; set; }
+	public Evaluation_Response__c currResponse { get; set; }
 	
 	//Incidents 
 	//public List<Incident__c> myIncidents {get; set;}
