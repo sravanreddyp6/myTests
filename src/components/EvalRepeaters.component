@@ -54,11 +54,11 @@
                 <div class="pull-right">&nbsp;</div>
                 <apex:outputPanel layout="none" rendered="{! IF(  AND(eval.compositeKey == 'Reduction Review~Reduction Review~', ( !CONTAINS(parentEvalStatus, 'Applied') || (Contains(parentEvalStatus,'Applied') && parentHasOpenAsmt))),
                 												false,
-                												parentEvalStatus != 'Completed' && parentEvalStatus != 'End of Shift' && (eval.repeatable || ( parentEvalOwnerID == $User.Id && counter == 0 )) && canEditEvalType
+                												parentEvalStatus != 'Completed' && parentEvalStatus != 'End of Shift' && (eval.repeatable || ( parentEvalOwnerID == $User.Id && counter == 0 ) || (evalType == 'Residential' && counter == 0)) && canEditEvalType
                 												) }">
                 <a id="{! eval.compositeKey}" class="btn btn-info btn-sm pull-right"
                     href="#" role="button"
-                    onClick="createPanel('{!evaltype}', '{!eval.cat}', '{!eval.subcat}', null, '{! IF( AND( eval.compositeKey != 'Reduction Review~Reduction Review~', OR(CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'), parentEvalOwnerID != $User.Id )),'Activity Log',evaltype )}', true); return false;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                    onClick="createPanel('{!evaltype}', '{!eval.cat}', '{!eval.subcat}', null, '{! IF( AND( eval.compositeKey != 'Reduction Review~Reduction Review~', OR(CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'), AND(parentEvalOwnerID != $User.Id, evaltype != 'Residential'))),'Activity Log',evaltype )}', true); return false;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                 </apex:outputPanel>
             </div>
         </div>

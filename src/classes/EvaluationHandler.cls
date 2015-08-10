@@ -46,7 +46,8 @@ public with sharing class EvaluationHandler {
 			}
 		}
 		//Logic to Delete Annotations on NeuroTab when Pain Present field's value is set to 'No' or 'None'.
-		   for(Evaluation__c anno : updatedObjects){
+		/*  Sravan - 06/12/2015 2: 30 PM This is not needed since non dynamic evals do not use Neuro Tab body map.
+		 for(Evaluation__c anno : updatedObjects){
 			   if(anno.Pain_Present__c != 'Yes')
 				   annoEvals.add(anno);
 
@@ -57,7 +58,7 @@ public with sharing class EvaluationHandler {
 			}
 				   if(tobedelAnnos.size()>0)
 					delete tobedelAnnos;
-		   }
+		   }*/
 
 	}
 

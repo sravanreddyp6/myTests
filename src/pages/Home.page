@@ -4,8 +4,6 @@
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
-   
-
 	<style type="text/css">
 		.thinking {
 			opacity: 0.8;
@@ -172,19 +170,28 @@
 		}
 
 	</style>
+	<apex:outputPanel layout="none" rendered="{!OperatingGroup == 'Redwood' && BEGINS($UserRole.DeveloperName, 'IA')}">
+	<style>
+		[id$=serviceAssignmentTable] tr td:nth-child(2), [id$=serviceAssignmentTable] tr th:nth-child(2) {
+			/* This column is not displayed for RW */
+			display: none;
+		}
+	</style>
+	</apex:outputPanel>
 
 	<apex:form id="mainForm">
 		<apex:pageMessages id="pageMessages" />
-
 		<br />
-		<apex:outputPanel layout="none" rendered="{!OperatingGroup != 'Care Meridian'}">
+		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' || 
+													OperatingGroup = 'NeuroRestorative' ||
+													(AND(OperatingGroup = 'Redwood', !BEGINS($UserRole.DeveloperName, 'IA')))}">
 			<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
 			<apex:inputText title="First Name" value="{!FrstName}" id="FName" />
 			<apex:outputLabel for="{!$Component.LName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
 			<apex:inputText title="Last Name" value="{!LstName}" id="LName" />
 			<apex:commandButton style="margin-left: 10px; " id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
 		</apex:outputPanel>
-		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Care Meridian'}">
+		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Care Meridian' || (AND(OperatingGroup = 'Redwood', BEGINS($UserRole.DeveloperName, 'IA')))}">
 			<apex:outputLabel for="{!$Component.PbsSearchFirstName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
 			<apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
 			<apex:outputLabel for="{!$Component.PbsSearchLastName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
@@ -201,7 +208,7 @@
 			<c:HomePageComponents objectName="Documents" />
 			<c:HomePageComponents objectName="Incidents" />
 		</apex:outputPanel>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!AND(OperatingGroup == 'Care Meridian', canSeePBS)}">
+		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}">
 			<apex:pageBlockSection columns="2">
 				<apex:selectList id="selectprograms" value="{!selectedAlias}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
@@ -212,6 +219,7 @@
 				</apex:inputCheckbox>
 			</apex:pageBlockSection>
 			<a id="pbsTable"></a>
+					
 			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable" html-data-highlighted-sa-id="{!highlightedServiceAssignmentId}">
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
@@ -238,19 +246,18 @@
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" />
-<!-- 						<apex:selectOption itemValue="/{!serviceAssignment.Action_Plans__r[0].Id}" itemLabel="Current Action Plan" rendered="{!serviceAssignment.Action_Plans__r.size > 0}" /> -->
+						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Nurses Shift Documentation" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Nurses Shift Documentation" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#incidents" itemLabel="Incidents" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" />
@@ -260,11 +267,10 @@
 				<apex:column headerValue="saId">
 					{!serviceAssignment.Id}
 				</apex:column>
-			</apex:pageBlockTable>
+				
+		</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
-
-
 		<apex:pageBlock title="My Tasks">
 
 			<apex:pageBlockButtons location="Top">
@@ -409,9 +415,118 @@
 		<apex:actionFunction name="createPBStypeIncident" status="pageProcessing" rerender="none" action="{!createPBStypeIncident}" >
 			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
 		</apex:actionFunction>
+		<apex:actionFunction name="makeNewPlan" action="{!NewPlan}" rerender="" status="pageProcessing">
+			<apex:param name="saId" value="" assignTo="{!currsaID}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="showAddResponse" action="{!newResponse}" rerender="responseDialog" oncomplete="openModalDialog('responseDialog', 'div', 'Add Time Log', null, 1000, 'mainForm','false');" immediate="true">
+			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
+		</apex:actionFunction>
+		              	
 	</apex:form>
 	<div id="shiftDocActionDialog"></div>
 	<div id="searchResultDialog"></div>
+	
+	<!-- Dialog Modal -->
+	
+	<div id="responseDialog" style="display:none;" >
+	<apex:outputpanel layout="none" rendered="{!(AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}" >
+		<script>
+			jQuery.noConflict();
+			jQuery(document).ready(function($) {
+			afterSave = function (dialogId, tagType, keepDialogOpen, functionToOpenNewDialog, functionarg) {
+        	var $dialog = $(document.getElementById(dialogId));
+        	if ($dialog.find('.message').length == 0) {
+        		closeModalDialog(dialogId, tagType);
+	            if (keepDialogOpen) {
+	                (functionToOpenNewDialog)(functionarg);
+            	}            	
+        	}
+    	}
+    	});
+
+		</script>
+		<apex:form id="logForm">
+		<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+		<apex:pageBlock id="responseDialogMainBlock">
+
+		<apex:pageblockButtons location="bottom">
+				<apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');"> 
+					<apex:param name="keepDialogOpen" value="" />
+				</apex:actionFunction>
+				<apex:actionStatus id="saveResponseStatus">
+					<apex:facet name="stop">
+						<apex:outputPanel id="buttons">
+							<apex:commandButton value="Save" onClick="saveResponse(false); return false;" />
+							<apex:commandButton value="Save & New" onClick="saveResponse(true); return false;" /> &nbsp;
+							<apex:commandButton value="Cancel" onClick="closeModalDialog('responseDialog', 'div'); return false;" />
+						</apex:outputPanel>
+					</apex:facet>
+					<apex:facet name="start">
+						<apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+					</apex:facet>
+					<apex:facet name="stop" />
+				</apex:actionStatus>
+			</apex:pageblockButtons>
+			<apex:pageMessages id="responseDialogErrors" />
+			<apex:pageBlockSection>	
+			<apex:pageBlockSectionItem>
+			<apex:outputLabel value="Start Date/Time" />
+            	<apex:outputPanel layout="none">
+            		<div class="requiredInput"><div class="requiredBlock"></div>
+                	<c:militarydatetime id="logstart" edit="true" datetimeval="{!currResponse.start_date_time__c}" hiddenFieldId="timeLogStart" datetimepickerid="timeLogStart1"/>
+            	    </div>
+            	    <apex:inputHidden id="timeLogStart"  value="{!currResponse.start_date_time__c}"/>
+                </apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem>
+			<apex:outputLabel value="End Date/Time" />
+           		<apex:outputPanel layout="none">
+                	<c:militarydatetime id="logend" edit="true" datetimeval="{!currResponse.end_date_time__c}" hiddenFieldId="timeLogEnd" datetimepickerid="timeLogEnd1"/>
+               		<apex:inputHidden id="timeLogEnd"  value="{!currResponse.end_date_time__c}"/>
+                </apex:outputPanel>
+			</apex:pageBlockSectionItem>
+
+			<apex:pageBlockSectionItem>
+			
+			<apex:outputlabel value="Accompanied By"  />
+			<apex:outputpanel layout="none">
+			<div class="requiredInput"><div class="requiredBlock"></div>
+			<apex:inputField value="{! currResponse.tmn_user__c}" />
+			</div>
+			</apex:outputpanel>
+			</apex:pageBlockSectionItem>
+			
+			<apex:pageBlockSectionItem>
+			
+			<apex:outputlabel value="Location"/>
+			<apex:outputPanel layout="none">
+			<div class="requiredInput"><div class="requiredBlock"></div>
+			<apex:inputField value="{! currResponse.location__c}" />
+			</div>
+			</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			
+			<apex:pageBlockSectionItem>
+			<apex:outputlabel value="Narrative Note"  />
+			<apex:inputTextArea value="{! currResponse.narrative_note__c}" />
+			</apex:pageBlockSectionItem>
+			
+			
+			<apex:pageBlockSectionItem>
+			<apex:outputlabel value="Late Entry"  />
+			<apex:inputField value="{! currResponse.is_late_entry__c}" />
+			</apex:pageBlockSectionItem>
+			
+			</apex:pageBlockSection>
+			
+		</apex:pageBlock>
+	
+	</apex:form>
+    </apex:outputpanel>  
+	</div>
+	
+	
+	
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
 	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!serviceAssignmentIdForAction}" status="" shiftType="CNA Workbook" id="cnaWorkbookAddModal" />
 	<c:EvalSection id="evalSection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}"
@@ -494,6 +609,7 @@
 		
 		}
 		
+		jQuery.noConflict();
 		jQuery.fn.dataTableExt.oApi.fnDisplayRow = function(oSettings, nRow) {
 			// Account for the "display" all case - row is already displayed
 			if (oSettings._iDisplayLength == -1) {
@@ -604,6 +720,7 @@
 				var latestShiftDocId = $selectElement.data('latest-shift-doc-id');
 				var latestCNAWorkbookId = $selectElement.data('latest-cna-workbook-id');
 				var selectedValue = $selected.val();
+				var selectedText = $selected.text();
 				if (selectedValue == 'createShiftDoc') {
 					showAddShiftDocModal(serviceAssignmentId);
 				} else if (selectedValue.indexOf('shiftDocAction-') == 0) {
@@ -618,8 +735,18 @@
 					createPanel('CNA Workbook', category, subcategory, null, 'Activity Log', true, latestCNAWorkbookId);
 				} else if (selectedValue == 'createPBSIncident') {
 					createPBStypeIncident(serviceAssignmentId);
+				} 
+				// IADAY-9 - RW actions are navigations to new pages
+				else if ( selectedText == 'Create/Revise Action Plan') {
+					makeNewPlan(selectedValue);
+				}
+				else if ( selectedText == 'Create Shift Note' || selectedText == 'Add Behavior Data' || selectedText == 'Add Skill Data') {
+					window.location.href= selectedValue;
 				}
 					
+				else if ( selectedText == 'Create Time Log Entry' ) { 
+					showAddResponse( serviceAssignmentId); 
+				}	
 				event.preventDefault();
 			});
 

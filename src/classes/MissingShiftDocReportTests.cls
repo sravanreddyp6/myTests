@@ -6,8 +6,6 @@ public with sharing class MissingShiftDocReportTests {
 		controller.dummyEvaluation.Evaluation_Date__c = Date.Today().addDays(3);
 		controller.dummyEvaluation.Dialysis_Onset__c = Date.Today().addDays(1);
 		controller.runReport();
-		controller.dummyEvaluation.Evaluation_Date__c = Date.Today().addDays(-5);
-		controller.dummyEvaluation.Dialysis_Onset__c = Date.Today();
 
 		// Generate test data here
 		TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
@@ -30,6 +28,16 @@ public with sharing class MissingShiftDocReportTests {
 			)
 		};
 
+		controller = new MissingShiftDocReport();
+		controller.leftSelectedPrograms.add((String) controller.leftPrograms[0].getValue());
+		controller.addPrograms();
+		controller.rightSelectedPrograms.add((String) controller.rightPrograms[0].getValue());
+		controller.removePrograms();
+		controller.leftSelectedPrograms.add((String) controller.leftPrograms[0].getValue());
+		controller.addPrograms();
+		controller.dummyEvaluation.Evaluation_Date__c = Date.Today().addDays(-5);
+		controller.dummyEvaluation.Dialysis_Onset__c = Date.Today();
+		controller.selectedPbs = new Id[]{ myData.theSA.Id };
 		controller.runReport(); // this will run correctly
 	}
 }

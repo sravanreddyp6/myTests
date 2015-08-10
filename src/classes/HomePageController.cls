@@ -187,8 +187,8 @@ public with sharing class HomePageController{
 	public void updateProgramSelection() {
 		String query = '' +
 			'SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
-			'       Admission__r.Id, ' +
-			'       (SELECT Id FROM Action_Plans__r ORDER BY CreatedDate DESC), ' +
+			'       Admission__r.Id, Admission__r.state__c, ' +
+			'       (SELECT Id FROM Action_Plans__r where status__c = \'Active Final\'), ' +
 			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
 			'WHERE Service_Location__r.Alias__c = :selectedAlias ' +
@@ -254,6 +254,27 @@ public with sharing class HomePageController{
 			// For incident Creation - Add Security if condition later since We don't have requirements now - Sravan 07/21/2015
 				optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
 			
+			
+			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
+			if ( operatingGroup == 'Redwood') {
+				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
+					optionList.add(new SelectOption(
+										Page.Notes_ProgressNote_Create.getUrl() + 
+										'?service_assignment=' + serviceAssignment.ID + 
+										'&plan=' + serviceAssignment.Action_Plans__r[0].Id + 
+										'&admission=' + serviceAssignment.Admission__r.Id + 
+										'&person=' + serviceAssignment.Person_Being_Served__r.Id + 
+										'&state=' + serviceAssignment.Admission__r.State__c +
+										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));
+					
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Behavior Data'));
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Skill Data'));
+				} else {
+					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
+				}
+				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+				
+			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
 		List<AggregateResult> responses = [
@@ -584,4 +605,134 @@ public with sharing class HomePageController{
 		}
 	}
 	// END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
+	
+	// IADAY-9 - to support creation of new plan from home page
+	public String currsaID { get; set; }
+	public pagereference NewPlan( ){
+		
+		// we only come into this function if there is no active final plan
+		// find out if there's an inactive draft we can view
+		List<Action_Plan__c> aplist = [ select id, status__c from Action_Plan__c where status__c = 'Inactive Draft' and service_assignment__c = :currsaID order by status__c, lastmodifieddate desc  LIMIT 1];
+		
+		
+		Action_plan__c AP; 
+		
+		// if an inactive plan exists, take them to that page to view
+		if ( aplist.size() == 1 ) {
+			AP = aplist[0];
+		} else {
+		 
+			AP = new Action_plan__c();
+			AP.Service_Assignment__c = currsaID;
+			insert AP;
+		}
+		
+		PageReference ref =  new ApexPages.StandardController(AP).view() ;
+		ref.getparameters().put('retURL', Apexpages.CurrentPage().getURL());
+		return ref;
+
+	}
+	
+	public void newResponse() {
+		responseType = 'Time Log';
+		currResponse = new Evaluation_Response__c( recordtypeID = Utility.getEvaluationResponseRecordType(responseType), service_assignment__c = serviceAssignmentIDforAction);
+	}
+	
+	public pageReference saveResponse() {
+		
+		
+		hasError = false;
+		
+		// check for required fields
+		Map<string, string> columnsToHeadersMap = new Map<String, String>();
+		columnsToHeadersMap.put('start_date_time__c','Start Date/Time');
+		columnsToHeadersMap.put('end_date_time__c','End Date/Time');
+		columnsToHeadersMap.put('tmn_user__c','Accompanied By');
+		columnsToHeadersMap.put('location__c','Location');
+		
+		for(string rCol : new List<String>{'start_date_time__c', 'tmn_user__c', 'location__c'}){
+			if(currResponse.get(rCol) == null){
+				currResponse.addError( columnsToHeadersMap.get(rcol) + ' is required' );
+				hasError = true;
+			}
+		}
+		
+		
+		//system.debug('CURR:' + currResponse);
+		
+		
+		// IADAY-10 - date rules
+		if ( responseType == 'Time Log') {
+			// compare start and end dates
+			if ( currResponse.End_Date_Time__c != null ) {
+				// end date after start
+				if((currResponse.Start_Date_Time__c > currResponse.End_Date_Time__c) ){
+					currResponse.addError( 'End date must be after the start date.' );
+					hasError = true;
+				}
+				// must be same day
+				if (currResponse.Start_date_Time__c.Date() != currResponse.End_Date_Time__c.Date()) {
+					currResponse.addError('Start and End times must occur on the same day.');
+					hasError = true;
+				}
+				// must be different
+				if (currResponse.Start_Date_Time__c == currResponse.End_Date_Time__c ) {
+					currResponse.addError('Start and End times must be different.');
+					hasError = true;
+				}
+			}
+			// can't be in the future
+			if(currResponse.Start_Date_Time__c > DateTime.now() || currResponse.End_Date_Time__c > DateTime.now()  ){
+					currResponse.addError( 'Date and time cannot be in future.' );
+					hasError = true;
+			}
+		
+			if (! hasError ) {
+				// check for date overlap with another event
+				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currResponse.Id and service_assignment__c = :currResponse.service_assignment__c and disregard__c = false]; 
+				for ( Evaluation_Response__c tl : otherTimeLogs ) {
+					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currResponse.start_date_time__c, currResponse.end_date_time__c) ) {
+						currResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
+						hasError = true;
+						break;
+					}
+				}
+			}
+		
+		} // end IADAY-10
+		try {
+			if(!hasError){
+				//system.debug('CURR:' + currResponse);
+				upsert currResponse;
+				newResponse();
+			}
+		} catch (DMLException ex) {
+		 	hasError = true;
+			system.debug(ex);
+			// SF will automatically create a PageMessage Error here, so we don't
+			// have to do anything
+		}
+		return null;
+	}
+		
+	private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
+		
+		Boolean overlaps = false;
+		system.debug( 'Times:' + s1 + e1 + s2 + e2);
+		if ( e1 == null ) // first set is not a range - can't compare
+			return overlaps;
+			
+		if ( s2 >= s1 && s2 <= e1 ) // starts within first timeframe
+			overlaps = true;
+		else {
+			if ( e2 != null ) {
+				if ( e2 > s1 && e2 < e1 ) // ends within first timeframe
+					overlaps = true;
+				else if ( s2 < s1 && e2 > e1) // covers first time span
+					overlaps = true;
+			}
+		}
+		
+		return overlaps;
+	}
 }

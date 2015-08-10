@@ -142,7 +142,7 @@
 		}
 		
 		fundingSourceFinalize = function(){
-			 var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Sum_FS_Attributes__c}',
+			 var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Room_and_Board_Rate__c}','{!serviceLocation.PRN_DS_Per_Hour__c}',
 					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
 					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
 									
@@ -159,7 +159,7 @@
 				fundingSourceScrollToTop();
 	        }else{
 	        	j$('#fundingMessages').html('');
-				var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Sum_FS_Attributes__c}',
+				var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Room_and_Board_Rate__c}','{!serviceLocation.PRN_DS_Per_Hour__c}',
 					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
 					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
 					
@@ -1439,7 +1439,30 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
 
 		</apex:pageBlock>
+		
+		<!--  Time Log section - IADAY-10 -->
+		
+		<a name="TimeLog" id="TimeLog"></a>
+		<apex:pageBlock id="TimeLog" title="Time Log Entries" rendered="{! !editSA && AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'))}">
+				<c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
+                                           type="Time Log"
+                                           formId="{!$Component.myFRM}"
+                                           uniqueId="Time_Log"
+                                           cols="2"
+                                           rows="10"
+                                           showtitle="false"
+                                           showDisregard="true"
+                                           eSign="true"
+                                           addEnabled="true"
+                                           editEnabled="true"
+                                           customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" />
+                                          
+            <apex:outputPanel >Showing the 10 most recent entries. Click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!theServAssign.Person_Being_Served__c}&SA={!Service_Assignment__c.Id}&FS=Time Log" >here</apex:outputLink>&nbsp;to view all</apex:outputPanel>
+            </apex:pageBlock>
+             		
 
+	
+		<!--  end time log section  -->
 		<!--  Notes section -->
 		<a name="Notes" id="Notes"></a>
 		<apex:pageBlock id="Notes" title="Notes" rendered="{! !editSA}">
@@ -1891,16 +1914,27 @@ END: Uncomment to have the element collapsed by default -->
 							</div>
 						</apex:outputPanel>
 					</apex:pageblocksectionItem>
+					
 					<apex:pageBlockSectionItem id="hoursexpectedSectionItem">
 						<apex:outputLabel value="Number of Hrs. Expected" styleClass="labelCol" />
 						<apex:outputPanel >
 							<div class="requiredInput">
 								<div class="requiredBlock"></div>
-							<apex:inputField value="{!fundingSource.Number_of_Hrs_Expected__c}" style="width:100px;" id="hoursExpected"/>
+							<apex:inputField value="{!fundingSource.Number_of_Hrs_Expected__c}" style="width:100px;" id="hoursExpected"  onChange="prnDS('{!servicelocation.PRN_DS_Per_Hour__c}','{!$Component.costperdayBlock.costperdaySection.prndsSectionItem.prnDs}'); return false;" />
 							</div>
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
+					
+					
+					<apex:pageBlockSectionItem id="prndsSectionItem" >
+						<apex:outputLabel value="PRN DS" styleClass="labelCol" />
+						<apex:inputText value="{!fundingSource.PRN_DS__c}" style="width:100px;" id="prnDs" html-readonly="true" Label="PRN DS"/>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem />
+					
 				</apex:pageBlockSection>
+				
+				
 				
 				<apex:panelGrid columns="3" style="margin-left: 50px;">
 					<apex:panelGroup >
