@@ -48,7 +48,7 @@ private class TurnsChartController_Test {
         system.assert([select id from eval_value__c].size() > 0 );
         
 	   TurnsChartController controller = new TurnsChartController();
-	   controller.evalID = evaluation.id;
+	   controller.setEvalID(evaluation.id);
 	   system.assertEquals( controller.turnsInnerKeys.size(), 6 );
     }
 }

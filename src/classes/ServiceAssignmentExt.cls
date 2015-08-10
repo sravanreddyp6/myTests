@@ -834,7 +834,7 @@ public without sharing class ServiceAssignmentExt {
 			diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
 		}
 		if ( currentrecord.Service_Location__c != null) {
-			serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
+			serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c,Room_and_Board_Rate__c, PRN_DS_Per_Hour__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
 			currentProgramId = serviceLocation.programID__c;
 		}
 
@@ -1303,7 +1303,7 @@ public without sharing class ServiceAssignmentExt {
 			permissionSets.add(assignment.PermissionSet.Name);
 		}
 
-		if (permissionSets.Contains('iServe_Tier_III')) {
+		if (permissionSets.Contains('iServe_Tier_III') || permissionSets.Contains('iServe_Tier_II')) {
 			canAddShiftDoc = true;
 			canAddCNA = true;
 		}

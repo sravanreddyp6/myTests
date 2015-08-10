@@ -126,7 +126,7 @@
         <apex:outputPanel id="upload" rendered="{!upload}">&nbsp;> Upload Attachments</apex:outputPanel>
     </div>
     <br />
-    <div id="pbsBlueCard" >
+    <div id="pbsBlueCard" tyle="background-color:#99ccff !important; font-size:11px;" >
         <apex:form >
             <table style="vertical-align:top" width="100%" border="0">
                 <tr>
@@ -235,26 +235,27 @@
                             <apex:image styleClass="unstickPbs" url="{!URLFOR($Resource.unpin)}" style="height:1.2em;" onclick="unpinPbs()" />
                         </div>
                         <div style="padding:0px 35px 0px 0px;">
-                            <table id="pbsCard-serviceLinks" style="border:1px solid #6699cc; background-color:white; padding-bottom:10px">
+                            <table style="border:1px solid #6699cc; background-color:white; padding-bottom:10px">
                                 <tr>
                                     <td colspan="2"><b>Service Links:</b></td>
                                 </tr>
                                 <tr>
                                     <td style="vertical-align:top; text-align:left;line-height:20px">
-                                        <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#RP" >View Related Parties</a>
-                                        <br />
-                                        <a href="/apex/uploader?parentid={!con.id}&fileUploadVal=false&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}" >Add/Edit Picture</a>
-                                        <br />
+										<a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#RP" class="servicelink">View Related Parties</a>
+										<br />
+										<a href="/apex/uploader?parentid={!con.id}&fileUploadVal=false&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}" class="servicelink">Add/Edit Picture</a>
+										<br />
 
-                                        <apex:outputLink value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && opGrp!='Redwood' && opGrp!='NeuroRestorative' && servAssigns.size > 0 }">
-                                            Add Seizure <br />
-                                            <apex:param value="{!con.Id}" name="pbsId" />
-                                            <apex:param value="{!$CurrentPage.URL}" name="retURL" />
-                                        </apex:outputLink>
+                                       <apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && opGrp!='Redwood' && opGrp!='NeuroRestorative' && servAssigns.size > 0 }">
+											Add Seizure <br />
+											<apex:param value="{!con.Id}" name="pbsId" />
+											<apex:param value="{!$CurrentPage.URL}" name="retURL" />
+										</apex:outputLink>
 
-                                        <apex:outputLink onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!opGrp=='Care Meridian' && servAssigns.size > 0 }">
+                                         <apex:outputLink styleClass="servicelink" 
+                                            onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!opGrp=='Care Meridian' && servAssigns.size > 0 }">
                                             Person Summary
-                                        </apex:outputLink>                                        
+                                        </apex:outputLink>                                      
                                     </td>
 
                                     <td style="vertical-align:top; padding-left:10px; padding-right:20px; line-height:20px">
@@ -286,6 +287,11 @@
                                             <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#AI" >View/Edit Advanced Directives</a>
                                             <br />
                                         </apex:outputText>
+										
+										<apex:outputText rendered="{!parentPage == 'ServAssign' && opGrp == 'NeuroRestorative' }">
+											<a  href="{!IF(parentPage != 'ServAssign', '/apex/PersonBeingServedEditNew?id={!saId}', '')}#Funding_Sources" class="servicelink">View/Edit Funding Sources</a>
+											<br />
+										</apex:outputText>
 
                                     </td>
                                 </tr>

@@ -17,7 +17,7 @@
                                cols="1"
                                showDisregard="true" 
                                eSign="true"
-                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device'}" />
+                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device' && $CurrentPage.parameters.FS != 'Time Log'}" />
 
         <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
                                type="{!$CurrentPage.parameters.FS}"
@@ -46,7 +46,19 @@
                                     rules="{&quot;Isolation_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"                                       
                                     cols="1"
                                     rendered="{!$CurrentPage.parameters.SA != null && $CurrentPage.parameters.FS == 'Isolation Event' }" />
-  
+      
+		<c:EvaluationResponseTable saParentId="{!$CurrentPage.parameters.SA}"
+                                    type="{!$CurrentPage.parameters.FS}"
+                                    formId="{!$Component.frm}"
+                                    uniqueId="TimeLog"
+                                    showDisregard="true"
+                                    eSign="true"
+                                    cols="1"
+                                    addEnabled="true"
+                                    editEnabled="true"
+                                    customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" 
+                                    rendered="{!$CurrentPage.parameters.SA != null && $CurrentPage.parameters.FS == 'Time Log' }" />  
+   
 		</apex:pageBlock>
    </apex:form> 
 </apex:page>

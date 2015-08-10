@@ -2,8 +2,27 @@
 private class Notes_ProgressNote_Create_TEST {
 
     static testMethod void testAZ() {
-
-
+    	
+    	 User testUser = new User(alias = 'tester',
+                                email='testusern@TMN.com',
+                                emailencodingkey='UTF-8',
+                                lastname='testn',firstname='testn', languagelocalekey='en_US',
+                                localesidkey='en_US',
+                                profileid = [select id from Profile limit 1].id,
+                                timezonesidkey='America/Los_Angeles',
+                                username='tesn@test.com' + System.currentTimeMillis());
+        insert testUser ;        
+       // permsetAssign(new list<String>{'ESD_Notes_Common','ESD_Notes_Clinical_Data_User'}, testUser.id);
+        Tmn_user__c tmnUser= new Tmn_user__c(operating_group__c = 'Care Meridian', salesforce_user_account__c = testUser.Id);
+        insert tmnuser;
+        
+        User admin = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
+        system.runas(admin){
+        	 permsetAssign(new list<String>{'ESD_Notes_Common','ESD_Notes_Clinical_Data_User'}, testUser.id);
+        	
+        }
+        system.runas( testUser ) {
+		
         TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
         coredata.loadData( 'AZ');
         
@@ -17,14 +36,12 @@ private class Notes_ProgressNote_Create_TEST {
 
         PageReference pageRef = Page.Notes_ProgressNote_Create;
         Test.setCurrentPageReference(pageRef);
-
         ApexPages.currentPage().getParameters().put('state', 'AZ');
         ApexPages.currentPage().getParameters().put('person', coredata.contactID);
         ApexPages.currentPage().getParameters().put('service_assignment', coredata.theSA.ID);
         Notes_ProgressNote_Create objNpncTest = new Notes_ProgressNote_Create(sc);
         System.Assert( objNpncTest.myRTs.size() > 0 );
         System.AssertEquals(null, objNpncTest.redirect());
-
         coredata.theSA.service_location__c = newSLid1a;
         update coredata.theSA;
 
@@ -40,14 +57,32 @@ private class Notes_ProgressNote_Create_TEST {
         Notes_ProgressNote_Create objNpncTest2 = new Notes_ProgressNote_Create(sc2);
         
         System.Assert(objNpncTest2.redirect() != null); // redirect to shift note
-
+        }
         }
 
     static testMethod void testFL() {
 
-
+ 		User testUser = new User(alias = 'tester',
+                                email='testusern@TMN.com',
+                                emailencodingkey='UTF-8',
+                                lastname='testn',firstname='testn', languagelocalekey='en_US',
+                                localesidkey='en_US',
+                                profileid = [select id from Profile limit 1].id,
+                                timezonesidkey='America/Los_Angeles',
+                                username='tesn@test.com' + System.currentTimeMillis());
+        insert testUser ;        
+      
+        Tmn_user__c tmnUser= new Tmn_user__c(operating_group__c = 'Care Meridian', salesforce_user_account__c = testUser.Id);
+        insert tmnuser;
+        
+        User admin = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
+        system.runas(admin){
+        	 permsetAssign(new list<String>{'ESD_Notes_Common','ESD_Notes_Clinical_Data_User'}, testUser.id);
+        	
+        }
+        system.runas( testUser ) {
         TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
-        coredata.loadData( 'FL');
+        coredata.loadData('FL');
         
         ID newSLid1 = createServiceLocation( '123456', '123456001', 'New Service Location 1', 1, 'FL', '1-123456' );
         coredata.theSA.service_location__c = newSLid1;
@@ -69,7 +104,7 @@ private class Notes_ProgressNote_Create_TEST {
         System.Assert( objNpncTest.rtOptions.size() > 0 );
         System.AssertEquals(null, objNpncTest.redirect());
 
-
+        }
         }
 
 

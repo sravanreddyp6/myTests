@@ -131,21 +131,21 @@ public with sharing class referral_Controller2 {
 	
 	SystemSettings__c OS = SystemSettings__c.getOrgDefaults(); // Custom setting to control the visibility of convert button for CareMeridian group Sravan: 07/10/2014 1:42 PM.
 	public boolean canConvert{ get {
-
-		Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana', 'Iowa'};
-		system.debug( 'Ref record type: ' + referralrecordtype );
-		system.debug(' is cambridge:' + iscambridge);
-		system.debug(' operatinggroup:' + operatinggroup);
-		return ((operatinggroup == 'Cambridge' && isCambridge )|| 
-				(operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || 
-				(operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) ||
-				(operatinggroup == 'Redwood' && referralrecordtype == 'Wisconsin' && showCANS ) ||
-				(operatinggroup == 'NeuroRestorative' && personBeingRefRecord.State__c == 'Illinois' )
-			);
-			
-	} set;}
 	
-	 //EB-481
+        Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana', 'Iowa'};
+        system.debug( 'Ref record type: ' + referralrecordtype );
+        system.debug(' is cambridge:' + iscambridge);
+        system.debug(' operatinggroup:' + operatinggroup);
+        return ((operatinggroup == 'Cambridge' && isCambridge )|| 
+                (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || 
+                (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) ||
+                (operatinggroup == 'Redwood' && referralrecordtype == 'Wisconsin' && showCANS ) ||
+                (operatinggroup == 'NeuroRestorative' && referralRecord.State_for_Preferred_Service__c == 'Illinois' )
+            );
+            
+    } set;}
+    
+    //EB-481
 	public boolean gethasPrimaryFS(){
 		boolean tmp = false;		
 		for(Funding_Source__c fs : fundingSources){		
@@ -650,8 +650,18 @@ public with sharing class referral_Controller2 {
 		List<String> messages = new List<String>{};
 		boolean hasReq = false;
 		
-		
-			
+	 //start CTEAE-137
+        if(ReferralRecordType=='Cambridge North Carolina'){
+            if(referralRecord.Payer_Medical_Record_Number__c == null ){
+                messages.Add( 'Payer/Guarantor Medical Record Number' );
+                hasReq = false;
+            }
+            if(referralRecord.Payer_Medical_Record_Number_Description__c == null){
+                messages.Add( 'Payer/Guarantor Medical Number Description' );
+                hasReq = false;
+            }
+        }
+        //end CTEAE-137
         //eb-428
         if(referralRecordType == 'NeuroRestorative'){
             boolean PT = false;
@@ -871,14 +881,33 @@ public with sharing class referral_Controller2 {
 		for (Integer orderedName: orderedNames) {
 			// We do not batch insert the tasks here because it leads to inconsistent
 			// sorting order.
-			insert new Task(
+			Task task = new Task(
 				Subject = stepSubjects.get(String.valueOf(orderedName)).Subject__c,
 				Priority = 'Normal',
 				Status = 'Not Started',
 				WhatId = referralRecord.Id,
 				OwnerId = dummyTask.OwnerId,
-				RecordTypeId = taskRecordType
+				RecordTypeId = taskRecordType,
+				ActivityDate = referralRecord.Referral_Date__c
 			);
+			if (task.Subject == 'Schedule Assessment')
+                    task.ActivityDate = task.ActivityDate + 3;
+                
+            else if (task.Subject == 'Complete Assessment')
+                    task.ActivityDate = task.ActivityDate + 7;
+                
+            else if (task.Subject == 'Assessment follow-up with Referral Source')
+                    task.ActivityDate = task.ActivityDate + 8;
+                
+            else if (task.Subject == 'Upload CAT to iServe') 
+                    task.ActivityDate = task.ActivityDate + 15;
+                
+            else if (task.Subject == 'Schedule a Red Flag call (if applicable)') 
+                    task.ActivityDate = task.ActivityDate + 15;
+            
+            else
+                	task.ActivityDate = null;
+            insert task;
 		}
 		populateActivities();
 
