@@ -61,15 +61,15 @@ public without sharing class nonemployeeAttestationPageController {
 		string info = 'Thank You! '+nonemployee[0].Last_Name__c + ' ' +nonemployee[0].Last_Name__c;
 		if(flag == 'ninety'){
 			nonemployee[0].Last_Day__c = nonemployee[0].Last_Day__c.addDays(90);
-			info += '\'s last date is extended till '+nonemployee[0].Last_Day__c;	
+			info += '\'s last date is extended till '+nonemployee[0].Last_Day__c.format();	
 		}
 		else if(flag == 'sixty'){
 			nonemployee[0].Last_Day__c = nonemployee[0].Last_Day__c.addDays(60);
-			info += '\'s last date is extended till '+nonemployee[0].Last_Day__c;	
+			info += '\'s last date is extended till '+nonemployee[0].Last_Day__c.format();	
 		}
 		else if(flag == 'thirty'){
 			nonemployee[0].Last_Day__c = nonemployee[0].Last_Day__c.addDays(30);
-			info += '\'s last date is extended till '+nonemployee[0].Last_Day__c;	
+			info += '\'s last date is extended till '+nonemployee[0].Last_Day__c.format();	
 		}
 		else if(flag == 'now'){
 			nonemployee[0].Last_Day__c = Date.Today();
@@ -77,7 +77,7 @@ public without sharing class nonemployeeAttestationPageController {
 		}
 		else if(flag == 'termDate'){
 			//do nothing
-			info += '\'s last date will be on '+nonemployee[0].Last_Day__c;
+			info += '\'s last date will be on '+nonemployee[0].Last_Day__c.format();
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, info));
 			return null;
 		}
