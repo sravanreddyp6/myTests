@@ -13,7 +13,7 @@ public with sharing class TMN_UserTriggerHandler {
     	
     	for (TMN_User__c usr: newObj) {
     		// prepare the list of emails/userNames to select the lists of salesforce users (recruiters) that would get the a task for pre-hire
-    		if (usr.Current_Person_Type__C == 'Pre-hire' && oldObjMap.get(usr.id).Current_Person_Type__C != 'Pre-hire' && 
+    		if (usr.Current_Person_Type__C == 'Pre-hire' && (oldObjMap.containsKey(usr.id) ? oldObjMap.get(usr.id).Current_Person_Type__C != 'Pre-hire' : true ) && 
     		     (String.isNotBlank(usr.Recruiter_Email_Address__c) || String.isNotBlank(usr.Recruiter_Name__c) )
     		   ) {
     			if (String.isNotBlank(usr.Recruiter_Email_Address__c)) emailMap.put(usr.Recruiter_Email_Address__c, null);
@@ -29,12 +29,17 @@ public with sharing class TMN_UserTriggerHandler {
         }
         
         for (TMN_User__c tmn : tmnForTask){
-        	taskToInsert.add(new Task(Subject = 'Pre-Hire Provisioning', Status = 'New', Priority = 'Normal', 
-        	                           OwnerId = emailMap.containsKey(tmn.Recruiter_Email_Address__c) ? emailMap.get(tmn.Recruiter_Email_Address__c) : emailMap.get(tmn.Recruiter_Email_Address__c),
-        	                           Description = 'Pre-Hire Provisioning. Name of the new hire: ' + tmn.Last_Name__c + ' ' + tmn.Last_Name__c
-        	                           + '. Hire Date: ' + tmn.Hire_Date__c.format() + '. Job Title: ' + tmn.Job_Title__c + '. Manager Name: ' + tmn.Manager_Name__c + '.', 
-        	                           WhatId = tmn.Id, ActivityDate = Date.Today().AddDays(1)));        	
-        }        
+        	if ( (emailMap.containsKey(tmn.Recruiter_Email_Address__c) ? String.isNotBlank(emailMap.get(tmn.Recruiter_Email_Address__c)) : false) || 
+        	     (nameMap.containsKey(tmn.Recruiter_Name__c) ? String.isNotBlank(nameMap.get(tmn.Recruiter_Name__c)) : false) )         	     
+	        	taskToInsert.add(new Task(Subject = 'Pre-Hire Provisioning', Status = 'New', Priority = 'Normal', 
+	        	                           OwnerId = emailMap.containsKey(tmn.Recruiter_Email_Address__c) ? emailMap.get(tmn.Recruiter_Email_Address__c) : nameMap.get(tmn.Recruiter_Name__c),
+	        	                           Description = 'Pre-Hire Provisioning. Name of the new hire: ' + tmn.First_Name__c + ' ' + tmn.Last_Name__c
+	        	                           + '. Hire Date: ' + (tmn.Hire_Date__c != null ? tmn.Hire_Date__c.format() : 'Not Filled')  
+	        	                           + '. Job Title: ' + tmn.Job_Title__c 
+	        	                           + '. Manager Name: ' + tmn.Manager_Name__c + '.', 
+	        	                           WhatId = tmn.Id, ActivityDate = Date.Today().AddDays(1)));
+        }
+                
         insert taskToInsert;
     }
     
