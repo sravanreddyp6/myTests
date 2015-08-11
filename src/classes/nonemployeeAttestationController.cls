@@ -14,7 +14,7 @@ public with sharing class nonemployeeAttestationController {
 	
 	
 	public Map<Integer,List<TMN_User__c>> employeeMap{get{
-		List<TMN_User__c> employeeList = [SELECT Id, NAME, Job_Status__c, Job_title__c, Termination_Date__c, First_Name__c, Last_Name__c, Manager_Lookup__c FROM TMN_user__c WHERE Manager_Lookup__c = :managerId];
+		List<TMN_User__c> employeeList = [SELECT Id, NAME, Job_Status__c, Job_title__c, Termination_Date__c, First_Name__c, Last_Name__c, Manager_Lookup__c FROM TMN_user__c WHERE Manager_Lookup__c = :managerId AND Current_Person_Type__c = 'Non-Employee'];
 			employeeMap = new Map<Integer,List<TMN_User__c>>();
 			List<TMN_user__c> employeeOne = new List<TMN_User__c>();
 			employeeMap.put(1,employeeOne);
