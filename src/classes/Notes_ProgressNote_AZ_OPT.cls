@@ -64,10 +64,11 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     }
     public void LoadData(Progress_Note__c tmp){
         thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,next_approver__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
-        
+         
       List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, start_time__c, end_time__c,next_approver__c, status__c, Owner.Name from Progress_Note__c 
               where id != :thePN.id 
               and Person_Being_Served__c = :thePN.Person_Being_Served__c
+              and disregard_note__c = false
               and Admission__c = :thePN.Admission__c
               and  Service_Assignment__c = :thePN.Service_Assignment__c
               and Plan__c = :thePN.Plan__c
@@ -80,6 +81,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        //Added by Sravan to display the Progress Notes with overlapping time with a different PBS. EB-188 08/12/2014 12:26 PM      
        List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c,next_approver__c, Owner.Name from Progress_Note__c 
               where id != :thePN.id 
+              and disregard_note__c = false
               and Person_Being_Served__c != :thePN.Person_Being_Served__c
               and Owner.Name = :thePN.Owner.Name
               and (
@@ -150,20 +152,16 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public pagereference showPopup() { 
         list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
                 Person_being_served__r.Name, start_time__c, end_time__c, status__c, recordtype.Name,Service_code__c,People_Present__c,next_approver__c, 
-                Interventions__c, progress__c,Notes_For_Next_Visit__c,Action_plan__c,Number_of_Required_Signatures__c ,Signature_on_File__c,
+                Interventions__c, progress__c,Notes_For_Next_Visit__c,Action_plan__c,Number_of_Required_Signatures__c ,GoalIds_AZOPTPage__c,Signature_on_File__c,
                 Owner.Name from Progress_Note__c
                 where id =:thePn.Id];
         boolean HasGoal = false;
-        List<ProgressNote_ActionPlanChildren_mjo__c> GoalList = [SELECT Id, Progress_Note__c, Goal__c from ProgressNote_ActionPlanChildren_mjo__c where Progress_Note__c =: thePN.id];
-        for(ProgressNote_ActionPlanChildren_mjo__c p:GoalList){
-            if(p.goal__c!=Null){
-                hasGoal = True ;
-            }
-        } 
-        if(!hasgoal || pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
+        GoalsSelected = pnValidations[0].GoalIds_AZOPTPage__c;
+        System.debug('Goals Selecetd --> ' + GoalsSelected); 
+        if((GoalsSelected==null || GoalsSelected =='') || pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
         (pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0)||
         pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
-            if(!hasGoal){
+            if(GoalsSelected==null || GoalsSelected ==''){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a "Goal" before continuing.'));   
             }
             if(pnValidations[0].status__c == 'Final'){
@@ -371,6 +369,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name,next_approver__c, Action_Plan__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId
               and Person_Being_Served__c = :pn.Person_Being_Served__c
+              and disregard_note__c = false
               and Admission__c = :pn.Admission__c
               and  Service_Assignment__c = :pn.Service_Assignment__c
               and Action_Plan__c = :pn.Action_Plan__c
@@ -385,6 +384,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,next_approver__c, end_time__c, status__c, Ownerid from Progress_Note__c 
               where id != :insertedprogressnoteId 
               and Person_Being_Served__c != :pn.Person_Being_Served__c
+              and disregard_note__c = false
               and (
                   (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
                 or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)
@@ -435,6 +435,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         overlappingProgressNote = new list<progress_note__c>();
         List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name,next_approver__c, Action_Plan__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId
+              and disregard_note__c = false
               and Person_Being_Served__c = :pn.Person_Being_Served__c
               and Admission__c = :pn.Admission__c
               and  Service_Assignment__c = :pn.Service_Assignment__c
@@ -449,6 +450,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        //Added by Sravan to display the Progress Notes with overlapping time with a different PBS. EB-188 08/12/2014 12:26 PM      
        List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,next_approver__c, end_time__c, status__c, Ownerid from Progress_Note__c 
               where Person_Being_Served__c != :pn.Person_Being_Served__c
+              and disregard_note__c = false
               and (
                   (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
                 or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)
@@ -461,7 +463,11 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         if(overlappingProgressNote.size()>0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'An Overlap Exists -'+ overlappingProgressNote[0].Name));     
             return null;
-      }else if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
+      }else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
+            return null;
+       }
+      else if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             return null;
        }else{
@@ -478,11 +484,11 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        return pageref;
         } 
     }  
-    
     public pagereference cancelEditNote(){
+    System.debug('Here at line 485');
         newBlock = false; 
-       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&sfdc.override=1');
-        pageref.setredirect(true);
+       pagereference pageref = new Pagereference('/'+pn.id);
+       pageref.setredirect(true);
         return pageref;
     }
     
@@ -541,6 +547,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        if(insertedProgressnoteid!=Null){
             samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c,next_approver__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId
+              and disregard_note__c = false
               and Person_Being_Served__c = :pbsName
               and Admission__c = :admissionId
               and  Service_Assignment__c = :theServAssignId
@@ -555,6 +562,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        else{
             samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,next_approver__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where Person_Being_Served__c = :pbsName
+              and disregard_note__c = false
               and Admission__c = :admissionId
               and  Service_Assignment__c = :theServAssignId
               and Action_Plan__c = :ActivePlanId
@@ -569,6 +577,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        //Added by Sravan to display the Progress Notes with overlapping time with a different PBS. EB-188 08/12/2014 12:26 PM      
        List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,next_approver__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId 
+              and disregard_note__c = false
               and Person_Being_Served__c != :pn.Person_Being_Served__c
               and (
                   (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
@@ -586,7 +595,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        else if(overlappingProgressNote.size()>0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'An Overlap Exists -'+ overlappingProgressNote[0].Name));     
             return null;
-        }
+        }else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
+            return null;
+       }
         else if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             return null;
@@ -756,6 +768,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         overlappingProgressNote = new list<progress_note__c>();
         List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,next_approver__c,start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
               where id != :insertedprogressnoteId
+              and disregard_note__c = false
               and Person_Being_Served__c = :pn.Person_Being_Served__c
               and Admission__c = :pn.Admission__c
               and  Service_Assignment__c = :pn.Service_Assignment__c
@@ -770,6 +783,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
        //Added by Sravan to display the Progress Notes with overlapping time with a different PBS. EB-188 08/12/2014 12:26 PM      
        List<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,next_approver__c, end_time__c, status__c, Ownerid from Progress_Note__c 
               where Person_Being_Served__c != :pn.Person_Being_Served__c
+              and disregard_note__c = false
               and (
                   (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
                 or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)
@@ -782,7 +796,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         if(overlappingProgressNote.size()>0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'An Overlap Exists -'+ overlappingProgressNote[0].Name));     
             return null;
-        }
+        }else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
+            return null;
+       }
         else if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             return null;
@@ -795,6 +812,9 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
          
         if(overlappingProgressNote.size()>0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'An Overlap Exists -'+ overlappingProgressNote[0].Name));     
+            return null;
+       }else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
             return null;
        }else if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
