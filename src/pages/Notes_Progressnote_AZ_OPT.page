@@ -495,7 +495,7 @@
         <br></br>
         <apex:pageBlock id="pblk">
             <apex:pageBlockButtons location="top" rendered="{!!Final}">
-                <apex:commandButton id="saveButton"   value="Save Inline"   action="{!saveProgressNoteInlineEdit}"   style="margin-left:22%;display:none;"/>
+                <apex:commandButton id="saveButton"   value="Save"   action="{!saveProgressNoteInlineEdit}"   style="margin-left:22%;display:none;"/>
                 <apex:commandButton id="cancelButton" value="Cancel" action="{!cancel}" style="display:none;"/>
                 <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}"/>
                 <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
@@ -694,7 +694,7 @@
                 </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="1" >
                     <apex:pageMessages ></apex:pageMessages>
-                    <apex:inputField value="{!thePn.Next_Approver__c}">
+                    <apex:inputField value="{!thePn.Approval_User__c}">
                         <!--<apex:actionSupport event="onclick" reRender="block"/> -->              
                     </apex:inputField><br></br>
                     <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
@@ -733,7 +733,7 @@
                 </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="1" >
                     <apex:pageMessages ></apex:pageMessages>
-                    <apex:inputField value="{!thePn.Next_Approver__c}">
+                    <apex:inputField value="{!thePn.Approval_User__c}">
                         <!--<apex:actionSupport event="onclick" reRender="block"/>  -->             
                     </apex:inputField><br></br>
                     <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
