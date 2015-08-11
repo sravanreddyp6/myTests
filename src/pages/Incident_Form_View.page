@@ -52,14 +52,16 @@
 	                <apex:CommandButton value="Disregard" rendered="false" />
 	            </div>
         	</apex:pageBlockButtons>
-        	<apex:pageBlocksection id="_firstHeader" columns="1" title="Incident Information" collapsible="true">
+        	<apex:pageBlockSection id="_firstHeader" title="Incident Information" >
+        	</apex:pageBlockSection>
+        	<apex:pageBlocksection id="_secondHeader" columns="1" title="Current Service" >
         		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
         			<apex:outputLabel value="Which Current Service is Related to the Incident? " />
         			<apex:outputField value="{!Incident__c.Service_Assignment__c }" />
         		</apex:pageBlockSectionItem>
         	</apex:pageBlocksection>
         	
-        	<apex:pageBlockSection id="_secondHeader" columns="1" title="Timing" showHeader="true" collapsible="false" >
+        	<apex:pageBlockSection columns="1" title="Timing" showHeader="true" collapsible="false" >
         		<apex:outputField value="{!Incident__c.Unknown_Date_Occurred__c}" label="Date/Time Currently Unknown" rendered="{!Incident__c.Unknown_Date_Occurred__c}"/>
         		<apex:pageBlockSectionItem rendered="{!!Incident__c.Unknown_Date_Occurred__c}">
         			<apex:outputLabel value="Date/Time Incident Occurred" />
