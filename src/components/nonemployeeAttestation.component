@@ -32,18 +32,17 @@
 		}
 		</style>
 		<body>
-			<P> Dear <i>{!manager.First_name__c} {!manager.Last_name__c}</i>, <br/> <br/>You are receiving this message because you are listed as the manager of member(s) listed below and their termination date is set to expire soon. </P>
 			<apex:dataTable value="{!employeeMap[1]}" var="one" id="oneTable"  styleClass="tableClass" rowClasses="odd,even" rendered="{!showOne}">
 				
 				<apex:facet name="caption">Employees Terminating Tomorrow</apex:facet>
-				<apex:column >
-					<apex:facet name="header">Action</apex:facet>
-					<a href="/apex/nonemployeeAttestation?managerId={!one.Manager_lookup__c}&employeeId={!one.Id}&flag=ninety">Extend 90 Days </a>
-					&nbsp;
-					<a href="/apex/nonemployeeAttestation?managerId={!one.Manager_lookup__c}&employeeId={!one.Id}&flag=thirty">Extend 30 Days </a>
-					&nbsp;
-					<a href="/apex/nonemployeeAttestation?managerId={!one.Manager_lookup__c}&employeeId={!one.Id}&flag=reject">Reject </a>
-				</apex:column>
+<!-- 				<apex:column > -->
+<!-- 					<apex:facet name="header">Action</apex:facet> -->
+<!-- 					<a href="http://sandboxajv-mentor.cs10.force.com/nonempAttestation?managerId={!one.Manager_lookup__c}&employeeId={!one.Id}&flag=ninety">Extend 90 Days </a> -->
+<!-- 					&nbsp; -->
+<!-- 					<a href="/apex/nonemployeeAttestation?managerId={!one.Manager_lookup__c}&employeeId={!one.Id}&flag=thirty">Extend 30 Days </a> -->
+<!-- 					&nbsp; -->
+<!-- 					<a href="/apex/nonemployeeAttestation?managerId={!one.Manager_lookup__c}&employeeId={!one.Id}&flag=reject">Reject </a> -->
+<!-- 				</apex:column> -->
 				
 				<apex:column >
 					<apex:facet name="header">First Name</apex:facet>
@@ -71,14 +70,14 @@
 				
 				<apex:facet name="caption">Employees Terminating in 7 days</apex:facet>
 				
-				<apex:column >
-					<apex:facet name="header">Action</apex:facet>
-					<a href="/apex/nonemployeeAttestation?managerId={!Seven.Manager_lookup__c}&employeeId={!Seven.Id}&flag=ninety">Extend 90 Days </a>
-					&nbsp;
-					<a href="/apex/nonemployeeAttestation?managerId={!Seven.Manager_lookup__c}&employeeId={!Seven.Id}&flag=thirty">Extend 30 Days </a>
-					&nbsp;
-					<a href="/apex/nonemployeeAttestation?managerId={!Seven.Manager_lookup__c}&employeeId={!Seven.Id}&flag=reject">Reject </a>
-				</apex:column>
+<!-- 				<apex:column > -->
+<!-- 					<apex:facet name="header">Action</apex:facet> -->
+<!-- 					<a href="/apex/nonemployeeAttestation?managerId={!Seven.Manager_lookup__c}&employeeId={!Seven.Id}&flag=ninety">Extend 90 Days </a> -->
+<!-- 					&nbsp; -->
+<!-- 					<a href="/apex/nonemployeeAttestation?managerId={!Seven.Manager_lookup__c}&employeeId={!Seven.Id}&flag=thirty">Extend 30 Days </a> -->
+<!-- 					&nbsp; -->
+<!-- 					<a href="/apex/nonemployeeAttestation?managerId={!Seven.Manager_lookup__c}&employeeId={!Seven.Id}&flag=reject">Reject </a> -->
+<!-- 				</apex:column> -->
 				
 				<apex:column >
 					<apex:facet name="header">First Name</apex:facet>
@@ -105,14 +104,14 @@
 			
 			<apex:facet name="caption">Employees Terminating in 14 days</apex:facet>
 			
-			<apex:column >
-				<apex:facet name="header">Action</apex:facet>
-				<a href="/apex/nonemployeeAttestation?managerId={!Fourteen.Manager_lookup__c}&employeeId={!Fourteen.Id}&flag=ninety">Extend 90 Days </a>
-				&nbsp;
-				<a href="/apex/nonemployeeAttestation?managerId={!Fourteen.Manager_lookup__c}&employeeId={!Fourteen.Id}&flag=thirty">Extend 30 Days </a>
-				&nbsp;
-				<a href="/apex/nonemployeeAttestation?managerId={!Fourteen.Manager_lookup__c}&employeeId={!Fourteen.Id}&flag=reject">Reject </a>
-			</apex:column>
+<!-- 			<apex:column > -->
+<!-- 				<apex:facet name="header">Action</apex:facet> -->
+<!-- 				<a href="/apex/nonemployeeAttestation?managerId={!Fourteen.Manager_lookup__c}&employeeId={!Fourteen.Id}&flag=ninety">Extend 90 Days </a> -->
+<!-- 				&nbsp; -->
+<!-- 				<a href="/apex/nonemployeeAttestation?managerId={!Fourteen.Manager_lookup__c}&employeeId={!Fourteen.Id}&flag=thirty">Extend 30 Days </a> -->
+<!-- 				&nbsp; -->
+<!-- 				<a href="/apex/nonemployeeAttestation?managerId={!Fourteen.Manager_lookup__c}&employeeId={!Fourteen.Id}&flag=reject">Reject </a> -->
+<!-- 			</apex:column> -->
 				
 			<apex:column >
 				<apex:facet name="header">First Name</apex:facet>
@@ -134,17 +133,8 @@
 			</apex:column>
 		</apex:dataTable>
 		
+		Please Click <a href="http://sandboxajv-mentor.cs10.force.com/nonempAttestation?managerId={!managerId}" >here</a> to take action.
+		
 	</body>
 	</html>
-	<apex:actionStatus id="pageProcessing">
-		<apex:facet name="start">
-			<div class="thinking">
-				<div class="thinkingwheel">
-					<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
-				</div>
-			</div>
-		</apex:facet>
-		<apex:facet name="stop" />
-	</apex:actionStatus>
-
 </apex:component> 
