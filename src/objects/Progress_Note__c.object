@@ -20275,6 +20275,14 @@ Neurostative IL role</description>
         <errorMessage>For NC - TFC, NC - Wks 1-6 TFC, the Purpose/Service is Billable field must be unchecked.  Please uncheck that field and try again.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>NC_TFC_Notes_Must_Be_Non_Billable</fullName>
+        <active>true</active>
+        <description>A validation rule to insure that Progress Notes with the &quot;NC - TFC&quot; or &quot;NC - Wks 1-6 TFC&quot; record types have Purpose_Service_is_Billable__c value of false.</description>
+        <errorConditionFormula>AND(OR(RecordType.DeveloperName = &apos;NC_TFC&apos;, RecordType.DeveloperName = &apos;NC_Wks_1_6_TFC&apos;), Purpose_Service_is_Billable__c = true)</errorConditionFormula>
+        <errorDisplayField>Purpose_Service_is_Billable__c</errorDisplayField>
+        <errorMessage>For NC - TFC and NC - Wks 1-6 TFC Progress Notes, the Purpose/Service is Billable field must be unchecked.  Please uncheck that field and try again.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>No_future_dates</fullName>
         <active>true</active>
         <errorConditionFormula>RecordType.DeveloperName !=&apos;Shift_Note&apos; &amp;&amp; OR( (Date_of_Service__c &gt;  DATEVALUE( NOW() )),(  Start_Time__c   &gt; NOW() ) ,(   End_Time__c    &gt; NOW() ) )</errorConditionFormula>
@@ -20631,7 +20639,7 @@ errors.push(&apos;You must select the &quot;Type of Contact&quot; before continu
 
 
 //Check to see if there is a Service Code selected 
-var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId,RecordType.name, Service_Code__c,Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c,Type__c,Staff_Name__c,Other_Service_Code__c ,Type_of_Contact__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
+var progressFields = sforce.connection.query(&quot;SELECT id, RecordTypeId,RecordType.name, Service_Code__c,Authorization__c, Short_Term_Goals_Placeholder__c, Number_of_Required_Signatures__c,Type__c,Staff_Name__c,Other_Service_Code__c ,Type_of_Contact__c, Therapy_discipline__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;); 
 records = progressFields.getArray(&quot;records&quot;); 
 
 var recordTypeQuery = sforce.connection.query(&quot;SELECT Id, Name, DeveloperName from RecordType where id = &apos;&quot; + records[0].RecordTypeId + &quot;&apos;&quot;); 
@@ -20640,7 +20648,7 @@ if(records[0].Service_Code__c != null ){
 var ServiceCodeQuery = sforce.connection.query(&quot;SELECT Id, Name, Service_Code__c from Service_Code__c where id = &apos;&quot; + records[0].Service_Code__c + &quot;&apos;&quot;);
 curSvcCode = ServiceCodeQuery.getArray(&quot;records&quot;); 
 }
-if(records[0].Service_Code__c == null &amp;&amp; curRtype[0].DeveloperName != &apos;Therapy&apos;){ 
+if(records[0].Service_Code__c == null ){ 
 errors.push(&apos;You must select a &quot;Service Code&quot; before continuing.&apos;); 
 } 
 if(records[0].Type__c == &apos;Co-Treatment&apos;&amp;&amp; records[0].Staff_Name__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos;){ 
@@ -20648,6 +20656,9 @@ errors.push(&apos;You must enter the staff name if the type of treatment is co-t
 }
 if(records[0].Type__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Type_of_Contact__c == &apos;Face-To-Face&apos;){ 
 errors.push(&apos;If type of contact is face to face , then type of treatment needs to be selected&apos;); 
+}
+if(records[0].Therapy_Discipline__c == null &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos;) {
+errors.push(&apos;Please choose a therapy discipline before finalizing&apos;);
 }
 if(records[0].Service_Code__c != null &amp;&amp; curSvcCode[0].Service_Code__c == &apos;OTHER&apos; &amp;&amp; curRtype[0].DeveloperName == &apos;Therapy&apos; &amp;&amp; records[0].Other_Service_Code__c == null){ 
 errors.push(&apos;When Service Code = &quot;Other&quot; is selected, you must manually enter a code or description in the &quot;Other Service Code&quot; text box. &apos;); 

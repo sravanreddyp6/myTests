@@ -226,7 +226,7 @@
     
     }
 	
-	totalauthTherapyUnits = function(FSRate,ServiceLocationSum, FSHrs, FSDME, FSOther, FSMedication, FSNutritional, perproductiveUnit){
+/*	totalauthTherapyUnits = function(FSRate,ServiceLocationSum, FSHrs, FSDME, FSOther, FSMedication, FSNutritional, perproductiveUnit){
 		//var FSRate = $(document.getElementById(FSRate)).val();
 		//var SLsum = ServiceLocationSum;
 		//var FSHrs =  $(document.getElementById(FSHrs)).val();
@@ -261,6 +261,69 @@
 			totalUnits = parseFloat(FSRate) - sum;
 			if(parseFloat(perproductiveUnit) > 0){
 				totalUnits = totalUnits/parseFloat(perproductiveUnit);
+			}else{
+				totalUnits = totalUnits/1;
+			}
+			totalUnits = Math.round(totalUnits);
+			return totalUnits;
+	}*/
+	
+	totalauthTherapyUnits = function(FSRate,SLRoomBoard,SLPRNDS, FSHrs, FSDME, FSOther, FSMedication, FSNutritional, SLperproductiveUnit){
+		//var FSRate = $(document.getElementById(FSRate)).val();
+		//var SLsum = ServiceLocationSum;
+		//var FSHrs =  $(document.getElementById(FSHrs)).val();
+		//var FSDME = $(document.getElementById(FSDME)).val();
+		//var FSOther = $(document.getElementById(FSOther)).val();
+		//var FSMedication = $(document.getElementById(FSMedication)).val();
+		//var FSNutritional = $(document.getElementById(FSNutritional)).val();
+		//var perUnit =  perproductiveUnit;
+		
+		var totalUnits = 0;
+		var sum = 0;
+		var FSPRNDS = 0;
+		var FSmarginMultiplier = 0;
+		
+		if(FSHrs > 0 && SLPRNDS >0){
+			FSPRNDS = FSHrs*SLPRNDS;
+		}
+		if(FSRate > 0){	
+			FSmarginMultiplier = FSRate*0.67;
+		}
+		
+		if(FSPRNDS > 0){
+				sum = sum + parseFloat(FSPRNDS);
+			}
+			if(SLRoomBoard > 0){
+				sum = sum + parseFloat(SLRoomBoard);
+			}
+			if(FSDME > 0){
+				sum = sum + parseFloat(FSDME);
+			}
+			if(FSOther > 0){
+				sum = sum + parseFloat(FSOther);
+			}
+			if(FSMedication > 0){
+				sum = sum + parseFloat(FSMedication);
+			}
+			if(FSNutritional > 0){
+				sum = sum + parseFloat(FSNutritional);
+			}
+			
+			console.log('Hours' + FSHrs);
+			console.log('SLPRNDS' +SLPRNDS);
+			console.log('FSPRNDS'+FSPRNDS);
+			console.log('RATE'+FSRate);
+			console.log('Rate*0.67'+FSmarginMultiplier);
+			console.log('SLRoomBoard'+SLRoomBoard);
+			console.log('DME'+FSDME);
+			console.log('FSOther'+FSOther);
+			console.log('FSMedication'+FSMedication);
+			console.log('FSNutritional'+FSNutritional);
+			
+			totalUnits = (parseFloat(FSmarginMultiplier) - sum)*7;
+			console.log('total units*7'+totalUnits);
+			if(parseFloat(SLperproductiveUnit) > 0){
+				totalUnits = totalUnits/parseFloat(SLperproductiveUnit);
 			}else{
 				totalUnits = totalUnits/1;
 			}
@@ -359,6 +422,24 @@
 		}
 		
 		return authUnitErrors;
+	
+	}
+	
+	prnDS = function(slPRNDS, elselector){
+		var hours = $('[id$=hoursExpected]').val();
+		var slDs = slPRNDS;
+		console.log('I am in here');
+		console.log(hours);
+		console.log(elselector);
+		console.log(slDs);
+		
+		if(hours > 0 && slDs  > 0){
+			console.log('i am in if loop');
+			assignValue(elselector,hours*slDs);
+		}else{
+			console.log('I am ion else loop');
+			assignValue(elselector, 0);
+		}
 	
 	}
 	
