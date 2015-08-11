@@ -37,6 +37,12 @@
      <script type="text/javascript" >
     
       var j$ = jQuery.noConflict(); 
+             jQuery(document).ready(function($) {
+             j$('[id$=BAASigned]').prop('disabled', true);
+             j$('[id$=VendorName]').prop('disabled', true);
+             j$('input[id$="AddAttachments"]').prop('disabled', true);
+        });
+        
  var currentUrl = window.location.href;
  currentUrl = currentUrl.substring(0, currentUrl.indexOf("/identity_create"));
  var sourcePage = currentUrl +'/TMNUser_JSON?core.apexpages.devmode.url=0&identityPage=yes';
@@ -112,6 +118,7 @@ function autoCompleteRender(ul, item) {
                         j$('[id$=locationCity]').text(checkUndefined(result.Work_City__c));
                         j$('[id$=locationState]').text(checkUndefined(result.Work_State__c));                                                      
                         j$('[id$=locationZip]').text(checkUndefined(result.Zip_Code__c));
+                        j$('[id$=ManagerName]').val(checkUndefined(result.Manager_Name__c));
                         j$('[id$=hiddenlocationLine1]').val(checkUndefined(result.Office_Location__c))
                         j$('[id$=hiddenlocationLine2]').val(checkUndefined(result.Office_Location_2__c))
                         j$('[id$=hiddenlocationCity]').val(checkUndefined(result.Work_City__c))
@@ -143,6 +150,25 @@ function autoCompleteRender(ul, item) {
        
      j$('[id*=AttachmentsModel]').dialog("open");
     }
+    
+    function CloseAttchment() {
+       
+     j$('[id*=AttachmentsModel]').dialog("close");
+    }
+   
+    function selectVendor() {
+   // alert(j$('[id$=vendorList]').val());
+        if (j$('[id$=vendorList]').val()==='OTHER') {
+        	j$('[id$=BAASigned]').prop('disabled', false);
+            j$('[id$=VendorName]').prop('disabled', false);
+            j$('input[id$="AddAttachments"]').prop('disabled', false);
+        }else {
+         j$('[id$=BAASigned]').prop('disabled', true);
+         j$('[id$=VendorName]').prop('disabled', true);
+         j$('input[id$="AddAttachments"]').prop('disabled', true);
+        }
+    }
+    
     
     </script>  
         <apex:form id="createForm" >
@@ -259,14 +285,24 @@ function autoCompleteRender(ul, item) {
                     <apex:inputhidden value="{!TMNUser.Work_State__c}" id="hiddenlocationState"/>
                 </apex:pageBlockSection>
                  
-                  <apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo">                                                                                                                                                                                                                                        
-                    <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="24"/>
+                    <apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo">                                                                                                                                                                                                                                        
+                    <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}"  id="ManagerName" required="true" taborderhint="24"/>
                     <apex:pageBlockSectionItem /> 
-                    <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}" required="true" id="vendorList" ></apex:inputField>
+                    <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}" required="true" id="vendorList" onchange="selectVendor()"></apex:inputField>
+                                 
                     <apex:pageBlockSectionItem />
-                      <apex:outputPanel id="BAASection" style="display:none">
-                    <apex:inputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
-                    <apex:commandButton value="Add Attachments"  onclick="showAttchment();return false;"  />
+                     
+                       <apex:pageBlockSectionItem >
+                      <apex:outputText value="BAA Signed " />
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                      <apex:outputText value="Vendor Name" />
+                        <apex:outputPanel styleClass="nowrap">
+                       <apex:inputField value="{!TMNUser.Vendor_Name__c}" id="VendorName"  ></apex:inputField>  
+                       <apex:commandButton value="Add Attachments"  onclick="showAttchment();return false;" id="AddAttachments" />
+                    </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
                                     <apex:outputPanel id="AttachmentsModel" style="display:none">
                           <apex:pageBlock title="Upload Attachments">
                 <apex:repeat value="{!newAttachments}" var="newAtt">
@@ -280,12 +316,12 @@ function autoCompleteRender(ul, item) {
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
             </apex:repeat>  
-             <apex:commandButton value="Upload" action="{!saveAttachment}"/>
+             <apex:commandButton value="OK" onClick="CloseAttchment();return false;"/>
             <apex:commandButton value="Cancel" />                 
             </apex:pageBlock>                  
 
                     </apex:outputPanel>
-                   </apex:outputPanel>       
+                        
                 </apex:pageBlockSection>
                  
             </apex:pageBlock>

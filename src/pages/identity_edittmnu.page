@@ -37,6 +37,19 @@
     <script type="text/javascript" >
     
       var j$ = jQuery.noConflict(); 
+      
+      jQuery(document).ready(function($) {
+      		if({!TMNUser.Vendor_list__c=='OTHER'}) {
+             j$('[id$=BAASigned]').prop('disabled', false);
+             j$('[id$=VendorName]').prop('disabled', false);
+             j$('input[id$="AddAttachments"]').prop('disabled', false);
+          }  else {
+             j$('[id$=BAASigned]').prop('disabled', true);
+             j$('[id$=VendorName]').prop('disabled', true);
+             j$('input[id$="AddAttachments"]').prop('disabled', true);
+          } 
+        });
+      
  var currentUrl = window.location.href;
  currentUrl = currentUrl.substring(0, currentUrl.indexOf("/identity_edittmnu"));
  var sourcePage = currentUrl +'/TMNUser_JSON?core.apexpages.devmode.url=0&identityPage=yes';
@@ -112,7 +125,7 @@ function autoCompleteRender(ul, item) {
                         j$('[id$=locationCity]').val(checkUndefined(result.Work_City__c));
                         j$('[id$=locationState]').val(checkUndefined(result.Work_State__c));                                                      
                         j$('[id$=locationZip]').val(checkUndefined(result.Zip_Code__c));
-                        
+                         j$('[id$=ManagerName]').val(checkUndefined(result.Manager_Name__c));
                     } else if (event.type === 'exception') {
                         console.log(event);
                     } 
@@ -152,12 +165,10 @@ function autoCompleteRender(ul, item) {
     
     function closeEditDialog (){
       j$('[id*=attachmentDeatils]').dialog("close");
-    }  
-    var attchmentId =''; 
+    } 
+     
     function deleteFile(attId){
-        attchmentId = attId;
         j$('[id*=dialog-confirm]').dialog("open");
-        alert(attchmentId);
  }
 
  j$(function() {
@@ -169,8 +180,7 @@ function autoCompleteRender(ul, item) {
       buttons: {
         Yes: function() {
             j$( this ).dialog( "close" );
-            alert(attchmentId)
-          deleteattachment(attchmentId);         
+          deleteattachment();         
         },
         No: function() {
             j$( this ).dialog( "close" );
@@ -180,9 +190,8 @@ function autoCompleteRender(ul, item) {
 });
   
     
-  function showEditDialog (attId){
+  function showEditDialog (){
     j$('[id*=attachmentDeatils]').dialog("open");
-      attachmentDeatils(attId);
     }
     
     function closeEditDialog (){
@@ -197,18 +206,25 @@ function autoCompleteRender(ul, item) {
       width : 750,
       modal: true,
       autoOpen: false
-    });
+    }).parent().appendTo(j$('form[id$=identity_edittmnu]'));
 });
+    
+      function selectVendor() {
+        if (j$('[id$=vendorList]').val()==='OTHER') {
+        	j$('[id$=BAASigned]').prop('disabled', false);
+            j$('[id$=VendorName]').prop('disabled', false);
+            j$('input[id$="AddAttachments"]').prop('disabled', false);
+        }else {
+         j$('[id$=BAASigned]').prop('disabled', true);
+         j$('[id$=VendorName]').prop('disabled', true);
+         j$('input[id$="AddAttachments"]').prop('disabled', true);
+        }
+    }
     
     </script>      
         <apex:form id="identity_edittmnu">
-       <apex:actionFunction name="attachmentDeatils" action="{!attachmentDeatils}"   >
-        <apex:param name="kiran" value="" assignTo="{!attchmentId}" />
-      </apex:actionFunction>  
-        <apex:actionFunction name="deleteattachment" action="{!deleteattachment}"  >
-        <apex:param name="attchmentId" value="" assignTo="{!attchmentId}" />
-      </apex:actionFunction>
-            
+       <apex:actionFunction name="deleteattachment" action="{!deleteattachment}"  reRender="ExistingAttachments,AttachmentsPanel" onComplete="closeEditDialog(); return false;"/>
+      
             <apex:pageBlock title="TMN User" mode="edit" >
                 <apex:pageMessages />
                 <apex:pageblockButtons location="Bottom" >    
@@ -262,12 +278,21 @@ function autoCompleteRender(ul, item) {
                 </apex:pageBlockSection>
                    
                    <apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo" >                                                                                                                                                                                                                                        
-                    <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" required="true" taborderhint="24"/>
+                    <apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}" id="ManagerName" required="true" taborderhint="24"/>
                     <apex:pageBlockSectionItem /> 
-                    <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}" required="true" id="vendorList" ></apex:inputField>
+                    <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}"  id="vendorList" onchange="selectVendor()" required="true" ></apex:inputField>
                     <apex:pageBlockSectionItem />
-                    <apex:inputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
-                    <input type="button"  value="Add Attachments"  onclick="showAttchment()"   />
+                   <apex:pageBlockSectionItem >
+                      <apex:outputText value="BAA Signed " />
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                      <apex:outputText value="Vendor Name" />
+                        <apex:outputPanel styleClass="nowrap">
+                       <apex:inputField value="{!TMNUser.Vendor_Name__c}" id="VendorName"  ></apex:inputField>  
+                       <apex:outputPanel id="AttachmentsPanel"> <apex:commandButton value="Add Attachments"  onclick="showAttchment();return false;" id="AddAttachments" disabled="{!newAttachments.size = 0}"/></apex:outputPanel>
+                    </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
                      
                        <apex:outputPanel id="AttachmentsModel" style="display:none">
                           <apex:pageBlock title="Upload Attachments">
@@ -281,17 +306,17 @@ function autoCompleteRender(ul, item) {
                         <apex:inputText value="{!newAtt.Description}"/>
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
-            </apex:repeat>  
-                              <apex:commandButton value="Upload" action="{!saveAttachment}"/>
-            <apex:commandButton value="Cancel" />
-                              
-                            
+            </apex:repeat>
+            <apex:commandButton value="Ok" onClick="closeDiglog();return false;" />
+            <apex:commandButton value="Cancel" onClick="closeDiglog();return false;" />
             </apex:pageBlock>                  
             <apex:outputPanel id="datePanelContainer">
             <apex:pageBlock title="Existing Attachments"  >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Action">
-                       <a href= "#"   onClick="showEditDialog('{!attachment.id}')"> Edit</a> |<a href="#" onclick="deleteattachment('{!attachment.id}');return false;"> Delete </a> 
+                       <apex:commandLink value="Edit"  action="{!attachmentDeatils}"  onComplete="showEditDialog();return false;"> 
+                       <apex:param name="attchmentId" value="{!attachment.id}" assignTo="{!attchmentId}" />
+                        </apex:commandLink> 
                     </apex:column>
                     <apex:column style="padding-right: 9px;" headerValue="Title">
                     <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
@@ -313,7 +338,9 @@ function autoCompleteRender(ul, item) {
                   <apex:pageBlock title="Existing Attachments"  >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Action">
-                       <a href= "#"   onClick="showEditDialog('{!attachment.id}')"> Edit</a> |<a href="#" onclick="deleteFile('{!attachment.id}');return false;"> Delete </a> 
+                       <apex:commandLink value="Edit"  action="{!attachmentDeatils}" reRender="attachmenDeatilsBlock" onComplete="showEditDialog();return false;"> 
+                       <apex:param name="attchmentId" value="{!attachment.id}" assignTo="{!attchmentId}" />
+                        </apex:commandLink> 
                     </apex:column>
                     <apex:column style="padding-right: 9px;" headerValue="Title">
                     <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
@@ -330,18 +357,19 @@ function autoCompleteRender(ul, item) {
         </apex:outputPanel>
                 
                 <apex:outputPanel id="attachmentDeatils"  style="display:none" title="Attachment Information">
-                     <apex:pageBlock >
+                     <apex:pageBlock id="attachmenDeatilsBlock">
                         <apex:pageBlockSection columns="2">   
                             <apex:outputText label="File Name">{!attDeatils.Name}</apex:outputText>
-                            <apex:inputText label="Description">{!attDeatils.Description}</apex:inputText>
+                            <apex:inputText label="Description" value="{!attDeatils.Description}"/>
                             <apex:outputText label="Size">{!attDeatils.Name}</apex:outputText>
                             <apex:outputText label="Attachment Owner">{!attDeatils.Owner.Name}</apex:outputText>
-                            <apex:outputText label="Created By">{!attDeatils.CreatedBy.Name}</apex:outputText>
+                            <apex:outputText label="Created By">{!attDeatils.CreatedBy.name}</apex:outputText>
                             <apex:outputText label="Modified By">{!attDeatils.LastModifiedBy.name}</apex:outputText>
                     </apex:pageBlockSection> 
                          <apex:pageblockButtons location="Bottom" >    
-                    <apex:commandButton value="Save"/>
-                    <apex:commandButton value="Cancel"  />
+                    <apex:commandButton value="Save" action="{!updateAttachment}" reRender="ExistingAttachments" onComplete="closeEditDialog(); return false;"/>
+                    <apex:commandButton value="Delete" onclick="deleteFile();return false;"/>
+                    <apex:commandButton value="Cancel" onClick="closeEditDialog();return false;" />
                 </apex:pageblockButtons>  
             </apex:pageBlock>
         </apex:outputPanel>

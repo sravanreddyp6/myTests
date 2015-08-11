@@ -39,13 +39,13 @@ public class identityEditNew {
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Program_String__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
-            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c
+            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c
             FROM TMN_User__c 
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
         if(TMNUser.id!=null) {
                 attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
-             for(integer i = attachments.size(); i<5;i++){
+             for(integer i = attachments.size(); i<3;i++){
                         newAttachments.add(new  ProxyAttachment(new Attachment())); 
             }           
         }else {
@@ -80,35 +80,38 @@ public class identityEditNew {
         TMNUser.BAA_Signed__c = aliasUser.BAA_Signed__c;
         TMNUser.Last_Day__c = defaultLastDay;
     }
-        
-        
-        
-    }
+ }
      @RemoteAction
     public static TMN_User__c LocationDetails(String location) {
-       return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
+       return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
     
     public  Attachment attDeatils {set;get;}
  
-    public  void attachmentDeatils() {
-       // attchmentId = apexpages.currentpage().getparameters().get('kiran');
-        System.debug('attchmentId : ' +attchmentId);
-       attDeatils =   [select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where id=:attchmentId order by createddate limit 1];
+    public  PageReference attachmentDeatils() {
+       attDeatils =   [select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID,CreatedBy.name,LastModifiedBy.name from Attachment where id=:attchmentId order by createddate limit 1];
+      return null;
     }
 
-    public  String deleteattachment() {
-        //System.debug('attchmentId:: ' + attchmentId);
-       Attachment att =    [select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where id=:attchmentId order by createddate limit 1];
+    public  PageReference deleteattachment() {
             try {
-                delete att;
-                attachments=null;
+                delete attDeatils;
+                  attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
+               newAttachments = new List<ProxyAttachment>();
+                  for(integer i = attachments.size(); i<3;i++){
+                        newAttachments.add(new  ProxyAttachment(new Attachment())); 
+            } 
         } catch(System.DMLException e) {
             return null;
         }
-        return  'true'; 
+        return  null; 
     }
 
+	public PageReference updateAttachment () {
+		update attDeatils;
+		attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
+		    return null;
+	}
     
     TMN_User__c t = [SELECT Id, Name, Operating_Group__c,Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];
     public String tmnName = t.Name;
@@ -170,34 +173,13 @@ public class identityEditNew {
     }
     
     public List<Attachment> attachments {set;get;}
-    public PageReference addAttachment () {
-        attachments  = new List<Attachment>();  
-       // newAttachments = new List<Attachment>();  
-        system.debug('in addAttachment');
-        if(TMNUser.id != null) {
-            attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ]; 
-            for (Integer i=0;i<3;i++){
-                //newAttachments.add(new Attachment() );
-            }
-        }else {
-             //newAttachments.add(new Attachment() );
-            // newAttachments.add(new Attachment() );
-             //newAttachments.add(new Attachment() );
-        }
-                     return null;
-    }
 
     public void saveAttachment()       {
-        System.debug('In saveAttachment');
-        System.debug('newAttachments.size :: ' + newAttachments.size());
                 List<Attachment> toInsert=new List<Attachment>();
                 Integer index = 0;
                 for (ProxyAttachment newProxyAtt : newAttachments)
                 {
                         Attachment newAtt = newProxyAtt.getSObject();
-                        System.debug('newAtt Object ' + newAtt);
-                                System.debug('newAtt.Body ' + newAtt.body);
-                        System.debug('newAtt.Description ' + newAtt.Description);
                         if (newAtt.Body!=null)
                         {
                                 newAtt.parentId=TMNUser.id;
@@ -205,9 +187,13 @@ public class identityEditNew {
                         }
                         index ++;
                 }
+                try {
                 insert toInsert;
-        System.debug('toInsert.size :: ' + toInsert.size());
-               
+                toInsert = new List<Attachment>();
+                newAttachments = new List<ProxyAttachment>();
+                }catch (Exception e ) {
+                newAttachments = new List<ProxyAttachment>();
+                }
         }
     
     
