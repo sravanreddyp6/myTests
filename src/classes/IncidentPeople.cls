@@ -115,13 +115,13 @@ public void editPerson () {
 	currPerson = relExisting.get(personToEditDelete).relatedPerson;
 }
 
-public pageReference delPerson() {
-	
-	removeFromTypeMap( personToEditDelete);
-	relExisting.remove( personToEditDelete );
-
-	return null;
-}
+			public pageReference delPerson() {
+				
+				removeFromTypeMap( personToEditDelete);
+				relExisting.remove( personToEditDelete );
+			
+				return null;
+			}
 
 private void removeFromTypeMap( string keytoDel ) {
 	
@@ -131,26 +131,28 @@ private void removeFromTypeMap( string keytoDel ) {
 	
 	if ( ipw.persontype == 'Other') {
 		mapOther.remove( keyToDel );
-		for (integer i = 0; i < newPeople.size(); i++) {
-			if (newPeople.get(i).other_people__c == currPerson.other_people__c )
-				newPeople.Remove( i );
-		}
 	}
 	else if ( ipw.persontype == 'Staff') {
 		mapStaff.remove( keyToDel );
-		for (integer i = 0; i < newPeople.size(); i++) {
-			if (newPeople.get(i).staff_member__c == currPerson.staff_member__c )
-				newPeople.Remove( i );
-		}
 	}
 	else if ( ipw.persontype == 'Mentor') {
-		mapMentor.remove( keyToDel );
-		for (integer i = 0; i < newPeople.size(); i++) {
-			if (newPeople.get(i).mentor__c == currPerson.mentor__c )
-				newPeople.Remove( i );
-		}
-		
+		mapMentor.remove( keyToDel );		
 	}
+	
+	//rebuild the new people list
+	newPeople = new List<Incident_Person__c>();
+	for(IncidentPersonWrapper IW : mapOther.values() ){
+		if(IW.isNew)
+			newPeople.add(IW.relatedPerson);
+	}
+	for(IncidentPersonWrapper IW : mapMentor.values() ){
+		if(IW.isNew)
+			newPeople.add(IW.relatedPerson);
+	}
+	for(IncidentPersonWrapper IW : mapStaff.values() ){
+		if(IW.isNew)
+			newPeople.add(IW.relatedPerson);
+	}		
 	
 }
 private void addToTypeMap( IncidentPersonWrapper ipw ) {
