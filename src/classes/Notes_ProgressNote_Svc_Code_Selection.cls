@@ -9,7 +9,7 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
         }
     }
     public void loadData(Progress_Note__c localRecord){
-        CurrentRecord = [Select Service_Assignment__c,Service_Assignment__r.SA_Start_DateTime__c,next_approver__c, Service_Code__c, Admission__c, start_time__c,recordtype.Name From Progress_Note__c Where ID = :localRecord.id Limit 1];
+        CurrentRecord = [Select Service_Assignment__c,Service_Assignment__r.SA_Start_DateTime__c, Approval_User__c, Service_Code__c, Admission__c, start_time__c,recordtype.Name From Progress_Note__c Where ID = :localRecord.id Limit 1];
     }
     public List<SelectOption> Codes = new List<SelectOption>();
     public List<SelectOption> getCodes(){
