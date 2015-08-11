@@ -44,7 +44,7 @@ public PageReference editAttachment() {
 public PageReference redirectToViewAttachment() {
     PageReference pg= null;
     // added by Amruth for EB-513
-        if(retURL != null && pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
+        if(note != null && TU!= Null && retURL != null && pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
           pagereference pr = new PageReference('/'+parentId);
             return pr;
         }
@@ -65,7 +65,7 @@ public PageReference redirectToViewAttachment() {
     public PageReference redirectToLastView() {
     pagereference pg ;
       // added by Amruth for EB-513
-      if(pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
+      if(note != null && TU!= Null && pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
           pg = new PageReference('/'+parentId);
       }
       else{
@@ -84,7 +84,7 @@ public PageReference redirectToViewAttachment() {
         delete attachment;
         PageReference pg;
         // added by Amruth for EB-513
-        if(pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
+        if(note != null && TU!= Null && pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
           pg = new PageReference('/'+parentId);
         } else{
         pg = new PageReference(retURL);
