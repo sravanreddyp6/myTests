@@ -294,10 +294,28 @@
                         <apex:outputField label="Network Username" value="{!theTMNUser.Network_Username__c}"/>                                            
                     </apex:pageBlockSection>
                     <apex:PageBlockSection columns="2">
-                        <apex:pageBlockSectionItem />                                                                                                                                                                                                                                    
-                        <apex:outputField label="BAA Signed?" value="{!theTMNUser.BAA_Signed__c}" />
-                        </apex:pageBlockSection>                 
+                         <apex:outputField label="Vendor"  value="{!theTMNUser.Vendor_list__c}" /> 
+                         <apex:outputField label="Vendor Name"  value="{!theTMNUser.Vendor_Name__c}"  rendered="{!theTMNUser.Vendor_list__c='OTHER'}"/> 
+                          <apex:outputField label="BAA Signed?" value="{!theTMNUser.BAA_Signed__c}" /> 
+                      <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
+                        </apex:PageBlockSection>  
+                        <apex:pageBlock title="Existing Attachments" rendered="{!theTMNUser.Vendor_list__c='OTHER'}">
+ 		               <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
+                    <apex:column style="padding-right: 9px;" headerValue="Title">
+                    <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Description">{!attachment.Description}</apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
+                  <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>
+                </apex:column>
+                 <apex:column style="padding-right: 9px;" headerValue="Created By">
+                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
+                </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
                     </apex:pageBlock>
+                       
+ 
                 </apex:form>
             </apex:outputPanel>            
         </apex:outputPanel> 
