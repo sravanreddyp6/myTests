@@ -30,6 +30,7 @@ public with sharing class EvalDynamicExt {
 	public Boolean isEditable;
 	public Boolean isDON { get; set; }
 	public Boolean isTierIII { get; set; }
+    public Boolean isTierII { get; set; }
 
 	public String getEvalStatusDate(){
 		if (evalType == 'Head to Toe')
@@ -92,8 +93,13 @@ public with sharing class EvalDynamicExt {
 		} else {
 			isTierIII = false;
 		}
+        if (permissionSets.contains('iServe_Tier_II')) {
+            isTierII = true;
+        } else {
+            isTierII = false;
+        }		
 
-		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Signed_By__r.Name, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
+ 		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Signed_By__r.Name, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
 
 		if ( thisEval != null ) {
 			PBSID = thisEval.serviceassignment__r.admission__r.person_being_served__c;
@@ -302,7 +308,7 @@ public with sharing class EvalDynamicExt {
     	//Roll back all the DML operations in case of any failure in the process of Cloning. 04/4/2015 8:00 PM
     	Savepoint sp = Database.setSavepoint();
     		try{
-    			Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian');
+    			Evaluation__c clonedEval = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian', PBSId);
     			PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedEval.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
     			pg.setRedirect(true);
     			return pg;
@@ -346,7 +352,7 @@ public with sharing class EvalDynamicExt {
 			try{
 
 				update thisEval;
-				Evaluation__c clonedShift = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian');
+				Evaluation__c clonedShift = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian', PBSId);
 				PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedShift.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
 	    		pg.setRedirect(true);
 	    		return pg;
@@ -389,8 +395,8 @@ public with sharing class EvalDynamicExt {
 
 	public pageReference completeShift() {
 
-		if ( evalType == 'CNA Workbook')
-			return FinalizeCNA();
+		if ( evalType == 'CNA Workbook' || evalType == 'Residential')
+			return SubmitForApproval();
 
 		//Commented by Sravan - 04/13/2015 as the whole logic is handled in CMShiftAssessmentEsign.cls -- CLciking the Complete button invokes Authentication Component but not this method.
 
@@ -441,7 +447,7 @@ public with sharing class EvalDynamicExt {
 	}
 
 	//Generic Clone functionality to copy Eval Value records.
-	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup){
+	public static Evaluation__c cloneEvalContent(Evaluation__c eval, string evalType, string operatingGroup, ID pbsID){
 
 		Evaluation__c currentEval = eval;
 		id currentEvalId = currentEval.Id;
@@ -451,13 +457,26 @@ public with sharing class EvalDynamicExt {
 		clonedEval.Signed_At__c = null;
 		clonedEval.Head_to_toe_Signed_At__c = null;
 
+        // EC-235 - rename the assessment on revise - needs new owner name and date of creation
+        string assessmentName = '';
+        Contact thisPBS = [ select firstname, lastname from contact where id = :pbsID];
+        string pbsLastName = thisPBS.LastName != null ? thisPBS.LastName : '' ;
+        string pbsFirstinitial = thisPBS.FirstName != null ? thisPBS.FirstName.substring(0, 1) : '';
+        string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : '';
 		if(evalType == 'Head to Toe'){
 			clonedEval.Head_to_toe_status__c = 'Draft';
+			assessmentName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString()) +' - '+'NSD'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
 		} else if (evalType == 'Residential') {
 			clonedEval.OwnerId = UserInfo.getUserId();
+			assessmentName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
 		}
-
+		clonedEval.name = assessmentName;
+			
+		
     	insert clonedEval;
+    	
+    	
+    	
 
     	//Creation of Assessment records is specific to Residential Assessment. Not required in in Head to Toe!!
     	if(evalType == 'Residential') {
@@ -553,7 +572,7 @@ public with sharing class EvalDynamicExt {
 			}
 		}
 
-		if (!isUserOwner && evalType != 'Restraint Event') {  // EC-153 - Let other people finalize Restraint Events
+		if (!isUserOwner && evalType != 'Restraint Event' && evalType != 'Residential') {  // EC-153 - Let other people finalize Restraint Events, EC-219 - Let other people edit Residential
 			showEsign=false;
 			showRevise = false;
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
@@ -562,16 +581,6 @@ public with sharing class EvalDynamicExt {
 			if (isDON) {
 				if ((evalType == 'Head to Toe' || evalType == 'CNA Workbook') && thisEval.Status__c == 'Draft') {  // EC-163
 					showEndOfShiftDON = true;
-				}
-			}
-			if (evalType == 'Residential') {  // EC-203 - Let other people revise Resident Assessment
-				List<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id, Status__c, CreatedDate FROM Evaluations__r Where Id != :thisEval.Id AND Status__c != 'Disregard' AND RecordType.Name ='NursesAssessment' order by CreatedDate desc) FROM Service_Assignment__c WHERE Id=: SAID LIMIT 1];
-				if (thisEval.Status__c == 'Final Admission' && servAssign[0].Evaluations__r.Size() == 0){
-					showRevise = true;
-				} else if (thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r.Size() == 1){
-					showRevise = true;
-				} else if (thisEval.Status__c == 'Final Revision' && servAssign[0].Evaluations__r[0].Status__c == 'Final Revision' && thisEval.CreatedDate > servAssign[0].Evaluations__r[0].CreatedDate) {
-					showRevise = true;
 				}
 			}
 			return;
@@ -619,6 +628,17 @@ public with sharing class EvalDynamicExt {
 
 			}
 
+			
+            if ( thiseval.status__c == 'Pending Approval' && isApprover) {
+                showApprove = true;
+            }
+			// if user is not tier iii or ii don't display anything. This needs to be at the end because
+			// it trumps everything else.
+			if (!isTierIII && !isTierII) {
+				showEsign = false;
+				showRevise = false;
+				showDisregard = false;
+			}
 		}
 
 		if(evalType == 'Head to Toe'){
@@ -720,7 +740,7 @@ public with sharing class EvalDynamicExt {
 	}
 
 
-    public PageReference FinalizeCNA(){
+    public PageReference SubmitForApproval(){
         return new PageReference('/apex/EvalApproval?id=' + evalID);
     }
 
@@ -755,7 +775,11 @@ public with sharing class EvalDynamicExt {
         // if a rejection, set up a task for the CNA owner
         if ( approvalAction == 'Reject') {
         	DateTime n = DateTime.now();
-        	Task t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
+        	Task t;
+        	if (thisEval.Recordtype.Name == 'CNA Workbook')
+        	   t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
+        	else if (thisEval.Recordtype.Name == 'NursesAssessment')
+        	   t = new Task(Subject = 'Rejected Resident Assessment', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'Resident Assessment rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
         	insert t;
         }
 
@@ -770,6 +794,19 @@ public with sharing class EvalDynamicExt {
 
         // Submit the request for approval
         Approval.ProcessResult result =  Approval.process(req);
+
+        //the below logic sets the resident assessment status to Final Admission/Final Revision
+        NoSharingRecord nsr = new NoSharingRecord(thisEval.id);
+        if (thisEval.Recordtype.Name == 'NursesAssessment' && approvalAction != 'Reject') {
+            list<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r Where Status__c != 'Disregard' 
+                                                                     AND Recordtype.Name ='NursesAssessment' order by createdDate asc) 
+                                                        FROM Service_Assignment__c WHERE Id=: thisEval.ServiceAssignment__c LIMIT 1];
+            if(thisEval.Id == servAssign[0].Evaluations__r[0].Id){
+                nsr.setStatusAndSave('Final Admission');
+            } else {
+            	nsr.setStatusAndSave('Final Revision');
+            }
+        }
     }
 
 

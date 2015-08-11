@@ -1,7 +1,14 @@
 public with sharing class TurnsChartController {
 	
-public ID evalID { get; set { evalID = value; getTurnsData( value ); } }
- 
+private ID evalID;
+public ID getEvalID() {
+	return this.evalID;
+}
+public void setEvalID(ID value) { 
+	this.evalID = value; 
+	getTurnsData(value); 
+}
+
 public transient List<string> turnsChartkeys { get; set; }
 public transient Set<String> turnsInnerKeys { get; set; }
 public Map< string, Map<string, List<turnsPanel>>> turnsChart { get; private set;} 

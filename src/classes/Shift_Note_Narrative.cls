@@ -56,6 +56,10 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
         	
         	note.Start_Time__c = DateTime.Now();
             note.End_Time__c = DateTime.Now().AddMinutes(1);
+            if ( string.isblank(note.narrative__c) ) {
+            	ApexPages.addMessage( new ApexPages.Message(ApexPages.severity.error, 'Narrative text is required.'));
+            	return null;
+            }
             upsert note;
             return null;
             }
@@ -78,6 +82,13 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
 
     
     public pagereference myCancel(){
+        
+        // might need to clean up if user has already clicked esign but then cancelled out.  the save occurs first.
+        if (note.id != null) {
+        	Progress_Note__c thisnote = [ select id from progress_note__c where id = :note.id and status__c != 'Final'];
+        	if ( thisnote != null )
+        		delete thisnote;
+        }
         
         // get the return URL from the page
         PageReference pr = new PageReference( retURL);

@@ -185,10 +185,10 @@ public with sharing class EvalRepeaters {
 		}
 
 		if ( evalname.indexOf('CNA') < 0 ) {
-			if ( permissionSets.contains('iServe_Tier_III')) {
+			if ( permissionSets.contains('iServe_Tier_III') || permissionSets.contains('iServe_Tier_II')) {
 				canEditEvalType = true;
 			}
-		}	else if ( permissionSets.contains('iServe_Tier_III') ||  permissionSets.contains('iServe_Tier_I') ) {
+		}	else if ( permissionSets.contains('iServe_Tier_III') ||  permissionSets.contains('iServe_Tier_I') || permissionSets.contains('iServe_Tier_II')) {
 				// anyone can edit CNA 
 				// but only if owner EC-173
 				canEditEvalType = ( parentevalOwnerID == UserInfo.getUserId());
