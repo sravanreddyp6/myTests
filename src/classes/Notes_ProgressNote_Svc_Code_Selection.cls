@@ -2,6 +2,7 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
     public Progress_Note__c CurrentRecord {get; set;}
     public string dispMode{get;set;}
     public Notes_ProgressNote_Svc_Code_Selection(ApexPages.StandardController controller) {
+    	//Added by amruth for EB-513
         dispMode = ApexPages.currentPage().getParameters().get('Mode');
         if(dispMode != 'New'){
             loadData((Progress_Note__c)Controller.getRecord());
@@ -12,6 +13,7 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
     }
     public List<SelectOption> Codes = new List<SelectOption>();
     public List<SelectOption> getCodes(){
+    	//Added by amruth for EB-513
     if(dispMode != 'New'){
         loadData(CurrentRecord);
         Codes.clear();
@@ -50,6 +52,7 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
         Auths.clear();
         SelectOption SOtmp = new SelectOption('', '--None--');
         Auths.Add(SOtmp);
+        //Added by amruth for EB-513
         if(dispMode != 'New'){
             loadData(CurrentRecord);
         
