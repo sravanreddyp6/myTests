@@ -16,6 +16,9 @@ public AttachmentView attachmentView {get;set;}
 public Attachment attachment {get;set;}
 public boolean enableDelete {get;set;}
 public String docId {get{return apexpages.currentpage().getparameters().get('docId');}set;}
+public progress_note__C note = [ select recordtype.developername from progress_note__c where id=:parentId limit 1];
+Public TMN_User__c TU = [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1];
+        
 SystemSettings__c pnnew = SystemSettings__c.getOrgDefaults();
 public SObjectViewAttachmentController() {
     if (attachment == null) {
@@ -40,8 +43,8 @@ public PageReference editAttachment() {
 
 public PageReference redirectToViewAttachment() {
     PageReference pg= null;
-        //updated by amruth
-        if(retURL != null && pnnew.AZ_OPT_Enabler__c){
+    // added by Amruth for EB-513
+        if(retURL != null && pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
           pagereference pr = new PageReference('/'+parentId);
             return pr;
         }
@@ -49,23 +52,20 @@ public PageReference redirectToViewAttachment() {
         
         else if (retURL != null) {
             pg = new PageReference(retURL);
-             pg.setRedirect(true);
+            pg.setRedirect(true);
         }
         
-        
-        
-        
-         else{
-         pg = new PageReference(VIEW_ATTACHMENT_URL +docId + '&retURL='+retURL+'&parentPage='+parentPage +'&parentId='+parentId+'&pbsId='+pbsId+'&servAssignId='+servAssignId+'&apId='+apId+'&admId='+admId+'&asmtType='+asmtType+'&asmtId='+asmtId+'&ReferralName='+ReferralName);
-        pg.setRedirect(true);
+        else{
+            pg = new PageReference(VIEW_ATTACHMENT_URL +docId + '&retURL='+retURL+'&parentPage='+parentPage +'&parentId='+parentId+'&pbsId='+pbsId+'&servAssignId='+servAssignId+'&apId='+apId+'&admId='+admId+'&asmtType='+asmtType+'&asmtId='+asmtId+'&ReferralName='+ReferralName);
+            pg.setRedirect(true);
         }
         return pg;
     }
     
     public PageReference redirectToLastView() {
     pagereference pg ;
-      //updated by amruth
-      if(pnnew.AZ_OPT_Enabler__c){
+      // added by Amruth for EB-513
+      if(pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
           pg = new PageReference('/'+parentId);
       }
       else{
@@ -83,8 +83,8 @@ public PageReference redirectToViewAttachment() {
     {
         delete attachment;
         PageReference pg;
-        //updated by amruth
-        if(pnnew.AZ_OPT_Enabler__c){
+        // added by Amruth for EB-513
+        if(pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
           pg = new PageReference('/'+parentId);
         } else{
         pg = new PageReference(retURL);
