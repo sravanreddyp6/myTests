@@ -335,7 +335,7 @@ function autoCompleteRender(ul, item) {
                        </apex:outputPanel>                        
                 </apex:pageBlockSection>
                     <apex:outputPanel id="ExistingAttachments">
-                  <apex:pageBlock title="Existing Attachments"  >
+                  <apex:pageBlock title="Existing Attachments"  rendered="{!TMNUser.Vendor_list__c='OTHER'}" >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Action">
                        <apex:commandLink value="Edit"  action="{!attachmentDeatils}" reRender="attachmenDeatilsBlock" onComplete="showEditDialog();return false;"> 
