@@ -57,29 +57,29 @@
 			<apex:pageBlockTable value="{!employeeMap[7]}" var="Seven" >
 				<apex:column >
 					<apex:facet name="header">Extend</apex:facet>
-					<apex:commandLink value="90 Days" action="{!updateTMNUser}" reRender="SevenTable,msgs,noOneFound">
+					<apex:commandLink value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="ninety" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>
 					&nbsp;
-					<apex:commandLink value="60 Days" action="{!updateTMNUser}" reRender="SevenTable,msgs,noOneFound">
+					<apex:commandLink value="60 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="sixty" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>
 					&nbsp;
-					<apex:commandLink value="30 Days" action="{!updateTMNUser}" reRender="SevenTable,msgs,noOneFound">
+					<apex:commandLink value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="thirty" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>
 				</apex:column>
 				
 				<apex:column headerValue="Terminate">
-					<apex:commandLink value="Now" action="{!updateTMNUser}" reRender="SevenTable,msgs,noOneFound">
+					<apex:commandLink value="Now" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="now" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>
 					&nbsp;
-					<apex:commandLink value="On Termination Date" action="{!updateTMNUser}" reRender="SevenTable,msgs,noOneFound">
+					<apex:commandLink value="On Termination Date" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="termDate" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>
@@ -107,29 +107,29 @@
 	
 				<apex:column >
 					<apex:facet name="header">Extend</apex:facet>
-					<apex:commandLink value="90 Days" action="{!updateTMNUser}" reRender="fourteenTable,msgs,noOneFound">
+					<apex:commandLink value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="ninety" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>
 					&nbsp;
-					<apex:commandLink value="60 Days" action="{!updateTMNUser}" reRender="fourteenTable,msgs,noOneFound">
+					<apex:commandLink value="60 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="sixty" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>
 					&nbsp;
-					<apex:commandLink value="30 Days" action="{!updateTMNUser}" reRender="fourteenTable,msgs,noOneFound">
+					<apex:commandLink value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="thirty" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>
 				</apex:column>
 				
 				<apex:column headerValue="Terminate">
-					<apex:commandLink value="Now" action="{!updateTMNUser}" reRender="fourteenTable,msgs,noOneFound">
+					<apex:commandLink value="Now" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="now" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>
 					&nbsp;
-					<apex:commandLink value="On Termination Date" action="{!updateTMNUser}" reRender="fourteenTable,msgs,noOneFound">
+					<apex:commandLink value="On Termination Date" action="{!updateTMNUser}" reRender="theBlock,msgs">
 						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
 						<apex:param value="termDate" assignTo="{!flag}" name="flag"/>
 					</apex:commandLink>

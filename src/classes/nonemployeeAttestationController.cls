@@ -48,6 +48,9 @@ public with sharing class nonemployeeAttestationController {
 		
 	}private set;}
 	
+	public string getbaseUrl(){
+		return URL.getSalesforceBaseUrl().toExternalForm();
+	}
 	
 	
 	public nonemployeeAttestationController(){
