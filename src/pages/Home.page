@@ -222,7 +222,6 @@
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
-				<apex:column headerValue="View Current Shift" >
 				<apex:column headerValue="View Current Shift" rendered="{!NOT(canCreateProgressNotes)}">
 					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
 						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
