@@ -17,6 +17,11 @@
             display: none;
         }
         
+        /* Used to hide the search section of the default salesforce side bar */
+        .sidebarModule{
+            display:none;
+        }
+        
         /* Hide the createNew section of the default salesforce sidebar */
         #createNew {
             display: none;
@@ -295,8 +300,13 @@
         }
     
        </script>
-    
-    
+    <style>
+		input.btn[name="piSubmit"] {
+		display: none;
+		}
+
+	</style>
+
     
     
     <script>
@@ -312,11 +322,14 @@
     <c:PersonalRecordBreadCrumbsOnly pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_ProgressNote_AZ_OPT" servAssignNew="true" admId="{!admissionId}"/>
     <apex:pageBlock mode="mainDetail" id="mainData">
     <apex:form id="myFRM" >
+     <apex:outputPanel id="OutputpanelId">
+        <apex:pagemessages ></apex:pagemessages>
+    </apex:outputPanel>
     <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); openDialog('tstpopupAfterEsign', 'span', ''); return false; return false;" /><!--location.reload(true); -->
     <!-- New Page Starts  -->
     <apex:outputpanel rendered="{!NewBlock}">
         <apex:pageBlock >
-            <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy,myFRM" >
+            <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy,myFRM,OutputpanelId" >
             <apex:param name="selectedKey" value="" />
             <apex:param name="DeselectedKey" value="" />
             </apex:actionFunction>
@@ -324,12 +337,12 @@
             </apex:actionFunction>
             <apex:actionFunction action="{!update_overlap}" name="updateOvrLap" rerender="tstpopupAfterEsign">
             </apex:actionFunction>
-            <apex:pagemessages ></apex:pagemessages>
             <apex:pageBlockButtons > 
-                <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk"></apex:commandButton>
-                <apex:commandButton action="{!saveModifiedProgressNote}" value="Save" rendered="{!inlinemode}" onclick="keyselectedvalue()" rerender="myFRM,relatedToPgblk"></apex:commandButton>
-                <apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}"></apex:commandButton> 
-                <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}"></apex:commandButton>
+                <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+                <apex:commandButton action="{!saveModifiedProgressNote}" value="Save" rendered="{!inlinemode}" onclick="keyselectedvalue()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+    
+                <apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
+                <apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
             </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="2" >
                    <!-- hidden fields, values will be passed in the url -->    
@@ -469,7 +482,7 @@
         
     </apex:outputpanel>
     
-    
+   
     <!--  New Page Block Ends  -->
     <!--  Edit Page Block Starts  -->
     <apex:outputpanel rendered="{!!NewBlock}">
@@ -481,17 +494,17 @@
         </style>-->
         <br></br>
         <apex:pageBlock id="pblk">
-            <apex:pagemessages ></apex:pagemessages>
             <apex:pageBlockButtons location="top" rendered="{!!Final}">
                 <apex:commandButton id="saveButton"   value="Save Inline"   action="{!saveProgressNoteInlineEdit}"   style="margin-left:22%;display:none;"/>
-                <apex:commandButton id="cancelButton" value="Cancel" action="{!Cancel}" style="display:none;"/>
+                <apex:commandButton id="cancelButton" value="Cancel" action="{!cancel}" style="display:none;"/>
                 <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}"/>
-                <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,pblk" />
+                <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
                 <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
                 <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
                 <!--<apex:commandButton id="createPDF" value="Create PDF"  onclick="openDialog('tstpopup', 'span', 'Finalize'); return false;" />-->
                 <apex:commandButton id="esign" value="E-Sign"  onClick="complete('{!SignedDoc}'); return false;" />
             </apex:pageBlockButtons>
+            
             <apex:pageBlockButtons location="top" rendered="{!Final}">
                 <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
                 <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
@@ -559,16 +572,20 @@
 <!--                 <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/> -->
 <!--                 </apex:outputField> -->
                 <apex:outputField value="{!Progress_Note__c.Person_Being_Served__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Service_Assignment__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Admission__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+               
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Action_Plan__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 
             </apex:pageBlockSection>
@@ -747,11 +764,11 @@
                 <c:SObjectNotesAndAttachments parentPage="Notes_ProgressNote_AZ_OPT" parentId="{!$CurrentPage.parameters.id}" showAction="true" pbsId="{!pbsname}" servAssignId="{!theServAssignId}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
                 </div>
             </apex:outputpanel>
-            <apex:outputpanel rendered="{!!NewBlock}">
+             <apex:outputpanel rendered="{!!NewBlock}">
                 <div id="Approvals">
                 <apex:relatedList list="ProcessSteps"/>
                 </div>
-            </apex:outputpanel>
+            </apex:outputpanel> 
         </apex:pageBlock>
         <apex:actionStatus id="myStatus" >
             <apex:facet name="start">
