@@ -23,7 +23,7 @@ global with sharing class EmpController {
     }
     
 
-    List <TMN_User__c> employee = [ Select TMN_identity_id__c from TMN_User__c where Pre_hire_ID__c = :taleo_num];
+    List <TMN_User__c> employee = [ Select identity_id__c from TMN_User__c where Pre_hire_ID__c = :taleo_num];
 
     if (employee.size() == 0) {
         /*
@@ -37,7 +37,7 @@ global with sharing class EmpController {
          */
         return taleo_num + ' multiple returned.';
     }else {
-        return String.valueOf(employee[0].TMN_Identity_ID__c);
+        return String.valueOf(employee[0].Identity_ID__c);
     }
          
 
