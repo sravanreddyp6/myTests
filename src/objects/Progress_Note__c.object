@@ -100,66 +100,6 @@
         </displayedFields>
         <label>NewForm</label>
     </fieldSets>
-    <fieldSets>
-        <fullName>NewFormAZOPT</fullName>
-        <description>On the New AZ OPT page with a fewer clicks.</description>
-        <displayedFields>
-            <field>Start_Time__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>End_Time__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Total_Time__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Service_Location__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Type_of_Contact__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Purpose_Service_is_Billable__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Units__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>People_Present__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Is_Note_Late__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Sleep_Check_Conducted__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Next_Appt_Date_Time__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <label>NewFormAZOPT</label>
-    </fieldSets>
     <fields>
         <fullName>Abuse_Disclosure_Type__c</fullName>
         <externalId>false</externalId>
@@ -845,6 +785,41 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Clinician_Employee_ID__c</fullName>
+        <description>Staff employee ID - from Clinician lookup - populated through trigger</description>
+        <externalId>false</externalId>
+        <label>Practitioner ID</label>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Clinician__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Staff Name</label>
+        <lookupFilter>
+            <active>true</active>
+            <errorMessage>Please choose a clinician from the list</errorMessage>
+            <filterItems>
+                <field>TMN_User__c.Operating_Group__c</field>
+                <operation>equals</operation>
+                <valueField>$User.Operating_Group__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Progress Notes</relationshipLabel>
+        <relationshipName>Progress_Notes</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Co_Therapist_unable_to_bill__c</fullName>
@@ -1625,16 +1600,6 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
-    </fields>
-    <fields>
-        <fullName>GoalIds_AZOPTPage__c</fullName>
-        <description>Contains the goalids to be opened when the progress note is clicked</description>
-        <externalId>false</externalId>
-        <label>GoalIds_AZOPTPage</label>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>TextArea</type>
     </fields>
     <fields>
         <fullName>Guardian_Name__c</fullName>
@@ -3526,19 +3491,6 @@ Neurostative IL role</description>
         <formula>Service_Assignment__r.Service_Line__c</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Type (Hidden)</label>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>Type_Of_Note__c</fullName>
-        <description>For AZ OPT To show the field on the detail page layout</description>
-        <externalId>false</externalId>
-        <formula>RecordType.Name</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label>Type Of Note</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
