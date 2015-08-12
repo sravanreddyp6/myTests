@@ -1,0 +1,161 @@
+<apex:page controller="nonemployeeAttestationPageController" showheader="false" >
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	
+	<apex:form >
+	<apex:pageBlock title="Non-Employee Attestation" id="theBlock">
+		<apex:pageMessages id="msgs" />
+		<apex:pageBlockSection title="Employees Terminating Tomorrow" columns="2" rendered="{!showOne}" id="oneTable" >
+		<apex:PageBlockTable value="{!employeeMap[1]}" var="one"  >
+				<apex:column >
+					<apex:facet name="header">Extend</apex:facet>
+					<apex:commandLink value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="ninety" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+					&nbsp;
+					<apex:commandLink value="60 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="sixty" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+					&nbsp;
+					<apex:commandLink value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="thirty" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+				</apex:column>
+				
+				<apex:column headerValue="Terminate">
+					<apex:commandLink value="Now" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="now" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+					&nbsp;
+					<apex:commandLink value="On Termination Date" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="termDate" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+				</apex:column>
+					
+				<apex:column >
+					<apex:facet name="header">Name</apex:facet>
+					<apex:outputText>{!one.First_Name__c} {!one.Last_name__c}</apex:outputText> 
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">Job title</apex:facet>
+					<apex:outputText>{!one.Job_title__c}</apex:outputText> 
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">Last Date</apex:facet>
+					<apex:outputText Value=" {!one.Last_Day__c}"/>
+				</apex:column>
+		</apex:PageBlockTable>
+		</apex:pageBlockSection>
+		
+		<apex:pageBlocksection columns="2" title="Employees Terminating in 7 days" rendered="{!showSeven}" id="SevenTable" >
+			<apex:pageBlockTable value="{!employeeMap[7]}" var="Seven" >
+				<apex:column >
+					<apex:facet name="header">Extend</apex:facet>
+					<apex:commandLink value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="ninety" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+					&nbsp;
+					<apex:commandLink value="60 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="sixty" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+					&nbsp;
+					<apex:commandLink value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="thirty" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+				</apex:column>
+				
+				<apex:column headerValue="Terminate">
+					<apex:commandLink value="Now" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="now" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+					&nbsp;
+					<apex:commandLink value="On Termination Date" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="termDate" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+				</apex:column>
+					
+				<apex:column >
+					<apex:facet name="header">Name</apex:facet>
+					<apex:outputText>{!Seven.First_Name__c} {!Seven.Last_name__c}</apex:outputText> 
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">Job title</apex:facet>
+					<apex:outputText>{!Seven.Job_title__c}</apex:outputText> 
+				</apex:column>
+				
+				<apex:column >
+					<apex:facet name="header">Last Date</apex:facet>
+					<apex:outputText Value=" {!Seven.Last_Day__c}"/>
+				</apex:column>
+			</apex:pageBlockTable>
+		</apex:pageBlocksection>
+		
+		<apex:pageBlocksection columns="2" title="Employees Terminating in 14 days" rendered="{!showFourteen}" id="fourteenTable" >
+			<apex:pageBlockTable value="{!employeeMap[14]}" var="Fourteen"  >
+	
+				<apex:column >
+					<apex:facet name="header">Extend</apex:facet>
+					<apex:commandLink value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="ninety" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+					&nbsp;
+					<apex:commandLink value="60 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="sixty" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+					&nbsp;
+					<apex:commandLink value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="thirty" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+				</apex:column>
+				
+				<apex:column headerValue="Terminate">
+					<apex:commandLink value="Now" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="now" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+					&nbsp;
+					<apex:commandLink value="On Termination Date" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/>
+						<apex:param value="termDate" assignTo="{!flag}" name="flag"/>
+					</apex:commandLink>
+				</apex:column>
+					
+				<apex:column >
+					<apex:facet name="header">Name</apex:facet>
+					<apex:outputText>{!Fourteen.First_Name__c} {!Fourteen.Last_name__c}</apex:outputText> 
+				</apex:column>
+				<apex:column >
+					<apex:facet name="header">Job title</apex:facet>
+					<apex:outputText>{!Fourteen.Job_title__c}</apex:outputText> 
+				</apex:column>
+			
+				<apex:column >
+					<apex:facet name="header">Last Date</apex:facet>
+					<apex:outputText Value=" {!Fourteen.Last_Day__c}"/>
+				</apex:column>
+			</apex:pageBlockTable>
+		</apex:pageBlocksection>
+		
+		<apex:outputPanel id="noOneFound" rendered="{!!(showOne||showSeven || showFourteen)}" >
+			<apex:pageMessage summary="No action is pending for non-employee attestation at this time" severity="info" strength="3"/>
+		</apex:outputPanel>
+
+	</apex:pageBlock>
+	</apex:form>
+	
+</apex:page>
