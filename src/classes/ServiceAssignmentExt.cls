@@ -829,7 +829,7 @@ public without sharing class ServiceAssignmentExt {
 				              where RecordType.Name = 'Monthly Behavior Result'
 				              and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
 			}
-			notes = [select name, id, Start_Time__c, End_time__c, createddate, createdby.name, action_plan__r.Name, Action_plan__c from Progress_Note__c where Service_Assignment__c = :currentID Order by CreatedDate DESC Limit 10];
+			notes = [select name, id, Start_Time__c, End_time__c, createddate, clinician__c,createdby.name, action_plan__r.Name, Action_plan__c from Progress_Note__c where Service_Assignment__c = :currentID Order by CreatedDate DESC Limit 10];
 			diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
 		}
 		if ( currentrecord.Service_Location__c != null) {

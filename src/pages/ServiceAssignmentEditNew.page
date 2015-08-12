@@ -1486,8 +1486,10 @@ END: Uncomment to have the element collapsed by default -->
 					</apex:column>
 					<apex:column value="{!note.Start_time__c }" rendered="{! !vfVarIsCM }"/>
 					<apex:column value="{!note.End_Time__c }" rendered="{! !vfVarIsCM }"/>
+					<apex:column value="{!note.Clinician__c}" rendered="{! vfVarIsCB && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
 					<apex:column value="{!note.createddate }" />
 					<apex:column value="{!note.createdby.name }" />
+					
 				</apex:pageblockTable>
 				<apex:outputText value="No notes to display" rendered="{!(notes.size=0)}" />
 				<apex:outputPanel rendered="{!notes.size!=0}">Showing the 10 most recent notes click&nbsp;
