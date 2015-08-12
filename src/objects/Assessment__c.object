@@ -337,6 +337,51 @@ Delete Me</description>
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Dsc_Day_Habilitation_Services__c</fullName>
+        <externalId>false</externalId>
+        <label>Dsc Day Habilitation Services</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Dsc_Organizational_Employment_Services__c</fullName>
+        <externalId>false</externalId>
+        <label>Dsc Organizational Employment Services</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Dsc_Prevocational_Services__c</fullName>
+        <externalId>false</externalId>
+        <label>Dsc Prevocational Services</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Dsc_Private_Pay_Services__c</fullName>
+        <externalId>false</externalId>
+        <label>Dsc Private Pay Services</label>
+        <length>32000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Dsc_School_Transition_Services__c</fullName>
+        <externalId>false</externalId>
+        <label>Dsc School Transition Services</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Evaluation__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -420,6 +465,33 @@ IF( Score__c &gt; 35, &apos;Poor&apos;, &apos;&apos;)))</formula>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Individual_Rights_Review_Explain__c</fullName>
+        <externalId>false</externalId>
+        <label>Individual Rights Review Explain:</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Individual_Rights_Review__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</inlineHelpText>
+        <label>Individual Rights Review</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Interval__c</fullName>
@@ -620,6 +692,37 @@ IF( Score__c &gt; 35, &apos;Poor&apos;, &apos;&apos;)))</formula>
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Service_Needs_Support__c</fullName>
+        <externalId>false</externalId>
+        <label>Service Needs/Support</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Prevocational</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Day Habilitation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Organizational Employment</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>School Transition</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Private Pay</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
     </fields>
     <fields>
         <fullName>Services_Required_Level_Day_Services__c</fullName>

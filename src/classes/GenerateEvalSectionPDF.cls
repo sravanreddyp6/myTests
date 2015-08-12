@@ -62,7 +62,7 @@ public with sharing class GenerateEvalSectionPDF {
 		
 		if (thisEval.shift_start_time__c != null && thisEval.shift_end_time__c != null) {	
 			GenerateGoalObjPDF goalscontroller = new GenerateGoalObjPDF();
-			goalscontroller.init( evaluationID, evalname);
+			goalscontroller.init( evaluationID );
 			objectives = goalscontroller.objectives;
 		}
         // Naming the PDF in case this controller is used for the PDF page

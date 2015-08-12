@@ -1,16 +1,16 @@
 public with sharing class Notes_ProgressNote_Create {
-
-
+    SystemSettings__c pnnew = SystemSettings__c.getOrgDefaults();
 //varibles
     public list<RecordType> myRTs = new list<RecordType>();
     public list<RecordType> getmyRTs(){return myRTs;}
 
     public string RTid;
     public string myState = ApexPages.currentPage().getParameters().get('state');
+    public String dispMode = ApexPages.currentPage().getParameters().get('Mode');
     public Id AZ_OPT_ID, SHIFT_NOTE_ID;
     public String pbsName { get; set; }
     Public Boolean AsmntOnly{get;set;}
-	private string usrOpGrp;
+    private string usrOpGrp;
 
     public list<SelectOption> rtOptions = new list<SelectOption>();
     public list<SelectOption> getrtOptions(){return rtOptions ;}
@@ -62,7 +62,7 @@ public with sharing class Notes_ProgressNote_Create {
         
         // EC-196 - CM uses Shift Notes 
         if ( usrOpGrp == 'Care Meridian')
-        	pn.RecordTypeId = SHIFT_NOTE_ID;
+            pn.RecordTypeId = SHIFT_NOTE_ID;
         
         //Added By Amruth for EB-436
         if(sa.recordtype.name == 'Assessment Only' && currUser != null && currUser.Operating_Group__c == 'NeuroRestorative'){
@@ -75,7 +75,7 @@ public with sharing class Notes_ProgressNote_Create {
         
         System.Debug('user op group is: ' + currUser.Operating_Group__c );
         if (currUser != null ) {
-            if (( myState == 'MN' || myState == 'IN' || myState == 'CA') && currUser.Operating_Group__c == 'Redwood') {
+            if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA') && currUser.Operating_Group__c == 'Redwood') {
                 pn.RecordTypeId = SHIFT_NOTE_ID;
                 // special case for CM Ludlow is handled above in AZ
             }
@@ -85,7 +85,7 @@ public with sharing class Notes_ProgressNote_Create {
         
         //EC-196 - skip this step for CM
         if (  usrOpGrp != 'Care Meridian')
-        	loadData();
+            loadData();
     }
     public Notes_ProgressNote_Create() {
         
@@ -157,28 +157,46 @@ public with sharing class Notes_ProgressNote_Create {
 
 // redirect if necessary
     public PageReference redirect(){
+        ID pbsId = ApexPages.currentPage().getParameters().get('person');
         ID planID = ApexPages.currentPage().getParameters().get('plan');
         ID admID = ApexPages.currentPage().getParameters().get('admission');
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
+        
         string retURL = ApexPages.currentPage().getParameters().get('retURL');
         if ( pn.RecordTypeId == SHIFT_NOTE_ID ) {
-        	PageReference prShiftNote;
-        	
-        	// EC-196 - CM gets different shift note form
-        	if ( usrOpGrp == 'Care Meridian') {
-        		prShiftNote = Page.shiftnote_narrative_form;
-        	} else {
-				prShiftNote = Page.shiftnote_basic_form;
-	            prShiftNote.getParameters().put('planID', planId);
-        	}
+            PageReference prShiftNote;
+            // EC-196 - CM gets different shift note form
+            if ( usrOpGrp == 'Care Meridian') {
+                prShiftNote = Page.shiftnote_narrative_form;
+            } else {
+                prShiftNote = Page.shiftnote_basic_form;
+                prShiftNote.getParameters().put('planID', planId);
+            }
             prShiftNote.getParameters().put('admID', admId);
             prShiftNote.getParameters().put('saID', saID);
             prShiftNote.getParameters().put('retURL', retURL);
             prShiftNote.setRedirect(true);
             return prShiftNote;
         }
+        
+        else if((pn.RecordTypeId == AZ_OPT_ID) && pnnew.AZ_OPT_Enabler__c) {
+            if (usrOpGrp == 'Redwood') { 
+                PageReference AZOPTnote = new PageReference('/apex/Notes_ProgressNote_AZ_OPT');
+                AZOPTnote.getParameters().put('Mode', 'New');
+                //AZOPTnote.getParameters().put('Id', pn.ID);
+                AZOPTnote.getParameters().put('ServAssignId', saID);
+                AZOPTnote.getParameters().put('plan', planId);
+                AZOPTnote.getParameters().put('admission', admId);
+                AZOPTnote.getParameters().put('person', pbsId);
+                AZOPTnote.getParameters().put('State',myState);AZOPTnote.getParameters().put('retURL', retURL);
+                AZOPTnote.setRedirect(true);
+                return  AZOPTnote;
+            }  
+            return null;    
+  
+        }
         else
-            return null;
+        return null; 
                 
     }
 

@@ -36,9 +36,57 @@
 			<apex:pageBlockButtons location="bottom">
 				<apex:commandButton value="Run Report" action="{!runReport}" status="pageProcessing" rerender="{!$Component.tableBlock}, pageMessages" oncomplete="setUpTable();" />
 			</apex:pageBlockButtons>
-			<apex:pageBlockSection id="dateRangeBlockSection" columns="2">
-				<apex:inputField value="{!dummyEvaluation.Evaluation_Date__c}" label="Start Date" />
-				<apex:inputField value="{!dummyEvaluation.Dialysis_Onset__c}" label="End Date" />
+			<apex:outputPanel style="margin-bottom: 10px; " layout="block">
+				<apex:outputLabel styleclass="labelCol" value="Start Date" for="startDate" />
+				<apex:inputField value="{!dummyEvaluation.Evaluation_Date__c}" id="startDate" label="Start Date" />
+				<apex:outputLabel styleclass="labelCol" value="End Date" for="endDate" />
+				<apex:inputField value="{!dummyEvaluation.Dialysis_Onset__c}" id="endDate" label="End Date" />
+			</apex:outputPanel>
+			<apex:pageBlockSection id="programSection" title="Programs (Please select one or more Programs from the below list to view clients.)" columns="1" collapsible="false">
+				<apex:outputpanel >
+					<table>
+						<tr>
+							<td>
+								<apex:selectList value="{!leftSelectedPrograms}" size="7" multiselect="true" style="min-width: 235px; ">
+									<apex:selectOptions value="{!leftPrograms}"/>
+								</apex:selectList>
+							</td>
+							<td style="vertical-align: middle">
+								<apex:commandButton value="add"
+									action="{!addPrograms}"
+									reRender="programSection, pbsSection"
+									status="pageProcessing"
+									oncomplete="setUpPBSTable()"
+									style="height: 25px; width: 35px;" />
+								<br/>
+								<apex:commandButton value="remove"
+									action="{!removePrograms}"
+									reRender="programSection, pbsSection"
+									status="pageProcessing"
+									oncomplete="setUpPBSTable()"
+								style="height: 25px; width: 50px;"/>
+							</td>
+							<td>
+								<apex:selectList value="{!rightSelectedPrograms}" size="7" multiselect="true" style="min-width:235px">
+									<apex:selectOptions value="{!rightPrograms}" />
+								</apex:selectList>
+							</td>
+						</tr>
+					</table>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection id="pbsSection" title="Person Being Served (Please select one or more names from the list. Type a name in the field below to filter the list.)" columns="1" collapsible="false">
+				<div style="position:relative; left:180px; top:10px; ">
+					<a href="#" onclick="clearAllPBS(); return false;">Clear</a>&nbsp;&nbsp;
+					<a href="#" onclick="selectAllPBS(); return false;">Select All</a>
+				</div>
+				<Br />
+				<apex:outputPanel >
+					<br />
+					<apex:selectCheckboxes html-class="pbsTable" value="{!selectedPBS}" layout="pageDirection" id="pbsCheckboxes">
+						<apex:selectOptions value="{!pbsList}"></apex:selectOptions>
+					</apex:selectCheckboxes>
+				</apex:outputPanel>
 			</apex:pageBlockSection>
 		</apex:pageBlock>
 		<apex:pageBlock id="tableBlock">
@@ -79,6 +127,36 @@
 
 			window.setUpTable = function () {
 				$(document.getElementById('{!$Component.mainForm.tableBlock}')).find('table').dataTable();
+			};
+
+			window.setUpPBSTable = function () {
+				$('.pbsTable').dataTable({
+					"bFilter": true,
+					"bLengthChange": false,
+					"aoColumnDefs": [{
+						"sTitle": "Name",
+						"aTargets": [ 0 ]
+					}],
+					"fnDrawCallback": function (oSettings) {
+						$(oSettings.nTHead).hide();
+						$(oSettings.nTableWrapper).find(".dataTables_filter").css({
+							"float": "left",
+							"text-align": "left"
+						})
+					}
+				});
+			};
+
+			window.selectAllPBS = function () {
+				$('input[id *=pbsCheckboxes]').each(function(index,element) {
+					$(element).prop('checked', true);
+				});
+			};
+
+			window.clearAllPBS = function () {
+				$('input[id *=pbsCheckboxes]').each(function(index,element) {
+					$(element).prop('checked', false);
+				});
 			};
 		});
 	</script>

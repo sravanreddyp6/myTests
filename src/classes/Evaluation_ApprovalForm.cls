@@ -25,6 +25,7 @@ public with sharing class Evaluation_ApprovalForm {
     public PageReference myFinal(){
         Evaluation__c thisEval = (Evaluation__c)controller.getrecord();
         thisEval.status__c = 'Final';
+        thisEval.Signed_At__c = system.Now();
         update thisEval;
         if ( !No_Approval_Needed) {
             return new PageReference('/p/process/Submit?id='+controller.getid());
