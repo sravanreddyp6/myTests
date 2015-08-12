@@ -14,7 +14,7 @@ public with sharing class nonemployeeAttestationController {
 	
 	
 	public Map<Integer,List<TMN_User__c>> employeeMap{get{
-		List<TMN_User__c> employeeList = [SELECT Id, NAME, Job_Status__c, Job_title__c, Termination_Date__c, First_Name__c, Last_Name__c, Manager_Lookup__c FROM TMN_user__c WHERE Manager_Lookup__c = :managerId AND Current_Person_Type__c = 'Non-Employee'];
+		List<TMN_User__c> employeeList = [SELECT Id, NAME, Job_Status__c, Job_title__c, Termination_Date__c, Last_Day__c, First_Name__c, Last_Name__c, Manager_Lookup__c FROM TMN_user__c WHERE Manager_Lookup__c = :managerId AND Current_Person_Type__c = 'Non-Employee'];
 			employeeMap = new Map<Integer,List<TMN_User__c>>();
 			List<TMN_user__c> employeeOne = new List<TMN_User__c>();
 			employeeMap.put(1,employeeOne);
@@ -24,15 +24,15 @@ public with sharing class nonemployeeAttestationController {
 			employeeMap.put(14,employeeFourteen);
 			
 		for(TMN_User__c t: employeeList){
-			if(Date.Today().daysBetween(t.Termination_Date__c) == 1 ){
+			if(Date.Today().daysBetween(t.Last_Day__c) == 1 ){
 				employeeOne.add(t);
 				employeeMap.put(1,employeeOne);
 			}
-			if(Date.Today().daysBetween(t.Termination_Date__c) == 7){
+			if(Date.Today().daysBetween(t.Last_Day__c) == 7){
 				employeeSeven.add(t);
 				employeeMap.put(7,employeeSeven);
 			}
-			if(Date.Today().daysBetween(t.Termination_Date__c) == 14){
+			if(Date.Today().daysBetween(t.Last_Day__c) == 14){
 				employeeFourteen.add(t);
 				employeeMap.put(14,employeeFourteen);
 			}
@@ -48,8 +48,11 @@ public with sharing class nonemployeeAttestationController {
 		
 	}private set;}
 	
+	
+	
 	public string getbaseUrl(){
-		return URL.getSalesforceBaseUrl().toExternalForm();
+		Site_URL__c s = Site_URL__c.getValues('NonemployeeAttestationSite');
+		return s.Prefix__c;
 	}
 	
 	
