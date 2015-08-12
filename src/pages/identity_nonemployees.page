@@ -219,7 +219,7 @@
                         </apex:commandLink>
                         <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">View</apex:outputLink>-->
                         &nbsp;&#124;&nbsp;
-                        <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(ner.Current_Person_Type__c ='Active Employee','false','true')}">Edit</apex:outputLink>
+                        <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(ner.Current_Person_Type__c ='Employee','false','true')}">Edit</apex:outputLink>
                         &nbsp;&#124;&nbsp;
                         <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Provision</apex:outputLink>
                         </apex:column>
@@ -244,7 +244,7 @@
                         <apex:pageblockButtons location="Bottom" >    
                         <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=theTMNUser.id])}"/>-->
                         <!--<apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>-->
-                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
+                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!OR(theTMNUser.Current_Person_Type__c == 'Non-Employee',theTMNUser.Current_Person_Type__c == 'Pre-hire')}"/>
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
                         <apex:commandButton value="Provision Access" action="{!URLFOR($Page.identity_canvas, '')}" />
                     </apex:pageblockButtons>            
@@ -289,9 +289,11 @@
                         <apex:outputField label="Accountable Approval Manager Email" value="{!theTMNUser.Accountable_Manager_Mentor_Email__c}"/>                     
                     </apex:pageBlockSection>
                     <apex:pageBlockSection title="System IDs" columns="2">
-                        <!--<apex:outputField label="Identity ID" value="{!theTMNUser.Identity_ID__c}" />-->
+                        <apex:outputField label="Identity ID" value="{!theTMNUser.Identity_ID__c}" />
                         <apex:outputField label="Salesforce Account" value="{!theTMNUser.Salesforce_User_Account__c}"/>
-                        <apex:outputField label="Network Username" value="{!theTMNUser.Network_Username__c}"/>                                            
+                        <apex:outputField label="Network Username" value="{!theTMNUser.Network_Username__c}"/>
+                        <apex:outputField label="Employee ID" value="{!theTMNUser.Employee_Number__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/>
+                        <apex:outputField label="Taleo ID" value="{!theTMNUser.Teleo_ID__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/>                                            
                     </apex:pageBlockSection>
                     <apex:PageBlockSection columns="2">
                          <apex:outputField label="Vendor"  value="{!theTMNUser.Vendor_list__c}" /> 
@@ -300,7 +302,7 @@
                       <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         </apex:PageBlockSection>  
                         <apex:pageBlock title="Existing Attachments" rendered="{!theTMNUser.Vendor_list__c='OTHER'}">
- 		               <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
+                       <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column style="padding-right: 9px;" headerValue="Title">
                     <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
                 </apex:column>

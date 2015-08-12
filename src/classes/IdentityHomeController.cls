@@ -106,20 +106,6 @@ public with sharing class IdentityHomeController {
         return delegateFor;
     }
 
-    //Get list of records for employee attestation. Currently not on page
-//    List<TMN_User__c> attestNonEmployees;
-//    public List<TMN_User__c> getattestNonEmployees() {
-//        attestNonEmployees = [SELECT Email__c,Employee_Number__c,Employee_Type__c,First_Name__c,
-//                   Hire_Date__c,Id,Job_Status__c,Job_Title__c,Last_Name__c,Manager_Email__c,
-//                   Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,
-//                   Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c,Last_Day__c,Current_Person_Type__c 
-//                   FROM TMN_User__c 
-//                   WHERE Manager_Email__c=:aliasName 
-//                   AND Current_Person_Type__c NOT IN ('Employee')
-//                   AND Last_Day__c<=:endDate
-//                   ORDER BY Last_Day__c ASC];
-//        return attestNonEmployees;
-//    }
 
     //Get list of assigned delegates for the user.    
     List<TMN_User_Delegate__c> myDelegates;        
@@ -496,16 +482,16 @@ public with sharing class IdentityHomeController {
     public PageReference viewTmnUser(){
         theTMNUser = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
                             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,
-                            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Level__c,Job_Status__c,Job_Title__c,
+                            Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Level__c,Job_Status__c,Job_Title__c,Identity_ID__c,
                             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
                             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
                             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
-                            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,
+                            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Teleo_ID__c,
                             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,Program_String__c ,
                             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_Name__c ,Vendor_list__c
                             FROM TMN_User__c 
                             WHERE Id =:selectedID];    
-    	attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:theTMNUser.id order by createddate desc];               
+        attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:theTMNUser.id order by createddate desc];               
         showInfo();
         return null;
     }
