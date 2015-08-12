@@ -16,14 +16,27 @@ public with sharing class Progress_NoteHandler {
 
     public void OnBeforeUpdate(Progress_Note__c[] oldObjects, Progress_Note__c[] updatedObjects, Map<Id,Progress_Note__c> newObjMap, Map<Id, Progress_Note__c> oldObjMap){
         // BEFORE UPDATE LOGIC
+        
+        
         Set<Id> theseNotesServiceAssignmentIds = new Set<Id>();
+        Set<Id> emps = new Set<ID>();
         for(Progress_Note__c p : updatedObjects) {
         	theseNotesServiceAssignmentIds.add(p.Service_Assignment__c);
+        	emps.add( p.clinician__c);
         }
         
         List<Diagnosis__c> listOfDxs = [ SELECT Id, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Effective_Date__c FROM Diagnosis__c WHERE Service_Assignment__c = :theseNotesServiceAssignmentIds ];
-        
+        Map<ID, TMN_User__c> empMap = new Map<ID, TMN_User__c>([ select id, employee_number__c from tmn_user__c where id in :emps]);
         for(Progress_Note__c p : updatedObjects) {
+        	// EB-526 - update the credentials field with TMN User info - can't do as formula due to max # of lookups on object
+        	
+        	if ( p.Clinician__c != null) 
+        		p.Clinician_Employee_ID__c = empMap.get( p.Clinician__c).Employee_Number__c;
+        		
+        	system.debug( 'Clinician: ' + p.Clinician__c + ', Employee ID:' + p.clinician_employee_ID__c);
+        	// END EB-526
+        	
+        		
         	System.debug('START: PROGRESS NOTE HANDLER LOOP FOR UPDATED DIAGNOSES; Progress_Note__c loop for updatedObjects');
         	Diagnosis__c mostRecentDx = new Diagnosis__c();
         	for(Diagnosis__c dx : listOfDxs) {
