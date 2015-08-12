@@ -287,6 +287,11 @@
 											<a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#AI" class="servicelink">View/Edit Advanced Directives</a>
 											<br />
 										</apex:outputText>
+										
+										<apex:outputText rendered="{!parentPage == 'ServAssign' && opGrp == 'NeuroRestorative' }">
+											<a  href="{!IF(parentPage != 'ServAssign', '/apex/PersonBeingServedEditNew?id={!saId}', '')}#Funding_Sources" class="servicelink">View/Edit Funding Sources</a>
+											<br />
+										</apex:outputText>
 
 									</td>
 								</tr>

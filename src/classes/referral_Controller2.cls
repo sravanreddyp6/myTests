@@ -132,7 +132,7 @@ public with sharing class referral_Controller2 {
     SystemSettings__c OS = SystemSettings__c.getOrgDefaults(); // Custom setting to control the visibility of convert button for CareMeridian group Sravan: 07/10/2014 1:42 PM.
     public boolean canConvert{ get {
 
-        Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana'};
+        Set<string> RWStates = new Set<string>{'Minnesota', 'California', 'Indiana', 'Iowa'};
         system.debug( 'Ref record type: ' + referralrecordtype );
         system.debug(' is cambridge:' + iscambridge);
         system.debug(' operatinggroup:' + operatinggroup);

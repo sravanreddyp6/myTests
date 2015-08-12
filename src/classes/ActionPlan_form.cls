@@ -463,10 +463,27 @@ public pagereference mySave(){
 
                 
     try{
-        //remove any goals taht are blank, they will not be saved
-        for(string g: planStuff.keySet()){    
-            if(planStuff.get(g).theGoal.Description__c == null){
-                planStuff.remove(g);
+        //remove any goals taht are blank as long as the obj and act are blank else throw an error
+        boolean goalError = false;
+        for(string g: planStuff.keySet()){  
+        	boolean hasChildData = false;  
+        	for( clsObj o: planStuff.get(g).GoalObjs.values() ){
+        		if(o.theObj.Description__c != null){hasChildData = true; break;}
+        		
+        		for( clsAction a :  o.objActs.values() ){
+        			if ( a.theAction.Description__c != null ){hasChildData = true; break;}
+        		}
+        	}
+            if(planStuff.get(g).theGoal.Description__c == null ){
+            	planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');	
+            	goalError = true;
+                if( hasChildData ){
+                	planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');
+                	goalError = true;
+                }
+                else{
+                	//planStuff.remove(g);
+                }
             } 
         }   
     
@@ -477,7 +494,7 @@ public pagereference mySave(){
             else
                 {goalsToUpdate.add(g.theGoal); system.debug('1st goal check needs to be updated? - true');}
             
-            for(clsObj o: g.GoalObjs.values()){
+            for( clsObj o: g.GoalObjs.values() ){
                 system.debug('1st obj check - ' + o.theobj.id);
                 if(o.isNew && o.theObj.id==null)
                     {objToInsert.add(o.theObj);}
@@ -513,7 +530,7 @@ public pagereference mySave(){
             
             }
         }
-        if(hadStatusErr ){
+        if(hadStatusErr || goalError){
             return null;
         }
                 
