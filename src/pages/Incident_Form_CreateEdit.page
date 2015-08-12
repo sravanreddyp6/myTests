@@ -46,9 +46,9 @@
             
             getJSONFieldVal = function() {
             
-            var $field = $('[id$=jsonstring]');
+            var $field = $('[id$=json]');
             if ($field != null )
-                return $field.val();
+                return $field.text();
             else
                     return '';
             };
@@ -301,7 +301,8 @@ function evalFirstReportedField(eley, leaveBlank){
 	            </apex:pageBlockSection>
 	            
 	            <apex:pageBlockSection columns="1" id="relStaffSection">
-	                    <apex:inputHidden id="jsonstring" value="{!newPeopleJSON}" />
+	            	<apex:outputPanel style="display: none;" id="json">{!newPeopleJSON}</apex:outputPanel>                   
+	            	
 	            <apex:pageBlockTable id="relStaff" value="{!mapStaff}" var="relper" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relExistingCount > 0}">
 	            
 	            <apex:column headerValue="Action">
@@ -426,13 +427,13 @@ function evalFirstReportedField(eley, leaveBlank){
 	        <apex:param name="incList" value="" assignTo="{!personListJSON}" />
 	    </apex:actionFunction>
 	    
-	     <apex:actionFunction name="showAddPerson" status="pageProcessing" action="{!newPerson}" rerender="personDialogMainBlock" oncomplete="openModalDialog('personDialog', 'div', 'Add Related Person', null, 1000, 'lowerForm','false');" immediate="true">
+	     <apex:actionFunction name="showAddPerson" status="pageProcessing" action="{!newPerson}" rerender="json, personDialogMainBlock" oncomplete="openModalDialog('personDialog', 'div', 'Add Related Person', null, 1000, 'lowerForm','false');" immediate="true">
 	        <apex:param name="personType" value="" assignTo="{!personTypeToAdd}" />
 	    </apex:actionFunction>
-	     <apex:actionFunction name="delPerson" status="pageProcessing" action="{!delPerson}" rerender="relStaffSection, relMentorSection, relOtherSection" onComplete="setUpFields();" immediate="true">
+	     <apex:actionFunction name="delPerson" status="pageProcessing" action="{!delPerson}" rerender="json, relStaffSection, relMentorSection, relOtherSection" onComplete="setUpFields();" immediate="true">
 	        <apex:param name="Id" value="" assignTo="{!persontoEditDelete}" />
 	    </apex:actionFunction>
-	     <apex:actionFunction name="showEditPerson" status="pageProcessing" action="{!editPerson}" rerender="personDialogMainBlock" immediate="true" oncomplete="openModalDialog('personDialog', 'div','Edit Related Person',null, 1000, 'lowerForm', 'false');">
+	     <apex:actionFunction name="showEditPerson" status="pageProcessing" action="{!editPerson}" rerender="json, personDialogMainBlock" immediate="true" oncomplete="openModalDialog('personDialog', 'div','Edit Related Person',null, 1000, 'lowerForm', 'false');">
 	        <apex:param name="Id" value="" assignTo="{!persontoEditDelete}" />
 	    </apex:actionFunction>
 	    

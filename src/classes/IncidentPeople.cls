@@ -17,7 +17,10 @@ public integer existingStaff { get; set; }
 public integer existingMentor { get; set; }
 public integer existingOther { get; set; }
 Private List<Incident_Person__c> newPeople;
-public String newPeopleJSON { get {	return JSON.serialize(newPeople);} set;}
+public String newPeopleJSON { get {	
+	//rebuild the new people list
+	
+	return JSON.serialize(newPeople);} set;}
 
 public IncidentPeople(Apexpages.StandardController controller){
 		
@@ -115,13 +118,25 @@ public void editPerson () {
 	currPerson = relExisting.get(personToEditDelete).relatedPerson;
 }
 
-			public pageReference delPerson() {
-				
-				removeFromTypeMap( personToEditDelete);
-				relExisting.remove( personToEditDelete );
-			
-				return null;
-			}
+public pageReference delPerson() {
+	
+	removeFromTypeMap( personToEditDelete);
+	relExisting.remove( personToEditDelete );
+	newPeople = new List<Incident_Person__c>();
+	for(IncidentPersonWrapper IW : mapOther.values() ){
+		if(IW.isNew)
+			newPeople.add(IW.relatedPerson);
+	}
+	for(IncidentPersonWrapper IW : mapMentor.values() ){
+		if(IW.isNew)
+			newPeople.add(IW.relatedPerson);
+	}
+	for(IncidentPersonWrapper IW : mapStaff.values() ){
+		if(IW.isNew)
+			newPeople.add(IW.relatedPerson);
+	}			
+	return null;
+}
 
 private void removeFromTypeMap( string keytoDel ) {
 	
@@ -139,20 +154,7 @@ private void removeFromTypeMap( string keytoDel ) {
 		mapMentor.remove( keyToDel );		
 	}
 	
-	//rebuild the new people list
-	newPeople = new List<Incident_Person__c>();
-	for(IncidentPersonWrapper IW : mapOther.values() ){
-		if(IW.isNew)
-			newPeople.add(IW.relatedPerson);
-	}
-	for(IncidentPersonWrapper IW : mapMentor.values() ){
-		if(IW.isNew)
-			newPeople.add(IW.relatedPerson);
-	}
-	for(IncidentPersonWrapper IW : mapStaff.values() ){
-		if(IW.isNew)
-			newPeople.add(IW.relatedPerson);
-	}		
+		
 	
 }
 private void addToTypeMap( IncidentPersonWrapper ipw ) {
