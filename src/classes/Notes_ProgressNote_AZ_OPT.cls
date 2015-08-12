@@ -199,14 +199,14 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             return null;
         }
         else{
-            displayPopup = true; 
+        	displayPopup = true; 
             LoadData(thePN);
             return null;
             
-        }
+        } 
     }
     public Notes_ProgressNote_AZ_OPT(ApexPages.StandardController controller){
-         GoalsSelected='';overlappingProgressNote = new list<progress_note__c>();GoalsDeSelected='';
+    	 GoalsSelected='';overlappingProgressNote = new list<progress_note__c>();GoalsDeSelected='';
          GoalSelStrs = New List<String>();
          GoalSelStrsremvd = New List<String>();
          String dispMode = ApexPages.currentPage().getParameters().get('Mode');
@@ -487,7 +487,11 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public pagereference cancelEditNote(){
     System.debug('Here at line 485');
         newBlock = false; 
-       pagereference pageref = new Pagereference('/'+pn.id);
+        pagereference pageref;
+        if(pn.id!=Null)
+            pageref = new Pagereference('/'+pn.id);
+        else
+            pageref = new Pagereference('/'+theServAssignId);
        pageref.setredirect(true);
         return pageref;
     }
