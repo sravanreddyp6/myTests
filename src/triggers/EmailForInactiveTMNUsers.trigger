@@ -1,6 +1,7 @@
 trigger EmailForInactiveTMNUsers on TMN_User__c (before insert, before update) {
 
-    /* 
+    /*
+     * 
      * Shaun-76
      *------------
      * Any user whose Job Status is being "inactivated" should
