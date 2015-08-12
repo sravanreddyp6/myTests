@@ -847,6 +847,41 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Clinician_Employee_ID__c</fullName>
+        <description>Staff employee ID - from Clinician lookup - populated through trigger</description>
+        <externalId>false</externalId>
+        <label>Practitioner ID</label>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Clinician__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Staff Name</label>
+        <lookupFilter>
+            <active>true</active>
+            <errorMessage>Please choose a clinician from the list</errorMessage>
+            <filterItems>
+                <field>TMN_User__c.Operating_Group__c</field>
+                <operation>equals</operation>
+                <valueField>$User.Operating_Group__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Progress Notes</relationshipLabel>
+        <relationshipName>Progress_Notes</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Co_Therapist_unable_to_bill__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
