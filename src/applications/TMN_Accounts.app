@@ -2,7 +2,7 @@
 <CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
     <defaultLandingTab>TMN_User__c</defaultLandingTab>
     <label>TMN Accounts</label>
-    <logo>SharedDocuments/TMN_Logo.png</logo>
+    <logo>SharedDocuments/TMNLogo.png</logo>
     <tab>TMN_User__c</tab>
     <tab>standard-Chatter</tab>
     <tab>standard-Workspace</tab>
