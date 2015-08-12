@@ -473,7 +473,9 @@
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
 				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !(vfVarIsCM || isNR) }" />
 				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR)}" required="{!episodeReq}" />
-				<apex:pageblocksectionitem />
+				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
+				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
+				<apex:pageblocksectionitem rendered="{! !vfVarIsCB}" />
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
 				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR}">
 					<apex:outputLabel value="Model" for="modelfield" />
