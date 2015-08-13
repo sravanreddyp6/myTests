@@ -23,12 +23,13 @@
   <script language="javascript">
 
    j$ = jQuery.noConflict();
+   
      //disable enter key
-function stopRKey(evt) {
-   var evt = (evt) ? evt : ((event) ? event : null);
-   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
-}
+	function stopRKey(evt) {
+	   var evt = (evt) ? evt : ((event) ? event : null);
+	   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+	   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+	}
 
     jQuery(document).ready(function ($) {
        setUpFields = function () {
@@ -50,9 +51,9 @@ function stopRKey(evt) {
 					applyShowHideRulesToField(target);
 				});
 			};
-		setUpFields();
-        setUpTabOrder();
-    });   //end "ready" function
+	setUpFields();
+    setUpTabOrder();
+  });   //end "ready" function
 
 
   //opens the dialog
