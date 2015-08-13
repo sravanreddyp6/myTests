@@ -106,7 +106,7 @@ function evalFirstReportedField(eley, leaveBlank){
     font-size:10pt !important;
 }
 .pbSubheader {
-   border-top: 1px solid #253e76 !important;
+   border-top: none !important;
    background-color: transparent  !important;
    color: black !important; 
 }
@@ -118,13 +118,13 @@ function evalFirstReportedField(eley, leaveBlank){
     color: white !important;
 }
 [id$="_secondHeader"] .pbSubheader{
-   border-top: none !important;
-   background-color: transparent  !important;
-   color: black !important; 
+	border-top: 1px solid #253e76 !important;
+   
+    background-color: transparent  !important;
+    color: black !important; 
 }
 .pbSubheader h1, .pbSubheader h2, .pbSubheader h3{   font-size: 11pt !important;}
-
-.labelCol{color: black !important; }
+.labelCol {color: black !important; }
 
 .detailList tr td, .detailList tr th{ }
 </style>
@@ -145,7 +145,7 @@ function evalFirstReportedField(eley, leaveBlank){
 	        </apex:pageBlockButtons>     
         	<apex:pageBlockSection id="_firstHeader" title="Incident Information"  collapsible="false">
         	</apex:pageBlockSection>	           
-	            <apex:pageBlockSection id="_secondHeader" title="Current Service" columns="1" collapsible="false"  >
+	            <apex:pageBlockSection title="Current Service" columns="1" collapsible="false" rendered="{!servAssign.id != null}"  >
 	                <apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
 	                    <apex:outputLabel value="Which Current Service is Related to the Incident? "  />
 	                    <apex:outputField value="{!Incident__c.Service_Assignment__c }" />
