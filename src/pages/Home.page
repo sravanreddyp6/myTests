@@ -235,7 +235,7 @@
 					</apex:column>
                 	<apex:column headerValue="View Note Log" rendered="{!canCreateProgressNotes}">
                     <apex:outputPanel rendered="{! canCreateProgressNotes}">
-                        <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&admission={!serviceAssignment.Admission__c}">View Note Log</a><br />
+                        <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View Note Log</a><br />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
