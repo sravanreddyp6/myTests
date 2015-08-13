@@ -1,5 +1,6 @@
-#pbsBlueCard{background-color:  #017dc3; font-size: 11pt; color: white;}
-#pbsBlueCard td{color: white; font-family: Arial, Helvetica, sans-serif;}
+#pbsBlueCard{background-color:  #017dc3; font-size: 11pt; }
+#pbsBlueCard label{font-weight: bold; font-family: Arial, Helvetica, sans-serif; font-size: 9pt;}
+#pbsBlueCard td{color: white; font-family: Arial, Helvetica, sans-serif; font-size: 9pt;}
         .pbsimg {
         width:100px !important;
 		display: block;
@@ -15,7 +16,7 @@
         } 
 
         .pbstitle { font-weight:bold; font-style:italic; color: white; line-height:24px; padding-left:5px }
-        .pbsname {font-weight:bold; font-size:13pt; padding-left:5px; color: white;}
+        .pbsname {font-weight:bold; font-size:11pt; padding-left:5px;}
         
         .breadcrumb, .breadcrumb a, .breadcrumb a.visited { color: #781d7d; text-decoration: none; font-size: 9pt; }
         .breadcrumb a:hover { text-decoration: underline }
@@ -25,6 +26,7 @@ text-decoration: underline;
     color: #7bc145 !important;
     white-space: nowrap;
 }
-
-
-	        	<div class="tmnHeader"></div>
+.lta-row label{font-size: 11pt !important;}
+.lta-row {font-size: 11pt !important;}
+#pbsCard-serviceLinks label{color: #017dc3;}
+#breadcrumb{padding: 2px 2px 10px;}
