@@ -125,8 +125,7 @@
         <apex:outputPanel id="viewall" rendered="{!viewall}">&nbsp;> View All Attachments</apex:outputPanel>
         <apex:outputPanel id="upload" rendered="{!upload}">&nbsp;> Upload Attachments</apex:outputPanel>
     </div>
-    <br />
-    <div id="pbsBlueCard" tyle="background-color:#99ccff !important; font-size:11px;" >
+    <div id="pbsBlueCard" >
         <apex:form >
             <table style="vertical-align:top" width="100%" border="0">
                 <tr>
@@ -142,77 +141,74 @@
                         <span class="pbsname">{!con.FirstName}  {!con.LastName}</span>
                         <table cellpadding="5" style="border-collapse:collapse; border-spacing:0;">
                             <tr>
-                                <td width="25%"><b>Person #:</b>&nbsp;
+                                <td width="25%"><label>Person #:</label>&nbsp;
                                     <apex:outputText value="{!con.PBS_Identifier__c}" />
                                 </td>
-                                <td width="25%"><b>Ethnicity:</b>&nbsp;
+                                <td width="25%"><label>Ethnicity:</label>&nbsp;
                                     <apex:OutputText value="{!con.Ethnicity_Picklist__c}" />
                                 </td>
                                 <apex:outputLabel rendered="{!guardianCount>0}">
-                                    <td width="25%"><b>Guardian:</b>&nbsp;
+                                    <td width="25%"><label>Guardian:</label>&nbsp;
                                         <apex:OutputText value="{!con.Guardian1_Name__c}" />
                                     </td>
                                 </apex:outputLabel>
                                 <apex:outputLabel rendered="{!primaryPhysician != ''}">
-                                    <td width="25%"><b>Primary Physician:</b>&nbsp;
+                                    <td width="25%"><label>Primary Physician:</label>&nbsp;
                                         <apex:outputText value="{!primaryPhysician}" />
                                     </td>
                                 </apex:outputLabel>
                             </tr>
                             <tr>
-                                <td width="25%"><b>DOB:</b>&nbsp;
+                                <td width="25%"><label>DOB:</label>&nbsp;
                                     <apex:outputText id="txtdob" value="{0, date, MM/dd/yyyy}">
                                         <apex:param value="{!con.Birthdate}" /></apex:outputText>
                                 </td>
-                                <td width="25%"><b>Primary Language:</b>&nbsp;
+                                <td width="25%"><label>Primary Language:</label>&nbsp;
                                     <apex:OutputText value="{!con.Primary_Language__c}" />
                                 </td>
                                 <apex:outputLabel rendered="{!guardianCount>0}">
-                                    <td width="25%"><b>Guardian Phone:</b>&nbsp;
+                                    <td width="25%"><label>Guardian Phone:</label>&nbsp;
                                         <apex:OutputText value="{!con.Guardian_Phone_Number__c}" />
                                     </td>
                                 </apex:outputLabel>
                                 <apex:outputLabel rendered="{!primaryPhysicianPhone != ''}">
-                                    <td width="25%"><b>Primary Physician Phone:</b>&nbsp;
+                                    <td width="25%"><label>Primary Physician Phone:</label>&nbsp;
                                         <apex:outputText value="{!primaryPhysicianPhone}" />
                                     </td>
                                 </apex:outputLabel>
                             </tr>
                             <tr>
-                                <td width="25%"><b>Age:</b>&nbsp;
+                                <td width="25%"><label>Age:</label>&nbsp;
                                     <apex:outputText label="Age"> {!age} </apex:outputText>
                                 </td>
-                                <td width="25%"><b>Primary Diagnosis:</b>&nbsp;
+                                <td width="25%"><label>Primary Diagnosis:</label>&nbsp;
                                     <apex:outputText value="{!primaryDiagnosis}" />
                                 </td>
                                 <td width="25%"></td>
-                                <!--                             <apex:outputLabel rendered="{!con.Family_Member_Other__c != ''}"> -->
-                                <!--                             <td><b>Other Family Members:</b>&nbsp;<apex:OutputText value="{!con.Family_Member_Other__c}"/></td> -->
-                                <!--                             </apex:outputLabel> -->
                                 <apex:outputLabel rendered="{!con.Advanced_Directives__c}">
-                                    <td width="25%"><b>Advance Directives:</b>&nbsp;
+                                    <td width="25%"><label>Advance Directives:</label>&nbsp;
                                         <apex:outputLabel value="{!HTMLENCODE('Yes')}" />
                                     </td>
                                 </apex:outputLabel>
                             </tr>
                             <tr>
-                                <td width="25%"><b>Gender:</b>&nbsp;
+                                <td width="25%"><label>Gender:</label>&nbsp;
                                     <apex:OutputText value="{!con.Gender__c}" />
                                 </td>
                                 <td width="25%"></td>
                                 <td width="25%"></td>
                                 <apex:outputLabel rendered="{!con.Code_Status__c != ''}">
-                                    <td width="25%"><b>Code Status:</b>&nbsp;
+                                    <td width="25%"><label>Code Status:</label>&nbsp;
                                         <apex:outputLabel value="{!con.Code_Status__c}" />
                                     </td>
                                 </apex:outputLabel>
                             </tr>
                             <apex:outputPanel layout="none" rendered="{!!evaluationResponses.empty}">
                                 <tr>
-                                    <td colspan="4">
-                                        <b>LTA:</b>
+                                    <td class="lta-row" colspan="4">
+                                        <label>LTA:</label>
                                         <apex:repeat value="{!evaluationResponses}" var="allergy">
-                                            <b>Type:</b> {!allergy.Allergy_Type__c}. <b>Details</b>: {!allergy.Allergy_Details__c}.
+                                            <label>Type:</label> {!allergy.Allergy_Type__c}. <label>Details</label>: {!allergy.Allergy_Details__c}.
                                         </apex:repeat>
                                     </td>
                                 </tr>
@@ -220,7 +216,7 @@
                             <apex:outputPanel layout="none" rendered="{!(opGrp == 'Care Meridian' && servAssigns.size > 0 && isolationStatus == 'Isolated' )}">
                                 <tr>
                                     <td>
-                                        <b>Isolated</b>: {!isolationType}
+                                        <label>Isolated</label>: {!isolationType}
                                     </td>
                                 </tr>
                             </apex:outputPanel>
@@ -237,7 +233,7 @@
                         <div style="padding:0px 35px 0px 0px;">
                             <table id="pbsCard-serviceLinks" style="border:1px solid #6699cc; background-color:white; padding-bottom:10px">
                                 <tr>
-                                    <td colspan="2"><b>Service Links:</b></td>
+                                    <td colspan="2"><label>Service Links:</label></td>
                                 </tr>
                                 <tr>
                                     <td style="vertical-align:top; text-align:left;line-height:20px">

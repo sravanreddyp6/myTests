@@ -15,7 +15,7 @@ public with sharing class AdmissionEditExtension {
         if(!Test.isRunningTest()) {
             this.stdController.addFields(new String[] {'Name', 'Effective_Date__c','Admission_Effective_DateTime__c',
                 'Status__c', 'Discharged_Date__c', 'Discharged_Date_Time__c',
-                'Network_Offering__c', 'Reason_for_Discharge__c', 'State__c',
+                'Network_Offering__c', 'Reason_for_Discharge__c', 'State__c','Admitted_From__c','Discharged_To__c',
                 'Referred_Out_Date__c', 'Referred_Out_Agency_Name__c', 'Referred_Out_Reason__c',
                 'Person_Being_Served__c', 'Discharged_Status__c', 'Planned_Discharge__c','Discharged_to_category__c','Discharged_to_subcategory__c','Discharged_to_additional__c', 'Discharged_to_other__c', 'Discharged_to_desc__c',
                 'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c'});
