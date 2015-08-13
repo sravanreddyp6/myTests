@@ -44,12 +44,17 @@
                 <br />                
                 <apex:pageBlockTable value="{!ProgressNotes}" var="pr" id="ProgressnotesTable" >
                     <apex:column headerValue="Created" >
-                        <apex:commandLink value="{!pr.CreatedDate}" action="{!editcardnotes}" >
+                        <apex:commandLink action="{!editcardnotes}" >
+                            <c:MilitaryDatetime dateTimeVal="{!pr.CreatedDate}" ></c:MilitaryDatetime>
                             <apex:param name="selectedid" value="{!pr.id}" assignTo="{!selectedpnid}"/>
                         </apex:commandLink>
+                    </apex:column> 
+                    <apex:column headerValue="Start Time">
+                        <c:MilitaryDatetime dateTimeVal="{!pr.Start_Time__c}" ></c:MilitaryDatetime>
                     </apex:column>
-                    <apex:column value="{!pr.Start_Time__c}" headerValue="Start Time"/>
-                    <apex:column value="{!pr.End_Time__c}" headerValue="End Time"/>
+                    <apex:column headerValue="End Time">
+                        <c:MilitaryDatetime dateTimeVal="{!pr.End_Time__c}" ></c:MilitaryDatetime>
+                    </apex:column>
                     <apex:column value=" {!Left(pr.Progress__c,100)}" headerValue="Comments/Notes"  style="width:300px" id="comments" />
                     <apex:column value="{!pr.CreatedBy.Name}" headerValue="User Name"/>
                     <apex:column value="{!pr.Status__c}" headerValue="Status"/>
