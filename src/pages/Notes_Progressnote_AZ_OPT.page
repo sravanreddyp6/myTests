@@ -347,11 +347,12 @@
                 <apex:pageBlockSection columns="2" >
                    <!-- hidden fields, values will be passed in the url -->    
                      <apex:pageBlockSection columns="1" > 
-                    <apex:outputText value="{!contactName}" label="Person Being Served" rendered="{!!ISBlANK(pbsName)}" />
-                    <apex:selectRadio id="TypeOfNoteField" required="true" layout="pageDirection" label="Type of Note" value="{!Progress_Note__c.RecordTypeId}" >
+                     
+                    <apex:outputText value="{!contactName}" label="Person Being Served" rendered="FALSE" />
+                    <apex:selectRadio id="TypeOfNoteField" required="true" layout="pageDirection" label="Type of Note" value="{!Progress_Note__c.RecordTypeId}" rendered="FALSE" >
                         <apex:selectOptions value="{!rtOptions}"></apex:selectOptions>
                     </apex:selectRadio>
-                   
+                     
                     <apex:repeat value="{!$ObjectType.Progress_Note__c.FieldSets.NewFormAZOPT}" var="f"> 
                         <apex:inputField id="isbillable" value="{!Progress_Note__c[f]}" rendered="{! f.fieldpath=='Purpose_Service_is_Billable__c'}"/>
                         <apex:inputField value="{!Progress_Note__c[f]}" rendered="{! AND(f.fieldpath != 'Start_Time__c', f.fieldpath != 'End_Time__c', f.fieldpath != 'Next_Appt_Date_Time__c', f.fieldpath != 'Purpose_Service_is_Billable__c', IF(And(contains(f.Label,'Unit'),$User.Operating_Group__c='NeuroRestorative'),false,true))}"/>
@@ -529,6 +530,7 @@
 <!--                 <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/> -->
 <!--                 </apex:outputField> -->
                 <apex:outputField value="{!Progress_Note__c.Total_Time__c}"/>
+                <apex:outputField value="{!Progress_Note__c.Signature_on_File__c}"/>
                 <apex:outputField value="{!Progress_Note__c.Service_Location__c}">
                 <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
