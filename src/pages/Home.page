@@ -363,7 +363,7 @@
 			</apex:outputPanel>
 			<apex:pageBlock id="servBlock">
 				<apex:pageBlocktable value="{!ServAssigns}" var="s" >
-					<apex:column headerValue="Choose the Service Assignment">
+					<apex:column headerValue="Choose the Active Service Assignment">
 						<a href="/apex/Incident_Form_CreateEdit?SAId={!s.Id}&RecordtypeId={!pbsincidentRecType}">{!s.Name}</a>
 					</apex:column>
 					<apex:column value="{!s.Person_being_Served__r.Name}" headerValue="Name"/>
@@ -468,25 +468,25 @@
 				</apex:actionStatus>
 			</apex:pageblockButtons>
 			<apex:pageMessages id="responseDialogErrors" />
-			<apex:pageBlockSection>	
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSection >	
+			<apex:pageBlockSectionItem >
 			<apex:outputLabel value="Start Date/Time" />
             	<apex:outputPanel layout="none">
             		<div class="requiredInput"><div class="requiredBlock"></div>
-                	<c:militarydatetime id="logstart" edit="true" datetimeval="{!currResponse.start_date_time__c}" hiddenFieldId="timeLogStart" datetimepickerid="timeLogStart1"/>
+                	<c:MilitaryDatetime id="logstart" edit="true" datetimeval="{!currResponse.Start_Date_Time__c}" hiddenFieldId="timeLogStart" datetimepickerid="timeLogStart1"/>
             	    </div>
-            	    <apex:inputHidden id="timeLogStart"  value="{!currResponse.start_date_time__c}"/>
+            	    <apex:inputHidden id="timeLogStart"  value="{!currResponse.Start_Date_Time__c}"/>
                 </apex:outputPanel>
 			</apex:pageBlockSectionItem>
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			<apex:outputLabel value="End Date/Time" />
            		<apex:outputPanel layout="none">
-                	<c:militarydatetime id="logend" edit="true" datetimeval="{!currResponse.end_date_time__c}" hiddenFieldId="timeLogEnd" datetimepickerid="timeLogEnd1"/>
-               		<apex:inputHidden id="timeLogEnd"  value="{!currResponse.end_date_time__c}"/>
+                	<c:MilitaryDatetime id="logend" edit="true" datetimeval="{!currResponse.End_Date_Time__c}" hiddenFieldId="timeLogEnd" datetimepickerid="timeLogEnd1"/>
+               		<apex:inputHidden id="timeLogEnd"  value="{!currResponse.End_Date_Time__c}"/>
                 </apex:outputPanel>
 			</apex:pageBlockSectionItem>
 
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			
 			<apex:outputlabel value="Accompanied By"  />
 			<apex:outputpanel layout="none">
@@ -496,7 +496,7 @@
 			</apex:outputpanel>
 			</apex:pageBlockSectionItem>
 			
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			
 			<apex:outputlabel value="Location"/>
 			<apex:outputPanel layout="none">
@@ -506,13 +506,13 @@
 			</apex:outputPanel>
 			</apex:pageBlockSectionItem>
 			
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			<apex:outputlabel value="Narrative Note"  />
 			<apex:inputTextArea value="{! currResponse.narrative_note__c}" />
 			</apex:pageBlockSectionItem>
 			
 			
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			<apex:outputlabel value="Late Entry"  />
 			<apex:inputField value="{! currResponse.is_late_entry__c}" />
 			</apex:pageBlockSectionItem>
