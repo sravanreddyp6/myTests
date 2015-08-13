@@ -7,9 +7,8 @@ public with sharing class Report_TimeLogEntry {
     public list<SelectOption> PBSList = new list<SelectOption>();
     public list<SelectOption> getPBSList(){ return PBSList ;}
     public boolean hasRunOnce {get; set;}
-    // START: ERD-11 - Add property to hold PDF run datetime as string in report runner's time zone.  J. Gilliam, 11/5/14
-    public string pdfRunDateTimeString { get; set; }
-    // END: ERD-11 - Add property to hold PDF run datetime as string in report runner's time zone.  J. Gilliam, 11/5/14
+    
+    public DateTime pdfRunDateTime { get; set; }
 
     public list<SelectOption> programslist = new list<SelectOption>();
     public list<SelectOption> getProgramslist(){ return programslist; }
@@ -21,17 +20,16 @@ public with sharing class Report_TimeLogEntry {
     
     public string opGroup { get; private set; }
     
-    public transient list<ProgressNote_ActionPlanChildren_mjo__c> note_plan_joins = new list<ProgressNote_ActionPlanChildren_mjo__c>();
-    public list<ProgressNote_ActionPlanChildren_mjo__c> getNote_plan_joins(){
-        return note_plan_joins;
-    }
+	public transient Map<id, List<evaluation_response__c>> logMap;
+	public Map<id, List<evaluation_response__c>> getlogMap () {
+		return logMap;
+	}
+	
+	public transient Map<id, String> people;
+	public Map<id, String> getpeople() {
+		return people; 
+	} 
     
-    public transient list<evaluation_response__c> logs = new list<evaluation_response__c>();
-    public list<evaluation_response__c> getlogs(){                                                 
-        return logs ;
-    }
-    
-
     public Report_TimeLogEntry() {   	
     	
     	opGroup = [ select operating_group__c from user where id = :UserInfo.getUserId()].operating_group__c;
@@ -46,6 +44,8 @@ public with sharing class Report_TimeLogEntry {
         }
         selectedPBS = new List<id>();
         hasRunOnce =false;
+        
+
         
     }
 
@@ -141,9 +141,11 @@ public with sharing class Report_TimeLogEntry {
            endDateTime = endDateTime.addseconds(-1);
        }
        
-       // RBO-265 - filter out Disregarded notes
-        logs = [Select service_assignment__r.person_being_served__c, Name, ID, Start_Date_Time__c, End_Date_Time__c, CreatedByid, tmn_user__c, location__c, is_late_entry__c, service_type__c, Narrative_Note__c 
-            From Evaluation_response__c where 
+		people = new Map<id, string>();
+		logMap = new Map<Id, List<Evaluation_response__c>>();
+       List<Evaluation_response__c> logs = [Select service_assignment__r.person_being_served__c, service_assignment__r.person_being_served__r.name, Name, ID, 
+       												Start_Date_Time__c, End_Date_Time__c, CreatedByid, tmn_user__c, location__c, is_late_entry__c, service_type__c, Narrative_Note__c 
+            						From Evaluation_response__c where 
                                         (
                                             (Start_Date_time__c > :startDateTime OR End_Date_time__c > :startDateTime ) 
                                                 AND 
@@ -152,21 +154,32 @@ public with sharing class Report_TimeLogEntry {
                                             AND Service_Assignment__r.Person_Being_Served__c In :selectedPBS 
                                             AND RecordType.DeveloperName = 'Time_Log'
                                             AND Disregard__c = false   
-                                        ORDER BY CreatedDate ];      
+                                        ORDER BY start_Date_time__c, end_date_time__c ];      
      
-                                   
+     	ID pbsID;
+       	for ( Evaluation_response__c logEntry : logs ) {
+       		pbsID = logEntry.service_assignment__r.person_being_served__c;
+       		system.debug('LOGMAP: ' + logmap + ', ' + logmap.size());
+       		
+       		if ( logmap.size() > 0 && logMap.KeySet().contains( pbsID ) )
+       			logMap.get( pbsID).add( logEntry);
+       		else {
+       			List<Evaluation_response__c> pbsLogs = new List<Evaluation_Response__c>{ logEntry };
+       			logMap.put( pbsID, pbsLogs);
+       			people.put( pbsID, logEntry.service_assignment__r.person_being_served__r.name);
+       		}
+       	}                            
         return null;
     }
 
     public PageReference runPdf() {	
-    	Datetime pdfRunDateTime = System.now();
-    	/*
-    	pdfRunDateTimeString = pdfRunDateTime.format('MM/dd/yyyy, h:mm:ss a');
-    	PageReference toPdfPage = new PageReference('/apex/shiftnote_summary_rpt_PDF');
+    	pdfRunDateTime = System.now();
+    	
+    	PageReference toPdfPage = new PageReference('/apex/Report_TimeLogEntry_PDF');
     	toPdfPage.setRedirect(false);
     	return toPdfPage;
-    	*/
-    	return null;
+    	
+    	
     }
    
     public PageReference cancelToNewRun() {
