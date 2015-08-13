@@ -72,6 +72,8 @@ public with sharing class HomePageController{
 	
 	public Map<Id, Boolean> saactionMap {get;set;}
     public Map<Id, Id> saActiveactionMap {get;set;}
+    
+    private boolean isIARole { get; set; }
 	
 	//Constructor
 	public HomePageController(){
@@ -166,6 +168,12 @@ public with sharing class HomePageController{
         }
         else
           canCreateProgressNotes =false;
+          
+        if (rolemap.get(UserInfo.getUserRoleID()).DeveloperName == 'IA')
+        	isIARole = true;
+        else
+        	isIARole = false;  
+        	
 
 		oSchema = Progress_Note__c.sObjectType.getDescribe();
 		canCreateNote = oSchema.isCreateable();
@@ -272,7 +280,7 @@ public with sharing class HomePageController{
 			}
 			
 			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
-			if ( operatingGroup == 'Redwood') {
+			if ( operatingGroup == 'Redwood' && isIARole ) {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					optionList.add(new SelectOption(
 										Page.Notes_ProgressNote_Create.getUrl() + 
