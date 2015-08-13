@@ -1494,9 +1494,11 @@ END: Uncomment to have the element collapsed by default -->
 					
 				</apex:pageblockTable>
 				<apex:outputText value="No notes to display" rendered="{!(notes.size=0)}" />
-				<apex:outputPanel rendered="{!notes.size!=0}">Showing the 10 most recent notes click&nbsp;
-					<apex:outputLink value="/a0L?id={!Service_Assignment__c.id}&rlid=00NU00000036mQ0&lsr=0">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
-			</apex:pageBlockSection>
+				<apex:outputPanel rendered="{!notes.size!=0 && ($Setup.SystemSettings__c.AZ_OPT_Enabler__c == False || ($Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup != 'Redwood'))}">Showing the 10 most recent notes click&nbsp;
+                    <apex:outputLink value="/a0L?id={!Service_Assignment__c.id}&rlid=00NU00000036mQ0&lsr=0">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+                <apex:outputPanel rendered="{!notes.size!=0 && $Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup == 'Redwood'}" >Showing the 10 most recent notes click&nbsp;
+                    <apex:outputLink value="/apex/Progress_Notes_Log?saID={!theServAssign}&saname={!theServAssign.Name}&admission={!theServAssign.Admission__c}&pbsID={!theServAssign.Person_Being_Served__c}">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+            </apex:pageBlockSection>
 		</apex:pageBlock>
 
 		<!-- Start FAD Assessments -->
