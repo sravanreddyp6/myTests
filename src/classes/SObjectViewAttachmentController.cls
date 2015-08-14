@@ -16,8 +16,8 @@ public AttachmentView attachmentView {get;set;}
 public Attachment attachment {get;set;}
 public boolean enableDelete {get;set;}
 public String docId {get{return apexpages.currentpage().getparameters().get('docId');}set;}
-public progress_note__C note = [ select recordtype.developername from progress_note__c where id=:parentId limit 1];
-Public TMN_User__c TU = [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1];
+public list<progress_note__C> note = [ select recordtype.developername from progress_note__c where id=:parentId limit 1];
+Public list<TMN_User__c> TU = [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1];
         
 SystemSettings__c pnnew = SystemSettings__c.getOrgDefaults();
 public SObjectViewAttachmentController() {
@@ -44,7 +44,7 @@ public PageReference editAttachment() {
 public PageReference redirectToViewAttachment() {
     PageReference pg= null;
     // added by Amruth for EB-513
-        if(note != null && TU!= Null && retURL != null && pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
+        if(note.size()>0 && TU.size()>0 && retURL != null && pnnew.AZ_OPT_Enabler__c && note[0].recordtype.DeveloperName == 'AZ_OPT' && TU[0].Operating_Group__c == 'Redwood'){
           pagereference pr = new PageReference('/'+parentId);
             return pr;
         }
@@ -65,7 +65,7 @@ public PageReference redirectToViewAttachment() {
     public PageReference redirectToLastView() {
     pagereference pg ;
       // added by Amruth for EB-513
-      if(note != null && TU!= Null && pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
+      if(note.size()>0 && TU.size()>0 && pnnew.AZ_OPT_Enabler__c && note[0].recordtype.DeveloperName == 'AZ_OPT' && TU[0].Operating_Group__c == 'Redwood'){
           pg = new PageReference('/'+parentId);
       }
       else{
@@ -84,7 +84,7 @@ public PageReference redirectToViewAttachment() {
         delete attachment;
         PageReference pg;
         // added by Amruth for EB-513
-        if(note != null && TU!= Null && pnnew.AZ_OPT_Enabler__c && note.recordtype.DeveloperName == 'AZ_OPT' && TU.Operating_Group__c == 'Redwood'){
+        if(note.size()>0 && TU.size()>0 && pnnew.AZ_OPT_Enabler__c && note[0].recordtype.DeveloperName == 'AZ_OPT' && TU[0].Operating_Group__c == 'Redwood'){
           pg = new PageReference('/'+parentId);
         } else{
         pg = new PageReference(retURL);
