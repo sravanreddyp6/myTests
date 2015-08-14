@@ -159,7 +159,7 @@ searchingForQuery = queryString;
 				QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
 				}
 				if(searchTitle!=null && searchTitle.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like ' + searchTitle +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like \'' + searchTitle +'%\' ');
 				}
             searchingForQuery =  tmlUserQuery + QueryWhere ;
 			tmlUserQuery =  tmlUserQuery + QueryWhere +  ' order by ' + SortField + ' ' + SortDirection + ' limit 10000';
