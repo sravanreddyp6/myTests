@@ -145,7 +145,12 @@
                     <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=wf.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>-->
                     <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                         <apex:param value="{!wf.Id}" assignTo="{!selectedID}" name="userIdParam"/>
-                    </apex:commandLink>                    
+                    </apex:commandLink> 
+                        &nbsp;
+                        <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(wf.Current_Person_Type__c ='Employee','false','true')}">&#124;&nbsp;Edit</apex:outputLink>
+                        &nbsp;
+                        <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">&#124;&nbsp;Provision</apex:outputLink>
+                                       
                 </apex:column>
                 <apex:column headerValue="Name" value="{!wf.Name}"/>
                 <apex:column headerValue="Email" value="{!wf.Email__c}"/>
@@ -164,6 +169,11 @@
                     <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                         <apex:param value="{!r.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink>
+                        &nbsp;
+                        <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(r.Current_Person_Type__c ='Employee','false','true')}">&#124;&nbsp;Edit</apex:outputLink>
+                        &nbsp;
+                        <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">&#124;&nbsp;Provision</apex:outputLink>
+
                 </apex:column>
                 <apex:column headerValue="Name" value="{!r.Name}"/>
                 <apex:column headerValue="Email" value="{!r.Email__c}"/>
@@ -244,7 +254,7 @@
                         <apex:pageblockButtons location="Bottom" >    
                         <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=theTMNUser.id])}"/>-->
                         <!--<apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>-->
-                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!OR(theTMNUser.Current_Person_Type__c == 'Non-Employee',theTMNUser.Current_Person_Type__c == 'Pre-hire')}"/>
+                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(theTMNUser.Current_Person_Type__c ='Employee','false','true')}"/>
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
                         <apex:commandButton value="Provision Access" action="{!URLFOR($Page.identity_canvas, '')}" />
                     </apex:pageblockButtons>            
