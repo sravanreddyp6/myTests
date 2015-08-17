@@ -1,7 +1,7 @@
 public class identityEditNew {
 
     Date currentDate = Date.today(); 
-    Date defaultLastDay = currentDate.addDays(120);
+    Date defaultLastDay = currentDate.addDays(90);
     public TMN_User__c TMNUser { get;  set; }
     User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
     String userId = u.id;
@@ -78,6 +78,7 @@ public class identityEditNew {
         TMNUser.Service_Line__c = auAlias.Alias_Service_Line__c;
         TMNUser.Zip_Code__c = aliasUser.Zip_Code__c;
         TMNUser.BAA_Signed__c = aliasUser.BAA_Signed__c;
+        TMNUser.Location_Name__c = aliasUser.Location_Name__c;
         TMNUser.Last_Day__c = defaultLastDay;
     }
  }
@@ -85,6 +86,9 @@ public class identityEditNew {
     public static TMN_User__c LocationDetails(String location) {
        return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
+    
+   
+    
     
     public  Attachment attDeatils {set;get;}
  
@@ -125,7 +129,7 @@ public class identityEditNew {
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c,Program_String__c, 
-            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c  
+            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
             
@@ -134,6 +138,13 @@ public class identityEditNew {
                         WHERE Alias_unique__c =: aliasUser.Alias__c];        
      
     public PageReference save() {
+
+    	 List<TMN_User__c> location =  [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where location_name__c  =:TMNUser.Location_Name__c limit 1];
+       	if(location.size() == 0){
+       	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Please enter valid Location in order to save this record.'));
+    	 	return null;
+       	}
+
         ID managerId = TMNUser.Manager_Lookup__c;
         ID aliasId = TMNUser.Alias_Lookup__c;
         TMN_User__c managerInfo = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
