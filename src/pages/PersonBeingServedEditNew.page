@@ -804,7 +804,7 @@
             </apex:pageBlock>
         </a>
             <a id="immunization"></a>
-            <apex:pageBlock rendered="{! ( Assessments_ChildImmune.size != null || contact.Age__c < 18) && vfVarIsCM}" >
+            <apex:pageBlock rendered="{! ( (Assessments_ChildImmune.size != null && Assessments_ChildImmune.size > 0) || contact.Age__c < 18) && vfVarIsCM}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Child"
                                            formId="{!$Component.FormID}"
