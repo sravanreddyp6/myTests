@@ -614,6 +614,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             return null;
        }
+       else if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This progress note cannot have the "Purpose/Service is Billable field" checked if the "Sleep Check Conducted" field is also checked'));     
+            return null;
+        }
        else{
        upsert pn;
        insertedProgressNoteId = pn.Id;
