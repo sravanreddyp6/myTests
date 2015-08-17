@@ -75,6 +75,12 @@ public with sharing class IdentityHomeController {
                                                                                                                                                                                                          
     }
 
+    //Standard Edit page
+    Public PageReference stdEditPage(){
+        PageReference ePage = new PageReference('/'+selectedID+'/e?retURL=/apex/identity_admin');
+        return ePage;
+    }
+
     // Method used to set aliasName value on page load.
     String aliasNameValue; 
     String getAliasNameValue(){
@@ -350,7 +356,7 @@ public with sharing class IdentityHomeController {
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                   FROM TMN_User__c 
                                   WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))
+                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
@@ -368,7 +374,7 @@ public with sharing class IdentityHomeController {
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
                                   FROM TMN_User__c 
                                   WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
-                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))
+                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
@@ -392,7 +398,7 @@ public with sharing class IdentityHomeController {
                                   OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                   OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
                                   OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
-                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))
+                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
@@ -406,22 +412,22 @@ public with sharing class IdentityHomeController {
         return null;
     }      
 
-      // SOSL Search for TMN_Users on identity_home page. 
+      // SOSL Search for TMN_Users on identity_admin page. 
       //Currently not used, but didn't want to remove in case of changes in requirements to bring it back.
-//    Public void tmnSearch() {
-//        tmnUserList = New List<TMN_User__c>();
-//        if(tmnSearchStr.length() > 2) {
-//            String searchStr1 = tmnSearchStr+'*';
-//            String searchQuery = 'FIND\'' + searchStr1 + '\' IN NAME FIELDS RETURNING TMN_User__c(Email__c,Employee_Number__c,Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Status__c,Job_Title__c,Last_Name__c,Manager_Email__c,Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c WHERE Operating_Group__c =\''+tmnOG+'\')';
-//            List<List <sObject>> searchList = search.query(searchQuery);
-//            tmnUserList = ((List<TMN_User__c>)searchList[0]);
-//                if(tmnUserList.size() == 0) {
-//                    apexPages.addmessage(new apexpages.message(apexpages.severity.INFO, 'The search did not find any possible matches! Please check the name and try again.'));
-//                }
-//        } else {
-//            apexPages.addmessage(new apexpages.message(apexpages.severity.WARNING, 'Please enter at least three characters to search.'));
-//        }
-//    }
+    Public void tmnSearch() {
+        tmnUserList = New List<TMN_User__c>();
+        if(tmnSearchStr.length() > 2) {
+            String searchStr1 = tmnSearchStr+'*';
+            String searchQuery = 'FIND\'' + searchStr1 + '\' IN NAME FIELDS RETURNING TMN_User__c(Email__c,Employee_Number__c,Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Status__c,Job_Title__c,Last_Name__c,Manager_Email__c,Manager_Name__c,Name,Network_Username__c,Operating_Group__c,Pay_Basis__c,Personal_Email__c,Salesforce_User_Account__c,Unique_Id__c,Work_State__c)';
+            List<List <sObject>> searchList = search.query(searchQuery);
+            tmnUserList = ((List<TMN_User__c>)searchList[0]);
+                if(tmnUserList.size() == 0) {
+                    apexPages.addmessage(new apexpages.message(apexpages.severity.INFO, 'The search did not find any possible matches! Please check the name and try again.'));
+                }
+        } else {
+            apexPages.addmessage(new apexpages.message(apexpages.severity.WARNING, 'Please enter at least three characters to search.'));
+        }
+    }
 
     //Set parameters to pass to identityEditNew controller for record creation.      
     public PageReference newTmnUser() {
