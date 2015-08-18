@@ -219,9 +219,10 @@ public pageReference savePerson( ) {
 			}
 		}
 		else if ( perType == 'Other') {
+			
 			if ( String.isBlank( currPerson.Other_People__c )) {
 				hasError = true;
-				currPerson.addError('Please enter information in the text box.');
+				currPerson.addError('Please enter Name (or PBS Initials) ');
 			} else {
 				if ( relExisting != null && relExisting.size() > 0 && relExisting.keyset().contains( currPerson.Other_people__c) && !(isEditing && currPerson.Other_People__c == personToEditDelete ) ) {
 					hasError = true;
@@ -231,7 +232,7 @@ public pageReference savePerson( ) {
 				}
 			}
 		}
-
+		if(String.isBlank(currPerson.Title__c) ){hasError = true; currPerson.addError('Please enter a Title');}
 		try {
 			if(!hasError){
 				//system.debug('CURR:' + currPerson);
