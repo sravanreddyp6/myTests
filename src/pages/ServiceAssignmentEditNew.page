@@ -15,7 +15,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
-
+	
 	<style>
 		.dialogLoadingSpinner {
 			margin-left: 5px;
@@ -318,18 +318,23 @@
 		        setUpFields = function () {
 		            $('body input').on("change", function (event) {
 		                applyRulesToField(event.target);
+		                applyShowHideRulesToField(event.target);
 		            });
 		            $('body select').on("change", function (event) {
 		                applyRulesToField(event.target);
+		                applyShowHideRulesToField(event.target);
 		            });
 		            $('body input').each(function (_, target) {
 		                applyRulesToField(target);
+		                applyShowHideRulesToField(target);
 		            });
 		            $('body select').each(function (_, target) {
 		                applyRulesToField(target);
+		                applyShowHideRulesToField(target);
 		            });
 		        }
 		        setUpFields();
+		        
 		    });   //end "
         
 
@@ -372,7 +377,7 @@
         <!-- end seizure actions-->
 
 		<!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
-		<apex:pageBlock mode="detail" title="Service Assignment{!if(editSA==true,' Edit','')}">
+		<apex:pageBlock mode="detail" title="Service Assignment{!if(editSA==true,' Edit','')}" >
 
 			<div class="pbHeaderButton">
 				<apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
@@ -398,7 +403,10 @@
 				<apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
 				<apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}" />
+				<apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}" >
+					<apex:actionSupport event="onchange" reRender="saEndSectionEdit" status="pageProcessing">
+					</apex:actionSupport>
+				</apex:inputField>
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
                 <apex:pageBlockSectionItem rendered="{!!editSA}">
@@ -487,7 +495,8 @@
 				<apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
 
 				<apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}" />
+				<apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}" >
+				</apex:inputField>
 
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
@@ -759,6 +768,113 @@
 						</apex:facet>
 					</apex:actionStatus>
 				</apex:outputPanel>
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection title="Service Assignment Start" id="saStartSectionEdit" collapsible="false" columns="2" showHeader="true" rendered="{!editSA}" >
+				<apex:pageBlockSectionItem helpText="This person's service is beginning because the company providing their services was purchased by The Network after 2016" >
+					<apex:outputLabel value="Service Began via Acquisition Company (as of 2016)?" />
+					<apex:outputPanel >
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputField value="{!theServAssign.Service_Began_via_Acquisition_Company__c}" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+			
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection title="Service Assignment Start" id="saStartSectionRead" collapsible="false" columns="2" showHeader="true" rendered="{!!editSA}" >
+				<apex:pageBlockSectionItem helpText="This person's service is beginning because the company providing their services was purchased by The Network after 2016" >
+					<apex:outputLabel value="Service Began via Acquisition Company (as of 2016)?" />
+					<apex:outputField value="{!theServAssign.Service_Began_via_Acquisition_Company__c}" />
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection title="Service Assignment End" id="saEndSectionEdit" collapsible="false" columns="2" showHeader="true" rendered="{!editSA}" >
+				<apex:pageBlockSectionItem helpText="This person's service is ending because The Network no longer owns this operation" rendered="{!theServAssign.Status__c == 'Inactive'}" >
+					<apex:outputLabel value="Service Ended via Business Divested?" />
+					<apex:outputPanel >
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputField value="{!theServAssign.Service_Ended_via_Business_Divested__c}"  />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && admission.Network_Offering__c == 'ARY'}" >
+					<apex:outputLabel value="Was Child Service or Permanency Goal met?" />
+					<apex:outputPanel >
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputField value="{!theServAssign.Was_Child_Service_or_Permanency_Goal_met__c}"  />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+						<apex:outputLabel value="Educational Involvement at End of Service" />
+						<apex:outputPanel >
+							<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+									<apex:inputField value="{!theservAssign.Educational_Involvement_at_End_of_Servic__c}" />
+							</div>
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
+								<apex:inputField value="{!theservAssign.Educational_Involvement_at_End_of_Servic__c}" />
+							</apex:outputPanel>
+						</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+						<apex:outputLabel value="Highest Level of Education at End of Service" />
+						<apex:outputPanel >
+							<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+									<apex:inputField value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
+							</div>
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
+								<apex:inputField value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
+							</apex:outputPanel>
+						</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+						<apex:outputLabel value="Total Number of Internal Moves During Service" />
+						<apex:outputPanel >
+							<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY' && (Contains(theservAssign.Program_Detail__c,'FCT') || Contains(theservAssign.Program_Detail__c,'HH'))}">
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+									<apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
+							</div>
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY' || (admission.Network_Offering__c == 'ARY' && !(Contains(theservAssign.Program_Detail__c,'FCT') || Contains(theservAssign.Program_Detail__c,'HH')))}" >
+								<apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
+							</apex:outputPanel>
+						</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection title="Service Assignment End" id="saEndSectionRead" collapsible="false" columns="2" showHeader="true" rendered="{!!editSA}" >
+				<apex:pageBlockSectionItem helpText="This person's service is ending because The Network no longer owns this operation" rendered="{!theServAssign.Status__c == 'Inactive'}" >
+					<apex:outputLabel value="Service Ended via Business Divested?" />
+					<apex:outputField value="{!theServAssign.Service_Ended_via_Business_Divested__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && admission.Network_Offering__c == 'ARY'}" >
+					<apex:outputLabel value="Was Child Service or Permanency Goal met?" />
+					<apex:outputField value="{!theServAssign.Was_Child_Service_or_Permanency_Goal_met__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+					<apex:outputLabel value="Educational Involvement at End of Service" />
+					<apex:outputField value="{!theServAssign.Educational_Involvement_at_End_of_Servic__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+					<apex:outputLabel value="Highest Level of Education at End of Service" />
+					<apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+					<apex:outputLabel value="Total Number of Internal Moves During Service" />
+					<apex:outputField value="{!theServAssign.Total_no_of_Internal_moves_during_Servic__c}" />
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
 			<apex:pageBlockSection title="System Information" showHeader="true" columns="2" collapsible="false" id="ServAssignSystemInfo">
@@ -2605,5 +2721,14 @@ END: Uncomment to have the element collapsed by default -->
 		    }
 		}
 	</script>
+	<apex:actionStatus id="pageProcessing">
+		<apex:facet name="start">
+			<div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+			<div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop" />
+	</apex:actionStatus>
 
 </apex:page>
