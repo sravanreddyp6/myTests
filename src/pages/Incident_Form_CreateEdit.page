@@ -89,7 +89,7 @@ function evalFirstReportedField(eley, leaveBlank){
 .labelCol{min-width: 300px;}
 .noDisplay{display: none;}
 .helpText{z-index: 1100 !important;}
-.people-input-wrapper{ width: 200px; float: left;}
+.people-input-wrapper{ width: 210px; float: left;}
 
 
 
@@ -331,7 +331,7 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
 	                <apex:pageBlockSectionItem >
 	                    <apex:outputLabel value="Mentor(s) present at the time of the incident?" />
 	                    <apex:outputPanel >
-	                    	<div class="people-input-wrapper">
+	                    	<div class="people-input-wrapper" style="width: 290px;">
 	                        	<apex:inputField value="{!Incident__c.Mentor_present__c}" 
 	                            	html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.mentor_label}&quot;]}" rendered="{! existingMentor = 0}"/>
 	                        </div>
