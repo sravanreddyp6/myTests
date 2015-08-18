@@ -202,23 +202,87 @@
     
     };
     </script>
+    
     <script>
     function complete(Signed) {
+    
+  		var srvcloc = '{!Progress_Note__c.Service_Location__c}';
+        var finalalready = '{!Progress_Note__c.Type_of_Contact__c}';
+        var goalsSelected = '{!Progress_Note__c.GoalIds_AZOPTPage__c}';
+        var Status = '{!Progress_Note__c.Status__c}';
+        var AppStatus = '{!Progress_Note__c.Approval_Status__c}';
+        var ActionPlan = '{!Progress_Note__c.Action_Plan__c}';
+        var ServiceCode = '{!Progress_Note__c.Service_Code__c}';
+        var Interventions = '{!Progress_Note__c.Interventions__c}';
+        var NextVisit = '{!Progress_Note__c.Notes_For_Next_Visit__c}';
+        var Progress = '{!Progress_Note__c.Progress__c}';
+        
+        var s= '';
+        
+        if((goalsSelected  == null || goalsSelected == '') || srvcloc =='' || finalalready == '' || ServiceCode == '' || Progress == '' || NextVisit == '' || Interventions == '' || AppStatus =='Pending' || Status == 'Final' || ActionPlan == null ){ 
+            if(goalsSelected  == null || goalsSelected == ''){
+                s = 'Y';
+            }if(Status == 'Final'){
+                s = 'Y';
+            }
+            if(AppStatus =='Pending'){
+                s = 'Y';
+            }if(ActionPlan == null){
+                s = 'Y';
+            }
+            if(srvcloc ==''){
+                s = 'Y';
+            }if(finalalready == ''){
+                s = 'Y';
+            }
+            if(ServiceCode == '' ){
+                s = 'Y';
+            }if(Interventions == ''){
+                s = 'Y';
+                //alert(s);
+            }
+            if(NextVisit == ''){
+                s = 'Y';
+                //alert(s);
+            }
+            if(Progress == ''){
+                s = 'Y';
+                //alert(s);
+            }
+            //alert(s);
+            location.reload(true);
+        }    
+
+		if (s == 'Y') {
+		alert("calling validate");
+			validateesign();
+		}else {
+            if (Signed == 'Y') {
+                alert("Document Already E-Signed");
+                openDialog('tstpopupAfterEsign', 'span', ''); 
+            } else {
+                authenticate();
+                
+           }
+		}    
+    
+      /*
         var srvcloc = '{!Progress_Note__c.Service_Location__c}';
         if(srvcloc ==''){
-            alert("Please select a service location before Esigning.");
+            alert("Please select a service location before Esigning");
         }
         else{
             if (Signed == 'Y') {
                 alert("Document Already E-Signed");
+                //validateApproval();
+                validateesign();
                 openDialog('tstpopupAfterEsign', 'span', ''); 
-                
-        
             } else {
                 authenticate();
                 
-            }
+           }
         }
+       */
     }
     </script>
     <script type="text/javascript">
@@ -298,6 +362,12 @@
 
             j$(selector).dialog('destroy');
         }
+        
+        function showPopupJavascript(){
+        
+        showpopup();
+        
+        }
     
        </script>
     <style>
@@ -325,7 +395,7 @@
      <apex:outputPanel id="OutputpanelId">
         <apex:pagemessages ></apex:pagemessages>
     </apex:outputPanel>
-    <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); openDialog('tstpopupAfterEsign', 'span', ''); return false; return false;" /><!--location.reload(true); -->
+    <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); validateApproval(); return false; return false;" /><!--location.reload(true); -->
     <!-- New Page Starts  -->
     <apex:outputpanel rendered="{!NewBlock}">
         <apex:pageBlock >
@@ -335,6 +405,10 @@
             </apex:actionFunction>
             <apex:actionFunction action="{!showPopup}" name="ShowPopUpWindow" rerender="tstpopup,pblk">
             </apex:actionFunction>
+            
+            <apex:actionFunction action="{!validateesign}" name="ValidateEsigntest" rerender="myFRM,Outputpatstpopup,OutputpanelId,tstpopup,pblk">
+             </apex:actionFunction>
+            
             <apex:actionFunction action="{!update_overlap}" name="updateOvrLap" rerender="tstpopupAfterEsign">
             </apex:actionFunction>
             <apex:pageBlockButtons > 
@@ -460,9 +534,7 @@
                     </apex:pageBlockSection>
                     </apex:pageBlockSection>
        
-       
-                    
-      
+    
         
         </apex:outputPanel>
         
@@ -470,14 +542,7 @@
           </apex:pageBlockSection>
         <!-- Goal Ends -->
                      
-            
-
-            
-            
-            
            
-            
-            
             
         </apex:pageBlock>
         
@@ -503,7 +568,9 @@
                 <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
                 <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
                 <!--<apex:commandButton id="createPDF" value="Create PDF"  onclick="openDialog('tstpopup', 'span', 'Finalize'); return false;" />-->
-                <apex:commandButton id="esign" value="E-Sign"  onClick="complete('{!SignedDoc}'); return false;" />
+               <!--  <apex:commandButton id="esign" value="E-Sign"  onClick=" complete('{!SignedDoc}'); return false;" />-->
+                <apex:commandButton id="esign" value="E-Sign" action="{!validateesign}"   onClick="complete('{!SignedDoc}'); return false;"  />
+               
             </apex:pageBlockButtons>
             
             <apex:pageBlockButtons location="top" rendered="{!Final}">
@@ -671,6 +738,7 @@
     
     <!-- finalize for e sign-->
     <apex:outputPanel id="tstpopupAfterEsign" style="display:none; dispaly: block; height: 500px;">
+    <apex:pagemessages ></apex:pagemessages>
         <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
         <apex:outputPanel styleClass="custPopup" layout="block" ><!--rendered="{!displayPopUp}">-->
             <apex:outputpanel rendered="{!displayPopupFinalize}"> 

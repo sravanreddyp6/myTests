@@ -62,6 +62,12 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public void update_overlap(){
         LoadData(thePN);    
     }
+    
+    public void esignvalidate(){
+         
+    }
+    
+    
     public void LoadData(Progress_Note__c tmp){
         thePN = [select id, Name, No_Approval_Needed__c,Person_Being_Served__r.Name,Approval_User__c, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
          
@@ -117,20 +123,6 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     }
     
     
-    /** Removed --> Not being used in the page now
-    public PageReference myFinal(){
-        PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_Create_Flavor_PDF');
-        pageRef.getParameters().put('id', thePN.id);
-        try{
-            update thePN;
-            return pageRef;
-        }
-            catch(DMLException e){
-                thePN.addError(e.getMessage());
-            }      
-        return null;
-    }***/
-    
     public PageReference disregardNote(){
         PageReference pageRef = new PageReference('/apex/Notes_ProgressNote_AddlActions');
         pageRef.getParameters().put('id', thePN.id);
@@ -148,7 +140,62 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     }
     public void closePopup() {        
         displayPopup = false;    
-    }     
+    }  
+    
+    public pagereference validateesign(){
+        
+        list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
+                Person_being_served__r.Name, start_time__c, end_time__c, status__c, recordtype.Name,Service_code__c,People_Present__c,Approval_User__c, 
+                Interventions__c, progress__c,Notes_For_Next_Visit__c,Action_plan__c,Number_of_Required_Signatures__c ,GoalIds_AZOPTPage__c,Signature_on_File__c,
+                Owner.Name from Progress_Note__c
+                where id =:thePn.Id];
+        boolean HasGoal = false;
+        GoalsSelected = pnValidations[0].GoalIds_AZOPTPage__c;
+        System.debug('Goals Selecetd --> ' + GoalsSelected); 
+        if((GoalsSelected==null || GoalsSelected =='') || pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
+        (pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0)||
+        pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
+            if(GoalsSelected==null || GoalsSelected ==''){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a "Goal" before continuing.'));   
+            }
+            if(pnValidations[0].status__c == 'Final'){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This Progress Note has already been Finalized'));  
+            }
+            if(pnValidations[0].Approval_Status__c == 'Pending'){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This Progress Note is pending Approval')); 
+            }
+            if(pnValidations[0].Action_plan__c == Null){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Action Plan before continuing'));    
+            }
+            if(pnValidations[0].Service_Location__c == Null){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Location before continuing'));   
+            }
+            if(pnValidations[0].Type_of_Contact__c == Null ||pnValidations[0].Type_of_Contact__c == ''){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select the Type of Contact before continuing'));  
+            }
+            if(pnValidations[0].Service_code__c == Null){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));  
+            }
+            if(pnValidations[0].Interventions__c== Null|| pnValidations[0].Interventions__c== ''){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must populate the Intervention field before continuing.'));    
+            }
+            if(pnValidations[0].Notes_For_Next_Visit__c == Null){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must populate the Notes For Next Visit field before continuing.'));  
+            }
+            if(pnValidations[0].progress__c == Null|| pnValidations[0].progress__c == ''){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must populate the Progress field before continuing.'));  
+            
+            }
+            //if(pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0 ){
+             //   ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization.'));  
+            
+           // }
+            
+        }return null;
+    }
+    
+    
+       
     public pagereference showPopup() { 
         list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
                 Person_being_served__r.Name, start_time__c, end_time__c, status__c, recordtype.Name,Service_code__c,People_Present__c,Approval_User__c, 
