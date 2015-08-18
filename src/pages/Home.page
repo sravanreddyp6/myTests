@@ -254,18 +254,18 @@
 						 <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}&admission={!serviceAssignment.Admission__c}&pbsID={!serviceAssignment.Person_Being_Served__c}" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" /> 
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" rendered="{!NOT(canCreateProgressNotes)}" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!And(OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV')), NOT(canCreateProgressNotes)) }" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Nurses Shift Documentation" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!(OperatingGroup = 'Care Meridian') || NOT(canCreateProgressNotes)}"/>
+                        <apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Nurses Shift Documentation" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" rendered="{!NOT(canCreateProgressNotes)}" />
 					</apex:selectList>
