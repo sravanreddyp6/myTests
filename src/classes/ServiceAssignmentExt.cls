@@ -352,7 +352,7 @@ public without sharing class ServiceAssignmentExt {
 			editSA = true;
 			theServAssign = new Service_Assignment__c();
 			initialRecord = new Service_Assignment__c();
-			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
+			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid, Network_Offering__c FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
 			admissionId = admission.Id;
 			theServAssign.Admission__c = admission.Id;
 			theServAssign.Name = 'TBD - Autofilled';
@@ -391,7 +391,8 @@ public without sharing class ServiceAssignmentExt {
 			                 Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
 			                 Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
 			                 Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c,Person_Being_Served__r.Age_month__c,Person_Being_Served__r.Age_year__c,Person_Being_Served__r.Age_days__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-			                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
+			                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c,
+			                 Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c
 			                 FROM Service_Assignment__c
 			                 WHERE Id = :controller.getid()];
 			initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,Admission__r.Person_Being_Served__r.LastName,
@@ -399,10 +400,11 @@ public without sharing class ServiceAssignmentExt {
 			                 Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
 			                 Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
 			                 Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-			                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c
+			                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c,
+			                 Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c
 			                 FROM Service_Assignment__c
 			                 WHERE Id = :controller.getid()];
-			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_Being_Served__r.LastName FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
+			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_Being_Served__r.LastName, Network_Offering__c FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
 			admissionId = admission.Id;
 			recordType = theServAssign.RecordType.Name;
 			recordTypeId = theServAssign.RecordTypeId;
@@ -812,7 +814,7 @@ public without sharing class ServiceAssignmentExt {
 
 		populateFundingSources();
 		if (!newSA) {
-			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_being_served__r.LastName FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
+			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_being_served__r.LastName, Network_Offering__c FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
 			plans = [select name, id, createddate, status__c, effective_date__c, target_date__c from Action_Plan__c where Service_Assignment__c = :currentID Order by CreatedDate DESC];
 			for(Action_Plan__c aplan: plans){
 				if (aplan.Status__c == 'Active Final'){
@@ -836,6 +838,10 @@ public without sharing class ServiceAssignmentExt {
 		if ( currentrecord.Service_Location__c != null) {
 			serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c,Room_and_Board_Rate__c, PRN_DS_Per_Hour__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
 			currentProgramId = serviceLocation.programID__c;
+		}
+		
+		if(theServAssign.Service_Began_via_Acquisition_Company__c == null){
+			theServAssign.Service_Began_via_Acquisition_Company__c = 'No';
 		}
 
 	}
@@ -1121,12 +1127,30 @@ public without sharing class ServiceAssignmentExt {
 
 
 	public PageReference SaveServAssign() {
+		
+		List<string> errors = new list<string>();
 
 		if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
-			ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
-			return null;
-		}else if (!AssessmentOnly && theServAssign.SA_Start_DateTime__c == null) {
-			ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Start date: You must enter a value.'));
+			errors.add('Location of Service: You must select a value.');
+			//ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
+			//return null;
+		}
+		if(!AssessmentOnly && theServAssign.SA_Start_DateTime__c == null) {
+			errors.add('Start date: You must enter a value.');
+			//ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Start date: You must enter a value.'));
+			//return null;
+		}
+		if(theServAssign.Service_Began_via_Acquisition_Company__c == null){
+			errors.add('Service Began via Acquisition Company (as of 2016)? : You must enter a value.');
+		}
+		if(theServAssign.Status__c == 'Inactive' && theServAssign.Service_Ended_via_Business_Divested__c == null){
+			errors.add('Service Ended via Business Divested? : You must enter a value.');
+		}
+		
+		if(errors.size() > 0){
+			for(string e: errors){
+				ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,e));	
+			}
 			return null;
 		}
 
@@ -1217,7 +1241,8 @@ public without sharing class ServiceAssignmentExt {
 				                 Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
 				                 Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
 				                 Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
-				                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c
+				                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c,
+				                 Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c
 				                 FROM Service_Assignment__c
 				                 WHERE Id = :s.id
 				                 ];
