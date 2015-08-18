@@ -13,6 +13,8 @@
     color: red;
     font-weight: bold;
 }
+
+body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-color: transparent !important;}
 .btn{
     background-color: #7bc145 !important;
     color: black !important;
@@ -31,15 +33,15 @@
     color: white !important;
 }
 [id$="_secondHeader"] .pbSubheader{
-	border-top: 1px solid #253e76 !important;
-   
+	border-top: 1px solid #253e76 !important;   
     background-color: transparent  !important;
     color: black !important; 
 }
 .pbSubheader h1, .pbSubheader h2, .pbSubheader h3{   font-size: 11pt !important;}
-.labelCol {color: black !important; }
+.labelCol {color: black !important; font-size: 9pt !important; }
+.data2Col{font-size: 9pt !important; color: black !important;}
 
-
+.tmn-row-even{background-color: gray;}
 </style>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentView" admId="{!servAssign.Admission__c}" rendered="{!servAssign.Id != null}"/>
 <br/>
@@ -129,7 +131,7 @@
 
 				<apex:outputText value="{!Incident__c.Staff_Present__c}" />
  				
-			<apex:pageBlockTable id="relStaff" value="{!relatedStaff}" var="relper" columnsWidth="35%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relatedstaff != null && relatedstaff.size > 0}">
+		<apex:pageBlockTable id="relStaff" value="{!relatedStaff}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="35%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relatedstaff != null && relatedstaff.size > 0}">
             
            <apex:column headerValue="Name" value="{!relper.staff_member__r.name}" /> 
            <apex:column headerValue="Employee Number" value="{!relper.staff_member__r.Employee_Number__c}" />
@@ -143,7 +145,7 @@
         
         <apex:outputText value="{!Incident__c.Mentor_present__c}" />
  				
-			<apex:pageBlockTable id="relMentor" value="{!relatedMentor}" var="relper" columnsWidth="35%,15%,20%,15%,15%" rendered="{! incident__c.mentor_present__c == 'Yes' && relatedMentor != null && relatedMentor.size > 0}">
+			<apex:pageBlockTable id="relMentor" value="{!relatedMentor}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="35%,15%,20%,15%,15%" rendered="{! incident__c.mentor_present__c == 'Yes' && relatedMentor != null && relatedMentor.size > 0}">
             
            <apex:column headerValue="Name" value="{!relper.mentor__r.Full_Name__c}" /> 
            <apex:column headerValue="Mentor Number" value="{!relper.mentor__r.name}" />
@@ -156,7 +158,7 @@
         
         <apex:outputText value="{!Incident__c.Others_Present_at_Time_of_Incident__c}" />
  				
-			<apex:pageBlockTable id="relOther" value="{!relatedOther}" var="relper" columnsWidth="35%,35%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' && relatedOther != null && relatedOther.size > 0}">
+		<apex:pageBlockTable id="relOther" value="{!relatedOther}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="35%,35%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' && relatedOther != null && relatedOther.size > 0}">
             
            <apex:column headerValue="Name" value="{!relper.Other_people__c}" />
            <apex:column headerValue="Title" value="{!relper.Title__c}" />  
