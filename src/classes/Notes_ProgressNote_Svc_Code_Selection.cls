@@ -22,7 +22,7 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
         for(Service_code__c local : 
                     [SELECT Id, Service_Code__c, Service_Value__c From Service_Code__c
                     where id in (select service_code__c from ServiceAssignment_ServiceCode_Jo__c where service_assignment__c = :currentRecord.Service_Assignment__c)
-                    and start_date__c <= :Date.valueOf(CurrentRecord.Service_Assignment__r.SA_Start_DateTime__c) and (end_date__c = null or end_date__c >= :Date.Today())  
+                    and start_date__c <= :Date.valueOf(CurrentRecord.Start_Time__c) and (end_date__c = null or end_date__c >= :Date.valueOf(CurrentRecord.Start_Time__c))  
                     ])
             {  SelectOption SO = new SelectOption(local.ID, local.Service_Value__c);
                 Codes.Add(SO);
@@ -38,7 +38,7 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
            for(Service_code__c local : 
                     [SELECT Id, Service_Code__c, Service_Value__c From Service_Code__c
                     where id in (select service_code__c from ServiceAssignment_ServiceCode_Jo__c where service_assignment__c = : servAssignId )
-                    and start_date__c <= :Date.valueOf(Sa.SA_Start_DateTime__c) and (end_date__c = null or end_date__c >= :Date.Today())  
+                    and start_date__c <= :Date.valueOf(Sa.SA_Start_DateTime__c) and (end_date__c = null or end_date__c >= :Date.valueOf(Sa.SA_Start_DateTime__c))  
                     ])
             {  SelectOption SO = new SelectOption(local.ID, local.Service_Value__c);
                 Codes.Add(SO);
