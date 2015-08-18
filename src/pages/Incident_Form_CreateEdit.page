@@ -153,7 +153,7 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
 	            <apex:pageBlockSection title="Current Service" columns="1" collapsible="false" rendered="{!servAssign.id != null}"  >
 	                <apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
 	                    <apex:outputLabel value="Which Current Service is Related to the Incident? "  />
-	                    <apex:outputField value="{!Incident__c.Service_Assignment__c }" />
+	                    <apex:outputField value="{!Incident__c.Service_Assignment__r.Program_Detail__c }" />
 	                </apex:pageBlockSectionItem>
 	            </apex:pageBlockSection>
 	            <apex:pageBlockSection columns="1" id="incidentTimingSection" title="Timing" showHeader="true" collapsible="false" >
@@ -205,7 +205,7 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
 	                </apex:pageBlockSectionItem>                           
 	               <apex:pageBlockSectionItem >
 	                    <apex:outputPanel >
-	                        <apex:outputLabel value="Date/Time Incident First Reported to The MENTOR Network" />                        
+	                        <apex:outputLabel value="Date/Time Incident First Reported to The MENTOR Network Management" />                        
 	                    </apex:outputPanel>
 	                    <apex:outputPanel >
 	                        <c:MilitaryDatetime id="dateReportedmilitary" shiftTop="20" datetimeval="{!Incident__c.Date_Reported__c}" edit="true" hiddenFieldId="DateReported" datetimepickerid="DateReported"/>
@@ -217,7 +217,7 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
 	               </apex:pageBlockSectionItem>             
 	            </apex:pageBlockSection>
 	            <apex:pageBlockSection id="incidentLocationSection" title="Location" columns="1" showHeader="true" collapsible="false" >    
-	                <apex:pageBlockSectionItem id="incidentLocationItem" helptext=" Select 'Residence' if the incident occurred at a Group Home, SNF, CLF, or Supported Living faciliy" >
+	                <apex:pageBlockSectionItem id="incidentLocationItem" helptext=" Select 'Residence' if the incident occurred at a Group Home, SNF, CLIF, or Supported Living faciliy" >
 	                    <apex:outputLabel >Where did the incident occur?</apex:outputLabel>
 	                    <apex:outputPanel >
 	                        <apex:inputField value="{!Incident__c.Where_incident_occurred__c }" id="whereOccurred"
@@ -225,7 +225,8 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
 	                                        &quot;Other Location&quot;: [&quot;{!$Component.otherIncidentLocation_label}&quot;, &quot;{!$Component.otherIncidentLocation_input}&quot;],
 	                                        &quot;Day Program&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
 	                                        &quot;Program Office&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
-	                                        &quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
+	                                        &quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
+	                                        &quot;Host Home/Foster Home&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],  
 	                                        &quot;School&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;], 
 	                                        &quot;Residence&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],
 	                                        &quot;Place of Employment&quot;: [&quot;{!$Component.incident_nettype_input}&quot;, &quot;{!$Component.incident_nettype_label}&quot;],                                           
