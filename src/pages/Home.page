@@ -237,6 +237,7 @@
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
 				</apex:column>
+
 				<apex:column headerValue="Daily Actions">
 					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
 						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
@@ -269,7 +270,10 @@
 				<apex:column headerValue="saId" rendered="{!vfIsNotDefaultUser}">
 					{!serviceAssignment.Id}
 				</apex:column>
-				
+				<!--  dummy for datatables extention -->
+				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>				
+				<!--  dummy for datatables extention -->
+				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>				
 		</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
