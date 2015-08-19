@@ -60,8 +60,10 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
         	<apex:pageBlocksection columns="1" title="Current Service" collapsible="false"  rendered="{!servAssign.id != null}">
         		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
         			<apex:outputLabel value="Which Current Service is Related to the Incident? " />
+        			
         			<apex:outputField value="{!Incident__c.Service_Assignment__c }" />
         		</apex:pageBlockSectionItem>
+        		<apex:outputField label="Program Detail" value="{!Incident__c.Service_Assignment__r.Program_Detail__c }" />
         	</apex:pageBlocksection>
         	
         	<apex:pageBlockSection columns="1" title="Timing" showHeader="true" collapsible="false" >
@@ -87,7 +89,7 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
         		 	</apex:outputPanel>
         		 </apex:pageBlockSectionItem>
         		 <apex:pageblockSectionItem >
-        		 	<apex:outputLabel value="Date/Time Incident Reported to The MENTOR Network" />
+        		 	<apex:outputLabel value="Date/Time Incident First Reported to The MENTOR Network Management" />
         		 	<apex:outputPanel >
         				<c:MilitaryDatetime dateTimeVal="{!Incident__c.Date_Reported__c}" />
         				<apex:outputPanel layout="block" rendered="{!Incident__c.First_Reported_Time_is_Approximate__c}" >        				

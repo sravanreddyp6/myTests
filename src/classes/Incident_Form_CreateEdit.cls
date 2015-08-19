@@ -107,6 +107,7 @@ public with sharing class Incident_Form_CreateEdit {
         WhereTypes.add('Residence');
         WhereTypes.add('School');
         WhereTypes.add('Vehicle');
+        WhereTypes.add('Host Home/Foster Home');
         if( WhereTypes.contains(incident.Where_incident_occurred__c)  && incident.Network_Type__c == null){
             incident.Where_incident_occurred__c.addError('Type is required'); hasError = true;
         }       
