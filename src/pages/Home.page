@@ -208,7 +208,9 @@
 			<c:HomePageComponents objectName="Documents" />
 			<c:HomePageComponents objectName="Incidents" />
 		</apex:outputPanel>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}">
+		<apex:variable value="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}"
+				var="vfIsNotDefaultUser"/>
+		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!canSeePBS}">
 			<apex:pageBlockSection columns="2">
 				<apex:selectList id="selectprograms" value="{!selectedAlias}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
@@ -224,7 +226,7 @@
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
-				<apex:column headerValue="View Current Shift">
+				<apex:column headerValue="View Current Shift"  rendered="{!vfIsNotDefaultUser}">
 					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
 						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
@@ -244,12 +246,12 @@
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" rendered="{!vfIsNotDefaultUser}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis"  rendered="{!vfIsNotDefaultUser}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
@@ -258,13 +260,13 @@
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#incidents" itemLabel="Incidents" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#incidents" itemLabel="Incidents"  rendered="{!vfIsNotDefaultUser}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment"  />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries"  rendered="{!vfIsNotDefaultUser}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
 				</apex:column>
-				<apex:column headerValue="saId">
+				<apex:column headerValue="saId" rendered="{!vfIsNotDefaultUser}">
 					{!serviceAssignment.Id}
 				</apex:column>
 				
