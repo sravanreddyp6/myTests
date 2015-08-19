@@ -781,13 +781,132 @@
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				
+				<apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_offering__c == 'ARY'}" >
+					<apex:outputLabel value="Child Service Goal" />
+					<apex:outputPanel id="serviceGoalPanel">
+						<apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c == null}">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputField value="{!theServAssign.Child_Service_Goal__c}" >
+								<apex:actionSupport event="onchange" reRender="permanencyGoalPanel" />
+							</apex:inputField>
+						</div>
+						</apex:outputPanel>
+						<apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c != null}" >
+							<apex:inputField value="{!theServAssign.Child_Service_Goal__c}" html-disabled="true" />
+						</apex:outputPanel>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_offering__c == 'ARY'}" >
+					<apex:outputLabel value="Child Permanency Goal" />
+					<apex:outputPanel id="permanencyGoalPanel">
+						<apex:outputPanel rendered="{!theServAssign.Child_Service_Goal__c == null}">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputField value="{!theServAssign.Child_Permanency_Goal__c}" >
+								<apex:actionSupport event="onchange" reRender="serviceGoalPanel" />
+							</apex:inputField>
+						</div>
+						</apex:outputPanel>
+						<apex:outputPanel rendered="{!theServAssign.Child_Service_Goal__c != null}" >
+							<apex:inputField value="{!theServAssign.Child_Permanency_Goal__c}" html-disabled="true" />
+						</apex:outputPanel>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
+					<apex:outputLabel value="Educational Involvement at Start of Service" />
+					<apex:outputPanel >
+						<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}" >
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputField value="{!theServAssign.Educational_Involvement_at_Start__c}" />
+						</div>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
+						<apex:inputField value="{!theServAssign.Educational_Involvement_at_Start__c}" />
+					</apex:outputPanel>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Highest Level of Education at Start of Service" />
+					<apex:outputPanel >
+						<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+								<apex:inputField value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
+							</div>
+						</apex:outputPanel>
+						<apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
+							<apex:inputField value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
+						</apex:outputPanel>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!vfVarIsCB}" >
+					<apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" />
+					<apex:outputPanel >
+						<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY' && (Contains(theservAssign.Program_Detail__c,'FCT') || Contains(theservAssign.Program_Detail__c,'HH'))}">
+							<div class="requiredInput">
+								<div class="requiredBlock"></div>
+								<apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
+							</div>
+						</apex:outputPanel>
+						<apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY' || (admission.Network_Offering__c == 'ARY' && !(Contains(theservAssign.Program_Detail__c,'FCT') || Contains(theservAssign.Program_Detail__c,'HH')))}" >
+							<apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
+						</apex:outputPanel>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!isNR}">
+					<apex:outputLabel value="Rancho Score" />
+					<apex:outputPanel >
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputField value="{!theServAssign.Rancho_Score__c}" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
 			
 			</apex:pageBlockSection>
 			
 			<apex:pageBlockSection title="Service Assignment Start" id="saStartSectionRead" collapsible="false" columns="2" showHeader="true" rendered="{!!editSA}" >
+				
 				<apex:pageBlockSectionItem helpText="This person's service is beginning because the company providing their services was purchased by The Network after 2016" >
 					<apex:outputLabel value="Service Began via Acquisition Company (as of 2016)?" />
 					<apex:outputField value="{!theServAssign.Service_Began_via_Acquisition_Company__c}" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem  rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_offering__c == 'ARY'}" >
+					<apex:outputLabel value="Child Service Goal" />
+					<apex:outputField value="{!theServAssign.Child_Service_Goal__c}" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_offering__c == 'ARY'}" >
+					<apex:outputLabel value="Child Permanency Goal" />
+					<apex:outputField value="{!theServAssign.Child_Permanency_Goal__c}" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
+					<apex:outputLabel value="Educational Involvement at Start of Service" />
+					<apex:outputField value="{!theServAssign.Educational_Involvement_at_Start__c}" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Highest Level of Education at Start of Service" />
+					<apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!vfVarIsCB}" >
+					<apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" />
+					<apex:outputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!isNR}">
+					<apex:outputLabel value="Rancho Score" />
+					<apex:outputField value="{!theServAssign.Rancho_Score__c}" />
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 			
