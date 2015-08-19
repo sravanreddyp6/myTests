@@ -153,8 +153,9 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
 	            <apex:pageBlockSection title="Current Service" columns="1" collapsible="false" rendered="{!servAssign.id != null}"  >
 	                <apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
 	                    <apex:outputLabel value="Which Current Service is Related to the Incident? "  />
-	                    <apex:outputField value="{!Incident__c.Service_Assignment__r.Program_Detail__c }" />
+	                    <apex:outputField value="{!Incident__c.Service_Assignment__c }" />
 	                </apex:pageBlockSectionItem>
+	                <apex:outputField label="Program Detail" value="{!Incident__c.Service_Assignment__r.Program_Detail__c }" />
 	            </apex:pageBlockSection>
 	            <apex:pageBlockSection columns="1" id="incidentTimingSection" title="Timing" showHeader="true" collapsible="false" >
 	                <apex:pageBlockSectionItem id="timeSectionItem">
