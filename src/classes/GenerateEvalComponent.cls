@@ -11,15 +11,35 @@ public with sharing class GenerateEvalComponent {
         }
         set;
     }
-    
+
     public string cat {get; set;}
     public string subcat{get; set;}
     public string subsubcat{get; set;}
     public string evalname{get; set;}
-    public ID evaluationID { get; set;}
+    public ID evaluationID {
+        get;
+        set {
+            evaluationId = value;
+            if (evaluationId != null) {
+                serviceAssignmentId = [
+                    SELECT ServiceAssignment__c FROM Evaluation__c WHERE Id=:evaluationId
+                ].ServiceAssignment__c;
+            }
+        }
+    }
     public ID pbsID { get; set;}
+    public Id serviceAssignmentId { get; set; }
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
+    public Boolean showPreviousEntries {
+        get {
+            System.debug(evalSecType);
+            System.debug(evalName);
+            System.debug(cat);
+            System.debug(subcat);
+            return (evalName == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'Vitals Signs');
+        }
+    }
 
     transient List<Eval_Drop_Down__c> dd;
     transient List<Eval__c> listEvalItems;
@@ -40,7 +60,7 @@ public with sharing class GenerateEvalComponent {
         }
         return str;
     }
-    
+
     public transient string evalSectionLastMod;
     public string getevalSectionLastMod() {
         String str = '';
@@ -59,7 +79,7 @@ public with sharing class GenerateEvalComponent {
             }
         }
     }
-    
+
 
     public transient boolean hasErros { get; private set;}
 
@@ -78,7 +98,7 @@ public with sharing class GenerateEvalComponent {
     }
 
     public GenerateEvalComponent( ) {
-        
+
         mapEvalItems = new Map<ID, Eval__c>();
         mapEvalValues = new Map<ID, Eval_Value__c>();
         hasErros = false;
@@ -111,7 +131,7 @@ public with sharing class GenerateEvalComponent {
                and visible__c = true
             order by category_sequence__c, sub_category_sequence__c, field_sequence__c
         ];
-        
+
         //EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
         if (evalSecType == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV'){
             listEvalItems = [ select id,
@@ -135,11 +155,11 @@ public with sharing class GenerateEvalComponent {
                                    and category__c =:cat
                                    and sub_category__c = :subcat
                                    and visible__c = true
-                                   and (NOT htmlid__c like 'HeadtoToeDiagnosticsIVQuestion%')  
+                                   and (NOT htmlid__c like 'HeadtoToeDiagnosticsIVQuestion%')
                                 order by category_sequence__c, sub_category_sequence__c, field_sequence__c
                             ];
         }
-        
+
         // create a map for easy access
         mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
         List<String> evalIds = new List<String>();
@@ -188,7 +208,7 @@ public with sharing class GenerateEvalComponent {
         for ( Eval_Value__c ev: listEvalValues ) {
             mapEvalValues.put( ev.eval__c, ev);
         }
-        
+
 
         // system.debug( 'Populated values:' + mapEvalValues );
         String newHtmlLbl = '';
@@ -647,8 +667,79 @@ public with sharing class GenerateEvalComponent {
               + (namespace != null && namespace != '' ? namespace + '__' : '')
               + resourceName;
         } else return '';
+    }
 
-}
+    @RemoteAction
+    public static EvalValue[] getPreviousEntries(Id evalId, Id serviceAssignmentId) {
+        Map<Id, Evaluation__c> evaluations = new Map<Id, Evaluation__c>([
+            SELECT Id
+              FROM Evaluation__c
+             WHERE ServiceAssignment__c = :serviceAssignmentId
+        ]);
+        EvalValue[] evalValues = new EvalValue[] {};
+        for (Eval_Value__c evalValue: [
+            SELECT Id, Boolean__c, Currency__c, Date_Time__c, Number_No_Decimal__c,
+                   Text_Over_250__c, Text_Under_250__c, What_Id__c, Eval__r.Field_Type__c,
+                   Eval__r.Field_Sub_Type__c, Eval__r.Length__c, LastModifiedDate
+              FROM Eval_Value__c
+             WHERE Eval__c = :evalId
+               AND What_Id__c IN :evaluations.keySet()
+            ORDER BY LastModifiedDate DESC
+            LIMIT 7
+        ]) {
+            evalValues.add(new EvalValue(evalValue));
+        }
+        return evalValues;
+    }
 
+    public class EvalValue {
+        public String value { get; set; }
+        public Id evaluationId { get; set; }
+        public String lastModifiedDate { get; set; }
+        public Eval_Value__c evalValueSObject { get; set; }
 
+        public EvalValue(Eval_Value__c evalValue) {
+            evaluationId = evalValue.What_Id__c;
+            value = evalValue.Text_Under_250__c;
+            lastModifiedDate = evalValue.LastModifiedDate.format('MM/dd/yyyy HH:mm');
+            evalValueSObject = evalValue;
+            if (evalValue.Eval__r.Field_Type__c == 'Boolean')  {
+                if (evalValue.Eval__r.Field_Sub_Type__c == 'Checkbox') {
+                    if (evalValue.Boolean__c) {
+                        value = 'Yes';
+                    } else {
+                        value = 'No';
+                    }
+                } else if (evalValue.Eval__r.Field_Sub_Type__c == 'Dropdown') {
+                    if (evalValue.Text_Under_250__c == '1') {
+                        value = 'Yes';
+                    } else {
+                        value = 'No';
+                    }
+                }
+            } else if (evalValue.Eval__r.Field_Type__c=='String') {
+                if (evalValue.Eval__r.length__c > 250) {
+                    value = evalValue.Text_Over_250__c;
+                } else {
+                    value = evalValue.Text_Under_250__c;
+                }
+            } else if (evalValue.Eval__r.Field_Type__c == 'Double'){
+                value = evalValue.Text_Under_250__c;
+            } else if (evalValue.Eval__r.Field_Type__c == 'Int'){
+                value = String.valueOf(evalValue.Number_No_Decimal__c);
+            } else if (evalValue.Eval__r.Field_Type__c == 'DropDown') {
+                value = evalValue.Text_Under_250__c;
+            }  else if (evalValue.Eval__r.Field_Type__c == 'Date') {
+                value = evalValue.Date_Time__c.date().format();
+            } else if (evalValue.Eval__r.Field_Type__c == 'Datetime') {
+                value = evalValue.Date_Time__c.format('MM/dd/yyyy HH:mm');
+            } else if (evalValue.Eval__r.Field_Type__c == 'Multiselect') {
+                if (evalValue.Eval__r.length__c > 250) {
+                    value = evalValue.Text_Over_250__c;
+                } else {
+                    value = evalValue.Text_Under_250__c;
+                }
+            }
+        }
+    }
 }
