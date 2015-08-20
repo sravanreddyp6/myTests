@@ -141,12 +141,12 @@ public class identityEditNew {
 		Boolean error = false;
     	 List<TMN_User__c> location =  [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where location_name__c  =:TMNUser.Location_Name__c limit 1];
        	if(location.size() == 0){
-       	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Please Search and select valid Location in order to save this record.'));
+       	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Please Search and select valid Location Name in order to save this record.'));
     	 	error = true;
        	}
 		
 		if(TMNUser.Hire_Date__c!=null && TMNUser.Last_Day__c!=null && TMNUser.Hire_Date__c.daysBetween(TMNUser.Last_Day__c)>90){
-		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date cann\'t be more than 90 days from Start Date.'));
+		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Start Date.'));
     	 	error = true;
 		}
 		if(error){

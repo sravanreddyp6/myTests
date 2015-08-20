@@ -121,7 +121,7 @@ function autoCompleteRender(ul, item) {
                         j$('[id$=locationCity]').text(checkUndefined(result.Work_City__c));
                         j$('[id$=locationState]').text(checkUndefined(result.Work_State__c));                                                      
                         j$('[id$=locationZip]').text(checkUndefined(result.Zip_Code__c));
-                        j$('[id$=ManagerName]').val(checkUndefined(result.Manager_Name__c));
+                        //j$('[id$=ManagerName]').val(checkUndefined(result.Manager_Name__c));
                         j$('[id$=hiddenlocationLine1]').val(checkUndefined(result.Office_Location__c));
                         j$('[id$=hiddenlocationLine2]').val(checkUndefined(result.Office_Location_2__c));
                         j$('[id$=hiddenlocationCity]').val(checkUndefined(result.Work_City__c));
@@ -190,7 +190,7 @@ function autoCompleteRender(ul, item) {
     function validatePhone () {
     var len = j$('[id$=OfficeNumber]').val();
     			if (len.length == 10){
-    				alert('Cann\'t enter more than 10 digits.');
+    				alert('This field can\'t take more than 10 characters.');
     				j$('[id$=OfficeNumber]').val(len.substring(0, 10));
     			} 
     }
@@ -198,7 +198,7 @@ function autoCompleteRender(ul, item) {
     function validateMobilePhone () {
     var len = j$('[id$=MobileNumber]').val();
     			if (len.length == 10){
-    			alert('Cann\'t enter more than 10 digits.');
+    			alert('This field can\'t take more than 10 characters.');
     				j$('[id$=MobileNumber]').val(len.substring(0, 10));
     			} 
     }
@@ -218,7 +218,7 @@ function autoCompleteRender(ul, item) {
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2"/>
                     <apex:inputField label="Professional Title" value="{!TMNUser.Professional_Title__c}" taborderhint="9"/>
                     <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true" taborderhint="3"/>
-                    <apex:inputField label="Job Status" value="{!TMNUser.Job_Status__c}" required="true" taborderhint="10"/>
+                    <apex:outputText label="Job Status" >Active</apex:outputText>
                     <apex:inputField label="Preferred First Name" value="{!TMNUser.Preferred_First_Name__c}" required="true" taborderhint="4"/>                    
                     <apex:inputField label="Start Date" value="{!TMNUser.Hire_Date__c}" required="true" id="startDate" taborderhint="11" onChange="setEndDate()"/>
                     <apex:inputField label="Preferred Last Name" value="{!TMNUser.Preferred_Last_Name__c}" required="true" taborderhint="5"/>       
@@ -234,7 +234,7 @@ function autoCompleteRender(ul, item) {
                     <apex:outputPanel styleClass="nowrap">
                       <apex:inputField label="Office Phone" value="{!TMNUser.Office_Phone__c}" type="tel" taborderhint="6" id="OfficeNumber" onkeydown="validatePhone()"/>
                         <apex:outputLabel value="Ext " />
-                        <apex:inputField value="{!TMNUser.phone_ext__c}" type="tel" taborderhint="6" style="width: 30px;" />
+                        <apex:inputField value="{!TMNUser.phone_ext__c}" type="tel" taborderhint="6" style="width: 40px;" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem />
