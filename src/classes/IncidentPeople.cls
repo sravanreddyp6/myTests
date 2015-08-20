@@ -231,8 +231,9 @@ public pageReference savePerson( ) {
 					ipw.Other = currPerson.Other_People__c;
 				}
 			}
-		}
 		if(String.isBlank(currPerson.Title__c) ){hasError = true; currPerson.addError('Please enter a Title');}
+		}
+		
 		try {
 			if(!hasError){
 				//system.debug('CURR:' + currPerson);
