@@ -2,9 +2,14 @@ public with sharing class PDMController {
 
  Public Integer size{get;set;}
  Public Integer noOfRecords {get;set;}
- public TMN_User__c curruser  {get{return [ select id,Work_State__c,Work_City__c  from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];} set;}
+ public TMN_User__c curruser  {get{return [ select id,Work_State__c,Work_City__c,Alias__c   from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];} set;}
  
- public String MainOffice {get{return '999-999-9999';} set;}
+ public String MainOffice {get{
+ 	List<Service_Location__c> phone =	[select Alias__c, Phone__c, City__c, State__c, Zip__c from Service_Location__c where Alias__c =:curruser.Alias__c limit 1];
+ 		if(phone!=null && phone.size()>0){
+ 		return phone.get(0).Phone__c;
+ 		}return '1-617-790-4800';
+ } set;}
  public String ServiceCenter {get{return '1-888-774-4872 Option #2';} set;}
  public String HumanResources {get{return '1-888-774-4872 Option #3';} set;}
  public String ItServiceCenter {get{return '1-888-774-4872 Option #1';} set;}
