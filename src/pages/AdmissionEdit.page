@@ -51,7 +51,6 @@ function setupDates() {
 }
 
 </script>
-    
     <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!Admission__c.Id}" rendered="{!showPersonalCard}"/>
     <br />
     <apex:form >
@@ -66,9 +65,11 @@ function setupDates() {
                 <apex:pageblocksectionitem >
                 <apex:outputLabel for="admstatus" value="Status" />
                 <apex:outputPanel >
-                    <apex:inputField id="admStatus" value="{!admission.Status__c}" >
-                    <apex:actionSupport event="onchange" rerender="detail" action="{!setDischargeFields}" />
-                    </apex:inputField>
+	                <apex:actionRegion >
+	                    <apex:inputField id="admStatus" value="{!admission.Status__c}" >
+	                    	<apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" />
+	                    </apex:inputField>
+	                </apex:actionRegion>    
                 </apex:outputPanel>
                 </apex:pageblocksectionitem>
                 <apex:outputField value="{!admission.Person_Being_Served__c}" />
@@ -89,9 +90,15 @@ function setupDates() {
                 <apex:pageBlockSectionItem />
                 <apex:inputField value="{!admission.Reason_for_Discharge__c}" rendered="{! !useDischargeSection }"/>
             </apex:pageBlockSection>
-			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="false" >
-				<apex:inputField value="{!admission.Admitted_From__c}" />
-			</apex:pageBlockSection>            
+            <!-- PRI-218/19 -->
+			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="false" rendered="{!reqAdmittedFrom}">
+				<apex:inputField value="{!admission.Admitted_From__c}" required="true" />
+			</apex:pageBlockSection>   
+			<apex:outputPanel id="Discharge2" layout="none">  
+	   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="false" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
+					<apex:inputField value="{!admission.Discharged_To__c}" required="{!reqDcTo}" />
+				</apex:pageBlockSection>  
+			</apex:outputPanel>  
             <apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="false" rendered="{! useDischargeSection && admission.status__c == 'Discharged'}" >
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Discharged Date/Time" />

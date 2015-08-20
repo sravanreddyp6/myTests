@@ -2,10 +2,12 @@ public with sharing class AdmissionEditExtension {
     public Admission__c admission { get; set; }
     public Boolean showPersonalCard { get; set; }
     public string admEffDateTime { get; set; }
-    
+
 	// EC-185 - capturing service discharge info - only applicable for CM to start
     public boolean useDischargeSection { get; set; }
     public string admDischargeDateTime { get; set; }
+    public TMN_User__c curUser{get;set;}
+    public list<Service_Assignment__c> allSAforAdmint{get; set;}
         
     public ApexPages.StandardController stdController;
     public AdmissionEditExtension(ApexPages.StandardController stdController) {
@@ -33,20 +35,74 @@ public with sharing class AdmissionEditExtension {
         	showPersonalCard = true;
         
         }
+        allSAforAdmint = new list<Service_Assignment__c>();
+        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c from Service_Assignment__c where Admission__c = :this.admission.id];
         
-        
+        curUser = new TMN_User__c();
         // EC-185 get operating group for whether to show new discharge section
         useDischargeSection = false;
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
+         	curUser = TU;
          	if (TU.Operating_Group__c == 'Care Meridian') { 
          		useDischargeSection = true;
          	} 
+         	
         }
         
         	
     }
+    //PRI-218 219
+    public boolean reqAdmittedFrom {get{return setReqAdmittedFrom(curUser,allSAforAdmint);} set;}
+    public boolean reqDcTo { get{ return setReqDcTo(curUser,allSAforAdmint);} set;}
+    public boolean shwDcTo { get{ return ( reqDcTo || curUser.Operating_Group__c.StartsWith('Neuro') );} set;}
     
+    static boolean setReqAdmittedFrom(TMN_User__c u, list<Service_Assignment__c> SAs ){
+
+    	//Cambridge check
+    	if( u.Operating_Group__c == 'Cambridge' ){
+	    	for(Service_Assignment__c item: SAs){
+	    		if(item.Service_Location__r.Program__c.contains('-ARY') )
+	    			{return true;}
+    			else{
+    				if( item.Service_Location__r.Setting__c.equalsIgnoreCase('residential') )
+    					{return true;}
+    			}
+    				
+	    	}
+    	}
+	//Redwood check
+    	if( u.Operating_Group__c == 'Redwood' ){
+	    	for(Service_Assignment__c item: SAs){
+	    		if( item.Service_Location__r.Setting__c.equalsIgnoreCase('residential') )
+	    			{return true;}    				
+	    	}
+    	}    	
     
+    	return false;
+    }
+    static boolean setReqDcTo(TMN_User__c u, list<Service_Assignment__c> SAs ){
+    	//Cambridge check
+    	if( u.Operating_Group__c == 'Cambridge' ){
+	    	for(Service_Assignment__c item: SAs){
+	    		if(item.Service_Location__r.Program__c.contains('-ARY') )
+	    			{return true;}
+    			else{
+    				if( item.Service_Location__r.Setting__c.equalsIgnoreCase('residential') )
+    					{return true;}
+    			}
+    				
+	    	}
+    	}
+	//Redwood check
+    	if( u.Operating_Group__c == 'Redwood' ){
+	    	for(Service_Assignment__c item: SAs){
+	    		if( item.Service_Location__r.Setting__c.equalsIgnoreCase('residential') )
+	    			{return true;}    				
+	    	}
+    	}    	
+    
+    	return false;
+    }    
     public pageReference saveAdmission () {
 
 		
