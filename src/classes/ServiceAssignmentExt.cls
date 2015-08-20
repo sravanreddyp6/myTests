@@ -842,10 +842,11 @@ public without sharing class ServiceAssignmentExt {
 			currentProgramId = serviceLocation.programID__c;
 		}
 		
-		if(theServAssign.Service_Began_via_Acquisition_Company__c == null){
-			theServAssign.Service_Began_via_Acquisition_Company__c = 'No';
+		//Setting the default value
+		if(theServAssign.Highest_Level_of_Education_at_Start__c != null){
+			theServAssign.Highest_Level_of_Education_at_End_of_Ser__c = theServAssign.Educational_Involvement_at_Start__c;//Setting the default value
+			
 		}
-
 	}
 
 	public void loadProgramList() {
@@ -1126,11 +1127,11 @@ public without sharing class ServiceAssignmentExt {
 		backToServAssignPage.setRedirect(true); //added by Sravan to flush out the view State 09/04/2014 4:38 PM.
 		return backToServAssignPage;
 	}
-
-
+	
 	public PageReference SaveServAssign() {
 		
 		List<string> errors = new list<string>();
+		string opGroup = getOperatingGroup();
 
 		if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
 			errors.add('Location of Service: You must select a value.');
@@ -1145,10 +1146,47 @@ public without sharing class ServiceAssignmentExt {
 		if(theServAssign.Service_Began_via_Acquisition_Company__c == null){
 			errors.add('Service Began via Acquisition Company (as of 2016)? : You must enter a value.');
 		}
-		if(theServAssign.Status__c == 'Inactive' && theServAssign.Service_Ended_via_Business_Divested__c == null){
-			errors.add('Service Ended via Business Divested? : You must enter a value.');
+		if(admission.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood') && (theServAssign.Child_Service_Goal__c == null && theServAssign.Child_Permanency_Goal__c == null)){
+			errors.add('Please enter a value for Child Service Goal or Child Permanency Goal');
 		}
 		
+		if((opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'Care Meridian') && admission.Network_offering__c == 'ARY' && theServAssign.Educational_Involvement_at_Start__c == null){
+			errors.add('Educational Involvement at Start of Service: You must enter a value');
+		}
+		
+		if(admission.Network_offering__c == 'ARY' && theServAssign.Highest_Level_of_Education_at_Start__c == null){
+			errors.add('Highest level of education at Start of Service: You must enter a value');
+		}
+		
+		if(opGroup == 'Cambridge' && admission.Network_offering__c == 'ARY' && (theServAssign.Program_Detail__c.Contains('FCT') || theServAssign.Program_Detail__c.Contains('HH')) && theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c == null){
+			errors.add('Number of Out-of-Home Placements Pre-Service: You must enter a value');
+		}
+		
+		if(opGroup == 'NeuroRestorative' && theServAssign.Rancho_Score__c == null){
+			errors.add('Rancho Score: You must enter a Value');
+		}
+		
+		if(theServAssign.Status__c == 'Inactive'){
+			if(theServAssign.Service_Ended_via_Business_Divested__c == null){
+				errors.add('Service Ended via Business Divested? : You must enter a value.');
+			}
+			if(admission.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood') && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c == null){
+				errors.add('Was Child Service or Permanency Goal met? : You must enter a value.');
+			}
+			if(admission.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Educational_Involvement_at_End_of_Servic__c == null){
+				errors.add('Educational Involvement at End of Service : You must enter a value.');
+			}
+			if(admission.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Educational_Involvement_at_End_of_Servic__c == null){
+				errors.add('Educational Involvement at End of Service : You must enter a value.');
+			}
+			if(admission.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Highest_Level_of_Education_at_End_of_Ser__c == null){
+				errors.add('Highest Level of Education at End of Service : You must enter a value.');
+			}
+			if(admission.Network_offering__c == 'ARY' && opGroup == 'Cambridge' && (theServAssign.Program_Detail__c.Contains('FCT') || theServAssign.Program_Detail__c.Contains('HH')) &&theservAssign.Total_no_of_Internal_moves_during_Servic__c == null){
+				errors.add('Total Number of Internal Moves During Service : You must enter a value.');
+			}
+		}
+	
 		if(errors.size() > 0){
 			for(string e: errors){
 				ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,e));	
