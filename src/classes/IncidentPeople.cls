@@ -13,12 +13,14 @@ public boolean isEditing {get; set;} // internal flag to keep track of edit vs. 
 public Map<String, IncidentPersonWrapper> mapStaff { get; private set;}
 public Map<String, IncidentPersonWrapper> mapMentor { get; private set;}
 public Map<String, IncidentPersonWrapper> mapOther { get; private set;}
+public list<String> orderStaff { get; private set;}
+public list<String> orderMentor { get; private set;}
+public list<String> orderOther { get; private set;}
 public integer existingStaff { get; set; }
 public integer existingMentor { get; set; }
 public integer existingOther { get; set; }
 Private List<Incident_Person__c> newPeople;
 public String newPeopleJSON { get {	
-	//rebuild the new people list
 	
 	return JSON.serialize(newPeople);} set;}
 
@@ -53,8 +55,11 @@ private void initrelatedPeople() {
 		mapMentor  = new Map<String, IncidentPersonWrapper>();
 		mapOther  = new Map<String, IncidentPersonWrapper>();
 		
+		  orderStaff = new list<String>();
+		  orderMentor = new list<String>();
+		  orderOther =	new list<String>();
 		if ( incident.id != null)
-			relatedPeople = [ select id, title__c, person_type__c, staff_member__c, staff_member__r.name, staff_member__r.employee_number__c, staff_member__r.job_title__c, mentor__c, mentor__r.name, mentor__r.role__c, mentor__r.full_name__c, other_people__c, recordtype.name, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid, lastmodifiedby.name from incident_person__c where incident__c = :this.incident.id order by person_type__c, lastmodifieddate desc ];
+			relatedPeople = [ select id, title__c, person_type__c, staff_member__c, staff_member__r.name, staff_member__r.employee_number__c, staff_member__r.job_title__c, mentor__c, mentor__r.name, mentor__r.role__c, mentor__r.full_name__c, other_people__c, recordtype.name, createdbyid, createddate, lastmodifieddate, lastmodifiedbyid, lastmodifiedby.name from incident_person__c where incident__c = :this.incident.id order by person_type__c, lastmodifieddate asc ];
 		else
 			relatedPeople = new List<Incident_Person__c>();
 			
@@ -73,9 +78,9 @@ private void initrelatedPeople() {
 				ipw.PersonName = rp.mentor__r.full_name__c;
 				ipw.Title = rp.mentor__r.role__c;
 				ipw.EmpNum = rp.mentor__r.name;
-				ipw.mentor = rp.mentor__c;
-				
+				ipw.mentor = rp.mentor__c;				
 				mapMentor.put( ipw.editID, ipw);
+				orderMentor.add( ipw.editID);
 			}
 			else if ( rp.person_type__c == 'Staff') {
 				ipw.PersonName = rp.staff_member__r.name;
@@ -83,11 +88,15 @@ private void initrelatedPeople() {
 				ipw.Title = rp.staff_member__r.job_title__c;
 				ipw.staff= rp.staff_member__c;
 				mapStaff.put( ipw.editID, ipw);
+				orderStaff.add( ipw.editID);
+				
 			} 
 			else if ( rp.person_type__c == 'Other') {
 				ipw.PersonName = rp.other_people__c;
 				ipw.other = rp.other_people__c;
 				mapOther.put ( ipw.editID, ipw);
+				orderOther.add( ipw.editID);
+				
 			}
 			relExisting.put( ipw.editID, ipw );
 		}
@@ -119,6 +128,7 @@ public void editPerson () {
 }
 
 public pageReference delPerson() {
+	// ;
 	
 	removeFromTypeMap( personToEditDelete);
 	relExisting.remove( personToEditDelete );
@@ -146,12 +156,15 @@ private void removeFromTypeMap( string keytoDel ) {
 	
 	if ( ipw.persontype == 'Other') {
 		mapOther.remove( keyToDel );
+	    orderOther.remove( getIndexForItem(orderOther,ipw) );		
 	}
 	else if ( ipw.persontype == 'Staff') {
 		mapStaff.remove( keyToDel );
+		orderStaff.remove( getIndexForItem(orderStaff,ipw) );
 	}
 	else if ( ipw.persontype == 'Mentor') {
-		mapMentor.remove( keyToDel );		
+		mapMentor.remove( keyToDel );	
+		orderMentor.remove( getIndexForItem(orderMentor,ipw) );	
 	}
 	
 		
@@ -161,16 +174,28 @@ private void addToTypeMap( IncidentPersonWrapper ipw ) {
 	
 	if ( ipw.persontype == 'Other') {
 		mapOther.put( ipw.editID, ipw);
+		orderOther.add(ipw.editID);
 		incident.others_present_at_time_of_incident__c = 'Yes';
 	}
 	else if ( ipw.persontype == 'Staff') {
 		mapStaff.put ( ipw.editID, ipw);
+		orderStaff.add(ipw.editID);
 		incident.staff_present__c = 'Yes';
 	}
 	else if ( ipw.persontype == 'Mentor') {
 		mapMentor.put ( ipw.editID, ipw);
+		OrderMentor.add(ipw.editID);
 		incident.mentor_present__c = 'Yes';
 	}
+}
+
+private integer getIndexForItem(list<string> items, IncidentPersonWrapper itemToCheck){
+
+	for(integer i = 0; i <  items.size();  i++){
+		if(items[i] == itemToCheck.editID){ return i;}
+	}
+	
+	return null;
 }
 
 public pageReference savePerson( ) {

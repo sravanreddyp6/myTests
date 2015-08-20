@@ -308,7 +308,7 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
 	            <apex:pageBlockSection columns="1" id="relStaffSection">
 	            	<apex:outputPanel style="display: none;" id="json">{!newPeopleJSON}</apex:outputPanel>                   
 	            	
-	            <apex:pageBlockTable id="relStaff" value="{!mapStaff}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relExistingCount > 0}">
+	            <apex:pageBlockTable id="relStaff" value="{!orderStaff}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relExistingCount > 0}">
 	            
 	            <apex:column headerValue="Action">
 	                <apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
@@ -348,7 +348,7 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
 	           
 	           <apex:pageBlockSection columns="1" id="relMentorSection">
 	
-               <apex:pageBlockTable id="relMentor" value="{!mapMentor}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.mentor_present__c == 'Yes' && relExistingCount > 0}">
+               <apex:pageBlockTable id="relMentor" value="{!orderMentor}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.mentor_present__c == 'Yes' && relExistingCount > 0}">
 	            
 	            <apex:column headerValue="Action">
 	                <apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
@@ -387,7 +387,7 @@ body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-co
 	        </apex:pageBlockSection>
 	        <apex:pageBlockSection columns="1" id="relOtherSection">        
 	                
-                <apex:pageBlockTable id="relOther" value="{!mapOther}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,35%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' }">
+                <apex:pageBlockTable id="relOther" value="{!orderOther}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,35%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' }">
 	            
 		            <apex:column headerValue="Action">
 		                <apex:outputLink value="#" onClick="showEditPerson('{!relExisting[relper].editId}'); return false;" rendered="{! relExisting[relper].isNew}">Edit</apex:outputLink>&nbsp;&nbsp;
