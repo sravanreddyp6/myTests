@@ -135,7 +135,7 @@ function autoCompleteRender(ul, item) {
                         j$('[id$=hiddenlocationCity]').val(checkUndefined(result.Work_City__c));
                         j$('[id$=hiddenlocationState]').val(checkUndefined(result.Work_State__c));
                         j$('[id$=hiddenlocationZip]').val(checkUndefined(result.Zip_Code__c));
-                        j$('[id$=ManagerName]').val(checkUndefined(result.Manager_Name__c));
+                        //j$('[id$=ManagerName]').val(checkUndefined(result.Manager_Name__c));
                      	var locationType = checkUndefined(result.Office_Location_PickList__c);
                        	if(locationType === " ") {
                        		j$('[id$=OfficeLocationType]').text('No');
@@ -250,7 +250,7 @@ function autoCompleteRender(ul, item) {
    function validatePhone () {
     var len = j$('[id$=OfficeNumber]').val();
     			if (len.length == 10){
-    				alert('Cann\'t enter more than 10 digits.');
+    				alert('This field can\'t take more than 10 characters.');
     				j$('[id$=OfficeNumber]').val(len.substring(0, 10));
     			} 
     }
@@ -258,7 +258,7 @@ function autoCompleteRender(ul, item) {
     function validateMobilePhone () {
     var len = j$('[id$=MobileNumber]').val();
     			if (len.length == 10){
-    			alert('Cann\'t enter more than 10 digits.');
+    			alert('This field can\'t take more than 10 characters.');
     				j$('[id$=MobileNumber]').val(len.substring(0, 10));
     			} 
     }
@@ -289,7 +289,7 @@ function autoCompleteRender(ul, item) {
                     <apex:outputPanel styleClass="nowrap">
                       <apex:inputField label="Office Phone" value="{!TMNUser.Office_Phone__c}" type="tel" taborderhint="6" id="OfficeNumber" onkeydown="validatePhone()"/>
                         <apex:outputLabel value="Ext " />
-                        <apex:inputField value="{!TMNUser.phone_ext__c}" type="tel" taborderhint="6" style="width: 30px;" />
+                        <apex:inputField value="{!TMNUser.phone_ext__c}" type="tel" taborderhint="6" style="width: 40px;" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>                      
                     <apex:inputField label="Start Date" value="{!TMNUser.Hire_Date__c}" required="true" id="startDate" taborderhint="11" onChange="setEndDate()"/>
