@@ -77,7 +77,7 @@ public without sharing class TMN_Generic_Core_TestData {
 				Projected_Treatment_End_Date__c = date.newInstance(2014, 12, 31),
 				Service_Location__c = sl.Id
 				);
-		
+
 		System.debug([SELECT service_location__r.id, service_location__r.Alias__c, service_location__r.program__c
 					  FROM service_assignment__c]);
 		System.debug([SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
@@ -88,7 +88,7 @@ public without sharing class TMN_Generic_Core_TestData {
 
 		insert theSA;
 
-		
+
 		theServiceCode = new Service_Code__c(
 				Service_Code__c = '10942.1161',
 				FacilityID__c = 'TEST FAC ID',
@@ -142,27 +142,22 @@ public without sharing class TMN_Generic_Core_TestData {
 		for(Profile p : proflist){
 			profileMap.put(p.Name, P);
 		}
-		User testUser = new User(alias = userAlias,
-				email='testuser@TMN.com',
-				emailencodingkey='UTF-8',
-				lastname=lastName,firstname=firstName, languagelocalekey='en_US',
-				localesidkey='en_US',
-				profileid = profileMap.get(profileName).id,
-				timezonesidkey='America/Los_Angeles',
-				username=username + System.currentTimeMillis());
+		User testUser = new User(
+			alias = userAlias,
+			email='testuser@TMN.com',
+			emailencodingkey='UTF-8',
+			lastname=lastName,firstname=firstName, languagelocalekey='en_US',
+			localesidkey='en_US',
+			profileid = profileMap.get(profileName).id,
+			timezonesidkey='America/Los_Angeles',
+			username=username + System.currentTimeMillis(),
+			operating_group__c=OperatingGroup  // to overcome trigger that doesn't run during test
+		);
 
 		insert testUser;
 
 		Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Salesforce_User_Account__c=testUser.id);
 		insert tmnUser;
-
-		// to overcome trigger that doesn't run during test
-		if (Test.isRunningTest()) {
-			System.Debug('running test, updating operating group on user manually');
-			testUser = [ select id, operating_group__c from User where id = :testUser.Id];
-			testUser.Operating_Group__c = OperatingGroup;
-			update testUser;
-		}
 		return testUser;
 	}
 
@@ -195,11 +190,11 @@ public without sharing class TMN_Generic_Core_TestData {
     private static list<Eval__c> testEvals;
     public static list<Eval__c> getEvalTestRecords() {
     	if (testEvals == null || testEvals.size() == 0)  createEvalTestRecords();
-    	return testEvals; 
+    	return testEvals;
     }
     private static void createEvalTestRecords() {
     	testEvals = new list<Eval__c>();
-    	
+
         //create Eval_Type__c records
         list<Eval_Type__c> evlTyps = new list<Eval_Type__c>();
         evlTyps.add(new Eval_Type__c(Name = 'Residential', Category__c = 'Care Meridian', External_Eval_Type_ID__c = 1));
@@ -207,7 +202,7 @@ public without sharing class TMN_Generic_Core_TestData {
         evlTyps.add(new Eval_Type__c(Name = 'CNA Workbook', Category__c = 'Care Meridian', External_Eval_Type_ID__c = 3));
         evlTyps.add(new Eval_Type__c(Name = 'Restraint Event', Category__c = 'Care Meridian', External_Eval_Type_ID__c = 4));
         insert evlTyps;
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'Skin/Body',
@@ -235,7 +230,7 @@ public without sharing class TMN_Generic_Core_TestData {
         visible__c = false,
         Field_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('99.00')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -263,7 +258,7 @@ public without sharing class TMN_Generic_Core_TestData {
         visible__c = false,
         Field_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('99.00')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -272,12 +267,12 @@ public without sharing class TMN_Generic_Core_TestData {
         Sub_Category__c = 'TEST_TEST',
         Sub_Category_Sequence__c = 1,
         SubCat_Seq_Text__c = '1',
-        Field_Name__c='ErrorMsg', 
-        htmlid__c='ErrorMsg', 
-        Field_Type__c='Hidden', 
-        Field_Sub_Type__c='String', 
+        Field_Name__c='ErrorMsg',
+        htmlid__c='ErrorMsg',
+        Field_Type__c='Hidden',
+        Field_Sub_Type__c='String',
         Field_Sequence__c=Decimal.valueOf('0.10')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -291,7 +286,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Boolean',
         Field_Sub_Type__c = 'Checkbox',
         Field_Sequence__c = Decimal.valueOf('1.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = true,
         Category__c = 'TEST',
@@ -305,7 +300,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Boolean',
         Field_Sub_Type__c = 'Dropdown',
         Field_Sequence__c = Decimal.valueOf('2.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -319,7 +314,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'String_3000',
         Field_Type__c = 'String',
         Field_Sequence__c = Decimal.valueOf('3.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -332,7 +327,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'String_300',
         Field_Type__c = 'String',
         Field_Sequence__c = Decimal.valueOf('3.1')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -345,7 +340,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Double',
         Field_Type__c = 'Double',
         Field_Sequence__c = Decimal.valueOf('4.0')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -371,7 +366,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'DropDown',
         Field_Type__c = 'DropDown',
         Field_Sequence__c = Decimal.valueOf('6.0')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -384,7 +379,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Date',
         Field_Type__c = 'Date',
         Field_Sequence__c = Decimal.valueOf('7.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -397,7 +392,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Datetime',
         Field_Type__c = 'Datetime',
         Field_Sequence__c = Decimal.valueOf('8.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = true,
         Category__c = 'TEST',
@@ -411,7 +406,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Multiselect',
         Field_Sub_Type__c = 'Checkbox',
         Field_Sequence__c = Decimal.valueOf('9.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -424,7 +419,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Multiselect',
         Field_Type__c = 'Multiselect',
         Field_Sequence__c = Decimal.valueOf('10.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -451,7 +446,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Image',
         field_sub_type__c= 'Image',
         Field_Sequence__c = Decimal.valueOf('12.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[0].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -464,9 +459,9 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Slider',
         Field_Type__c = 'Slider',
         Field_Sequence__c = Decimal.valueOf('10.0')));
-        
-        
-        
+
+
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'Skin/Body',
@@ -480,7 +475,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Hidden',
         Field_Sub_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('0.00')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'Skin/Body',
@@ -494,7 +489,7 @@ public without sharing class TMN_Generic_Core_TestData {
         visible__c = false,
         Field_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('99.00')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -508,7 +503,7 @@ public without sharing class TMN_Generic_Core_TestData {
         visible__c = false,
         Field_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('99.00')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -522,7 +517,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Hidden',
         Field_Sub_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('0.00')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -531,12 +526,12 @@ public without sharing class TMN_Generic_Core_TestData {
         Sub_Category__c = 'TEST_TEST',
         Sub_Category_Sequence__c = 1,
         SubCat_Seq_Text__c = '1',
-        Field_Name__c='ErrorMsg', 
-        htmlid__c='ErrorMsg', 
-        Field_Type__c='Hidden', 
-        Field_Sub_Type__c='String', 
+        Field_Name__c='ErrorMsg',
+        htmlid__c='ErrorMsg',
+        Field_Type__c='Hidden',
+        Field_Sub_Type__c='String',
         Field_Sequence__c=Decimal.valueOf('0.10')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -550,7 +545,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Boolean',
         Field_Sub_Type__c = 'Checkbox',
         Field_Sequence__c = Decimal.valueOf('1.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = true,
         Category__c = 'TEST',
@@ -564,7 +559,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Boolean',
         Field_Sub_Type__c = 'Dropdown',
         Field_Sequence__c = Decimal.valueOf('2.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -578,7 +573,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'String_3000',
         Field_Type__c = 'String',
         Field_Sequence__c = Decimal.valueOf('3.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -591,7 +586,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'String_300',
         Field_Type__c = 'String',
         Field_Sequence__c = Decimal.valueOf('3.1')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -604,7 +599,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Double',
         Field_Type__c = 'Double',
         Field_Sequence__c = Decimal.valueOf('4.0')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -630,7 +625,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'DropDown',
         Field_Type__c = 'DropDown',
         Field_Sequence__c = Decimal.valueOf('6.0')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -643,7 +638,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Date',
         Field_Type__c = 'Date',
         Field_Sequence__c = Decimal.valueOf('7.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -656,7 +651,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Datetime',
         Field_Type__c = 'Datetime',
         Field_Sequence__c = Decimal.valueOf('8.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = true,
         Category__c = 'TEST',
@@ -670,7 +665,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Multiselect',
         Field_Sub_Type__c = 'Checkbox',
         Field_Sequence__c = Decimal.valueOf('9.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -683,7 +678,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Multiselect',
         Field_Type__c = 'Multiselect',
         Field_Sequence__c = Decimal.valueOf('10.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -710,7 +705,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Image',
         field_sub_type__c= 'Image',
         Field_Sequence__c = Decimal.valueOf('12.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[1].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -723,8 +718,8 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Slider',
         Field_Type__c = 'Slider',
         Field_Sequence__c = Decimal.valueOf('10.0')));
-        
- 
+
+
  	// CNA Workbook
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
@@ -739,7 +734,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Hidden',
         Field_Sub_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('0.00')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'Skin/Body',
@@ -753,7 +748,7 @@ public without sharing class TMN_Generic_Core_TestData {
         visible__c = false,
         Field_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('99.00')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -767,7 +762,7 @@ public without sharing class TMN_Generic_Core_TestData {
         visible__c = false,
         Field_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('99.00')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -781,7 +776,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Hidden',
         Field_Sub_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('0.00')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -790,12 +785,12 @@ public without sharing class TMN_Generic_Core_TestData {
         Sub_Category__c = 'TEST_TEST',
         Sub_Category_Sequence__c = 1,
         SubCat_Seq_Text__c = '1',
-        Field_Name__c='ErrorMsg', 
-        htmlid__c='ErrorMsg', 
-        Field_Type__c='Hidden', 
-        Field_Sub_Type__c='String', 
+        Field_Name__c='ErrorMsg',
+        htmlid__c='ErrorMsg',
+        Field_Type__c='Hidden',
+        Field_Sub_Type__c='String',
         Field_Sequence__c=Decimal.valueOf('0.10')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -809,7 +804,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Boolean',
         Field_Sub_Type__c = 'Checkbox',
         Field_Sequence__c = Decimal.valueOf('1.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = true,
         Category__c = 'TEST',
@@ -823,7 +818,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Boolean',
         Field_Sub_Type__c = 'Dropdown',
         Field_Sequence__c = Decimal.valueOf('2.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -837,7 +832,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'String_3000',
         Field_Type__c = 'String',
         Field_Sequence__c = Decimal.valueOf('3.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -850,7 +845,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'String_300',
         Field_Type__c = 'String',
         Field_Sequence__c = Decimal.valueOf('3.1')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -863,7 +858,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Double',
         Field_Type__c = 'Double',
         Field_Sequence__c = Decimal.valueOf('4.0')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -889,7 +884,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'DropDown',
         Field_Type__c = 'DropDown',
         Field_Sequence__c = Decimal.valueOf('6.0')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -902,7 +897,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Date',
         Field_Type__c = 'Date',
         Field_Sequence__c = Decimal.valueOf('7.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -915,7 +910,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Datetime',
         Field_Type__c = 'Datetime',
         Field_Sequence__c = Decimal.valueOf('8.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = true,
         Category__c = 'TEST',
@@ -929,7 +924,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Multiselect',
         Field_Sub_Type__c = 'Checkbox',
         Field_Sequence__c = Decimal.valueOf('9.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -942,7 +937,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Multiselect',
         Field_Type__c = 'Multiselect',
         Field_Sequence__c = Decimal.valueOf('10.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -969,7 +964,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Image',
         field_sub_type__c= 'Image',
         Field_Sequence__c = Decimal.valueOf('12.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -982,8 +977,8 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Slider',
         Field_Type__c = 'Slider',
         Field_Sequence__c = Decimal.valueOf('10.0')));
-        
-        
+
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'Turns',
@@ -997,7 +992,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Hidden',
         Field_Sub_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('0.00')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'Turns',
@@ -1011,7 +1006,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'DateTime',
         field_sub_type__c= '',
         Field_Sequence__c = Decimal.valueOf('1.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'Turns',
@@ -1025,7 +1020,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'DateTime',
         field_sub_type__c= '',
         Field_Sequence__c = Decimal.valueOf('1.1')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'Turns',
@@ -1040,9 +1035,9 @@ public without sharing class TMN_Generic_Core_TestData {
         field_sub_type__c= '',
         length__c = 200,
         Field_Sequence__c = Decimal.valueOf('1.0')));
-        
-        
-        
+
+
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[2].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1055,7 +1050,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Slider',
         Field_Type__c = 'Slider',
         Field_Sequence__c = Decimal.valueOf('10.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'Skin/Body',
@@ -1083,7 +1078,7 @@ public without sharing class TMN_Generic_Core_TestData {
         visible__c = false,
         Field_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('99.00')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1097,7 +1092,7 @@ public without sharing class TMN_Generic_Core_TestData {
         visible__c = false,
         Field_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('99.00')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1111,7 +1106,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Hidden',
         Field_Sub_Type__c = 'Boolean',
         Field_Sequence__c = Decimal.valueOf('0.00')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1120,12 +1115,12 @@ public without sharing class TMN_Generic_Core_TestData {
         Sub_Category__c = 'TEST_TEST',
         Sub_Category_Sequence__c = 1,
         SubCat_Seq_Text__c = '1',
-        Field_Name__c='ErrorMsg', 
-        htmlid__c='ErrorMsg', 
-        Field_Type__c='Hidden', 
-        Field_Sub_Type__c='String', 
+        Field_Name__c='ErrorMsg',
+        htmlid__c='ErrorMsg',
+        Field_Type__c='Hidden',
+        Field_Sub_Type__c='String',
         Field_Sequence__c=Decimal.valueOf('0.10')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1139,7 +1134,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Boolean',
         Field_Sub_Type__c = 'Checkbox',
         Field_Sequence__c = Decimal.valueOf('1.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = true,
         Category__c = 'TEST',
@@ -1153,7 +1148,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Boolean',
         Field_Sub_Type__c = 'Dropdown',
         Field_Sequence__c = Decimal.valueOf('2.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1167,7 +1162,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'String_3000',
         Field_Type__c = 'String',
         Field_Sequence__c = Decimal.valueOf('3.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1180,7 +1175,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'String_300',
         Field_Type__c = 'String',
         Field_Sequence__c = Decimal.valueOf('3.1')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1193,7 +1188,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Double',
         Field_Type__c = 'Double',
         Field_Sequence__c = Decimal.valueOf('4.0')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1219,7 +1214,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'DropDown',
         Field_Type__c = 'DropDown',
         Field_Sequence__c = Decimal.valueOf('6.0')));
-                
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1232,7 +1227,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Date',
         Field_Type__c = 'Date',
         Field_Sequence__c = Decimal.valueOf('7.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1245,7 +1240,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Datetime',
         Field_Type__c = 'Datetime',
         Field_Sequence__c = Decimal.valueOf('8.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = true,
         Category__c = 'TEST',
@@ -1259,7 +1254,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Multiselect',
         Field_Sub_Type__c = 'Checkbox',
         Field_Sequence__c = Decimal.valueOf('9.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1272,7 +1267,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Multiselect',
         Field_Type__c = 'Multiselect',
         Field_Sequence__c = Decimal.valueOf('10.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1299,7 +1294,7 @@ public without sharing class TMN_Generic_Core_TestData {
         Field_Type__c = 'Image',
         field_sub_type__c= 'Image',
         Field_Sequence__c = Decimal.valueOf('12.0')));
-        
+
         testEvals.add(new Eval__c(Eval_Type__c = evlTyps[3].id,
         Required__c = false,
         Category__c = 'TEST',
@@ -1312,7 +1307,7 @@ public without sharing class TMN_Generic_Core_TestData {
         htmlid__c = 'Slider',
         Field_Type__c = 'Slider',
         Field_Sequence__c = Decimal.valueOf('10.0')));
-        
+
         insert testEvals;
 
         list < eval_drop_down__c > dropdowns = new list < eval_drop_down__c > ();
