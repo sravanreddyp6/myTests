@@ -1,0 +1,101 @@
+<apex:component controller="EvalRepeaters">
+    <apex:attribute name="parentId"
+        description="Id of the parent Evaluation record" type="Id"
+        assignTo="{!evaluationId}" />
+    <apex:attribute name="evaltype" description="Kind of eval"
+        type="string" assignTo="{!evalname}" required="true" />
+    <apex:attribute name="opGrp" description="Operating group for eval"
+        type="string" assignTo="{!operatingGroup}" required="true" />
+    <apex:attribute name="onComplete"
+        description="JavaScript function to call when rendered" type="string"
+        required="false" />
+
+    <apex:variable value="{!0}" var="counter" />
+
+    <apex:repeat value="{!evals}" var="eval">
+
+        <apex:variable var="counter" value="{!0}" />
+
+        <div id="{! eval.compositeKey + 'shift'}"
+            class="panel {!if ( eval.numErrors > 0, 'panel-danger', if ( CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'), 'panel-success', 'panel-warning'))}">
+
+            <div class="panel-heading">
+                <h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- ' + evaltype}</h3>
+            </div>
+            <div class="panel-body">
+
+                <apex:outputPanel rendered="{! AND( NOT(ISBLANK(evalDataKeys)), CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'))}" layout="none">
+
+                    <apex:repeat value="{! evalDataList[evaltype + '~' + eval.compositeKey]}"
+                        var="edata">
+                        <apex:outputPanel rendered="{!edata.sectiontype== evaltype}"
+                            layout="none">
+
+                        	<!-- SSW made the links default to iServe purple based on k/k discussion -->
+                        	<apex:outputText value="<br />" escape="false"
+                                rendered="{! counter > 0}"  />
+
+                            <a href="#" style="color:#781d7d;"
+                                onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','{!evaltype}', {! edata.ownerID == $User.Id && ( (AND(parentEvalStatus == 'Draft', evalType != 'Head to Toe'))  || ( AND(parentShiftStatus == 'Draft', evalType == 'Head to Toe')) || ( AND(CONTAINS(evalType,'Restraint'), parentEvalStatus == 'Not Restrained')))}); return false;">
+                                <apex:outputText value="{! edata.owner }" />&nbsp;@&nbsp;<apex:outputText value="{!edata.created24 }" />
+                            </a>
+                            <apex:variable var="counter" value="{!counter + 1}" />
+
+
+                        </apex:outputPanel>
+
+                    </apex:repeat>
+
+                </apex:outputPanel>
+
+                <a id="{! eval.compositeKey}Summary"
+                    class="btn btn-info btn-sm pull-right" href="/apex/EvalLogView?evalID={!parentID}&evalname={!evaltype}&opGrp={!opGrp}&cat={!eval.cat}&subcat={!eval.subcat}" role="button"
+                    target="_blank"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a>
+                <div class="pull-right">&nbsp;</div>
+                <apex:outputPanel layout="none" rendered="{! IF(  AND(eval.compositeKey == 'Reduction Review~Reduction Review~', ( !CONTAINS(parentEvalStatus, 'Applied') || (Contains(parentEvalStatus,'Applied') && parentHasOpenAsmt))),
+                												false,
+                												parentEvalStatus != 'Completed' && parentEvalStatus != 'End of Shift' && (eval.repeatable || ( parentEvalOwnerID == $User.Id && counter == 0 ) || (evalType == 'Residential' && counter == 0)) && canEditEvalType
+                												) }">
+                <a id="{! eval.compositeKey}" class="btn btn-info btn-sm pull-right"
+                    href="#" role="button"
+                    onClick="createPanel('{!evaltype}', '{!eval.cat}', '{!eval.subcat}', null, '{! IF( AND( eval.compositeKey != 'Reduction Review~Reduction Review~', OR(CONTAINS( evalDataKeys, evaltype + '~' + eval.compositeKey+ '||'), AND(parentEvalOwnerID != $User.Id, evaltype != 'Residential'))),'Activity Log',evaltype )}', true); return false;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                </apex:outputPanel>
+            </div>
+        </div>
+
+        <apex:outputPanel layout="none"
+            rendered="{! AND(NOT(ISBLANK(evalDataKeys)), CONTAINS( evalDataKeys, 'Activity Log~' + eval.compositeKey + '||'))}">
+            <div id="{! eval.compositeKey + 'activitylog'}"
+                class="panel panel-default">
+
+                <div class="panel-heading">
+                    <h3 class="panel-title">{! eval.cat + '/' + eval.subcat + ' -- Activity Log'}</h3>
+                </div>
+                <div class="panel-body">
+
+                    <apex:repeat value="{! evalDataList['Activity Log~' + eval.compositeKey]}"
+                        var="edata">
+                        <apex:outputPanel rendered="{!edata.sectiontype=='Activity Log'}">
+                        	<!-- SSW made the links default to iServe purple based on k/k discussion -->
+                            <a href="#" style="color:#781d7d;"
+                                onClick="createPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log', {! (edata.ownerID == $User.Id)  && (parentEvalStatus != 'Completed') && (parentEvalStatus != 'Disregard')}); return false;">
+                                <apex:outputText value="{! edata.owner }" /> @ <apex:outputText value=" {!edata.created24}" />
+                            </a>
+                            <br />
+                        </apex:outputPanel>
+                    </apex:repeat>
+
+                </div>
+            </div>
+        </apex:outputPanel>
+
+    </apex:repeat>
+
+    <script>
+        jQuery.noConflict();
+        jQuery(document).ready(function ($) {
+                 setupButtons({! OR(anyErrors, anyEmpty )});
+            });
+
+    </script>
+</apex:component>

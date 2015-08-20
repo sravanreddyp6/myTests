@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>List of people present/involved in incident.  NOT used for the person who is the subject of the incident.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fieldSets>
+        <fullName>Mentor</fullName>
+        <description>when person type is mentor</description>
+        <displayedFields>
+            <field>Mentor__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <label>Mentor</label>
+    </fieldSets>
+    <fieldSets>
+        <fullName>Other</fullName>
+        <description>when person type is other</description>
+        <displayedFields>
+            <field>Other_people__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <label>Other</label>
+    </fieldSets>
+    <fieldSets>
+        <fullName>Staff</fullName>
+        <description>When incident person type is Staff</description>
+        <displayedFields>
+            <field>Staff_Member__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <label>Staff</label>
+    </fieldSets>
+    <fields>
+        <fullName>Incident__c</fullName>
+        <description>incident this list is related to</description>
+        <externalId>false</externalId>
+        <label>Incident</label>
+        <referenceTo>Incident__c</referenceTo>
+        <relationshipLabel>Incident People</relationshipLabel>
+        <relationshipName>Incident_People</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Mentor__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Mentor</label>
+        <referenceTo>TMN_Contact__c</referenceTo>
+        <relationshipLabel>Incident People</relationshipLabel>
+        <relationshipName>Incident_People</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Other_people__c</fullName>
+        <description>info about non TMN person present at incident</description>
+        <externalId>false</externalId>
+        <label>Other Person(s)</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Person_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Person Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Staff</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Staff_Member__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Staff Member</label>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Incident People</relationshipLabel>
+        <relationshipName>Incident_People</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Title__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Examples include: Friend, Roommate, Classmate, Mother, Father, Caregiver, Teacher, Community Member, Store Employee, etc.</inlineHelpText>
+        <label>Title</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Incident Person</label>
+    <nameField>
+        <label>Full Name</label>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Incident People</pluralLabel>
+    <recordTypeTrackHistory>false</recordTypeTrackHistory>
+    <recordTypes>
+        <fullName>Mentor</fullName>
+        <active>true</active>
+        <label>Mentor</label>
+        <picklistValues>
+            <picklist>Person_Type__c</picklist>
+            <values>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Staff</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Other</fullName>
+        <active>true</active>
+        <label>Other</label>
+        <picklistValues>
+            <picklist>Person_Type__c</picklist>
+            <values>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Staff</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Staff</fullName>
+        <active>true</active>
+        <label>Staff</label>
+        <picklistValues>
+            <picklist>Person_Type__c</picklist>
+            <values>
+                <fullName>Mentor</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Staff</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Mentor_required</fullName>
+        <active>true</active>
+        <description>checks for blank value on mentor lookup when type = mentor</description>
+        <errorConditionFormula>AND( ISPICKVAL(  Person_Type__c , &apos;Mentor&apos;), ISBLANK(  Mentor__c ))</errorConditionFormula>
+        <errorMessage>Please choose a Mentor</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Other_person_required</fullName>
+        <active>true</active>
+        <description>Checks for blank value when type= other</description>
+        <errorConditionFormula>AND(  ISPICKVAL( Person_Type__c , &apos;Other&apos;),  ISBLANK( Other_people__c ))</errorConditionFormula>
+        <errorMessage>Please enter text describing &quot;Other Person(s)&quot;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Staff_person_required</fullName>
+        <active>true</active>
+        <description>Checks for tmn user value on save when type is staff</description>
+        <errorConditionFormula>AND(ISPICKVAL(Person_Type__c, &apos;Staff&apos;), ISBLANK( Staff_Member__c ))</errorConditionFormula>
+        <errorMessage>Please specify a Staff Member</errorMessage>
+    </validationRules>
+</CustomObject>
