@@ -496,6 +496,8 @@
 
 				<apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}" />
 				<apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}" >
+					<apex:actionSupport event="onchange" reRender="saEndSectionEdit" status="pageProcessing">
+					</apex:actionSupport>
 				</apex:inputField>
 
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
@@ -920,7 +922,7 @@
 						</div>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && admission.Network_Offering__c == 'ARY'}" >
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && admission.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
 					<apex:outputLabel value="Was Child Service or Permanency Goal met?" />
 					<apex:outputPanel >
 						<div class="requiredInput">
@@ -929,7 +931,7 @@
 						</div>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
 						<apex:outputLabel value="Educational Involvement at End of Service" />
 						<apex:outputPanel >
 							<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
@@ -943,7 +945,7 @@
 							</apex:outputPanel>
 						</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
 						<apex:outputLabel value="Highest Level of Education at End of Service" />
 						<apex:outputPanel >
 							<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
@@ -957,7 +959,7 @@
 							</apex:outputPanel>
 						</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
 						<apex:outputLabel value="Total Number of Internal Moves During Service" />
 						<apex:outputPanel >
 							<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY' && (Contains(theservAssign.Program_Detail__c,'FCT') || Contains(theservAssign.Program_Detail__c,'HH'))}">
@@ -978,19 +980,19 @@
 					<apex:outputLabel value="Service Ended via Business Divested?" />
 					<apex:outputField value="{!theServAssign.Service_Ended_via_Business_Divested__c}" />
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && admission.Network_Offering__c == 'ARY'}" >
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && admission.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
 					<apex:outputLabel value="Was Child Service or Permanency Goal met?" />
 					<apex:outputField value="{!theServAssign.Was_Child_Service_or_Permanency_Goal_met__c}" />
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
 					<apex:outputLabel value="Educational Involvement at End of Service" />
 					<apex:outputField value="{!theServAssign.Educational_Involvement_at_End_of_Servic__c}" />
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
 					<apex:outputLabel value="Highest Level of Education at End of Service" />
 					<apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
 				</apex:pageBlockSectionItem>
-				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
 					<apex:outputLabel value="Total Number of Internal Moves During Service" />
 					<apex:outputField value="{!theServAssign.Total_no_of_Internal_moves_during_Servic__c}" />
 				</apex:pageBlockSectionItem>
