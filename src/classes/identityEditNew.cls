@@ -218,7 +218,7 @@ public class identityEditNew {
     
     
     public pageReference updateAliasInfo(){
-        Alias__c a = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
+        Alias__c a = [SELECT Alias_Operating_Group__c,Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
                       FROM Alias__c 
                       WHERE Id = :TMNUser.Alias_Lookup__c];
         TMNUser.Alias__c = a.Alias_unique__c;              
@@ -226,6 +226,7 @@ public class identityEditNew {
         TMNUser.Service_Region__c = a.Alias_Region__c;
         TMNUser.Service_Line__c = a.Alias_Service_Line__c;
         TMNUser.Program_String__c = a.Alias_Description__c;
+        TMNUser.Operating_Group__c = a.Alias_Operating_Group__c;
         return null;              
     }
     
