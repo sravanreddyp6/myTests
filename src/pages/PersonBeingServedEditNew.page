@@ -326,7 +326,9 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                  <apex:outputText label="Age" value="{!Age}" rendered="{! pbsEditModeOn }"/>
-                <apex:inputField value="{!Contact.Level_of_Education__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
+<!--                  Sravan - Aug 20, 2015 - PRI-224 -->
+<!--                 <apex:inputField value="{!Contact.Level_of_Education__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/> -->
+				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" />
 				<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" required="true" rendered="{! pbsEditModeOn }" />
 				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" />
 				<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" rendered="{! pbsEditModeOn }" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}"
@@ -362,7 +364,8 @@
                 </apex:pageBlockSectionItem>    
                 
                 <apex:outputText label="Age" value="{!Age}" rendered="{! !pbsEditModeOn }"/>
-                <apex:outputField value="{!Contact.Level_of_Education__c}" rendered="{! !pbsEditModeOn }"/>
+<!--                 <apex:outputField value="{!Contact.Level_of_Education__c}" rendered="{! !pbsEditModeOn }"/> -->
+				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }" />
                 <apex:outputField value="{!Contact.Gender__c}" rendered="{! !pbsEditModeOn }"/>
                 <apex:pageBlockSectionItem />
                 <apex:pageBlockSectionItem rendered="{!!pbsEditModeOn}" >

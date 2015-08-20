@@ -142,6 +142,7 @@ public with sharing class referralConversion_Controller {
                         r.Phone__c,
                         r.Person_Being_Served__c,
                         r.Person_Being_Referred__c,
+                        r.Person_Being_Referred__r.Level_of_Education__c,
                         r.OwnerId,
                         r.OldPBR__c,
                         r.Name_PBR__c,
@@ -442,8 +443,8 @@ public with sharing class referralConversion_Controller {
                                 Partial_Guardianship_Conservatorship__pc = referralRecord.Partial_Guardianship_Conservatorship__c,
                                 Current_Medications__pc = referralRecord.Current_Medications__c,
                                 Other_id__pc = referralRecord.Payer_Medical_Record_Number__c ,
-                                Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c,
-                                Level_of_Education__pc = pbrCurr.Level_of_Education__c
+                                Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c
+                                //Level_of_Education__pc = pbrCurr.Level_of_Education__c - Sravan Aug 20, 2015
                                 );
 
     insert accNew;
@@ -629,6 +630,8 @@ public with sharing class referralConversion_Controller {
                                             Prior_Location_Zip__c = refCurr.Zip_Code__c,
                                             Prior_Location_Phone__c = refCurr.Phone__c,
                                             Prior_Location_Email__c = refCurr.Email_Address__c,
+                                           // Highest_Level_of_Education_at_Start__c = refCurr.Person_Being_Referred__r.Level_of_Education__c,
+                                            Highest_Level_of_Education_at_Start__c = this.personBeingRefRecord.Level_of_Education__c,
                                             Referral__c = refCurr.Id
 
                                             );
