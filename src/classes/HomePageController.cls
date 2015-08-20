@@ -677,7 +677,7 @@ public with sharing class HomePageController{
 		return null;
 	}
 		
-	private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
+	@TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
 		
 		Boolean overlaps = false;
 		system.debug( 'Times:' + s1 + e1 + s2 + e2);
