@@ -2,7 +2,7 @@ public with sharing class nonemployeeAttestationController {
 	public Id managerId {get; set;}
 	
 	//Unable check the size of the map in VF directly. hence defining these - Sravan - 08/03/2015
-	public boolean getshowOne(){
+	/*public boolean getshowOne(){
 		return employeeMap.get(1).size() > 0;
 	}
 	public boolean getshowSeven(){
@@ -40,7 +40,7 @@ public with sharing class nonemployeeAttestationController {
 		}
 		
 		return employeeMap;
-	} set;}
+	} set;}*/
 	
 	
 	public TMN_User__c manager {get{
@@ -49,6 +49,12 @@ public with sharing class nonemployeeAttestationController {
 	}private set;}
 	
 	
+	Public List<TMN_user__c> nonemployees{get{
+		if(nonemployees == null){
+			nonemployees = [SELECT Id, Job_Status__c, Job_title__c, Last_Day__c, First_Name__c, Termination_Date__c ,Last_Name__c, Manager_Lookup__c FROM TMN_user__c WHERE Manager_Lookup__c = :managerId AND Current_Person_Type__c ='Non-Employee' AND Job_Status__c = 'Active' AND Last_Day__c <= :System.Today().addDays(14) order by Last_Day__c asc];
+		}
+		return nonemployees;
+	}set;}
 	
 	public string getbaseUrl(){
 		Site_URL__c s = Site_URL__c.getValues('NonemployeeAttestationSite');
