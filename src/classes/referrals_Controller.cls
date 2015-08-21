@@ -713,12 +713,22 @@ public with sharing class referrals_Controller{
 		}
 
 		try {
-			this.agencies = [
-				select Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
-				  from Agency_Involved_With_Individual__c
-				 where Referral__c = :this.referralRecord.Id
-				 limit 150
-			];
+			if(this.referralRecord.Person_Being_Served__c != null){
+				this.agencies = [
+					select Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
+					  from Agency_Involved_With_Individual__c
+					 where Referral__c = :this.referralRecord.Id OR Person_Being_Served__c =:this.referralRecord.Person_Being_Served__c 
+					 limit 150
+				];				
+			}
+			else{
+				this.agencies = [
+					select Name, Address__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
+					  from Agency_Involved_With_Individual__c
+					 where Referral__c = :this.referralRecord.Id
+					 limit 150
+				];
+			}
 			this.fundingSources = [
 				SELECT ID, CreatedDate, Funding_Source__c, Status__c, Comment__c, Funding_Source_ID__c,
 				       Service_Being_Funded__c, Type_of_Coverage__c, Payer_Verification_Date__c,
