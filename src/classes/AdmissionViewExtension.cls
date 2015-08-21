@@ -13,7 +13,13 @@ public with sharing class AdmissionViewExtension {
     public boolean canCreateAdm{ get; set;}
     public boolean canCreatePlan{ get; set;}
     public boolean showCANS { get; private set; }
-    
+    public TMN_User__c curUser{get;set;}
+    public list<Service_Assignment__c> allSAforAdmint{get; set;}
+    //PRI-218 219
+    public boolean reqAdmittedFrom {get{return AdmissionEditViewCommon.setReqAdmittedFrom(curUser,allSAforAdmint);} set;}
+    public boolean reqDcTo { get{ return AdmissionEditViewCommon.setReqDcTo(curUser,allSAforAdmint);} set;}
+    public boolean shwDcTo { get{ return ( reqDcTo || curUser.Operating_Group__c.StartsWith('Neuro') );} set;}
+        
     // EC-185 - capturing service discharge info - only applicable for CM to start
     public boolean useDischargeSection { get; set; }
     
@@ -39,7 +45,7 @@ public with sharing class AdmissionViewExtension {
     	showCANS = false;
     	
     	// look for this op grp in the custom setting
-    	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :getOperatingGroup()];
+    	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :curUser.operating_group__c];
     	// this op group isn't allowed 
     	if ( cansList.size() == 0 )
     		return;
@@ -117,7 +123,17 @@ public with sharing class AdmissionViewExtension {
     }
 
     public AdmissionViewExtension(ApexPages.StandardController stdController) {
-        // Fetch the record with necessary fields
+        // set current user
+        curUser = new TMN_User__c();
+        // EC-185 get operating group for whether to show new discharge section
+        useDischargeSection = false;
+        for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
+         	curUser = TU;
+         	if (TU.Operating_Group__c == 'Care Meridian') { 
+         		useDischargeSection = true;
+         	} 
+         	
+        }         
         this.admission = [
                 SELECT ID, Name, CreatedBy.Name, CreatedDate, LastModifiedBy.Name,
                            LastModifiedDate, Effective_Date__c, Admission_Effective_DateTime__c, Status__c,
@@ -135,6 +151,9 @@ public with sharing class AdmissionViewExtension {
                            (SELECT Name, Plan__r.Name, First_Name__c, Last_Name__c, Start_Time__c, End_Time__c, Type_of_Contact__c, Purpose_Nature_of_Service__c FROM Progress_Notes__r)
                 FROM Admission__c WHERE ID=:ApexPages.currentPage().getParameters().get('id')
         ];
+        
+        allSAforAdmint = new list<Service_Assignment__c>();
+        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c from Service_Assignment__c where Admission__c = :this.admission.id];        
         // We decide to show/hide the New Assessment button based on Role and
         // Permission instead of hardcoding them.
         Assessment_Type__c[] types = [
@@ -159,8 +178,9 @@ public with sharing class AdmissionViewExtension {
         setcanCreateSvc();
         setcanCreatePlan();
         setIsEditor();
+
         
-        useDischargeSection =  (getOperatingGroup() == 'Care Meridian');
+       
     }
 
     private Assessment__c[] fetchAssessments(String name, String admissionId) {
