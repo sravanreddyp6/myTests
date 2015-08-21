@@ -4,7 +4,7 @@
 <!-- <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" /> -->
 <!-- <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" /> -->
 <style>
-.sub-question-header{font-size:10pt; font-weight: bold; padding: 7px; padding-left:0px; color: black;}
+.sub-question-header{font-size:9pt; font-weight: bold; padding: 7px; padding-left:0px; color: black;}
 .labelCol{min-width: 300px;}
 
 
@@ -130,7 +130,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
         		<apex:outputField label="Was an Internal Investigation initiated?" value="{!Incident__c.Internal_Investigation__c }" />
         		<apex:outputField label="Incident Outcome" value="{!Incident__c.Incident_Outcome__c}" />
         	</apex:pageBlockSection>
-		    <apex:pageBlockSection columns="1" title="People Involved" collapsible="false" >
+		    <apex:pageBlockSection id="second_firstHeader" columns="1" title="People Involved" collapsible="false" >
 
 				<apex:outputText value="{!Incident__c.Staff_Present__c}" />
  				
