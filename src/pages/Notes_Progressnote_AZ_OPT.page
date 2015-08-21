@@ -206,9 +206,9 @@
     <script>
     function complete(Signed) {
     
-  		var srvcloc = '{!Progress_Note__c.Service_Location__c}';
+        var srvcloc = '{!Progress_Note__c.Service_Location__c}';
         var finalalready = '{!Progress_Note__c.Type_of_Contact__c}';
-        var goalsSelected = '{!Progress_Note__c.GoalIds_AZOPTPage__c}';
+        //var goalsSelected = '{!Progress_Note__c.GoalIds_AZOPTPage__c}';
         var Status = '{!Progress_Note__c.Status__c}';
         var AppStatus = '{!Progress_Note__c.Approval_Status__c}';
         var ActionPlan = '{!Progress_Note__c.Action_Plan__c}';
@@ -218,11 +218,12 @@
         var Progress = '{!Progress_Note__c.Progress__c}';
         
         var s= '';
-        
-        if((goalsSelected  == null || goalsSelected == '') || srvcloc =='' || finalalready == '' || ServiceCode == '' || Progress == '' || NextVisit == '' || Interventions == '' || AppStatus =='Pending' || Status == 'Final' || ActionPlan == null ){ 
-            if(goalsSelected  == null || goalsSelected == ''){
-                s = 'Y';
-            }if(Status == 'Final'){
+        //(goalsSelected  == null || goalsSelected == '') || 
+        if(srvcloc =='' || finalalready == '' || ServiceCode == '' || Progress == '' || NextVisit == '' || Interventions == '' || AppStatus =='Pending' || Status == 'Final' || ActionPlan == null ){ 
+            //if(goalsSelected  == null || goalsSelected == ''){
+            //    s = 'Y';
+            //}
+            if(Status == 'Final'){
                 s = 'Y';
             }
             if(AppStatus =='Pending'){
@@ -253,10 +254,10 @@
             location.reload(true);
         }    
 
-		if (s == 'Y') {
-			//alert("calling validate");
-			validateesign();
-		}else {
+        if (s == 'Y') {
+        //alert("calling validate");
+            validateesign();
+        }else {
             if (Signed == 'Y') {
                 alert("Document Already E-Signed");
                 openDialog('tstpopupAfterEsign', 'span', ''); 
@@ -264,7 +265,7 @@
                 authenticate();
                 
            }
-		}    
+        }    
     
       /*
         var srvcloc = '{!Progress_Note__c.Service_Location__c}';
@@ -295,14 +296,15 @@
     }
     function triggerNodeSelection(treeNode) {
         
-        if(treeNode.isSelected()&& treeNode.key.indexOf("a1A") > -1){
+        if(treeNode.isSelected()&& (treeNode.key.indexOf("a1A") > -1 || treeNode.key.indexOf("a1B") > -1 )){
             keysSelected = keysSelected + treeNode.key + ",";
+            //alert(keysSelected);
         }else{
             if(keysSelected.indexOf(treeNode.key) > -1){
                 keysSelected = keysSelected.replace(treeNode.key+",", "");
             }
         }
-        if(!treeNode.isSelected()&& treeNode.key.indexOf("a1A") > -1){
+        if(!treeNode.isSelected()&& (treeNode.key.indexOf("a1A") > -1 || treeNode.key.indexOf("a1B") > -1 )){
             keysDeSelected = keysDeSelected + treeNode.key + ",";
             //alert(keysDeSelected);
         }else{
@@ -395,7 +397,7 @@
      <apex:outputPanel id="OutputpanelId">
         <apex:pagemessages ></apex:pagemessages>
     </apex:outputPanel>
-    <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); validateApproval(); return false; return false;" /><!--location.reload(true); -->
+    <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); return false; return false;" /><!--location.reload(true); -->
     <!-- New Page Starts  -->
     <apex:outputpanel rendered="{!NewBlock}">
         <apex:pageBlock >
@@ -412,8 +414,8 @@
             <apex:actionFunction action="{!update_overlap}" name="updateOvrLap" rerender="tstpopupAfterEsign">
             </apex:actionFunction>
             <apex:pageBlockButtons > 
-                <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
-                <apex:commandButton action="{!saveModifiedProgressNote}" value="Save" rendered="{!inlinemode}" onclick="keyselectedvalue()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+                <apex:commandButton action="{!saveProgressNote}" value="Save pro" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+                <apex:commandButton value="Save Mod" rendered="{!inlinemode}" onclick="keyselectedvalue()" oncomplete="saveModifiedProgressNote()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
     
                 <apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
                 <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
@@ -569,7 +571,7 @@
                 <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
                 <!--<apex:commandButton id="createPDF" value="Create PDF"  onclick="openDialog('tstpopup', 'span', 'Finalize'); return false;" />-->
                <!--  <apex:commandButton id="esign" value="E-Sign"  onClick=" complete('{!SignedDoc}'); return false;" />-->
-                <apex:commandButton id="esign" value="E-Sign" action="{!validateesign}"   onClick="complete('{!SignedDoc}'); return false;"  />
+                <apex:commandButton id="esign" value="E-Sign" action="{!validateesign}" onClick="complete('{!SignedDoc}'); return false;"  />
                
             </apex:pageBlockButtons>
             
