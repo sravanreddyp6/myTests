@@ -17,10 +17,13 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     Public String SignedDoc {get;set;}
     Public String SrvcLoc {get;set;}
     Public list<sTRING> GoalSelStrs {get;set;}
+    Public list<sTRING> AZOPTString {get;set;}
+    Public list<sTRING> GoalSelAzOptCombo {get;set;}
     Public list<sTRING> GoalSelStrsremvd {get;set;}
     Public list<sTRING> GoaldeSelStrs {get;set;}
    public string GoalsSelected{get;set;}
    public string GoalsdeSelected{get;set;}
+   Public string finalGoalsObjList{get;set;}
    public Map<Id, GoalWrapper> treeModel = new Map<Id, GoalWrapper>();
    public list<action_plan_objective__c> allObjectives  = new list<action_plan_objective__c>();
    public list<action_plan_objective__c> getallObjectives (){return allObjectives ;}
@@ -253,28 +256,57 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         } 
     }
     public Notes_ProgressNote_AZ_OPT(ApexPages.StandardController controller){
-         GoalsSelected='';overlappingProgressNote = new list<progress_note__c>();GoalsDeSelected='';
+         GoalsSelected='';overlappingProgressNote = new list<progress_note__c>();GoalsDeSelected='';finalGoalsObjList='';
          GoalSelStrs = New List<String>();
+         AZOPTString = New List<String>();
+          GoalSelAzOptCombo = New List<String>();
          GoalSelStrsremvd = New List<String>();
          String dispMode = ApexPages.currentPage().getParameters().get('Mode');
         if(dispMode!='Edit'){
             ActivePlanId = ApexPages.currentPage().getParameters().get('plan');
         }else if (dispMode =='Edit'){
              displayPopupFinalize = false;
+             
              insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
              pn = (Progress_Note__c) controller.getRecord();
              progress_note__c pnedit = [select Service_Assignment__c ,owner.name,End_Time__c,Signature_on_File__c ,Person_Being_Served__r.Name,Approval_User__c,Start_Time__c,Service_Location__c,GoalIds_AZOPTPage__c ,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
              this.thePN = pn;
+             finalGoalsObjList = pnedit.GoalIds_AZOPTPage__c;
              GoalsSelected = Apexpages.currentPage().getParameters().get('selectedKey');
              GoalsDeSelected = Apexpages.currentPage().getParameters().get('DeselectedKey');
              System.debug('******************GoalsSelected'+GoalsSelected);
              System.debug('******************GoalsDeSelected'+GoalsDeSelected);
              System.debug('888888888pnedit.GoalIds_AZOPTPage__c'+pnedit.GoalIds_AZOPTPage__c);
              list<Id> GoalSelIds = New List<Id>();
-             if(GoalsSelected == null || GoalsSelected == '')
+             if(GoalsSelected == null || GoalsSelected == '' )
                 GoalsSelected = pnedit.GoalIds_AZOPTPage__c;
-             else
-                GoalsSelected = GoalsSelected +','+ pnedit.GoalIds_AZOPTPage__c;
+             else{ 
+                
+                //GoalsSelected = GoalsSelected +','+ pnedit.GoalIds_AZOPTPage__c;
+                GoalSelStrs = (GoalsSelected.split(','));
+                GoalSelAzOptCombo = (GoalsSelected.split(','));
+                if(pnedit.GoalIds_AZOPTPage__c!= null && pnedit.GoalIds_AZOPTPage__c!='')
+                    AZOPTString = (pnedit.GoalIds_AZOPTPage__c.split(','));
+                boolean dontadd = false;
+                if(AZOPTString.size()>0){
+                    for(string s:AZOPTString){
+                        for(string st: GoalSelStrs){
+                            if(s==st){
+                                dontadd= true;
+                            }
+                            
+                        }
+                        if(dontadd== false){
+                            GoalSelAzOptCombo.add(s);
+                        }
+                    }
+                    string finalgoals ='';
+                    for(string q:GoalSelAzOptCombo){
+                        finalgoals = finalgoals + ',' + q;
+                    }
+                    GoalsSelected = finalgoals;
+                }
+             } 
              SignedDoc = pnedit.Signature_on_File__c;
              SrvcLoc = pnedit.Service_Location__c;
              pnOverlap = new List<Progress_Note__c>();
@@ -286,9 +318,33 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
              if(GoalsDeSelected!=null && GoalsDeSelected !=''){
                 GoalDeSelStrs = (GoalsDeSelected.split(','));
              }System.debug('******************GoalDeSelStrs'+GoalDeSelStrs);
+             list<string> RemovedGoalIDs = New List<String>();
+             if(GoalsDeSelected!=null && GoalsDeSelected !=''){
+                for(string s:GoalDeSelStrs){
+                    if(s.contains('a1A')){
+                        RemovedGoalIDs.add(s);
+                    }
+                }System.debug('******************RemovedGoalIDs'+RemovedGoalIDs);
+                if(RemovedGoalIDs.size()>0){
+                    list<action_plan_objective__c> ObjListToBedel = [select id from action_plan_objective__c where action_plan_goal__r.Id In :RemovedGoalIDs] ; 
+                    System.debug('******************ObjListToBedel'+ObjListToBedel);
+                    for(action_plan_objective__c obj:ObjListToBedel){
+                        GoalDeSelStrs.add(obj.id);
+                    }
+                }
+                
+                GoalsDeSelected ='';
+                if(GoalDeSelStrs.size()>0){
+                    for(string s:GoalDeSelStrs){
+                        GoalsDeSelected = GoalsDeSelected + ',' +s;
+                    }
+                }
+             }
+            
              if(GoalsSelected!=null && GoalsSelected !=''){
                 GoalSelStrs = (GoalsSelected.split(','));
                 System.debug('******************GoalSelStrs'+GoalSelStrs);
+                System.debug('******************GoalDeSelStrs'+GoalDeSelStrs);
                 if(GoalDeSelStrs!=Null){
                     for(string s:GoalSelStrs){
                         boolean deletethis = false;
@@ -302,9 +358,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                     }
                 }else{
                         GoalSelStrsremvd.addall(GoalSelStrs);
-                }System.debug('******************'+GoalSelStrsremvd);
-                reformedittree(GoalSelStrsremvd);
-             }
+                }System.debug('********GoalSelStrsremvd**********'+GoalSelStrsremvd);
+                //pnedit.GoalIds_AZOPTPage__c='test';
+                
+             }reformedittree(GoalSelStrsremvd);
         }
         if(ActivePlanId != Null && dispMode!='Edit'){
             allgoals1 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r ) from Action_Plan_Goal__c where Action_Plan__c = :ActivePlanId Order BY Sort_Order__c];  
@@ -521,12 +578,13 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
       else if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             return null;
-       }else{
+       }else{ 
        pn.recordtypeid = AZ_OPT_ID ; 
        pn.Person_Being_Served__c = pbsName;
        pn.admission__c = admissionId;
        pn.Service_Assignment__c = theServAssignId;
        pn.Action_Plan__c = ActivePlanId;
+       //pn.GoalIds_AZOPTPage__c = finalGoalsObjList;
        update pn;
        insertedProgressNoteId = pn.Id;
        newBlock = false;
@@ -569,21 +627,45 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         if(GoalsDeSelected!=null && GoalsDeSelected !=''){
                 GoalDeSelStrs = (GoalsDeSelected.split(','));
         }System.debug('******************GoalDeSelStrs'+GoalDeSelStrs);
-                if(GoalDeSelStrs!=Null){
-                    for(string s:GoalSelStrs){
-                        boolean deletethis = false;
-                        for(string str:GoalDeSelStrs){
-                            if(s==str){
-                              deletethis = true; //GoalSelStrs.remove(s);
-                            }
+        list<string> RemovedGoalIDs = New List<String>();
+         if(GoalsDeSelected!=null && GoalsDeSelected !=''){
+            for(string s:GoalDeSelStrs){
+                if(s.contains('a1A')){
+                    RemovedGoalIDs.add(s);
+                }
+            }System.debug('******************RemovedGoalIDs'+RemovedGoalIDs);
+            if(RemovedGoalIDs.size()>0){
+                list<action_plan_objective__c> ObjListToBedel = [select id from action_plan_objective__c where action_plan_goal__r.Id In :RemovedGoalIDs] ; 
+                System.debug('******************ObjListToBedel'+ObjListToBedel);
+                for(action_plan_objective__c obj:ObjListToBedel){
+                    GoalDeSelStrs.add(obj.id);
+                }
+            }
+         GoalsDeSelected ='';
+         if(GoalDeSelStrs.size()>0){
+             for(string s:GoalDeSelStrs){
+                    GoalsDeSelected = GoalsDeSelected + ',' +s;
+             }
+         }
+         }
+             
+             
+         System.debug('******************RemovedGoalIDs603'+GoalDeSelStrs);
+            if(GoalDeSelStrs!=Null){
+                for(string s:GoalSelStrs){
+                    boolean deletethis = false;
+                    for(string str:GoalDeSelStrs){
+                        if(s==str){
+                          deletethis = true; //GoalSelStrs.remove(s);
                         }
-                        if(deletethis == false)
-                            GoalSelStrsremvd.add(s);
                     }
-                }else{
-                        GoalSelStrsremvd.addall(GoalSelStrs);
-                }System.debug('******************'+GoalSelStrsremvd);
-        if(GoalSelStrsremvd.Size()>0){
+                    if(deletethis == false)
+                        GoalSelStrsremvd.add(s);
+                }
+            }else{
+                    GoalSelStrsremvd.addall(GoalSelStrs);
+            }System.debug('******************'+GoalSelStrsremvd);
+         if(GoalSelStrsremvd.Size()>0){
             goalsSelected= '' ;
             for(string s: GoalSelStrsremvd){
                 goalsSelected = goalsSelected + s + ',';
@@ -592,12 +674,12 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             goalsSelected = '';
         }
         }}
+        finalGoalsObjList = goalsSelected;
         pn.recordtypeid = AZ_OPT_ID ;
         pn.Person_Being_Served__c = pbsName;
        pn.admission__c = admissionId;
        pn.Service_Assignment__c = theServAssignId;
        pn.Action_Plan__c = ActivePlanId;
-       pn.GoalIds_AZOPTPage__c = GoalsSelected;
        List<Progress_Note__c> samepbsNotes = New List<Progress_Note__c>();
        if(insertedProgressnoteid!=Null){
             samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c,Approval_User__c, end_time__c, status__c, Owner.Name ,ownerid from Progress_Note__c 
@@ -656,36 +738,69 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         }else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
             return null;
-       }
+       } 
         else if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             return null;
-       }
+       } 
        else if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This progress note cannot have the "Purpose/Service is Billable field" checked if the "Sleep Check Conducted" field is also checked'));     
             return null;
         }
        else{
+        pn.GoalIds_AZOPTPage__c = GoalsSelected;
        upsert pn;
        insertedProgressNoteId = pn.Id;
        newBlock = false;
-       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&SelectedKey='+ pn.GoalIds_AZOPTPage__c +'&Deselectedkey='+ GoalsDeSelected +'&sfdc.override=1');
+       pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&SelectedKey='+ pn.GoalIds_AZOPTPage__c +'&Deselectedkey='+ GoalsDeSelected); //+'&sfdc.override=1');
        pageref.setredirect(true);
        return pageref;     
       }      
     
     }
     public void reformedittree(list<string> GoalSelStrs){
+        list<ProgressNote_ActionPlanChildren_mjo__c> lstJncObj = New List<ProgressNote_ActionPlanChildren_mjo__c>();
+        if(GoalSelStrs.size()>0){
+        	
+        }else{
+        	lstJncObj = [select goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where progress_note__c =: insertedprogressnoteid];
+        	for(ProgressNote_ActionPlanChildren_mjo__c jnc:lstjncobj){
+        		if(jnc.goal__C != Null ){
+        			GoalSelStrs.add(jnc.goal__C);
+        		}else if(jnc.objective__c != Null ){
+        			GoalSelStrs.add(jnc.objective__c);
+        		}
+        	}
+        }
+        
         if(GoalSelStrs.size()>0){
            String strToUpdate ='';
             for(string s: GoalSelStrs){
                 strToUpdate = strToUpdate + s+',';
+            }
+            System.debug('M K ----->> strToUpdate ' +strToUpdate); 
+            pn.GoalIds_AZOPTPage__c = strToUpdate ;
+            allGoals = new TMN_Tree(); 
+            
+            list<string> GoalsSelIdLst = New List<String>();
+            list<string> ObjSelIdLst = New List<String>(); 
+            System.debug('689  ----->> ' +GoalSelStrs);
+            for(string s: GoalSelStrs){
+                if(s!=Null && S!=''){
+                    if(s.contains('a1A')){
+                        GoalsSelIdLst.add(s);
+                    }
+                    else if(s.contains('a1B')){
+                        ObjSelIdLst.add(s);
+                    }
+                }
             } 
-            pn.GoalIds_AZOPTPage__c = strToUpdate ;   
-            allGoals = new TMN_Tree();     
-            nodes2 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r ) from Action_Plan_Goal__c where Id In: GoalSelStrs Order BY Sort_Order__c];
-            allgoals1 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r ) from Action_Plan_Goal__c where Action_Plan__c = :ActivePlanId Order BY Sort_Order__c];  
-                allObjectives = [select id, (select description__c, id from Action_Plan_Actions__r order by Sort_Order__c) from action_plan_objective__c where action_plan_goal__r.action_plan__c = :ActivePlanId] ;                               
+            System.debug('700  ----->> ' +GoalsSelIdLst);
+            System.debug('700  ----->> ' +ObjSelIdLst);
+                
+            nodes2 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r where id in: ObjSelIdLst) from Action_Plan_Goal__c where Id In: GoalsSelIdLst Order BY Sort_Order__c];
+            allgoals1 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r where id in: ObjSelIdLst) from Action_Plan_Goal__c where Action_Plan__c = :ActivePlanId And Id In: GoalsSelIdLst Order BY Sort_Order__c];  
+                allObjectives = [select id, (select description__c, id from Action_Plan_Actions__r order by Sort_Order__c) from action_plan_objective__c where action_plan_goal__r.action_plan__c = :ActivePlanId And Id In: ObjSelIdLst] ;                               
                 Map<id,Action_Plan_Goal__c> idGoalMap = New Map<id,Action_Plan_Goal__c>();    
                     for(Action_Plan_Goal__c g:allGoals1){
                         idGoalMap.put(g.id,g);
@@ -699,7 +814,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                     
                     }
                     
-                    for(action_plan_objective__c o:[select id, (select description__c, id from Action_Plan_Actions__r order by Sort_Order__c) from action_plan_objective__c where action_plan_goal__r.action_plan__c = :ActivePlanId]){
+                    for(action_plan_objective__c o:[select id, (select description__c, id from Action_Plan_Actions__r order by Sort_Order__c) from action_plan_objective__c where action_plan_goal__r.action_plan__c = :ActivePlanId And id in: ObjSelIdLst]){
                         mapActions.put(o.id, o.Action_Plan_Actions__r);
                     
                     } 
@@ -712,7 +827,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                     string curID1 = n.id;
                     string title1 = n.description__c;
                     TMN_Tree.node g_node= new TMN_Tree.node(curID1, title1);
-                    g_node.isFolder = true;
+                    g_node.isFolder = true;g_node.isExpand = true;
                     allGoals.root.nodes.add(g_node);
                     goalID =curID1;
                     if(GoalObjMap !=null && GoalObjMap.get(n.Id)!=null){
@@ -733,6 +848,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                                             string curID3 = actPln.id;
                                             string title3 = actPln.description__c;
                                             TMN_Tree.node a_node= new TMN_Tree.node(curID3, title3);
+                                            a_node.hideCheckbox = true;
                                             integer g_key1 = allGoals.root.getNode_Key(goalID );
                                             integer o_key1 = allGoals.root.nodes.get(g_key).getNode_Key(objID);
                                             if(o_key1 != -1){
@@ -746,7 +862,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                     }
                 }
             }    
-        }
+        } 
     }
      
     
@@ -761,9 +877,38 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 GoalSelStrs = (GoalsSelected.split(','));
              }
             
-        }            
+        }
+        
+        list<ProgressNote_ActionPlanChildren_mjo__c> lstJncObj = New List<ProgressNote_ActionPlanChildren_mjo__c>();
+        if(GoalSelStrs.size()>0){
+        	
+        }else{
+        	lstJncObj = [select goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where progress_note__c =: insertedprogressnoteid];
+        	for(ProgressNote_ActionPlanChildren_mjo__c jnc:lstjncobj){
+        		if(jnc.goal__C != Null ){
+        			GoalSelStrs.add(jnc.goal__C);
+        		}else if(jnc.objective__c != Null ){
+        			GoalSelStrs.add(jnc.objective__c);
+        		}
+        	}
+        }
+        
+        
+        list<string> GoalsSelIdLst = New List<String>();
+        list<string> ObjSelIdLst = New List<String>(); 
+        System.debug('780  ----->> ' +GoalSelStrs);
+        for(string s: GoalSelStrs){
+            if(s!=Null && S!=''){
+                if(s.contains('a1A')){
+                    GoalsSelIdLst.add(s);
+                }
+                else if(s.contains('a1B')){
+                    ObjSelIdLst.add(s);
+                }
+            }
+        }           
         allGoals = new TMN_Tree();  
-        nodes2 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r ) from Action_Plan_Goal__c where Action_Plan__c = :ActivePlanId Order BY Sort_Order__c];
+        nodes2 = [select id, description__c, (select id, Description__c, status__c from action_plan_objectives__r where id In: ObjSelIdLst) from Action_Plan_Goal__c where Action_Plan__c = :ActivePlanId Order BY Sort_Order__c];
         string goalID ='';
         string objID ='';
         if(nodes2.size()>0){
@@ -772,14 +917,14 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 string curID1 = n.id;
                 string title1 = n.description__c;
                 TMN_Tree.node g_node= new TMN_Tree.node(curID1, title1);
-                if(GoalSelStrs.size()>0){
-                    for(string str:GoalSelStrs ){
-                    system.debug('-------'+ str);
+                if(GoalsSelIdLst.size()>0){
+                    for(string str:GoalsSelIdLst ){
                         if(str==curID1){
-                        g_node.isSelected = true;
+                            g_node.isSelected = true;
                         }
                     }
                 }g_node.isFolder = true;
+                //g_node.isExpand = false;
                 //g_node.isSelected = true;
                 allGoals.root.nodes.add(g_node);
                 goalID =curID1;
@@ -790,8 +935,13 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                             string curID2 = ob.id;
                             string title2 = ob.description__c;
                             TMN_Tree.node o_node= new TMN_Tree.node(curID2, title2);
-                            if(g_node.isSelected == true)
-                                o_node.isSelected = true;
+                            for(string strObj:ObjSelIdLst ){
+                                if(strObj==curID2){
+                                    if(g_node.isSelected == true){
+                                        o_node.isSelected = true;
+                                    }
+                                }
+                            }
                             integer g_key = allGoals.root.getNode_Key(goalID );
                             allGoals.root.nodes.get(g_key).nodes.add(o_node);
                             objID =curID2;
@@ -802,15 +952,16 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                                         string curID3 = actPln.id;
                                         string title3 = actPln.description__c;
                                         TMN_Tree.node a_node= new TMN_Tree.node(curID3, title3);
-                                        if(g_node.isSelected == true)
+                                        if(o_node.isSelected == true)
                                             a_node.isSelected = true;
+                                        a_node.hideCheckbox = true;
                                         integer g_key1 = allGoals.root.getNode_Key(goalID );
                                         integer o_key1 = allGoals.root.nodes.get(g_key).getNode_Key(objID);
                                         if(o_key1 != -1){
                                             allGoals.root.nodes.get(g_key1).nodes.get(o_key1).nodes.add(a_node);
                                         }
                                     }
-                                } 
+                                }
                             }
                         }                         
                     }
