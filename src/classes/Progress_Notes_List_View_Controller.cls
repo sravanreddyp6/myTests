@@ -159,8 +159,7 @@ public with sharing class Progress_Notes_List_View_Controller {
     }
     
     public PageReference editcardnotes(){
-        
-        PageReference pnPage = new PageReference('/apex/Notes_Progressnote_AZ_OPT?Mode=Edit&id='+selectedpnid);
+        PageReference pnPage = new PageReference('/apex/ProgressNote_DetailPage?id='+selectedpnid);
         pnPage.setRedirect(true);
         return pnPage;
     }
