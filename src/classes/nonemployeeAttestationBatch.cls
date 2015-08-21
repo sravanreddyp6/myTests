@@ -27,7 +27,7 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>{
 			mail.setTemplateId(myEMailTemplate.id);
 			mail.setTargetObjectId(managerMap.get(m));
 			mail.setWhatId(m);
-			mail.setSenderDisplayName('TMN Non-Employee Attestation');
+			mail.setSenderDisplayName('TMN Access');
 			mail.SaveAsActivity = false;
 			mails.add(mail);
 		}
