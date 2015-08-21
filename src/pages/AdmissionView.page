@@ -346,10 +346,10 @@
 			</apex:pageBlockSection>
 
             <!-- PRI-218/19 -->
-			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="false" rendered="{!Admission__c.Admitted_From__c != null}">
+			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="false"  rendered="{!reqAdmittedFrom}">
 				<apex:outputField value="{!Admission__c.Admitted_From__c}"  />
 			</apex:pageBlockSection>    
-   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="false" rendered="{!Admission__c.Discharged_To__c != null || (Admission__c.Status__c=='Dischagred' && isNR)}">
+   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="false" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
 				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
 			</apex:pageBlockSection>   
 			<!-- end pri 218 --> 

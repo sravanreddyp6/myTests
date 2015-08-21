@@ -51,58 +51,13 @@ public with sharing class AdmissionEditExtension {
         
         	
     }
+    
     //PRI-218 219
-    public boolean reqAdmittedFrom {get{return setReqAdmittedFrom(curUser,allSAforAdmint);} set;}
-    public boolean reqDcTo { get{ return setReqDcTo(curUser,allSAforAdmint);} set;}
+    public boolean reqAdmittedFrom {get{return AdmissionEditViewCommon.setReqAdmittedFrom(curUser,allSAforAdmint);} set;}
+    public boolean reqDcTo { get{ return AdmissionEditViewCommon.setReqDcTo(curUser,allSAforAdmint);} set;}
     public boolean shwDcTo { get{ return ( reqDcTo || curUser.Operating_Group__c.StartsWith('Neuro') );} set;}
     
-    static boolean setReqAdmittedFrom(TMN_User__c u, list<Service_Assignment__c> SAs ){
-
-    	//Cambridge check
-    	if( u.Operating_Group__c == 'Cambridge' ){
-	    	for(Service_Assignment__c item: SAs){
-	    		if(item.Service_Location__r.Program__c.contains('-ARY') )
-	    			{return true;}
-    			else{
-    				if( item.Service_Location__r.Setting__c.equalsIgnoreCase('residential') )
-    					{return true;}
-    			}
-    				
-	    	}
-    	}
-	//Redwood check
-    	if( u.Operating_Group__c == 'Redwood' ){
-	    	for(Service_Assignment__c item: SAs){
-	    		if( item.Service_Location__r.Setting__c.equalsIgnoreCase('residential') )
-	    			{return true;}    				
-	    	}
-    	}    	
     
-    	return false;
-    }
-    static boolean setReqDcTo(TMN_User__c u, list<Service_Assignment__c> SAs ){
-    	//Cambridge check
-    	if( u.Operating_Group__c == 'Cambridge' ){
-	    	for(Service_Assignment__c item: SAs){
-	    		if(item.Service_Location__r.Program__c.contains('-ARY') )
-	    			{return true;}
-    			else{
-    				if( item.Service_Location__r.Setting__c.equalsIgnoreCase('residential') )
-    					{return true;}
-    			}
-    				
-	    	}
-    	}
-	//Redwood check
-    	if( u.Operating_Group__c == 'Redwood' ){
-	    	for(Service_Assignment__c item: SAs){
-	    		if( item.Service_Location__r.Setting__c.equalsIgnoreCase('residential') )
-	    			{return true;}    				
-	    	}
-    	}    	
-    
-    	return false;
-    }    
     public pageReference saveAdmission () {
 
 		
