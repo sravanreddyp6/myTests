@@ -31,15 +31,44 @@ public with sharing class GenerateEvalComponent {
     public Id serviceAssignmentId { get; set; }
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
-    public Boolean showPreviousEntries {
-        get {
-            System.debug(evalSecType);
-            System.debug(evalName);
-            System.debug(cat);
-            System.debug(subcat);
-            return (evalName == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'Vitals Signs');
+    public static List<Set<String>> previousEntryAssociation = new List<Set<String>>{
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsDate',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsDateTime'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsBloodPressure',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsBP'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsHeartRate',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsHeartRate'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsO2Saturation',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsO2Sat'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%HRinterventionNeeded'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%O2interventionNeeded'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsR',
+            'CNA Workbook%Diagnostics%Vitals Signs%vitalR'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsTemperature',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsTemp'
+        },
+        new Set<String>{
+            'CNA Workbook%Diagnostics%Vitals Signs%weightAtAdmission'
+        },
+        new Set<String>{
+            'Head to Toe%Neurological%Cognitive%ranchoLevel'
         }
-    }
+    };
 
     transient List<Eval_Drop_Down__c> dd;
     transient List<Eval__c> listEvalItems;
@@ -215,17 +244,32 @@ public with sharing class GenerateEvalComponent {
         String newHTMLfld = '';
         String strval = '';
         String reqfldHTML = '';
+        Set<String> fieldsWithPreviousEntries = new Set<String>();
+        for (Set<String> association: previousEntryAssociation) {
+            fieldsWithPreviousEntries.addAll(association);
+        }
         for( Eval__c e : listEvalItems ){
             try {
                 newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
                 newHTMLfld = '';
                 strval = '';
                 system.debug(' field type is ' + e.field_type__c);
-                if (e.Required__c) {
-                    reqfldHTML = '<div class="requiredInput" style="display: table-cell;"><div class="requiredBlock"></div>';
-                } else {
-                    reqfldHTML = '<div style="display: table-cell;">';
+                String composite = String.format('{0}%{1}%{2}%{3}', new List<String>{
+                    e.eval_type__r.name,
+                    e.category__c,
+                    e.sub_category__c,
+                    e.htmlid__c
+                });
+                String prevEntryStr = '';
+                if (fieldsWithPreviousEntries.contains(composite)) {
+                    prevEntryStr += ' data-previous-entry="' + composite + '"';
                 }
+                if (e.Required__c) {
+                    reqfldHTML = '<div class="requiredInput" style="display: table-cell;"' + prevEntryStr + '><div class="requiredBlock"></div>';
+                } else {
+                    reqfldHTML = '<div style="display: table-cell;"'+ prevEntryStr +'>';
+                }
+
 
                 if ( e.Field_Type__c == 'Hidden' )  {
                     newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
@@ -670,23 +714,49 @@ public with sharing class GenerateEvalComponent {
     }
 
     @RemoteAction
-    public static EvalValue[] getPreviousEntries(Id evalId, Id serviceAssignmentId) {
-        Map<Id, Evaluation__c> evaluations = new Map<Id, Evaluation__c>([
+    public static EvalValue[] getPreviousEntries(String composite, Id serviceAssignmentId) {
+        List<Evaluation__c> evaluations = [
             SELECT Id
               FROM Evaluation__c
              WHERE ServiceAssignment__c = :serviceAssignmentId
-        ]);
+        ];
+        String evaluationStr = '(';
+        for (Evaluation__c evaluation: evaluations) {
+            evaluationStr += '\'' + evaluation.Id + '\', ';
+        }
+        evaluationStr = evaluationStr.removeEnd(', ');
+        evaluationStr += ')';
+        List<String> split = composite.split('%', 0);
+        String query =
+            'SELECT Id, Boolean__c, Currency__c, Date_Time__c, Number_No_Decimal__c, ' +
+                   'Text_Over_250__c, Text_Under_250__c, What_Id__c, Eval__r.Field_Type__c, ' +
+                   'Eval__r.Field_Sub_Type__c, Eval__r.Length__c, LastModifiedDate, ' +
+                   'Eval__r.Eval_Type__r.Name, Eval__r.Category__c, Eval__r.Sub_Category__c, ' +
+                   'Eval__r.Field_Name__c ' +
+             'FROM Eval_Value__c ' +
+            'WHERE What_Id__c IN ' + evaluationStr + ' ' +
+              'AND (';
+        Integer index = 0;
+        for (Set<String> association: previousEntryAssociation) {
+            if (association.contains(composite)) {
+                for (String fields: association) {
+                    if (index != 0) {
+                        query += 'OR ';
+                    }
+                    query += String.format(
+                        '(Eval__r.Eval_Type__r.Name=\'\'{0}\'\' AND Eval__r.Category__c=\'\'{1}\'\' ' +
+                        'AND Eval__r.Sub_Category__c=\'\'{2}\'\' AND Eval__r.htmlid__c=\'\'{3}\'\') ',
+                        fields.split('%', 0));
+                    index ++;
+                }
+            }
+        }
+        query += ') ' +
+            'ORDER BY LastModifiedDate DESC ' +
+            'LIMIT 7';
         EvalValue[] evalValues = new EvalValue[] {};
-        for (Eval_Value__c evalValue: [
-            SELECT Id, Boolean__c, Currency__c, Date_Time__c, Number_No_Decimal__c,
-                   Text_Over_250__c, Text_Under_250__c, What_Id__c, Eval__r.Field_Type__c,
-                   Eval__r.Field_Sub_Type__c, Eval__r.Length__c, LastModifiedDate
-              FROM Eval_Value__c
-             WHERE Eval__c = :evalId
-               AND What_Id__c IN :evaluations.keySet()
-            ORDER BY LastModifiedDate DESC
-            LIMIT 7
-        ]) {
+        System.debug(query);
+        for (Eval_Value__c evalValue: Database.query(query)) {
             evalValues.add(new EvalValue(evalValue));
         }
         return evalValues;

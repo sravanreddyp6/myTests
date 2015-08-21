@@ -146,9 +146,9 @@
 
             window.refreshQtips = function () {
                 // All qtips share the same config, so we refactor it here.
-                var qtip_options = function (selector, fn) {
-                    return $(selector)
-                        .not(':input[type=button], :input[type=submit], :input[type=reset]')
+                var qtip_options = function (fn) {
+                    return $("div[data-previous-entry]")
+                        .find("input, select, textarea")
                         .qtip({
                             style: {
                                 classes: 'bPageBlock'
@@ -169,11 +169,11 @@
                             }
                         });
                 };
-                qtip_options("input, select, textarea", function(e, api) {
-                    var evalId = $(e.target).prop("name");
+                qtip_options(function(e, api) {
+                    var composite = $(e.target).closest("div[data-previous-entry]").data("previous-entry");
                     Visualforce.remoting.Manager.invokeAction(
                         '{!$RemoteAction.GenerateEvalComponent.getPreviousEntries}',
-                        evalId,
+                        composite,
                         '{!serviceAssignmentId}',
                         function (result, event) {
                             if (event.status) { // Success
@@ -187,16 +187,15 @@
                                         resultText += '- <a href="/' + entry.evaluationId + '">' + entry.value + '</a> at ' + entry.lastModifiedDate + '<br />';
                                     }
                                 });
-                            api.set('content.text', resultText);
-                    } else if (event.type === 'exception') {
-                        api.set('content.text', 'Error: <br/>' + event.message);
-                        console.log(event);
-                    } else {
-                        api.set('content.text', event.message);
-                    }
-                }
-            );
-            return "Loading ...";
+                               api.set('content.text', resultText);
+                            } else if (event.type === 'exception') {
+                               api.set('content.text', 'Error: <br/>' + event.message);
+                               console.log(event);
+                            } else {
+                               api.set('content.text', event.message);
+                            }
+                       });
+                    return "Loading ...";
                 });
             };
 
@@ -232,9 +231,7 @@
                     isModified = true;
                 });
 
-                if ({!showPreviousEntries}) {
-                    refreshQtips();
-                }
+                refreshQtips();
             };
 
             window.handleFormErros = function() {
