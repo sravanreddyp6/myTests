@@ -397,7 +397,7 @@
      <apex:outputPanel id="OutputpanelId">
         <apex:pagemessages ></apex:pagemessages>
     </apex:outputPanel>
-    <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); return false; return false;" /><!--location.reload(true); -->
+    <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); openDialog('tstpopupAfterEsign', 'span', ''); return false; return false;" /><!--location.reload(true); -->
     <!-- New Page Starts  -->
     <apex:outputpanel rendered="{!NewBlock}">
         <apex:pageBlock >
