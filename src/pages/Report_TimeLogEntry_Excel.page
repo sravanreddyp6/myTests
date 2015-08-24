@@ -20,9 +20,8 @@
 			<tr>
 				<td>Run Date</td>
 				<td>
-					<apex:outputText value="{0,date,MM/dd/yyyy HH:mm}">
-						<apex:param value="{!pdfRunDateTime}" />
-					</apex:outputText>
+					<c:MilitaryDatetime datetimeval="{!pdfRunDateTime}" />
+					
 				</td>
 			</tr>
 			<tr>
@@ -32,14 +31,14 @@
 		</table>
 	</apex:pageBlock>
 	<apex:repeat value="{!people}" var="pbs">
-		<apex:pageBlock>
+		<apex:pageBlock >
 			<apex:pageBlockSection title="{!people[pbs]}" columns="1" collapsible="false">
 				<apex:pageBlockTable value="{!logMap[pbs]}" var="n">
 					<apex:column headervalue="Start Date/Time">
-						<c:militarydatetime datetimeval="{!n.start_date_time__c}"/>
+						<c:MilitaryDatetime datetimeval="{!n.start_date_time__c}"/>
 					</apex:column>
 					<apex:column headervalue="End Date/Time">
-						<c:militarydatetime datetimeval="{!n.end_date_time__c}"/>
+						<c:MilitaryDatetime datetimeval="{!n.end_date_time__c}"/>
 					</apex:column>
 
 					<apex:column headervalue="Service Type" value="{!n.service_type__c}"/>
