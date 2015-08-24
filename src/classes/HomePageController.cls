@@ -297,6 +297,7 @@ public with sharing class HomePageController{
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
 				}
 				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+                optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
 				
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);

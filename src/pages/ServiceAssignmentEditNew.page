@@ -375,6 +375,9 @@
 		<apex:pageBlock mode="detail" title="Service Assignment{!if(editSA==true,' Edit','')}">
 
 			<div class="pbHeaderButton">
+			    <apex:outputPanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA'), !editSA))}">
+                    <a class="btn" href="#" onClick="openModalDialogSA('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700);" id="IowaDailyDataSummaryGenerate">Create Daily Data Summary</a>&nbsp;&nbsp;
+                </apex:outputPanel>
 				<apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
 				<apex:actionStatus id="SaveStatus1">
 					<apex:facet name="stop">
@@ -2349,6 +2352,48 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageBlockButtons>
 			</apex:pageBlock>
 		</apex:outputPanel>
+		
+	    <div id="IowaDailyDataSummaryDialog" style="display:none;" >
+	    <apex:outputpanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA')))}" >
+	        <script>
+	            jQuery.noConflict();
+	            jQuery(document).ready(function($) {
+	                $('.datepicker').datetimepicker({
+	                    timepicker: false,
+	                    format: 'm/d/Y',
+	                    closeOnDateSelect: true
+	                });
+	            });
+	        </script>
+	        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+	        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
+	        
+	        <apex:pageBlockSection>    
+	            <apex:pageBlockSectionItem >
+	            <apex:outputLabel value="Service date" />
+	                <apex:outputPanel layout="none">
+	<!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
+                        <input id="IowaDailyDataSummaryServiceDate" type="text" class="datepicker" />
+	<!--                     </div> -->
+	                </apex:outputPanel>
+	            </apex:pageBlockSectionItem>
+	
+	            <apex:pageBlockSectionItem >
+	                <apex:outputlabel value="E-Sign" />
+	                <input type="checkbox" id="IowaDailyDataSummaryEsign" name="esign"/>
+	            </apex:pageBlockSectionItem>
+	            </apex:pageBlockSection>
+	            
+	            <apex:outputPanel layout="block" style="position: relative; left: 180px; top: 10px; padding-bottom: 10px;">
+	                <a class="btn" href="#" id="IowaDailyDataSummaryGenerate" onClick="window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
+                                + '&saId='+ '{!theServAssign.Id}'
+                                + '&Esign=' + (document.getElementById('IowaDailyDataSummaryEsign').checked ? true : false)
+                                , '_blank');return false;">Generate</a>&nbsp;&nbsp; 
+	                <a class="btn" href="#" onClick="closeModalDialogSA('IowaDailyDataSummaryDialog', 'div');return false;">Close</a>
+	            </apex:outputPanel>
+	        </apex:pageBlock>
+	    </apex:outputpanel>  
+	    </div> 
 	</apex:form>
 	<a id="shiftSummaries" />
 	<apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
