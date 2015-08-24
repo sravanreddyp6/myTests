@@ -1,0 +1,399 @@
+<apex:page standardController="Progress_Note__c" renderAs="pdf"><!-- renderAs="pdf" -->
+   <head>
+<style type="text/css">
+.dataTbTd{
+   1px solid black;
+    padding: 6px;
+}
+
+.BoldLabelLg {
+    font-size: 13px;
+    font-weight: bold;
+    width: 100px;
+}
+.Header{
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+
+}
+.Lg {
+    font-size: 20px;
+    font-weight: bold;
+    
+
+}
+.alightRight2{
+    text-align: right;
+}
+
+.alignTop{
+    vertical-align: top;
+    
+}
+
+
+
+.inTbTdWidth {
+    width: 100px;
+    padding-right: 5px;
+}
+.tbCB{
+    
+    padding: 7px;
+    
+
+ }
+ 
+.smTxt{
+    font-size: 5pt;
+}
+.medTxt{
+
+    font-size: 16pt;
+    }
+.myTB{
+    width: 100%;
+    Border "1";
+    background-color:;
+       : 1px solid black;
+    padding: 7px;
+}  
+.innerTb{
+    :1px solid black;
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 90%;      
+    background-color: ;
+        
+}
+.innerTb2{
+    
+    padding-left: 3px;
+    padding-top: 4px;
+    vertical-align:top;
+    margin-left:10px;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 290px; 
+    background-color: ;        
+}
+.shaded{
+    background-color:#ebebeb;
+    
+    } 
+.dataTable{
+    border: 1px solid black;
+
+}    
+</style>
+</head>
+<table class="myTB" cellspacing="0" cellpadding="0"  >
+<tr>
+  <td align="left" ><apex:image url="https://c.cs10.content.force.com/servlet/servlet.FileDownload?file=015J0000000DIfy"/></td>
+</tr>
+<tr>
+<td colspan="2" class="Lg" align="right" >In-Home Therapy Progress Note</td>
+</tr>
+  <tr>
+    <td colspan="2" align="right">Revision Date: 03-18-10</td>
+    </tr>
+    </table>
+    <table class="InnerTb" cellspacing="0" cellpadding="2"     >
+    <tr>
+    <td colspan="2" class="BoldLabelLg">Persons Name:</td>
+    <td>{!Progress_Note__c.Person_Being_Served__r.Name}</td> 
+    </tr>
+    <tr>
+    <td colspan="2" class="BoldLabelLg">Record Number</td>
+    <td><apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></td>
+    </tr>
+    <tr>
+    <td colspan="2" class="BoldLabelLg">DOB</td>
+    <td><apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Birthdate}"/></td>
+    </tr>
+  </table>
+ <table class="myTB" cellspacing="0" cellpadding="0"  > 
+ <tr>
+ <td colspan="2" class="BoldLabelLg">ORGANIZATION NAME:</td>
+ 
+ 
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Therapeutic interventions Provided:</td>
+<td><apex:outputField value="{!Progress_Note__c.Purpose_Nature_of_Service__c}"/></td>
+
+</tr>
+</table> 
+<table class="myTB" cellspacing="0" cellpadding="0" Width="80%"  >
+<tr>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Intensive_Family_Therapy__c}"/>Intensive Family Therapy</td>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Intensive_Family_Therapy_Units__c}"/>/Units</td>
+</tr>
+<tr>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Care_Coordination__c}"/>Care Coordination</td>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Care_Coordination_Units__c}"/>/Units</td>
+</tr>
+<tr>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Telephone_Crisis_Response__c}"/>Telephone Crisis Response</td>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Telephone_Crisis_Response_Units__c}"/>/Units</td>
+</tr>
+<tr>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Member_Transportation_by_Staff__c}"/>Member Transportation by Staff</td>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Member_Transportation_by_Staff_Units__c}"/>/Units</td>
+</tr>
+<tr>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Collateral_Contacts__c}"/>Collateral Contacts</td>
+ <td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Collateral_Contacts_Units__c}"/>/Units</td>
+</tr>
+<tr>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Member_Outreach__c}"/>Member Outreach</td>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.Member_Outreach_Units__c}"/>&#47;Units</td>
+<br/>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">(Describe the Interventions Provided)</td>
+<td>{!Progress_Note__c.Interventions__c}</td> 
+<br/>
+</tr>
+
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Person&#39;s report of progress towards goals/objectives since last session:</td>
+<td>
+<td>{!Progress_Note__c.Progress__c}</td> 
+</td> 
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td><apex:outputField styleClass="tbCB" value="{!Progress_Note__c.New_Issues_Presented__c}"/>New Issue(s)Presented
+</td>
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">New Issues Presented</td>
+<td><apex:outputField value="{!Progress_Note__c.New_Issues_Presented__c}"/></td>
+<br/>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Person's Condition (MA ONLY)</td>
+<br/>
+<br/>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Mood/Affect:</td>
+<td><apex:outputField value="{!Progress_Note__c.Mood_Affect__c}"/></td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Change in Persons Condition</td>
+<td><apex:outputField value="{!Progress_Note__c.Changes_in_Persons_Mood_Affect__c}"/></td>
+
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Thought Process Orientation:</td>
+<td><apex:outputField value="{!Progress_Note__c.Thought_Process_Orientation__c}"/></td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Change in Persons Condition</td>
+<td><apex:outputField value="{!Progress_Note__c.Changes_in_Persons_Mood_Affect__c}"/></td>
+
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Behavior Functioning:</td>
+<td><apex:outputField value="{!Progress_Note__c.Behavior_Functioning__c}"/></td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Change in Persons Condition</td>
+<td><apex:outputField value="{!Progress_Note__c.Changes_in_Persons_Mood_Affect__c}"/></td>
+
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Medical Condition:</td>
+<td><apex:outputField value="{!Progress_Note__c.Medical_Condition__c}"/></td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Change in Persons Condition</td>
+<td><apex:outputField value="{!Progress_Note__c.Changes_in_Persons_Mood_Affect__c}"/></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Substance Abuse:</td>
+<td><apex:outputField value="{!Progress_Note__c.Substance_Abuse__c}"/></td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Change in Persons Condition</td>
+<td><apex:outputField value="{!Progress_Note__c.Changes_in_Persons_Mood_Affect__c}"/></td>
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Risk Assessment</td>
+</tr>
+<tr>
+<td><apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_None__c}"/>Danger to None</td>
+</tr>
+<tr>
+ <td><apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Others_Attempt__c}"/>Danger to Others Attempt</td> 
+ </tr>
+<tr>
+<td> <apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Others_Ideation__c}"/>Danger to Others Ideation</td>
+ </tr>
+<tr>
+ <td><apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Others_Intent__c}"/>Danger to Others Intent</td>
+ </tr>
+<tr>
+<td><apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Others_Plan__c}"/>Danger to Others Plan</td>
+</tr>
+<tr>
+<td> <apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Property_Attempt__c}"/>Danger to Property Attempt</td>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Risk Assessment (Continued)</td>
+</tr>
+<tr>
+ <td><apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Property_Intent__c}"/>Danger to Property Intent</td>
+ </tr>
+<tr>
+<td> <apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Property_Plan__c}"/>Danger to Property Plan</td>
+ </tr>
+<tr>
+<td> <apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Proprety_Ideation__c}"/>Danger to Property Ideation</td>
+ </tr>
+<tr>
+<td><apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_To_Self_Attempt__c}"/>Danger to Self Attempt</td>
+ </tr>
+<tr>
+<td> <apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Self_Ideation__c}"/>Danger to Self Ideation</td>
+ </tr>
+<tr>
+<td> <apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Self_Intent__c}"/>Danger to Self Intent</td>
+ </tr>
+<tr>
+<td><apex:outputField styleClass="istbCB" value="{!Progress_Note__c.Danger_to_Self_Plan__c}"/>Danger to Self Plan</td>
+<br/>
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Goal(s)/Objectives Addressed As Per: []IAP []BMP []Other</td>
+</tr>
+<tr>
+<td><apex:include pageName="progressnote_actionplan_embed_include"/></td>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Functioning (observed or reported)</td>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Person's response to Intervention/Progress Toward Goals/Objectives</td>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Plan/Additional Information:</td>
+<td><apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}"/></td>
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+</tr>            
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Provider-Print Name/Credential/Title</td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Provider Signature</td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Date:</td>
+<br/>
+<br/>
+<br/>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Supervisor-Print Name/Credential(if needed)</td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Supervisor Signature (if needed)</td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Date:</td>
+<br/>
+<br/>
+<br/>
+<br/>
+</tr>
+</table>
+<table class="myTB" cellspacing="0" cellpadding="0" Width="100%"  >
+<tr>
+<td colspan="2" class="BoldLabelLg">Date of Service</td>
+<td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td>            
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Start Time</td>
+<td><apex:outputField value="{!Progress_Note__c.Start_Time__c}"/></td>
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">End Time</td>
+<td><apex:outputField value="{!Progress_Note__c.End_Time__c}"/></td>            
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Service Code)</td>
+<td><apex:outputField value="{!Progress_Note__c.Service_Code__r.Service_Code__c}"/></td>            
+
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Total Units</td>
+<td><apex:outputField value="{!Progress_Note__c.Units__c}"/></td>
+
+</tr>
+<tr>
+<td colspan="2" class="BoldLabelLg">Primary Diagnosis Code</td>
+<td><apex:outputField value="{!Progress_Note__c.Primary_Diagnosis_Code__c}"/></td>            
+</tr>
+</table>
+</apex:page>
