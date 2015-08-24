@@ -12,6 +12,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public string ContactName{get;set;}
     public string SignedDoc {get;set;}
     public string SrvcLoc {get;set;}
+    public string goalsOrObSelected { get;set; }
     public list<string> GoalSelStrs {get;set;}
     public list<string> AZOPTstring {get;set;}
     public list<string> GoalSelAzOptCombo {get;set;}
@@ -158,7 +159,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     
     /** Validations which are required to be checked Before Finalizing or Esigning the progress Note**/
     public void validateFinalizeEsign(list<progress_note__c> pnValidations,string GoalsSelected){
-    	if(GoalsSelected==null || GoalsSelected ==''){
+    	if(GoalsSelected=='NoGoal'){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a "Goal" before continuing.'));   
         }
         if(pnValidations[0].status__c == 'Final'){
@@ -191,6 +192,11 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     		
     }
     
+    public void CheckGoalsAndObj(){
+    	  
+    }
+    
+    
     /**Esign Validation **/ 
     public pagereference validateesign(){
         list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
@@ -200,14 +206,20 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 where id =:thePn.Id];
         boolean HasGoal = false;
         //GoalsSelected = pnValidations[0].GoalIds_AZOPTPage__c;
-        System.debug('Goals Selecetd --> ' + GoalsSelected); 
-        if(/*(GoalsSelected==null || GoalsSelected =='') ||*/ pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
+        String GoalsOrObj;
+        list<ProgressNote_ActionPlanChildren_mjo__c> lstJncObj = New List<ProgressNote_ActionPlanChildren_mjo__c>();
+    	lstJncObj = [select goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where progress_note__c =: thePn.Id];
+	    if(lstjncObj == Null || lstjncObj.size()==0){
+	    	GoalsOrObj ='NoGoal';
+	    }
+        System.debug('Goals Selecetd --> ' + GoalsOrObj); 
+        if((GoalsOrObj =='NoGoal') || pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
         (pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0)||
         pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
-            validateFinalizeEsign(pnValidations,GoalsSelected);
+            validateFinalizeEsign(pnValidations,GoalsOrObj);
        }return null;
     }
-    
+     
     /** Finalize Validations And then rendering of the finalize popup on the screen Logic**/ 
     public pagereference showPopup() { 
         list<progress_note__c> pnValidations = [SELECT Id, service_location__C,Approval_Status__c,Type_of_Contact__c, 
@@ -216,12 +228,17 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 Owner.Name from Progress_Note__c
                 where id =:thePn.Id];
         boolean HasGoal = false;
-        //GoalsSelected = pnValidations[0].GoalIds_AZOPTPage__c;
-        System.debug('Goals Selecetd --> ' + GoalsSelected); 
-        if(/**(GoalsSelected==null || GoalsSelected =='') || **/pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
+        String GoalsOrObj;
+        list<ProgressNote_ActionPlanChildren_mjo__c> lstJncObj = New List<ProgressNote_ActionPlanChildren_mjo__c>();
+    	lstJncObj = [select goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where progress_note__c =: thePn.Id];
+	    if(lstjncObj == Null || lstjncObj.size()==0){
+	    	GoalsOrObj ='NoGoal';
+	    }
+        System.debug('Goals Selecetd --> ' + GoalsOrObj); 
+        if( GoalsOrObj =='NoGoal' || pnValidations[0].status__c == 'Final' || pnValidations[0].Approval_Status__c == 'Pending' || pnValidations[0].Action_plan__c == Null ||
         (pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0)||
         pnValidations[0].Service_Location__c == Null || pnValidations[0].Type_of_Contact__c == Null || pnValidations[0].Service_code__c == Null ||pnValidations[0].Interventions__c== Null || pnValidations[0].Notes_For_Next_Visit__c == Null  || pnValidations[0].progress__c == Null || pnValidations[0].Type_of_Contact__c == '' || pnValidations[0].progress__c == '' || pnValidations[0].Interventions__c== '') {
-            validateFinalizeEsign(pnValidations,GoalsSelected);
+            validateFinalizeEsign(pnValidations,GoalsOrObj);
             if(pnValidations[0].Signature_on_File__c != 'Y' && pnValidations[0].Number_of_Required_Signatures__c > 0 ){
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization.'));  
             }
@@ -238,6 +255,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     	GoalsSelected='';overlappingProgressNote = new list<progress_note__c>();GoalsDeSelected='';finalGoalsObjList='';
  		GoalSelStrs = New List<string>();
      	AZOPTstring = New List<string>();
+     	goalsOrObSelected ='';
       	GoalSelAzOptCombo = New List<string>();
      	GoalSelStrsremvd = New List<string>();
      	string dispMode = ApexPages.currentPage().getParameters().get('Mode');
@@ -248,6 +266,8 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
      		insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
          	GoalsSelected = Apexpages.currentPage().getParameters().get('selectedKey');
          	GoalsDeSelected = Apexpages.currentPage().getParameters().get('DeselectedKey');
+         	
+         	
          	List<String> OldIds = New List<String>();
          	list<ProgressNote_ActionPlanChildren_mjo__c> lstJncObj = New List<ProgressNote_ActionPlanChildren_mjo__c>();
 	    	lstJncObj = [select goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where progress_note__c =: insertedprogressnoteid];
@@ -262,7 +282,9 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
 	    				existingId.add(jnc.objective__c);
 	    			}
 	    		}
-        	}
+        	}else{
+	    		goalsOrObSelected='NoGoal';
+    		}  
          	list<string> finallisttocreate = new list<string>();
 	        pn = (Progress_Note__c) controller.getRecord();
          	progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Signature_on_File__c ,Service_Location__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
@@ -590,9 +612,19 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
 		        		}
 		        	}
 		        }
+		        list<string> ObjSelIds = new list<string>();
 		        list<string> finallisttocreate = new list<string>();
 		        if(GoalsSelected!=null && GoalsSelected !='')
 	        		GoalSelStrs = (GoalsSelected.split(','));
+		    	list<string> AlrGoal = New List<String>();
+		    	if(goalSelStrs!= Null && GoalSelStrs.size()>0){
+		    		for(string s: goalSelstrs){
+		    			if(s.contains('a1B')){
+		    				ObjSelIds.add(s);
+		    			}
+		    		}
+		    	}
+		    	
 		    	System.debug('******************GoalSelStrs'+GoalSelStrs);
 				if(existingId!=Null && existingId.size()>0){
 			        for(string s:GoalSelStrs){
@@ -608,7 +640,30 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
 		        }else{
 		        	finallisttocreate.addall(GoalSelStrs);
 		        }
-				list<string> RemovedGoalIDs = New List<string>();
+		        list<string> relatedGoals = New List<string>();
+		        list<action_plan_objective__c> ObjListToBeAdded = [select action_plan_goal__c from action_plan_objective__c where Id In :ObjSelIds] ; 
+                if(objlistToBeAdded!=Null && ObjListToBeAdded.size()>0){
+                	for(action_plan_objective__c apo:objlistToBeAdded){
+                		boolean deletethis = false;
+		            	for(string str:existingId){
+		            		System.debug('******************existingId'+existingId);
+		            		System.debug('************apo.action_plan_goal'+apo.action_plan_goal__c);
+		                	if(apo.action_plan_goal__c==str){
+		                  		deletethis = true; //GoalSelStrs.remove(s)
+		                	}
+		            	}
+		            	if(deletethis == false){
+		            		boolean toAdd = true;
+		            		for(string str:finallisttocreate){
+		            			if(str == apo.action_plan_goal__c)
+		            				toadd = false;
+		            		}
+		            		if(toAdd==true)
+		            			finallisttocreate.add(apo.action_plan_goal__c);
+		            	}
+		            }
+                }
+		        list<string> RemovedGoalIDs = New List<string>();
 	         	if(GoalsDeSelected!=null && GoalsDeSelected !=''){
 		        	GoalDeSelStrs = (GoalsDeSelected.split(','));
 		        	for(string s:GoalDeSelStrs){
@@ -648,7 +703,6 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
 		            if(tobedelList!=Null && tobedelList.size()>0)
 		        	 	delete tobedelList;
 	        	}
-				
 			}
        		newBlock = false;
        		pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&SelectedKey='+ GoalsSelected +'&Deselectedkey='+ GoalsDeSelected); //+'&sfdc.override=1');
