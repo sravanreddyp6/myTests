@@ -415,10 +415,11 @@
             </apex:actionFunction>
             <apex:pageBlockButtons > 
                 <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
-                <apex:commandButton value="Save" rendered="{!inlinemode}" onclick="keyselectedvalue()" oncomplete="saveModifiedProgressNote()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+                <apex:commandButton value="Save Edit" rendered="{!inlinemode}" onclick="keyselectedvalue()" oncomplete="saveModifiedProgressNote()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
     
                 <apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
                 <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
+
             </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="2" >
                    <!-- hidden fields, values will be passed in the url -->    
@@ -565,8 +566,8 @@
             <apex:pageBlockButtons location="top" rendered="{!!Final}">
                 <apex:commandButton id="saveButton"   value="Save"   action="{!saveProgressNoteInlineEdit}"   style="margin-left:22%;display:none;"/>
                 <apex:commandButton id="cancelButton" value="Cancel" action="{!cancel}" style="display:none;"/>
-                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}"/>
-                <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
+				<apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
+                                <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
                 <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
                 <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
                 <!--<apex:commandButton id="createPDF" value="Create PDF"  onclick="openDialog('tstpopup', 'span', 'Finalize'); return false;" />-->
