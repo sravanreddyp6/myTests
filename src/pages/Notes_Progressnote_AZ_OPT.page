@@ -205,10 +205,9 @@
     
     <script>
     function complete(Signed) {
-    
         var srvcloc = '{!Progress_Note__c.Service_Location__c}';
         var finalalready = '{!Progress_Note__c.Type_of_Contact__c}';
-        //var goalsSelected = '{!Progress_Note__c.GoalIds_AZOPTPage__c}';
+        var goalsSelected = '{!goalsOrObSelected}';
         var Status = '{!Progress_Note__c.Status__c}';
         var AppStatus = '{!Progress_Note__c.Approval_Status__c}';
         var ActionPlan = '{!Progress_Note__c.Action_Plan__c}';
@@ -218,11 +217,10 @@
         var Progress = '{!Progress_Note__c.Progress__c}';
         
         var s= '';
-        //(goalsSelected  == null || goalsSelected == '') || 
-        if(srvcloc =='' || finalalready == '' || ServiceCode == '' || Progress == '' || NextVisit == '' || Interventions == '' || AppStatus =='Pending' || Status == 'Final' || ActionPlan == null ){ 
-            //if(goalsSelected  == null || goalsSelected == ''){
-            //    s = 'Y';
-            //}
+        if(goalsSelected == 'NoGoal' || srvcloc =='' || finalalready == '' || ServiceCode == '' || Progress == '' || NextVisit == '' || Interventions == '' || AppStatus =='Pending' || Status == 'Final' || ActionPlan == null ){ 
+            if(goalsSelected == 'NoGoal' ){
+                s = 'Y';
+            }
             if(Status == 'Final'){
                 s = 'Y';
             }
@@ -412,10 +410,12 @@
              </apex:actionFunction>
             
             <apex:actionFunction action="{!update_overlap}" name="updateOvrLap" rerender="tstpopupAfterEsign">
-            </apex:actionFunction>
+            </apex:actionFunction><apex:actionFunction action="{!CheckGoalsAndObj}" name="CheckGoalsAndObj" rerender="myFRM,Outputpatstpopup,OutputpanelId,tstpopup,pblk">
+             </apex:actionFunction>
+            
             <apex:pageBlockButtons > 
                 <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
-                <apex:commandButton value="Save Edit" rendered="{!inlinemode}" onclick="keyselectedvalue()" oncomplete="saveModifiedProgressNote()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+                <apex:commandButton value="Save" rendered="{!inlinemode}" onclick="keyselectedvalue()" oncomplete="saveModifiedProgressNote()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
     
                 <apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
                 <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
@@ -566,7 +566,7 @@
             <apex:pageBlockButtons location="top" rendered="{!!Final}">
                 <apex:commandButton id="saveButton"   value="Save"   action="{!saveProgressNoteInlineEdit}"   style="margin-left:22%;display:none;"/>
                 <apex:commandButton id="cancelButton" value="Cancel" action="{!cancel}" style="display:none;"/>
-				<apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
+                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
                                 <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
                 <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
                 <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
