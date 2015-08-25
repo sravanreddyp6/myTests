@@ -21,6 +21,18 @@ global class referralbatchforPersonRegistry implements Database.Batchable<sObjec
 	}
 	
 	global void finish(Database.BatchableContext BC){
+		List<String> toAddresses = new List<String>();
+		toAddresses.add('adam.vernatter@thementornetwork.com');
+		Messaging.singleEmailMessage mail = new Messaging.singleEmailMessage();
+		mail.setToAddresses(toAddresses);
+		mail.setSenderDisplayName('Referral Batch');
+		mail.setSubject('Referral Batch to update Guardianship type is completed');
+		mail.setUseSignature(false);
+		string body = 'Batch processing is completed. I do not know what to do next';
+		mail.setplainTextBody(body);
+		mail.setSaveAsActivity(false);
+		
+		Messaging.sendEmail(new Messaging.SingleEmailMessage[]{mail});
 		
 	}
 
