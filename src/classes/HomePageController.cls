@@ -224,6 +224,8 @@ public with sharing class HomePageController{
 			}
 
 			SelectOption[] optionList = new SelectOption[]{};
+			//adding a wrapping clause here PRI-237, this may be requested for removal 
+			if(operatingGroup.StartsWith( 'Care') ){
 			if (canSeeShiftDoc) {
 				optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
 				if (hasShiftDocMap.get(serviceAssignment.Id) && shiftDocMap.get(serviceAssignment.Id).OwnerId != UserInfo.getUserId()) {
@@ -254,6 +256,7 @@ public with sharing class HomePageController{
 						));
 					}
 				}
+			}
 			}
 			// For incident Creation - Add Security if condition later since We don't have requirements now - Sravan 07/21/2015
 				optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
