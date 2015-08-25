@@ -263,7 +263,7 @@ public with sharing class HomePageController{
 			
 			
 			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
-			if ( operatingGroup == 'Redwood') {
+			if ( operatingGroup == 'Redwood' && serviceAssignment.Admission__r.state__c == 'IA') {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					optionList.add(new SelectOption(
 										Page.Notes_ProgressNote_Create.getUrl() + 
