@@ -2367,30 +2367,25 @@ END: Uncomment to have the element collapsed by default -->
 	        </script>
 	        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
 	        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
-	        
-	        <apex:pageBlockSection>    
-	            <apex:pageBlockSectionItem >
-	            <apex:outputLabel value="Service date" />
-	                <apex:outputPanel layout="none">
-	<!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
-                        <input id="IowaDailyDataSummaryServiceDate" type="text" class="datepicker" />
-	<!--                     </div> -->
-	                </apex:outputPanel>
-	            </apex:pageBlockSectionItem>
-	
-	            <apex:pageBlockSectionItem >
-	                <apex:outputlabel value="E-Sign" />
-	                <input type="checkbox" id="IowaDailyDataSummaryEsign" name="esign"/>
-	            </apex:pageBlockSectionItem>
-	            </apex:pageBlockSection>
-	            
-	            <apex:outputPanel layout="block" style="position: relative; left: 180px; top: 10px; padding-bottom: 10px;">
-	                <a class="btn" href="#" id="IowaDailyDataSummaryGenerate" onClick="window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
-                                + '&saId='+ '{!theServAssign.Id}'
-                                + '&Esign=' + (document.getElementById('IowaDailyDataSummaryEsign').checked ? true : false)
-                                , '_blank');return false;">Generate</a>&nbsp;&nbsp; 
-	                <a class="btn" href="#" onClick="closeModalDialogSA('IowaDailyDataSummaryDialog', 'div');return false;">Close</a>
-	            </apex:outputPanel>
+		        <apex:pageBlockSection>    
+		            <apex:pageBlockSectionItem >
+		            <apex:outputLabel value="Service date" />
+		                <apex:outputPanel layout="none">
+		<!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
+	                        <input id="IowaDailyDataSummaryServiceDate" type="text" class="datepicker" />
+		<!--                     </div> -->
+		                </apex:outputPanel>
+		            </apex:pageBlockSectionItem>
+		
+		            <apex:pageBlockSectionItem >
+		                <apex:outputPanel layout="block">
+		                    <a class="btn" href="#" id="IowaDailyDataSummaryGenerate" onClick="window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
+		                                + '&saId='+ '{!theServAssign.Id}'
+		                                , '_blank');return false;">Generate</a>&nbsp;&nbsp; 
+		                    <a class="btn" href="#" onClick="closeModalDialogSA('IowaDailyDataSummaryDialog', 'div');return false;">Close</a>
+		                </apex:outputPanel>
+		            </apex:pageBlockSectionItem>
+		        </apex:pageBlockSection>
 	        </apex:pageBlock>
 	    </apex:outputpanel>  
 	    </div> 

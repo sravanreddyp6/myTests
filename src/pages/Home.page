@@ -488,15 +488,13 @@
             </apex:pageBlockSectionItem>
 
             <apex:pageBlockSectionItem >
-                <apex:outputlabel value="E-Sign" />
-                <input type="checkbox" id="IowaDailyDataSummaryEsign" name="esign"/>
+	            <apex:outputPanel layout="block">
+	                <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp; 
+	                <a class="btn" href="#" onClick="closeModalDialog('IowaDailyDataSummaryDialog', 'div');  jQuery('#IowaDailyDataSummaryGenerate').off('click'); return false;">Close</a>
+	            </apex:outputPanel>
             </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
             
-            <apex:outputPanel layout="block" style="position: relative; left: 180px; top: 10px; padding-bottom: 10px;">
-                <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp; 
-                <a class="btn" href="#" onClick="closeModalDialog('IowaDailyDataSummaryDialog', 'div');  jQuery('#IowaDailyDataSummaryGenerate').off('click'); return false;">Close</a>
-            </apex:outputPanel>
         </apex:pageBlock>
     </apex:outputpanel>  
     </div>	
@@ -697,8 +695,7 @@
                     openModalDialog('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700, 'mainForm','false');
                     $('#IowaDailyDataSummaryGenerate').on("click","",{saId:serviceAssignmentId}, function(event){
                                 window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
-                                + '&saId='+ event.data.saId 
-                                + '&Esign=' + (document.getElementById('IowaDailyDataSummaryEsign').checked ? true : false)
+                                + '&saId='+ event.data.saId
                                 , '_blank');});
                 }
 				event.preventDefault();
