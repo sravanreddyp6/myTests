@@ -83,7 +83,16 @@ function setupDates() {
                 </apex:outputPanel>
                </apex:pageblocksectionitem>
                 <apex:inputField value="{!admission.Network_Offering__c}" required="true" />
-                <apex:inputField value="{!admission.Discharged_Date__c}" rendered="{! !useDischargeSection }"/>
+                <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Discharged Date" />
+	                <apex:outputPanel >
+		                <apex:actionRegion >
+			                <apex:inputField value="{!admission.Discharged_Date__c}" rendered="{! !useDischargeSection }">
+			                	<apex:actionSupport event="onchange" rerender="Discharge2" />
+			                </apex:inputField>
+		                </apex:actionRegion>
+	                </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 <apex:outputText value="" rendered="{! useDischargeSection }" />
                 <apex:inputField value="{!admission.State__c}" required="true" />
                 <apex:inputField value="{!admission.Discharged_Status__c}" rendered="{! !useDischargeSection }"/>
@@ -95,7 +104,7 @@ function setupDates() {
 				<apex:inputField value="{!admission.Admitted_From__c}" required="true" />
 			</apex:pageBlockSection>   
 			<apex:outputPanel id="Discharge2" layout="none">  
-	   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="false" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
+	   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="false" rendered="{!shwDcTo && admission.Discharged_Date__c != null}">
 					<apex:inputField value="{!admission.Discharged_To__c}" required="{!reqDcTo}" />
 				</apex:pageBlockSection>  
 			</apex:outputPanel>  
