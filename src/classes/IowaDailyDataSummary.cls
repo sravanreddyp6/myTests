@@ -65,7 +65,7 @@ public with sharing class IowaDailyDataSummary {
                     AND Service_Assignment__c =: this.sAId AND RecordType.DeveloperName = 'Time_Log' AND Disregard__c = false   
                     order BY start_Date_time__c, end_date_time__c] ) {
                     	Integer startHR = log.Start_Date_Time__c.addSeconds(zone.getOffset(log.Start_Date_Time__c)/1000*-1).hour();
-                    	Integer endHR = log.Start_Date_Time__c.addSeconds(zone.getOffset(log.Start_Date_Time__c)/1000*-1).hour();
+                    	Integer endHR = log.End_Date_Time__c.addSeconds(zone.getOffset(log.End_Date_Time__c)/1000*-1).hour();
                     	if (startHR >= 8 && endHR <= 16) timelogs.add(new Timelog(log));    
         }
 
