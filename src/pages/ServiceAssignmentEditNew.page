@@ -1757,13 +1757,13 @@ END: Uncomment to have the element collapsed by default -->
 		
 		<!-- Incidents Section -->
 		<a name="Incidents" id="incidents"></a>
-		<apex:pageblock id="incidentsBlock" title="Incidents" rendered="{!!editSA}">
-			<div class="pbHeaderButton">
+		<apex:pageblock id="incidentsBlock" title="Incidents" rendered="{!!editSA && $ObjectType.Incident__c.accessible}">
+			<div class="pbHeaderButton" rendered="{!$ObjectType.Incident__c.createable}">
 				<apex:commandButton value="Create Incident" action="{!createIncident}" status="fundingSouceModalStatus" rerender="none"/>
 			</div>
 			<apex:outputText value="No Incidents to display" rendered="{!(incidents.size=0)}" />
 			<apex:pageblockTable value="{!incidents}" var="i" rendered="{!(incidents.size!=0)}">
-				<apex:column headerValue="Action" >
+				<apex:column headerValue="Action" rendered="{!$ObjectType.Incident__c.updateable}">
 					<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>
 				</apex:column>
 				<apex:column headerValue="Incident Number" >
