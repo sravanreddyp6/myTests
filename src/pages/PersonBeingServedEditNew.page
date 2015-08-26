@@ -862,7 +862,7 @@
             </apex:pageBlockSection>
         </apex:pageBlock>
         <!-- Incidents Section Start -->
-       	<apex:pageBlock id="incidentsBlock">
+       	<apex:pageBlock id="incidentsBlock" rendered="{!$ObjectType.Incident__c.accessible}" >
             <apex:pageBlockSection columns="1" title="Incidents" id="incidentsSection" collapsible="false"  >
             <apex:outputText value="No Incident Records to Display" rendered="{!incidents.size= 0}" />
                 <apex:pageBlockTable value="{!incidents}" var="i" rendered="{!incidents.size != 0}">
