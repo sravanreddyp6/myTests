@@ -48,15 +48,25 @@ public with sharing class IowaDailyDataSummary {
         
        
         TimeZone zone = UserInfo.getTimeZone();       
-        
+        datetime startDateTime = serviceDate;
+        if(startDateTime !=null){startDateTime = startDateTime.addSeconds((zone.getOffset(startDateTime)/1000)*-1);}
+        datetime endDateTime = serviceDate;
+        if(endDateTime !=null){
+           endDateTime = endDateTime.addSeconds((zone.getOffset(endDateTime)/1000)*-1);
+           endDateTime = endDateTime.addDays(1);
+           endDateTime = endDateTime.addseconds(-1);
+        }
+       
         pbsObj = [Select Name, Person_Being_Served__r.FirstName, Person_Being_Served__r.Middle_Name__c, Person_Being_Served__r.LastName, Person_Being_Served__r.Birthdate, Person_Being_Served__r.Medicaid_ID__c 
                     from Service_Assignment__c where id =: this.sAId];
         for (Evaluation_response__c log : [Select Start_Date_Time__c, End_Date_Time__c, CreatedById, tmn_user__r.Name, location__c, is_late_entry__c, service_type__c, Narrative_Note__c 
-                    From Evaluation_response__c where Start_Date_time__c >=:  Datetime.newInstanceGMT(serviceDate, Time.newInstance(8, 0, 0, 0))
-                    AND End_date_time__c < : Datetime.newInstanceGMT(serviceDate, Time.newInstance(16, 0, 0, 0))
+                    From Evaluation_response__c where Start_Date_time__c >=: startDateTime
+                    AND End_date_time__c < : endDateTime
                     AND Service_Assignment__c =: this.sAId AND RecordType.DeveloperName = 'Time_Log' AND Disregard__c = false   
                     order BY start_Date_time__c, end_date_time__c] ) {
-             timelogs.add(new Timelog(log));    
+                    	Integer startHR = log.Start_Date_Time__c.addSeconds(zone.getOffset(log.Start_Date_Time__c)/1000*-1).hour();
+                    	Integer endHR = log.Start_Date_Time__c.addSeconds(zone.getOffset(log.Start_Date_Time__c)/1000*-1).hour();
+                    	if (startHR >= 8 && endHR <= 16) timelogs.add(new Timelog(log));    
         }
 
         for (Action_Skill_Result__c skillResult: [SELECT Attempts__c, Status__c, Met_Objective__c, Initials__c, Day__c, Action_Plan_Objective__c,
@@ -105,8 +115,8 @@ public with sharing class IowaDailyDataSummary {
 
         notes = [select name, id, Start_Time__c, End_time__c, Narrative__c,  createddate, createdby.name, Late_Entry__c, Approval_Status__c 
                   from Progress_Note__c where Service_Assignment__c =: this.sAId
-                   AND Start_Time__c >=:  Datetime.newInstanceGMT(serviceDate, Time.newInstance(0, 0, 0, 0))
-                   AND End_time__c < : Datetime.newInstanceGMT(serviceDate.AddDays(1), Time.newInstance(0, 0, 0, 0))
+                   AND Start_Time__c >=:  startDateTime
+                   AND End_time__c <= : endDateTime
                    AND Disregard_Note__c = false order by Start_Time__c, End_time__c];
     }
     
