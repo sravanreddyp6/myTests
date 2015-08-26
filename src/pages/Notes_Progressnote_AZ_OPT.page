@@ -1,4 +1,4 @@
-<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_AZ_OPT,Notes_ProgressNote_Svc_Code_Selection,progressnote_actionplan_embed_ex" id="mypage">
+<apex:page standardController="Progress_Note__c" sidebar="false" extensions="Notes_ProgressNote_AZ_OPT,Notes_ProgressNote_Svc_Code_Selection,progressnote_actionplan_embed_ex" id="mypage">
     <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -35,6 +35,14 @@
         /* Hide the Recycle Bin section of the default salesforce side bar */
         .recycleBinModule{
             display: none;
+        }
+        #eleyForm1 {
+        white-space: normal; width:100px;
+        }
+        #tree3 {
+        color:red !important ;
+        white-space: normal !important; 
+        display:block !important;
         }
     </style>  
     <style>
@@ -75,6 +83,9 @@
         }
         .myhide{color :blue; text-decoration: underline; cursor:pointer}
         .myshow{color :blue; text-decoration: underline; cursor:pointer}
+        ul.fancytree-container{
+         white-space: normal !important;
+        }
         .ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
             left: 55% !important;
             margin: 0 0 0 -488px;
@@ -114,6 +125,7 @@
             float: right;
             //border: 1px solid black;
             padding: 7px;
+            
         }
         .rcol{
             float: right;
@@ -215,7 +227,6 @@
         var Interventions = '{!Progress_Note__c.Interventions__c}';
         var NextVisit = '{!Progress_Note__c.Notes_For_Next_Visit__c}';
         var Progress = '{!Progress_Note__c.Progress__c}';
-        
         var s= '';
         if(goalsSelected == 'NoGoal' || srvcloc =='' || finalalready == '' || ServiceCode == '' || Progress == '' || NextVisit == '' || Interventions == '' || AppStatus =='Pending' || Status == 'Final' || ActionPlan == null ){ 
             if(goalsSelected == 'NoGoal' ){
@@ -388,8 +399,8 @@
             window.open('/apex/Notes_ProgressNote_PDF_AZ_OPT?id='+ vars,'','width=700,height=500,0,status=0,');
         }
     </script>
-    <!-- Shaun changed this from PersonalRecord to PersonalRecordBreadCumbsOnly -->
-    <c:PersonalRecordBreadCrumbsOnly pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_ProgressNote_AZ_OPT" servAssignNew="true" admId="{!admissionId}"/>
+    <!-- added back the old component -->
+    <c:PersonalRecord pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_ProgressNote_AZ_OPT" servAssignNew="true" admId="{!admissionId}"/>
     <apex:pageBlock mode="mainDetail" id="mainData">
     <apex:form id="myFRM" >
      <apex:outputPanel id="OutputpanelId">
@@ -414,11 +425,13 @@
              </apex:actionFunction>
             
             <apex:pageBlockButtons > 
-                <apex:commandButton action="{!saveProgressNote}" value="Save" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
-                <apex:commandButton value="Save" rendered="{!inlinemode}" onclick="keyselectedvalue()" oncomplete="saveModifiedProgressNote()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+                
+                <apex:commandButton action="{!cancelEditNote}" value="Cancel" style="float:right"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
+                <apex:commandButton action="{!cancel}" value="Cancel" style="float:right"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
+                <apex:commandButton action="{!saveProgressNote}" value="Save" style="float:right" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+                <apex:commandButton value="Save" rendered="{!inlinemode}" style="float:right" onclick="keyselectedvalue()" oncomplete="saveModifiedProgressNote()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
     
-                <apex:commandButton action="{!cancelEditNote}" value="Cancel"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
-                <apex:commandButton action="{!cancel}" value="Cancel"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
+                
 
             </apex:pageBlockButtons>
                 <apex:pageBlockSection columns="2" >
@@ -460,28 +473,17 @@
                                 <apex:inputHidden id="nextApptTime"  value="{!Progress_Note__c[f]}" />
                             </apex:outputPanel>
                         </apex:pageblocksectionitem>
+                        <apex:pageBlockSectionItem rendered="{! f.fieldpath=='Number_of_Required_Signatures__c'}">
+                            <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" />
+                        </apex:pageBlockSectionItem>
+                       
+                          
                     </apex:repeat>
-                </apex:pageBlockSection>
-  
-  <!-- Goal Block Begins -->
-        <apex:outputPanel layout="block" styleClass="lcol">
-            <apex:pageBlock id="eleyForm1" title="Goals & Objectives" >
-                <script type="text/javascript">
-                    isModified = false;
-                </script>       
-                <apex:outputPanel id="relatedTo">
-                     <apex:outputPanel layout="block" styleClass="frmRCol">
-                            <apex:outputPanel layout="block" rendered="true">
-                                <apex:outputPanel id="tree3" layout="block">
-                                    <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" mode="2" selectActionSignature="triggerNodeSelection(data.node);" ID_PageSideStorage="myKeys" allowInactiveNode="false" checkbox="true" TreeID="tree3" showIcons="false" debug="false" />
-                                    <!--  <apex:inputHidden value="{!selectedKeys}" id="myKeys"/> -->     
-                                </apex:outputPanel>
-                            </apex:outputPanel>               
-                    </apex:outputPanel>
-                </apex:outputPanel>
-            </apex:pageBlock>
-            
-            <table>
+                    <apex:pageBlockSection columns="1">
+                   <apex:inputField value="{!Progress_Note__c.Interventions__c}" style="height:60px;width:230px"/>
+                   
+                   
+                   <table>
             <tr>
             <td>
            
@@ -521,20 +523,45 @@
             </tr>
             
             </table>
+                   
+                   
+                   
+                   
+                    </apex:pageBlockSection>
+                    
+                     
+                </apex:pageBlockSection>
+  
+  <!-- Goal Block Begins -->
+        <apex:outputPanel layout="block" styleClass="lcol">
+            <apex:pageBlock id="eleyForm1" title="Goals & Objectives" >
+                <script type="text/javascript">
+                    isModified = false;
+                </script>       
+                <apex:outputPanel id="relatedTo" styleClass="frmRCol">
+                     <apex:outputPanel layout="block" >
+                            <apex:outputPanel layout="block" rendered="true">
+                                <apex:outputPanel id="tree3" layout="block" style="color:red; overflow-x:hidden; width:100%; height:190px;" >
+                                    <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" mode="2" selectActionSignature="triggerNodeSelection(data.node);" ID_PageSideStorage="myKeys" allowInactiveNode="false" checkbox="true" TreeID="tree3" showIcons="false" debug="false" />
+                                    <!--  <apex:inputHidden value="{!selectedKeys}" id="myKeys"/> -->     
+                                </apex:outputPanel>
+                            </apex:outputPanel>               
+                    </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:pageBlock>
+            
+            
             
                <apex:pageBlockSection columns="3">
                     
                     <apex:pageBlockSection columns="1">
-                   <apex:inputField value="{!Progress_Note__c.Interventions__c}" style="height:60px"/>
+                    <apex:inputField value="{!Progress_Note__c.Progress__c}" style="height:60px;width:300px"/>
+                    </apex:pageBlockSection>
+                  
+                     <apex:pageBlockSection columns="1">
+                     <apex:inputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}" style="height:60px;width:300px"/>
                     </apex:pageBlockSection>
                     
-                     <apex:pageBlockSection columns="1">
-                    <apex:inputField value="{!Progress_Note__c.Progress__c}" style="height:60px"/>
-                    </apex:pageBlockSection>
-                    
-                     <apex:pageBlockSection columns="1">
-                     <apex:inputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}" style="height:60px"/>
-                    </apex:pageBlockSection>
                     </apex:pageBlockSection>
        
     
@@ -563,28 +590,23 @@
         </style>-->
         <br></br>
         <apex:pageBlock id="pblk">
-            <apex:pageBlockButtons location="top" rendered="{!!Final}">
-                <apex:commandButton id="saveButton"   value="Save"   action="{!saveProgressNoteInlineEdit}"   style="margin-left:22%;display:none;"/>
-                <apex:commandButton id="cancelButton" value="Cancel" action="{!cancel}" style="display:none;"/>
-                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
-                                <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton id="saveButton"   value="Save"   action="{!saveProgressNoteInlineEdit}"  rendered="{!!Final}"   style="margin-left:22%;display:none;"/>
+                <apex:commandButton id="cancelButton" value="Cancel" action="{!cancel}"  rendered="{!!Final}" style="display:none;"/>
+                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock || !Final}" immediate="true"/>
+                <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
                 <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
                 <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
                 <!--<apex:commandButton id="createPDF" value="Create PDF"  onclick="openDialog('tstpopup', 'span', 'Finalize'); return false;" />-->
                <!--  <apex:commandButton id="esign" value="E-Sign"  onClick=" complete('{!SignedDoc}'); return false;" />-->
-                <apex:commandButton id="esign" value="E-Sign" action="{!validateesign}" onClick="complete('{!SignedDoc}'); return false;"  />
+                <apex:commandButton id="esign" value="E-Sign"  rendered="{!!Final}" action="{!validateesign}" onClick="complete('{!SignedDoc}'); return false;"  />
                
-            </apex:pageBlockButtons>
-            
-            <apex:pageBlockButtons location="top" rendered="{!Final}">
-                <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
-                <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
             </apex:pageBlockButtons>
             <!--  Section for Fields with Inline Edit mode On -->
             <apex:pageBlockSection columns="2">
             <apex:pageBlockSection columns="1">
-                <apex:outputField value="{!Progress_Note__c.name}"/>
-                <apex:outputField title="Type of Note" value="{!Progress_Note__c.recordtypeid}"/>
+                <apex:outputField value="{!Progress_Note__c.name}" rendered="false"/>
+                <apex:outputField title="Type of Note" value="{!Progress_Note__c.recordtypeid}" rendered="false"/>
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Start Time" />
                     <c:MilitaryDatetime dateTimeVal="{!Progress_Note__c.Start_Time__c}" />
@@ -602,43 +624,52 @@
                 <apex:outputField value="{!Progress_Note__c.Total_Time__c}"/>
                 <apex:outputField value="{!Progress_Note__c.Signature_on_File__c}"/>
                 <apex:outputField value="{!Progress_Note__c.Service_Location__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Type_of_Contact__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Purpose_Service_is_Billable__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Units__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.People_Present__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Status__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Is_Note_Late__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Disregard_Note__c}">
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Sleep_Check_Conducted__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
+           <!-- Service code section -->
+                <apex:pageBlockSection collapsible="false">
+              <apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="False" disabled="True">
+                    <apex:selectOptions value="{!Codes}"></apex:selectOptions>
+                      <!--  <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>   -->
+                </apex:selectList>
+                <apex:outputField id="svccode" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="True"/>
+                
+            </apex:pageBlockSection>
+           <!-- Service code section ends -->
                 <apex:outputField value="{!Progress_Note__c.Interventions__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
                 <apex:outputField value="{!Progress_Note__c.Progress__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
                 </apex:outputField>
-                <apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}">
-                <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
-                </apex:outputField>
+
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Next Appt. Date / Time" />
-                    <c:MilitaryDatetime dateTimeVal="{!Progress_Note__c.Next_Appt_Date_Time__c}" />
+                    <c:MilitaryDatetime dateTimeVal="{!Progress_Note__c.Next_Appt_Date_Time__c}" edit="false" />
+                   
                 </apex:pageBlockSectionItem>                
 <!--                 <apex:outputField value="{!Progress_Note__c.Next_Appt_Date_Time__c}"> -->
 <!--                 <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/> -->
@@ -668,19 +699,28 @@
                     isModified = false;
                 </script>       
                 <apex:outputPanel id="relatedToPgblk">
-                    <apex:outputPanel layout="block" styleClass="frmRCol">
+                    <apex:outputPanel layout="block" styleClass="frmRCol" style="white-space: normal; width:100%; height: 100%; ">
                         <apex:outputPanel layout="block" rendered="true">
-                                <apex:outputPanel id="tree3" layout="block">
+                                <apex:outputPanel id="tree3" layout="block" >
                                     <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" mode="2" ID_PageSideStorage="myKeys" allowInactiveNode="false" checkbox="false" TreeID="tree3" showIcons="false" debug="false" />
                                     <!--  <apex:inputHidden value="{!selectedKeys}" id="myKeys"/> -->     
                                 </apex:outputPanel>
                         </apex:outputPanel>               
                     </apex:outputPanel>
                 </apex:outputPanel>
+        
             </apex:pageBlock>
+            <apex:pageBlockSection columns="1">
+            
+        <apex:outputField title="Notes for Next Visit" value="{!Progress_Note__c.Notes_For_Next_Visit__c}">
+        <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+        </apex:outputField>
+        
+        </apex:pageBlockSection>
         </apex:outputPanel>
         </apex:pageBlockSection>
         <!-- Goal Ends -->
+        
        </apex:pageBlock>
         <apex:pageBlock mode="mainDetail" >
             <apex:actionStatus id="myStatus">
@@ -691,30 +731,7 @@
                 </apex:facet>
                 <apex:facet name="stop"></apex:facet>
             </apex:actionStatus>
-            <apex:pageBlockSection title="Service Code" collapsible="false" columns="2">
-    
-              <apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="{!!Final}" disabled="{!Pending}">
-                    <apex:selectOptions value="{!Codes}"></apex:selectOptions>
-                     <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/> 
-                </apex:selectList>
-              
-              <apex:pageBLockSectionItem rendered="{Progress_Note__c.Admission__r.State__c != 'NC' && Progress_Note__c.Admission__r.State__c != 'AZ' && Progress_Note__c.Admission__r.State__c != 'IN' && Progress_Note__c.Admission__r.State__c != 'MA' && Progress_Note__c.Admission__r.State__c != 'MD' && Progress_Note__c.Admission__r.State__c != 'OH'}">
-              <apex:outputLabel for="auth" value="Authorization" rendered="{isNR}" />
-              <apex:selectList size="1" id="auth" value="{!Progress_Note__c.Authorization__c}"  rendered="{!!isNR}" disabled="{!Pending || Final}">
-                    
-                <apex:selectOptions value="{!Auths}"></apex:selectOptions>
-                        <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>
-                </apex:selectList>
-                </apex:pageBLockSectionItem>
-                
-                <apex:outputField id="svccode" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="{!Final}"/>
-                <apex:outputPanel rendered="{! Progress_note__c.Admission__r.state__C != 'NC' && Progress_Note__c.Admission__r.State__c != 'AZ' && Progress_Note__c.Admission__r.State__c != 'IN' && Progress_Note__c.Admission__r.State__c != 'MA' && Progress_Note__c.Admission__r.State__c != 'MD' && Progress_Note__c.Admission__r.State__c != 'OH'}" >
-                <apex:outputLabel for="authdisp" value="Authorization" rendered="{isNR}"/>
-                <apex:outputField id="authdisp" label="Authorization" value="{!Progress_Note__c.Authorization__r.Display_Name__c}"/>
-                <apex:pageBlockSectionItem />         
-                <apex:outputField label="Payor Name" value="{!Progress_Note__c.Authorization__r.Payer_Name__c}" />
-                </apex:outputPanel>
-            </apex:pageBlockSection>
+             
         </apex:pageBlock>
         
          
@@ -826,9 +843,7 @@
             </apex:outputPanel>
             </apex:form>
             
-            <div id="blue-card-vertical">         
-                     <c:PersonalRecord_Vertical pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_ProgressNote_AZ_OPT" servAssignNew="true" admId="{!admissionId}"/>
-            </div>
+        
             <apex:outputpanel rendered="{!!NewBlock}">
                 <div id="Taks">
                 <apex:relatedList title="Activity" list="OpenActivities"  subject="{!$CurrentPage.parameters.id}" />
@@ -853,14 +868,5 @@
             </apex:facet>  
             <apex:facet name="stop">
             </apex:facet> 
-        </apex:actionStatus> 
-        <script>
-            /* Shaun Added --> Use jQuery to put the blue card in the Default Salesforce Sidebar */ 
-            j$("#sidebarDiv").append(j$("#blue-card-vertical"));
-             /* The Salesforce Sidebar is "sticky". So if it is close open it by default. */
-             j$(window).load(function() {
-                if (document.getElementById('handlebarContainer') && document.getElementById('handlebarContainer').title.indexOf('Close Sidebar') < 0)
-                    document.getElementById('handlebarContainer').click();
-             });
-        </script>       
+        </apex:actionStatus>       
 </apex:page>
