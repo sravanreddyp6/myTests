@@ -74,6 +74,7 @@ public with sharing class HomePageController{
 	//Incidents 
 	//public List<Incident__c> myIncidents {get; set;}
 	//public string selectedIncident {get; set;}
+	public boolean canCreateIncidents {get; set;}
 	public string userChosenIncident {get; set;}
 	public string SAfirstName {get; set;}
 	public string SAlastName {get; set;}
@@ -169,6 +170,9 @@ public with sharing class HomePageController{
 		oSchema = Progress_Note__c.sObjectType.getDescribe();
 		canCreateNote = oSchema.isCreateable();
 		
+		Schema.DescribeSObjectResult sc = Incident__c.sObjectType.getDescribe();
+		canCreateIncidents = sc.isCreateable();
+		
 		ServAssigns = new list<Service_Assignment__c>();
 		
 		updateProgramSelection();
@@ -259,9 +263,10 @@ public with sharing class HomePageController{
 			}
 			}
 			// For incident Creation - Add Security if condition later since We don't have requirements now - Sravan 07/21/2015
+			if(canCreateIncidents){
 				optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
-			
-			
+			}
+				
 			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
 			if ( operatingGroup == 'Redwood' && serviceAssignment.Admission__r.state__c == 'IA') {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
