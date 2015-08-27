@@ -252,7 +252,7 @@
 										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && opGrp!='Redwood' && opGrp!='NeuroRestorative' && servAssigns.size > 0 }">
 											Add Seizure <br />
 											<apex:param value="{!con.Id}" name="pbsId" />
-											<apex:param value="{!$CurrentPage.URL}" name="retURL" />
+											<apex:param value="{!URLENCODE($CurrentPage.URL)}" name="retURL" />
 										</apex:outputLink>
 
                                         <apex:outputLink styleClass="servicelink" 
