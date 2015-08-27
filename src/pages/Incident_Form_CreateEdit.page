@@ -149,7 +149,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
 	                <apex:CommandButton action="{!Cancel}" value="Cancel" />
 	            </div>
 	        </apex:pageBlockButtons>     
-        	<apex:pageBlockSection id="_firstHeader" title="Incident Information"  collapsible="true">
+        	<apex:pageBlockSection id="_firstHeader" title="Incident Information"  collapsible="false">
         	</apex:pageBlockSection>	           
 	            <apex:pageBlockSection title="Current Service" columns="1" collapsible="false" rendered="{!servAssign.id != null}"  >
 	                <apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
@@ -290,7 +290,8 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
 	                <apex:outputPanel /> 
 	                
 	            </apex:pageBlockSection>    
-	            <apex:pageBlockSection id="staffPresent_firstHeader" title="People Involved" columns="1" collapsible="false"> 
+	            <apex:pageBlockSection id="people_firstHeader" title="People Involved" columns="1" collapsible="false"> </apex:pageBlockSection>
+	            <apex:pageBlockSection id="staffPresent" title="Staff" columns="1" collapsible="false"> 
 	                <apex:pageBlockSectionItem >	                    
 	                    <apex:outputLabel >Staff present at the time of the Incident?</apex:outputLabel>
 	                    <apex:outputPanel >
@@ -306,7 +307,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
 	                </apex:pageBlockSectionItem>  	                    
 	            </apex:pageBlockSection>
 	            
-	            <apex:pageBlockSection columns="1" id="relStaffSection">
+	            <apex:pageBlockSection columns="1" id="relStaffSection" collapsible="false">
 	            	<apex:outputPanel style="display: none;" id="json">{!newPeopleJSON}</apex:outputPanel>                   
 	            	
 	            <apex:pageBlockTable id="relStaff" headerClass="tbl-header" value="{!orderStaff}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,15%,20%,15%,15%" rendered="{! incident__c.staff_present__c == 'Yes' && relExistingCount > 0}">
@@ -330,7 +331,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
 	        <apex:pageBlockSectionItem ><br /></apex:pageBlockSectionItem>
 	        </apex:pageBlockSection>
 	        
-	        <apex:pageBlockSection columns="1" id="mentorPresent">    
+	        <apex:pageBlockSection columns="1" title="Mentor(s)" id="mentorPresent" collapsible="false">    
 	                <apex:pageBlockSectionItem >
 	                    <apex:outputLabel value="Mentor(s) present at the time of the incident?" />
 	                    <apex:outputPanel >
@@ -370,7 +371,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
 	        <apex:pageBlockSectionItem ><br /></apex:pageBlockSectionItem>
 	        </apex:pageBlockSection>        
 	         
-	                <apex:pageBlockSection columns="1" id="otherPresent">                     
+	                <apex:pageBlockSection columns="1" title="Other(s)" id="otherPresent" collapsible="false">                     
 	                 <apex:pageBlockSectionItem >
 	                    <apex:outputLabel >Other(s) present at the time of the incident?</apex:outputLabel>
 	                    <apex:outputPanel >
@@ -386,7 +387,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
 	                
 	                                  
 	        </apex:pageBlockSection>
-	        <apex:pageBlockSection columns="1" id="relOtherSection">        
+	        <apex:pageBlockSection columns="1"  id="relOtherSection">        
 	                
                 <apex:pageBlockTable id="relOther" headerClass="tbl-header" value="{!orderOther}" var="relper" rowClasses="tmn-row-odd, tmn-row-even" columnsWidth="10%,25%,35%,15%,15%" rendered="{! incident__c.others_present_at_time_of_incident__c == 'Yes' }">
 	            
