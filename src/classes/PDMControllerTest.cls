@@ -140,7 +140,7 @@ public with sharing class PDMControllerTest {
 								u.Operating_Group__c= 'Corporate';
 								u.Office_Location__c  = '1600 Osgood Street';
 								u.Office_Location_PickList__c= 'Yes';
-								u.Manager_Lookup__c= 'a0RJ000000Ai8QeMAJ';
+								//u.Manager_Lookup__c= 'a0RJ000000Ai8QeMAJ';
 								//u.Manager_Last_Name__c= 'swood';
 								u.Manager_Email__c= 'shaun.wood@thementornetwork.com';
 								u.Location_Name__c= 'North Andover';
@@ -169,7 +169,7 @@ public with sharing class PDMControllerTest {
 								u.Operating_Group__c= 'Corporate';
 								u.Office_Location__c  = '1600 Osgood Street';
 								u.Office_Location_PickList__c= 'Yes';
-								u.Manager_Lookup__c= 'a0RJ000000Ai8QeMAJ';
+								//u.Manager_Lookup__c= 'a0RJ000000Ai8QeMAJ';
 								//u.Manager_Last_Name__c= 'swood';
 								u.Manager_Email__c= 'shaun.wood@thementornetwork.com';
 								u.Location_Name__c= 'North Andover';
