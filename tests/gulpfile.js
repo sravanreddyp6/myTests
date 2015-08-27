@@ -4,6 +4,7 @@ var argv = require('yargs')
   .alias('s', 'suite')
   .alias('d', 'debug')
   .alias('sd', 'seleniumdebug')
+  .alias('f', 'force')
   .argv;
 
 var gulp = require('gulp');
@@ -44,7 +45,7 @@ gulp.task("inspector", function (done) {
 });
 
 gulp.task("manage-user", function (done) {
-  manageUsers(done);
+  manageUsers(done, argv.force);
 });
 
 var deps = ["manage-user", "selenium"];
