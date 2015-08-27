@@ -8,8 +8,9 @@ var defaultOperationTimeout = 30 * 1000;
 
 testSuite("Referral", suiteTimeout, {
   "should create a Referral successfully": function(client, done) {
+    var user = users["CM_Referral_Intaker"];
     return client
-      .logInAs(users["CM_Referral_Intaker"])
+      .logInAs(user)
       .click("a=Create New Referral")
       .getSelectOptions('Race')
       .then(function(races) {
@@ -103,7 +104,7 @@ testSuite("Referral", suiteTimeout, {
       .element("#searchFrame")
       .then(function (frame) { return frame.value; })
       .then(client.frame)
-      .setValue("input#lksrch", "Dang Mai")
+      .setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
       .click("input[value*='Go']")
       .frameParent()
       .waitForExist("#resultsFrame", defaultOperationTimeout)
@@ -128,7 +129,7 @@ testSuite("Referral", suiteTimeout, {
       }).
       getOutputText("Evaluated By")
       .then(function (evaluatedBy) {
-        assert.equal("Dang Mai", evaluatedBy);
+        assert.equal(user["first_name"] + " " + user["last_name"], evaluatedBy);
       })
       .getOutputText("Referral Source")
       .then(function (source) {

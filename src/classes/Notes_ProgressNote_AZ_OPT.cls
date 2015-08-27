@@ -478,7 +478,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     	overlappingProgressNote = new list<progress_note__c>();
         overlappingProgressNote = lookForOverLappingNotes(insertedProgressNoteId);
         if(overlappingProgressNote.size()>0){
-        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'An Overlap Exists -'+ overlappingProgressNote[0].Name));     
+        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
 	        return null;
 	  	}else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
         	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
@@ -581,7 +581,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             return null;
        	}
        	else if(overlappingProgressNote.size()>0){
-        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'An Overlap Exists -'+ overlappingProgressNote[0].Name));     
+        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
             return null;
         }else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
@@ -901,7 +901,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public pagereference saveProgressNoteInlineEdit(){
         overlappingProgressNote = new list<progress_note__c>();
         if(overlappingProgressNote.size()>0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'An Overlap Exists -'+ overlappingProgressNote[0].Name));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
             return null;
         }else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
@@ -921,7 +921,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     /** Method called onclick Save on New Progrss Note Page**/
     public pagereference saveProgressNote(){
     	if(overlappingProgressNote.size()>0){
-        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'An Overlap Exists -'+ overlappingProgressNote[0].Name));     
+        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
             return null;
    		}else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
