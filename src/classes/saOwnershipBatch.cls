@@ -26,7 +26,7 @@ public static void runOwnership( string targetState ) {
 			sa.clinician__c = mapUsertoTMN.get( sa.person_being_served__r.ownerid);
 		
 		system.debug('NO CLINICIAN DATA: ' +  saNoClinicianList) ;	
-		// update saNoClinicianList
+		update saNoClinicianList;
 		
 	} else {	
 		
@@ -80,9 +80,9 @@ public static void runOwnership( string targetState ) {
 		for ( Service_Assignment__c sa: saNoPNList ) 
 			sa.clinician__c = mapUsertoTMN.get( sa.person_being_served__r.ownerid);
 		
-		system.debug( 'NO PN DATA: ' + saNoPNList) ;
+		//system.debug( 'NO PN DATA: ' + saNoPNList) ;
 		
-		//update saNoPNList;
+		update saNoPNList;
 			
 		// service assignments with progress notes - get staff name off the most recent note
 		List<Service_Assignment__c> saToUpdate = [ select id, clinician__c from service_assignment__c where id in :saWithPNList.keyset() ];
@@ -103,10 +103,10 @@ public static void runOwnership( string targetState ) {
 		
 		}
 	
-		system.debug( 'SA WITH PN: ' + sawithPNList );
-		system.debug( 'SA WITH CLINICIAN PN: ' + saToUpdate );
+		//system.debug( 'SA WITH PN: ' + sawithPNList );
+		//system.debug( 'SA WITH CLINICIAN PN: ' + saToUpdate );
 	
-		//update saToUpdate;
+		update saToUpdate;
 		}
 	}
 }
