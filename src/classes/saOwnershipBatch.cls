@@ -6,7 +6,7 @@ global class saOwnershipBatch implements Database.Batchable<sObject>
              targetState = st;
    }
 	global Database.QueryLocator start( Database.BatchableContext BC) {
-		String query = 'select id from service_assignment__c where admission__r.state__c = :targetState' ;
+		String query = 'select id from service_assignment__c where admission__r.state__c = :targetState and clinician__c = null' ;
 		
 		system.debug( query + ', ' + targetState );
 		return Database.getQueryLocator( query );
@@ -24,7 +24,7 @@ system.debug(scope.size());
 system.debug( targetState);	
 	if ( targetState == 'NC' || targetState == 'FL' || targetState == 'GA') {
 		// SAs needing clincians that don't have finalized progress notes
-		List<Service_Assignment__c> saNoClinicianList = [ select id, clinician__c, person_being_served__r.ownerid from service_assignment__c where admission__r.state__c = :targetState and clinician__c = null];
+		List<Service_Assignment__c> saNoClinicianList = [ select id, clinician__c, person_being_served__r.ownerid from service_assignment__c where id in :scope ];
 		
 		// add users who are owners of SA list
 		for ( Service_Assignment__c sa : saNoClinicianList )
