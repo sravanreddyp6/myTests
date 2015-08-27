@@ -36,9 +36,9 @@ public Boolean errorMsg2 {set;get;}
 public Boolean errorMsg3 {set;get;}
 public Boolean errorMsg4 {set;get;}
 public String searchingForQuery {set;get;}    
-private String tmlUserQuery;
-private List<TMN_User__c> TMNUserList {set;get;}
- private String searchName;
+@testVisible private String tmlUserQuery;
+@testVisible private List<TMN_User__c> TMNUserList {set;get;}
+@testVisible private String searchName;
 
 	public PDMController() {
 		  SortFieldSave = SortField;
@@ -155,16 +155,16 @@ searchingForQuery = queryString;
 				QueryWhere =  BuildWhere( QueryWhere , 'Work_State_Code__c =\'' + state +'\' ');
 				}
 				if(firstName!=null && firstName.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'First_Name__c like \'' + firstName +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'First_Name__c like \'%' + firstName +'%\' ');
 				}
 				if(lastName!=null && lastName.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'Last_Name__c like \'' + lastName +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Last_Name__c like \'%' + lastName +'%\' ');
 				}
 				if(operationGroup!=null && operationGroup.length() > 0) {
 				QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
 				}
 				if(searchTitle!=null && searchTitle.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like \'' + searchTitle +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like \'%' + searchTitle +'%\' ');
 				}
             searchingForQuery =  tmlUserQuery + QueryWhere ;
 			tmlUserQuery =  tmlUserQuery + QueryWhere +  ' order by ' + SortField + ' ' + SortDirection + ' limit 10000';
@@ -203,6 +203,7 @@ searchingForQuery = queryString;
 public void search () {
 	SortField = null;
 	SortDirection = null;
+	AlphaFilter = null;
 	searchName ='AdvanceSearch';
 	BuildQuery();
 }
