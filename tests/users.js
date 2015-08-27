@@ -46,7 +46,8 @@ _.forEach(Object.keys(usernameMap), function (username) {
 var manageUsers = function (cb) {
   var usersCreated = false;
   var conn = new jsforce.Connection({
-    loginUrl: "https://test.salesforce.com/"
+    loginUrl: "https://test.salesforce.com/",
+    maxRequest: 1000  // otherwise we'll run into max concurrent request error very soon (it defaults to 10)
   });
   conn
     .login(auth.username, auth.password)
