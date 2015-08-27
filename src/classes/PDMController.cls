@@ -2,9 +2,14 @@ public with sharing class PDMController {
 
  Public Integer size{get;set;}
  Public Integer noOfRecords {get;set;}
- public TMN_User__c curruser  {get{return [ select id,Work_State__c,Work_City__c  from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];} set;}
+ public TMN_User__c curruser  {get{return [ select id,Work_State__c,Work_City__c,Alias__c   from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];} set;}
  
- public String MainOffice {get{return '999-999-9999';} set;}
+ public String MainOffice {get{
+ 	List<Service_Location__c> phone =	[select Alias__c, Phone__c, City__c, State__c, Zip__c from Service_Location__c where Alias__c =:curruser.Alias__c limit 1];
+ 		if(phone!=null && phone.size()>0){
+ 		return phone.get(0).Phone__c;
+ 		}return '1-617-790-4800';
+ } set;}
  public String ServiceCenter {get{return '1-888-774-4872 Option #2';} set;}
  public String HumanResources {get{return '1-888-774-4872 Option #3';} set;}
  public String ItServiceCenter {get{return '1-888-774-4872 Option #1';} set;}
@@ -31,9 +36,9 @@ public Boolean errorMsg2 {set;get;}
 public Boolean errorMsg3 {set;get;}
 public Boolean errorMsg4 {set;get;}
 public String searchingForQuery {set;get;}    
-private String tmlUserQuery;
-private List<TMN_User__c> TMNUserList {set;get;}
- private String searchName;
+@testVisible private String tmlUserQuery;
+@testVisible private List<TMN_User__c> TMNUserList {set;get;}
+@testVisible private String searchName;
 
 	public PDMController() {
 		  SortFieldSave = SortField;
@@ -150,16 +155,16 @@ searchingForQuery = queryString;
 				QueryWhere =  BuildWhere( QueryWhere , 'Work_State_Code__c =\'' + state +'\' ');
 				}
 				if(firstName!=null && firstName.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'First_Name__c like \'' + firstName +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'First_Name__c like \'%' + firstName +'%\' ');
 				}
 				if(lastName!=null && lastName.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'Last_Name__c like \'' + lastName +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Last_Name__c like \'%' + lastName +'%\' ');
 				}
 				if(operationGroup!=null && operationGroup.length() > 0) {
 				QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
 				}
 				if(searchTitle!=null && searchTitle.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like ' + searchTitle +'%\' ');
+				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like \'%' + searchTitle +'%\' ');
 				}
             searchingForQuery =  tmlUserQuery + QueryWhere ;
 			tmlUserQuery =  tmlUserQuery + QueryWhere +  ' order by ' + SortField + ' ' + SortDirection + ' limit 10000';
@@ -198,6 +203,7 @@ searchingForQuery = queryString;
 public void search () {
 	SortField = null;
 	SortDirection = null;
+	AlphaFilter = null;
 	searchName ='AdvanceSearch';
 	BuildQuery();
 }

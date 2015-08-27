@@ -268,8 +268,8 @@ public with sharing class IdentityHomeController {
 
     //Method for delegate search.
     public void delSearch(){
-        generatedKey1 = Soundex.toSoundex(srchLNameDel);
-        generatedKey2 = Soundex.toSoundex(srchFNameDel);
+        generatedKey1 = srchLNameDel;
+        generatedKey2 = srchFNameDel;
         doQueryDel();
         showDelSrch();
     }
@@ -283,39 +283,39 @@ public with sharing class IdentityHomeController {
         }else if (String.IsNotBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
             totalRecsDel = [SELECT COUNT()
                          FROM TMN_User__c
-                         WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                         WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%')
                          AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];   
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                     FROM TMN_User__c 
-                                    WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                                    WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%')
                                     AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
                                     ORDER BY Last_Name__c
                                     LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];              
         }else if (String.IsBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
             totalRecsDel = [SELECT COUNT()
                          FROM TMN_User__c
-                         WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
+                         WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%') 
                          AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                     FROM TMN_User__c 
-                                    WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
+                                    WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%')  
                                     AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
                                     ORDER BY Last_Name__c
                                     LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];                              
         }else if (String.IsNotBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
             totalRecsDel = [SELECT COUNT()
                          FROM TMN_User__c 
-                         WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
-                         OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                         OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                         OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2))
+                         WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%') 
+                         OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
+                         OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%')
+                         OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
                          AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                     FROM TMN_User__c 
-                                    WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
-                                    OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                    OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                    OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
+                                    WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%') 
+                                    OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
+                                    OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
+                                    OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
                                     AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
                                     ORDER BY Last_Name__c 
                                     LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];
@@ -335,8 +335,8 @@ public with sharing class IdentityHomeController {
 
     //Method for non-employee search
     public void nonEmpSearch(){
-        generatedKey1 = Soundex.toSoundex(srchLNameNonEmp);
-        generatedKey2 = Soundex.toSoundex(srchFNameNonEmp);
+        generatedKey1 = srchLNameNonEmp;
+        generatedKey2 = srchFNameNonEmp;
         doQuery();
     }
 
@@ -351,11 +351,11 @@ public with sharing class IdentityHomeController {
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
             totalRecsNE = [SELECT COUNT()
                          FROM TMN_User__c 
-                         WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                         WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%') 
                          AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];   
-            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
-                                  WHERE (First_Name_Soundex_Key__c = :generatedKey2 OR Prf_First_Name_Soundex_Key__c = :generatedKey2) 
+                                  WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like : generatedKey2 +'%') 
                                   AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
@@ -369,11 +369,11 @@ public with sharing class IdentityHomeController {
         }else if (String.IsBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
             totalRecsNE = [SELECT COUNT()
                          FROM TMN_User__c 
-                         WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
+                         WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%') 
                          AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];
-            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
-                                  WHERE (Last_Name_Soundex_Key__c = :generatedKey1 OR Prf_Last_Name_Soundex_Key__c = :generatedKey1) 
+                                  WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like :  generatedKey1 +'%') 
                                   AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
@@ -387,17 +387,17 @@ public with sharing class IdentityHomeController {
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
             totalRecsNE = [SELECT COUNT()
                          FROM TMN_User__c 
-                         WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
-                         OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                         OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                         OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
+                         WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%') 
+                         OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
+                         OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
+                         OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
                          AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];
-            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name_Soundex_Key__c,Last_Name_Soundex_Key__c,Prf_First_Name_Soundex_Key__c,Prf_Last_Name_Soundex_Key__c 
+            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
-                                  WHERE ((Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2) 
-                                  OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                  OR (Last_Name_Soundex_Key__c = :generatedKey1 AND Prf_First_Name_Soundex_Key__c = :generatedKey2) 
-                                  OR (Prf_Last_Name_Soundex_Key__c = :generatedKey1 AND First_Name_Soundex_Key__c = :generatedKey2)) 
+                                  WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%') 
+                                  OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
+                                  OR (Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
+                                  OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%')) 
                                   AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
