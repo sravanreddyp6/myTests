@@ -36,9 +36,6 @@
         .recycleBinModule{
             display: none;
         }
-        #eleyForm1 {
-        white-space: normal; width:100px;
-        }
         
     </style>  
     <style>
@@ -596,7 +593,7 @@
             <apex:pageBlockButtons location="top">
                 <apex:commandButton id="saveButton"   value="Save"   action="{!saveProgressNoteInlineEdit}"  rendered="{!!Final}"   style="margin-left:22%;display:none;"/>
                 <apex:commandButton id="cancelButton" value="Cancel" action="{!cancel}"  rendered="{!!Final}" style="display:none;"/>
-                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock || !Final}" immediate="true"/>
+                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
                 <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
                 <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
                 <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
