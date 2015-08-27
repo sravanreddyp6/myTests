@@ -1,13 +1,27 @@
-public with sharing class saOwnershipBatch {
+global class saOwnershipBatch implements Database.Batchable<sObject> 
+{
+	global final string targetState;
+	
+	global saOwnershipBatch (String st){
+             targetState = st;
+   }
+	global Database.QueryLocator start( Database.BatchableContext BC) {
+		String query = 'select id from service_assignment__c where admission__r.state__c = :targetState' ;
+		
+		system.debug( query + ', ' + targetState );
+		return Database.getQueryLocator( query );
+		
+	}
 
+	global void execute(Database.BatchableContext BC, List<Service_Assignment__c> scope) {
 
+system.debug(scope.size());
 
-public static void runOwnership( string targetState ) {
-	// get unique list of users for whom to get associated TMN User records
+		// get unique list of users for whom to get associated TMN User records
 	Set<ID> userList = new Set<ID>();
 	List<TMN_user__c> tmnList = new List<TMN_User__c>();
 	Map<ID, ID> mapUsertoTMN = new Map<ID, ID>(); 
-	
+system.debug( targetState);	
 	if ( targetState == 'NC' || targetState == 'FL' || targetState == 'GA') {
 		// SAs needing clincians that don't have finalized progress notes
 		List<Service_Assignment__c> saNoClinicianList = [ select id, clinician__c, person_being_served__r.ownerid from service_assignment__c where admission__r.state__c = :targetState and clinician__c = null];
@@ -30,21 +44,21 @@ public static void runOwnership( string targetState ) {
 		
 	} else {	
 		
-		Set<ID> saIDSet = new Set<ID>();
-		List<Service_Assignment__c> SAs = new List<Service_Assignment__c>();
+//system.debug( targetState );
+		
+		Set<ID> saIDSet = new Set<Id>();
 		List<Progress_Note__c> pnList = new List<Progress_Note__c>();
 	
 		system.debug( 'CHECKING FOR: ' + targetState );
 		// get progress notes associated with the SAs needing clinicians 
-		SAs = [ select id from service_assignment__c where admission__r.state__c = :targetState ];
-		pnList = [ select id, service_assignment__c, clinician__c, staff_name__c, status__c, person_Being_served__r.ownerid, lastmodifieddate from progress_note__c where service_assignment__c in :SAs and service_assignment__r.clinician__c = null and status__c = 'Final' order by lastmodifieddate desc];
+		pnList = [ select id, service_assignment__c, clinician__c, staff_name__c, status__c, person_Being_served__r.ownerid, lastmodifieddate from progress_note__c where service_assignment__c in :scope and service_assignment__r.clinician__c = null and status__c = 'Final' order by lastmodifieddate desc];
 		
 		// create a unique list of SAs with progress notes needing update
 		for ( Progress_note__c p : pnList ) 
 			saIDSet.add( p.service_assignment__c);
 			
 		// get SAs needing clincians that don't have finalized progress notes
-		List<Service_Assignment__c> saNoPNList = [ select id, clinician__c, person_being_served__r.ownerid from service_assignment__c where id in :SAs and id not in :saIDSet and clinician__c = null];
+		List<Service_Assignment__c> saNoPNList = [ select id, clinician__c, person_being_served__r.ownerid from service_assignment__c where id in :scope and id not in :saIDSet and clinician__c = null];
 		
 		
 		Map<ID, List<Progress_Note__c>> sawithPNList = new Map<ID, List<Progress_note__c>>();
@@ -109,5 +123,9 @@ public static void runOwnership( string targetState ) {
 		update saToUpdate;
 		}
 	}
+	global void finish(Database.BatchableContext BC)
+    {
+    }
+    
 }
 
