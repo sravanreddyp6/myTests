@@ -85,30 +85,29 @@
         }
     </script>
     <!--  breadcrumb -->
-    <div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;
-        <a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
+    <div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;<a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
        <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
         <apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" />
         <apex:outputLink rendered="{!parentPage = 'PBS' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
-        <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS' }"> <apex:outputText rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'}"> &nbsp;>&nbsp;  <a href="/{!admId}">Admission </a> </apex:outputText>
+        <apex:outputPanel id="admlink" rendered="{!parentPage != 'PBS' }"> <apex:outputText rendered="{!parentPage!= 'Admission' && parentPage != 'SeizureEdit'}"> &nbsp;>&nbsp;<a href="/{!admId}">Admission</a></apex:outputText>
         <apex:outputText rendered="{!parentPage == 'Admission' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value=" > Admission" /></apex:outputPanel>
         <apex:outputLink rendered="{!parentPage == 'Admission' &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" > &nbsp;>&nbsp; <a href="/apex/AdmissionView?id={!admId}">Admission</a></apex:outputLink>
         <apex:outputText id="asmtlink" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' ) &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value=" > {!asmtType} Assessment" />
-        <apex:outputLink id="asmtlinkatt" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' )  &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" >&nbsp;>&nbsp; <a href="/{!asmtId}">{!asmtType} Assessment </a> </apex:outputLink>
+        <apex:outputLink id="asmtlinkatt" rendered="{!parentPage == 'Assessment' &&  !BEGINS(asmtType, 'FAD' )  &&  (upload || viewall ||editAttachemnt ||viewAttachment) }" >&nbsp;>&nbsp;<a href="/{!asmtId}">{!asmtType} Assessment</a></apex:outputLink>
         <apex:outputPanel id="svcassignlink" rendered="{! parentPage == 'ActionPlan' || parentPage = 'NursesShiftDocument' || parentPage = 'ShiftAssessmentListView' || parentPage = 'SkillsTracking' || parentPage = 'ActionSummaryReport' || parentPage = 'ShiftNote' || parentPage = 'BehaviorTracking' || parentPage='GoalObjRpt' || parentPage='ServAssignClose' || parentPage='ServAssignCloseApproval' || ( parentPage=='Assessment' && BEGINS(asmtType, 'FAD')) || parentPage='SeizureListView' || parentPage='Evaluation' || parentPage = 'incidentEdit' || parentPage = 'incidentView'}">&nbsp;>&nbsp;<a href="/{!servAssignId}">Service Assignment</a></apex:outputPanel>
         <apex:outputText id="asmtlink2" rendered="{!parentPage == 'Assessment' && NOT(upload || viewall ||editAttachemnt ||viewAttachment) && BEGINS(asmtType, 'FAD') }" value=" > {! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')}" />
-        <apex:outputText rendered="{!parentPage == 'Assessment' && (upload || viewall ||editAttachemnt ||viewAttachment) && BEGINS(asmtType, 'FAD') }" > &nbsp;>&nbsp;<a href="/apex/Assessment_FAD_Form?id={!asmtId}"> {! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')} </a></apex:outputText>
-        <apex:outputLink id="planlinkplanAtt" rendered="{!parentPage == 'ActionPlan' &&   (upload || viewall ||editAttachemnt ||viewAttachment)}" > <a href="/{!apId}"> > Action Plan</a></apex:outputLink>
-        <apex:outputText id="planlinkplan"  rendered="{!parentPage == 'ActionPlan'  &&   NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value =" >Action Plan " />
+        <apex:outputText rendered="{!parentPage == 'Assessment' && (upload || viewall ||editAttachemnt ||viewAttachment) && BEGINS(asmtType, 'FAD') }" > &nbsp;>&nbsp;<a href="/apex/Assessment_FAD_Form?id={!asmtId}">{! IF( CONTAINS(asmtType, 'Summary'), asmtType, asmtType + ' Assessment')}</a></apex:outputText>
+        <apex:outputLink id="planlinkplanAtt" rendered="{!parentPage == 'ActionPlan' &&   (upload || viewall ||editAttachemnt ||viewAttachment)}" > <a href="/{!apId}">&nbsp;>&nbsp;Action Plan</a></apex:outputLink>
+        <apex:outputText id="planlinkplan"  rendered="{!parentPage == 'ActionPlan'  &&   NOT(upload || viewall ||editAttachemnt ||viewAttachment) }" value =" > Action Plan " />
         <apex:outputText id="evalText" rendered="{!parentPage == 'NursesShiftDocument'}" value=" > Nurses Shift Documentation" />
         <apex:outputText id="evalListView" rendered="{!parentPage = 'ShiftAssessmentListView'}" value=" > {!recType}" />
-        <apex:outputText id="evalType" rendered="{!parentPage == 'Evaluation'}"> > {!evalType} </apex:outputText>
-        <apex:outputText id="incident" rendered="{!parentPage == 'incidentEdit' || parentPage == 'incidentView'}"> > Incident </apex:outputText>
+        <apex:outputText id="evalType" rendered="{!parentPage == 'Evaluation'}">&nbsp;>&nbsp;{!evalType}</apex:outputText>
+        <apex:outputText id="incident" rendered="{!parentPage == 'incidentEdit' || parentPage == 'incidentView'}">&nbsp;>&nbsp;Incident </apex:outputText>
         <apex:outputText id="goalobj" rendered="{!parentPage == 'GoalObjRpt'}" value=" > Goal/Objective Documentation Report" />
         <apex:outputPanel id="skillslink" rendered="{! parentPage =='SkillsTracking'}">&nbsp;>&nbsp;Skills Worksheet</apex:outputPanel>
         <apex:outputPanel id="behaviorlink" rendered="{! parentPage == 'BehaviorTracking'}">&nbsp;>&nbsp;Behavior Worksheet</apex:outputPanel>
         <apex:outputText id="summaryRept" rendered="{!parentPage == 'ActionSummaryReport' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" value=" > Action Plan Summary" />
-        <apex:outputLink id="summaryReptatt" rendered="{!parentPage == 'ActionSummaryReport'  &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" >&nbsp;>&nbsp; <a href="/apex/ActionSummaryReport?id={!apId}">Action Plan Summary </a> </apex:outputLink>
+        <apex:outputLink id="summaryReptatt" rendered="{!parentPage == 'ActionSummaryReport'  &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" >&nbsp;>&nbsp;<a href="/apex/ActionSummaryReport?id={!apId}">Action Plan Summary</a></apex:outputLink>
         <apex:outputPanel id="notelink" rendered="{! parentPage = 'ShiftNote' && NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Notes</apex:outputPanel>
         <apex:outputLink rendered="{! parentPage = 'ShiftNote' && (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/shiftnote_basic_form?id={!apId}">Notes</a></apex:outputLink>
         <apex:outputPanel id="servAssignText" rendered="{!parentPage == 'ServAssign' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Service Assignment</apex:outputPanel>
@@ -119,11 +118,11 @@
         <apex:outputPanel id="servAssignCloseText" rendered="{!parentPage == 'ServAssignClose'}">&nbsp;>&nbsp;Service Assignment Closure</apex:outputPanel>
         <apex:outputPanel id="servAssignCloseApprovalLink" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;<a href="/{!servAssignClose}">Service Assignment Closure</a></apex:outputPanel>
         <apex:outputPanel id="servAssignCloseApprovalText" rendered="{!parentPage == 'ServAssignCloseApproval'}">&nbsp;>&nbsp;Service Assignment Closure: Approval</apex:outputPanel>
-        <apex:outputPanel id="SeizureEdit" rendered="{!parentPage == 'SeizureEdit'}">&nbsp;Seizure</apex:outputPanel>
-        <apex:outputPanel id="viewAttachment" rendered="{!viewAttachment}">&nbsp;>  View Attachment</apex:outputPanel>
-        <apex:outputPanel id="editAttachemnt" rendered="{!editAttachemnt}">&nbsp;> Edit Attachment</apex:outputPanel>
-        <apex:outputPanel id="viewall" rendered="{!viewall}">&nbsp;> View All Attachments</apex:outputPanel>
-        <apex:outputPanel id="upload" rendered="{!upload}">&nbsp;> Upload Attachments</apex:outputPanel>
+        <apex:outputPanel id="SeizureEdit" rendered="{!parentPage == 'SeizureEdit'}">&nbsp;>&nbsp;Seizure</apex:outputPanel>
+        <apex:outputPanel id="viewAttachment" rendered="{!viewAttachment}">&nbsp;>&nbsp;View Attachment</apex:outputPanel>
+        <apex:outputPanel id="editAttachemnt" rendered="{!editAttachemnt}">&nbsp;>&nbsp;Edit Attachment</apex:outputPanel>
+        <apex:outputPanel id="viewall" rendered="{!viewall}">&nbsp;>&nbsp;View All Attachments</apex:outputPanel>
+        <apex:outputPanel id="upload" rendered="{!upload}">&nbsp;>&nbsp;Upload Attachments</apex:outputPanel>
     </div>
     <div id="pbsBlueCard" >
         <apex:form >
