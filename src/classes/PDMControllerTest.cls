@@ -206,6 +206,7 @@ public static User createUser(string profileName,string userAlias, string userNa
 		
 public static 	Alias__c getNewAlias(String unique){
 	Alias__c alias = new Alias__c();
+	alias.Name = unique;
 	alias.Alias_Operating_Group__c= 'Care Meridian1';
 	alias.Alias_unique__c = unique;
 	alias.Alias_Business_Unit__c = '001140 IT Business Systems2';
