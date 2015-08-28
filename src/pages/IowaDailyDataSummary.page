@@ -111,19 +111,18 @@ div.footer {
         <tbody>
             <tr>
                 <td style="vertical-align: top;"><apex:repeat value="{!timelogs}" var="log">
-                        <table class="timeLogTable" style="white-space: nowrap; width: 100%;">
+                        <table class="timeLogTable" style="width: 100%;padding-bottom: 10px;">
                             <tr>
-                                <td colspan="2" style="width: 50%;"><apex:outputLabel styleClass="labelCol"
+                                <td style="width: 50%;"><apex:outputLabel styleClass="labelCol"
                                         value="Start Time: {!log.startTime}" /></td>
-                                <td colspan="2" style="width: 50%;"><apex:outputLabel styleClass="labelCol"
+                                <td style="width: 50%;"><apex:outputLabel styleClass="labelCol"
                                         value="End Time: {!log.endTime}" /></td>
                             </tr>
                             <tr>
-                                <td><apex:outputLabel value="Accompanied By: {!log.timeLog.tmn_user__r.Name}" /></td>
-                                <td><apex:outputLabel value="Location: {!log.timeLog.Location__c}" /></td>
-                                <td><apex:outputLabel value="Service Type: {!log.timeLog.Service_Type__c}" /></td>
-                                <td><apex:outputLabel value="Late Entry"
-                                        rendered="{!log.timeLog.Is_Late_Entry__c}" /></td>
+                                <td><apex:outputLabel  value="Accompanied By: {!log.timeLog.tmn_user__r.Name}" /><br/>
+                                <apex:outputLabel  value="Service Type: {!log.timeLog.Service_Type__c}" /><br/>
+                                <apex:outputLabel  value="Late Entry" rendered="{!log.timeLog.Is_Late_Entry__c}" /></td>
+                                <td><apex:outputLabel value="Location: {!log.timeLog.Location__c}" /> </td>
                             </tr>
                         </table><br />
                     </apex:repeat><apex:outputText value="No Data Found" rendered="{!timelogs.size==0}" /></td>
