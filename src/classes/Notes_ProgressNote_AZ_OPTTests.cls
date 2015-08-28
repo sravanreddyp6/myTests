@@ -73,7 +73,7 @@ public with sharing class Notes_ProgressNote_AZ_OPTTests {
         
         
         Notes_Progressnote_AZ_OPT objNpncTest = new Notes_Progressnote_AZ_OPT(sc);
-        Progress_Note__c pt = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c='a1DK000000xockHMAQ');
+        Progress_Note__c pt = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c=Aplan.Id);
         insert pt;
         list<progress_note__c> pnote = New list<progress_note__c>();
         pnote.add(pt);
@@ -176,7 +176,7 @@ public with sharing class Notes_ProgressNote_AZ_OPTTests {
         
         
         Notes_Progressnote_AZ_OPT objNpncTest = new Notes_Progressnote_AZ_OPT(sc);
-        Progress_Note__c pt = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c='a1DK000000xockHMAQ');
+        Progress_Note__c pt = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c=Aplan.Id);
         insert pt;
         
         
@@ -275,7 +275,7 @@ public with sharing class Notes_ProgressNote_AZ_OPTTests {
         act1.end_date__c = date.today().adddays(3);
         act1.status__c = 'New';
         insert act1;
-        Progress_Note__c pt = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c='a1DK000000xockHMAQ');
+        Progress_Note__c pt = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c=Aplan.Id);
         insert pt;
         
         PageReference pageRef = Page.Notes_Progressnote_AZ_OPT;
@@ -391,7 +391,7 @@ public with sharing class Notes_ProgressNote_AZ_OPTTests {
         act1.end_date__c = date.today().adddays(3);
         act1.status__c = 'New';
         insert act1;
-        Progress_Note__c pt = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c='a1DK000000xockHMAQ');
+        Progress_Note__c pt = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c=Aplan.Id);
         insert pt;
         
         PageReference pageRef = Page.Notes_Progressnote_AZ_OPT;
