@@ -69,7 +69,7 @@ public without sharing class ServAssignExpectedDocsExt {
                 rDDEvent = sadJ.Relative_Due_Date_Event__c;
                 dueDateConcat = rDDUnits + ' ' + rDDUom + ' from ' + rDDEvent;
             }
-            sAOwnerName = sadJ.Service_Assignment__r.Clinician__c;
+            sAOwnerName = sadJ.Service_Assignment__r.Clinician__r.Name;
             docName = sadJ.Document_Name__c;
 
             fileStatus = sadJ.File_Status__c;
@@ -143,7 +143,7 @@ public without sharing class ServAssignExpectedDocsExt {
         List<Document__c> someDocs = new List<Document__c>();
 
         // Select all cross-references between Contracts and this Service Assignment.
-        String queryString = 'SELECT Id, Name, Document__c, Document_Name__c, File_Status__c, Relative_Due_Date_Units__c, Relative_Due_Date_UOM__c, Relative_Due_Date_Event__c, Relative_Due_Date_Resolved__c, Fixed_Due_Date__c, Service_Assignment__r.Clinician__c, Document__r.Auto_Include__c FROM ServiceAssignment_Document_JO__c WHERE Service_Assignment__c = \'' + theServAssign.Id + '\' AND Document__r.Type__c = \'Case Document\' ORDER BY ' + sortBy;
+        String queryString = 'SELECT Id, Name, Document__c, Document_Name__c, File_Status__c, Relative_Due_Date_Units__c, Relative_Due_Date_UOM__c, Relative_Due_Date_Event__c, Relative_Due_Date_Resolved__c, Fixed_Due_Date__c, Service_Assignment__r.Clinician__r.Name, Document__r.Auto_Include__c FROM ServiceAssignment_Document_JO__c WHERE Service_Assignment__c = \'' + theServAssign.Id + '\' AND Document__r.Type__c = \'Case Document\' ORDER BY ' + sortBy;
         servAssignDocXrefs = Database.query(queryString);
 
         docIds = new List<Id>();
