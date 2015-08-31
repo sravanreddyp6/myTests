@@ -1,0 +1,42 @@
+<apex:page standardController="Progress_Note__c" extensions="GoalsObjActionsInclude_ex" applyBodyTag="false">
+<apex:stylesheet value="{!$Resource.progresnote_pdf_styling_ap_children}"/>
+<apex:outputPanel style="display: none">
+<apex:outputField value="{!Progress_Note__c.Service_Assignment__c}"/>
+<apex:outputField value="{!Progress_Note__c.Admission__c}"/>
+<apex:outputField value="{!Progress_Note__c.Action_Plan__c}"/>
+</apex:outputPanel>
+    <apex:repeat value="{!allGoals}" var="g">
+        <table>
+            <tr>
+                <td>
+                    <apex:outputPanel layout="block" styleClass="goal" rendered="true">
+                        <b>Goal Description</b><br/>   
+                        <apex:outputLabel for="goal">
+                            {!g.Description__c}
+                        </apex:outputLabel>
+                    </apex:outputPanel> 
+                    <apex:outputPanel layout="block" styleClass="obj" rendered="{!g.action_plan_objectives__r.size>0 }">
+                        <b>Objectives</b>  
+                    </apex:outputPanel>
+                    <apex:repeat value="{!g.action_plan_objectives__r }" var="o">
+                        <apex:outputPanel rendered="true">
+                            <apex:outputPanel layout="block" styleClass="obj">
+                                <apex:outputLabel for="obj">
+                                    {!o.Description__c}
+                                </apex:outputLabel>                            
+                            </apex:outputPanel> 
+                            <apex:outputPanel layout="block" styleClass="act" rendered="{!Progress_Note__c.RecordType.DeveloperName=='AZ_OPT'}">
+                                <b>Actions</b> <br/>
+                            </apex:outputPanel>
+                            <apex:repeat value="{!mapActions[o.id]}" var="a" rendered="{!Progress_Note__c.RecordType.DeveloperName=='AZ_OPT'}">
+                                <apex:outputPanel layout="block" styleClass="act">
+                                    {!a.description__c}                                
+                                </apex:outputPanel>  
+                            </apex:repeat> 
+                        </apex:outputPanel>                               
+                    </apex:repeat>
+                </td>
+            </tr>
+        </table>
+    </apex:repeat>   
+</apex:page>
