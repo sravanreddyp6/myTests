@@ -673,7 +673,7 @@
 				} else if (selectedValue == 'createCNAWorkbook') {
 					showAddCNAWorkbookModal(serviceAssignmentId);
 				} else if(selectedValue=='createProgressNotes'){
-					var url = '/apex/Notes_ProgressNote_Create?plan='+action+'&service_assignment='+serviceAssignmentId+'&admission='+admissionId+'&person='+personId+'&State='+state;
+ 					var url ='{!$Page.Notes_ProgressNote_Create}?plan='+action+'&service_assignment='+serviceAssignmentId+'&admission='+admissionId+'&person='+personId+'&State='+state+'&retURL={!HTMLENCODE('/apex/home')}';
 					$(location).attr('href',url);
                 }
 				else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
