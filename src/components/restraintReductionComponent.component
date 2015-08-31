@@ -2,23 +2,23 @@
 	<apex:attribute name="AssessmentId" description="Name of the Assessment record which is same as the Section id"
         type="Id" assignTo="{!assId}" />
    	<apex:attribute name="isPDF" description="Used to render the PDF on View Pages" type="Boolean" default="false"/>
-        
+
   	<style >
   		.disregard{
   			float:right;
   			margin-right: 30px;
   		}
-  		
+
   	</style>
   	<apex:outputPanel id="fullPanel" >
   	<apex:outputPanel id="editPanel"  >
-	    <apex:pageBlock id="editBlock" rendered="{!!viewMode && !isPDF}" >	
+	    <apex:pageBlock id="editBlock" rendered="{!!viewMode && !isPDF}" >
 			<apex:pageBlockSection columns="1" >
 				<apex:outputPanel >
 					<apex:outputText value="Created Date: " style="margin-left:80px; font-weight:bold;"/>
 					<apex:outputText value="{!assessment.owner.Name}" style="font-weight:bold;"/> @ <apex:outputText value=" {!assessment.CreatedDate}" style="font-weight:bold;"/>
 				</apex:outputPanel>
-				<apex:outputText Value="{!assessment.Status__c}" label="Status" style="font-weight:bold;"/> 
+				<apex:outputText Value="{!assessment.Status__c}" label="Status" style="font-weight:bold;"/>
 				<apex:pageBlockTable value="{!questions}" var="q" >
 					<apex:column HeaderValue="Category" style="border-color: #ededed; width: 275px; text-align: left; vertical-align: middle; padding-left: 5px; padding-top:7px; font-size: 11pt; color: black;">
 						<apex:outputPanel layout="block">{!q.Question_Title__c}</apex:outputPanel>
@@ -67,13 +67,13 @@
 					<apex:outputText rendered="{!ThisRecordsDomains[0].Score__c >35}" >{!CEILING(ThisRecordsDomains[0].Score__c)} (Poor)</apex:outputText>
 				</apex:outputPanel>
 			</apex:pageBlockSection>
-			
+
 				<apex:pageblockbuttons location="top" id="buttonsSection">
 					<apex:outputPanel id="completePanel">
-						<apex:commandbutton value="Completed" action="{!complete}" styleClass="disregard" reRender="fullPanel,evalRepeaters" status="generalStatus" rendered="{!showComplete}"/>
+						<apex:commandbutton value="Completed" action="{!complete}" styleClass="disregard" reRender="fullPanel,evalRepeaters" status="generalStatus" rendered="{!showComplete}" oncomplete="refreshEvalRepeaters();" />
 					</apex:outputPanel>
 					<apex:commandbutton value="Disregard" action="{!disregard}" styleClass="disregard" reRender="fullPanel,evalRepeaters" status="generalStatus" />
-					<input class="btn" type="button" style="float:right;" value="Close" onclick="clearPanel();" /> 
+					<input class="btn" type="button" style="float:right;" value="Close" onclick="clearPanel();" />
 					<apex:actionStatus id="generalStatus" >
 						<apex:facet name="start">
 	                        <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /></span>
@@ -81,12 +81,12 @@
 						<apex:facet name="stop" />
 					</apex:actionStatus>
 				</apex:pageblockbuttons>
-			
+
 		</apex:pageBlock>
 	</apex:outputPanel>
 	<apex:outputPanel id="viewPanel"  >
 		<apex:outputpanel rendered="{!!isPDF && viewMode}" >
-			<input class="btn" type="button" style="float:right;" value="Close" onclick="clearPanel();"  /> 
+			<input class="btn" type="button" style="float:right;" value="Close" onclick="clearPanel();"  />
 		</apex:outputpanel>
 		<apex:pageBlock id="viewBlock" rendered="{!viewMode || isPDF}">
 	   		<apex:pageBlockSection columns="2" >
@@ -99,7 +99,7 @@
 				<apex:pageBlockSectionitem />
 	           	<apex:pageBlockTable value="{!questions}" var="q" border="1px;" >
 	          			<apex:column HeaderValue="Category" >
-	          				<apex:outputText >{!q.Question_Title__c}</apex:outputText>	
+	          				<apex:outputText >{!q.Question_Title__c}</apex:outputText>
 					</apex:column>
 					<apex:column HeaderValue="Rating" >
 						<apex:outputText >{!questionResponseMap[q.Id].Rating__c} </apex:outputText>
