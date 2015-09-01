@@ -12,7 +12,7 @@ var defaultOperationTimeout = 30 * 1000;
 testSuite("NRReferral", suiteTimeout, {
   "should create a Redwood NR Referral successfully": function(client, done) {
     return client
-      .logInAs(users["RW_AZ_Referral_Intaker"])
+      .logInAs(users["NR_Referral_Intaker"])
       .click("a=Create New Referral")
       .getSelectOptions('Race')
       .then(function(races) {
