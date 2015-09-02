@@ -45,6 +45,17 @@ public with sharing class ReportListViewController {
 		String ESDAct='',ref,Care,ESDbill,ESDsup,Red;
 		VF_Reports__c vf = VF_Reports__c.getInstance();
 		VFReportlst = [SELECT Name,Id,Name__c,Description__c,link__c, groups__c from VF_Reports__c];
+		// IADAY-14
+		String userRole = [
+			SELECT DeveloperName, Id FROM UserRole WHERE Id=:UserInfo.getUserRoleId()
+		].DeveloperName;
+		if (OperatingGroup != 'Redwood' || userRole != 'IA') {
+			for (Integer i=0; i < VFReportLst.size(); i++) {
+				if (VFReportLst[i].Name == 'TimeLogEntryReport') {
+					VFReportLst.remove(i);
+				}
+			}
+		}
 		for(Folder tmp:[SELECT AccessType,Id,IsReadonly,Name,DeveloperName,Type FROM Folder WHERE Type = 'Report']){
 
 			if(tmp.DeveloperName=='Referrals'){
@@ -104,14 +115,20 @@ public with sharing class ReportListViewController {
 
 		PBSrportlst = new List<Report>();
 		for(Report rpt: filterReportAccess(report(ESDActivityId,ESDAct))) {
+			System.debug('0');
+			System.debug(rpt.DeveloperName);
 			PBSrportlst.add(rpt);
 		}
 
 		for(Report rpt1: filterReportAccess(report(ESDbillingId,ESDbill))) {
+			System.debug('1');
+			System.debug(rpt1.DeveloperName);
 			PBSrportlst.add(rpt1);
 		}
 
 		for(Report rpt2: filterReportAccess(report(ESDSupyId,ESDsup))) {
+			System.debug('2');
+			System.debug(rpt2.DeveloperName);
 			PBSrportlst.add(rpt2);
 		}
 

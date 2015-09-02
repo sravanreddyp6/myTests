@@ -53,24 +53,31 @@
 	<apex:includeScript value="{!$Resource.AnotoJS}" />
 	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
 
 	<style>
-tr.border_bottom td {
-	border-bottom: 1pt solid #F0F0EF;
-}
+		tr.border_bottom td {
+			border-bottom: 1pt solid #F0F0EF;
+		}
 
-td.text_right {
-	text-align: right;
-	float: right;
-}
-</style>
+		td.text_right {
+			text-align: right;
+			float: right;
+		}
+
+		.qtip {
+			font-size: 13px;
+			line-height: 18px;
+		}
+	</style>
 
 	<form id="evalForm" method="post">
 		<apex:pageBlock rendered="{!cat != ''}">
 			<label class="labelCol">Created By:</label>{!evalSectionOwner}
  			<br /><label class="labelCol">Last Modified By:</label>{!evalSectionLastMod}
 
-            <apex:outputPanel layout="block"
+			<apex:outputPanel layout="block"
 				style="right: 10px;float: right;position: relative;"
 				rendered="{!editEnabled}">
 				<input class="btn" type="submit" value="Save" id="btnSave"
@@ -142,6 +149,61 @@ td.text_right {
                 });
             };
 
+            window.refreshQtips = function () {
+                // All qtips share the same config, so we refactor it here.
+                var qtip_options = function (fn) {
+                    return $("div[data-previous-entry]")
+                        .find("input, select, textarea")
+                        .qtip({
+                            style: {
+                                classes: 'bPageBlock'
+                            },
+                            show: {
+                                delay: 500
+                            },
+                            hide: {
+                                fixed: true,
+                                delay: 500
+                            },
+                            content: {
+                                text: fn
+                            },
+                            position: {
+                                my: 'bottom left',
+                                at: 'top left'
+                            }
+                        });
+                };
+                qtip_options(function(e, api) {
+                    var composite = $(e.target).closest("div[data-previous-entry]").data("previous-entry");
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.GenerateEvalComponent.getPreviousEntries}',
+                        composite,
+                        '{!serviceAssignmentId}',
+                        function (result, event) {
+                            if (event.status) { // Success
+                                resultText =
+                                    '<div class="pbHeader"><strong>Previous Entries</strong></div>';
+                                if (result.length == 0) {
+                                   resultText += 'No previous entry';
+                                }
+                                $.each(result, function (index, entry) {
+                                    if (entry !== undefined && entry.value !== undefined) {
+                                        resultText += '<a href="/' + entry.evaluationId + '">' + entry.value + '</a> at ' + entry.lastModifiedDate + '<br />';
+                                    }
+                                });
+                               api.set('content.text', resultText);
+                            } else if (event.type === 'exception') {
+                               api.set('content.text', 'Error: <br/>' + event.message);
+                               console.log(event);
+                            } else {
+                               api.set('content.text', event.message);
+                            }
+                       });
+                    return "Loading ...";
+                });
+            };
+
             window.setUpFields = function() {
                 // if not editable, make all input fields disabled and do not apply rules
                 <apex:outputPanel rendered="{!!editEnabled}" layout="none">
@@ -174,6 +236,7 @@ td.text_right {
                     isModified = true;
                 });
 
+                refreshQtips();
             };
 
             window.handleFormErros = function() {
@@ -455,12 +518,7 @@ td.text_right {
             if(inc!= null && inc!='')
                 inctocm = inc*2.54;
             return inctocm;
-
-
         }
-
-
-
     </script>
 	</apex:outputPanel>
 </apex:component>

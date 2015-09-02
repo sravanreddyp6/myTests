@@ -63,7 +63,7 @@ public without sharing class AssessmentSetup {
       Schema.FieldSetMember[] customQuestions = SObjectType.Assessment_Response__c.FieldSets.Custom_Questions.getFields();
 
       for (Assessment__c a: theseAssessments){
-        if (a.Previous__c==null) {
+       // if (a.Previous__c==null) {
             for( ID assmtDomainLoopID : domainMap.keySet() ){
                 // START: RBO-289
                 if(a.Type__c=='ISSA') {
@@ -171,9 +171,10 @@ public without sharing class AssessmentSetup {
                     }
                 }
             }
-        } else {
+      //  } else {
+      if(a.Previous__c != null){
             // Clone stuff now
-            tempQuery = 'SELECT ID, Assessment_Domain_Result__r.Assessment_Domain__c,' +
+            tempQuery = 'SELECT ID, Assessment_Domain_Result__r.Assessment_Domain__c, Comment__c,' +
                'Question__c, Rating__c, Color__c, Response__c';
             for(Schema.FieldSetMember f : customQuestions) {
                 tempQuery += ', ' + f.getFieldPath();
@@ -182,27 +183,44 @@ public without sharing class AssessmentSetup {
             currentAr = Database.query(tempQuery);
             
             System.debug('Before trigger, currentAr: ' + currentAr);
-            // Clone responses
-            for (Assessment_Response__c ar: currentAr) {
-                dummyAdr = new Assessment_Domain_Result__c(
-                    Assessment__c = a.ID,
-                    Assessment_Domain__c = ar.Assessment_Domain_Result__r.Assessment_Domain__c
-                );
-                insert dummyAdr;
-                tempAr = new Assessment_Response__c(
-                    Assessment__c = a.ID,
-                    Question__c = ar.Question__c,
-                    Assessment_Domain_Result__c = dummyAdr.ID,
-                    Rating__c = ar.Rating__c,
-                    Color__c = ar.Color__c,
-                    Response__c = ar.Response__c
-                );
-                for(Schema.FieldSetMember f : customQuestions) {
-                    tempAr.put(f.getFieldPath(), ar.get(f.getFieldPath()));
-                }
-                dummyAr.add(tempAr);
+            //remove items that will be cloned
+            for (Assessment_Response__c cr: currentAr) {            	
+                 for(Integer di = 0; di < dummyAr.size(); di++){
+                	if(cr.Question__c == dummyAr.get(di).Question__c ){dummyAr.remove(di); }
+                }           	
+            
             }
+            
+            // Clone responses            
+            for (Assessment_Response__c ar: currentAr) {
+                if( dummyAdr != null && dummyAdr.id != null){
+	                dummyAdr = new Assessment_Domain_Result__c(
+	                    Assessment__c = a.ID,
+	                    Assessment_Domain__c = ar.Assessment_Domain_Result__r.Assessment_Domain__c
+	                );
+	                insert dummyAdr;
+                }
+                
+	
+	                tempAr = new Assessment_Response__c(
+	                    Assessment__c = a.ID,
+	                    Question__c = ar.Question__c,
+	                    Assessment_Domain_Result__c = dummyAdr.ID,
+	                    Rating__c = ar.Rating__c,
+	                    Color__c = ar.Color__c,
+	                    Response__c = ar.Response__c,
+	                    Comment__c = ar.Comment__c
+	                );
+	                for(Schema.FieldSetMember f : customQuestions) {
+	                    tempAr.put(f.getFieldPath(), ar.get(f.getFieldPath()));
+	                }
+	                dummyAr.add(tempAr);
+	                
+                
+            }
+            
         }
+        
         insert dummyAr;
       }       
     }

@@ -161,7 +161,7 @@ public with sharing class HomePageController{
 			canSeeShiftDoc = false;
 		}
 		Map<id,UserRole> rolemap =new Map<id,UserRole>([SELECT DeveloperName,Id FROM UserRole]);
-        if((rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix_Clinical_Users'||rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix')&& OperatingGroup == 'Redwood'){
+        if((rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix_Clinical_Users'||rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix')&& OperatingGroup == 'Redwood' && os.AZ_OPT_Enabler__c==true){
           canCreateProgressNotes = true;
           canSeeShiftDoc = false;
           canSeeCNAWorkbook = false;
@@ -297,6 +297,7 @@ public with sharing class HomePageController{
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
 				}
 				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+                optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
 				
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
@@ -677,7 +678,7 @@ public with sharing class HomePageController{
 		return null;
 	}
 		
-	private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
+	@TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
 		
 		Boolean overlaps = false;
 		system.debug( 'Times:' + s1 + e1 + s2 + e2);
