@@ -1,6 +1,7 @@
 public with sharing class Notes_ProgressNote_Create_Audit_pdf {
     public Progress_Note__c thePN = new Progress_Note__c();
     public string myId = ApexPages.currentPage().getParameters().get('id');
+    public string myStatus = ApexPages.currentPage().getParameters().get('SubmittedAlready');
     public PageReference redirect() {        
         PageReference pageRef2 = new PageReference('/' + myId); 
         
@@ -25,7 +26,13 @@ public with sharing class Notes_ProgressNote_Create_Audit_pdf {
                 }
                 else{                    
                     insert attachmentPDF;
+                    if(myStatus=='Yes'){
+                        return new PageReference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+thePn.id+'&sfdc.override=1');
+                    }
+                    else{
+                    
                     return new PageReference('/p/process/Submit?retURL=%2F'+thePN.id+'&id='+thePN.id);
+                    }
                 }            
             
         }catch(DMLException e){

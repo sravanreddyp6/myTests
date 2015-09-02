@@ -1,7 +1,7 @@
 public with sharing class CmPersonBillingRpt {
     transient public String pbsId {get; set;}
     transient public String pbsName {get; set;}
-    
+    transient public Service_Assignment__c pbsObj {get;set;}
     transient public date StartDate {get; set;}
     transient public date EndDate {get; set;}
     
@@ -31,8 +31,9 @@ public with sharing class CmPersonBillingRpt {
         this.EndDate = Date.parse(ApexPages.CurrentPage().getParameters().get('EndDate'));
 
         list<Service_Assignment__c> sa = [SELECT  id, person_being_served__r.id, person_being_served__r.LastName, person_being_served__r.FirstName, person_being_served__r.Middle_Name__c, person_being_served__r.Avatar_ID__c,
+                                                  person_being_served__r.Birthdate, person_being_served__r.PBS_Identifier__c,
 		                                          Service_Location__r.Name, Service_Location__r.Street__c, Service_Location__r.City__c, Service_Location__r.State__c, Service_Location__r.Zip__c,
-		                                          Service_Location__r.Setting__c, Service_Location__r.Phone__c, person_being_served__r.PBS_Identifier__c, person_being_served__r.Birthdate, 
+		                                          Service_Location__r.Setting__c, Service_Location__r.Phone__c, 
 		                                          person_being_served__r.Marital_Status__c, person_being_served__r.Gender__c, person_being_served__r.Age__c,
 		                                          (SELECT Id, Name, RecordType.Name, Shift_Start_time__c, Shift_end_time__c, Status__c, Head_to_Toe_Status__c, owner.name
 		                                             FROM Evaluations__r
@@ -53,6 +54,7 @@ public with sharing class CmPersonBillingRpt {
             (String.isBlank(sa[0].person_being_served__r.Middle_Name__c) ?  '' : sa[0].person_being_served__r.Middle_Name__c) +
             (String.isBlank(sa[0].person_being_served__r.Avatar_ID__c) ?  '' : '(' + sa[0].person_being_served__r.Avatar_ID__c + ')' ) ;
         
+        this.pbsObj = sa[0];
         for (Service_Assignment__c s : sa) {
             for (Evaluation__c eval : s.Evaluations__r) {
                 evaluationsMap.put(eval.Id, eval);

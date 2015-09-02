@@ -11,15 +11,64 @@ public with sharing class GenerateEvalComponent {
         }
         set;
     }
-    
+
     public string cat {get; set;}
     public string subcat{get; set;}
     public string subsubcat{get; set;}
     public string evalname{get; set;}
-    public ID evaluationID { get; set;}
+    public ID evaluationID {
+        get;
+        set {
+            evaluationId = value;
+            if (evaluationId != null) {
+                serviceAssignmentId = [
+                    SELECT ServiceAssignment__c FROM Evaluation__c WHERE Id=:evaluationId
+                ].ServiceAssignment__c;
+            }
+        }
+    }
     public ID pbsID { get; set;}
+    public Id serviceAssignmentId { get; set; }
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
+    public static List<Set<String>> previousEntryAssociation = new List<Set<String>>{
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsDate',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsDateTime'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsBloodPressure',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsBP'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsHeartRate',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsHeartRate'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsO2Saturation',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsO2Sat'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%HRinterventionNeeded'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%O2interventionNeeded'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsR',
+            'CNA Workbook%Diagnostics%Vitals Signs%vitalR'
+        },
+        new Set<String>{
+            'Head to Toe%Diagnostics%Vitals Signs%vitalsTemperature',
+            'CNA Workbook%Diagnostics%Vitals Signs%signsTemp'
+        },
+        new Set<String>{
+            'CNA Workbook%Diagnostics%Vitals Signs%weightAtAdmission'
+        },
+        new Set<String>{
+            'Head to Toe%Neurological%Cognitive%ranchoLevel'
+        }
+    };
 
     transient List<Eval_Drop_Down__c> dd;
     transient List<Eval__c> listEvalItems;
@@ -40,7 +89,7 @@ public with sharing class GenerateEvalComponent {
         }
         return str;
     }
-    
+
     public transient string evalSectionLastMod;
     public string getevalSectionLastMod() {
         String str = '';
@@ -59,7 +108,7 @@ public with sharing class GenerateEvalComponent {
             }
         }
     }
-    
+
 
     public transient boolean hasErros { get; private set;}
 
@@ -78,7 +127,7 @@ public with sharing class GenerateEvalComponent {
     }
 
     public GenerateEvalComponent( ) {
-        
+
         mapEvalItems = new Map<ID, Eval__c>();
         mapEvalValues = new Map<ID, Eval_Value__c>();
         hasErros = false;
@@ -111,7 +160,7 @@ public with sharing class GenerateEvalComponent {
                and visible__c = true
             order by category_sequence__c, sub_category_sequence__c, field_sequence__c
         ];
-        
+
         //EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
         if (evalSecType == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV'){
             listEvalItems = [ select id,
@@ -135,11 +184,11 @@ public with sharing class GenerateEvalComponent {
                                    and category__c =:cat
                                    and sub_category__c = :subcat
                                    and visible__c = true
-                                   and (NOT htmlid__c like 'HeadtoToeDiagnosticsIVQuestion%')  
+                                   and (NOT htmlid__c like 'HeadtoToeDiagnosticsIVQuestion%')
                                 order by category_sequence__c, sub_category_sequence__c, field_sequence__c
                             ];
         }
-        
+
         // create a map for easy access
         mapEvalItems = new Map<ID, Eval__c>(listEvalItems);
         List<String> evalIds = new List<String>();
@@ -188,24 +237,39 @@ public with sharing class GenerateEvalComponent {
         for ( Eval_Value__c ev: listEvalValues ) {
             mapEvalValues.put( ev.eval__c, ev);
         }
-        
+
 
         // system.debug( 'Populated values:' + mapEvalValues );
         String newHtmlLbl = '';
         String newHTMLfld = '';
         String strval = '';
         String reqfldHTML = '';
+        Set<String> fieldsWithPreviousEntries = new Set<String>();
+        for (Set<String> association: previousEntryAssociation) {
+            fieldsWithPreviousEntries.addAll(association);
+        }
         for( Eval__c e : listEvalItems ){
             try {
                 newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
                 newHTMLfld = '';
                 strval = '';
                 system.debug(' field type is ' + e.field_type__c);
-                if (e.Required__c) {
-                    reqfldHTML = '<div class="requiredInput" style="display: table-cell;"><div class="requiredBlock"></div>';
-                } else {
-                    reqfldHTML = '<div style="display: table-cell;">';
+                String composite = String.format('{0}%{1}%{2}%{3}', new List<String>{
+                    e.eval_type__r.name,
+                    e.category__c,
+                    e.sub_category__c,
+                    e.htmlid__c
+                });
+                String prevEntryStr = '';
+                if (fieldsWithPreviousEntries.contains(composite)) {
+                    prevEntryStr += ' data-previous-entry="' + composite + '"';
                 }
+                if (e.Required__c) {
+                    reqfldHTML = '<div class="requiredInput" style="display: table-cell;"' + prevEntryStr + '><div class="requiredBlock"></div>';
+                } else {
+                    reqfldHTML = '<div style="display: table-cell;"'+ prevEntryStr +'>';
+                }
+
 
                 if ( e.Field_Type__c == 'Hidden' )  {
                     newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
@@ -299,15 +363,15 @@ public with sharing class GenerateEvalComponent {
                         }
                         if ( e.htmlid__c == 'weightAtAdmission') {
                             newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="weightAtAdmission">(kg) OR</label>';
-                            newHTMLfld += ' <span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightAtAdmissionlb">(lb)</label>';
+                            newHTMLfld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightAtAdmissionlb">(lb)</label>';
                             newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" /> <label for="weightAtAdmissionoz">(oz)</label></span>';
                         }  else if ( e.htmlid__c == 'kg') {
                             newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="kg" id="kgLabel2">(kg) OR</label>';
-                            newHTMLfld += ' <span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightlb" id="weightlbLabel">(lb)</label>';
+                            newHTMLfld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightlb" id="weightlbLabel">(lb)</label>';
                             newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" /> <label for="weightoz" id="weightozLabel">(oz)</label></span>';
                         } else if ( e.htmlid__c == 'heightAtAdmission') {
                             newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'cm\');" /> <label for="heightAtAdmission">(cm) OR</label>';
-                            newHTMLfld += ' <span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionft"  size="6" name="" type="text" onkeyUp="return calculate(this, \'ft\');" /> <label for="heightAtAdmissionft">(ft)</label>';
+                            newHTMLfld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionft"  size="6" name="" type="text" onkeyUp="return calculate(this, \'ft\');" /> <label for="heightAtAdmissionft">(ft)</label>';
                             newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionin"  size="6" name="" type="text" onkeyUp="return calculate(this, \'inc\');" /> <label for="heightAtAdmissionin">(in)</label></span>';
                         } else {
                             newHTMLfld +=  '/>';
@@ -647,8 +711,105 @@ public with sharing class GenerateEvalComponent {
               + (namespace != null && namespace != '' ? namespace + '__' : '')
               + resourceName;
         } else return '';
+    }
 
-}
+    @RemoteAction
+    public static EvalValue[] getPreviousEntries(String composite, Id serviceAssignmentId) {
+        List<Evaluation__c> evaluations = [
+            SELECT Id
+              FROM Evaluation__c
+             WHERE ServiceAssignment__c = :serviceAssignmentId
+        ];
+        String evaluationStr = '(';
+        for (Evaluation__c evaluation: evaluations) {
+            evaluationStr += '\'' + evaluation.Id + '\', ';
+        }
+        evaluationStr = evaluationStr.removeEnd(', ');
+        evaluationStr += ')';
+        List<String> split = composite.split('%', 0);
+        String query =
+            'SELECT Id, Boolean__c, Currency__c, Date_Time__c, Number_No_Decimal__c, ' +
+                   'Text_Over_250__c, Text_Under_250__c, What_Id__c, Eval__r.Field_Type__c, ' +
+                   'Eval__r.Field_Sub_Type__c, Eval__r.Length__c, LastModifiedDate, ' +
+                   'Eval__r.Eval_Type__r.Name, Eval__r.Category__c, Eval__r.Sub_Category__c, ' +
+                   'Eval__r.Field_Name__c ' +
+             'FROM Eval_Value__c ' +
+            'WHERE What_Id__c IN ' + evaluationStr + ' ' +
+              'AND (';
+        Integer index = 0;
+        for (Set<String> association: previousEntryAssociation) {
+            if (association.contains(composite)) {
+                for (String fields: association) {
+                    if (index != 0) {
+                        query += 'OR ';
+                    }
+                    query += String.format(
+                        '(Eval__r.Eval_Type__r.Name=\'\'{0}\'\' AND Eval__r.Category__c=\'\'{1}\'\' ' +
+                        'AND Eval__r.Sub_Category__c=\'\'{2}\'\' AND Eval__r.htmlid__c=\'\'{3}\'\') ',
+                        fields.split('%', 0));
+                    index ++;
+                }
+            }
+        }
+        query += ') ' +
+            'ORDER BY LastModifiedDate DESC ' +
+            'LIMIT 7';
+        EvalValue[] evalValues = new EvalValue[] {};
+        System.debug(query);
+        for (Eval_Value__c evalValue: Database.query(query)) {
+            evalValues.add(new EvalValue(evalValue));
+        }
+        return evalValues;
+    }
 
+    public class EvalValue {
+        public String value { get; set; }
+        public Id evaluationId { get; set; }
+        public String lastModifiedDate { get; set; }
+        public Eval_Value__c evalValueSObject { get; set; }
 
+        public EvalValue(Eval_Value__c evalValue) {
+            evaluationId = evalValue.What_Id__c;
+            value = evalValue.Text_Under_250__c;
+            lastModifiedDate = evalValue.LastModifiedDate.format('MM/dd/yyyy HH:mm');
+            evalValueSObject = evalValue;
+            if (evalValue.Eval__r.Field_Type__c == 'Boolean')  {
+                if (evalValue.Eval__r.Field_Sub_Type__c == 'Checkbox') {
+                    if (evalValue.Boolean__c) {
+                        value = 'Yes';
+                    } else {
+                        value = 'No';
+                    }
+                } else if (evalValue.Eval__r.Field_Sub_Type__c == 'Dropdown') {
+                    if (evalValue.Text_Under_250__c == '1') {
+                        value = 'Yes';
+                    } else {
+                        value = 'No';
+                    }
+                }
+            } else if (evalValue.Eval__r.Field_Type__c=='String') {
+                if (evalValue.Eval__r.length__c > 250) {
+                    value = evalValue.Text_Over_250__c;
+                } else {
+                    value = evalValue.Text_Under_250__c;
+                }
+            } else if (evalValue.Eval__r.Field_Type__c == 'Double'){
+                value = evalValue.Text_Under_250__c;
+            } else if (evalValue.Eval__r.Field_Type__c == 'Int'){
+                value = String.valueOf(evalValue.Number_No_Decimal__c);
+            } else if (evalValue.Eval__r.Field_Type__c == 'DropDown') {
+                value = evalValue.Text_Under_250__c;
+            }  else if (evalValue.Eval__r.Field_Type__c == 'Date') {
+                value = evalValue.Date_Time__c.date().format();
+            } else if (evalValue.Eval__r.Field_Type__c == 'Datetime') {
+                value = evalValue.Date_Time__c.format('MM/dd/yyyy HH:mm');
+            } else if (evalValue.Eval__r.Field_Type__c == 'Multiselect') {
+                if (evalValue.Eval__r.length__c > 250) {
+                    value = evalValue.Text_Over_250__c;
+                } else {
+                    value = evalValue.Text_Under_250__c;
+                }
+            }
+        }
+    }
 }

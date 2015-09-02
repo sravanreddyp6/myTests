@@ -16,12 +16,40 @@ private class HomePageControllerTest{
 		Person_Being_Referred__c testPBR = [Select Id,Name,Full_Name__c,State__c,First_Name__c, Last_Name__c, Age__c, Date_of_Birth__c From Person_Being_Referred__c a WHERE a.Id = :pbr.Id];
 		return testPBR;
 	}
+    public static User createTestUserWithRole(string userAlias, string userName, string firstName, string lastName, string OperatingGroup, string DeveloperName) {
+		Profile prof = [select id, name from Profile where name ='System Administrator'];
+        UserRole ur = [select Id, Name, DeveloperName from USerRole where DeveloperName =: DeveloperName ];
+        User testUser = new User(alias = userAlias,
+                                email='dsurfleet@appirio.com',
+                                emailencodingkey='UTF-8',
+                                lastname=lastName,firstname=firstName, languagelocalekey='en_US',
+                                localesidkey='en_US',
+                                profileid = prof.Id, UserRoleId=ur.Id, 
+                                timezonesidkey='America/Los_Angeles',
+                                username=username + System.currentTimeMillis());/*,
+                                operating_group__c=OperatingGroup);*/
+        insert testUser;
+        Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Salesforce_User_Account__c=testUser.id);
+        insert tmnUser;
+
+        return testUser;
+    }
+
 
 	static testMethod void test(){
-
-		Service_Location__c testLoc = Referral_CreateTestData.createServiceLocation('Test565');
-		User testUser = Referral_CreateTestData.createTestUser('testU','ReferralTestUser@tmn.com.test','Test','Test','Care Meridian');
-		Person_Being_Referred__c pbr = createPersonBeingReferred('testfname','testlname',25, null);
+		User testUser;
+        User testUser2;
+        User testUser3;
+		User testUser4;
+        User currUsr = [select Name from User where Id =:UserInfo.getUserId()];
+		system.runAs(currUsr){
+		 testUser = createTestUserWithRole('testU','ReferralTestUser@tmn.com.test','Test','Test','Redwood', 'AZ_Phoenix_Clinical_Users');
+         testUser2 = createTestUserWithRole('testU2','ReferralTestUser2@tmn.com.test','Test','Test','CareMeridian', 'IA');
+		 testUser3 = createTestUserWithRole('testU3','ReferralTestUser3@tmn.com.test','Test','Test','NeuroRestorative','IA');
+		 testUser4 = createTestUserWithRole('testU4','ReferralTestUser4@tmn.com.test','Test','Test','Cambridge','IA');
+        }
+        Service_Location__c testLoc = Referral_CreateTestData.createServiceLocation('Test565');    
+        Person_Being_Referred__c pbr = createPersonBeingReferred('testfname','testlname',25, null);
 		Related_Party__c rp = Referral_CreateTestData.createRelatedParty('Test565', 'Other', pbr);
 		Referral__c ref = Referral_CreateTestData.createReferral('Generic', 'New', 'Test565', pbr);
 
@@ -35,10 +63,7 @@ private class HomePageControllerTest{
 				testUser, Date.Today()+1, 'Test Comment', ref);
 		Task tsk2 = Referral_CreateTestData.createReferralTask('Test Subject', 'Normal', 'Not Started',
 				testUser, Date.Today()-1, 'Test Comment', ref);
-		User testUser2 = Referral_CreateTestData.createTestUser('testU2','ReferralTestUser2@tmn.com.test','Test','Test','CareMeridian');
-		User testUser3 = Referral_CreateTestData.createTestUser('testU3','ReferralTestUser3@tmn.com.test','Test','Test','NeuroRestorative');
-		User testUser4 = Referral_CreateTestData.createTestUser('testU4','ReferralTestUser4@tmn.com.test','Test','Test','Cambridge');
-
+		
 		Test.startTest();
 		System.runAs(testUser){
 
@@ -62,8 +87,11 @@ private class HomePageControllerTest{
 			controller.mineTasks();
 			controller.viewstsk = 'This Month';
 			controller.mineTasks();
-
-
+            ApexPages.currentPage().getParameters().put('isIARole', 'true');
+			controller.NewPlan();
+			controller.newResponse();
+			controller.saveResponse();
+			controller.checkOverlap(DateTime.parse('11/6/2013 12:00 AM'), DateTime.parse('11/6/2015 12:00 AM'),DateTime.parse('11/6/2012 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'));
 		}
 		System.runAs(testUser2){
 			PageReference pageRef = new PageReference('/apex/HomePage_Search');
@@ -73,6 +101,7 @@ private class HomePageControllerTest{
 			controller.FrstName = 'testfname';
 			controller.LstName = 'testlname';
 			controller.getsearchNames();
+			controller.checkOverlap(DateTime.parse('11/6/2014 12:00 AM'), DateTime.parse('11/6/2013 12:00 AM'),DateTime.parse('11/6/2013 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'));
 		}
 		System.runAs(testUser3){
 			PageReference pageRef = new PageReference('/apex/HomePage_Search');
@@ -82,6 +111,8 @@ private class HomePageControllerTest{
 			controller1.getviewvalues();
 			controller1.FrstName = '';
 			controller1.LstName = '';
+            controller1.checkOverlap(DateTime.parse('11/6/2014 12:00 AM'), null,DateTime.parse('11/6/2013 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'));
+
 		}
 		System.runAs(testUser4){
 			PageReference pageRef = new PageReference('/apex/HomePage_Search');
@@ -115,12 +146,13 @@ private class HomePageControllerTest{
 	// SHAUN-47:  Method added to test new code that checks for presence of TMN_User__c record, and throws error on ESD Home page if not present. J. Gilliam, 10/16/14.
 	static testMethod void testTmnUserCheck() {
 		Profile prof = [select id, name from Profile where name ='System Administrator'];
+        UserRole ur = [select Id, Name, DeveloperName from USerRole where DeveloperName =: 'AZ_Phoenix_Clinical_Users' ];
 		User testUserAlpha = new User(alias = 'testAlp',
 				email='testAlpha@thementornetwork.com',
 				emailencodingkey='UTF-8',
 				lastname='TestAlphaLastName',firstname='TestAlphaFirstName', languagelocalekey='en_US',
 				localesidkey='en_US',
-				profileid = prof.Id,
+				profileid = prof.Id, UserRoleId=ur.Id,
 				timezonesidkey='America/New_York',
 				username='testAlpha' + System.currentTimeMillis() + '@thementornetwork.com');
 		insert testUserAlpha;
@@ -162,6 +194,18 @@ private class HomePageControllerTest{
 			// Further confirms that more than zero TMN_User__c records exist for our user when instantiation of the constructor succeeds.
 			System.assert(countTmnUsers>0);
 		}
+
+	}
+    static testMethod void unitTest() {
+        TMN_User__c tmnRW  = new TMN_User__c(Operating_Group__c = 'Redwood', Salesforce_User_Account__c= UserInfo.getUserId() );    
+        insert tmnRW;
+       	HomePageController homeCr = new HomePageController();
+		List<String> objnm = homeCr.objname;
+        String obj = homeCr.objectName;
+        String og = homeCr.getOperatingGroup();
+        Id saidAc = homeCr.serviceAssignmentIdForAction;
+        HomePageController.wrapper homeCntr = new HomePageController.wrapper(Id.valueOf('000000000000000000'),Id.valueOf('000000000000000000'),Id.valueOf('000000000000000000'),'test',Datetime.now(),'test','test');
+		homeCr.checkOverlap(DateTime.parse('11/6/2014 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'),DateTime.parse('11/6/2014 12:00 AM'), DateTime.parse('11/6/2014 12:00 AM'));
 
 	}
 

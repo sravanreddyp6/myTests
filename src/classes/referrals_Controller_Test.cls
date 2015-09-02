@@ -1,16 +1,44 @@
 @isTest
 public class referrals_Controller_Test{
-    static testMethod void testEdit() {
-        User testUser = Referral_CreateTestData.createTestUser('testU3','ReferralTestUser3@tmn.com.test');
+    static testMethod void testEdit2(){
+        User testUser = Referral_CreateTestData.createTestUser('testU3','ReferralTestUser3@tmn.com.test','myfirst','mylast','NeuroRestorative');
 
         PageReference pageRef = Page.referral;
+pageRef.getParameters().put('firstName','');
+pageRef.getParameters().put('lastName','');
+pageRef.getParameters().put('personGender','Male');
+pageRef.getParameters().put('personAge','0');
+pageRef.getParameters().put('personDOB','10/10/2010');
+
+
         Test.setCurrentPage(pageRef);
-        ApexPages.StandardController sc = new ApexPages.StandardController(new Referral__c());
+        recordtype rt = [select id from recordtype where DeveloperName ='NeuroRestorative' AND SobjectType ='Referral__c'];
+        ApexPages.StandardController sc = new ApexPages.StandardController(new Referral__c(recordtype = rt));
         referrals_Controller controller = new referrals_Controller(sc);
         System.assert(controller.relParty != null);
         System.assert(controller.relPartyFile != null);
         System.assert(controller.currentRefId == null);
         controller.checkRedFlags();
+
+//adding some extra items for %
+//referralRecordType
+        string myStr = controller.userIdToAssignTasks;
+        boolean myBool = controller.showNeuroFeatures;
+        integer myInt = controller.searchedServiceLocationResultSize;
+        myInt = controller.searchedServiceLocationResultSize2;
+        myBool = controller.gethasPrimaryFS();
+        myStr = controller.relPartiesJSON;
+        myStr = controller.locationsJSON;
+        myBool = controller.hasNonClosedPrimaryLocation;
+        myBool = controller.isLinkedPersonBeingServed;
+        //myBool = controller.checkNRRequiredCloseAdmitFields();
+        //myBool = controller.checkNRRequiredCloseNonAdmitFields();
+       // controller.referralRecord.oldPBS__c = '123';
+       // controller.unlinkPBS();
+        controller.unsetStatusHelperFiels();
+
+//
+
 
         controller.personBeingRefRecord.first_name__c = 'Kossi';
         controller.personBeingRefRecord.middle_initial__c ='T' ;
@@ -56,7 +84,68 @@ public class referrals_Controller_Test{
         controller.stateFilter2 = '*';
         controller.search2();
 
-        System.AssertEquals(controller.tmpResults2.size(),[select count() from service_location__c where state__c like '%']);
+        System.AssertEquals(controller.tmpResults2.size(),[select count() from service_location__c where state__c like '%']);    
+    
+    
+        controller.nameFilter = '*';
+        controller.search();
+
+        controller.nameFilter = 'None';
+        controller.search();
+
+        controller.cityFilter = '*';
+        controller.search();
+
+        controller.cityFilter = 'None';
+        controller.search();
+
+        controller.stateFilter = '*';
+        controller.search();
+
+        controller.stateFilter = 'ca';
+        controller.search();
+
+        controller.nameFilter = '';
+
+        controller.cityFilter = '*';
+        controller.search();
+
+        controller.cityFilter = 'None';
+        controller.search();
+
+        controller.cityFilter = '';
+
+        controller.stateFilter = 'ca';
+        controller.search();
+
+        controller.stateFilter = '*';
+        controller.search();
+
+        System.AssertEquals(controller.tmpResults.size(),[select count() from service_location__c where state__c like '%']);    
+    
+    }
+
+
+    static testMethod void testEdit() {
+        User testUser = Referral_CreateTestData.createTestUser('testU3','ReferralTestUser3@tmn.com.test','myfirst','mylast','NeuroRestorative');
+
+        PageReference pageRef = Page.referral;
+        Test.setCurrentPage(pageRef);
+        recordtype rt = [select id from recordtype where DeveloperName ='NeuroRestorative' AND SobjectType ='Referral__c'];
+        ApexPages.StandardController sc = new ApexPages.StandardController(new Referral__c(recordtype = rt));
+        referrals_Controller controller = new referrals_Controller(sc);
+        System.assert(controller.relParty != null);
+        System.assert(controller.relPartyFile != null);
+        System.assert(controller.currentRefId == null);
+        controller.checkRedFlags();
+
+        controller.personBeingRefRecord.first_name__c = 'Kossi';
+        controller.personBeingRefRecord.middle_initial__c ='T' ;
+        controller.personBeingRefRecord.last_name__c = 'last';
+
+        controller.createPBR();
+
+        controller.ReferralRecord.state_for_preferred_service__c = 'indiana';
 
         Referral_CreateTestData.createServiceLocations('Testings',100);
         controller.resetSearchItems2();
@@ -96,41 +185,7 @@ public class referrals_Controller_Test{
         controller.showAddLocation();
         controller.search();
 
-        controller.nameFilter = '*';
-        controller.search();
 
-        controller.nameFilter = 'None';
-        controller.search();
-
-        controller.cityFilter = '*';
-        controller.search();
-
-        controller.cityFilter = 'None';
-        controller.search();
-
-        controller.stateFilter = '*';
-        controller.search();
-
-        controller.stateFilter = 'ca';
-        controller.search();
-
-        controller.nameFilter = '';
-
-        controller.cityFilter = '*';
-        controller.search();
-
-        controller.cityFilter = 'None';
-        controller.search();
-
-        controller.cityFilter = '';
-
-        controller.stateFilter = 'ca';
-        controller.search();
-
-        controller.stateFilter = '*';
-        controller.search();
-
-        System.AssertEquals(controller.tmpResults.size(),[select count() from service_location__c where state__c like '%']);
 
         Referral_CreateTestData.createServiceLocations('Testing',100);
         controller.resetSearchItems();
@@ -204,10 +259,10 @@ public class referrals_Controller_Test{
             new Admission_Step__c(Name='1', Subject__c='Subject 1', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro1'),
             new Admission_Step__c(Name='2', Subject__c='Subject 2', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro2'),
             new Admission_Step__c(Name='3', Subject__c='Subject 3', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro3'),
-         	new Admission_Step__c(Name='4', Subject__c='Schedule Assessment', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro4'),
+            new Admission_Step__c(Name='4', Subject__c='Schedule Assessment', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro4'),
             new Admission_Step__c(Name='5', Subject__c='Complete Assessment', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro5'),
-			new Admission_Step__c(Name='6', Subject__c='Assessment follow-up with Referral Source', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro6'),
-		    new Admission_Step__c(Name='7', Subject__c='Upload CAT to iServe', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro7'),
+            new Admission_Step__c(Name='6', Subject__c='Assessment follow-up with Referral Source', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro6'),
+            new Admission_Step__c(Name='7', Subject__c='Upload CAT to iServe', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro7'),
             new Admission_Step__c(Name='8', Subject__c='Schedule a Red Flag call (if applicable)', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro8'),
             new Admission_Step__c(Name='9', Subject__c='Admission Scheduled', Record_Type__c='NeuroRestorative', Unique_Id__c='neuro9')
             
@@ -225,5 +280,7 @@ public class referrals_Controller_Test{
         controller.dummyTask.OwnerId = u.Id;
         controller.addAdmissionSteps();
         System.assertEquals(oldNumTask + numberOfStepSubjects, controller.activities.size());
+        
+        controller.unlinkPBS();
     }
 }
