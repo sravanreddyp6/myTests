@@ -1184,7 +1184,7 @@ public without sharing class ServiceAssignmentExt {
             if(admission.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Highest_Level_of_Education_at_End_of_Ser__c == null){
                 errors.add('Highest Level of Education at End of Service : You must enter a value.');
             }
-            if(admission.Network_offering__c == 'ARY' && opGroup == 'Cambridge' && (theServAssign.Program_Detail__c.Contains('FCT') || theServAssign.Program_Detail__c.Contains('HH')) &&theservAssign.Total_no_of_Internal_moves_during_Servic__c == null){
+            if(admission.Network_offering__c == 'ARY' && opGroup == 'Cambridge' && (theServAssign.Model__c.Equals('FCT') || theServAssign.service_location__r.service_value__c.Contains('Host Home')) && theservAssign.Total_no_of_Internal_moves_during_Servic__c == null){
                 errors.add('Total Number of Internal Moves During Service : You must enter a value.');
             }
         }

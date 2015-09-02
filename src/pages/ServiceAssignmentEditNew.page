@@ -965,13 +965,13 @@
 				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
 						<apex:outputLabel value="Total Number of Internal Moves During Service" />
 						<apex:outputPanel >
-							<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY' && (Contains(theservAssign.Program_Detail__c,'FCT') || Contains(theservAssign.Program_Detail__c,'HH'))}">
+							<apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }">
 							<div class="requiredInput">
 								<div class="requiredBlock"></div>
 									<apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
 							</div>
 							</apex:outputPanel>
-							<apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY' || (admission.Network_Offering__c == 'ARY' && !(Contains(theservAssign.Program_Detail__c,'FCT') || Contains(theservAssign.Program_Detail__c,'HH')))}" >
+							<apex:outputPanel rendered="{! NOT(admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')))  }" >
 								<apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
 							</apex:outputPanel>
 						</apex:outputPanel>
