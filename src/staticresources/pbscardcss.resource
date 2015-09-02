@@ -29,4 +29,4 @@ text-decoration: underline;
 .lta-row label{font-size: 11pt !important;}
 .lta-row {font-size: 11pt !important;}
 #pbsCard-serviceLinks label{color: #017dc3;}
-#breadcrumb{padding: 2px 2px 10px;}
+#breadcrumb{padding: 2px 2px 10px; font-weight: bold;}
