@@ -108,6 +108,8 @@ function setupDates() {
 					<apex:inputField value="{!admission.Discharged_To__c}" required="{!reqDcTo}" />
 				</apex:pageBlockSection>  
 			</apex:outputPanel>  
+			
+		 <!-- end PRI-218/19 -->
             <apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="false" rendered="{! useDischargeSection && admission.status__c == 'Discharged'}" >
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Discharged Date/Time" />
@@ -170,7 +172,6 @@ function setupDates() {
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!admission.Discharged_Reason_Additional__c}" />
                 <apex:outputText value="" />
-                <apex:inputField value="{!admission.Discharged_To__c}" />
                 
             </apex:pageBlockSection>
             
