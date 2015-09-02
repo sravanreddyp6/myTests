@@ -6,11 +6,21 @@ public with sharing class Incident_Form_CreateEdit {
     public string recordtypeName {get; set;}
     public boolean isNew{get; set;}
     public String personListJSON { get; set; }
+    public string getprogDetail() {    	
+    	if( SAid != null ){
+    		return [select name, id, Program_Detail__c from service_assignment__c where id=:SAid].Program_Detail__c;
+    	}
+    	else if (incident.service_assignment__c != null){
+    		return incident.Service_Assignment__r.Program_Detail__c;
+    	
+    	}
+    	return '';
+	}
     
     public Incident_Form_CreateEdit(ApexPages.StandardController controller) {
         this.controller = controller;
         if(!test.isRunningTest()){
-            controller.addFields(new list<String>{'Recordtype.Name'});// Add additonal fields here  
+            controller.addFields(new list<String>{'Recordtype.Name', 'Service_Assignment__r.Program_Detail__c'});// Add additonal fields here  
         }
         this.incident = (Incident__c)controller.getRecord();
         //New record creation

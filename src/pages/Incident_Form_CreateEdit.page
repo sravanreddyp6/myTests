@@ -157,7 +157,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
                         <apex:outputLabel value="Which Current Service is Related to the Incident? "  />
                         <apex:outputField value="{!Incident__c.Service_Assignment__c }" />
                     </apex:pageBlockSectionItem>
-                    <apex:outputField label="Program Detail" value="{!Incident__c.Service_Assignment__r.Program_Detail__c }" />
+                    <apex:outputText label="Program Detail" value="{!progDetail }" />
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="1" id="incidentTimingSection" title="Timing" showHeader="true" collapsible="true" >
                     <apex:pageBlockSectionItem id="timeSectionItem">
