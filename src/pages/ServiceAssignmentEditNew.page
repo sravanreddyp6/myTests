@@ -10,12 +10,14 @@
 	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
 
+
     <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS" />
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
-	
+  
+
 	<style>
 		.dialogLoadingSpinner {
 			margin-left: 5px;
@@ -351,7 +353,7 @@
 		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus">
 			<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 		</apex:actionFunction>
-		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc" status="SaveStatus1" />
+		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc, numOutOfHomePlacementsPreService" status="SaveStatus1" />
 		<apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" rendered="{!canEditSA}" />
 		<!-- To set focus on Top -->
 		<input id="hiddenElementId" type="hidden" />
@@ -846,22 +848,23 @@
 						</apex:outputPanel>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
-				
-				<apex:pageBlockSectionItem rendered="{!vfVarIsCB}" >
-					<apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" />
-					<apex:outputPanel >
-						<apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY' && (Contains(theservAssign.Program_Detail__c,'FCT') || Contains(theservAssign.Program_Detail__c,'HH'))}">
-							<div class="requiredInput">
-								<div class="requiredBlock"></div>
+
+					<apex:pageBlockSectionItem rendered="{!vfVarIsCB}"  >
+						<apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" >
+						</apex:outputLabel>
+						<apex:outputPanel id="numOutOfHomePlacementsPreService">
+							<apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }">
+								<div class="requiredInput">
+									<div class="requiredBlock"></div>
+									<apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
+								</div>
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{! NOT(admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) ) }" >
 								<apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
-							</div>
+							</apex:outputPanel>
 						</apex:outputPanel>
-						<apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY' || (admission.Network_Offering__c == 'ARY' && !(Contains(theservAssign.Program_Detail__c,'FCT') || Contains(theservAssign.Program_Detail__c,'HH')))}" >
-							<apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
-						</apex:outputPanel>
-					</apex:outputPanel>
-				</apex:pageBlockSectionItem>
-				
+					</apex:pageBlockSectionItem>
+
 				<apex:pageBlockSectionItem rendered="{!isNR}">
 					<apex:outputLabel value="Rancho Score at Start of Service" />
 					<apex:outputPanel >
