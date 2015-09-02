@@ -65,7 +65,7 @@ public with sharing class GenerateEvalSectionPDF {
 			goalscontroller.init( evaluationID );
 			objectives = goalscontroller.objectives;
 		}		
-		pbsObj = [SELECT Id, FirstName, LastName, Birthdate, PBS_Identifier__c FROM Contact WHERE id=:thisEval.ServiceAssignment__r.Admission__r.Person_Being_Served__c];		
+		pbsObj = [SELECT Id, FirstName, LastName, Birthdate, PBS_Identifier__c,Avatar_ID__c FROM Contact WHERE id=:thisEval.ServiceAssignment__r.Admission__r.Person_Being_Served__c];		
         // Naming the PDF in case this controller is used for the PDF page
         String file;
         file = thisEval.Name+'.pdf';

@@ -1,4 +1,4 @@
-<apex:page controller="Progress_Notes_List_View_Controller"  readOnly="true">
+<apex:page controller="Progress_Notes_List_View_Controller" sidebar="false" readOnly="true">
     <apex:includeScript value="{!$Resource.jquery}"/>    
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <style>  
@@ -6,6 +6,11 @@
         #tabContainer {
         display: none;
         }
+        
+        /* Used to hide the search section of the default salesforce side bar */
+      	.sidebarModule{
+		display:none;
+      	}
         
         /* Hide the createNew section of the default salesforce sidebar */
         #createNew {
@@ -21,12 +26,16 @@
         .recycleBinModule{
         display: none;
         }
-    </style> 
+       
+    </style>  
+     
+    <c:PersonalRecord pbsId="{!pbsid}" servAssignId="{!said}" parentPage="Progress_Notes_Log" servAssignNew="true" admId="{!admissionId}" />
+
     <script>
     var j$ = jQuery.noConflict();
     </script>    
     <apex:form >
-        <c:PersonalRecordBreadCrumbsOnly pbsId="{!pbsid}" servAssignId="{!said}" parentPage="Progress_Notes_Log" servAssignNew="true" admId="{!admissionId}"/>
+       <!-- <c:PersonalRecordBreadCrumbsOnly pbsId="{!pbsid}" servAssignId="{!said}" parentPage="Progress_Notes_Log" servAssignNew="true" admId="{!admissionId}"/> -->
         <apex:panelGrid id="details" width="100%"> 
             <apex:actionStatus id="ajaxStatus" startText="Loading..."  stopText=""/>
             <apex:pageBlock title="Progress Notes Log" id="results"> 
@@ -67,19 +76,4 @@
             </apex:pageBlock>
         </apex:panelGrid>
     </apex:form>
-    <apex:pageBlock > 
-        <div id="blue-card-vertical">         
-            <c:PersonalRecord_Vertical pbsId="{!pbsid}" servAssignId="{!said}" parentPage="Progress_Notes_Log" servAssignNew="true" admId="{!admissionId}"/>
-        </div>
-        <script>
-        /* Shaun Added --> Use jQuery to put the blue card in the Default Salesforce Sidebar */ 
-        j$("#sidebarDiv").append(j$("#blue-card-vertical"));
-        
-        /* The Salesforce Sidebar is "sticky". So if it is close open it by default. */
-        j$(window).load(function() {
-            if (document.getElementById('handlebarContainer') && document.getElementById('handlebarContainer').title.indexOf('Close Sidebar') < 0)
-                document.getElementById('handlebarContainer').click();
-        });
-        </script>   
-    </apex:pageBlock>
-</apex:page>
+  </apex:page>

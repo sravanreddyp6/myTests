@@ -49,20 +49,21 @@
                     <apex:outputField label="Manager Email" value="{!TMNUser.Manager_Email__c}" />
                     <apex:outputField label="Accountable Approval Manager Email" value="{!TMNUser.Accountable_Manager_Mentor_Email__c}"/>                     
                  </apex:pageBlockSection>
-                 <apex:pageBlockSection title="System IDs" columns="2">
+
+                 <apex:PageBlockSection columns="2" title="Vendor Information" >
+                         <apex:outputField label="Vendor"  value="{!TMNUser.Vendor_list__c}" /> 
+                     <!--    <apex:outputField label="Vendor Name"  value="{!TMNUser.Vendor_Name__c}"  rendered="{!TMNUser.Vendor_list__c='OTHER'}"/> -->
+                          <apex:outputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" /> 
+                      <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
+                 </apex:PageBlockSection>  
+                   <apex:pageBlockSection title="System IDs" columns="2">
                     <apex:outputField label="Identity ID" value="{!TMNUser.Identity_ID__c}" />
                     <apex:outputField label="Salesforce Account" value="{!TMNUser.Salesforce_User_Account__c}"/>
                     <apex:outputField label="Network Username" value="{!TMNUser.Network_Username__c}"/>
                     <apex:outputField label="Employee ID" value="{!TMNUser.Employee_Number__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee'}"/>
                     <apex:outputField label="Taleo ID" value="{!TMNUser.Teleo_ID__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee'}"/>                                            
-                </apex:pageBlockSection>
-                 <apex:PageBlockSection columns="2">
-                         <apex:outputField label="Vendor"  value="{!TMNUser.Vendor_list__c}" /> 
-                         <apex:outputField label="Vendor Name"  value="{!TMNUser.Vendor_Name__c}"  rendered="{!TMNUser.Vendor_list__c='OTHER'}"/> 
-                          <apex:outputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" /> 
-                      <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
-                        </apex:PageBlockSection>  
-                        <apex:pageBlock title="Existing Attachments" rendered="{!TMNUser.Vendor_list__c='OTHER'}">
+                </apex:pageBlockSection>          
+                     <!--   <apex:pageBlock title="Existing Attachments" rendered="{!TMNUser.Vendor_list__c='OTHER'}">
                        <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column style="padding-right: 9px;" headerValue="Title">
                     <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
@@ -75,7 +76,7 @@
                     <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
                 </apex:column>
                 </apex:pageBlockTable>
-            </apex:pageBlock>             
+            </apex:pageBlock>      -->       
             </apex:pageBlock>
         </apex:form>
         

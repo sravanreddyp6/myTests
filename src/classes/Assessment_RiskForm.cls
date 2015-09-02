@@ -119,7 +119,7 @@ public with sharing class Assessment_RiskForm {
         options.add(new SelectOption('Specific Plan','Specific Plan (Identify in detail any special arrangements which would need to be implemented in order for person to remain alone or unsupervised or identify where specific plan is located)'));                      
             return options;
         }
-            
+        
     String[] Level_Required_DayServices = new String[]{};
         public String[] getLevel_Required_DayServices () {
                 for(Integer item = 0; item < Level_Required_DayServices.size(); item++ ){
@@ -317,7 +317,7 @@ public with sharing class Assessment_RiskForm {
             {mode='edit';}
         mapCurrentResps  = new Map<id, Assessment_Response__c>();
         
-        CurrentResps = [Select id, Rating__c, Description_of_Risk__c, Plan_to_reduce_Risk__c, Assessment_Domain_Result__c, Question__c,  Question__r.Question_Domain__c, Question__r.Question_Title__c From Assessment_Response__c Where assessment__c = :assessment.id];
+        CurrentResps = [Select id, Rating__c, Description_of_Risk__c, Plan_to_reduce_Risk__c, Comment__c, Assessment_Domain_Result__c, Question__c, Question__r.External_Id__c,  Question__r.Question_Domain__c, Question__r.Question_Title__c From Assessment_Response__c Where assessment__c = :assessment.id];
        // system.debug(currentresps);
        
         ID idDomId = null;
@@ -344,7 +344,7 @@ public with sharing class Assessment_RiskForm {
             }
         }
         
-        List<Assessment_Question__c > tmpQ = [Select ID, Question_Number__c, Question_Title__c, Name, Question_Description__c, Assessment_Type__c,  
+        List<Assessment_Question__c > tmpQ = [Select ID, External_Id__c, Question_Number__c, Question_Title__c, Name, Question_Description__c, Assessment_Type__c,  
                         (Select 
                                 Name, Score__c, Rating__c, Color__c, Rating_Description__c, Show_These_Fields__c, id
                                 From Assessment_Question_Option__r 
@@ -379,108 +379,13 @@ public with sharing class Assessment_RiskForm {
             }
             system.debug(mapquestions);
             
-            DomainsInScope= [Select ID,  Name, Description__c, Assessment_Type__c, Header__c,  
-                        (Select Name, ID, Question_Description__c, Question_Title__c, Question_Number__c 
+            DomainsInScope= [Select ID,  Name, Description__c, Assessment_Type__c, Header__c,  External_Id__c,
+                        (Select Name, ID, Question_Description__c, Question_Title__c, Question_Number__c , External_Id__c
                                 From Question__r 
                                 Where ID in :QuestionsInScopeIDs
                                 Order By Question_Number__c) 
                 From Assessment_Domain__c Where id in :DomainsInScopeIDs Order By Sort_Order__c];
             
-        // Processing the ratio
-        /*
-        String ratio = this.assessment.Recommended_Day_Services_Staffing_Ratio__c;
-        if (ratio!= null && ratio!='1 to 4' && ratio!='1 to 6' && ratio!='1 to 8') {
-            recommendedDayServicesStaffingRatio = 'Other';
-            recommendedDayServicesStaffingRatioOther = ratio;
-            recommendedDayServicesStaffingRatioFull = recommendedDayServicesStaffingRatio + ' ' + ratio; 
-        } else {
-            recommendedDayServicesStaffingRatio = ratio;
-            recommendedDayServicesStaffingRatioFull = ratio;
-        }
-        */
-        // Processing Level of Services Required for Day Services
-        /*
-        Boolean showSpecificPlan = false;
-        String dayService = this.assessment.Services_Required_Level_Day_Services__c;
-        if (dayService==null) dayService = '';
-        if (dayService.indexOf('Current level of services required for health and safety supports')!=-1) {
-            levelRequiredDayServices = 'Current level of services required for health and safety supports';
-            String supportInterval = dayService.remove('Current level of services required for health and safety supports ');
-            if (supportInterval=='full day' || supportInterval=='partial day') {
-                levelRequiredDayServicesSupport = supportInterval;
-            } else {
-                levelRequiredDayServicesSupport = 'other';
-                levelRequiredDayServicesSupportOtherInterval = supportInterval;
-            }
-        } else if (dayService.indexOf('Can be without caregiver for')!=-1) {
-            String caregiverString = dayService.remove('Can be without caregiver for ');
-            String caregiverDuration = caregiverString.split(' ')[0];
-            String caregiverInterval = caregiverString.split(' ')[1];
-            if ((caregiverInterval!=' Minutes' && caregiverInterval!=' Hours') ||
-                !isNumber(caregiverDuration)) {
-                showSpecificPlan = true;
-            } else {
-                levelRequiredDayServices = 'Can be without caregiver for';
-                levelRequiredDayServicesWithoutCaregiverDuration = caregiverDuration;
-                levelRequiredDayServicesWithoutCaregiverInterval = caregiverInterval;
-            }
-        } else if (dayService == 'Other') {
-            levelRequiredDayServices = 'Other';
-        } else if (dayService != null && dayService != '') {
-            showSpecificPlan = true;
-        }
-        if (showSpecificPlan) {
-            levelRequiredDayServices = 'Specific Plan';
-            levelRequiredDayServicesSpecificPlan = dayService;
-            levelRequiredDayServicesFull = levelRequiredDayServices + ': ' + levelRequiredDayServicesSpecificPlan;
-        } else {
-            levelRequiredDayServicesFull = dayService;
-        }
-        */
-        // Processing Level of Support Required for Residential Services
-        
-        /*
-        showSpecificPlan = false;
-        String residentialService = this.assessment.Support_Required_Level_Residential__c;
-        if (residentialService==null) residentialService = '';
-        if (residentialService=='Support person on premises at all times when individual is home') {
-            levelRequiredResidential = residentialService;
-        } else if (residentialService.indexOf('Can be unsupervised at home for')!=-1) {
-            String homeUnsupervisedString = residentialService.remove('Can be unsupervised at home for ');
-            String homeUnsupervisedDuration = homeUnsupervisedString.split(' ')[0];
-            String homeUnsupervisedInterval = homeUnsupervisedString.split(' ')[1];
-            if ((homeUnsupervisedInterval!=' Minutes' && homeUnsupervisedInterval!=' Hours') ||
-                !isNumber(homeUnsupervisedDuration)) {
-                showSpecificPlan = true;
-            } else {
-                levelRequiredResidential = 'Can be unsupervised at home for';
-                levelRequiredResidentialUnsupervisedHome = homeUnsupervisedDuration;
-                levelRequiredResidentialUnsupervisedHomeInterval = homeUnsupervisedInterval;
-            }
-        } else if (residentialService.indexOf('Can be unsupervised in the community for')!=-1) {
-            String communityUnsupervisedString = residentialService.remove('Can be unsupervised in the community for ');
-            String communityUnsupervisedDuration = communityUnsupervisedString.split(' ')[0];
-            String communityUnsupervisedInterval = communityUnsupervisedString.split(' ')[1];
-            if ((communityUnsupervisedInterval!=' Minutes' && communityUnsupervisedInterval!=' Hours') ||
-                !isNumber(communityUnsupervisedDuration)) {
-                showSpecificPlan = true;
-            } else {
-                levelRequiredResidential = 'Can be unsupervised in the community for';
-                levelRequiredResidentialUnsupervisedCommunity = communityUnsupervisedDuration;
-                levelRequiredResidentialUnsupervisedCommunityInterval = communityUnsupervisedInterval;
-            }
-        } else if (residentialService != null && residentialService != '') {
-            showSpecificPlan = true;
-        }
-        if (showSpecificPlan) {
-            levelRequiredResidential = 'Specific Plan';
-            levelRequiredResidentialSpecificPlan = residentialService;
-            levelRequiredResidentialFull = levelRequiredResidential + ': ' + levelRequiredResidentialSpecificPlan;
-        } else {
-            levelRequiredResidentialFull = residentialService;
-        }
-        
-        */
     }
 
    
@@ -740,16 +645,31 @@ public with sharing class Assessment_RiskForm {
         try{
             hasErrorOnFinalize = false;
             boolean hasDesError = false;
-            
+            set<string> noDescOfRiskField = new set<string>();
+            noDescOfRiskField.add('IADAY17c');
+            noDescOfRiskField.add('IADAY17d');
             for(Assessment_Response__c local :  mapCurrentResps.values()){
                 if(local.Rating__c != null && local.Rating__c.equalsIgnoreCase('presents a risk')){
                     system.debug('entered loop for ' + local.id);
-                    IF(local.Description_of_Risk__c == null || local.Description_of_Risk__c == ''  )
+                    IF( (local.Description_of_Risk__c == null || local.Description_of_Risk__c == '' ) && !noDescOfRiskField.contains(local.Question__r.external_id__c) )
                         {
                             hasDesError =true;
                             system.debug('true ' + local.id);
-                            local.Description_of_Risk__c.addError('Description of Risk must be entered');
+                            if(local.Question__r.external_id__c == 'IADAY17a'){
+                            	local.addError('Please select an option for Dietary Needs: "Do the dietary needs address a significant health or safety risk to the individual?"');
+                            }
+                            else if(local.Question__r.external_id__c == 'IADAY17b'){
+                            	local.addError('Please select an option for PRN During Day Programming Hours: "Describe signs or symptoms that would require the need for the PRN to be administered"');
+                            }
+                            else{
+                            	local.Description_of_Risk__c.addError('Description of Risk must be entered');
+                            }
                         }
+                    //special IADAY-17 check
+                    if(local.Description_of_Risk__c =='CMA/MM observes the need based on the following symptoms:'){
+                    	if(local.comment__c == null || local.comment__c == ''){local.comment__c.addError('Symptoms must be entered');}
+                    }
+                    
                     IF(local.Plan_to_reduce_Risk__c ==null || local.Plan_to_reduce_Risk__c == '')
                         {
                             hasDesError = true;
@@ -760,6 +680,7 @@ public with sharing class Assessment_RiskForm {
             } 
            // this.validateHardcodedQuestions(true);
             if(hasDesError ){
+            	hasErrorOnFinalize = true;
                 mode='edit';
                 return null;
 

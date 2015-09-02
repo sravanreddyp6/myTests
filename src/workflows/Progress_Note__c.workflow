@@ -132,6 +132,15 @@
         <protected>false</protected>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>Unlock_Progress_Note</fullName>
+        <field>Locked__c</field>
+        <literalValue>0</literalValue>
+        <name>Unlock Progress Note</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>Update_Approval_Date</fullName>
         <field>Approval_Status_Date__c</field>
         <formula>TODAY()</formula>
