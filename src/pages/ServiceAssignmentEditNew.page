@@ -353,7 +353,9 @@
 		<apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus">
 			<apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
 		</apex:actionFunction>
-		<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc, numOutOfHomePlacementsPreService" status="SaveStatus1" />
+		<apex:actionRegion>
+			<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc, numOutOfHomePlacementsPreService, Total_no_of_Internal_moves_during_Servic__c_wrapper" status="SaveStatus1" />
+		</apex:actionRegion>
 		<apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" rendered="{!canEditSA}" />
 		<!-- To set focus on Top -->
 		<input id="hiddenElementId" type="hidden" />
@@ -405,10 +407,18 @@
 				<apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
 				<apex:outputField value="{!theServAssign.Status__c}" rendered="{!!editSA}" />
-				<apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}" >
-					<apex:actionSupport event="onchange" reRender="saEndSectionEdit" status="pageProcessing">
-					</apex:actionSupport>
-				</apex:inputField>
+				<apex:pageBlockSectionItem rendered="{!editSA}">
+					<apex:outputLabel>Status</apex:outputLabel>
+					<apex:outputPanel>
+						<apex:actionRegion>
+						<apex:inputField value="{!theServAssign.Status__c}"  >
+							<apex:actionSupport event="onchange" reRender="saEndSectionEdit" status="pageProcessing">
+							</apex:actionSupport>
+						</apex:inputField>
+						</apex:actionRegion>					
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
 				<apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
                 <apex:pageBlockSectionItem rendered="{!!editSA}">
@@ -486,8 +496,11 @@
 				<apex:pageblocksectionitem />
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
 				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR}">
+					
 					<apex:outputLabel value="Model" for="modelfield" />
-					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
+					
+						<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()"/ >
+
 				</apex:pageblocksectionitem>
 
 			</apex:pageBlockSection>
@@ -853,14 +866,11 @@
 						<apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" >
 						</apex:outputLabel>
 						<apex:outputPanel id="numOutOfHomePlacementsPreService">
-							<apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }">
+							<apex:outputPanel >
 								<div class="requiredInput">
-									<div class="requiredBlock"></div>
+									<apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }"><div class="requiredBlock"></div></apex:outputPanel>									
 									<apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
 								</div>
-							</apex:outputPanel>
-							<apex:outputPanel rendered="{! NOT(admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) ) }" >
-								<apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
 							</apex:outputPanel>
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
@@ -965,14 +975,11 @@
 				<apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
 						<apex:outputLabel value="Total Number of Internal Moves During Service" />
 						<apex:outputPanel >
-							<apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }">
+							<apex:outputPanel id="Total_no_of_Internal_moves_during_Servic__c_wrapper">
 							<div class="requiredInput">
-								<div class="requiredBlock"></div>
+								<apex:outputPanel  rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }"> <div class="requiredBlock"></div> </apex:outputPanel>
 									<apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
 							</div>
-							</apex:outputPanel>
-							<apex:outputPanel rendered="{! NOT(admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')))  }" >
-								<apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
 							</apex:outputPanel>
 						</apex:outputPanel>
 				</apex:pageBlockSectionItem>
