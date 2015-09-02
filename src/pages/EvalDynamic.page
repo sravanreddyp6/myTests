@@ -39,6 +39,40 @@
 					$(this).find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
 				}
 			});
+			var lastScrollTop = 0;
+			window.setUpMainSectionPosition = function () {
+				var $mainSection = $("#main-section");
+				var paddingTop = window.pageYOffset - $mainSection.offset().top;
+				$blueCard = $("#pbsBlueCard");
+				if ($blueCard.hasClass("stickBlueCard")) {
+					paddingTop += $blueCard.height();
+				}
+				$mainSection.css("padding-top", paddingTop > 0 ? paddingTop : 0);
+			};
+			$(document).on("scroll", function () {
+				var currentScrollTop = $(this).scrollTop();
+				var $sidebar = $("#sidebar");
+				var $mainSection = $("#main-section");
+				var mainSectionTop = $mainSection.offset().top;
+				var paddingTop = window.pageYOffset - mainSectionTop;
+				var sidebarOffsetTop = $sidebar.offset().top;
+				$blueCard = $("#pbsBlueCard");
+				if ($blueCard.hasClass("stickBlueCard")) {
+					paddingTop += $blueCard.height();
+					sidebarOffsetTop -= $blueCard.height();
+				}
+				var currentPaddingTop = Number($mainSection.css("padding-top").replace("px", ""));
+
+				if (window.pageYOffset > sidebarOffsetTop) {
+					if (currentScrollTop < lastScrollTop && currentPaddingTop > paddingTop) {
+						// When user scrolls up, we want the entry screen to be sticky
+						$mainSection.css("padding-top", paddingTop > 0 ? paddingTop : 0);
+					}
+				} else {
+					$mainSection.css("padding-top", 0);
+				}
+				lastScrollTop = currentScrollTop;
+			});
 		});
 
 		function clearPanel() {
@@ -73,6 +107,7 @@
 				setUpFields();
 				jQuery('#evalSecValMsgs').html(jQuery('#ErrorMsg').val());
 			}
+			setUpMainSectionPosition();
 		}
 
 		function setupButtons(disableFlag) {
@@ -256,7 +291,7 @@
 	<div class="container">
 		<div class="blog-header"></div>
 		<div class="row">
-			<div class="col-sm-4">
+			<div class="col-sm-4" id="sidebar">
 				<div class="sidebar-module-sm-no-scroll sidebar-module-inset">
 					<apex:outputPanel rendered="{!evalType == 'Head to Toe'}">
 						<h4>Nurse: {!thisEval.Owner.Name}</h4>
@@ -399,7 +434,7 @@
 			</div>
 			<!-- /.blog-sidebar -->
 
-			<div class="col-sm-8 blog-main">
+			<div class="col-sm-8 blog-main" id="main-section">
 				<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
 					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 						<div class="panel-heading clearfix">
@@ -429,7 +464,7 @@
 			<apex:param name="canEdit" value="" />
 		</apex:actionFunction>
 		<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();" />
-		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (AND(evalType=='CNA Workbook', thisEval.OwnerId == $User.Id),'completeShift();', 'location.reload(true);')} return false;" />
+		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (AND(evalType=='CNA Workbook' || evalType=='Residential', thisEval.OwnerId == $User.Id),'completeShift();', 'location.reload(true);')} return false;" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="" uniqueId="2" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialog2(); saveLateEntryNote(); return false;" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="EndOfShiftEsign" uniqueId="Esign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialogEsign(); location.reload(true); return false;" />
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
@@ -520,7 +555,7 @@
 		</apex:form>
 	</apex:outputPanel>
 
-	<apex:pageBlock rendered="{! evalType == 'CNA Workbook'}">
+	<apex:pageBlock rendered="{! evalType == 'CNA Workbook' || evalType == 'Residential'}">
 		<Apex:pageblocksection columns="1" title="Approval History">
 			<apex:datatable style="width: 100%;" value="{!approvalHistory}" var="a">
 				<apex:column value="{!a.actorid}" headervalue="By" />

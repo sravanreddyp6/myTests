@@ -9,7 +9,7 @@
        
       <apex:pageBlock mode="maindetail" id="fullBlock" rendered="{!!isPdf}">
       	<apex:outputpanel >
-			<input class="btn" type="button" style="float:right;" value="Close" onclick="clearPanel();"  /> 
+			<input class="btn" type="button" style="float:right;" value="Close" onclick="clearPanel();refreshEvalRepeaters();"  /> 
 		</apex:outputpanel>
           <apex:repeat value="{!ThisRecordsDomains[0]}" var="thisDomain">
                   <apex:pageBlockSection columns="1" >

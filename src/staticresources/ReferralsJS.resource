@@ -47,7 +47,7 @@
     validateEmail = function (email) {
         return /\S+@\S+\.\S+/.test(email);  // Very simple regex to check email here
     }
-    validateFundingSource = function (referralRecordType) {
+    validateFundingSource2 = function (referralRecordType) {
         var errors = [];
         if (referralRecordType != 'CareMeridian' && referralRecordType != 'NeuroRestorative' && $('select[id$=fundingEntry_Source]').val() == '') {
             errors.push('Funding Source is required.');
@@ -154,7 +154,7 @@
 
     fundingSourceSaveHelper = function (referralRecordType) {
         fundingSourceClearMessages();
-        var errors = validateFundingSource(referralRecordType);
+        var errors = validateFundingSource2(referralRecordType);
         if (errors.length > 0) {
             $('#fundingMessages').html('');
             $.each(errors, function (index, error) {

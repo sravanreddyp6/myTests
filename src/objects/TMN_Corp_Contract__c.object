@@ -54,9 +54,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>Corp Contracts - Procurement.</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>Contract_Terms</fullName>
         <description>the main form</description>
@@ -489,6 +492,16 @@
             <field>Commodity_Group__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Supplier_Risk__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Procurement_Managed__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
             <field>Evergreen__c</field>
@@ -1438,6 +1451,29 @@
         <type>TextArea</type>
     </fields>
     <fields>
+        <fullName>Procurement_Managed__c</fullName>
+        <externalId>false</externalId>
+        <label>Procurement Managed</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Purpose_of_Agreement__c</fullName>
         <externalId>false</externalId>
         <label>Purpose of Agreement</label>
@@ -1868,6 +1904,33 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Supplier_Risk__c</fullName>
+        <externalId>false</externalId>
+        <label>Supplier Risk</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Low</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Med</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>High</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>N/A</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Supplier__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
@@ -2009,7 +2072,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>CDA</fullName>
+                <fullName>BAA</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>

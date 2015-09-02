@@ -30,6 +30,7 @@ public with sharing class EvalDynamicExt {
 	public Boolean isEditable;
 	public Boolean isDON { get; set; }
 	public Boolean isTierIII { get; set; }
+    public Boolean isTierII { get; set; }
 
 	public String getEvalStatusDate(){
 		if (evalType == 'Head to Toe')
@@ -92,6 +93,11 @@ public with sharing class EvalDynamicExt {
 		} else {
 			isTierIII = false;
 		}
+        if (permissionSets.contains('iServe_Tier_II')) {
+            isTierII = true;
+        } else {
+            isTierII = false;
+        }		
 
  		thisEval = [ select id, Name, Status__c, Head_to_Toe_Status__c, Owner.Name, ownerid, Shift_Start_Time__c, Shift_End_time__c, Signed_By__r.Name, Recordtype.Name, CreatedDate, serviceassignment__c, serviceassignment__r.admission__c, serviceassignment__r.admission__r.person_being_served__c, serviceassignment__r.admission__r.person_being_served__r.AccountId,Has_Open_Assessment__c, serviceassignment__r.person_being_served__c from Evaluation__c where ID = :evalID LIMIT 1];
 
@@ -389,8 +395,8 @@ public with sharing class EvalDynamicExt {
 
 	public pageReference completeShift() {
 
-		if ( evalType == 'CNA Workbook')
-			return FinalizeCNA();
+		if ( evalType == 'CNA Workbook' || evalType == 'Residential')
+			return SubmitForApproval();
 
 		//Commented by Sravan - 04/13/2015 as the whole logic is handled in CMShiftAssessmentEsign.cls -- CLciking the Complete button invokes Authentication Component but not this method.
 
@@ -621,9 +627,14 @@ public with sharing class EvalDynamicExt {
 				showDisregard = true;
 
 			}
-			// if user is not tier iii don't display anything. This needs to be at the end because
+
+			
+            if ( thiseval.status__c == 'Pending Approval' && isApprover) {
+                showApprove = true;
+            }
+			// if user is not tier iii or ii don't display anything. This needs to be at the end because
 			// it trumps everything else.
-			if (!isTierIII) {
+			if (!isTierIII && !isTierII) {
 				showEsign = false;
 				showRevise = false;
 				showDisregard = false;
@@ -729,7 +740,7 @@ public with sharing class EvalDynamicExt {
 	}
 
 
-    public PageReference FinalizeCNA(){
+    public PageReference SubmitForApproval(){
         return new PageReference('/apex/EvalApproval?id=' + evalID);
     }
 
@@ -764,7 +775,11 @@ public with sharing class EvalDynamicExt {
         // if a rejection, set up a task for the CNA owner
         if ( approvalAction == 'Reject') {
         	DateTime n = DateTime.now();
-        	Task t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
+        	Task t;
+        	if (thisEval.Recordtype.Name == 'CNA Workbook')
+        	   t = new Task(Subject = 'Rejected CNA Workbook', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'CNA Workbook rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
+        	else if (thisEval.Recordtype.Name == 'NursesAssessment')
+        	   t = new Task(Subject = 'Rejected Resident Assessment', Status = 'New', Priority = 'Normal', OwnerId = thiseval.ownerid, Description = 'Resident Assessment rejected by ' + UserInfo.getName() + ' at ' + utility.getmilitarytime(datetime.now()) + ' with comment: "' + comment + '"', WhoId = thiseval.ServiceAssignment__r.Person_Being_Served__c, WhatId = thiseval.Id, ActivityDate = Date.Today().AddDays(1));
         	insert t;
         }
 
@@ -779,6 +794,19 @@ public with sharing class EvalDynamicExt {
 
         // Submit the request for approval
         Approval.ProcessResult result =  Approval.process(req);
+
+        //the below logic sets the resident assessment status to Final Admission/Final Revision
+        NoSharingRecord nsr = new NoSharingRecord(thisEval.id);
+        if (thisEval.Recordtype.Name == 'NursesAssessment' && approvalAction != 'Reject') {
+            list<Service_Assignment__c> servAssign = [SELECT ID, (SELECT Id FROM Evaluations__r Where Status__c != 'Disregard' 
+                                                                     AND Recordtype.Name ='NursesAssessment' order by createdDate asc) 
+                                                        FROM Service_Assignment__c WHERE Id=: thisEval.ServiceAssignment__c LIMIT 1];
+            if(thisEval.Id == servAssign[0].Evaluations__r[0].Id){
+                nsr.setStatusAndSave('Final Admission');
+            } else {
+            	nsr.setStatusAndSave('Final Revision');
+            }
+        }
     }
 
 

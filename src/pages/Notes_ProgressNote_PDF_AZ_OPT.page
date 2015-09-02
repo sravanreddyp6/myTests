@@ -77,9 +77,16 @@
 
     Is Note Late:    
     <apex:outputField value="{!Progress_Note__c.Is_Note_Late__c}"/>
-
+    
+    E-Signed by:
+    <apex:outputField value="{!Progress_Note__c.Esigned_By__c}"/>
+    
+    E-Signed at:
+	<apex:outputField value="{!Progress_Note__c.Esigned_At__c}"/>
 </apex:panelGrid>
-<div class="med"><apex:include pageName="progressnote_actionplan_embed_include"/></div>
+<apex:outputpanel rendered="{!!showGoalsObjActionsInclude}">
+<div class="med"><apex:include pageName="progressnote_actionplan_embed_include"/></div></apex:outputpanel>
+<apex:outputpanel rendered="{!showGoalsObjActionsInclude}"><div class="med"><apex:include pageName="GoalsObjActionsInclude"/></div></apex:outputpanel>
 <div class="medBold"><b>Interventions</b></div>
 <div class="med"><apex:outputField value="{!Progress_Note__c.Interventions__c}"/><br/></div>
 <div class="medBold"><b>Progress</b></div>

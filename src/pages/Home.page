@@ -1,4 +1,4 @@
-<apex:page controller="HomePageController" sidebar="false" id="thePage">
+<apex:page controller="HomePageController" sidebar="false" id="thePage" tabStyle="ESD_Home__tab">
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -206,7 +206,7 @@
 			<c:HomePageComponents objectName="Contract Management" />
 			<c:HomePageComponents objectName="Documents" />
 		</apex:outputPanel>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}">
+		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS )) || AND (OperatingGroup == 'Redwood', canSeePBS,canCreateProgressNotes)}">
 			<apex:pageBlockSection columns="2">
 				<apex:selectList id="selectprograms" value="{!selectedAlias}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
@@ -222,33 +222,43 @@
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
-				<apex:column headerValue="View Current Shift" >
+				<apex:column headerValue="View Current Shift" rendered="{!NOT(canCreateProgressNotes)}">
 					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
 						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
 					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
 						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{! canCreateNote }">
+					<apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes)) }">
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
+					</apex:outputPanel>
+					</apex:column>
+                	<apex:column headerValue="View Note Log" rendered="{!canCreateProgressNotes}">
+                    <apex:outputPanel rendered="{! canCreateProgressNotes}">
+                        <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View Note Log</a><br />
 					</apex:outputPanel>
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
-					<apex:selectList styleClass="actionList" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-						<apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
+					<apex:selectList styleClass="actionList" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"  size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
+                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" /> 
 					</apex:selectList>
-					<apex:commandButton value="Go" styleClass="pbsActionButton" />
+                    <apex:selectList styleClass="actionList" rendered="{!!canCreateProgressNotes}" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
+                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" /> 
+					</apex:selectList>
+					<apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!!canCreateProgressNotes}"/>
+                    <apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"/>
 				</apex:column>
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
+						 <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}&admission={!serviceAssignment.Admission__c}&pbsID={!serviceAssignment.Person_Being_Served__c}" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" /> 
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" rendered="{!NOT(canCreateProgressNotes)}" />
+                        <apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" rendered="{!OperatingGroup = 'Care Meridian'}"/>
@@ -257,7 +267,7 @@
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" rendered="{!NOT(canCreateProgressNotes)}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
 				</apex:column>
@@ -393,25 +403,25 @@
 				</apex:actionStatus>
 			</apex:pageblockButtons>
 			<apex:pageMessages id="responseDialogErrors" />
-			<apex:pageBlockSection>	
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSection >	
+			<apex:pageBlockSectionItem >
 			<apex:outputLabel value="Start Date/Time" />
             	<apex:outputPanel layout="none">
             		<div class="requiredInput"><div class="requiredBlock"></div>
-                	<c:militarydatetime id="logstart" edit="true" datetimeval="{!currResponse.start_date_time__c}" hiddenFieldId="timeLogStart" datetimepickerid="timeLogStart1"/>
+                	<c:MilitaryDatetime id="logstart" edit="true" datetimeval="{!currResponse.Start_Date_Time__c}" hiddenFieldId="timeLogStart" datetimepickerid="timeLogStart1"/>
             	    </div>
-            	    <apex:inputHidden id="timeLogStart"  value="{!currResponse.start_date_time__c}"/>
+            	    <apex:inputHidden id="timeLogStart"  value="{!currResponse.Start_Date_Time__c}"/>
                 </apex:outputPanel>
 			</apex:pageBlockSectionItem>
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			<apex:outputLabel value="End Date/Time" />
            		<apex:outputPanel layout="none">
-                	<c:militarydatetime id="logend" edit="true" datetimeval="{!currResponse.end_date_time__c}" hiddenFieldId="timeLogEnd" datetimepickerid="timeLogEnd1"/>
-               		<apex:inputHidden id="timeLogEnd"  value="{!currResponse.end_date_time__c}"/>
+                	<c:MilitaryDatetime id="logend" edit="true" datetimeval="{!currResponse.End_Date_Time__c}" hiddenFieldId="timeLogEnd" datetimepickerid="timeLogEnd1"/>
+               		<apex:inputHidden id="timeLogEnd"  value="{!currResponse.End_Date_Time__c}"/>
                 </apex:outputPanel>
 			</apex:pageBlockSectionItem>
 
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			
 			<apex:outputlabel value="Accompanied By"  />
 			<apex:outputpanel layout="none">
@@ -421,7 +431,7 @@
 			</apex:outputpanel>
 			</apex:pageBlockSectionItem>
 			
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			
 			<apex:outputlabel value="Location"/>
 			<apex:outputPanel layout="none">
@@ -431,13 +441,23 @@
 			</apex:outputPanel>
 			</apex:pageBlockSectionItem>
 			
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
+			<apex:outputlabel value="Service Type"/>
+			<apex:outputPanel layout="none">
+			<div class="requiredInput"><div class="requiredBlock"></div>
+			<apex:inputField value="{! currResponse.service_type__c}" />
+			</div>
+			</apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			
+			<apex:outputText value="" />
+			<apex:pageBlockSectionItem >
 			<apex:outputlabel value="Narrative Note"  />
 			<apex:inputTextArea value="{! currResponse.narrative_note__c}" />
 			</apex:pageBlockSectionItem>
 			
 			
-			<apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem >
 			<apex:outputlabel value="Late Entry"  />
 			<apex:inputField value="{! currResponse.is_late_entry__c}" />
 			</apex:pageBlockSectionItem>
@@ -449,7 +469,35 @@
 	</apex:form>
     </apex:outputpanel>  
 	</div>
-	
+
+    <div id="IowaDailyDataSummaryDialog" style="display:none;" >
+    <apex:outputpanel layout="none" rendered="{!(AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}" >
+        <script>
+        </script>
+        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
+        
+        <apex:pageBlockSection >    
+            <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Service date" />
+                <apex:outputPanel layout="none">
+<!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
+                        <input id="IowaDailyDataSummaryServiceDate" type="text" class="datepicker" />
+<!--                     </div> -->
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem >
+	            <apex:outputPanel layout="block">
+	                <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp; 
+	                <a class="btn" href="#" onClick="closeModalDialog('IowaDailyDataSummaryDialog', 'div');  jQuery('#IowaDailyDataSummaryGenerate').off('click'); return false;">Close</a>
+	            </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+    </apex:outputpanel>  
+    </div>	
 	
 	
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
@@ -608,6 +656,10 @@
 				var $selectElement = $(this).parent().find('select');
 				var $selected = $selectElement.find('option:selected');
 				var serviceAssignmentId = $selectElement.data('service-assignment-id');
+				var admissionId = $selectElement.data('service-admission-id');
+                var personId = $selectElement.data('service-person-id');
+                var state = $selectElement.data('service-state-id');
+                var action = $selectElement.data('service-action-id');
 				var latestShiftDocId = $selectElement.data('latest-shift-doc-id');
 				var latestCNAWorkbookId = $selectElement.data('latest-cna-workbook-id');
 				var selectedValue = $selected.val();
@@ -620,7 +672,11 @@
 					createPanel('Head to Toe', category, subcategory, null, 'Activity Log', true, latestShiftDocId);
 				} else if (selectedValue == 'createCNAWorkbook') {
 					showAddCNAWorkbookModal(serviceAssignmentId);
-				} else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
+				} else if(selectedValue=='createProgressNotes'){
+ 					var url ='{!$Page.Notes_ProgressNote_Create}?plan='+action+'&service_assignment='+serviceAssignmentId+'&admission='+admissionId+'&person='+personId+'&State='+state+'&retURL={!HTMLENCODE('/apex/home')}';
+					$(location).attr('href',url);
+                }
+				else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
 					var category = selectedValue.replace('cnaWorkbookAction-', '').split('~')[0];
 					var subcategory = selectedValue.replace('cnaWorkbookAction-', '').split('~')[1];
 					createPanel('CNA Workbook', category, subcategory, null, 'Activity Log', true, latestCNAWorkbookId);
@@ -634,7 +690,14 @@
 				}
 				else if ( selectedText == 'Create Time Log Entry' ) { 
 					showAddResponse( serviceAssignmentId); 
-				}	
+				}
+                else if ( selectedText == 'Create Daily Data Summary' ) { 
+                    openModalDialog('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700, 'mainForm','false');
+                    $('#IowaDailyDataSummaryGenerate').on("click","",{saId:serviceAssignmentId}, function(event){
+                                window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
+                                + '&saId='+ event.data.saId
+                                , '_blank');});
+                }
 				event.preventDefault();
 			});
 
