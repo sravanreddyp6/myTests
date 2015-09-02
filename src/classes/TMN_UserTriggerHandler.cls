@@ -12,12 +12,11 @@ public with sharing class TMN_UserTriggerHandler {
     	list<Task> taskToInsert = new list<Task>();
     	
     	for (TMN_User__c usr: newObj) {
-    		// prepare the list of emails/userNames to select the lists of salesforce users (recruiters) that would get the a task for pre-hire
+    		// prepare the list of emails/userNames to select the lists of salesforce users (recruiters) that would get the a task for pre-hire 
     		//Sravan - Added "oldObjMap!= null" or else the trigger will error out in case a new record is inserted. Trigger.old variable is not available for insert operations. 
     		if (usr.Current_Person_Type__c == 'Pre-hire' && (oldObjMap!= null && oldObjMap.containsKey(usr.id) ? oldObjMap.get(usr.id).Current_Person_Type__C != 'Pre-hire' : true ) && 
     		     (String.isNotBlank(usr.Recruiter_Email_Address__c) || String.isNotBlank(usr.Recruiter_Name__c) )
     		   ) 
-    		   
     		   {
     			if (String.isNotBlank(usr.Recruiter_Email_Address__c)) emailMap.put(usr.Recruiter_Email_Address__c, null);
     			else nameMap.put(usr.Recruiter_Name__c, null);

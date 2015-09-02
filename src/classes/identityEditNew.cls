@@ -87,6 +87,9 @@ public class identityEditNew {
        return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
     
+   
+    
+    
     public  Attachment attDeatils {set;get;}
  
     public  PageReference attachmentDeatils() {
