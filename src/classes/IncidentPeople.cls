@@ -155,16 +155,19 @@ private void removeFromTypeMap( string keytoDel ) {
 		return;
 	
 	if ( ipw.persontype == 'Other') {
+		
 		mapOther.remove( keyToDel );
-	    orderOther.remove( getIndexForItem(orderOther,ipw) );		
+	    orderOther.remove( getIndexForItem(orderOther,keyToDel) );		
 	}
 	else if ( ipw.persontype == 'Staff') {
 		mapStaff.remove( keyToDel );
-		orderStaff.remove( getIndexForItem(orderStaff,ipw) );
+
+			orderStaff.remove( getIndexForItem(orderStaff,keyToDel) );
 	}
 	else if ( ipw.persontype == 'Mentor') {
 		mapMentor.remove( keyToDel );	
-		orderMentor.remove( getIndexForItem(orderMentor,ipw) );	
+
+			orderMentor.remove( getIndexForItem(orderMentor,keyToDel) );	
 	}
 	
 		
@@ -189,10 +192,11 @@ private void addToTypeMap( IncidentPersonWrapper ipw ) {
 	}
 }
 
-private integer getIndexForItem(list<string> items, IncidentPersonWrapper itemToCheck){
+private integer getIndexForItem(list<string> items, string itemToCheck){
 
+	
 	for(integer i = 0; i <  items.size();  i++){
-		if(items[i] == itemToCheck.editID){ return i;}
+		if(items[i] == itemToCheck){ return i;}
 	}
 	
 	return null;
@@ -264,8 +268,21 @@ public pageReference savePerson( ) {
 				//system.debug('CURR:' + currPerson);
 				ipw.relatedPerson = currPerson;
 				if ( isEditing ) {
-					removeFromTypeMap ( persontoEditDelete);
+					removeFromTypeMap (persontoEditDelete);
 					relExisting.remove(persontoEditDelete);
+					newPeople = new List<Incident_Person__c>();
+					for(IncidentPersonWrapper IW : mapOther.values() ){
+						if(IW.isNew)
+							newPeople.add(IW.relatedPerson);
+					}
+					for(IncidentPersonWrapper IW : mapMentor.values() ){
+						if(IW.isNew)
+							newPeople.add(IW.relatedPerson);
+					}
+					for(IncidentPersonWrapper IW : mapStaff.values() ){
+						if(IW.isNew)
+							newPeople.add(IW.relatedPerson);
+					}						
 				}
 					
 				relExisting.put( ipw.editId, ipw);
