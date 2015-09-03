@@ -28,6 +28,7 @@ public with sharing class referral_Controller2 {
 		}
 		set;
 	}
+	public string age{set;get;}
 	public string openLocationPopup {get; set;}
 	public Referral__c referralRecord { get; set; }
 	public Person_Being_Referred__c personBeingRefRecord { get; set; }
@@ -521,7 +522,7 @@ public with sharing class referral_Controller2 {
 		return pBSRec;
 	}
 	
-	public string age{set;get;}
+	
 	public void showAddActivity() {
 		activity = new Task();
 		activity.Priority = 'Normal';

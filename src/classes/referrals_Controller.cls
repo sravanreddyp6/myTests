@@ -10,7 +10,7 @@ Mod Reason     : Adding this comment only so this class can get deployed again i
                : Please see ticket SHAUN-21 for reference.
  *******************************************************************************/
 public with sharing class referrals_Controller{
-
+	public string age{set;get;}
 	public String OperatingGroup{
 		get{
 			if(operatinggroup!=null && operatinggroup!='' && operatingGroup.equalsIgnoreCase('Care Meridian')){
@@ -833,6 +833,7 @@ public with sharing class referrals_Controller{
 				 where Id = :pBRId
 				 limit 1
 			];
+		this.age = Utility.getAge(String.valueOf(pBRRec.Age_year__c),pBRRec.Age_month__c,pBRRec.Age_days__c);
 		} catch (Exception e) {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 					'The Person Being Served record id specified is invalid. ' + e.getMessage()));
@@ -871,6 +872,7 @@ public with sharing class referrals_Controller{
 				 where Id = :pBSId
 				 limit 1
 			];
+		this.age = Utility.getAge(pBSRec.Age_year__c,pBSRec.Age_month__c,pBSRec.Age_days__c);	
 		} catch (Exception e) {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 				'The Person Being Served record id specified is invalid. getpbsrec()' + e.getMessage()));
