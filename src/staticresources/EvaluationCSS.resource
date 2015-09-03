@@ -12,19 +12,6 @@
     font-size: 0.9em;
 }
 
-.breadcrumb {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.breadcrumb, .breadcrumb a, .breadcrumb a.visited {
-    color: #154890 !important;
-    text-decoration: none;
-}
-.breadcrumb a:hover {
-    text-decoration: underline;
-}
-
 /* Tab Styling */
 img[src$="spacer.gif"] {
     display:none
