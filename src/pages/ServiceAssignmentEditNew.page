@@ -498,7 +498,7 @@
                     <apex:outputLabel value="Model" for="modelfield" />
                         <!--apex:actionRegion -->
                             <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}"  >
-                                <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="saStartSectionEdit, saEndSectionEdit, ContractAssoc, ProgAssoc" status="pageProcessing" />    
+                                <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="saStartSectionEdit, saEndSectionEdit, ContractAssoc, ProgAssoc" status="pageProcessing" />   
                             </apex:inputField>
                         <!--/apex:actionRegion-->
                 </apex:pageblocksectionitem>
@@ -862,19 +862,20 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
     
-                    <apex:pageBlockSectionItem id="numOutOfHomePlacementsPreService" rendered="{!vfVarIsCB}" >
-                        
-                        <apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }" / >
 
-                        
-                            <apex:outputPanel id="panelpanel" rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }">
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsCB}"  >
+                        <apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" / >
+
+                        <apex:outputPanel id="numOutOfHomePlacementsPreService">
+                            <apex:outputPanel id="panelpanel">
                                 <div class="requiredInput">
-                                    <apex:outputPanel ><div class="requiredBlock"></div></apex:outputPanel>                                  
+                                    <apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }"><div class="requiredBlock"></div></apex:outputPanel>                                  
                                     <apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
                                 </div>
                             </apex:outputPanel>
-                        
+                        </apex:outputPanel>
                     </apex:pageBlockSectionItem>
+
 
                 <apex:pageBlockSectionItem rendered="{!isNR}">
                     <apex:outputLabel value="Rancho Score at Start of Service" />
@@ -915,7 +916,7 @@
                     <apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!vfVarIsCB && (admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')))}" >
+                <apex:pageBlockSectionItem rendered="{!vfVarIsCB}" >
                     <apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" />
                     <apex:outputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
                 </apex:pageBlockSectionItem>
@@ -974,11 +975,11 @@
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
-                        <apex:outputLabel value="Total Number of Internal Moves During Service" rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }" />
+                        <apex:outputLabel value="Total Number of Internal Moves During Service" />
                         <apex:outputPanel >
-                            <apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }">
+                            <apex:outputPanel id="Total_no_of_Internal_moves_during_Servic__c_wrapper">
                             <div class="requiredInput">
-                                <apex:outputPanel > <div class="requiredBlock"></div> </apex:outputPanel>
+                                <apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }"> <div class="requiredBlock"></div> </apex:outputPanel>
                                     <apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
                             </div>
                             </apex:outputPanel>
@@ -1003,7 +1004,7 @@
                     <apex:outputLabel value="Highest Level of Education at End of Service" />
                     <apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB && (admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')))}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
                     <apex:outputLabel value="Total Number of Internal Moves During Service" />
                     <apex:outputField value="{!theServAssign.Total_no_of_Internal_moves_during_Servic__c}" />
                 </apex:pageBlockSectionItem>
