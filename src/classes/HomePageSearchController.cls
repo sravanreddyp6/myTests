@@ -33,7 +33,7 @@ public with sharing class HomePageSearchController{
 			for(Contact cnt:database.Query(conQuery)) {
 				firstNames = cnt.FirstName;
 				LastNames = cnt.LastName;
-				age = cnt.Age_year__c + ' Years '+ cnt.Age_month__c + ' Months '+ cnt.Age_days__c+' Days ';
+				age = Utility.getAge(String.valueOf(cnt.Age_year__c),cnt.Age_month__c,cnt.Age_days__c); 
 				for(Admission__c adm:cnt.Episodes__r) {
 					if( adm.State__c!=null) {
 						// convert state code to name
@@ -57,7 +57,7 @@ public with sharing class HomePageSearchController{
 			for(Person_Being_Referred__c pbr:database.Query(pbrQuery)) {
 				firstNames = pbr.First_Name__c;
 				LastNames = pbr.Last_Name__c;
-				age =  pbr.Age_year__c + ' Years '+ pbr.Age_month__c + ' Months '+ pbr.Age_days__c+' Days ';
+				age = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);   
 				for(Referral__c ref:pbr.Referrals__r) {
 					if(ref.State_for_Preferred_Service__c!=null && ref.Person_Being_Referred__c==pbr.Id) {
 						state = ref.State_for_Preferred_Service__c;
