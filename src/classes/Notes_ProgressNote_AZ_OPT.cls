@@ -685,7 +685,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 }
                 if(GoalDeSelStrs!=null && GoalDeSelStrs.Size()>0){
                     list<ProgressNote_ActionPlanChildren_mjo__c> tobedelList = New List<ProgressNote_ActionPlanChildren_mjo__c>();
-                    tobedelList = [select id,goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where goal__c In: GoalDeSelStrs Or objective__c In: GoalDeSelStrs];
+                    tobedelList = [select id,goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where (goal__c In: GoalDeSelStrs Or objective__c In: GoalDeSelStrs) and progress_note__c=:insertedprogressnoteid];
                     if(tobedelList!=Null && tobedelList.size()>0)
                         delete tobedelList;
                 }
