@@ -476,6 +476,11 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public pagereference saveModifiedProgressNote(){
     	
     	// EB-539 - moved ordering of time checks
+    	if ( pn.start_time__c == null || pn.end_time__c == null ) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
+            return null;
+    	}
+    	
     	if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
             return null;
@@ -548,6 +553,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         pn.Action_Plan__c = ActivePlanId;
         
         // HOTFIX - EB-539 - start time must be before end time, reorder to do time checks before checking overlap
+        if ( pn.start_time__c == null || pn.end_time__c == null ) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
+            return null;
+    	}
         if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
             return null;
@@ -919,38 +928,66 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     
     /** Method called onclick Save on Inline Edit Page**/
     public pagereference saveProgressNoteInlineEdit(){
-        overlappingProgressNote = new list<progress_note__c>();
-        if(overlappingProgressNote.size()>0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
+
+        // HOTFIX - EB-539 - start time must be before end time, reorder to do time checks before checking overlap
+        if ( pn.start_time__c == null || pn.end_time__c == null ) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
             return null;
-        }if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
+    	}
+        if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
             return null;
-       }
+        } 
+        if( pn.start_time__c > pn.end_time__c ){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start date/time must be before end/date time'));     
+            return null;
+        }
         if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             return null;
-       }if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
+        } 
+        if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This progress note cannot have the "Purpose/Service is Billable field" checked if the "Sleep Check Conducted" field is also checked'));     
             return null;
-        }else{
+        }
+        if ([select id from Action_Plan__c where id = :ActivePlanId and Status__c='Active Final'].size() == 0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Cannot create note for action plan not in Active Final status.'));  
+            return null;
+        }
        upsert pn;
-       return null;}
+       return null;
     }
     
     /** Method called onclick Save on New Progrss Note Page**/
     public pagereference saveProgressNote(){
+    	
+        // HOTFIX - EB-539 - start time must be before end time, reorder to do time checks before checking overlap
+        if ( pn.start_time__c == null || pn.end_time__c == null ) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
+            return null;
+    	}
         if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
             return null;
-        }if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
+        } 
+        if( pn.start_time__c > pn.end_time__c ){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start date/time must be before end/date time'));     
             return null;
         }
+        if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
+            return null;
+        } 
         if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This progress note cannot have the "Purpose/Service is Billable field" checked if the "Sleep Check Conducted" field is also checked'));     
             return null;
-        }if(overlappingProgressNote.size()>0){
+        }
+        if ([select id from Action_Plan__c where id = :ActivePlanId and Status__c='Active Final'].size() == 0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Cannot create note for action plan not in Active Final status.'));  
+            return null;
+        }
+
+		if(overlappingProgressNote.size()>0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
             return null;
         }else{
