@@ -612,7 +612,7 @@ public with sharing class referrals_Controller{
 		if(tmnUser.size() > 0){
 			this.operatinggroup = tmnUser[0].operating_group__c;
 			this.businessUnit =  tmnUser[0].Business_Unit__c;
-			this.isCAFSS = tmnUser[0].Business_Unit__c.startsWith('BU 008');
+			this.isCAFSS = (tmnUser[0].Business_Unit__c != null && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
 		}
 		/*this.operatinggroup=([select operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty()) ? ''
 				: [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1][0].operating_group__c;*/
