@@ -38,7 +38,7 @@ var injectJS = function () {
 
   window.rtGetLabel = function (label, cb) {
     rtInjectJQuery(function ($) {
-      var $el = $("label:contains('" + label +"'), th.labelCol:contains('" + label + "'), th.labelCol span:contains('" + label + "')")
+      var $el = $("label:contains('" + label +"'):visible, th.labelCol:contains('" + label + "'):visible, th.labelCol span:contains('" + label + "'):visible")
         .filter(function () {
           return $(this).pureText().trim() === label;
         });
