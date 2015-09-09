@@ -12,6 +12,7 @@ testSuite("Referral", suiteTimeout, {
     return client
       .logInAs(user)
       .click("a=Create New Referral")
+      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
       .getSelectOptions('Race')
       .then(function(races) {
         assert.deepEqual([
