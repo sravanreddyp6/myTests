@@ -244,7 +244,7 @@ public with sharing class referral_Controller2 {
         list<Tmn_User__c> tmnUser = [SELECT Id,operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1]; //Using list to prevent system.query exception 
 		if(tmnUser.size() > 0){
 			this.operatinggroup = tmnUser[0].operating_group__c;
-			this.isCAFSS = tmnUser[0].Business_Unit__c.startsWith('BU 008');
+			this.isCAFSS = (null != tmnUser[0].Business_Unit__c && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
 		}
         this.referralRecord = (Referral__c) ctl.getRecord();
         this.agencies = new List<Agency_Involved_With_Individual__c>();
