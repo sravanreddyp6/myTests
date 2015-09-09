@@ -6,11 +6,12 @@ var suiteTimeout = 3 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
 testSuite("rwAzPBS", suiteTimeout, {
-	  "should create a Redwood AZ Person Being Served successfully": function(client, done) {
-	    return client
-	    .logInAs(users["RW_AZ_handler"])
-	    .click("a=Add New Person Being Served")
-	    .getSelectOptions('Race')
+    "should create a Redwood AZ Person Being Served successfully": function(client, done) {
+      return client
+      .logInAs(users["RW_AZ_handler"])
+      .click("a=Add New Person Being Served")
+      .waitForVisible("input[value='Save']", defaultOperationTimeout)
+      .getSelectOptions('Race')
       .then(function(races) {
         assert.deepEqual([
           "", "Caucasian", "African American", "American Indian/Alaskan", "Asian/Pacific Islands",
@@ -114,7 +115,7 @@ testSuite("rwAzPBS", suiteTimeout, {
      /*.getSelectOptions('Mailing Country')
       .then(function(Country) {
         assert.deepEqual([
-          "", 
+          "",
         ], Country);
       })*/
       //.chooseSelectOption("Mailing Country", "United States")
@@ -145,16 +146,16 @@ testSuite("rwAzPBS", suiteTimeout, {
       .fillInputText("Date of Birth", "7/7/1989")
       .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
-      
+
       .fillInputText("Family Members / Other / Notes", "Really hurtful")
       .chooseSelectOption("Mailing State/Province", "AZ")
       .click("input[value='Save']")
       .url()
-      
+
       .then(function (url) {
-    	  
+
         assert.include(url.value, "PersonBeingServedEditNew");
       })
-       
+
 	  }
 });

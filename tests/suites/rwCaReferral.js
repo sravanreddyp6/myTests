@@ -10,6 +10,7 @@ testSuite("rwCaReferral", suiteTimeout, {
     return client
       .logInAs(users["RW_CA_Referral_Intaker"])
       .click("a=Create New Referral")
+      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
       .getSelectOptions('Race')
       .then(function(races) {
         assert.deepEqual([
@@ -93,14 +94,14 @@ testSuite("rwCaReferral", suiteTimeout, {
       .chooseSelectOption("Mailing State/Province", "California")
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
-      
+
       .getSelectOptions('Referral Status')
       .then(function(refStatus) {
         assert.deepEqual(["New", "Active", "On Hold", "Closed"], refStatus);
       })
       .getSelectOptions('Referral Source Type')
       .then(function(refSrcType) {
-          assert.deepEqual(["", "Attorney", "Family", "Hospital Case Manager", 
+          assert.deepEqual(["", "Attorney", "Family", "Hospital Case Manager",
                             "Independent Case Manager", "Internal", "Payor Case Manager",
                             "Physician", "School", "Self", "Unknown", "Other"
                             ], refSrcType);
@@ -109,13 +110,13 @@ testSuite("rwCaReferral", suiteTimeout, {
       .then(function(guardianStatus) {
           assert.deepEqual(["", "Civil Commitment", "Conservator/Conservatorship", "Full Guardian", "Guardian", "Health Care Representative",
                             "Kinship", "Limited Guardianship", "Parent", "Self", "Shelter Care", "State Assumes Guardianship", "Voluntary Placement Agreement"], guardianStatus);
-      })      
+      })
       .getMultiSelectOptions('Services Requested')
       .then(function(vals) {
           assert.deepEqual(["California Integrated Services", "Community Care Facilities", "Crisis Response Team", "Day Programs",
                             "Early Intervention", "Family Behavioral Services", "Family Home Agency", "Independent Living Services", "Intermediate Care Facilities",
                             "Non-Mobile", "One to One Services", "Seniors", "Supported Living Services", "Transportation" ], vals);
-      })	    
+      })
       .getSelectOptions('Staffing Needs')
       .then(function(vals) {
           assert.deepEqual(["", "Night Sleep", "Night Awake"], vals);
@@ -131,7 +132,7 @@ testSuite("rwCaReferral", suiteTimeout, {
       .getSelectOptions('Mobility')
       .then(function(vals) {
           assert.deepEqual(["", "Ambulatory", "Wheelchair", "Uses Walker" , "Uses Cane"], vals);
-      })      
+      })
       .fillInputText("Referral Source", "Mentor")
       .fillInputText("Referrer Name", "Obi-wan Kennobi")
       .click("input[value='Save Referral']")
@@ -143,7 +144,7 @@ testSuite("rwCaReferral", suiteTimeout, {
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
     	 assert.ok(isExisting, "Convert Button exists.");
-      })      
+      })
       .getOutputText("First Name")
       .then(function (firstName) {
         assert.equal("Darth", firstName);
