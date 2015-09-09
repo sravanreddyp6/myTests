@@ -88,7 +88,7 @@ testSuite("Referral", suiteTimeout, {
       .chooseSelectOption("Ethnicity", "Unknown")
       .fillInputText("Last Name", "Vader")
       .chooseSelectOption("Marital Status", "Divorced")
-      // .fillInputText("Date of Birth", "7/7/1970")  // not working yet because there are 2 DOB fields on the page
+      .fillInputText("Date of Birth", "7/7/1970")
       .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
       .fillInputText("SSN", "111111111")
@@ -123,6 +123,10 @@ testSuite("Referral", suiteTimeout, {
       .getOutputText("First Name")
       .then(function (firstName) {
         assert.equal("Darth", firstName);
+      })
+      .getOutputText("Date of Birth")
+      .then(function (dateOfBirth) {
+        assert.equal("7/7/1970", dateOfBirth);
       })
       .getOutputText("Race")
       .then(function (race) {
