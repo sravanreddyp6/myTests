@@ -1530,8 +1530,8 @@
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' || isCambridge || ReferralRecordType=='CA FSS'}" />
                 <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!isCambridge || ReferralRecordType=='CA FSS'}" />
                 <!-- CTEAE-137 -->
-                <apex:inputField label="Payer/Guarantor Medical Record Number" value="{!Referral__c.Payer_Medical_Record_Number__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina'}" />
-                <apex:inputField label="Payer/Guarantor Medical Record Number Description" value="{!Referral__c.Payer_Medical_Record_Number_Description__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina'}" />
+                <apex:inputField label="Payer/Guarantor Medical Record Number" value="{!Referral__c.Payer_Medical_Record_Number__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina' || ReferralRecordType=='CA FSS'}" />
+                <apex:inputField label="Payer/Guarantor Medical Record Number Description" value="{!Referral__c.Payer_Medical_Record_Number_Description__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina' || ReferralRecordType=='CA FSS'}" />
                 <!-- end CTEAE -137 -->
                 <apex:inputText id="referrerFax" value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" onblur="j$('input[id$=referrerFax]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))" />
                 <apex:inputField value="{!Referral__c.Case_Manager_Name__c}" rendered="{!ReferralRecordType!='NeuroRestorative'}" />

@@ -36,7 +36,7 @@ public with sharing class PersonsBeingServedListController {
         list<TMN_User__c> TU = [select Operating_Group__c, Business_Unit__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1];
         if (TU.size() == 1){
 	        Schema.DescribeSObjectResult acctSchema = Account.sObjectType.getDescribe();
-	        canCreateNew = (TU.get(0).Operating_Group__c=='NeuroRestorative' || TU.get(0).Business_unit__c.startswith('BU 008') || TU.get(0).Operating_Group__c=='Care Meridian') ? False : acctSchema.IsCreateable();        	
+	        canCreateNew = (TU.get(0).Operating_Group__c=='NeuroRestorative' || (null != TU.get(0).Business_unit__c && TU.get(0).Business_unit__c.startswith('BU 008')) || TU.get(0).Operating_Group__c=='Care Meridian') ? False : acctSchema.IsCreateable();        	
         }
     }
     public String filterId {
