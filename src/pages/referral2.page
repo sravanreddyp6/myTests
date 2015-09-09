@@ -1326,8 +1326,8 @@
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' }" />
                 <apex:outputField value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
                 <!-- CTEAE-137 -->
-                <apex:outputField label="Payer/Guarantor Medical Record Number" value="{!Referral__c.Payer_Medical_Record_Number__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina'}" />
-                <apex:outputField label="Payer/Guarantor Medical Record Number Description" value="{!Referral__c.Payer_Medical_Record_Number_Description__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina'}" />
+                <apex:outputField label="Payer/Guarantor Medical Record Number" value="{!Referral__c.Payer_Medical_Record_Number__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina' || ReferralRecordType = 'CA FSS'}" />
+                <apex:outputField label="Payer/Guarantor Medical Record Number Description" value="{!Referral__c.Payer_Medical_Record_Number_Description__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina' || ReferralRecordType = 'CA FSS'}" />
                 <!-- end CTEAE -137 -->
                 <apex:outputField value="{!Referral__c.Case_Manager_Name__c}" rendered="{!ReferralRecordType!='NeuroRestorative'}" />
                 <!-- ERNS-26 -->
