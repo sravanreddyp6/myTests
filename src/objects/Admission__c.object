@@ -1158,26 +1158,14 @@
     <fields>
         <fullName>Status__c</fullName>
         <externalId>false</externalId>
-        <label>Status</label>
+        <label>Admission Status</label>
         <picklist>
             <picklistValues>
                 <fullName>Active</fullName>
                 <default>true</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Completed</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>On-Hold</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>Discharged</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Referred Out</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -1216,6 +1204,14 @@
     </searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
     <startsWith>Vowel</startsWith>
+    <validationRules>
+        <fullName>Admission_Status_IsActiveorDischarged</fullName>
+        <active>true</active>
+        <description>Admission status should be either Active or Discharged</description>
+        <errorConditionFormula>OR(ISPICKVAL( Status__c , &quot;Completed&quot;),ISPICKVAL( Status__c , &quot;On-Hold&quot;),ISPICKVAL( Status__c , &quot;Referred Out&quot;))</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Please choose the status Active or Discharged</errorMessage>
+    </validationRules>
     <validationRules>
         <fullName>Discharge_Date_After_Intake_Date</fullName>
         <active>true</active>
