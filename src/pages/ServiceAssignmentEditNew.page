@@ -232,7 +232,11 @@
         function loadSeizure(seizureId) {
             showEditSeizure(seizureId);
         }
-
+		function setStatusDefaults(){
+		if(j$('[id$=highEduAtEnd]').val() == '')
+			j$('[id$=highEduAtEnd]').val( j$('[id$=highEduAtStart]').val() );
+		
+		}
         validateSeizure = function () {
             var seizureErrors = [];
             var startValue = j$('[id$=seizureEntry_startDateTime]').val();
@@ -410,7 +414,7 @@
                     <apex:outputPanel >
                         <apex:actionRegion >
                         <apex:inputField value="{!theServAssign.Status__c}"  >
-                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit" status="pageProcessing">
+                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit" status="pageProcessing" oncomplete="setStatusDefaults();">
                             </apex:actionSupport>
                         </apex:inputField>
                         </apex:actionRegion>                    
@@ -853,7 +857,7 @@
                         <apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
-                                <apex:inputField value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
+                                <apex:inputField id="highEduAtStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
                             </div>
                         </apex:outputPanel>
                         <apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
@@ -966,11 +970,11 @@
                             <apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
-                                    <apex:inputField value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
+                                    <apex:inputField id="first_highEduAtEnd" value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
                             </div>
                             </apex:outputPanel>
                             <apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
-                                <apex:inputField value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
+                                <apex:inputField id="second_highEduAtEnd" value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
                             </apex:outputPanel>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
