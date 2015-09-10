@@ -300,8 +300,7 @@
                 <apex:commandButton value="Save" id="SavePBSId" action="{!save}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
                 <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
             </div>
-
-            <apex:pageBlockSection title="Person Being Served" showHeader="false" columns="2" collapsible="false" id="pbsOutPutsectionId">
+            <apex:pageBlockSection title="Demographics" showHeader="true" columns="2" collapsible="true" id="pbsOutPutsectionId">
                 <apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput" required="true"/>
                 <apex:inputField value="{!Contact.Race__c }" taborderhint="2" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Middle_Name__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
