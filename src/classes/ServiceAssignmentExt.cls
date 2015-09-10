@@ -403,7 +403,8 @@ public without sharing class ServiceAssignmentExt {
                              Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                              Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                              Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c,
+                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, service_location__c, Medical_Record_Number__c, 
+                             service_location__r.programid__c, service_location__r.service_value__c,
                              Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
                              Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c
                              FROM Service_Assignment__c
@@ -771,12 +772,15 @@ public without sharing class ServiceAssignmentExt {
 
     // START:  Original and Updated Service Assignment, Program, Location, Service Line, Service Code Methods
     public void LoadData(Service_Assignment__c localRecord){
+        system.debug('loading data');
         currentID = localRecord.Id;
         if(newSA==false) {
-            currentRecord = [Select start_date__c, SA_Start_DateTime__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c,Status__c  From Service_Assignment__c Where Id = :currentID Limit 1];
+            system.debug('this isnt a new reocrd');
+            currentRecord = [Select start_date__c, SA_Start_DateTime__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c, Service_Location__r.Service_Value__c, Status__c  From Service_Assignment__c Where Id = :currentID Limit 1];
             currentState = currentRecord.Admission__r.State__c;
         }
         else {
+        	system.debug('it is a new record');	
             currentRecord = theServAssign;
             Admission__c admForState = [ SELECT State__c FROM Admission__c WHERE Id = :admission.Id LIMIT 1 ];
             currentState = admForState.State__c;
@@ -840,13 +844,13 @@ public without sharing class ServiceAssignmentExt {
             diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
         }
         if ( currentrecord.Service_Location__c != null) {
-            serviceLocation = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c,Room_and_Board_Rate__c, PRN_DS_Per_Hour__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
+            serviceLocation = [ select ID, Name, Service_Value__c, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c,Room_and_Board_Rate__c, PRN_DS_Per_Hour__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
             currentProgramId = serviceLocation.programID__c;
         }
         
         //Setting the default value
         if(theServAssign.Highest_Level_of_Education_at_Start__c != null){
-            theServAssign.Highest_Level_of_Education_at_End_of_Ser__c = theServAssign.Educational_Involvement_at_Start__c;//Setting the default value
+            theServAssign.Highest_Level_of_Education_at_End_of_Ser__c = theServAssign.Highest_Level_of_Education_at_Start__c;//Setting the default value
             
         }
     }
@@ -1129,11 +1133,14 @@ public without sharing class ServiceAssignmentExt {
         backToServAssignPage.setRedirect(true); //added by Sravan to flush out the view State 09/04/2014 4:38 PM.
         return backToServAssignPage;
     }
-    
     public PageReference SaveServAssign() {
         
         List<string> errors = new list<string>();
         string opGroup = getOperatingGroup();
+        
+        if(theServAssign.Status__c != 'Inactive'){
+        	theServAssign.Highest_Level_of_Education_at_End_of_Ser__c = null;
+        }
 
         if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
             errors.add('Location of Service: You must select a value.');
