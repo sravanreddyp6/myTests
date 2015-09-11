@@ -75,7 +75,7 @@ public with sharing class IdentityHomeController {
                                                                                                                                                                                                          
     }
 
-    //Standard Edit page
+    //Standard Default Edit page
     Public PageReference stdEditPage(){
         PageReference ePage = new PageReference('/'+selectedID+'/e?retURL=/apex/identity_admin');
         return ePage;

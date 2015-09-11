@@ -10,6 +10,8 @@ public with sharing class HomePageTileController {
 	public boolean DocCreate{get;set;}
 	public boolean DocView{get;set;}
 	
+	public boolean isCAFSS{get; set;} //flag to handle CA FSS implementation
+	
 	public String objectName{get;set;}
 	
 	
@@ -37,7 +39,8 @@ public with sharing class HomePageTileController {
 		TMNCreate = oSchema3.IsCreateable();
 		TMNView = oSchema3.isAccessible();
 		//Contract object
-		List<TMN_User__c> tmnUsers = [SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c= :UserInfo.getUserId() LIMIT 1];
+		List<TMN_User__c> tmnUsers = [SELECT ID, Operating_Group__c, Business_Unit__c FROM TMN_User__c WHERE Salesforce_User_Account__c= :UserInfo.getUserId() LIMIT 1];
+		isCAFSS = (null !=  tmnUsers[0].Business_Unit__c && tmnUsers[0].Business_Unit__c.startswith('BU 008')) ? true: false;
 
 		for(TMN_User__c tmn:tmnUsers){
 			if(tmn.Operating_Group__c=='Cambridge'){

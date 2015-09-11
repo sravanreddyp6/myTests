@@ -5,10 +5,10 @@ var users = require("../users.js").accounts;
 var suiteTimeout = 3 * 60 * 1000;
 var defaultOperationTimeout = 30 * 1000;
 
-testSuite("rwInReferral", suiteTimeout, {
-  "should create a Redwood IN Referral successfully": function(client, done) {
+testSuite("rwCaReferral", suiteTimeout, {
+  "should create a Redwood CA Referral successfully": function(client, done) {
     return client
-      .logInAs(users["RW_IN_Referral_Intaker"])
+      .logInAs(users["RW_CA_Referral_Intaker"])
       .click("a=Create New Referral")
       .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
       .getSelectOptions('Race')
@@ -91,7 +91,7 @@ testSuite("rwInReferral", suiteTimeout, {
       .chooseSelectOption("Gender", "Male")
       .fillInputText("SSN", "111111111")
       .fillInputText("Additional Information / Comments", "Really hateful")
-      .chooseSelectOption("Mailing State/Province", "Indiana")
+      .chooseSelectOption("Mailing State/Province", "California")
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
 
@@ -113,7 +113,17 @@ testSuite("rwInReferral", suiteTimeout, {
       })
       .getMultiSelectOptions('Services Requested')
       .then(function(vals) {
-          assert.deepEqual(["Behavioral Supports", "Day Services", "ICF/MR Group Home", "In-Home Services/supports", "Supported Living (24 hour)"], vals);
+          assert.deepEqual(["California Integrated Services", "Community Care Facilities", "Crisis Response Team", "Day Programs",
+                            "Early Intervention", "Family Behavioral Services", "Family Home Agency", "Independent Living Services", "Intermediate Care Facilities",
+                            "Non-Mobile", "One to One Services", "Seniors", "Supported Living Services", "Transportation" ], vals);
+      })
+      .getSelectOptions('Staffing Needs')
+      .then(function(vals) {
+          assert.deepEqual(["", "Night Sleep", "Night Awake"], vals);
+      })
+      .getSelectOptions('Staffing Ratio')
+      .then(function(vals) {
+          assert.deepEqual(["","1:1","1:2","1:3","1:4","Other"], vals);
       })
       .getSelectOptions('Desired Living Environment')
       .then(function(vals) {
@@ -123,14 +133,8 @@ testSuite("rwInReferral", suiteTimeout, {
       .then(function(vals) {
           assert.deepEqual(["", "Ambulatory", "Wheelchair", "Uses Walker" , "Uses Cane"], vals);
       })
-      .chooseSelectOption("Referral Source Type", "Other")
-      .waitForVisible("input[id$=refSourceTypeOtherField]", defaultOperationTimeout)
-      .fillInputText("Other (Describe)", "Mentor2")
       .fillInputText("Referral Source", "Mentor")
       .fillInputText("Referrer Name", "Obi-wan Kennobi")
-      .fillInputText("Anticipated Admission DateTime", "07/31/2015 14:00")
-
-
       .click("input[value='Save Referral']")
       .waitForVisible("input[value=Edit]", defaultOperationTimeout)
       .url()
@@ -140,14 +144,6 @@ testSuite("rwInReferral", suiteTimeout, {
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
     	 assert.ok(isExisting, "Convert Button exists.");
-      })
-      .getOutputText("Referral Source Type")
-      .then(function (refSrcTyp) {
-        assert.equal("Other", refSrcTyp);
-      })
-      .getOutputText("Referral Source Type Other Describe")
-      .then(function (refSrcTypOther) {
-        assert.equal("Mentor2", refSrcTypOther);
       })
       .getOutputText("First Name")
       .then(function (firstName) {
@@ -165,6 +161,5 @@ testSuite("rwInReferral", suiteTimeout, {
       .then(function (name) {
         assert.equal("Obi-wan Kennobi", name);
       });
-
   }
 });
