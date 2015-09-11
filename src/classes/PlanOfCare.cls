@@ -11,6 +11,9 @@ public with sharing class PlanOfCare {
     public map<string, clsGoal> planStuff = new map<string, clsGoal> ();    
     public map<string, clsGoal> GETplanStuff(){return planStuff;}
 
+
+    transient public boolean errorPresent {get; set;}
+    
     public without sharing class NoSharingRecord {
         public NoSharingRecord(){}
 	    public TMN_User__c getTmnAccess(){
@@ -24,6 +27,7 @@ public with sharing class PlanOfCare {
     }
     
     public planOfCare(){
+    	this.errorPresent= false;
         this.pbsId = ApexPages.CurrentPage().getParameters().get('Id');
         
         try {
@@ -61,6 +65,7 @@ public with sharing class PlanOfCare {
 	        Apexpages.currentPage().getHeaders().put('content-disposition', 'attachment; filename="'+file+'"');        
         
         } catch (Exception e) {
+        	this.errorPresent= true;
             ApexPages.addmessage(new ApexPages.message(ApexPages.severity.Error, e.getMessage()));
         }
     }

@@ -42,9 +42,9 @@
 </w:WordDocument>
  <o:DocumentProperties>
   <o:Subject>Plan Of Care</o:Subject>
-  <o:Author>The Mentor Network - iServe</o:Author>
+  <o:Author>iServe</o:Author>
   <o:Company>The Mentor Network</o:Company>
-  <o:Version>1.0</o:Version>
+  <o:Version></o:Version>
  </o:DocumentProperties>
  <o:OfficeDocumentSettings>
   <o:RelyOnVML/>
@@ -146,6 +146,7 @@ div.MyHead {
 	<body>
 <apex:messages style="color: red;"/>
 
+<apex:outputPanel layout="none" rendered="{!!errorPresent}">
 		<div class="pageContent" id="b1" >
 			<table class="pageHeader" style="width: 100%;">
 				<thead>
@@ -855,6 +856,8 @@ div.MyHead {
                 </div>
             </div>
         </div>
+</apex:outputPanel>
+        
 	</body>
 </html>
 </apex:page>
