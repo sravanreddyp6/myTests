@@ -168,22 +168,22 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     /** Validations which are required to be checked Before Finalizing or Esigning the progress Note**/
     public void validateFinalizeEsign(list<progress_note__c> pnValidations,string GoalsSelected){
         if(GoalsSelected=='NoGoal'){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a "Goal" before continuing.'));   
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Goal before continuing.'));   
         }
         if(pnValidations[0].status__c == 'Final'){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This Progress Note has already been Finalized'));  
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This Progress Note has already been finalized.'));  
         }
         if(pnValidations[0].Approval_Status__c == 'Pending'){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This Progress Note is pending Approval')); 
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This Progress Note is pending approval.')); 
         }
         if(pnValidations[0].Action_plan__c == Null){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Action Plan before continuing'));    
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select an Action Plan before continuing.'));    
         }
         if(pnValidations[0].Service_Location__c == Null){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Location before continuing'));   
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Location before continuing.'));   
         }
         if(pnValidations[0].Type_of_Contact__c == Null ||pnValidations[0].Type_of_Contact__c == ''){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select the Type of Contact before continuing'));  
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select the Type of Contact before continuing.'));  
         }
         if(pnValidations[0].Service_code__c == Null){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'You must select a Service Code before continuing.'));  
@@ -474,31 +474,54 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     
     /**Method called onclick save button on Edit Page**/
     public pagereference saveModifiedProgressNote(){
-        overlappingProgressNote = new list<progress_note__c>();
-        overlappingProgressNote = lookForOverLappingNotes(insertedProgressNoteId);
-        if(overlappingProgressNote.size()>0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
+    	
+    	// EB-539 - moved ordering of time checks
+    	if ( pn.start_time__c == null || pn.end_time__c == null ) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
             return null;
-        }else if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
+    	}
+    	
+    	if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
+            return null;
+        } 
+        // HOTFIX - EB-539 - start time must be before end time
+        else if( pn.start_time__c > pn.end_time__c ){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start date/time must be before end/date time.'));     
             return null;
         }
         else if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy.'));     
             return null;
-        }else{ 
-            pn.recordtypeid = AZ_OPT_ID ; 
-            pn.Person_Being_Served__c = pbsName;
-            pn.admission__c = admissionId;
-            pn.Service_Assignment__c = theServAssignId;
-            pn.Action_Plan__c = ActivePlanId;
-            update pn;
-            insertedProgressNoteId = pn.Id;
-            newBlock = false;
-            pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id +'&SelectedKey='+ '' +'&DeselectedKey='+ '' );
-            pageref.setredirect(true);
-            return pageref;
-        } 
+        }
+    	
+        overlappingProgressNote = new list<progress_note__c>();
+        overlappingProgressNote = lookForOverLappingNotes(insertedProgressNoteId);
+        if(overlappingProgressNote.size()>0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times overlap with the start and end times of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
+            return null;
+        }
+        
+        pn.recordtypeid = AZ_OPT_ID ; 
+        pn.Person_Being_Served__c = pbsName;
+        pn.admission__c = admissionId;
+        pn.Service_Assignment__c = theServAssignId;
+        pn.Action_Plan__c = ActivePlanId;
+        // EB-539 - wrap update in try/catch block to present error more nicely
+        try {
+       		update pn;
+        }
+       	catch (Exception e) {
+		    ApexPages.addMessage( new ApexPages.message(ApexPages.severity.ERROR, 'The following exception has occurred: ' + e.getMessage()));
+		    return null;
+		}
+     	
+     	insertedProgressNoteId = pn.Id;
+        newBlock = false;
+        pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id +'&SelectedKey='+ '' +'&DeselectedKey='+ '' );
+        pageref.setredirect(true);
+        return pageref;
+         
     }
       
     /**Method called onclick Cancel button on Edit Page, Takes back the User 
@@ -528,6 +551,34 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         pn.admission__c = admissionId;
         pn.Service_Assignment__c = theServAssignId;
         pn.Action_Plan__c = ActivePlanId;
+        
+        // HOTFIX - EB-539 - start time must be before end time, reorder to do time checks before checking overlap
+        if ( pn.start_time__c == null || pn.end_time__c == null ) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
+            return null;
+    	}
+        if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
+            return null;
+        } 
+        if( pn.start_time__c > pn.end_time__c ){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start date/time must be before end/date time'));     
+            return null;
+        }
+        if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
+            return null;
+        } 
+        if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This progress note cannot have the "Purpose/Service is Billable field" checked if the "Sleep Check Conducted" field is also checked'));     
+            return null;
+        }
+                if ([select id from Action_Plan__c where id = :ActivePlanId and Status__c='Active Final'].size() == 0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Cannot create note for action plan not in Active Final status.'));  
+            return null;
+        }
+        
+        
         list<Progress_Note__c> samepbsNotes = New list<Progress_Note__c>();
         if(insertedProgressnoteid!=Null){
             samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c,Approval_User__c, end_time__c, status__c, Owner.Name ,ownerid from Progress_Note__c where id != :insertedprogressnoteId and disregard_note__c = false and Person_Being_Served__c = :pbsName and Admission__c = :admissionId and  Service_Assignment__c = :theServAssignId and Action_Plan__c = :ActivePlanId and OwnerId =: UserInfo.getUserId() and ((start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c) or (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)or ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c ) ) ]; 
@@ -562,139 +613,131 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         //System.debug('M--> K -->c'+ diffpbsNotes ); 
         overlappingProgressNote.addall(samepbsNotes);
         overlappingProgressNote.addall(diffpbsNotes);
-        if ([select id from Action_Plan__c where id = :ActivePlanId and Status__c='Active Final'].size() == 0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Cannot create note for action plan not in Active Final status.'));  
-            return null;
-        }
         if(overlappingProgressNote.size()>0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
-            return null;
-        }if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
-            return null;
-        } 
-        if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
-            return null;
-        } 
-        if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This progress note cannot have the "Purpose/Service is Billable field" checked if the "Sleep Check Conducted" field is also checked'));     
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times overlap with the start and end times of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
             return null;
         }
-        else{
-            //pn.GoalIds_AZOPTPage__c = GoalsSelected;
-            upsert pn;
-            insertedProgressNoteId = pn.Id;
-            if(insertedProgressNoteId !=null){
-                list<ProgressNote_ActionPlanChildren_mjo__c> lstJncObj = New List<ProgressNote_ActionPlanChildren_mjo__c>();
-                lstJncObj = [select goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where progress_note__c =: insertedprogressnoteid];
-                list<string> existingId = new list <string>();
-                if(lstjncobj.size()>0){
-                    for(ProgressNote_ActionPlanChildren_mjo__c jnc:lstjncobj){
-                        if(jnc.goal__C != Null ){
-                            existingId.add(jnc.goal__C);
-                        }else if(jnc.objective__c != Null ){
-                            existingId.add(jnc.objective__c);
-                        }
-                    }
-                }
-                list<string> ObjSelIds = new list<string>();
-                list<string> finallisttocreate = new list<string>();
-                if(GoalsSelected!=null && GoalsSelected !='')
-                    GoalSelStrs = (GoalsSelected.split(','));
-                list<string> AlrGoal = New List<String>();
-                if(goalSelStrs!= Null && GoalSelStrs.size()>0){
-                    for(string s: goalSelstrs){
-                        if(s.contains('a1B')){
-                            ObjSelIds.add(s);
-                        }
-                    }
-                }
-                
-                System.debug('******************GoalSelStrs'+GoalSelStrs);
-                if(existingId!=Null && existingId.size()>0){
-                    for(string s:GoalSelStrs){
-                        boolean deletethis = false;
-                        for(string str:existingId){
-                            if(s==str){
-                                deletethis = true; //GoalSelStrs.remove(s)
-                            }
-                        }
-                        if(deletethis == false)
-                            finallisttocreate.add(s);
-                    }
-                }else{
-                    finallisttocreate.addall(GoalSelStrs);
-                }
-                list<string> relatedGoals = New List<string>();
-                list<action_plan_objective__c> ObjListToBeAdded = [select action_plan_goal__c from action_plan_objective__c where Id In :ObjSelIds] ; 
-                if(objlistToBeAdded!=Null && ObjListToBeAdded.size()>0){
-                    for(action_plan_objective__c apo:objlistToBeAdded){
-                        boolean deletethis = false;
-                        for(string str:existingId){
-                            System.debug('******************existingId'+existingId);
-                            System.debug('************apo.action_plan_goal'+apo.action_plan_goal__c);
-                            if(apo.action_plan_goal__c==str){
-                                deletethis = true; //GoalSelStrs.remove(s)
-                            }
-                        }
-                        if(deletethis == false){
-                            boolean toAdd = true;
-                            for(string str:finallisttocreate){
-                                if(str == apo.action_plan_goal__c)
-                                    toadd = false;
-                            }
-                            if(toAdd==true)
-                                finallisttocreate.add(apo.action_plan_goal__c);
-                        }
-                    }
-                }
-                list<string> RemovedGoalIDs = New List<string>();
-                if(GoalsDeSelected!=null && GoalsDeSelected !=''){
-                    GoalDeSelStrs = (GoalsDeSelected.split(','));
-                    for(string s:GoalDeSelStrs){
-                        if(s.contains('a1A')){
-                            RemovedGoalIDs.add(s);
-                        }
-                    }System.debug('******************RemovedGoalIDs'+RemovedGoalIDs);
-                    if(RemovedGoalIDs.size()>0){
-                        list<action_plan_objective__c> ObjListToBedel = [select id from action_plan_objective__c where action_plan_goal__r.Id In :RemovedGoalIDs] ; 
-                        System.debug('******************ObjListToBedel'+ObjListToBedel);
-                        for(action_plan_objective__c obj:ObjListToBedel){
-                            GoalDeSelStrs.add(obj.id);
-                        }
-                    }
-                }
-                if(finallisttocreate!=null && finallisttocreate.Size()>0){
-                    for(string s:finallisttocreate){
-                        ProgressNote_ActionPlanChildren_mjo__c childJO =  new ProgressNote_ActionPlanChildren_mjo__c();
-                        childJO.progress_note__c = insertedProgressnoteid;
-                        if(S!=Null && S!=''){
-                            if(s.contains('a1A')){
-                               childJO.goal__c = s; 
-                            }
-                            else if(s.contains('a1B')){
-                                childJO.Objective__c=s;
-                            }
-                        }
-                        try{
-                            insert childJO;
-                        }
-                        catch(DMLException e){ApexPages.addMessages(e); }
-                    }
-                }
-                if(GoalDeSelStrs!=null && GoalDeSelStrs.Size()>0){
-                    list<ProgressNote_ActionPlanChildren_mjo__c> tobedelList = New List<ProgressNote_ActionPlanChildren_mjo__c>();
-                    tobedelList = [select id,goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where (goal__c In: GoalDeSelStrs Or objective__c In: GoalDeSelStrs) and progress_note__c=:insertedprogressnoteid];
-                    if(tobedelList!=Null && tobedelList.size()>0)
-                        delete tobedelList;
-                }
-            }
-            newBlock = false;
-            pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&SelectedKey='+ GoalsSelected +'&Deselectedkey='+ GoalsDeSelected); //+'&sfdc.override=1');
-            pageref.setredirect(true);
-            return pageref;     
-        }      
+
+        //pn.GoalIds_AZOPTPage__c = GoalsSelected;
+        // EB-539 - wrap upsert in try/catch to present nicer messsage
+        try {
+        	upsert pn;
+
+	        insertedProgressNoteId = pn.Id;
+	        if(insertedProgressNoteId !=null){
+	            list<ProgressNote_ActionPlanChildren_mjo__c> lstJncObj = New List<ProgressNote_ActionPlanChildren_mjo__c>();
+	            lstJncObj = [select goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where progress_note__c =: insertedprogressnoteid];
+	            list<string> existingId = new list <string>();
+	            if(lstjncobj.size()>0){
+	                for(ProgressNote_ActionPlanChildren_mjo__c jnc:lstjncobj){
+	                    if(jnc.goal__C != Null ){
+	                        existingId.add(jnc.goal__C);
+	                    }else if(jnc.objective__c != Null ){
+	                        existingId.add(jnc.objective__c);
+	                    }
+	                }
+	            }
+	            list<string> ObjSelIds = new list<string>();
+	            list<string> finallisttocreate = new list<string>();
+	            if(GoalsSelected!=null && GoalsSelected !='')
+	                GoalSelStrs = (GoalsSelected.split(','));
+	            list<string> AlrGoal = New List<String>();
+	            if(goalSelStrs!= Null && GoalSelStrs.size()>0){
+	                for(string s: goalSelstrs){
+	                    if(s.contains('a1B')){
+	                        ObjSelIds.add(s);
+	                    }
+	                }
+	            }
+	            
+	            System.debug('******************GoalSelStrs'+GoalSelStrs);
+	            if(existingId!=Null && existingId.size()>0){
+	                for(string s:GoalSelStrs){
+	                    boolean deletethis = false;
+	                    for(string str:existingId){
+	                        if(s==str){
+	                            deletethis = true; //GoalSelStrs.remove(s)
+	                        }
+	                    }
+	                    if(deletethis == false)
+	                        finallisttocreate.add(s);
+	                }
+	            }else{
+	                finallisttocreate.addall(GoalSelStrs);
+	            }
+	            list<string> relatedGoals = New List<string>();
+	            list<action_plan_objective__c> ObjListToBeAdded = [select action_plan_goal__c from action_plan_objective__c where Id In :ObjSelIds] ; 
+	            if(objlistToBeAdded!=Null && ObjListToBeAdded.size()>0){
+	                for(action_plan_objective__c apo:objlistToBeAdded){
+	                    boolean deletethis = false;
+	                    for(string str:existingId){
+	                        System.debug('******************existingId'+existingId);
+	                        System.debug('************apo.action_plan_goal'+apo.action_plan_goal__c);
+	                        if(apo.action_plan_goal__c==str){
+	                            deletethis = true; //GoalSelStrs.remove(s)
+	                        }
+	                    }
+	                    if(deletethis == false){
+	                        boolean toAdd = true;
+	                        for(string str:finallisttocreate){
+	                            if(str == apo.action_plan_goal__c)
+	                                toadd = false;
+	                        }
+	                        if(toAdd==true)
+	                            finallisttocreate.add(apo.action_plan_goal__c);
+	                    }
+	                }
+	            }
+	            list<string> RemovedGoalIDs = New List<string>();
+	            if(GoalsDeSelected!=null && GoalsDeSelected !=''){
+	                GoalDeSelStrs = (GoalsDeSelected.split(','));
+	                for(string s:GoalDeSelStrs){
+	                    if(s.contains('a1A')){
+	                        RemovedGoalIDs.add(s);
+	                    }
+	                }System.debug('******************RemovedGoalIDs'+RemovedGoalIDs);
+	                if(RemovedGoalIDs.size()>0){
+	                    list<action_plan_objective__c> ObjListToBedel = [select id from action_plan_objective__c where action_plan_goal__r.Id In :RemovedGoalIDs] ; 
+	                    System.debug('******************ObjListToBedel'+ObjListToBedel);
+	                    for(action_plan_objective__c obj:ObjListToBedel){
+	                        GoalDeSelStrs.add(obj.id);
+	                    }
+	                }
+	            }
+	            if(finallisttocreate!=null && finallisttocreate.Size()>0){
+	                for(string s:finallisttocreate){
+	                    ProgressNote_ActionPlanChildren_mjo__c childJO =  new ProgressNote_ActionPlanChildren_mjo__c();
+	                    childJO.progress_note__c = insertedProgressnoteid;
+	                    if(S!=Null && S!=''){
+	                        if(s.contains('a1A')){
+	                           childJO.goal__c = s; 
+	                        }
+	                        else if(s.contains('a1B')){
+	                            childJO.Objective__c=s;
+	                        }
+	                    }
+	                    try{
+	                        insert childJO;
+	                    }
+	                    catch(DMLException e){ApexPages.addMessages(e); }
+	                }
+	            }
+	            if(GoalDeSelStrs!=null && GoalDeSelStrs.Size()>0){
+	                list<ProgressNote_ActionPlanChildren_mjo__c> tobedelList = New List<ProgressNote_ActionPlanChildren_mjo__c>();
+	                tobedelList = [select id,goal__c,objective__c from ProgressNote_ActionPlanChildren_mjo__c where (goal__c In: GoalDeSelStrs Or objective__c In: GoalDeSelStrs) and progress_note__c=:insertedprogressnoteid];
+	                if(tobedelList!=Null && tobedelList.size()>0)
+	                    delete tobedelList;
+	            }
+	        }
+        } catch (Exception e) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, e.getMessage()));     
+            return null;
+        }
+        
+        newBlock = false;
+        pagereference pageref = new Pagereference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+pn.id+'&SelectedKey='+ GoalsSelected +'&Deselectedkey='+ GoalsDeSelected); //+'&sfdc.override=1');
+        pageref.setredirect(true);
+        return pageref;     
     }
     
     public void reformedittree(list<string> GoalSelStrs){
@@ -885,38 +928,66 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     
     /** Method called onclick Save on Inline Edit Page**/
     public pagereference saveProgressNoteInlineEdit(){
-        overlappingProgressNote = new list<progress_note__c>();
-        if(overlappingProgressNote.size()>0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
+
+        // HOTFIX - EB-539 - start time must be before end time, reorder to do time checks before checking overlap
+        if ( pn.start_time__c == null || pn.end_time__c == null ) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
             return null;
-        }if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
+    	}
+        if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
             return null;
-       }
+        } 
+        if( pn.start_time__c > pn.end_time__c ){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start date/time must be before end/date time'));     
+            return null;
+        }
         if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             return null;
-       }if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
+        } 
+        if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This progress note cannot have the "Purpose/Service is Billable field" checked if the "Sleep Check Conducted" field is also checked'));     
             return null;
-        }else{
+        }
+        if ([select id from Action_Plan__c where id = :ActivePlanId and Status__c='Active Final'].size() == 0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Cannot create note for action plan not in Active Final status.'));  
+            return null;
+        }
        upsert pn;
-       return null;}
+       return null;
     }
     
     /** Method called onclick Save on New Progrss Note Page**/
     public pagereference saveProgressNote(){
+    	
+        // HOTFIX - EB-539 - start time must be before end time, reorder to do time checks before checking overlap
+        if ( pn.start_time__c == null || pn.end_time__c == null ) {
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start and end dates and times required.'));     
+            return null;
+    	}
         if(pn.End_Time__c.getTime()==pn.Start_Time__c.getTime()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end times must differ.'));     
             return null;
-        }if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
+        } 
+        if( pn.start_time__c > pn.end_time__c ){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start date/time must be before end/date time'));     
             return null;
         }
+        if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
+            return null;
+        } 
         if(pn.Sleep_Check_Conducted__c == true && pn.Purpose_Service_is_Billable__c == true){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'This progress note cannot have the "Purpose/Service is Billable field" checked if the "Sleep Check Conducted" field is also checked'));     
             return null;
-        }if(overlappingProgressNote.size()>0){
+        }
+        if ([select id from Action_Plan__c where id = :ActivePlanId and Status__c='Active Final'].size() == 0){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Cannot create note for action plan not in Active Final status.'));  
+            return null;
+        }
+
+		if(overlappingProgressNote.size()>0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Your start and end time overlaps with the start and end time of '+ overlappingProgressNote[0].Name+' note that you created. Please consider changing the start and end times.'));     
             return null;
         }else{

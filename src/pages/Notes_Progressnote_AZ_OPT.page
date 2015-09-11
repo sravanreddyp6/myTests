@@ -221,9 +221,9 @@
         var AppStatus = '{!Progress_Note__c.Approval_Status__c}';
         var ActionPlan = '{!Progress_Note__c.Action_Plan__c}';
         var ServiceCode = '{!Progress_Note__c.Service_Code__c}';
-        var Interventions = '{!Progress_Note__c.Interventions__c}';
-        var NextVisit = '{!Progress_Note__c.Notes_For_Next_Visit__c}';
-        var Progress = '{!Progress_Note__c.Progress__c}';
+        var Interventions = '{! JSENCODE(Progress_Note__c.Interventions__c)}';
+        var NextVisit = '{! JSENCODE(Progress_Note__c.Notes_For_Next_Visit__c)}';
+        var Progress = '{! JSENCODE(Progress_Note__c.Progress__c)}';
         var s= '';
         if(goalsSelected == 'NoGoal' || srvcloc =='' || finalalready == '' || ServiceCode == '' || Progress == '' || NextVisit == '' || Interventions == '' || AppStatus =='Pending' || Status == 'Final' || ActionPlan == null ){ 
             if(goalsSelected == 'NoGoal' ){
