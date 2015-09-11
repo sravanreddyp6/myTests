@@ -902,12 +902,8 @@ public with sharing class referrals_Controller{
 	}
 
 	private void defaultAuthTypePicklist ( Funding_Source__c fs ) {
-		List<RecordType> cmrt = [ select id from recordtype where sobjecttype='Funding_Source__c' and developername = 'CareMeridian_FS'];
-		if (cmrt.size() > 0) {
-			ID CMID = cmrt[0].Id;
-			if ( fs.RecordTypeId == CMID)
-				fs.Authorization_type__c = 'Initial'; // set default value that is not being honored in late render on jquery dialog
-		}
+		// removing the CM case for CMAUTH-2
+		// keeping this method in case we need it in the future for other record types
 	}
 
 	public void showAddRelParty() {
