@@ -679,7 +679,7 @@ public pagereference mySave(){
                             || (mc.ActnPln_CtlgEnabledFor_Cambridge__c && userOpGrp == 'Cambridge')
                             || (mc.ActnPln_CtlgEnabledFor_NR__c && userOpGrp == 'NeuroRestorative')
                             || (mc.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood')
-                            || (mc.ActnPln_CtlgEnabledFor_CAFSS__c && Actionplan.Service_Assignment__r.Flavor__c = 'CA FSS');
+                            || (mc.ActnPln_CtlgEnabledFor_CAFSS__c && Actionplan.Service_Assignment__r.Flavor__c == 'CA FSS');
                             
         system.debug('catalog enabled - ' + showThis);
         system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
