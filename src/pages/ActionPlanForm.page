@@ -8,9 +8,10 @@
 
 <apex:variable value="{! (Action_Plan__c.Service_Assignment__r.Admission__r.State__c == 'AZ' 
                             && Action_Plan__c.Service_Assignment__r.Service_location__r.ProgramID__c != '114165002') ||
-                         $User.Operating_Group__c = 'Cambridge' }" var="hideObjType"/>
+                         $User.Operating_Group__c = 'Cambridge' || Action_Plan__c.Service_Assignment__r.Flavor__c == 'CA FSS'}" var="hideObjType"/>
 <apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>
 <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS"/>
+<apex:variable value="{!Action_Plan__c.Service_Assignment__r.Flavor__c == 'CA FSS'}" var="isCAFSS" />
 
 
 <apex:variable value="{!if(isCM,'What difficulty does this Person Being Served seek to overcome?','What does this Person Being Served want to achieve?')}" var="goalTxt" />
@@ -526,7 +527,8 @@ background-color: cornsilk;
                             ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_CM__c && userOpGrp == 'Care Meridian')
                             || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_Cambridge__c && userOpGrp == 'Cambridge')
                             || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_NR__c && userOpGrp == 'NeuroRestorative')
-                            || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood') }" >
+                            || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood') 
+                            || ($Setup.SystemSettings__c.ActnPln_CtlgEnabledFor_CAFSS__c && isCAFSS)}" >
             <div id="catalog_filler" style="display: none; width: 400px;"> &nbsp;</div>
             <div style="width: 45px;"> &nbsp;</div>
             <div id="catalog_sticky">
