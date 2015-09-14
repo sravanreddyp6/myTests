@@ -19,7 +19,7 @@ public with sharing class AdmissionViewExtension {
     
     private void setisEditor() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
-                FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id ];
+                FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id];
 
         if (acls.size() > 0) {
             isEditor = acls[0].HasEditAccess;
