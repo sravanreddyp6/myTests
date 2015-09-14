@@ -84,15 +84,13 @@ var injectJS = function () {
 var defaultOperationTimeout = 30 * 1000;
 
 module.exports = function (client, done) {
-  client.addCommand("logInAs", function(user) {
+  client.addCommand("checkLogin", function () {
     var loginSuccessful = false;
     var loginError = false;
     var changePasswordNeeded = false;
+    var scheduledMaintenance = false;
+
     return client
-      .url("https://test.salesforce.com")
-      .setValue("input#username", user.username)
-      .setValue("input#password", user.password)
-      .click("button#Login")
       .waitUntil(function () {
         return this.isExisting("a=ESD Home").then(function (loginSuccessResult) {
           if (loginSuccessResult) {
@@ -109,6 +107,10 @@ module.exports = function (client, done) {
                 changePasswordNeeded = true;
                 return true;
               }
+              if (title.indexOf("Scheduled") !== -1) {
+                scheduledMaintenance = true;
+                return true;
+              }
               return false;
             });
           });
@@ -123,8 +125,20 @@ module.exports = function (client, done) {
           return this
             .click("input[value='Cancel']")
             .waitForVisible("a=ESD Home", defaultOperationTimeout);
+        } else if (scheduledMaintenance) {
+          return this
+            .click("a.continue")
+            .checkLogin();
         }
       });
+  });
+  client.addCommand("logInAs", function (user) {
+    return client
+      .url("https://test.salesforce.com")
+      .setValue("input#username", user.username)
+      .setValue("input#password", user.password)
+      .click("input#Login")
+      .checkLogin();
   });
   client.addCommand("fillInputText", function (label, value) {
     return client
