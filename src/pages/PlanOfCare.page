@@ -479,26 +479,56 @@ div.MyHead {
                                 <tr>
                                     <th style="padding-left: .5em; text-align: left;" colspan="3">Has this individual made any achievement towards their rights restriction restoration plans(lifting rights restrictions)?</th>
                                 </tr>
-                                <tr>                                
-                                    <apex:outputPanel layout="none" rendered="{!assessment.Individual_Rights_Review__c == 'Yes'}">
-                                        <td style="vertical-align: top; width: 15%; padding-left: 1em; "> <input type="checkbox" checked="checked" /><apex:outputText value="Yes" /></td>
-                                        <td rowspan="2" style="vertical-align: middle; width: 10%;"> <b>Explain</b></td>
-                                        <td rowspan="2"> <apex:outputText value="{!assessment.Individual_Rights_Review_Explain__c}" /></td>
-                                    </apex:outputPanel>
-                                    <apex:outputPanel layout="none" rendered="{! OR( assessment.Individual_Rights_Review__c == 'No', assessment.Individual_Rights_Review__c == '')}">
-                                        <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" /><apex:outputLabel value="Yes" /></td> 
-                                        <td rowspan="2" style="vertical-align: middle;width: 10%;"> <b>Explain</b></td>
-                                        <td rowspan="2"> <apex:outputText value="{!assessment.Individual_Rights_Review_Explain__c}" /></td>
-                                    </apex:outputPanel>
-                                </tr>
+                                <apex:outputPanel layout="none" rendered="{!assessment.Individual_Rights_Review__c == 'Yes'}">
                                 <tr>
-                                    <apex:outputPanel layout="none" rendered="{! OR( assessment.Individual_Rights_Review__c == 'No', assessment.Individual_Rights_Review__c == '')}">
-                                        <td style="vertical-align: top; width: 15%; padding-left: 1em; "> <input type="checkbox" checked="checked" /><apex:outputText value="No" /></td>
-                                    </apex:outputPanel>
-                                    <apex:outputPanel layout="none" rendered="{!assessment.Individual_Rights_Review__c == 'Yes'}">
-                                        <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" /><apex:outputLabel value="No" /></td> 
-                                    </apex:outputPanel>                                
-                                </tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em; "> <input type="checkbox" checked="checked" /><apex:outputText value="Yes" /></td>
+                                    <td rowspan="3" style="vertical-align: middle; width: 10%;"> <b>Explain</b></td>
+                                    <td rowspan="3"> <apex:outputText value="{!assessment.Individual_Rights_Review_Explain__c}" /></td>
+                                </tr><tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" /><apex:outputLabel value="No" /></td>
+                                </tr><tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" /><apex:outputLabel value="N/A" /></td>
+                                </tr> 
+                                </apex:outputPanel>
+                                
+                                
+                                <apex:outputPanel layout="none" rendered="{!assessment.Individual_Rights_Review__c == 'No'}">
+                                <tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em; "> <input type="checkbox" /><apex:outputText value="Yes" /></td>
+                                    <td rowspan="3" style="vertical-align: middle; width: 10%;"> <b>Explain</b></td>
+                                    <td rowspan="3"> <apex:outputText value="{!assessment.Individual_Rights_Review_Explain__c}" /></td>
+                                </tr><tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" checked="checked"/><apex:outputLabel value="No" /></td>
+                                </tr><tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" /><apex:outputLabel value="N/A" /></td>
+                                </tr> 
+                                </apex:outputPanel>
+                                
+                                
+                                <apex:outputPanel layout="none" rendered="{!assessment.Individual_Rights_Review__c == 'N/A'}">
+                                <tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em; "> <input type="checkbox" /><apex:outputText value="Yes" /></td>
+                                    <td rowspan="3" style="vertical-align: middle; width: 10%;"> <b>Explain</b></td>
+                                    <td rowspan="3"> <apex:outputText value="{!assessment.Individual_Rights_Review_Explain__c}" /></td>
+                                </tr><tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" /><apex:outputLabel value="No" /></td>
+                                </tr><tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" checked="checked" /><apex:outputLabel value="N/A" /></td>
+                                </tr> 
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel layout="none" rendered="{!assessment.Individual_Rights_Review__c == ''}">
+                                <tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em; "> <input type="checkbox"/><apex:outputText value="Yes" /></td>
+                                    <td rowspan="3" style="vertical-align: middle; width: 10%;"> <b>Explain</b></td>
+                                    <td rowspan="3"> <apex:outputText value="{!assessment.Individual_Rights_Review_Explain__c}" /></td>
+                                </tr><tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" /><apex:outputLabel value="No" /></td>
+                                </tr><tr>
+                                    <td style="vertical-align: top; width: 15%; padding-left: 1em;"><input type="checkbox" /><apex:outputLabel value="N/A" /></td>
+                                </tr> 
+                                </apex:outputPanel>
+                                
                             </table>
 
                         </td>
