@@ -145,7 +145,13 @@
                     <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=wf.id,retURL=$Page.identity_nonemployees])}">View</apex:outputLink>-->
                     <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                         <apex:param value="{!wf.Id}" assignTo="{!selectedID}" name="userIdParam"/>
-                    </apex:commandLink>                    
+                    </apex:commandLink> 
+                       
+                    <apex:outputPanel> &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!IF(wf.Current_Person_Type__c ='Employee','false','true')}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                        &nbsp;
+                                       
                 </apex:column>
                 <apex:column headerValue="Name" value="{!wf.Name}"/>
                 <apex:column headerValue="Email" value="{!wf.Email__c}"/>
@@ -164,6 +170,12 @@
                     <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                         <apex:param value="{!r.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink>
+                     
+                    <apex:outputPanel> &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!IF(r.Current_Person_Type__c ='Employee','false','true')}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                        &nbsp;
+
                 </apex:column>
                 <apex:column headerValue="Name" value="{!r.Name}"/>
                 <apex:column headerValue="Email" value="{!r.Email__c}"/>
@@ -205,7 +217,7 @@
                 <apex:pageBlock title="Potential Matches" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
                     <apex:pageBlockButtons location="Bottom">
                         <apex:commandButton value="Cancel" action="{!closePopup}"/>
-                        <apex:commandButton value="Create New Identity Record" action="{!newTmnUser}" id="createBtn"/>
+                        <apex:commandButton value="Create Non Employee Record" action="{!newTmnUser}" id="createBtn"/>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <apex:commandButton value="First Page" rerender="details" action="{!FirstPageNE}" disabled="{!prevNE}" status="loadingBusy"/>
                         <apex:commandButton value="Previous" rerender="details" action="{!previousNE}" disabled="{!prevNE}" status="loadingBusy"/>
@@ -218,10 +230,11 @@
                             <apex:param value="{!ner.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                         </apex:commandLink>
                         <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">View</apex:outputLink>-->
-                        &nbsp;&#124;&nbsp;
-                        <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!IF(ner.Current_Person_Type__c ='Employee','false','true')}">Edit</apex:outputLink>
-                        &nbsp;&#124;&nbsp;
-                        <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Provision</apex:outputLink>
+                     
+                    <apex:outputPanel> &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!IF(ner.Current_Person_Type__c ='Employee','false','true')}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                        &nbsp;
                         </apex:column>
                         <apex:column headerValue="Name" value="{!ner.Name}"/>
                         <apex:column headerValue="Title" value="{!ner.Professional_Title__c}"/>                                               
@@ -246,7 +259,7 @@
                         <!--<apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>-->
                         <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!OR(theTMNUser.Current_Person_Type__c == 'Non-Employee',theTMNUser.Current_Person_Type__c == 'Pre-hire')}"/>
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
-                        <apex:commandButton value="Provision Access" action="{!URLFOR($Page.identity_canvas, '')}" />
+                        <apex:commandButton value="Request Access" action="{!URLFOR($Page.identity_canvas, '')}" />
                     </apex:pageblockButtons>            
                     <apex:pageBlockSection columns="2" title="Person Information">                   
                         <apex:outputField label="First Name" value="{!theTMNUser.First_Name__c}"/>
@@ -254,14 +267,18 @@
                         <apex:outputField label="Middle Name" value="{!theTMNUser.Middle_Name__c}"/>
                         <apex:outputField label="Personal Email" value="{!theTMNUser.Personal_Email__c}"/> 
                         <apex:outputField label="Last Name" value="{!theTMNUser.Last_Name__c}"/>
-                        <apex:outputField label="Professional Title" value="{!theTMNUser.Professional_Title__c}"/>     
+                        <apex:outputField label="Job Title" value="{!theTMNUser.Job_Title__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/>
+                        <apex:outputText rendered="{!theTMNUser.Current_Person_Type__c!='Employee'}" >  </apex:outputText> 
                         <apex:outputField label="Preferred First Name" value="{!theTMNUser.Preferred_First_Name__c}"/>
-                        <apex:outputField label="Job Status" value="{!theTMNUser.Job_Status__c}" />
+                        <apex:outputField label="Professional Title" value="{!theTMNUser.Professional_Title__c}"/>     
+
                         <apex:outputField label="Preferred Last Name" value="{!theTMNUser.Preferred_Last_Name__c}"/>
+                        <apex:outputField label="Job Status" value="{!theTMNUser.Job_Status__c}" />
+                        <apex:outputField label="Mobile Phone" value="{!theTMNUser.Mentor_Cell_Phone__c}"/>
                         <apex:outputField label="Person Type" value="{!theTMNUser.Current_Person_Type__c}" />                                                                                 
                         <apex:outputField label="Office Phone" value="{!theTMNUser.Office_Phone__c}"/>
                         <apex:outputField label="Start Date" value="{!theTMNUser.Hire_Date__c}" />
-                        <apex:outputField label="Mobile Phone" value="{!theTMNUser.Mentor_Cell_Phone__c}"/>
+ 					    <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         <apex:outputField label="End Date" value="{!theTMNUser.Last_Day__c}" />
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="2" title="Management Hierarchy">
@@ -270,7 +287,7 @@
                         <apex:outputField label="Operating Group" value="{!theTMNUser.Operating_Group__c}" />
                         <apex:outputField label="Business Unit" value="{!theTMNUser.Business_Unit__c}"/>                     
                         <apex:outputField label="Service Region" value="{!theTMNUser.Service_Region__c}"/>
-                        <apex:outputField label="Program String" value="{!theTMNUser.Program_String__c}"/>                    
+                        <!--  <apex:outputField label="Program String" value="{!theTMNUser.Program_String__c}"/> -->                    
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="2" title="Location">
                         <apex:outputField label="Location Name" value="{!theTMNUser.Location_Name__c}"/>
@@ -290,17 +307,30 @@
                     </apex:pageBlockSection>
                     <apex:pageBlockSection title="System IDs" columns="2">
                         <apex:outputField label="Identity ID" value="{!theTMNUser.Identity_ID__c}" />
-                        <apex:outputField label="Salesforce Account" value="{!theTMNUser.Salesforce_User_Account__c}"/>
                         <apex:outputField label="Network Username" value="{!theTMNUser.Network_Username__c}"/>
                         <apex:outputField label="Employee ID" value="{!theTMNUser.Employee_Number__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/>
-                        <apex:outputField label="Taleo ID" value="{!theTMNUser.Teleo_ID__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/>                                            
+                        <apex:outputField label="Unique ID" value="{!theTMNUser.Unique_Id__c}"/>
+                        <apex:outputField label="Taleo ID" value="{!theTMNUser.Teleo_ID__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                        <apex:outputField label="Salesforce Account" value="{!theTMNUser.Salesforce_User_Account__c}"/>
                     </apex:pageBlockSection>
-                    <apex:PageBlockSection columns="2">
+ 
+                    <apex:PageBlockSection columns="2" title="Other Information" >
+                         <apex:outputField label="Job Code"  value="{!theTMNUser.Job_Code__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                         <apex:outputField label="Recruiter Name"  value="{!theTMNUser.Recruiter_Name__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                          <apex:outputField label="Pay Basis" value="{!theTMNUser.Pay_Basis__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                      <apex:outputField label="Recruiter Email"  value="{!theTMNUser.Recruiter_Email_Address__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                         <apex:outputField label="Approval Level"  value="{!theTMNUser.Approval_Level__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                          <apex:outputField label="Custodians" value="{!theTMNUser.Custodians__c}" /> 
+                        </apex:PageBlockSection>  
+
+ 
+                    <apex:PageBlockSection columns="2" rendered="{!theTMNUser.Current_Person_Type__c=='Non-Employee'}">
                          <apex:outputField label="Vendor"  value="{!theTMNUser.Vendor_list__c}" /> 
                          <apex:outputField label="Vendor Name"  value="{!theTMNUser.Vendor_Name__c}"  rendered="{!theTMNUser.Vendor_list__c='OTHER'}"/> 
                           <apex:outputField label="BAA Signed?" value="{!theTMNUser.BAA_Signed__c}" /> 
                       <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         </apex:PageBlockSection>  
+                        <!--  
                         <apex:pageBlock title="Existing Attachments" rendered="{!theTMNUser.Vendor_list__c='OTHER'}">
                        <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column style="padding-right: 9px;" headerValue="Title">
@@ -315,6 +345,7 @@
                 </apex:column>
                 </apex:pageBlockTable>
             </apex:pageBlock>
+            -->
                     </apex:pageBlock>
                        
  
