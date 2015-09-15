@@ -352,17 +352,17 @@ public with sharing class IdentityHomeController {
             totalRecsNE = [SELECT COUNT()
                          FROM TMN_User__c 
                          WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%') 
-                         AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];   
+                         AND (Job_Status__c IN ('Inactive','Pending') )];   
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
                                   WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like : generatedKey2 +'%') 
-                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
+                                  AND (Job_Status__c IN ('Inactive','Pending') )
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create New Identity Record to create the new identity record.')); 
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
               }else if(searchNonEmpResult.size()>0){
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
               }              
@@ -370,19 +370,19 @@ public with sharing class IdentityHomeController {
             totalRecsNE = [SELECT COUNT()
                          FROM TMN_User__c 
                          WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%') 
-                         AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];
+                         AND (Job_Status__c IN ('Inactive','Pending') )];
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
                                   WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like :  generatedKey1 +'%') 
-                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
+                                  AND (Job_Status__c IN ('Inactive','Pending') )
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create New Identity Record to create the new identity record.')); 
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
               }else if(searchNonEmpResult.size()>0){
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create Non Employee Record to create the Non Employee record.'));
               }                              
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
             totalRecsNE = [SELECT COUNT()
@@ -391,22 +391,22 @@ public with sharing class IdentityHomeController {
                          OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
                          OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
                          OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
-                         AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];
+                         AND (Job_Status__c IN ('Inactive','Pending') )];
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
                                   WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%') 
                                   OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
                                   OR (Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
                                   OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%')) 
-                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
+                                  AND (Job_Status__c IN ('Inactive','Pending') )
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create New Identity Record to create the new identity record.')); 
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
               }else if(searchNonEmpResult.size()>0){
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create Non Employee Record to create the Non Employee record.'));
               }              
         }
         return null;
@@ -494,7 +494,7 @@ public with sharing class IdentityHomeController {
                             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
                             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Teleo_ID__c,
                             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,Program_String__c ,
-                            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_Name__c ,Vendor_list__c
+                            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_Name__c ,Vendor_list__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,Custodians__c
                             FROM TMN_User__c 
                             WHERE Id =:selectedID];    
         attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:theTMNUser.id order by createddate desc];               
