@@ -390,15 +390,13 @@ public with sharing class IdentityHomeController {
                          WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%') 
                          OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
                          OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
-                         OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
-                         AND (Job_Status__c IN ('Inactive','Pending') )];
+                         OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) ];
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
                                   WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%') 
                                   OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
                                   OR (Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
                                   OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%')) 
-                                  AND (Job_Status__c IN ('Inactive','Pending') )
                                   ORDER BY Last_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
