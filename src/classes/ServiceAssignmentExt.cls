@@ -1107,7 +1107,7 @@ public without sharing class ServiceAssignmentExt {
     public PageReference ResetPage() {
         System.debug('theServAssign: ' + theServAssign);
         System.debug('initialRecord: ' + initialRecord);
-        theServAssign = initialRecord;
+        theServAssign = initialRecord.clone(true);
         LoadData(theServAssign);
         getContractsAndXrefs();
         contractsList = new List<SelectOption>();
