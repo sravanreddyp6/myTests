@@ -95,10 +95,14 @@ function setupDates() {
                 </apex:pageBlockSectionItem>
                 <apex:outputText value="" rendered="{! useDischargeSection }" />
                 <apex:inputField value="{!admission.State__c}" required="true" />
-                <apex:inputField value="{!admission.Discharged_Status__c}" rendered="{! !useDischargeSection }"/>
+                
+                <!-- Removed for PRI-272
+                <apex:inputField value="{!admission.Discharged_Status__c}" rendered="{! !useDischargeSection }"/> -->
                 <apex:pageBlockSectionItem />
-                <apex:inputField value="{!admission.Reason_for_Discharge__c}" rendered="{! !useDischargeSection }"/>
-            </apex:pageBlockSection>
+                <!-- Removed for PRI-272
+                <apex:inputField value="{!admission.Reason_for_Discharge__c}" rendered="{! !useDischargeSection }"/>-->
+            </apex:pageBlockSection> 
+            
             <!-- PRI-218/19 -->
 			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="false" rendered="{!reqAdmittedFrom}">
 				<apex:inputField value="{!admission.Admitted_From__c}" required="true" />
