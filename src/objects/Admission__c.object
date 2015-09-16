@@ -1222,24 +1222,16 @@
     <validationRules>
         <fullName>Discharged_Requirements</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(ISPICKVAL(Status__c, &quot;Discharged&quot;),
-OR(
-ISNULL(Discharged_Date__c),
-ISPICKVAL(Discharged_Status__c,&quot;&quot;),
-ISBLANK(Reason_for_Discharge__c)))</errorConditionFormula>
+        <errorConditionFormula>AND(ISPICKVAL(Status__c, &quot;Discharged&quot;),ISNULL(Discharged_Date__c))</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
-        <errorMessage>An Admission must have a Discharged Date, Discharged Status, and Reason for Discharge, before it can be discharged.</errorMessage>
+        <errorMessage>An Admission must have a Discharged Date before it can be discharged.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Discharged_Requirements_2</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(NOT(ISPICKVAL(Status__c, &quot;Discharged&quot;)), 
-OR( 
-NOT(ISNULL(Discharged_Date__c)), 
-NOT(ISPICKVAL(Discharged_Status__c,&quot;&quot;)), 
-NOT(ISBLANK(Reason_for_Discharge__c))))</errorConditionFormula>
+        <errorConditionFormula>AND(NOT(ISPICKVAL(Status__c, &quot;Discharged&quot;)),NOT(ISNULL(Discharged_Date__c)))</errorConditionFormula>
         <errorDisplayField>Status__c</errorDisplayField>
-        <errorMessage>Status must be changed to Discharged when entering a Discharge Date/Reason/Status.</errorMessage>
+        <errorMessage>Status must be changed to Discharged when entering a Discharge Date.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Referred_Out_Details</fullName>
