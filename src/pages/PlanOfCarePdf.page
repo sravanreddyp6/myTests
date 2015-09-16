@@ -295,7 +295,7 @@ div.footer {
                         <td style="padding-top: .5em;">
                             <table style="width: 100%" >
                                 <tr>
-                                    <th style="padding-left: .5em; text-align: left;" colspan="2">Does the individual have any specific dietary needs?</th>
+                                    <th style="padding-left: .5em; text-align: left;">Does the individual have any specific dietary needs?</th>
                                 </tr>
                                 <tr>
                                     <apex:outputPanel layout="none" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Rating__c == 'Presents a Risk'}">
@@ -318,15 +318,12 @@ div.footer {
                                     <th style="padding-left: .5em; text-align: left;">If 'Presents a Risk', do the dietary needs address a significant health or safety risk to the individual?</th>
                                 </tr>
                                 <tr>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Description_of_Risk__c == 'Yes, refer to DAO for instructions and completion'}" >
-                                        <td style="vertical-align: top; width: 30%; padding-left: 1em; ">Yes, refer to DAO for instructions and completion</td>
-                                    </apex:outputPanel>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Description_of_Risk__c == 'No, DAO not required per IDT recommendation'}" >
-                                        <td style="vertical-align: top; width: 30%; padding-left: 1em; ">No, DAO not required per IDT recommendation</td>
-                                    </apex:outputPanel>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Yes, refer to DAO for instructions and completion" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Description_of_Risk__c == 'Yes, refer to DAO for instructions and completion'}" />
+                                        <apex:outputText value="No, DAO not required per IDT recommendation" rendered="{!responseMap['Health Conditions/Medical Treatment~Dietary Needs'].Description_of_Risk__c == 'No, DAO not required per IDT recommendation'}" /> 
+                                    </td>
                                 </tr>
                             </table>
-
                         </td>
                     </tr>
             </apex:outputPanel>
@@ -335,15 +332,13 @@ div.footer {
                         <td style="padding-top: 1.5em;">
                             <table style="width: 100%" >
                                 <tr>
-                                    <th style="padding-left: .5em; text-align: left;" colspan="2">Does the Individual require PRN During Day Programming Hours?</th>
+                                    <th style="padding-left: .5em; text-align: left;">Does the Individual require PRN During Day Programming Hours?</th>
                                 </tr>
                                 <tr>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Presents a Risk'}">
-                                        <td style="vertical-align: top; width: 30%; padding-left: 1em; "><apex:outputText value="Presents a Risk" /></td>
-                                    </apex:outputPanel>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Does Not Present a Risk'}">
-                                        <td style="vertical-align: top;"><apex:outputLabel value="Does Not Present a Risk" /></td>
-                                    </apex:outputPanel>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Presents a Risk" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Presents a Risk'}" />
+                                        <apex:outputText value="Does Not Present a Risk" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Rating__c == 'Does Not Present a Risk'}" /> 
+                                    </td>
                                 </tr>
                             </table>
 
@@ -358,12 +353,10 @@ div.footer {
                                     <th style="padding-left: .5em; text-align: left;">If 'Presents a Risk', Describe signs or symptoms that would require the need for the PRN to be administered</th>
                                 </tr>
                                 <tr>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Description_of_Risk__c == 'Individual requests the medication'}" >
-                                        <td style="vertical-align: top; width: 30%; padding-left: 1em; ">Individual requests the medication</td>
-                                    </apex:outputPanel>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Description_of_Risk__c == 'CMA/MM observes the need based on the following symptoms:'}" >
-                                        <td style="vertical-align: top; width: 30%; padding-left: 1em; ">CMA/MM observes the need based on the following symptoms:</td>
-                                    </apex:outputPanel>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Individual requests the medication" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Description_of_Risk__c == 'Individual requests the medication'}" />
+                                        <apex:outputText value="CMA/MM observes the need based on the following symptoms:" rendered="{!responseMap['Medications~PRN During Day Programming Hours'].Description_of_Risk__c == 'CMA/MM observes the need based on the following symptoms:'}" /> 
+                                    </td>
                                 </tr>
                             </table>
                         </td>
@@ -374,15 +367,13 @@ div.footer {
                         <td style="padding-top: 1.5em;">
                             <table style="width: 100%" >
                                 <tr>
-                                    <th style="padding-left: .5em; text-align: left;" colspan="2">Does this individual Self-Medicate?</th>
+                                    <th style="padding-left: .5em; text-align: left;">Does this individual Self-Medicate?</th>
                                 </tr>
                                 <tr>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Medications~Self-Medicate'].Rating__c == 'Presents a Risk'}">
-                                        <td style="vertical-align: top; width: 30%; padding-left: 1em; "><apex:outputText value="Presents a Risk" /></td>
-                                    </apex:outputPanel>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Medications~Self-Medicate'].Rating__c == 'Does Not Present a Risk'}">
-                                        <td style="vertical-align: top;"><apex:outputLabel value="Does Not Present a Risk" /></td>
-                                    </apex:outputPanel>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Presents a Risk" rendered="{!responseMap['Medications~Self-Medicate'].Rating__c == 'Presents a Risk'}" />
+                                        <apex:outputText value="Does Not Present a Risk" rendered="{!responseMap['Medications~Self-Medicate'].Rating__c == 'Does Not Present a Risk'}" /> 
+                                    </td>
                                 </tr>
                             </table>
                         </td>
@@ -392,15 +383,13 @@ div.footer {
                         <td style="padding-top: 1.5em;">
                             <table style="width: 100%" >
                                 <tr>
-                                    <th style="padding-left: .5em; text-align: left;" colspan="2">Can this individual transport medication to and from the program?</th>
+                                    <th style="padding-left: .5em; text-align: left;">Can this individual transport medication to and from the program?</th>
                                 </tr>
                                 <tr>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Presents a Risk'}">
-                                        <td style="vertical-align: top; width: 30%; padding-left: 1em; "><apex:outputText value="Yes" /></td>
-                                    </apex:outputPanel>
-                                    <apex:outputPanel layout="none" rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Does Not Present a Risk'}">
-                                        <td style="vertical-align: top;"><apex:outputLabel value="No" /></td>
-                                    </apex:outputPanel>
+                                    <td style="vertical-align: top; padding-left: 1em; ">
+                                        <apex:outputText value="Yes" rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Presents a Risk'}" />
+                                        <apex:outputText value="No" rendered="{!responseMap['Medications~Self-Transportation of Medication'].Rating__c == 'Does Not Present a Risk'}" /> 
+                                    </td>
                                 </tr>
                             </table>
                         </td>
