@@ -1,5 +1,10 @@
 <apex:page controller="IdentityHomeController" sidebar="false" id="idNoEmpPage" tabStyle="TMN_User__c">
-    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />    
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />  
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+
     <style type="text/css">
         .custPopup{
             background-color: white;
@@ -76,7 +81,35 @@
         }
                              
     </style>
-
+<script type="text/javascript" >
+   var j$ = jQuery.noConflict(); 
+             jQuery(window).load(function($) {
+             if({!onloadDialog}){
+             	 j$('[id$=selectDelegateId]').val('');
+                  j$('[id*=DelegateOnBehalfOf]').dialog("open");
+                }
+        });
+    
+    j$(function() {
+    j$('[id*=DelegateOnBehalfOf]').dialog({
+      resizable: false,
+      draggable: false,
+      height:300,
+      width : 500,
+      modal: true,
+      autoOpen: false,
+      top: 400
+    }).parent().appendTo(j$('form[id$=identityNonEmployee]'));
+}); 
+ 
+    function CloseDialog() {
+    j$('[id*=DelegateOnBehalfOf]').dialog("close");
+    }
+    function changeDelegate() {
+    	selectDelegate(j$('[id$=selectDelegateId]').val());
+    }
+    </script> 
+    
     <apex:actionStatus id="loadingBusy" stopText="">
         <apex:facet name="start">
             <div>
@@ -115,11 +148,32 @@
     <apex:outputPanel >
         <apex:pageMessages />
     </apex:outputPanel>
-    
+       
+    <apex:form>
+     <apex:actionFunction name="selectDelegate" action="{!selectDelegate}"   reRender="WorkforceOnBehalf,wfReports,wfAttest" oncomplete="CloseDialog();" >
+             <apex:param name="aliasName" value="" assignTo="{!aliasName}" />
+            </apex:actionFunction>
+        
+        <apex:outputPanel id="DelegateOnBehalfOf" title="Delegate On Behalf Of" style="display:none">
+            <apex:pageBlock >
+                <apex:pageBlockSection columns="2" > 
+                    <apex:pageBlockSectionItem >
+                        <apex:outputText value="Manage Workforce on Behalf of" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem>
+                        <apex:selectList value="{!aliasName}" size="1" label="Select Delegation" id="selectDelegateId" onchange="changeDelegate()" style="margin-right: 20px;">
+                            <apex:selectOptions value="{!DelValues}" />
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>  
+        
+    </apex:form>
     <apex:outputPanel layout="block" styleClass="block-title" rendered="{!hasAccess}" >
     <apex:form >
         Manage Workforce on Behalf of:&nbsp;
-        <apex:selectList value="{!aliasName}" size="1" label="Delegation Selected">
+        <apex:selectList value="{!aliasName}" size="1" label="Delegation Selected" id="WorkforceOnBehalf">
             <apex:actionSupport event="onchange" reRender="wfReports,wfAttest" />
             <apex:selectOptions value="{!DelValues}" >
             </apex:selectOptions>
@@ -147,9 +201,9 @@
                         <apex:param value="{!wf.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink> 
                        
-                    <apex:outputPanel> &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.identity_nonemployees,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Request Access</apex:outputLink></apex:outputPanel>
 
-                    <apex:outputPanel rendered="{!IF(wf.Current_Person_Type__c ='Employee','false','true')}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                    <apex:outputPanel rendered="{!wf.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
                         &nbsp;
                                        
                 </apex:column>
@@ -171,9 +225,9 @@
                         <apex:param value="{!r.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink>
                      
-                    <apex:outputPanel> &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.identity_nonemployees,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
 
-                    <apex:outputPanel rendered="{!IF(r.Current_Person_Type__c ='Employee','false','true')}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                    <apex:outputPanel rendered="{!r.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
                         &nbsp;
 
                 </apex:column>
@@ -231,9 +285,9 @@
                         </apex:commandLink>
                         <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">View</apex:outputLink>-->
                      
-                    <apex:outputPanel> &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.identity_canvas,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.identity_nonemployees,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
 
-                    <apex:outputPanel rendered="{!IF(ner.Current_Person_Type__c ='Employee','false','true')}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                    <apex:outputPanel rendered="{!ner.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
                         &nbsp;
                         </apex:column>
                         <apex:column headerValue="Name" value="{!ner.Name}"/>

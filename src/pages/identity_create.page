@@ -290,13 +290,19 @@ function autoCompleteRender(ul, item) {
                 </apex:pageblockButtons>            
                 <apex:pageBlockSection columns="2" title="Person Information" id="perInfo">
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true" taborderhint="1"/>
-                    <apex:inputField label="Personal Email" value="{!TMNUser.Personal_Email__c}" type="email" taborderhint="8"/>
+                    <apex:inputField  value="{!TMNUser.Personal_Email__c}" taborderhint="8"/>
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2"/>
                     <apex:inputField label="Professional Title" value="{!TMNUser.Professional_Title__c}" taborderhint="9"/>
                     <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true" taborderhint="3"/>
                     <apex:outputText label="Job Status" >Active</apex:outputText>
                     <apex:inputField label="Preferred First Name" value="{!TMNUser.Preferred_First_Name__c}" required="true" taborderhint="4"/>                    
-                    <apex:inputField label="Start Date" value="{!TMNUser.Hire_Date__c}" required="true" id="startDate" taborderhint="11" onChange="setEndDate()"/>
+                    <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Start Date" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                    <apex:inputField label="Start Date" value="{!TMNUser.Hire_Date__c}"  id="startDate" taborderhint="11" onChange="setEndDate()"/>	
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                     <apex:inputField label="Preferred Last Name" value="{!TMNUser.Preferred_Last_Name__c}" required="true" taborderhint="5"/>       
                     <apex:pageBlockSectionItem helpText="End Date Cann't be more than 90 days from Start Date">
                     <apex:outputLabel value="End Date" />
@@ -422,8 +428,14 @@ function autoCompleteRender(ul, item) {
                       </apex:pageBlockSectionItem>  
 					</apex:pageBlockSection>
 					 <apex:inputhidden value="{!TMNUser.Manager_Lookup__c}" id="managerId"/> 
-                    <apex:pageBlockSection columns="2" title="Vendor Information" >                                                                                                                                                                                                                                        
-                     <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}" required="true" id="vendorList" onchange="selectVendor()"></apex:inputField>
+                    <apex:pageBlockSection columns="2" title="Vendor Information" > 
+				<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Vendor" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                     <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}"  id="vendorList" onchange="selectVendor()"/>	
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                        <apex:pageBlockSectionItem >
                       <apex:outputText value="BAA Signed " />
                     <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
