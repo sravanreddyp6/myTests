@@ -851,11 +851,11 @@
                     </apex:column>
                     <apex:column headerValue="Admission Name"><a href="/apex/AdmissionView?id={!admsns.ID}">{!admsns.Name}</a>
                     </apex:column>
-                    <apex:column headerValue="Effective Date">
+                    <apex:column headerValue="Admission Date">
                         <c:MilitaryDatetime dateTimeVal="{!admsns.Admission_Effective_DateTime__c}" />           
                     </apex:column>
                     <apex:column value="{!admsns.Discharged_Date__c}" headerValue="Discharge Date" />
-                    <apex:column value="{!admsns.Status__c}" headerValue="Status" />
+                    <apex:column value="{!admsns.Status__c}" headerValue="Admission Status" />
                 </apex:pageblockTable>
                 <apex:outputText value="No admissions to display" rendered="{!(admissions.size=0)}" />
             </apex:pageBlockSection>
