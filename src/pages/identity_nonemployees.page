@@ -311,7 +311,7 @@
                         <apex:pageblockButtons location="Bottom" >    
                         <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=theTMNUser.id])}"/>-->
                         <!--<apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>-->
-                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!OR(theTMNUser.Current_Person_Type__c == 'Non-Employee',theTMNUser.Current_Person_Type__c == 'Pre-hire')}"/>
+                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
                         <apex:commandButton value="Request Access" action="{!URLFOR($Page.identity_canvas, '')}" />
                     </apex:pageblockButtons>            
