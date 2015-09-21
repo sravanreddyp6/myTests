@@ -1,6 +1,8 @@
 public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
     public Progress_Note__c thePN = new Progress_Note__c();
     public string myId = ApexPages.currentPage().getParameters().get('id');
+    public string SubmittedAlready = ApexPages.currentPage().getParameters().get('IsSubmitted');
+
     public PageReference redirect() {        
         PageReference pageRef2 = new PageReference('/' + myId); 
 //AZ - OPT        
@@ -97,9 +99,11 @@ public with sharing class Notes_ProgressNote_Create_Flavor_PDF {
             // Cleaned up the if/else we had here that was doing the same thing for the true and false case based on 
             // value of field No_Approval_Needed__c.  J. Gilliam, 3/26/14.          
             insert attachmentPDF;
-            return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
-            
-            
+            if(SubmittedAlready != Null){
+                return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id +'&SubmittedAlready=Yes');
+            }else{
+                return new PageReference('/apex/Notes_ProgressNote_Create_Audit_pdf?id='+thePN.id);
+            }
         }catch(DMLException e){
             thePN.addError(e.getMessage());
         }

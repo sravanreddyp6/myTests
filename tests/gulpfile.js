@@ -4,8 +4,10 @@ var argv = require('yargs')
   .alias('s', 'suite')
   .alias('d', 'debug')
   .alias('sd', 'seleniumdebug')
+  .alias('f', 'force')
   .argv;
 
+var exec = require('child_process').exec;
 var gulp = require('gulp');
 var selenium = require('selenium-standalone');
 var mocha = require('gulp-spawn-mocha');
@@ -44,10 +46,19 @@ gulp.task("inspector", function (done) {
 });
 
 gulp.task("manage-user", function (done) {
-  manageUsers(done);
+  manageUsers(done, argv.force);
 });
 
-var deps = ["manage-user", "selenium"];
+gulp.task("install-dependencies", function (done) {
+  exec("npm install", function (err, stdout, stderr) {
+    if (stderr) {
+      throw new Error(stderr);
+    }
+    done();
+  })
+});
+
+var deps = ["install-dependencies", "manage-user", "selenium"];
 if (argv.debug) {
   deps.push("inspector");
 }

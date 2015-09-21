@@ -1,6 +1,7 @@
 trigger EmailForInactiveTMNUsers on TMN_User__c (before insert, before update) {
 
-    /* 
+    /*
+     * 
      * Shaun-76
      *------------
      * Any user whose Job Status is being "inactivated" should
@@ -23,6 +24,33 @@ trigger EmailForInactiveTMNUsers on TMN_User__c (before insert, before update) {
         if (u.job_status__c == 'Inactive'){
             u.email__c = '';
         }
+        
+        /*
+         * Only do this on update
+         */
+         if (Trigger.isUpdate) {
+	        /*
+	         * If the user modified the last_day__c field then "termination_date_modified_salesforce__c" will be equal to true
+	         * We will use this value to ensure when Kettle tries to update the last_day__c field it will be not be ablel to 
+	         * if it was previously updated by the user.
+	         */
+       		 if (u.last_day__c <> Trigger.oldMap.get(u.id).last_day__c && UserInfo.getLastName() <> 'integration') {
+            		u.Termination_Date_Modified_Salesforce__c = True;
+        	 }
+         
+        
+	        /*
+	         * If the user modified the last_day__c field then "termination_date_modified_salesforce__c" will be equal to true
+	         * If the INTEGRATION user tries to update the last day field and u.Termination_Date_Modified_Salesforce__c == true then 
+	         * we will NOT allow the INTEGRATION user to make this update and update the table back to it's original value.
+	         */
+	        if (u.last_day__c <> Trigger.oldMap.get(u.id).last_day__c && UserInfo.getLastName() == 'integration' && u.Termination_Date_Modified_Salesforce__c == true) {
+	            u.last_day__c = Trigger.oldMap.get(u.id).last_day__c;
+	        }
+        
+         }//end if (Trigger.isUpdate) 
+
+        
     }
 
 }

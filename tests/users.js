@@ -43,21 +43,34 @@ _.forEach(Object.keys(usernameMap), function (username) {
   usersToCreate.push(username);
 });
 
-var manageUsers = function (cb) {
+var manageUsers = function (cb, forced) {
   var usersCreated = false;
   var conn = new jsforce.Connection({
-    loginUrl: "https://test.salesforce.com/"
+    loginUrl: "https://test.salesforce.com/",
+    maxRequest: 1000  // otherwise we'll run into max concurrent request error very soon (it defaults to 10)
   });
   conn
     .login(auth.username, auth.password)
     .then(function () {
-      return conn.sobject("User").select("Id, Username")
+      return conn.sobject("User").select("Id, Username, IsActive")
         .where({ Username: Object.keys(usernameMap) }).execute();
     })
     .then(function (existingUsers) {
-      _.forEach(existingUsers, function (user) {
-        _.pull(usersToCreate, user["Username"].toLowerCase());
-      });
+      if (forced)  {
+        _.forEach(existingUsers, function (user) {
+          user["Username"] = user["Username"] + "." + _.random(100000);
+          user["IsActive"] = false;
+        })
+        return conn.sobject("User").update(existingUsers);
+      }
+      return existingUsers;
+    })
+    .then(function (existingUsers) {
+      if (!forced) {
+        _.forEach(existingUsers, function (user) {
+          _.pull(usersToCreate, user["Username"].toLowerCase());
+        });
+      }
       if (usersToCreate.length === 0) {
         throw {
           name: "NoNewUserException",

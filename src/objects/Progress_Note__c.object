@@ -100,6 +100,66 @@
         </displayedFields>
         <label>NewForm</label>
     </fieldSets>
+    <fieldSets>
+        <fullName>NewFormAZOPT</fullName>
+        <description>On the New AZ OPT page with a fewer clicks.</description>
+        <displayedFields>
+            <field>Start_Time__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>End_Time__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Total_Time__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Service_Location__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Type_of_Contact__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Purpose_Service_is_Billable__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Units__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>People_Present__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Is_Note_Late__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Sleep_Check_Conducted__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Next_Appt_Date_Time__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>NewFormAZOPT</label>
+    </fieldSets>
     <fields>
         <fullName>Abuse_Disclosure_Type__c</fullName>
         <externalId>false</externalId>
@@ -787,6 +847,41 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Clinician_Employee_ID__c</fullName>
+        <description>Staff employee ID - from Clinician lookup - populated through trigger</description>
+        <externalId>false</externalId>
+        <label>Practitioner ID</label>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Clinician__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Staff Name</label>
+        <lookupFilter>
+            <active>true</active>
+            <errorMessage>Please choose a clinician from the list</errorMessage>
+            <filterItems>
+                <field>TMN_User__c.Operating_Group__c</field>
+                <operation>equals</operation>
+                <valueField>$User.Operating_Group__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Progress Notes</relationshipLabel>
+        <relationshipName>Progress_Notes</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Co_Therapist_unable_to_bill__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -1389,6 +1484,26 @@
         <type>DateTime</type>
     </fields>
     <fields>
+        <fullName>Esigned_At__c</fullName>
+        <externalId>false</externalId>
+        <label>Esigned At</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Esigned_By__c</fullName>
+        <externalId>false</externalId>
+        <label>Esigned By</label>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Eye_Contact__c</fullName>
         <externalId>false</externalId>
         <label>Eye Contact</label>
@@ -1567,6 +1682,16 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>GoalIds_AZOPTPage__c</fullName>
+        <description>Contains the goalids to be opened when the progress note is clicked</description>
+        <externalId>false</externalId>
+        <label>GoalIds_AZOPTPage</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
         <fullName>Guardian_Name__c</fullName>
         <externalId>false</externalId>
         <formula>&quot;Guardian #1: &quot;+ Person_Being_Served__r.Guardian1_Name__c + &quot; &quot; + IF(Person_Being_Served__r.Guardian2_Name__c != null, &quot;Guardian #2: &quot; +  Person_Being_Served__r.Guardian2_Name__c, &quot;&quot;)</formula>
@@ -1659,6 +1784,7 @@
     <fields>
         <fullName>Interventions__c</fullName>
         <externalId>false</externalId>
+        <inlineHelpText>Any Interventions. – Required</inlineHelpText>
         <label>Interventions</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
@@ -2194,7 +2320,7 @@ If this is selected, please fill out the appropriate check boxes to the right.</
         <fullName>Notes_For_Next_Visit__c</fullName>
         <description>Describe goals for next meeting</description>
         <externalId>false</externalId>
-        <inlineHelpText>Any notes that may be helpful for the next visit.</inlineHelpText>
+        <inlineHelpText>Any notes that may be helpful for the next visit. – Required</inlineHelpText>
         <label>Notes For Next Visit</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
@@ -2540,7 +2666,7 @@ Neurostative IL role</description>
         <fullName>Progress__c</fullName>
         <description>Progress towards goals selected.</description>
         <externalId>false</externalId>
-        <inlineHelpText>Progress made towards goals selected.</inlineHelpText>
+        <inlineHelpText>Progress made towards goals selected. – Required</inlineHelpText>
         <label>Progress</label>
         <length>32768</length>
         <trackHistory>false</trackHistory>
@@ -3462,6 +3588,19 @@ Neurostative IL role</description>
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Type_Of_Note__c</fullName>
+        <description>For AZ OPT To show the field on the detail page layout</description>
+        <externalId>false</externalId>
+        <formula>RecordType.Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Type Of Note</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Type__c</fullName>
         <description>created for NeuroRestorative IL role and rec type called &quot;Therapy&quot;</description>
         <externalId>false</externalId>
@@ -3477,6 +3616,10 @@ Neurostative IL role</description>
             </picklistValues>
             <picklistValues>
                 <fullName>Group</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Indirect</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -3564,6 +3707,10 @@ Neurostative IL role</description>
             </picklistValues>
             <picklistValues>
                 <fullName>Telehealth</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Indirect</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -19327,6 +19474,10 @@ Neurostative IL role</description>
                 <default>false</default>
             </values>
             <values>
+                <fullName>Indirect</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Individual</fullName>
                 <default>false</default>
             </values>
@@ -19374,6 +19525,10 @@ Neurostative IL role</description>
             </values>
             <values>
                 <fullName>Face-To-Face</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Indirect</fullName>
                 <default>false</default>
             </values>
             <values>

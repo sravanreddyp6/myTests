@@ -198,7 +198,7 @@ function drawData() {
         context.fillText(text, col1, line );
 
         var newdate = new Date( '{!Progress_Note__c.End_Time__c}');
-        text = "Action Plan:  {!Progress_Note__c.Action_Plan__r.Name}";
+        text = "Action Plan:  {! JSENCODE(Progress_Note__c.Action_Plan__r.Name)}";
         metrics = context.measureText( text );
         context.fillText(text, col2, line );
         

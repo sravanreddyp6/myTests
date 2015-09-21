@@ -54,6 +54,7 @@ public with sharing class HomePageController{
 
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
+	public Boolean canCreateProgressNotes { get; set; }
 	
 	// EC-196 - Shift notes
 	public Boolean canCreateNote { get; private set; }
@@ -80,6 +81,10 @@ public with sharing class HomePageController{
 	public string SAlastName {get; set;}
 	public List<Service_Assignment__c> ServAssigns {get; private set;}
 	
+	public Map<Id, Boolean> saactionMap {get;set;}
+    public Map<Id, Id> saActiveactionMap {get;set;}
+    
+    private boolean isIARole { get; set; }	
 
 	//Constructor
 	public HomePageController(){
@@ -166,6 +171,20 @@ public with sharing class HomePageController{
 		} else {
 			canSeeShiftDoc = false;
 		}
+		Map<id,UserRole> rolemap =new Map<id,UserRole>([SELECT DeveloperName,Id FROM UserRole]);
+        if((rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix_Clinical_Users'||rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix')&& OperatingGroup == 'Redwood' && os.AZ_OPT_Enabler__c==true){
+          canCreateProgressNotes = true;
+          canSeeShiftDoc = false;
+          canSeeCNAWorkbook = false;
+        }
+        else
+          canCreateProgressNotes =false;
+          
+        if (rolemap.get(UserInfo.getUserRoleID()).DeveloperName == 'IA')
+        	isIARole = true;
+        else
+        	isIARole = false;  
+        	
 
 		oSchema = Progress_Note__c.sObjectType.getDescribe();
 		canCreateNote = oSchema.isCreateable();
@@ -194,9 +213,9 @@ public with sharing class HomePageController{
 
 	public void updateProgramSelection() {
 		String query = '' +
-			'SELECT Id, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
-			'       Admission__r.Id, Admission__r.state__c, ' +
-			'       (SELECT Id FROM Action_Plans__r where status__c = \'Active Final\'), ' +
+			'SELECT Id,Name, Person_Being_Served__r.Id, Person_Being_Served__r.Name, ' +
+			'       Admission__r.Id, Admission__r.State__c, ' +
+			'       (SELECT Id, status__C FROM Action_Plans__r where status__c = \'Active Final\') , ' +
 			'       (SELECT Id, Name, Status__c, RecordType.Name, OwnerId FROM Evaluations__r WHERE RecordType.Name = \'CMShiftAssessment\' OR RecordType.Name = \'CNA Workbook\' ORDER BY CreatedDate DESC) ' +
 			'FROM Service_Assignment__c ' +
 			'WHERE Service_Location__r.Alias__c = :selectedAlias ' +
@@ -208,6 +227,19 @@ public with sharing class HomePageController{
 		cnaWorkbookMap = new Map<Id, Evaluation__c>();
 		hasShiftDocMap = new Map<Id, Boolean>();
 		hasCnaWorkbookMap = new Map<Id, Boolean>();
+        saactionMap = new Map<Id, Boolean>();
+        saActiveactionMap = new Map<Id,Id>();
+        for (Service_Assignment__c serviceAssignment: serviceAssignments) {
+            saactionMap.put(serviceAssignment.id,false);
+            saActiveactionMap.put(serviceAssignment.id,serviceAssignment.id);
+            for(Action_Plan__c ap:serviceAssignment.Action_Plans__r){
+                if(ap.Status__c == 'Active Final'){
+                    saactionMap.put(serviceAssignment.id,True);
+                    saActiveactionMap.put(serviceAssignment.id,ap.Id);
+                } 
+            }
+            
+        }
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
 			// Get the latest shift doc/CNA Workbook
 			shiftDocMap.put(serviceAssignment.Id, null);
@@ -246,6 +278,10 @@ public with sharing class HomePageController{
 				}
 				optionList.add(new SelectOption('', '-------------'));
 			}
+			if (canCreateProgressNotes) {
+                optionList.add(new SelectOption('createProgressNotes', 'Create New Progress Note'));
+                optionList.add(new SelectOption('', '-------------'));
+            }
 			if (canSeeCNAWorkbook) {
 				optionList.add(new SelectOption('createCNAWorkbook', 'Create New CNA Workbook'));
 				if (hasCNAWorkbookMap.get(serviceAssignment.Id) && cnaWorkbookMap.get(serviceAssignment.Id).OwnerId == UserInfo.getUserId()) {
@@ -268,7 +304,7 @@ public with sharing class HomePageController{
 			}
 				
 			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
-			if ( operatingGroup == 'Redwood' && serviceAssignment.Admission__r.state__c == 'IA') {
+			if ( operatingGroup == 'Redwood' && isIARole ) {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					optionList.add(new SelectOption(
 										Page.Notes_ProgressNote_Create.getUrl() + 
@@ -285,6 +321,7 @@ public with sharing class HomePageController{
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
 				}
 				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+                optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
 				
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
@@ -661,8 +698,9 @@ public with sharing class HomePageController{
 		columnsToHeadersMap.put('end_date_time__c','End Date/Time');
 		columnsToHeadersMap.put('tmn_user__c','Accompanied By');
 		columnsToHeadersMap.put('location__c','Location');
+		columnsToHeadersMap.put('service_type__c','Service Type');
 		
-		for(string rCol : new List<String>{'start_date_time__c', 'tmn_user__c', 'location__c'}){
+		for(string rCol : new List<String>{'start_date_time__c', 'tmn_user__c', 'location__c', 'service_type__c'}){
 			if(currResponse.get(rCol) == null){
 				currResponse.addError( columnsToHeadersMap.get(rcol) + ' is required' );
 				hasError = true;
@@ -727,7 +765,7 @@ public with sharing class HomePageController{
 		return null;
 	}
 		
-	private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
+	@TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
 		
 		Boolean overlaps = false;
 		system.debug( 'Times:' + s1 + e1 + s2 + e2);

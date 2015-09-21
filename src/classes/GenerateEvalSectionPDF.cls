@@ -6,7 +6,6 @@ public with sharing class GenerateEvalSectionPDF {
 	public string evalname{get; set;}
 	public string opGrp {get;set;}
 	public ID evaluationID { get; set;}
-	public ID pbsID { get; set;}
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}
     public string uniqueID{ get; set; }
@@ -20,6 +19,7 @@ public with sharing class GenerateEvalSectionPDF {
 	public static Evaluation__c thiseval { get; private set;}
 	
 	public List<GenerateGoalObjPDF.ObjectiveWrapper> objectives { get; set; }
+	public transient Contact pbsObj {get;set;}
 	
     @TestVisible 
 	private Evaluation_Response__c[] getAnnotations(String annotationType) { 
@@ -58,13 +58,14 @@ public with sharing class GenerateEvalSectionPDF {
 		
 		approvalHistory = new List<ProcessInstanceHistory>();
 	
-		thisEval = [ select id, name, shift_start_time__c, shift_end_time__c, status__c, head_to_toe_status__c, owner.name from evaluation__c where id = :evaluationID LIMIT 1];
+		thisEval = [ select id, name, shift_start_time__c, shift_end_time__c, status__c, head_to_toe_status__c, owner.name, ServiceAssignment__r.Admission__r.Person_Being_Served__c from evaluation__c where id = :evaluationID LIMIT 1];
 		
 		if (thisEval.shift_start_time__c != null && thisEval.shift_end_time__c != null) {	
 			GenerateGoalObjPDF goalscontroller = new GenerateGoalObjPDF();
 			goalscontroller.init( evaluationID );
 			objectives = goalscontroller.objectives;
-		}
+		}		
+		pbsObj = [SELECT Id, FirstName, LastName, Birthdate, PBS_Identifier__c,Avatar_ID__c FROM Contact WHERE id=:thisEval.ServiceAssignment__r.Admission__r.Person_Being_Served__c];		
         // Naming the PDF in case this controller is used for the PDF page
         String file;
         file = thisEval.Name+'.pdf';

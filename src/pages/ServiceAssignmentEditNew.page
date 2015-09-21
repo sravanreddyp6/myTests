@@ -386,6 +386,9 @@
         <apex:pageBlock mode="detail" title="Service Assignment{!if(editSA==true,' Edit','')}" >
 
             <div class="pbHeaderButton">
+			    <apex:outputPanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA'), !editSA))}">
+                    <a class="btn" href="#" onClick="openModalDialogSA('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700);" id="IowaDailyDataSummaryGenerate">Create Daily Data Summary</a>&nbsp;&nbsp;
+                </apex:outputPanel>
                 <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
                 <apex:actionStatus id="SaveStatus1">
                     <apex:facet name="stop">
@@ -495,7 +498,9 @@
                 <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
                 <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !(vfVarIsCM || isNR) }" />
                 <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR)}" required="{!episodeReq}" />
-                <apex:pageblocksectionitem />
+				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
+				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
+                <apex:pageblocksectionitem rendered="{! !vfVarIsCB}" />
                 <apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
                 <apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR}">
                     
@@ -605,6 +610,11 @@
                     <apex:outputLabel value="Model" for="modelfield" />
                     <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" />
                 </apex:pageblocksectionitem>
+
+				<!--  EB-526 -->
+				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
+				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
+				<apex:outputText value="" rendered="{! vfVarIsCB}" />
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR}">
@@ -1728,23 +1738,26 @@ END: Uncomment to have the element collapsed by default -->
             <apex:pageBlockSection columns="1" collapsible="false">
                 <apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0)}">
 
-                    <apex:column headerValue="Action" styleClass="editcol"><a href="/{!note.ID}/e">Edit</a>
+                    <apex:column headerValue="Action" styleClass="editcol" rendered="{! !vfVarIsCM }"><a href="/{!note.ID}/e">Edit</a>
                     </apex:column>
                     <apex:column headerValue="Name">
                         <apex:outputLink value="/{!note.id}">
                             <apex:outputField value="{!note.name}" /></apex:outputLink>
                     </apex:column>
-                    <apex:column headerValue="Action Plan">
+                    <apex:column headerValue="Action Plan" rendered="{! !vfVarIsCM}">
                         <apex:outputLink value="/{!note.Action_Plan__c}">{!note.action_plan__r.name }</apex:outputLink>
                     </apex:column>
                     <apex:column value="{!note.Start_time__c }" rendered="{! !vfVarIsCM }"/>
                     <apex:column value="{!note.End_Time__c }" rendered="{! !vfVarIsCM }"/>
+		    <apex:column value="{!note.Clinician__c}" rendered="{! vfVarIsCB && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
                     <apex:column value="{!note.createddate }" />
                     <apex:column value="{!note.createdby.name }" />
                 </apex:pageblockTable>
                 <apex:outputText value="No notes to display" rendered="{!(notes.size=0)}" />
-                <apex:outputPanel rendered="{!notes.size!=0}">Showing the 10 most recent notes click&nbsp;
+                <apex:outputPanel rendered="{!notes.size!=0 && ($Setup.SystemSettings__c.AZ_OPT_Enabler__c == False || ($Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup != 'Redwood'))}">Showing the 10 most recent notes click&nbsp;
                     <apex:outputLink value="/a0L?id={!Service_Assignment__c.id}&rlid=00NU00000036mQ0&lsr=0">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+                <apex:outputPanel rendered="{!notes.size!=0 && $Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup == 'Redwood'}" >Showing the 10 most recent notes click&nbsp;
+                    <apex:outputLink value="/apex/Progress_Notes_Log?saID={!theServAssign}&saname={!theServAssign.Name}&admission={!theServAssign.Admission__c}&pbsID={!theServAssign.Person_Being_Served__c}">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlockSection>
         </apex:pageBlock>
 
@@ -2612,6 +2625,42 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:pageBlockButtons>
             </apex:pageBlock>
         </apex:outputPanel>
+	    <div id="IowaDailyDataSummaryDialog" style="display:none;" >
+	    <apex:outputpanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA')))}" >
+	        <script>
+	            jQuery.noConflict();
+	            jQuery(document).ready(function($) {
+	                $('.datepicker').datetimepicker({
+	                    timepicker: false,
+	                    format: 'm/d/Y',
+	                    closeOnDateSelect: true
+	                });
+	            });
+	        </script>
+	        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+	        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
+		        <apex:pageBlockSection>    
+		            <apex:pageBlockSectionItem >
+		            <apex:outputLabel value="Service date" />
+		                <apex:outputPanel layout="none">
+		<!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
+	                        <input id="IowaDailyDataSummaryServiceDate" type="text" class="datepicker" />
+		<!--                     </div> -->
+		                </apex:outputPanel>
+		            </apex:pageBlockSectionItem>
+		
+		            <apex:pageBlockSectionItem >
+		                <apex:outputPanel layout="block">
+		                    <a class="btn" href="#" id="IowaDailyDataSummaryGenerate" onClick="window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
+		                                + '&saId='+ '{!theServAssign.Id}'
+		                                , '_blank');return false;">Generate</a>&nbsp;&nbsp; 
+		                    <a class="btn" href="#" onClick="closeModalDialogSA('IowaDailyDataSummaryDialog', 'div');return false;">Close</a>
+		                </apex:outputPanel>
+		            </apex:pageBlockSectionItem>
+		        </apex:pageBlockSection>
+	        </apex:pageBlock>
+	    </apex:outputpanel>  
+	    </div> 
     </apex:form>
     <a id="shiftSummaries" />
     <apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
