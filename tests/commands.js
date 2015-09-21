@@ -190,6 +190,20 @@ module.exports = function (client, done) {
       }, label)
       .then(function (result) { return result.value; });
   });
+  client.addCommand("getSelectOptionsBySelector", function (selector) {
+    return client
+      .execute(injectJS)
+      .executeAsync(function (selector, doneAsync) {
+        rtInjectJQuery(function ($) {
+          var options = $(selector).find("option");
+          if (options.length === 0) {
+            throw new Error("Found element with selector " + selector + " but cannot find any select options associated with it.");
+          }
+          doneAsync(options.map(function (index, opt) { return opt.value; }));
+        });
+      }, selector)
+      .then(function (result) { return result.value; });
+  });
   client.addCommand("getMultiSelectOptions", function (label) {
 	    return client
 	      .execute(injectJS)
