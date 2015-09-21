@@ -1,3 +1,5 @@
+var url = require("url");
+
 // All the methods in here are injected into the browser context when the test suite is run.
 // Don't include comments in here because apparently WebdriverIO do not like it.
 var injectJS = function () {
@@ -103,7 +105,7 @@ module.exports = function (client, done) {
               return true;
             }
             return this.getTitle().then(function (title) {
-              if (title.indexOf("Change Password") !== -1) {
+              if (title.indexOf("Change Password") !== -1 || title.indexOf("Change Your Password") !== -1) {
                 changePasswordNeeded = true;
                 return true;
               }
@@ -123,7 +125,10 @@ module.exports = function (client, done) {
           throw new Error("Log in failure with user " + user.name);
         } else if (changePasswordNeeded) {
           return this
-            .click("input[value='Cancel']")
+            .url()
+            .then(function (currentUrl) {
+              return this.url(url.resolve(currentUrl.value, '/apex/Home'));
+            })
             .waitForVisible("a=ESD Home", defaultOperationTimeout);
         } else if (scheduledMaintenance) {
           return this
