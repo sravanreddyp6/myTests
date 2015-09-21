@@ -27,6 +27,9 @@ that has label `label` with `value`.
 - `getOutputText(label)`: Get the value from a Visualforce `outputText` or
 `outputField` with label `label`.
 - `getSelectOptions(label)`: Get all the options from a `select` tag with label `label`.
+- `getSelectOptionsBySelector(selector)`: Get all the options from a `select` tag with
+selector `selector`. Use this only when `getSelectOptions` is not viable (e.g. when there
+are multiple elements with the same label on the page).
 - `chooseSelectOption(label, optionValue)`: Choose the option `optionValue` from
 a `select` tag with label `label`.
 - `selectLookup(label)`: Click on a lookup icon that Visualforce generated for certain
