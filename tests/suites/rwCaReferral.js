@@ -93,7 +93,21 @@ testSuite("rwCaReferral", suiteTimeout, {
       .fillInputText("Additional Information / Comments", "Really hateful")
       .chooseSelectOption("Mailing State/Province", "California")
       .click("input[value='Create Person Being Referred']")
-      .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
+      //.waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
+      
+      .click("input[value='Add Related Party']")
+      .waitForVisible("input[value='Save']", defaultOperationTimeout)
+	  .fillInputText("Party Name", "Testing")
+	  .getSelectOptions('Type')
+      .then(function(typeVal) {
+          assert.deepEqual(["", "Caregiver", "Case Worker", "Employment" , "Family/Friends", "Financial Worker", 
+		  "Funder Resources", "Guardian", "Insurance", "Medical", "Mentor", "Mentor Co-Applicant", "Other", "Parent",
+		  "Physician - Alternate", "Physician - Primary", "Power of Attorney", "Referring Provider", "Representative Payee", "Spouse"], typeVal);
+      })      
+      .chooseSelectOption("Type", "Guardian")
+      //.click("input[value='Save']")
+      .click("[id$=regTestid]")
+      //.waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
 
       .getSelectOptions('Referral Status')
       .then(function(refStatus) {
@@ -135,7 +149,11 @@ testSuite("rwCaReferral", suiteTimeout, {
       })
       .fillInputText("Referral Source", "Mentor")
       .fillInputText("Referrer Name", "Obi-wan Kennobi")
-      .click("input[value='Save Referral']")
+      
+      .execute(function () {
+    	  jQuery("input[value='Save Referral']").click();
+      })
+      //.click("input[value='Save Referral']")
       .waitForVisible("input[value=Edit]", defaultOperationTimeout)
       .url()
       .then(function (url) {
