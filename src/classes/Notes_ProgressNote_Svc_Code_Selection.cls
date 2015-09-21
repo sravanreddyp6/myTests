@@ -1,42 +1,61 @@
 public with sharing class Notes_ProgressNote_Svc_Code_Selection {
     public Progress_Note__c CurrentRecord {get; set;}
+    public string dispMode{get;set;}
     public Notes_ProgressNote_Svc_Code_Selection(ApexPages.StandardController controller) {
-        
-        loadData((Progress_Note__c)Controller.getRecord());
-    }
+    	//Added by amruth for EB-513
+        dispMode = ApexPages.currentPage().getParameters().get('Mode');
+        if(dispMode != 'New'){
+            loadData((Progress_Note__c)Controller.getRecord());
+        }
+    } 
     public void loadData(Progress_Note__c localRecord){
-        CurrentRecord = [Select Service_Assignment__c, Service_Code__c, Admission__c, start_time__c,recordtype.Name From Progress_Note__c Where ID = :localRecord.id Limit 1];
+        CurrentRecord = [Select Service_Assignment__c,Service_Assignment__r.SA_Start_DateTime__c, Approval_User__c, Service_Code__c, Admission__c, start_time__c,recordtype.Name From Progress_Note__c Where ID = :localRecord.id Limit 1];
     }
     public List<SelectOption> Codes = new List<SelectOption>();
     public List<SelectOption> getCodes(){
-    loadData(CurrentRecord);
+    	//Added by amruth for EB-513
+    if(dispMode != 'New'){
+        loadData(CurrentRecord);
         Codes.clear();
         SelectOption SOtmp = new SelectOption('', '--None--');
         Codes.Add(SOtmp);
-        /*if(currentrecord.recordtype.name == 'Therapy'){
-        	Id ServCodeId = [SELECT Id From Service_Code__c where Service_Code__c =: 'FAKE'][0].Id;
-            SelectOption SOtmpTherapy = new SelectOption(ServCodeId, 'Other');
-            Codes.Add(SOtmpTherapy);
-        }*/
-            // CTEAE-88 look at note start date for effective service codes
-            for(Service_code__c local : 
+        for(Service_code__c local : 
                     [SELECT Id, Service_Code__c, Service_Value__c From Service_Code__c
                     where id in (select service_code__c from ServiceAssignment_ServiceCode_Jo__c where service_assignment__c = :currentRecord.Service_Assignment__c)
                     and start_date__c <= :Date.valueOf(CurrentRecord.Start_Time__c) and (end_date__c = null or end_date__c >= :Date.valueOf(CurrentRecord.Start_Time__c))  
                     ])
-            {                                   
-                SelectOption SO = new SelectOption(local.ID, local.Service_Value__c);
+            {  SelectOption SO = new SelectOption(local.ID, local.Service_Value__c);
                 Codes.Add(SO);
-            }        
+            }
+        
+      }else if(dispMode == 'New'){
+           id ServAssignId ;
+           servAssignId = ApexPages.currentPage().getParameters().get('ServAssignId');
+           service_assignment__c sa = [select id, SA_Start_DateTime__c from service_assignment__c where Id =: servAssignId ];
+           Codes.clear();
+            SelectOption SOtmp = new SelectOption('', '--None--');
+            Codes.Add(SOtmp);
+           for(Service_code__c local : 
+                    [SELECT Id, Service_Code__c, Service_Value__c From Service_Code__c
+                    where id in (select service_code__c from ServiceAssignment_ServiceCode_Jo__c where service_assignment__c = : servAssignId )
+                    and start_date__c <= : Date.valueof(System.now()) and (end_date__c = null or end_date__c >= :Date.valueOf(System.now()))  
+                    ])
+            {  SelectOption SO = new SelectOption(local.ID, local.Service_Value__c);
+                Codes.Add(SO);
+            }
+      }  
         return Codes;
     }
     
     public List<SelectOption> Auths = new List<SelectOption>();
     public List<SelectOption> getAuths(){
-        loadData(CurrentRecord);
         Auths.clear();
         SelectOption SOtmp = new SelectOption('', '--None--');
         Auths.Add(SOtmp);
+        //Added by amruth for EB-513
+        if(dispMode != 'New'){
+            loadData(CurrentRecord);
+        
         
             System.Debug( 'START_TIME=' + CurrentRecord.Start_Time__c);
             
@@ -53,6 +72,6 @@ public with sharing class Notes_ProgressNote_Svc_Code_Selection {
                 SelectOption SO = new SelectOption(local.Authorization__c, local.Authorization__r.Display_Name__c);
                 Auths.Add(SO);
             }        
-        return Auths ;
+        }return Auths ;
     }    
 }

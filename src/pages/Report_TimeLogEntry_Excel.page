@@ -1,0 +1,56 @@
+<apex:page controller="Report_TimeLogEntry" sidebar="false" contentType="application/vnd.ms-excel#time_log_entry-{!today()}.xls" action="{!runReport}">
+	<apex:pageBlock title="Time Log Entry Report">
+		<table>
+			<tr>
+				<td>Start Date</td>
+				<td>
+					<apex:outputText value="{0,date,MM/dd/yyyy}">
+						<apex:param value="{!startDate}" />
+					</apex:outputText>
+				</td>
+			</tr>
+			<tr>
+				<td>End Date</td>
+				<td>
+					<apex:outputText value="{0,date,MM/dd/yyyy}">
+						<apex:param value="{!endDate}" />
+					</apex:outputText>
+				</td>
+			</tr>
+			<tr>
+				<td>Run Date</td>
+				<td>
+					<c:MilitaryDatetime datetimeval="{!pdfRunDateTime}" />
+					
+				</td>
+			</tr>
+			<tr>
+				<td>Run By</td>
+				<td>{!$User.myFullName__c}</td>
+			</tr>
+		</table>
+	</apex:pageBlock>
+	<apex:repeat value="{!people}" var="pbs">
+		<apex:pageBlock >
+			<apex:pageBlockSection title="{!people[pbs]}" columns="1" collapsible="false">
+				<apex:pageBlockTable value="{!logMap[pbs]}" var="n">
+					<apex:column headervalue="Start Date/Time">
+						<c:MilitaryDatetime datetimeval="{!n.start_date_time__c}"/>
+					</apex:column>
+					<apex:column headervalue="End Date/Time">
+						<c:MilitaryDatetime datetimeval="{!n.end_date_time__c}"/>
+					</apex:column>
+
+					<apex:column headervalue="Service Type" value="{!n.service_type__c}"/>
+					<apex:column headervalue="Location" value="{!n.location__c}"/>
+					<apex:column headervalue="Accompanied By" value="{!n.tmn_user__c}"/>
+					<apex:column headervalue="Created By" value="{!n.createdbyid}"/>
+					<apex:column headervalue="Narrative Note" value="{!n.narrative_note__c}"/>
+					<apex:column headervalue="Late Entry">
+						{!IF(n.is_late_entry__c, 'Yes', 'No')}
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:repeat>
+</apex:page>

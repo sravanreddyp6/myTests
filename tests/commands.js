@@ -186,7 +186,7 @@ module.exports = function (client, done) {
 	        });
 	      }, label)
 	      .then(function (result) { return result.value; });
-  }); 
+  });
   client.addCommand("chooseSelectOption", function (label, optionValue) {
     return client
       .execute(injectJS)

@@ -7,15 +7,19 @@ public with sharing class ProgressNoteExtension {
 		public string pnStartTime { get; set; }
 		public string pnEndTime { get; set; }
 		public List<String> topicsDiscussed { get; set; }
+		Public Boolean showGoalsObjActionsInclude{get;set;}//added by Amruth for a different page to be included for goals
 	// END: EB-210 additions; NC TFC Progress Note fields / data.
+	SystemSettings__c pnnew = SystemSettings__c.getOrgDefaults();
+	Public list<TMN_User__c> TU = [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1];
+	
 	
 	//construct class with current page Id
     public ProgressNoteExtension(ApexPages.StandardController controller) {
 		pn = (Progress_Note__c)controller.getRecord();
 		medicaidIDClear = ApexPages.currentPage().getParameters().get('id2');
-		
+		showGoalsObjActionsInclude = false;//added by Amruth for a different page to be included for goals
 		// START: EB-210 additions; NC TFC Progress Note fields / data.
-			Progress_Note__c thePn = [ SELECT Start_Time__c, End_Time__c, 
+			Progress_Note__c thePn = [ SELECT Start_Time__c, End_Time__c,recordtype.DeveloperName, 
 				Topic_Behavior_Management__c,
 				Topic_Diagnostic_Psycho_education__c,
 				Topic_Shared_Parenting__c,
@@ -71,6 +75,11 @@ public with sharing class ProgressNoteExtension {
 			Contact c = [select medicaid_id__c from contact where id= :pn.Person_Being_Served__c];
 			medicaidIDClear = c.Medicaid_ID__c;
     	}
+    	
+    	if(TU.size()>0 && pnnew.AZ_OPT_Enabler__c && thePn.recordtype.DeveloperName == 'AZ_OPT' && TU[0].Operating_Group__c == 'Redwood'){
+        	showGoalsObjActionsInclude = true;		 	 
+      	}
+    	
 	
 		
 	

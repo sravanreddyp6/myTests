@@ -18,7 +18,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Edit</actionName>
-        <type>Default</type>
+        <content>ServiceAssignmentEditNew</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>Follow</actionName>
@@ -270,6 +272,29 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Clinician__c</fullName>
+        <deleteConstraint>Restrict</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Staff Name</label>
+        <lookupFilter>
+            <active>true</active>
+            <errorMessage>Please choose a clinician from the list</errorMessage>
+            <filterItems>
+                <field>TMN_User__c.Operating_Group__c</field>
+                <operation>equals</operation>
+                <valueField>$User.Operating_Group__c</valueField>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>TMN_User__c</referenceTo>
+        <relationshipLabel>Service Assignment</relationshipLabel>
+        <relationshipName>Service_Assignment</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Contract_Concatenation__c</fullName>

@@ -85,7 +85,7 @@
         }
     </script>
     <!--  breadcrumb -->
-    <div id="breadcrumb" class="breadcrumb"><a href="/">Home</a>&nbsp;>&nbsp;<a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
+    <div id="breadcrumb" class="breadcrumb"><a href="/apex/Home">Home</a>&nbsp;>&nbsp;<a href="/apex/PersonsBeingServedListView">Persons Being Served</a>&nbsp;>&nbsp;
        <apex:outputLink rendered="{!parentPage != 'PBS'}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
         <apex:outputText value="{!con.FirstName} {!con.LastName}" rendered="{!parentPage == 'PBS' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}" />
         <apex:outputLink rendered="{!parentPage = 'PBS' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}" value="/apex/PersonBeingServedEditnew?id={!con.Id}">{!con.FirstName} {!con.LastName}</apex:outputLink>
@@ -111,6 +111,9 @@
         <apex:outputPanel id="notelink" rendered="{! parentPage = 'ShiftNote' && NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Notes</apex:outputPanel>
         <apex:outputLink rendered="{! parentPage = 'ShiftNote' && (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/shiftnote_basic_form?id={!apId}">Notes</a></apex:outputLink>
         <apex:outputPanel id="servAssignText" rendered="{!parentPage == 'ServAssign' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Service Assignment</apex:outputPanel>
+	    <apex:outputLink id="servAssignTextAttnOTE" rendered="{!(parentPage == 'Notes_ProgressNote_AZ_OPT' || parentPage=='Progress_Notes_Log') &&  not(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
+        <apex:outputPanel id="servAssignTextNOTE" rendered="{!parentPage == 'Notes_ProgressNote_AZ_OPT' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Progress Note</apex:outputPanel>
+        <apex:outputPanel id="servAssignTextLog" rendered="{!parentPage=='Progress_Notes_Log' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Progress Notes Log</apex:outputPanel>        
         <apex:outputLink id="servAssignTextAtt" rendered="{!parentPage == 'ServAssign' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
         <apex:outputPanel id="servAssignLink" rendered="{!parentPage == 'CaseDocs' || parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputPanel>
         <apex:outputPanel id="caseDocsText" rendered="{!parentPage == 'CaseDocs'}">&nbsp;>&nbsp;Case Docs</apex:outputPanel>
@@ -241,49 +244,50 @@
 										<a href="/apex/uploader?parentid={!con.id}&fileUploadVal=false&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}" >Add/Edit Picture</a>
 										<br />
 
-                                       <apex:outputLink value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && opGrp!='Redwood' && opGrp!='NeuroRestorative' && servAssigns.size > 0 }">
+                                       <apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp != 'Cambridge' && opGrp!='Redwood' && opGrp!='NeuroRestorative' && servAssigns.size > 0 }">
 											Add Seizure <br />
 											<apex:param value="{!con.Id}" name="pbsId" />
-											<apex:param value="{!$CurrentPage.URL}" name="retURL" />
+											<apex:param value="{!URLENCODE($CurrentPage.URL)}" name="retURL" />
 										</apex:outputLink>
 
-                                         <apex:outputLink onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!opGrp=='Care Meridian' && servAssigns.size > 0 }">
+                                         <apex:outputLink styleClass="servicelink" 
+                                         	onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!opGrp=='Care Meridian' && servAssigns.size > 0 }">
                                             Person Summary
                                         </apex:outputLink>                                      
                                     </td>
 
                                     <td style="vertical-align:top; padding-left:10px; padding-right:20px; line-height:20px">
                                         <apex:outputText rendered="{! parentPage != 'Assessment' && opGrp == 'Redwood' && !ISBLANK(admissionID)}">
-                                            <a href="{!IF(parentPage != 'Admission', '/apex/AdmissionView?id=' + admissionID, '')}#Asmt" >View Risk Assessment</a>
+                                            <a href="{!IF(parentPage != 'Admission', '/apex/AdmissionView?id=' + admissionID, '')}#Asmt" class="servicelink">View Risk Assessment</a>
                                             <Br />
                                         </apex:outputText>
                                         <apex:outputText rendered="{!(parentPage == 'Admission')}">
-                                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Diag" >View Diagnosis</a>
+                                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Diag" class="servicelink">View Diagnosis</a>
                                             <br />
                                         </apex:outputText>
 
                                         <apex:outputText rendered="{!(parentPage != 'Admission')}">
-                                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Adm" >View Admission</a>
+                                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#Adm" class="servicelink">View Admission</a>
                                             <br />
                                         </apex:outputText>
 
                                         <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false && opGrp == 'Cambridge' )}">
-                                            <a href="/apex/ServAssignExpectedDocs?id={!saId}" >View Case Documents</a>
+                                            <a href="/apex/ServAssignExpectedDocs?id={!saId}" class="servicelink">View Case Documents</a>
                                             <br />
                                         </apex:outputText>
 
                                         <apex:outputText rendered="{!(parentPage == 'ServAssign' && saNew == false && opGrp == 'Cambridge' )}">
-                                            <a href="/apex/ServAssignFidelityChecklist?id={!saId}" >View Fidelity Checklist</a>
+                                            <a href="/apex/ServAssignFidelityChecklist?id={!saId}" class="servicelink">View Fidelity Checklist</a>
                                             <br />
                                         </apex:outputText>
 
                                         <apex:outputText rendered="{!((parentPage == 'ServAssign' || parentPage == 'Admission') && opGrp == 'Care Meridian' )}">
-                                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#AI" >View/Edit Advanced Directives</a>
+                                            <a href="{!IF(parentPage != 'PBS', '/apex/PersonBeingServedEditNew?id=' + con.ID, '')}#AI" class="servicelink">View/Edit Advanced Directives</a>
                                             <br />
                                         </apex:outputText>
 										
 										<apex:outputText rendered="{!parentPage == 'ServAssign' && opGrp == 'NeuroRestorative' }">
-											<a  href="{!IF(parentPage != 'ServAssign', '/apex/PersonBeingServedEditNew?id={!saId}', '')}#Funding_Sources" >View/Edit Funding Sources</a>
+											<a  href="{!IF(parentPage != 'ServAssign', '/apex/PersonBeingServedEditNew?id={!saId}', '')}#Funding_Sources" class="servicelink">View/Edit Funding Sources</a>
 											<br />
 										</apex:outputText>
 
