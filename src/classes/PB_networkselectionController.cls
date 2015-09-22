@@ -7,13 +7,19 @@ public with sharing class PB_networkselectionController {
 		networkOfferings.add(new selectoption('', '--None--'));
 		for(Recordtype n: [SELECT Id, Name, DeveloperName FROM RecordType WHERE SobjectType = 'PB_DocPacket__c' AND IsActive = true]){
 			networkOfferings.add(new selectoption(n.Name,n.Name));
-		} 
+		}
+		selectedNetwork = null;
 	}
 	
 	public pagereference proceed(){
-		pageReference pg = new Pagereference('/apex/PB_DocPack_Admin_Form');
-		pg.getParameters().put('network',selectedNetwork);
-		return pg;
-		
+		if(selectedNetwork == null ){
+			apexpages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Please choose a Network'));
+			return null;
+		}
+		else{
+			pageReference pg = new Pagereference('/apex/PB_DocPack_Admin_Form');
+			pg.getParameters().put('network',selectedNetwork);
+			return pg;
+		}
 	}
 }
