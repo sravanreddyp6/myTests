@@ -39,7 +39,7 @@ public class identityEditNew {
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Program_String__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
-            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c
+            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c,Office_Flag__c
             FROM TMN_User__c 
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
@@ -89,11 +89,11 @@ public class identityEditNew {
  			public PageReference getManagerList() {
  				List<TMN_User__c> matchingList;
  					if(managerFirstName!=null && managerFirstName.length() > 0 && (managerLastName ==null || managerLastName.length() ==0)){
- 				 matchingList = [select id,Manager_First_Name__c,Manager_Last_Name__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%'];
+ 				 matchingList = [select id,Manager_First_Name__c,Manager_Last_Name__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' limit 500];
  					} else 	if(managerFirstName==null || managerFirstName.length() == 0 && (managerLastName !=null && managerLastName.length() >0)){
- 						matchingList = [select id,Manager_First_Name__c,Manager_Last_Name__c from TMN_User__c where Manager_Last_Name__c like : '%'+managerLastName +'%'];
+ 						matchingList = [select id,Manager_First_Name__c,Manager_Last_Name__c from TMN_User__c where Manager_Last_Name__c like : '%'+managerLastName +'%' limit 500];
  					} else {
- 					matchingList = [select id,Manager_First_Name__c,Manager_Last_Name__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_Last_Name__c like : '%'+managerLastName +'%'];
+ 					matchingList = [select id,Manager_First_Name__c,Manager_Last_Name__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_Last_Name__c like : '%'+managerLastName +'%' limit 500];
  					}
 					 tmnManagerList = new List<TMN_User__c>();
 					 Set<String> managerIds = new Set<String>();
@@ -111,7 +111,7 @@ public class identityEditNew {
  
      @RemoteAction
     public static TMN_User__c LocationDetails(String location) {
-       return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
+       return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_flag__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
     
     public  Attachment attDeatils {set;get;}
