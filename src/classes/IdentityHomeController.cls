@@ -148,10 +148,10 @@ public with sharing class IdentityHomeController {
                        		if(email!=null && email.length() >0){ 
                        List<User> user = [select id,email from user where username like :'%'+email.subString(0,email.indexOf('@')) +'%'];
                        			if(user!=null&&user.size()>0){
-                       				tmn.BAA_Signed__c = true;
-                       				employeeWithSFAccount.add(tmn);
+                       				tmn.BAA_Signed__c = true;//using field only for display add delegate link in page
                        			}
                        		}
+                       		employeeWithSFAccount.add(tmn);
                        }
         return employeeWithSFAccount;    
     }
