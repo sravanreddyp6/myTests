@@ -168,13 +168,13 @@ function autoCompleteRender(ul, item) {
                         j$('[id$=hiddenlocationCity]').val(checkUndefined(result.Work_City__c));
                         j$('[id$=hiddenlocationState]').val(checkUndefined(result.Work_State__c));
                         j$('[id$=hiddenlocationZip]').val(checkUndefined(result.Zip_Code__c));
-                        var locationType = checkUndefined(result.Office_Location_PickList__c);
-                       	if(locationType === " ") {
-                       		j$('[id$=OfficeLocationType]').text('No');
+                        var locationType = checkUndefined(result.Office_Flag__c);
+                       	if(locationType == null || locationType === " "  ) {
+                       		j$('[id*="OfficeLocationType"]').text('No');
                        	} else {
-                       	j$('[id$=OfficeLocationType]').text(locationType);
+                       	j$('[id*="OfficeLocationType"]').text(locationType);
                        	}
-                        j$('[id$=hiddenOfficeLocationType]').val(checkUndefined(result.Office_Location_PickList__c));
+                        j$('[id$=hiddenOfficeLocationType]').val(checkUndefined(result.Office_Flag__c));
                     } else if (event.type === 'exception') {
                         console.log(event);
                     } 
@@ -221,11 +221,15 @@ function autoCompleteRender(ul, item) {
     
     function setEndDate() {
     var startDate = new Date(j$('[id$=startDate]').val());
+    if(!isNaN(startDate)){
     var endDate = startDate;
     endDate.setDate(endDate.getDate() + 90);
     j$('[id$=EndDate]').datepicker('option', 'minDate', startDate)
     j$('[id$=EndDate]').datepicker('option', 'maxDate', endDate)	
     j$('[id$=EndDate]').val(endDate.getMonth() + 1+'/'+endDate.getDate()+'/'+endDate.getFullYear());
+      }else {
+    j$('[id$=EndDate]').val('');  
+      }
     }
     
     function validatePhone () {
@@ -290,7 +294,10 @@ function autoCompleteRender(ul, item) {
                 </apex:pageblockButtons>            
                 <apex:pageBlockSection columns="2" title="Person Information" id="perInfo">
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true" taborderhint="1"/>
-                    <apex:inputField  value="{!TMNUser.Personal_Email__c}" taborderhint="8"/>
+                    <apex:pageBlockSectionItem>
+        					<apex:outputLabel value="Personal Email" for="PE" />
+       						<apex:inputField  id="PE" value="{!TMNUser.Personal_Email__c}" taborderhint="8"/>
+    				</apex:pageBlockSectionItem>
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2"/>
                     <apex:inputField label="Professional Title" value="{!TMNUser.Professional_Title__c}" taborderhint="9"/>
                     <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true" taborderhint="3"/>
@@ -404,7 +411,8 @@ function autoCompleteRender(ul, item) {
                     <apex:outputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" id="locationLine1" />
                     <apex:outputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" id="locationZip"/>
                     <apex:outputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" id="locationLine2"/>
-                    <apex:outputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}" id="OfficeLocationType" />                 
+                    <apex:outputText label="Office Location" value="Yes"  rendered="{!TMNUser.Office_Flag__c=='Y'}" id="OfficeLocationType1"/>
+                    <apex:outputText label="Office Location" value="No"  rendered="{!TMNUser.Office_Flag__c!='Y'}" id="OfficeLocationType2"/>                 
                     <apex:outputField label="City" value="{!TMNUser.Work_City__c}" id="locationCity"/>     
                 </apex:pageBlockSection>
                     <apex:inputhidden value="{!TMNUser.Office_Location__c}" id="hiddenlocationLine1" />
@@ -413,7 +421,7 @@ function autoCompleteRender(ul, item) {
                     <apex:inputhidden value="{!TMNUser.Work_City__c}" id="hiddenlocationCity"/>  
                     <apex:inputhidden value="{!TMNUser.Office_Location_PickList__c}"/>           
                     <apex:inputhidden value="{!TMNUser.Work_State__c}" id="hiddenlocationState"/>
-                    <apex:inputhidden value="{!TMNUser.Office_Location_PickList__c}" id="hiddenOfficeLocationType"/>     
+                   <apex:inputhidden value="{!TMNUser.Office_Flag__c}" id="hiddenOfficeLocationType"/>  
 
 					<apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo"> 
 					

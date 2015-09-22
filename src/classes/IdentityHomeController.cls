@@ -137,12 +137,23 @@ public with sharing class IdentityHomeController {
     // Get list of direct reports who are employees for user.
     List<TMN_User__c> myEmployees;
     public List<TMN_User__c> getMyEmployees() {
-        myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c 
+        myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c
                        FROM TMN_User__c 
                        WHERE Manager_Email__c=:aliasName 
                        AND Current_Person_Type__c IN ('Employee')
                        AND Job_Status__c IN ('Active') ];
-        return myEmployees;    
+           List<TMN_User__c>    employeeWithSFAccount = new List<TMN_User__c>();        
+                       for(TMN_User__c tmn:myEmployees){
+                       	String email = tmn.Email__c;
+                       		if(email!=null && email.length() >0){ 
+                       List<User> user = [select id,email from user where username like :'%'+email.subString(0,email.indexOf('@')) +'%'];
+                       			if(user!=null&&user.size()>0){
+                       				tmn.BAA_Signed__c = true;
+                       				employeeWithSFAccount.add(tmn);
+                       			}
+                       		}
+                       }
+        return employeeWithSFAccount;    
     }
     
     //Get list of all direct reports for user.
@@ -508,7 +519,8 @@ public with sharing class IdentityHomeController {
                             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
                             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Teleo_ID__c,
                             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,Program_String__c ,
-                            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_Name__c ,Vendor_list__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,Custodians__c
+                            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c,
+                            BAA_Signed__c,Vendor_Name__c ,Vendor_list__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,Custodians__c,office_flag__c,Pre_Hire_ID__c
                             FROM TMN_User__c 
                             WHERE Id =:selectedID];    
         attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:theTMNUser.id order by createddate desc];               
