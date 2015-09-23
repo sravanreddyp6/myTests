@@ -1,5 +1,6 @@
 <apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension,AdmissionDocumentController" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
@@ -316,13 +317,16 @@
 
 
 		<!--  -->
-		<apex:pageBlock title="Admission Detail">
-			<div class="pbHeaderButton">
-				<apex:commandButton onclick="window.open('/apex/AdmissionEdit?pbsId={!admission.Person_Being_Served__c}', '_self'); return false;" value="Add New Admission" rendered="{!canCreateAdm}" />&nbsp;&nbsp;
-				<apex:commandButton onclick="window.open('/apex/AdmissionEdit?id={!admission.ID}', '_self'); return false;" value="Edit Admission" rendered="{!isEditor}" />&nbsp;&nbsp;
-			</div>
-
-			<apex:pageBlockSection title="Information" columns="2" collapsible="false">
+		<apex:pageBlock mode="maindetail" >
+        	<apex:pageBlockSection id="_Alt1_Header" title="Admission Detail" collapsible="false">
+        	</apex:pageBlockSection> 
+        	<apex:pageBlockButtons >		
+				<div class="blockbtns">
+					<apex:commandButton onclick="window.open('/apex/AdmissionEdit?pbsId={!admission.Person_Being_Served__c}', '_self'); return false;" value="Add New Admission" rendered="{!canCreateAdm}" />&nbsp;&nbsp;
+					<apex:commandButton onclick="window.open('/apex/AdmissionEdit?id={!admission.ID}', '_self'); return false;" value="Edit Admission" rendered="{!isEditor}" />&nbsp;&nbsp;
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection title="Information" columns="2" collapsible="true">
 				<apex:outputField value="{!admission.name}" />
 				<apex:outputField value="{!admission.Status__c}" />
 				<apex:outputField value="{!admission.Network_Offering__c}" />
@@ -350,14 +354,14 @@
 			</apex:pageBlockSection>
 
             <!-- PRI-218/19 -->
-			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="false"  rendered="{!reqAdmittedFrom}">
+			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="true"  rendered="{!reqAdmittedFrom}">
 				<apex:outputField value="{!Admission__c.Admitted_From__c}"  />
 			</apex:pageBlockSection>    
-   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="false" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
+   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
 				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
 			</apex:pageBlockSection>   
 			<!-- end pri 218 --> 
-			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="false" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
+			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="true" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
 			<apex:pageBlockSectionItem >
 			<apex:outputLabel value="Discharged Date/Time" />
 			<c:MilitaryDatetime datetimeval="{!admission.Discharged_Date_Time__c}" />
@@ -387,7 +391,7 @@
 			
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection title="Referred-Out Details" collapsible="false" rendered="{! !useDischargeSection}">
+			<apex:pageBlockSection title="Referred-Out Details" collapsible="true" rendered="{! !useDischargeSection}">
 				<apex:outputText label="Referred-Out Date" value="{0, date, MM/dd/yyyy}">
 					<apex:param value="{!admission.Referred_Out_Date__c}" />
 				</apex:outputText>
@@ -397,7 +401,7 @@
 				<apex:outputField value="{!admission.Referred_Out_Reason__c}" />
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection title="System Information" collapsible="false">
+			<apex:pageBlockSection title="System Information" collapsible="true">
 
 				<apex:outputField label="Created By" value="{!admission.CreatedById}" />
 				<apex:outputField label="Last Modified By" value="{!admission.LastModifiedById}" />
