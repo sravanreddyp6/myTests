@@ -19,7 +19,7 @@ public without sharing class PB_AssociatedDocTriggeredActions {
 
 		for(Task t : updateTasks){
 			t.status = 'Completed';
-			t.Description = t.Description + '\r\n\r\nThis task is marked completed by ' + UserInfo.getName();
+			t.Description = t.Description + '\r\n\r\nThis task is closed because the associated document was updated by ' + UserInfo.getName();
 		}
 		update updateTasks;
 	}
