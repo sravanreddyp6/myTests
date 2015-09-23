@@ -98,6 +98,7 @@ public with sharing class AdmissionValidation {
             for(Admission__c tAdmit: admits){
                         datetime curStart = tAdmit.Admission_Effective_DateTime__c.date();
                         datetime curEnd = tAdmit.Discharged_Date__c;    
+                        
                     //Start: Prevent Admission date overlapping             	
                     for(Admission__c allAdmit: allAdmissionsForPersons){
                         datetime prevStart = allAdmit.Admission_Effective_DateTime__c.date();
@@ -106,16 +107,22 @@ public with sharing class AdmissionValidation {
                         if(tAdmit.id != allAdmit.id){
                         	boolean hasError = false;
                             if(curEnd == null){
-	                            if( (curStart >= prevStart) && ( curStart <= prevEnd ) )                                
+	                            if( (curStart >= prevStart) && ( curStart < prevEnd ) )                                
 	                                hasError = true;	                            
                             }
                             else{
-                            	if( (curStart >= prevStart) && ( curStart <= prevEnd ) && (curEnd > prevEnd ) && (curEnd > prevStart ) )
+                            	if( (curStart >= prevStart) && ( curStart < prevEnd ) && (curEnd > prevEnd ) && (curEnd > prevStart ) )
                             		hasError = true;
+                            	if( (curStart >= prevStart) && ( curStart < prevEnd ) )
+                            		hasError = true;  
+                            	if( (curEnd > prevStart ) && (curEnd <  prevEnd) )
+                            		hasError = true;
+                            	if( (curEnd > prevStart ) && (curEnd >  prevEnd) && (curStart < prevEnd) )
+                            		hasError = true;                              		                             		                          		
                             }
                             
                             if (hasError)
-                            	tAdmit.addError('This Admission is within the date range of another Admission ('+ allAdmit.Name + ').  Please correct the timing so Admissions do not overlap.');
+                            	tAdmit.addError('This Admission is within the date range of another Admission ('+ allAdmit.Name + ').  Please correct the dates so Admissions do not overlap.');
                         }
                     }
                     //prevent start dates from being before SA start dates
@@ -123,10 +130,10 @@ public with sharing class AdmissionValidation {
                     	if(sa.Admission__c == tAdmit.id ){
                     		
                     		if(sa.SA_Start_DateTime__c < curStart)                    		
-                    			tAdmit.addError('Effective Date can\'t be before a Service Assignment Start Date (' + sa.name + ' starts on: ' + sa.SA_Start_DateTime__c + ')'  );
+                    			tAdmit.addError('Admission Date cannot be after a Service Assignment Start Date (' + sa.name + ' starts on: ' + sa.SA_Start_DateTime__c + ')'  );
                     		
                     		if(sa.End_Date__c > curEnd)
-                    			tAdmit.addError('Discharge Date can\'t be before a Service Assignment End Date (' + sa.name + ' ends on:  ' + sa.End_Date__c + ')' );
+                    			tAdmit.addError('Discharged Date cannot be before a Service Assignment End Date (' + sa.name + ' ends on:  ' + sa.End_Date__c + ')' );
                     	
                     		if(sa.Status__c == 'Active' && tAdmit.Status__c == 'Discharged')
                     			tAdmit.addError('Discharged Status is prevented while there is an Active Service Assignment (' + sa.name + ')'  );

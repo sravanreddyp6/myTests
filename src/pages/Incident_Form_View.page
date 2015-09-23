@@ -1,51 +1,17 @@
 <apex:page standardcontroller="Incident__c" extensions="Incident_Form_View" sidebar="false" docType="html-5.0" >
 
-<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 <!-- <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" /> -->
 <!-- <apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" /> -->
 <style>
-.sub-question-header{font-size:9pt; font-weight: bold; padding: 7px; padding-left:0px; color: black;}
 .labelCol{min-width: 300px;}
-
-
 
 .pop-up-msg{
     color: red;
     font-weight: bold;
 }
 
-body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-color: transparent !important;}
-.btn{
-    background-color: #7bc145 !important;
-    color: black !important;
-    font-size:10pt !important;
-}
-.pbSubheader {
-   border-top: 1px solid #253e76 !important;
-   background-color: transparent  !important;
-   color: black !important; 
-}
-[id$="_firstHeader"] .pbSubheader{
-	border-top: none !important;
-    background-color: #253e76 !important; 
-    width: 100%;
-    font-size:11pt !important;
-    font-weight: bold;
-    color: white !important;
-}
-[id$="_secondHeader"] .pbSubheader{
-	border-top: 1px solid #253e76 !important;   
-    background-color: transparent  !important;
-    color: black !important; 
-}
-.pbSubheader h1, .pbSubheader h2, .pbSubheader h3{   font-size: 11pt !important;}
-.labelCol {color: black !important; font-size: 9pt !important; }
-.data2Col{font-size: 9pt !important; color: black !important;}
 
-.detailList tr td, .detailList tr th{ }
-.tmn-row-even{background-color: #f2f3f3;}
-body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5C5;}
-.hideListButton, .showListButton{background-color: transparent !important;}
 </style>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentView" admId="{!servAssign.Admission__c}" rendered="{!servAssign.Id != null}"/>
 <br/>
@@ -59,7 +25,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
 	                <apex:CommandButton value="Disregard" rendered="false" />
 	            </div>
         	</apex:pageBlockButtons>
-        	<apex:pageBlockSection id="_firstHeader" title="Incident Information" collapsible="false">
+        	<apex:pageBlockSection id="_Alt1_Header" title="Incident Information" collapsible="false">
         	</apex:pageBlockSection>
         	<apex:pageBlocksection columns="1" title="Current Service" collapsible="true"  rendered="{!servAssign.id != null}">
         		<apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
@@ -127,7 +93,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
         		<apex:outputField value="{!Incident__c.First_Response_Action_Taken_Other__c}" label="Other" rendered="{!contains(Incident__c.First_Response_Action_Taken__c,'Other')}"/>
         	</apex:pageBlockSection>
         	
-		    <apex:pageBlockSection id="second_firstHeader" columns="1" title="People Involved" collapsible="false" ></apex:pageBlockSection>
+		    <apex:pageBlockSection id="second_Alt1_Header" columns="1" title="People Involved" collapsible="false" ></apex:pageBlockSection>
 
 			<apex:pageBlockSection columns="1" title="Staff" collapsible="true">
 				<apex:outputText value="{!Incident__c.Staff_Present__c}" />
