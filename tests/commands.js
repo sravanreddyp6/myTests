@@ -276,4 +276,7 @@ module.exports = function (client, done) {
       })
       .then(client.window);
   });
+  client.addCommand("waitForActionStatusDisappearance", function (actionStatusId, timeout) {
+    return client.waitForVisible("span[id$=" + actionStatusId + "\\.start]", timeout, true);
+  });
 };

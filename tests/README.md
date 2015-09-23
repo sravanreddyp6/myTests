@@ -36,6 +36,8 @@ a `select` tag with label `label`.
 elements (e.g. when we need to look up a user).
 - `switchToNextWindow()`: Sometimes VF will create a new window (e.g. when we look up a
 user). You can use this function to switch between windows in that case.
+- `waitForActionStatusDisappearance(actionStatusId, timeout)`: Wait for an
+`apex:actionStatus` to disappear.
 
 A note of caution: NodeJS (and Javascript in general) is inherently a single thread, asynchronous
 language. This means that a lot of the time, code are run on a callback basis - and after awhile,
