@@ -22931,6 +22931,28 @@ errors.push(&apos;You must populate the &quot;Coord. support for Mentor &amp; ch
 }
 // END: EB-210: NC TFC Progress Note flavor field requirements
 
+//START: CA FSS Progress note flavor field requirements
+var csfssFields = sforce.connection.query(&quot;SELECT id, RecordTypeId, Provider__c, Time_spent_rendering_Service__c, Time_Spent_Driving__c, MHS_Activity_Type__c from Progress_Note__c where id =&apos;{!Progress_Note__c.Id}&apos;&quot;);
+records = csfssFields.getArray(&quot;records&quot;); 
+
+if( !records[0].Provider__c &amp;&amp; curRtype[0].DeveloperName == &apos;CA_FSS&apos;) {
+errors.push(&apos;You must populate the &quot;Provider#&quot; field before continuing.&apos;);
+}
+
+if( !records[0].Time_spent_rendering_Service__c &amp;&amp; curRtype[0].DeveloperName == &apos;CA_FSS&apos;) {
+errors.push(&apos;You must populate the &quot;Time Spent Rendering Service&quot; field before continuing.&apos;);
+}
+
+if( !records[0].Time_Spent_Driving__c &amp;&amp; curRtype[0].DeveloperName == &apos;CA_FSS&apos;) {
+errors.push(&apos;You must populate the &quot;Time Spent Driving&quot; field before continuing.&apos;);
+}
+
+if( !records[0].MHS_Activity_Type__c &amp;&amp; curRtype[0].DeveloperName == &apos;CA_FSS&apos;) {
+errors.push(&apos;You must populate the &quot;MHS Activity type&quot; field before continuing.&apos;);
+}
+
+//END: CA FSS Progress note flavor field requirements
+
 } 
 if(errors.length &lt;= 0){ 
 if(alerts.length &gt; 0){ 
