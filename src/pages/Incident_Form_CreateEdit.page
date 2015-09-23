@@ -1,5 +1,5 @@
 <apex:page standardcontroller="Incident__c" Extensions="Incident_Form_CreateEdit,IncidentPeople" sidebar="false" docType="html-5.0" >
-    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
@@ -7,6 +7,7 @@
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     
 <script>
     function setFocusOnLoad() {} //to prevent fiocus from first date time field
@@ -91,8 +92,6 @@ function evalFirstReportedField(eley, leaveBlank){
 .helpText{z-index: 1100 !important;}
 .people-input-wrapper{ width: 210px; float: left;}
 
-
-
 .sub-btn-wrapper{float: right; margin:3px;}
 .sub-btn-wrapper-new{padding-top: 7px; display: inline-block;}
 
@@ -100,39 +99,6 @@ function evalFirstReportedField(eley, leaveBlank){
     color: red;
     font-weight: bold;
 }
-
-
-body .bPageBlock .detailList tr td, body .bPageBlock .detailList tr th{border-color: transparent !important;}
-.btn{
-    background-color: #7bc145 !important;
-    color: black !important;
-    font-size:10pt !important;
-}
-.pbSubheader {
-   border-top: 1px solid #253e76 !important;
-   background-color: transparent  !important;
-   color: black !important; 
-}
-[id$="_firstHeader"] .pbSubheader{
-    border-top: none !important;
-    background-color: #253e76 !important; 
-    width: 100%;
-    font-size:11pt !important;
-    font-weight: bold;
-    color: white !important;
-}
-[id$="_secondHeader"] .pbSubheader{
-    border-top: 1px solid #253e76 !important;   
-    background-color: transparent  !important;
-    color: black !important; 
-}
-.pbSubheader h1, .pbSubheader h2, .pbSubheader h3{   font-size: 11pt !important;}
-.labelCol {color: black !important; font-size: 9pt !important; }
-.data2Col{font-size: 9pt !important; color: black !important;}
-
-.detailList tr td, .detailList tr th{ }
-.tmn-row-even{background-color: #f2f3f3;}
-body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5C5;}
 .hideListButton, .showListButton{background-color: transparent !important;}
 </style>
 <c:PersonalRecord pbsId="{!servAssign.Admission__r.Person_Being_Served__c}" servAssignId="{!servAssign.Id}" parentPage="incidentEdit" admId="{!servAssign.Admission__c}" rendered="{!servAssign.id != null}" />
@@ -150,7 +116,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
                     <apex:CommandButton action="{!Cancel}" value="Cancel" />
                 </div>
             </apex:pageBlockButtons>     
-            <apex:pageBlockSection id="_firstHeader" title="Incident Information"  collapsible="false">
+            <apex:pageBlockSection id="_Alt1_Header" title="Incident Information"  collapsible="false">
             </apex:pageBlockSection>               
                 <apex:pageBlockSection title="Current Service" columns="1" collapsible="true" rendered="{!servAssign.id != null}"  >
                     <apex:pageBlockSectionItem rendered="{!recordtypeName == 'PBS'}">
@@ -292,7 +258,7 @@ body .pbBody table.list tr.tbl-header th, .tbl-header th{background-color: #C5C5
                     <apex:outputPanel /> 
                     
                 </apex:pageBlockSection>    
-                <apex:pageBlockSection id="people_firstHeader" title="People Involved" columns="1" collapsible="false"> </apex:pageBlockSection>
+                <apex:pageBlockSection id="people_Alt1_Header" title="People Involved" columns="1" collapsible="false"> </apex:pageBlockSection>
 	                <apex:pageBlockSection id="staffPresent" title="Staff" columns="1" collapsible="true"> 
 	                    <apex:pageBlockSectionItem >                        
 	                        <apex:outputLabel >Staff present at the time of the Incident?</apex:outputLabel>
