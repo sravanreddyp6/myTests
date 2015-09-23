@@ -17,7 +17,7 @@ public with sharing class AdmissionEditExtension {
         if(!Test.isRunningTest()) {
             this.stdController.addFields(new String[] {'Name', 'Effective_Date__c','Admission_Effective_DateTime__c',
                 'Status__c', 'Discharged_Date__c', 'Discharged_Date_Time__c',
-                'Network_Offering__c', 'Reason_for_Discharge__c', 'State__c','Admitted_From__c','Discharged_To__c',
+                'Network_Offering__c', 'Reason_for_Discharge__c','Reason_Other__c', 'State__c','Admitted_From__c','Discharged_To__c',
                 'Referred_Out_Date__c', 'Referred_Out_Agency_Name__c', 'Referred_Out_Reason__c',
                 'Person_Being_Served__c', 'Discharged_Status__c', 'Planned_Discharge__c','Discharged_to_category__c','Discharged_to_subcategory__c','Discharged_to_additional__c', 'Discharged_to_other__c', 'Discharged_to_desc__c',
                 'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c'});
@@ -110,11 +110,13 @@ public with sharing class AdmissionEditExtension {
     		if ( String.IsBlank(admission.discharged_reason__c))
     			messages.add('Please enter Discharged Reason');
     		
-    		if ( String.IsBlank(admission.reason_for_discharge__c)) {
-    			if (admission.discharged_reason_subcategory__c == 'Other' || admission.discharged_reason_additional__c == 'Other') 
+    		if ( String.IsBlank(admission.Reason_Other__c)) {
+    			if (admission.discharged_reason_subcategory__c == 'Other' || admission.discharged_reason_additional__c == 'Other' || admission.Discharged_Reason__c == 'Other') 
 					messages.add('Please enter Discharged Reason Other');   
+				
+				/*Removed for PRI-272
 				else
-					admission.reason_for_discharge__c = '.'; // allows it to save without validation error		
+					admission.reason_for_discharge__c = '.'; // allows it to save without validation error		*/
     		}
     	}
     	for ( String msg : messages )	{
@@ -155,7 +157,7 @@ public with sharing class AdmissionEditExtension {
     		admission.discharged_reason__c = '';
     		admission.discharged_reason_subcategory__c = '';
     		admission.discharged_reason_additional__c ='';
-    		admission.reason_for_discharge__c = '';
+    		admission.Reason_Other__c = '';
     		admission.additional_discharge_info__c = '';
     	
     	}
