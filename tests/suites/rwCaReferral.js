@@ -93,22 +93,74 @@ testSuite("rwCaReferral", suiteTimeout, {
       .fillInputText("Additional Information / Comments", "Really hateful")
       .chooseSelectOption("Mailing State/Province", "California")
       .click("input[value='Create Person Being Referred']")
-      //.waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
       
       .click("input[value='Add Related Party']")
       .waitForVisible("input[value='Save']", defaultOperationTimeout)
-	  .fillInputText("Party Name", "Testing")
 	  .getSelectOptions('Type')
       .then(function(typeVal) {
           assert.deepEqual(["", "Caregiver", "Case Worker", "Employment" , "Family/Friends", "Financial Worker", 
 		  "Funder Resources", "Guardian", "Insurance", "Medical", "Mentor", "Mentor Co-Applicant", "Other", "Parent",
 		  "Physician - Alternate", "Physician - Primary", "Power of Attorney", "Referring Provider", "Representative Payee", "Spouse"], typeVal);
-      })      
+      })      	  
+      .fillInputText("Party Name", "Testing")
       .chooseSelectOption("Type", "Guardian")
       //.click("input[value='Save']")
       .click("[id$=regTestid]")
-      //.waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
+      .waitUntil(function () {
+    	  return client.isVisible("[id$=myStatus\\.start]").then(function (res) { return !res; });
+      }, defaultOperationTimeout)
 
+      .click("input[value='Add Agency Involved With Individual']")
+      .waitForVisible("input[value='Save']", defaultOperationTimeout)
+	  .fillInputText("Agency Name:", "Network")
+	  .fillInputText("Address:", "313 Congress St")
+	  .fillInputText("Phone Number:", "123456789")
+	  .fillInputText("Reason for Involvement:", "Testing")
+	  //.click("input[value='Save']")
+      .click("[id$=regTestid2]")  
+      .waitUntil(function () {
+    	  return client.isVisible("[id$=myStatus\\.start]").then(function (res) { return !res; });
+      }, defaultOperationTimeout)
+	  
+      .click("input[value='Add Funding Source']")
+      .waitForVisible("input[value='Save']", defaultOperationTimeout)
+	  .getSelectOptions('Funding Source')
+      .then(function(fsVal) {
+          assert.deepEqual(["", "Medicaid", "MediCal", "Medicare" , "PI", "Private Pay", 
+		  "RC", "SSA", "SSI", "Other"], fsVal);
+      })
+      .getSelectOptions('Service Being Funded')
+      .then(function(sbfVal) {
+          assert.deepEqual(["", "California Integrated Services", "Community Care Facilities", "Crisis Response Team" , "Day Programs", "Early Intervention", 
+		  "Family Behavioral Services", "Family Home Agency", "Independent Living Services", "Intermediate Care Facilities", "Non-Mobile", "One to One Services", 
+		  "Seniors", "Supported Living Services", "Transportation"], sbfVal);
+      })
+      .getSelectOptions('Status')
+      .then(function(sVal) {
+          assert.deepEqual(["", "Pending Approval", "Authorized"], sVal);
+      })
+	  .chooseSelectOption("Funding Source", "Medicaid")
+	  .fillInputText("Funding Source ID", "123456789")
+	  .chooseSelectOption("Service Being Funded", "California Integrated Services")
+	  .chooseSelectOption("Status", "Authorized")
+	  .fillInputText("Funding Source ID", "123456789")
+	  .fillInputText("Comment", "Testing")
+      .click("[id$=regTestid3]")
+      .waitUntil(function () {
+    	  return client.isVisible("[id$=myStatus\\.start]").then(function (res) { return !res; });
+      }, defaultOperationTimeout)
+      
+      .click("input[value='Add Referral Tracking Task']")
+      .waitForVisible("input[value='Save']", defaultOperationTimeout)
+      .click(".comboboxIcon")
+      .switchToNextWindow()
+      .click(".subjectSelectionPopup li.listItem0 a")
+      .switchToNextWindow()
+      .click("[id$=regTestid4]")
+      .waitUntil(function () {
+    	  return client.isVisible("[id$=myStatus\\.start]").then(function (res) { return !res; });
+      }, defaultOperationTimeout)
+      
       .getSelectOptions('Referral Status')
       .then(function(refStatus) {
         assert.deepEqual(["New", "Active", "On Hold", "Closed"], refStatus);
