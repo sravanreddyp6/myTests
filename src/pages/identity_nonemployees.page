@@ -201,9 +201,9 @@
                         <apex:param value="{!wf.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink> 
                        
-                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=wf.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}" >Request Access</apex:outputLink></apex:outputPanel>
+                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Request Access</apex:outputLink></apex:outputPanel>
 
-                    <apex:outputPanel rendered="{!wf.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=wf.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                    <apex:outputPanel rendered="{!wf.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
                         &nbsp;
                                        
                 </apex:column>
@@ -225,9 +225,9 @@
                         <apex:param value="{!r.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                     </apex:commandLink>
                      
-                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=r.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
 
-                    <apex:outputPanel rendered="{!r.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=r.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                    <apex:outputPanel rendered="{!r.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
                         &nbsp;
 
                 </apex:column>
@@ -285,9 +285,9 @@
                         </apex:commandLink>
                         <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}">View</apex:outputLink>-->
                      
-                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=ner.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
 
-                    <apex:outputPanel rendered="{!ner.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                    <apex:outputPanel rendered="{!ner.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
                         &nbsp;
                         </apex:column>
                         <apex:column headerValue="Name" value="{!ner.Name}"/>
