@@ -140,15 +140,23 @@ function validate() {
         var colmiddle = width/2;
 
         //Fill Image
-        var c=document.getElementById("EsignInfo");
-        var img=document.getElementById("myPage:fllogo"); // id of the img element
-        context.drawImage(img,width/2 - img.width/2,0); 
+       // var c=document.getElementById("EsignInfo");
+       // var img=document.getElementById("myPage:fllogo"); // id of the img element
+       // context.drawImage(img,width/2 - img.width/2,0); 
         
-        line += img.height + 10;
+      //  line += img.height + 10;
         
+        line += fontsize;
         
-        context.font = "bold 14px sans-serif ";
-        text = "{!Progress_Note__c.Service_Assignment__r.Program__c} {!Progress_Note__c.Service_Code__r.Location__c}";
+        context.font = "bold 17px sans-serif ";
+        text = "CA MENTOR";
+        context.textAlign="center";
+        context.fillText( text, width/2 , line, width );
+        
+        line += fontsize;
+        
+        context.font = "bold 12px sans-serif ";
+        text = "Family Support Services Note";
         context.textAlign="center";
         context.fillText( text, width/2 , line, width );
         
@@ -166,7 +174,7 @@ function validate() {
         context.textAlign="right";
         newdate = new Date( '{!Progress_Note__c.Start_Time__c}');
         text = "START TIME: " + (newdate.getMonth()+1) + "/" + newdate.getDate() + "/" + newdate.getFullYear() + ' ' + formatTime( newdate) ; 
-        context.fillText(text, 2, line );
+        context.fillText(text, (width - width/15) , line );
  
         line += fontsize;
         context.textAlign="left";
@@ -177,7 +185,7 @@ function validate() {
         context.textAlign="right";
         newdate = new Date( '{!Progress_Note__c.End_Time__c}');
         text = "END TIME: " + (newdate.getMonth()+1) + "/" + newdate.getDate() + "/" + newdate.getFullYear() + ' ' + formatTime( newdate) ;
-        context.fillText( text, width - 2, line );
+        context.fillText( text, (width - width/15), line );
         
         line += fontsize;
         context.textAlign="left";
@@ -186,7 +194,7 @@ function validate() {
         
         context.textAlign="right";
         text = "Time - Face to Face: {!Progress_Note__c.Time_spent_rendering_Service__c} " ;
-        context.fillText(text, 2, line );
+        context.fillText(text, (width - width/15), line );
         
         line += fontsize;
         context.textAlign="left";
@@ -195,7 +203,7 @@ function validate() {
         
         context.textAlign="right";
         text = "Time - Travel: {!Progress_Note__c.Time_Spent_Driving__c} " ;
-        context.fillText(text, 2, line );
+        context.fillText(text, (width - width/15), line );
         
         line += fontsize;
         context.textAlign="left";
@@ -204,7 +212,7 @@ function validate() {
         
         context.textAlign="right";
         text = "Time - Documentation: {!JSENCODE(Progress_Note__c.Provider__c)} " ;
-        context.fillText(text, 2, line );
+        context.fillText(text, (width - width/15), line );
         
         line += fontsize;
         context.textAlign="left";
@@ -213,7 +221,7 @@ function validate() {
         
         context.textAlign="right";
         text = "MHS Activity: {!JSENCODE(Progress_Note__c.MHS_Activity_Type__c)} " ;
-        context.fillText(text, 2, line );
+        context.fillText(text, (width - width/15), line );
         
         line += fontsize;
         context.textAlign="left";
@@ -238,7 +246,7 @@ function validate() {
         line += fontsize/2;
 
         context.moveTo( 0, line );
-        context.lineTo( width, line);
+       context.lineTo( width, line);
         context.stroke();
 
         line += fontsize *1.5;      
@@ -262,24 +270,24 @@ function validate() {
         line += fontsize*2;
         
         text="TX SETTING: {! Progress_Note__c.Service_Location__c}";
-        context.fillText(text, 2, line );
+       context.fillText(text, 2, line );
         
         text = "FUNDING SOURCE: {! Progress_Note__c.Funding_Source__c }";
         context.fillText( text, colmiddle +2, line );
             
-        line += fontsize*2;
+       line += fontsize*2;
         
         text="TYPE OF CONTACT: {!Progress_Note__c.Type_of_contact__c}";
-        context.fillText(text, 2, line );
+       context.fillText(text, 2, line );
 
  		/*
          * Changed from Record to Record ID  per ticket EB-209 
          */
-        //text = "RECORD: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}"; 
+        text = "RECORD: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}"; 
         text = "RECORD ID: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}";         
         context.fillText(text, colmiddle + 2, line);
 
-        line += fontsize*2;
+       line += fontsize*2;
 
         var rectbottom = line;      
 
@@ -291,7 +299,7 @@ function validate() {
         context.lineTo( colmiddle, rectbottom);
         context.stroke();
         context.strokeRect( 0, recttop, width, rectbottom - recttop);
-
+		
         
         context.font = "14px sans-serif";
         fontsize = 14;
