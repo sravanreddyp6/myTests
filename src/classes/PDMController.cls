@@ -214,7 +214,7 @@ update setCon.getRecords();
 
 
 public static String getExcludeJobTitle (){
-		String jobTitle =' AND (NOT Job_Title__c  like \'%Manager%\') AND Job_Title__c NOT IN (\'Certified Nurses Assistant\',\'Community Outreach Worker\',\'Cook\',\'Co-op\',\'Data Entry Coordinator\',\'Day Program Assistant\',\'Direct Support Professional\',\'Driver\',\'Family Member Caregiver\',\'Family Provider\',\'Housekeeper\',\'Job Coach\',\'Lead Maintenance Worker\',\'Life Skills Trainer\',\'Maintenance Specialist\',\'Maintenance Worker\',\'Personal Care Assistant\',\'Personal Service Attendant\',\'Rehabilitation Specialist\',\'Team Lead\',\'Vocational Program Participant\') ';
+		String jobTitle ='  AND Job_Status__c<>\'Inactive\' AND (NOT Job_Title__c  like \'%Call Manager%\')  AND Job_Title__c NOT IN (\'Certified Nurses Assistant\',\'Community Outreach Worker\',\'Cook\',\'Co-op\',\'Data Entry Coordinator\',\'Day Program Assistant\',\'Direct Support Professional\',\'Driver\',\'Family Member Caregiver\',\'Family Provider\',\'Housekeeper\',\'Job Coach\',\'Lead Maintenance Worker\',\'Life Skills Trainer\',\'Maintenance Specialist\',\'Maintenance Worker\',\'Personal Care Assistant\',\'Personal Service Attendant\',\'Rehabilitation Specialist\',\'Team Lead\',\'Vocational Program Participant\') ';
 		return jobTitle;
 }
 
