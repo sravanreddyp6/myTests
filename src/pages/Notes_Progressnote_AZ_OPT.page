@@ -1,0 +1,874 @@
+<apex:page standardController="Progress_Note__c" sidebar="false" extensions="Notes_ProgressNote_AZ_OPT,Notes_ProgressNote_Svc_Code_Selection,progressnote_actionplan_embed_ex" id="mypage">
+    <apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}" />
+    <apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
+    <apex:variable value="{!Progress_Note__c.Locked__c || Progress_Note__c.Status__c == 'Final'}" var="vfVarLock"/>
+    <apex:variable var="State" value="{!if(ISBLANK($CurrentPage.parameters.state) ,'',$CurrentPage.parameters.state)}"/>
+    <apex:variable var="Final" value="{!IF(Progress_Note__c.Status__c='Final',True,False)}"/>
+    <apex:variable var="Pending" value="{!IF(Progress_Note__c.Approval_Status__c='Pending',True,False)}"/>
+    <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
+    <!-- Shaun added this to get rid of the default Salesforce TABS -->
+    <style>  
+        /* Used to hide the default "tabs" in salesforce */
+        #tabContainer {
+            display: none;
+        }
+        
+        /* Used to hide the search section of the default salesforce side bar */
+        .sidebarModule{
+            display:none;
+        }
+        
+        /* Hide the createNew section of the default salesforce sidebar */
+        #createNew {
+            display: none;
+        }
+
+        /* Hide the Recent Items section of the default salesforce sidebar */
+        .recentItemModule {
+            display: none;
+        }
+
+        /* Hide the Recycle Bin section of the default salesforce side bar */
+        .recycleBinModule{
+            display: none;
+        }
+        
+    </style>  
+    <style>
+        .goal{padding-left: 20px;}
+        .obj{padding-left: 60px;}
+        .act{padding-left: 100px;}
+        .myheader{ margin-left: -10px;}
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }
+        .btnhover{
+            z-index:1001;
+        
+        }
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .fixedElement {
+            background-color: white;
+            border-bottom: 2px green solid;
+            position:fixed;
+            top:0;
+            width:100%;
+            z-index:100;
+            padding: 3px;
+        }
+        .mytitle{
+            font-weight: bold;
+            font-size: 14px;
+    
+        }
+        .myhide{color :blue; text-decoration: underline; cursor:pointer}
+        .myshow{color :blue; text-decoration: underline; cursor:pointer}
+        
+        .fancytree-title{
+         width: 100% !important;
+         white-space: normal !important;
+        }
+        .ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
+            left: 55% !important;
+            margin: 0 0 0 -488px;
+            z-index: 101 !important;
+            height:300px;
+            padding-top:10% !important;
+            position:fixed !important;
+            
+        }
+
+        .chosen-single {
+            background-color: black!important;
+            background-image: none !important;
+            box-shadow: none !important;
+            border-radius: 0px !important;
+            opacity: 0.20;
+        }
+        .ui-widget-overlay {
+            background: #eeeeee url(images/ui-bg_diagonals-thick_90_eeeeee_40x40.png) 50% 50% repeat;
+            opacity: .80;
+            position: absolute;
+              top: 0;
+              left: 0;
+        }
+        
+        .ui-widget-header {
+            border: 1px solid #aed0ea;
+            background: #deedf7 url(images/ui-bg_highlight-soft_100_deedf7_1x100.png) 50% 50% repeat-x;
+            color: #222222;
+            font-weight: bold;
+        }
+        .ui-dialog .ui-dialog-titlebar {
+            padding: .4em 1em;
+            position: relative;
+        }
+        .lcol{
+            width: 100%;
+            float: right;
+            //border: 1px solid black;
+            padding: 7px;
+            
+        }
+        .rcol{
+            float: right;
+            width: 50%;
+            //border: 1px solid gray;
+            padding: 0px;
+        }
+        .txtArea{
+            width: 320px;
+            height: 60px;    
+        } 
+        .label{
+            margin:10px;
+            font-weight:bold;
+        }
+              
+        .breadcrumb {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .breadcrumb, .breadcrumb a, .breadcrumb a.visited {
+            color: #154890 !important;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 38%;
+            padding:10px;
+            position: absolute;
+            width: 800px;
+            margin-left: -250px;
+            top:100px;
+            position:fixed !important;
+        }
+        .popupBackground{
+            background: #eeeeee url(images/ui-bg_diagonals-thick_90_eeeeee_40x40.png) 50% 50% repeat;
+            opacity: .80;
+            position: absolute;
+              top: 0;
+              left: 0;
+            
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .dateFormat{display: none;}
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }    
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .timePastNoon{
+            background: lightblue;
+        }
+    </style>
+    <script>
+    var j$ = jQuery.noConflict();
+    function toggleByClass(showcls, hidecls){
+        j$("."+hidecls).slideUp(0);
+        j$("."+showcls).slideDown(0);
+    };
+    function toggleByClass2(cls){
+        j$("."+cls).toggle(500);
+        j$(".myshow").toggle(0);
+        j$(".myhide").toggle(0);
+    
+    };
+    </script>
+    
+    <script>
+    function complete(Signed) {
+        var srvcloc = '{!Progress_Note__c.Service_Location__c}';
+        var finalalready = '{!Progress_Note__c.Type_of_Contact__c}';
+        var goalsSelected = '{!goalsOrObSelected}';
+        var Status = '{!Progress_Note__c.Status__c}';
+        var AppStatus = '{!Progress_Note__c.Approval_Status__c}';
+        var ActionPlan = '{!Progress_Note__c.Action_Plan__c}';
+        var ServiceCode = '{!Progress_Note__c.Service_Code__c}';
+        var Interventions = '{! JSENCODE(Progress_Note__c.Interventions__c)}';
+        var NextVisit = '{! JSENCODE(Progress_Note__c.Notes_For_Next_Visit__c)}';
+        var Progress = '{! JSENCODE(Progress_Note__c.Progress__c)}';
+        var s= '';
+        if(goalsSelected == 'NoGoal' || srvcloc =='' || finalalready == '' || ServiceCode == '' || Progress == '' || NextVisit == '' || Interventions == '' || AppStatus =='Pending' || Status == 'Final' || ActionPlan == null ){ 
+            if(goalsSelected == 'NoGoal' ){
+                s = 'Y';
+            }
+            if(Status == 'Final'){
+                s = 'Y';
+            }
+            if(AppStatus =='Pending'){
+                s = 'Y';
+            }if(ActionPlan == null){
+                s = 'Y';
+            }
+            if(srvcloc ==''){
+                s = 'Y';
+            }if(finalalready == ''){
+                s = 'Y';
+            }
+            if(ServiceCode == '' ){
+                s = 'Y';
+            }if(Interventions == ''){
+                s = 'Y';
+                //alert(s);
+            }
+            if(NextVisit == ''){
+                s = 'Y';
+                //alert(s);
+            }
+            if(Progress == ''){
+                s = 'Y';
+                //alert(s);
+            }
+            //alert(s);
+            location.reload(true);
+        }    
+
+        if (s == 'Y') {
+        //alert("calling validate");
+            validateesign();
+        }else {
+            if (Signed == 'Y') {
+                alert("Document Already E-Signed");
+                openDialog('tstpopupAfterEsign', 'span', ''); 
+            } else {
+                authenticate();
+                
+           }
+        }    
+    
+      /*
+        var srvcloc = '{!Progress_Note__c.Service_Location__c}';
+        if(srvcloc ==''){
+            alert("Please select a service location before Esigning");
+        }
+        else{
+            if (Signed == 'Y') {
+                alert("Document Already E-Signed");
+                //validateApproval();
+                validateesign();
+                openDialog('tstpopupAfterEsign', 'span', ''); 
+            } else {
+                authenticate();
+                
+           }
+        }
+       */
+    }
+    </script>
+    <script type="text/javascript">
+    var isModified = false;
+    var keysSelected ="";
+    var keysDeSelected="";
+    var nodeKey = null;    
+    function recordChange(){
+        isModified = true;
+    }
+    function triggerNodeSelection(treeNode) {
+        
+        if(treeNode.isSelected()&& (treeNode.key.indexOf("a1A") > -1 || treeNode.key.indexOf("a1B") > -1 )){
+            keysSelected = keysSelected + treeNode.key + ",";
+            //alert(keysSelected);
+        }else{
+            if(keysSelected.indexOf(treeNode.key) > -1){
+                keysSelected = keysSelected.replace(treeNode.key+",", "");
+            }
+        }
+        if(!treeNode.isSelected()&& (treeNode.key.indexOf("a1A") > -1 || treeNode.key.indexOf("a1B") > -1 )){
+            keysDeSelected = keysDeSelected + treeNode.key + ",";
+            //alert(keysDeSelected);
+        }else{
+            if(keysDeSelected.indexOf(treeNode.key) > -1){
+                keysDeSelected = keysDeSelected.replace(treeNode.key+",", "");
+                //alert(keysDeSelected);
+            }
+        }
+    } 
+    function keyselectedvalue(){
+        SelectedIds(keysSelected,keysDeSelected);
+    }
+    function popupDisplay(){
+        ShowPopUpWindow();
+    }
+    </script>
+    <script type="text/javascript">
+        j$ = jQuery.noConflict();
+        j$(document).ready(function(){
+            j$('.dateInput input').change(function(){
+                if(j$(this).val().toUpperCase().indexOf('PM') > 0 ){
+                    j$(this).addClass("timePastNoon");
+                }else{
+                    j$(this).removeClass("timePastNoon");
+                }            
+            })
+            j$('.dateInput input').trigger('change');
+            
+            
+            <apex:outputPanel layout="none" rendered="{!$User.Operating_Group__c=='NeuroRestorative' }" >
+            // uncheck the billable field for NR
+            j$('[id$=isbillable]').prop('checked',false);
+            </apex:outputPanel>
+        });
+    </script>
+    
+    <script language="javascript">
+        function setFocusOnLoad() {}
+        j$ = jQuery.noConflict();
+    
+       function openDialog(dialogId, tagType, titleString) {
+            console.log('trying to open modal');
+            selector = tagType + '[id$=' + dialogId + ']';
+
+            j$(selector).dialog({
+                dialogClass: 'fixed-dialog',
+                title: titleString,
+                modal: true,
+                width: 800,
+                closeOnEscape: false
+            }).parent().appendTo(j$('form[id$=myFRM]'));
+            j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+        }
+
+        function closeDialog(dialogId, tagType) {
+            selector = tagType + '[id$=' + dialogId + ']';
+
+            j$(selector).dialog('destroy');
+        }
+        
+        function showPopupJavascript(){
+        
+        showpopup();
+        
+        }
+    
+       </script>
+    <style>
+        input.btn[name="piSubmit"] {
+        display: none;
+        }
+
+    </style>
+
+    
+    
+    <script>
+        function setFocusOnLoad() {};
+    </script>
+    <script>
+        function openPopUp(){
+            var vars = '{!insertedProgressNoteId}';
+            window.open('/apex/Notes_ProgressNote_PDF_AZ_OPT?id='+ vars,'','width=700,height=500,0,status=0,');
+        }
+    </script>
+    <!-- added back the old component -->
+    <c:PersonalRecord pbsId="{!pbsname}" servAssignId="{!theServAssignId }" parentPage="Notes_ProgressNote_AZ_OPT" servAssignNew="true" admId="{!admissionId}"/>
+    <apex:pageBlock mode="mainDetail" id="mainData">
+    <apex:form id="myFRM" >
+     <apex:outputPanel id="OutputpanelId">
+        <apex:pagemessages ></apex:pagemessages>
+    </apex:outputPanel>
+    <c:Authentication formId="{!$Component.myFRM}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!insertedProgressNoteId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); openDialog('tstpopupAfterEsign', 'span', ''); return false; return false;" /><!--location.reload(true); -->
+    <!-- New Page Starts  -->
+    <apex:outputpanel rendered="{!NewBlock}">
+        <apex:pageBlock >
+            <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy,myFRM,OutputpanelId" >
+            <apex:param name="selectedKey" value="" />
+            <apex:param name="DeselectedKey" value="" />
+            </apex:actionFunction>
+            <apex:actionFunction action="{!showPopup}" name="ShowPopUpWindow" rerender="tstpopup,pblk">
+            </apex:actionFunction>
+            
+            <apex:actionFunction action="{!validateesign}" name="ValidateEsigntest" rerender="myFRM,Outputpatstpopup,OutputpanelId,tstpopup,pblk">
+             </apex:actionFunction>
+            
+           <apex:actionFunction action="{!update_overlap}" name="updateOvrLap" rerender="tstpopupAfterEsign">
+            </apex:actionFunction><!--   <apex:actionFunction action="{!CheckGoalsAndObj}" name="CheckGoalsAndObj" rerender="myFRM,Outputpatstpopup,OutputpanelId,tstpopup,pblk">
+             </apex:actionFunction> -->
+            
+            <apex:pageBlockButtons > 
+                
+                <apex:commandButton action="{!cancelEditNote}" value="Cancel" style="float:right"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
+                <apex:commandButton action="{!cancel}" value="Cancel" style="float:right"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
+                <apex:commandButton action="{!saveProgressNote}" value="Save" style="float:right" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+                <apex:commandButton value="Save" rendered="{!inlinemode}" style="float:right" onclick="keyselectedvalue()" oncomplete="saveModifiedProgressNote()" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+    
+                
+
+            </apex:pageBlockButtons>
+                <apex:pageBlockSection columns="2" >
+                   <!-- hidden fields, values will be passed in the url -->    
+                     <apex:pageBlockSection columns="1" > 
+                     
+                    <apex:outputText value="{!contactName}" label="Person Being Served" rendered="FALSE" />
+                    <apex:selectRadio id="TypeOfNoteField" required="true" layout="pageDirection" label="Type of Note" value="{!Progress_Note__c.RecordTypeId}" rendered="FALSE" >
+                        <apex:selectOptions value="{!rtOptions}"></apex:selectOptions>
+                    </apex:selectRadio>
+                     
+                    <apex:repeat value="{!$ObjectType.Progress_Note__c.FieldSets.NewFormAZOPT}" var="f"> 
+                        <apex:inputField id="isbillable" value="{!Progress_Note__c[f]}" rendered="{! f.fieldpath=='Purpose_Service_is_Billable__c'}"/>
+                        <apex:inputField value="{!Progress_Note__c[f]}" rendered="{! AND(f.fieldpath != 'Start_Time__c', f.fieldpath != 'End_Time__c', f.fieldpath != 'Next_Appt_Date_Time__c', f.fieldpath != 'Purpose_Service_is_Billable__c', IF(And(contains(f.Label,'Unit'),$User.Operating_Group__c='NeuroRestorative'),false,true))}"/>
+                        <apex:OutputField value="{!Progress_Note__c[f]}" rendered="{!AND(f.fieldpath != 'Purpose_Service_is_Billable__c', IF(And(contains(f.Label,'Unit'),$User.Operating_Group__c='NeuroRestorative'),true,false))}" styleclass="thinkingwheel"/>
+                        
+                        <apex:pageBlockSectionItem rendered="{! f.fieldpath=='Start_Time__c'}">
+                            <apex:outputLabel value="Start Time" />
+                            <apex:outputPanel layout="none">
+                                <div class="requiredInput"><div class="requiredBlock"></div>
+                                    <c:MilitaryDatetime id="effdatetime" datetimeval="{!Progress_Note__c[f]}" edit="true" hiddenFieldId="serviceStartTime" datetimepickerid="serviceStartTime" shiftTop="10"/>
+                                </div>
+                                <apex:inputHidden id="serviceStartTime"  value="{!Progress_Note__c[f]}" />
+                            </apex:outputPanel>
+                        </apex:pageblocksectionitem>
+                        <apex:pageBlockSectionItem rendered="{! f.fieldpath=='End_Time__c'}">
+                            <apex:outputLabel value="End Time" />
+                            <apex:outputPanel layout="none">
+                                <div class="requiredInput"><div class="requiredBlock"></div>
+                                    <c:MilitaryDatetime id="expdatetime" datetimeval="{!Progress_Note__c[f]}" edit="true" hiddenFieldId="serviceEndTime" datetimepickerid="serviceEndTime" shiftTop="10"/>
+                                </div>
+                                <apex:inputHidden id="serviceEndTime"  value="{!Progress_Note__c[f]}" />
+                            </apex:outputPanel>
+                        </apex:pageblocksectionitem>
+                        <apex:pageBlockSectionItem rendered="{! f.fieldpath=='Next_Appt_Date_Time__c'}">
+                            <apex:outputLabel value="Next Appt. Date / Time" />
+                            <apex:outputPanel layout="none">
+                                <c:MilitaryDatetime id="nextApptDateTime" datetimeval="{!Progress_Note__c[f]}" edit="true" hiddenFieldId="nextApptTime" datetimepickerid="nextApptTime" shiftTop="10"/>
+                                <apex:inputHidden id="nextApptTime"  value="{!Progress_Note__c[f]}" />
+                            </apex:outputPanel>
+                        </apex:pageblocksectionitem>
+                        <apex:pageBlockSectionItem rendered="{! f.fieldpath=='Number_of_Required_Signatures__c'}">
+                            <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" />
+                        </apex:pageBlockSectionItem>
+                       
+                          
+                    </apex:repeat>
+                    
+                    <table>
+            <tr>
+            <td>
+           
+            
+                    <apex:pageBlockSection >
+                            <apex:inputField required="true" value="{!Progress_Note__c.Number_of_Required_Signatures__c}" />
+                        </apex:pageBlockSection>
+                        </td>
+                    
+                    <td>
+                    
+                    <apex:pageBlockSection collapsible="false">
+              <apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="true" disabled="{!Pending || Final}">
+                    <apex:selectOptions value="{!Codes}"></apex:selectOptions>
+                      <!--  <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>   -->
+                </apex:selectList>
+              
+              <apex:pageBLockSectionItem rendered="{Progress_Note__c.Admission__r.State__c != 'NC' && Progress_Note__c.Admission__r.State__c != 'AZ' && Progress_Note__c.Admission__r.State__c != 'IN' && Progress_Note__c.Admission__r.State__c != 'MA' && Progress_Note__c.Admission__r.State__c != 'MD' && Progress_Note__c.Admission__r.State__c != 'OH'}">
+              <apex:outputLabel for="auth" value="Authorization" rendered="{isNR}" />
+              <apex:selectList size="1" id="auth" value="{!Progress_Note__c.Authorization__c}"  rendered="{!!isNR}" disabled="{!Pending || Final}">
+                    
+                <apex:selectOptions value="{!Auths}"></apex:selectOptions>
+                        <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>
+                </apex:selectList>
+                </apex:pageBLockSectionItem>
+                
+                 <apex:outputField id="svccode" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="false"/>
+                <apex:outputPanel rendered="{! Progress_note__c.Admission__r.state__C != 'NC' && Progress_Note__c.Admission__r.State__c != 'AZ' && Progress_Note__c.Admission__r.State__c != 'IN' && Progress_Note__c.Admission__r.State__c != 'MA' && Progress_Note__c.Admission__r.State__c != 'MD' && Progress_Note__c.Admission__r.State__c != 'OH'}" >
+                 <apex:outputLabel for="authdisp" value="Authorization" rendered="{isNR}"/>
+                <apex:outputField id="authdisp" label="Authorization" value="{!Progress_Note__c.Authorization__r.Display_Name__c}"/>
+                <apex:pageBlockSectionItem />         
+                <apex:outputField label="Payor Name" value="{!Progress_Note__c.Authorization__r.Payer_Name__c}" /> 
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+           
+            </td>
+            </tr>
+            
+            </table>
+                    
+                    
+                    
+                    <apex:pageBlockSection columns="1">
+                   <apex:inputField value="{!Progress_Note__c.Interventions__c}" style="height:60px;width:230px"/>
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                    </apex:pageBlockSection>
+                    
+                     
+                </apex:pageBlockSection>
+  
+  <!-- Goal Block Begins -->
+        <apex:outputPanel layout="block" styleClass="lcol">
+            <apex:pageBlock id="eleyForm1" title="Goals & Objectives" >
+                <script type="text/javascript">
+                    isModified = false;
+                </script>       
+                <apex:outputPanel id="relatedTo" styleClass="frmRCol">
+                     <apex:outputPanel layout="block" >
+                            <apex:outputPanel layout="block" rendered="true">
+                                <apex:outputPanel id="tree3" layout="block" style="color:red; overflow-x:hidden; width:100%; height:360px;" >
+                                    <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" mode="2" selectActionSignature="triggerNodeSelection(data.node);" ID_PageSideStorage="myKeys" allowInactiveNode="false" checkbox="true" TreeID="tree3" showIcons="false" debug="false" />
+                                    <!--  <apex:inputHidden value="{!selectedKeys}" id="myKeys"/> -->     
+                                </apex:outputPanel>
+                            </apex:outputPanel>               
+                    </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:pageBlock>
+            
+            
+            
+               <apex:pageBlockSection columns="3">
+                    
+                    <apex:pageBlockSection columns="1">
+                    <apex:inputField value="{!Progress_Note__c.Progress__c}" style="height:60px;width:300px"/>
+                    </apex:pageBlockSection>
+                  
+                     <apex:pageBlockSection columns="1">
+                     <apex:inputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}" style="height:60px;width:300px"/>
+                    </apex:pageBlockSection>
+                    
+                    </apex:pageBlockSection>
+       
+    
+        
+        </apex:outputPanel>
+        
+        
+          </apex:pageBlockSection>
+        <!-- Goal Ends -->
+                     
+           
+            
+        </apex:pageBlock>
+        
+    </apex:outputpanel>
+    
+   
+    <!--  New Page Block Ends  -->
+    <!--  Edit Page Block Starts  -->
+    <apex:outputpanel rendered="{!!NewBlock}">
+        <apex:outputPanel style="display: none;">
+            <apex:outputField value="{!Progress_Note__c.recordtype.DeveloperName}" />
+        </apex:outputPanel>
+        <!--  <style>
+            input[name=piSubmit] { display: none;}
+        </style>-->
+        <br></br>
+        <apex:pageBlock id="pblk">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton id="saveButton"   value="Save"   action="{!saveProgressNoteInlineEdit}"  rendered="{!!Final}"   style="margin-left:22%;display:none;"/>
+                <apex:commandButton id="cancelButton" value="Cancel" action="{!cancel}"  rendered="{!!Final}" style="display:none;"/>
+                <apex:commandButton id="editButton" value="Edit"  action="{!editInline}" rendered="{!!vfVarLock}" immediate="true"/>
+                <apex:commandButton id="finalizebtn" value="Finalize this Progress Note"  rendered="{!!Final}"  action="{!showPopup}" rerender="tstpopup,OutputpanelId" />
+                <apex:commandButton id="disregard" value="Disregard Note"  action="{!disregardNote}" />
+                <apex:commandButton id="createPDF" value="Create PDF"  onclick="openPopUp(); return false;"/>
+                <!--<apex:commandButton id="createPDF" value="Create PDF"  onclick="openDialog('tstpopup', 'span', 'Finalize'); return false;" />-->
+               <!--  <apex:commandButton id="esign" value="E-Sign"  onClick=" complete('{!SignedDoc}'); return false;" />-->
+                <apex:commandButton id="esign" value="E-Sign"  rendered="{!!Final}" action="{!validateesign}" onClick="complete('{!SignedDoc}'); return false;"  />
+               
+            </apex:pageBlockButtons>
+            <!--  Section for Fields with Inline Edit mode On -->
+            <apex:pageBlockSection columns="2">
+            <apex:pageBlockSection columns="1">
+                <apex:outputField value="{!Progress_Note__c.name}" rendered="false"/>
+                <apex:outputField title="Type of Note" value="{!Progress_Note__c.recordtypeid}" rendered="false"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Start Time" />
+                    <c:MilitaryDatetime dateTimeVal="{!Progress_Note__c.Start_Time__c}" />
+                </apex:pageBlockSectionItem>
+<!--                 <apex:outputField value="{!Progress_Note__c.Start_Time__c}"> -->
+<!--                 <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/> -->
+<!--                 </apex:outputField> -->
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="End Time" />
+                    <c:MilitaryDatetime dateTimeVal="{!Progress_Note__c.End_Time__c}" />
+                </apex:pageBlockSectionItem>
+<!--                 <apex:outputField value="{!Progress_Note__c.End_Time__c}"> -->
+<!--                 <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/> -->
+<!--                 </apex:outputField> -->
+                <apex:outputField value="{!Progress_Note__c.Total_Time__c}"/>
+                <apex:outputField value="{!Progress_Note__c.Signature_on_File__c}"/>
+                <apex:outputField value="{!Progress_Note__c.Service_Location__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Type_of_Contact__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Purpose_Service_is_Billable__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Units__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.People_Present__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Status__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Is_Note_Late__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Disregard_Note__c}">
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Sleep_Check_Conducted__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+           <!-- Service code section -->
+                <apex:pageBlockSection collapsible="false">
+              <apex:selectList size="1" title="Service Code" value="{!Progress_Note__c.Service_Code__c}" rendered="False" disabled="True">
+                    <apex:selectOptions value="{!Codes}"></apex:selectOptions>
+                      <!--  <apex:actionSupport event="onchange" reRender="myFrm" status="myStatus" action="{!quicksave}"/>   -->
+                </apex:selectList>
+                <apex:outputField id="svccode" value="{!Progress_Note__c.Service_Code__r.Service_Value__c}"  rendered="True"/>
+                
+            </apex:pageBlockSection>
+           <!-- Service code section ends -->
+                <apex:outputField value="{!Progress_Note__c.Interventions__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Progress__c}">
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Next Appt. Date / Time" />
+                    <c:MilitaryDatetime dateTimeVal="{!Progress_Note__c.Next_Appt_Date_Time__c}" edit="false" />
+                   
+                </apex:pageBlockSectionItem>                
+<!--                 <apex:outputField value="{!Progress_Note__c.Next_Appt_Date_Time__c}"> -->
+<!--                 <apex:inlineEditSupport disabled="{!vfVarLock}" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/> -->
+<!--                 </apex:outputField> -->
+                <apex:outputField value="{!Progress_Note__c.Person_Being_Served__c}">
+                
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Service_Assignment__c}">
+                
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Admission__c}">
+               
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                <apex:outputField value="{!Progress_Note__c.Action_Plan__c}">
+                
+                <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                
+            </apex:pageBlockSection>
+            <!-- Goal -->
+        <apex:outputPanel layout="block" styleClass="lcol">
+            <apex:pageBlock id="eleyForm" title="Goals & Objectives" >
+                <script type="text/javascript">
+                    isModified = false;
+                </script>       
+                <apex:outputPanel id="relatedToPgblk">
+                    <apex:outputPanel layout="block" styleClass="frmRCol" style="white-space: normal; width:100%; height: 100%; ">
+                        <apex:outputPanel layout="block" rendered="true">
+                                <apex:outputPanel id="tree3" layout="block" >
+                                    <c:Fancy_Tree TreeString="{!allGoals.Fancy_Tree_JSon_String_LongText}" mode="2" ID_PageSideStorage="myKeys" allowInactiveNode="false" checkbox="false" TreeID="tree3" showIcons="false" debug="false" />
+                                    <!--  <apex:inputHidden value="{!selectedKeys}" id="myKeys"/> -->     
+                                </apex:outputPanel>
+                        </apex:outputPanel>               
+                    </apex:outputPanel>
+                </apex:outputPanel>
+        
+            </apex:pageBlock>
+            <apex:pageBlockSection columns="1">
+            
+        <apex:outputField title="Notes for Next Visit" value="{!Progress_Note__c.Notes_For_Next_Visit__c}">
+        <apex:inlineEditSupport disabled="true" showOnEdit="saveButton,cancelButton" hideOnEdit="editButton,finalizebtn,disregard,createPDF,esign" event="ondblclick" changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+        </apex:outputField>
+        
+        </apex:pageBlockSection>
+        </apex:outputPanel>
+        </apex:pageBlockSection>
+        <!-- Goal Ends -->
+        
+       </apex:pageBlock>
+        <apex:pageBlock mode="mainDetail" >
+            <apex:actionStatus id="myStatus">
+                <apex:facet name="start">
+                    <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Saving... <span class="waitingDescription"></span>
+                    </div>
+                </apex:facet>
+                <apex:facet name="stop"></apex:facet>
+            </apex:actionStatus>
+             
+        </apex:pageBlock>
+        
+         
+        
+        <!-- System Information Section -->
+        <apex:pageblock >
+            <apex:pageBlockSection title="System Information" columns="2">
+                <apex:outputField value="{!Progress_Note__c.CreatedById}" />
+                <apex:outputField value="{!Progress_Note__c.LastModifiedById}"/>
+                <apex:outputField value="{!Progress_Note__c.CreatedDate}" />
+                <apex:outputField value="{!Progress_Note__c.Locked__c}"/>
+            </apex:pageBlockSection>
+        </apex:pageblock>
+        <apex:pageBlock title="Approval Information">
+            <apex:pageBlockSection >
+                <apex:outputField value="{!Progress_Note__c.Approval_Status__c}"/>
+                <apex:outputField value="{!Progress_Note__c.No_Approval_Needed__c}"/>
+                <apex:outputField value="{!Progress_Note__c.Approval_Status_Date__c}"/>
+            </apex:pageBlockSection> 
+            <br/>
+        </apex:pageBlock>
+    </apex:outputpanel>
+    
+    
+    <!-- finalize for e sign-->
+    <apex:outputPanel id="tstpopupAfterEsign" style="display:none; dispaly: block; height: 500px;">
+    <apex:pagemessages ></apex:pagemessages>
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+        <apex:outputPanel styleClass="custPopup" layout="block" ><!--rendered="{!displayPopUp}">-->
+            <apex:outputpanel rendered="{!displayPopupFinalize}"> 
+            <apex:pageMessage severity="warning" title="Overlapping Notes Detected" strength="3" detail="Before submitting this note, please consider these other Progress Notes listed below whose times overlap the start and end date of this note." />
+            <apex:pageBlock title="Overlapping Progress Notes">
+                <apex:pageBlockTable styleclass="pbBody-list"  value="{!pnOverlap}" var="item">
+                    <apex:column >
+                        <apex:outputLink value="/{!item.id}">{!item.name}</apex:outputLink>
+                     </apex:column>
+                     <apex:column value="{!item.Owner.Name}"/>
+                     <apex:column value="{!item.Start_Time__c}"/>
+                     <apex:column value="{!item.End_Time__c}"/>
+                     <apex:column value="{!item.Status__c}"/>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+            </apex:outputpanel>
+            <apex:pageBlock id="blockAfterEsign" >
+                <apex:pageBlockButtons >
+                    <apex:commandButton value="Submit for Approval" action="{!SubmitForApp}"  rendered="{!!thePN.No_Approval_Needed__c}"/>
+                    <!--<apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>-->
+                    <apex:commandButton value="Cancel" onclick="closeDialog('tstpopupAfterEsign', 'span'); location.reload(true); return false;" rerender="tstpopup"/>
+                    <!-- <apex:commandButton value="E-Sign"  action="{!closePopup}" oncomplete="authenticate(); return false;" rerender="tstpopup"/>  -->
+                </apex:pageBlockButtons>
+                <apex:pageBlockSection columns="1" >
+                    <apex:pageMessages ></apex:pageMessages>
+                    <apex:inputField value="{!thePn.Approval_User__c}">
+                        <!--<apex:actionSupport event="onclick" reRender="block"/> -->              
+                    </apex:inputField><br></br>
+                    <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
+                        <center>Once you submit this record for approval,
+                        <br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+            </apex:pageBlock> 
+            <br/><br/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+    <!-- Finalize for esign ends-->
+    
+    
+    <apex:outputPanel id="tstpopup" >
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+        <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+            <apex:pageMessage rendered="{!hasOverlap}" severity="warning" title="Overlapping Notes Detected" strength="3" detail="Before submitting this note, please consider these other Progress Notes listed below whose times overlap the start and end date of this note." />
+            <apex:pageBlock rendered="{!hasOverlap}" title="Overlapping Progress Notes">
+                <apex:pageBlockTable styleclass="pbBody-list"  value="{!pnOverlap}" var="item">
+                    <apex:column >
+                        <apex:outputLink value="/{!item.id}">{!item.name}</apex:outputLink>
+                     </apex:column>
+                     <apex:column value="{!item.Owner.Name}"/>
+                     <apex:column value="{!item.Start_Time__c}"/>
+                     <apex:column value="{!item.End_Time__c}"/>
+                     <apex:column value="{!item.Status__c}"/>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+            <apex:pageBlock id="block" >
+                <apex:pageBlockButtons >
+                    <apex:commandButton value="Submit for Approval" action="{!SubmitForApp}"  rendered="{!!thePN.No_Approval_Needed__c}"/>
+                    <!--<apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!thePN.No_Approval_Needed__c}"/>-->
+                    <apex:commandButton value="Cancel" action="{!closePopup}" rerender="tstpopup"/>
+                    <!-- <apex:commandButton value="E-Sign"  action="{!closePopup}" oncomplete="authenticate(); return false;" rerender="tstpopup"/>  -->
+                </apex:pageBlockButtons>
+                <apex:pageBlockSection columns="1" >
+                    <apex:pageMessages ></apex:pageMessages>
+                    <apex:inputField value="{!thePn.Approval_User__c}">
+                        <!--<apex:actionSupport event="onclick" reRender="block"/>  -->             
+                    </apex:inputField><br></br>
+                    <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
+                        <center>Once you submit this record for approval,
+                        <br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+            </apex:pageBlock> 
+            <br/><br/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+            <apex:outputPanel id="EsignComponent">
+                <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUpcomp}"/>
+                <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUpcomp}">
+                    <br/><br/><br/>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            </apex:form>
+            
+        
+            <apex:outputpanel rendered="{!!NewBlock}">
+                <div id="Taks">
+                <apex:relatedList title="Activity" list="OpenActivities"  subject="{!$CurrentPage.parameters.id}" />
+                </div>
+                <div id="Attachments">
+                <c:SObjectNotesAndAttachments parentPage="Notes_ProgressNote_AZ_OPT" parentId="{!$CurrentPage.parameters.id}" showAction="true" pbsId="{!pbsname}" servAssignId="{!theServAssignId}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
+                </div>
+            </apex:outputpanel>
+             <apex:outputpanel rendered="{!!NewBlock}">
+                <div id="Approvals">
+                <apex:relatedList list="ProcessSteps"/>
+                </div>
+            </apex:outputpanel> 
+        </apex:pageBlock>
+        <apex:actionStatus id="myStatus" >
+            <apex:facet name="start">
+                <div  class="thinking">
+                <div class="thinkingwheel">
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp;Processing...</span>
+                </div>
+                </div>
+            </apex:facet>  
+            <apex:facet name="stop">
+            </apex:facet> 
+        </apex:actionStatus>       
+</apex:page>
