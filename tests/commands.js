@@ -272,7 +272,7 @@ module.exports = function (client, done) {
           }
           return handles.value[index];
         }
-        throw new Error("There is only one open window!");
+        return originalHandle;
       })
       .then(client.window);
   });
