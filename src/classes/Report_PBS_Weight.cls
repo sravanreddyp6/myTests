@@ -129,13 +129,14 @@ public with sharing class Report_PBS_Weight {
 		if (errorFound) {
 			return;
 		}
+		pbsMap = new Map<Id, Person>();
 		Map<Id, Evaluation__c> evaluations = new Map<Id, Evaluation__c>([
 			SELECT Id, RecordType.Name, ServiceAssignment__r.Id, ServiceAssignment__r.Admission__r.Person_Being_Served__r.Name
 			  FROM Evaluation__c
 			 WHERE ServiceAssignment__c IN :selectedPbs
 			   AND (
-			       (RecordType.Name = 'CNA Workbook' AND Status__c = 'Final')
-			    OR (RecordType.Name = 'NursesAssessment' AND Status__c = 'Final')
+			        (RecordType.Name = 'CNA Workbook' AND Shift_Start_Time__c <= :endDate.addDays(1) AND Shift_End_Time__c >= :startDate AND Status__c = 'Final')
+			     OR (RecordType.Name = 'NursesAssessment' AND Signed_At__c >= :startDate AND Signed_At__c <= :endDate.addDays(1) AND Status__c = 'Final Admission')
 			   )
 		]);
 		for (Eval_Value__c value: [
@@ -186,6 +187,16 @@ public with sharing class Report_PBS_Weight {
 
 		public void generateWeights() {
 			this.weights = this.weightMap.values();
+			// There are times when observed date/time is included, but the weight is not entered.
+			// Here we filter out those entries.
+			Integer index = 0;
+			while (index < this.weights.size()) {
+				if (this.weights[index].isNull()) {
+					this.weights.remove(index);
+				} else {
+					index++;
+				}
+			}
 			this.weights.sort();
 		}
 
@@ -231,6 +242,10 @@ public with sharing class Report_PBS_Weight {
 			} else {
 				return -1;
 			}
+		}
+
+		public Boolean isNull() {
+			return kg == null;
 		}
 	}
 
