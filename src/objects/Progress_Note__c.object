@@ -3505,7 +3505,7 @@ Neurostative IL role</description>
     <fields>
         <fullName>Time_Spent_Driving__c</fullName>
         <externalId>false</externalId>
-        <inlineHelpText>Enter in minutes</inlineHelpText>
+        <inlineHelpText>Enter in Minutes</inlineHelpText>
         <label>Time Spent Driving</label>
         <precision>18</precision>
         <required>false</required>
@@ -3520,9 +3520,9 @@ Neurostative IL role</description>
         <externalId>false</externalId>
         <inlineHelpText>Enter in Minutes</inlineHelpText>
         <label>Time Spent Rendering Service</label>
-        <precision>10</precision>
+        <precision>8</precision>
         <required>false</required>
-        <scale>2</scale>
+        <scale>0</scale>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Number</type>
@@ -22848,7 +22848,7 @@ errors.push(&apos;A Progress Note cannot be finalized without an Authorization. 
 */
 
 //Check to see if there is a signature on file
-if ((curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos;) &amp;&amp; records[0].Number_of_Required_Signatures__c &gt; 0 &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
+if ((curRtype[0].DeveloperName == &apos;AZ_OPT&apos; || curRtype[0].DeveloperName == &apos;NC_TFC&apos; || curRtype[0].DeveloperName == &apos;NC_Wks_1_6_TFC&apos; || curRtype[0].DeveloperName == &apos;CA_FSS&apos;) &amp;&amp; records[0].Number_of_Required_Signatures__c &gt; 0 &amp;&amp; {! Progress_Note__c.Signature_on_File__c != &apos;Y&apos;}) {
 errors.push(&apos;A Progress Note cannot be finalized without an Electronic Signature attached to the Progress Note. Please esign the document prior to finalization. If you have esigned the document, hit refresh on the browser page and then click Finalize this Progress Note.&apos;);
 }
 
