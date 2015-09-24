@@ -366,7 +366,13 @@ function highlightButtons ( btype, sfid, on )
                                         reRender="block" 
                                         status="final_form_status"
                                         />                
-                                    </apex:inputField>                                  
+                                    </apex:inputField>   
+                
+                <apex:pageBlockSectionItem rendered="{!!pn.No_Approval_Needed__c}">
+                	<apex:outputLabel value="Approver" for="approver"/>
+                	<apex:inputField id="approver" value="{!pn.Approval_User__c}" />
+            	</apex:pageBlockSectionItem>
+                
             </apex:pageBlockSection>            
         </apex:pageBlock>
     </div>    
