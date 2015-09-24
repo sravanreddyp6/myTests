@@ -32,6 +32,14 @@
             <apex:inputField value="{!thePN.No_Approval_Needed__c}">
                 <apex:actionSupport event="onclick" reRender="block"/>                
             </apex:inputField>
+            
+            
+            <apex:PageBlockSectionItem rendered="{!!thePN.No_Approval_Needed__c}">
+               	<apex:outputLabel value="Approver" for="approver"/>
+               	<apex:inputField id="approver" value="{!thePN.Approval_User__c}" />
+           	</apex:PageBlockSectionItem>
+            
+            
             <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!thePN.No_Approval_Needed__c}" >
                 <center>Once you submit this record for approval,
                 <br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
