@@ -233,7 +233,7 @@ function validate() {
         
         var recttop= line;
                 
-        line += fontsize;
+      /*  line += fontsize;
         
         context.font = "bold " + context.font;
         text = "PROGRESS NOTES";
@@ -278,16 +278,16 @@ function validate() {
        line += fontsize*2;
         
         text="TYPE OF CONTACT: {!Progress_Note__c.Type_of_contact__c}";
-       context.fillText(text, 2, line );
+       context.fillText(text, 2, line );*/
 
  		/*
          * Changed from Record to Record ID  per ticket EB-209 
          */
-        text = "RECORD: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}"; 
+       /* text = "RECORD: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}"; 
         text = "RECORD ID: {!Progress_Note__c.Person_Being_Served__r.Avatar_ID__c}";         
         context.fillText(text, colmiddle + 2, line);
 
-       line += fontsize*2;
+       line += fontsize*2; 
 
         var rectbottom = line;      
 
@@ -298,7 +298,7 @@ function validate() {
         context.moveTo( colmiddle, recttop);
         context.lineTo( colmiddle, rectbottom);
         context.stroke();
-        context.strokeRect( 0, recttop, width, rectbottom - recttop);
+        context.strokeRect( 0, recttop, width, rectbottom - recttop); */
 		
         
         context.font = "14px sans-serif";
