@@ -861,7 +861,7 @@ public with sharing class referrals_Controller{
 		Contact pBSRec;
 		try {
 			pBSRec = [
-				select Age__c, MailingCity, BirthDate, Email, Race__c, Marital_Status__c, 
+				select Age__c, MailingCity, BirthDate, Email, Race__c, Marital_Status__c, Age_year__c, Age_month__c, Age_days__c,
 				       Fax, FirstName, Gender__c,
 				       LastName, Ethnicity_Picklist__c,
 				       Middle_Name__c, Phone, Primary_Language__c, //SSN__c,
