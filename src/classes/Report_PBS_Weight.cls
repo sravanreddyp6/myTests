@@ -136,7 +136,7 @@ public with sharing class Report_PBS_Weight {
 			 WHERE ServiceAssignment__c IN :selectedPbs
 			   AND (
 			        (RecordType.Name = 'CNA Workbook' AND Shift_Start_Time__c <= :endDate.addDays(1) AND Shift_End_Time__c >= :startDate AND Status__c = 'Final')
-			     OR (RecordType.Name = 'NursesAssessment' AND Signed_At__c >= :startDate AND Signed_At__c <= :endDate.addDays(1) AND Status__c = 'Final Admission')
+			     OR (RecordType.Name = 'NursesAssessment' AND Signed_At__c >= :startDate AND Signed_At__c <= :endDate.addDays(1) AND Status__c LIKE 'Final%')
 			   )
 		]);
 		for (Eval_Value__c value: [
