@@ -32,6 +32,9 @@ selector `selector`. Use this only when `getSelectOptions` is not viable (e.g. w
 are multiple elements with the same label on the page).
 - `chooseSelectOption(label, optionValue)`: Choose the option `optionValue` from
 a `select` tag with label `label`.
+- `selectCheckbox(label, selected)`: Select a checkbox with label `label`. `selected`
+is optional - if it is `undefined` or `true`, the checkbox will be selected, if it is `false`,
+the checkbox will be unselected.
 - `selectLookup(label)`: Click on a lookup icon that Visualforce generated for certain
 elements (e.g. when we need to look up a user).
 - `switchToNextWindow()`: Sometimes VF will create a new window (e.g. when we look up a
