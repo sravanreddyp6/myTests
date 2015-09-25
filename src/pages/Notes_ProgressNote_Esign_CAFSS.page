@@ -211,7 +211,7 @@ function validate() {
         context.fillText(text, 2, line );
         
         context.textAlign="right";
-        text = "Time - Documentation: {!JSENCODE(Progress_Note__c.Provider__c)} " ;
+        text = "Time - Documentation: {!Progress_Note__c.Total_Time__c - (Progress_Note__c.Time_spent_rendering_Service__c + Progress_Note__c.Time_Spent_Driving__c)} " ;
         context.fillText(text, (width - width/15), line );
         
         line += fontsize;
