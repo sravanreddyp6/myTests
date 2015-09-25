@@ -95,7 +95,7 @@
                 }
             }
 
-            if ( j$('input[id$=contractused_lkid]').length > 0 &&  j$('input[id$=contractused]').val().trim() && !(j$('input[id$=contractused_lkid]').val().trim())) {
+            if ( j$('input[id$=contractused_lkid]').length > 0 && j$('input[id$=contractused]').val() && j$('input[id$=contractused]').val().trim() && !(j$('input[id$=contractused_lkid]').val().trim())) {
                 errors.push('Please choose a valid contract using the search icon');
             }
 
