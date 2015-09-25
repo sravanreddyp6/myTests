@@ -173,7 +173,7 @@ public with sharing class Report_PBS_Weight {
 		reportRan = true;
 	}
 
-	class Person {
+	public class Person {
 		public List<Weight> weights { get; set; }
 		public Height height { get; set; }
 		public String name { get; set; }
@@ -218,7 +218,7 @@ public with sharing class Report_PBS_Weight {
 		}
 	}
 
-	class Weight implements Comparable {
+	public class Weight implements Comparable {
 		public Double kg {
 			get;
 			set {
@@ -249,7 +249,7 @@ public with sharing class Report_PBS_Weight {
 		}
 	}
 
-	class Height {
+	public class Height {
 		public Double cm { get; set; }
 		public Double inch { get; set; }
 		public Double ft { get; set; }
