@@ -483,7 +483,13 @@ public with sharing class referral_Controller2 {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 				'The Person Being Served record id specified is invalid. ' + e.getMessage()));
 		}
-			this.age = 	Utility.getAge(String.valueOf(pBRRec.Age_year__c),pBRRec.Age_month__c,pBRRec.Age_days__c);
+		//PRI-166 ensure month is calculated the same way as PBS
+		string monthAlias = pBRRec.Age_month__c;
+		if(integer.valueof(pBRRec.Age_days__c) > 14){
+			monthAlias = string.valueof(integer.valueof(monthAlias) + 1);
+		}
+		system.debug('age ' + String.valueOf(pBRRec.Age_year__c) + ' - ' + pBRRec.Age_month__c + ' - ' + pBRRec.Age_days__c);
+			this.age = 	Utility.getAge(String.valueOf(pBRRec.Age_year__c),monthAlias,pBRRec.Age_days__c);
 		return pBRRec;
 	}
 	private void getPBSId() {
