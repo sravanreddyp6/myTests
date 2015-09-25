@@ -90,7 +90,10 @@ function setupDates() {
                 </apex:outputPanel>
                </apex:pageblocksectionitem>
                 <apex:inputField value="{!admission.Network_Offering__c}" required="true" html-data-countInFormProgress="1"/>
-                <apex:pageBlockSectionItem >
+                
+                
+                
+                <!--<apex:pageBlockSectionItem >
                 <apex:outputLabel value="Discharged Date" />
 	                <apex:outputPanel >
 		                <apex:actionRegion >
@@ -99,7 +102,31 @@ function setupDates() {
 			                </apex:inputField>
 		                </apex:actionRegion>
 	                </apex:outputPanel>
-                </apex:pageBlockSectionItem>
+                </apex:pageBlockSectionItem>-->
+                
+                
+                <!-- PRI-277  -->
+                    <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && $User.Operating_Group__c != 'CareMeridian' )}" id="dischargeD1" >
+                            <apex:outputLabel value="Discharged Date" />
+                            <apex:outputPanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField value="{!admission.Discharged_Date__c}" id="disdate" rendered="{! !useDischargeSection }">
+                                <apex:actionSupport event="onchange" rerender="Discharge2" />
+                                </apex:inputField>
+                            </div>
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                     <apex:pageBlockSectionItem rendered="{!(admission.Status__c != 'Discharged' || (admission.Status__c == 'Discharged' && $User.Operating_Group__c == 'CareMeridian' ))}"  id="dischargeD2" >
+                        <apex:outputLabel value="Discharged Date" />
+                        <apex:outputPanel >
+                        	<apex:inputField value="{!admission.Discharged_Date__c}" id="disdate" rendered="{! !useDischargeSection }">
+                            <apex:actionSupport event="onchange" rerender="Discharge2" />
+                            </apex:inputField>
+                        </apex:outputPanel>           
+                    </apex:pageBlockSectionItem>
+                       
+                  
                 <apex:outputText value="" rendered="{! useDischargeSection }" />
                 <apex:inputField value="{!admission.State__c}" required="true" html-data-countInFormProgress="1"/>
                 
