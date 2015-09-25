@@ -782,7 +782,7 @@
                 </apex:pageBlockSectionItem>
 
                 <apex:outputField value="{!personBeingServedRecord.Age__c}" />
-                <apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" />
+                <apex:outputField value="{!personBeingServedRecord.Level_of_Education__c}" rendered="{! personBeingServedRecord.Level_of_Education__c != null}" />
 
                 <apex:outputField value="{!personBeingServedRecord.Gender__c}" />
             </apex:pageBlockSection>
