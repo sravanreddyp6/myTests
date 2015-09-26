@@ -101,7 +101,7 @@ public with sharing class Shift_Note_Narrative implements AuthenticatedAction {
     public Map<ID, string> shortdescs { get; private set; }
     private void setpastnotes () {
         
-       pastnotes = [ select id, start_time__c, end_time__c, narrative__c, createddate, createdbyid, createdby.name from progress_note__c where service_assignment__c = :note.service_assignment__c and recordtype.developername='Shift_Note' and id != :note.id order by lastmodifieddate desc];
+       pastnotes = [ select id, start_time__c, end_time__c, narrative__c, createddate, createdbyid, createdby.name from progress_note__c where service_assignment__c = :note.service_assignment__c and recordtype.developername='Shift_Note' and id != :note.id order by lastmodifieddate desc LIMIT 500];
        shortdescs = new Map<ID, string>();
        
        string shorttext;
