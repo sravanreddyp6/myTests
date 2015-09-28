@@ -109,6 +109,11 @@
     	selectDelegate(j$('[id$=selectDelegateId]').val());
     }
     
+    function changeDelegate2(){
+        if(j$('[id$=WorkforceOnBehalf]').val().length>1){
+    	selectDelegate2(j$('[id$=WorkforceOnBehalf]').val());
+        }    
+    }
     
     </script> 
     
@@ -174,7 +179,7 @@
     </apex:form>
     <apex:outputPanel layout="block" styleClass="block-title" rendered="{!hasAccess}" >
     <apex:form >
-    		<apex:actionFunction name="selectDelegate" action="{!selectDelegate}"   reRender="wfReports,wfAttest"  >
+    		<apex:actionFunction name="selectDelegate2" action="{!selectDelegate}"   reRender="wfReports,wfAttest"  >
              <apex:param name="aliasName" value="" assignTo="{!aliasName}" />
             </apex:actionFunction>
             
