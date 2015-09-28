@@ -303,7 +303,7 @@
 	<c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}" />
 	<br />
 	<apex:form id="admissionForm">
-
+		<c:FormCompletionControl viewMode="True" />
 		<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="SaveStatus" />
 		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="AddEditDocStatus" />
 
@@ -328,14 +328,40 @@
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection title="Information" columns="2" collapsible="true">
 				<apex:outputField value="{!admission.name}" />
-				<apex:outputField value="{!admission.Status__c}" />
-				<apex:outputField value="{!admission.Network_Offering__c}" />
+				<apex:pageBlockSectionItem >
+					<label for="pStatus" >Admission Status</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!admission.Status__c}" />
+						<!-- used in Progress score -->
+						<input id="pStatus" value="{!admission.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<label for="pNetOffer" >Network Offering</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!admission.Network_Offering__c}" />
+						<!-- used in Progress score -->
+						<input id="pNetOffer" value="{!admission.Network_Offering__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>			
+				
                 <apex:pageBlockSectionItem >
-                    <apex:outputLabel value="Admission Date" />
-                    <c:MilitaryDatetime dateTimeVal="{!admission.Admission_Effective_DateTime__c}" />
+                    <label for="pStartDate" >Admission Date</label>
+                    <apex:outputPanel >
+                    	<c:MilitaryDatetime dateTimeVal="{!admission.Admission_Effective_DateTime__c}" />
+						<!-- used in Progress score -->
+						<input id="pStartDate" value="{!admission.Admission_Effective_DateTime__c}" style="display: none;"  data-countInFormProgress="1" />                     
+                    </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                
-				<apex:outputField value="{!admission.State__c}" />
+
+				<apex:pageBlockSectionItem >
+					<label for="pState" >State</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!admission.State__c}" />
+						<!-- used in Progress score -->
+						<input id="pState" value="{!admission.State__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>
 
 				<apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}" rendered="{! !useDischargeSection}">
 					<apex:param value="{!admission.Discharged_Date__c}" />
@@ -355,7 +381,14 @@
 
             <!-- PRI-218/19 -->
 			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="true"  rendered="{!reqAdmittedFrom}">
-				<apex:outputField value="{!Admission__c.Admitted_From__c}"  />
+				<apex:pageBlockSectionItem >
+					<label for="pAdmitFrom" >Admitted From (ROLES Scale at Admission)</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!Admission__c.Admitted_From__c}"  />
+						<!-- used in Progress score -->
+						<input id="pAdmitFrom" value="{!Admission__c.Admitted_From__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>    
    			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
 				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
@@ -412,8 +445,9 @@
 		</apex:pageBlock>
 
 		<br />
-		<apex:pageBlock title="Authorizations" rendered="{!!(isCM||isNR)}">
-			<apex:pageBlockTable styleclass="pbBody-list" value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
+		<apex:pageBlock mode="maindetail" rendered="{!!(isCM||isNR)}">
+			<apex:pageBlockSection id="_Alt1_Header" title="Authorizations" collapsible="false"/>
+			<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
 				<apex:column >
 					<apex:facet name="header">Authorization ID</apex:facet>
 					<apex:outputlink value="/{!item.id}">{!item.name}</apex:outputlink>
@@ -430,7 +464,8 @@
 		</apex:pageBlock>
 
 		<a id="admissionDocuments">
-			<apex:pageBlock title="Admission Documents" rendered="{!isCM && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
+			<apex:pageBlock mode="maindetail"  rendered="{!isCM && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
+				<apex:pageBlockSection id="_Alt1_Header" title="Admission Documents" collapsible="false"/>
 				<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
 					<apex:facet name="start">
 						<span class="pbHeaderButton">
@@ -490,7 +525,7 @@
 
 		<!-- Add/edit Admission Documents. -->
 		<apex:outputPanel id="addAdmissionDocumentModal" style="display:none">
-			<apex:pageBlock title="Add/Edit Documents">
+			<apex:pageBlock mode="maindetail"  title="Add/Edit Documents">
 
 				<apex:pageblockButtons location="bottom">
 					<apex:actionStatus id="SaveStatus">
@@ -606,7 +641,8 @@
 		</apex:outputPanel>
 
 		<a name="Asmt" id="Asmt"></a>
-		<apex:pageBlock title="Assessments" rendered="{!!(isCM||isNR)}">   
+		<apex:pageBlock mode="maindetail" rendered="{!!(isCM||isNR)}">  
+			<apex:pageBlockSection id="_Alt1_Header" title="Assessments" collapsible="false"/> 
 			<apex:actionFunction name="makeNewISSA" action="{!createIssaAssess}" rerender="" status="issastatus" />
 			<apex:actionFunction name="makeNewRisk" action="{!createRiskAssess}" rerender="" status="riskstatus" />
 
@@ -675,13 +711,14 @@
 			</apex:outputPanel>
 			<apex:outputText value="No records to display" rendered="{!(admission.Assessments__r == null || admission.Assessments__r.size=0)}" />
 		</apex:pageBlock>
-		<apex:pageBlock title="Service Assignments">
-			<div class="pbHeaderButton">
+		<apex:pageBlock mode="maindetail" >
+			<apex:pageBlockSection id="_Alt1_Header" title="Service Assignments" collapsible="false"/>
+			<div class="blockbtns">
 				<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc && !isNR}" />&nbsp;&nbsp;
 				<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !isCM}" />
 			</div>
 
-			<apex:pageBlockTable styleclass="pbBody-list" value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
+			<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
 				<apex:column headerValue="Action">
 					<apex:outputLink value="/apex/ServiceAssignmentEditNew?id={!item.ID}&edit_link=1">Edit</apex:outputLink>
 				</apex:column>

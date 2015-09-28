@@ -54,13 +54,14 @@ function setupDates() {
 </script>
     <c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!Admission__c.Id}" rendered="{!showPersonalCard}"/>
     <br />
-    <!--  <c:FormCompletionControl />-->
+    <!--  -->
     <apex:form >
+	<c:FormCompletionControl />
     <apex:pageMessages id="msgs"/>
         <apex:pageBlock id="detail" mode="maindetail">
         	<apex:pageBlockButtons >
             <div class="blockbtns" id="buttons">
-                <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" />
+                <apex:commandButton value="Save" id="btnSave" action="{!saveAdmission}" status="mySaveStatus" rerender="msgs, detail" onComplete=" setUpCompletionMonitor(); " />
                 <apex:commandButton action="{!cancel}" value="Cancel"/>
             </div>        	
         	</apex:pageBlockButtons>
@@ -74,7 +75,7 @@ function setupDates() {
                 <apex:outputPanel >
 	                <apex:actionRegion >
 	                    <apex:inputField id="admStatus" value="{!admission.Status__c}" html-data-countInFormProgress="1" >
-	                    	<apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" />
+	                    	<apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" onComplete=" setUpCompletionMonitor(); " />
 	                    </apex:inputField>
 	                </apex:actionRegion>    
                 </apex:outputPanel>
@@ -112,7 +113,7 @@ function setupDates() {
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
                                 <apex:inputField value="{!admission.Discharged_Date__c}" id="disdate" rendered="{! !useDischargeSection }">
-                                <apex:actionSupport event="onchange" rerender="Discharge2" />
+                                <apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); " />
                                 </apex:inputField>
                             </div>
                             </apex:outputPanel>
@@ -121,7 +122,7 @@ function setupDates() {
                         <apex:outputLabel value="Discharged Date" />
                         <apex:outputPanel >
                         	<apex:inputField value="{!admission.Discharged_Date__c}" id="disdate" rendered="{! !useDischargeSection }">
-                            <apex:actionSupport event="onchange" rerender="Discharge2" />
+                            <apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); "/>
                             </apex:inputField>
                         </apex:outputPanel>           
                     </apex:pageBlockSectionItem>
@@ -139,7 +140,7 @@ function setupDates() {
             
             <!-- PRI-218/19 -->
 			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="true" rendered="{!reqAdmittedFrom}">
-				<apex:inputField value="{!admission.Admitted_From__c}" required="true" />
+				<apex:inputField value="{!admission.Admitted_From__c}" required="true" html-data-countInFormProgress="1"  />
 			</apex:pageBlockSection>   
 			<apex:outputPanel id="Discharge2" layout="none">  
 	   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Discharged_Date__c != null}">
@@ -214,7 +215,7 @@ function setupDates() {
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Referred-Out Details" columns="1"  collapsible="true" rendered="{! !useDischargeSection }">
-                <apex:inputField html-data-countInFormProgress="1" value="{!admission.Referred_Out_Date__c}" />
+                <apex:inputField value="{!admission.Referred_Out_Date__c}" />
                 <apex:inputField value="{!admission.Referred_Out_Agency_Name__c}" />
                 <apex:inputField value="{!admission.Referred_Out_Reason__c}" />
             </apex:pageBlockSection>

@@ -1,0 +1,77 @@
+<apex:component >
+<apex:attribute name="viewMode" description="when in view mode labels get updated css" type="boolean" default="false" />
+<style>
+.has-value-true{background-color: rgba(1, 125, 195, 1); width: 11px;}
+.has-value-false{background-color: rgba(255, 0, 0, 1); width: 11px;}
+.lbl.progress{width: 300px;}
+</style>
+<script>
+        jQuery.noConflict();
+        var countedItems = [];
+        jQuery(document).ready(function($) {
+            setUpCompletionMonitor = function () {
+                countedItems = [];
+                $('[data-countinformprogress]').each(function (_, target) {
+                    monitorItems(target);
+                });                             
+            };
+            setUpCompletionMonitor ();
+        });
+        
+        function monitorItems(element){
+            var e = jQuery(element).data('countinformprogress');
+            if (e == 1){ 
+	            countedItems.push( jQuery(element) );
+	            jQuery(element).on("change", function (event) {
+	                   calcCompletionScore(event.target);
+	                }); 
+	            if ( !jQuery(element).val()  ){}
+	            	jQuery(element).css('border-left','3px solid #017dc3');
+	            	jQuery(element).css('padding-left','2px');
+		            if( {!viewMode} ){ }
+		            
+		            	jQuery("label[for='"+jQuery(element).attr('id')+"']").css({'border-right':'2px solid #017dc3','padding-right':'1px'});
+		            	            	
+	               
+
+	            
+            }
+            calcCompletionScore();
+        }
+        function calcCompletionScore(e){
+            //console.log('test 2 '+e);
+            var score = 0;
+            var total = countedItems.length;
+            var myhtml = '<br/><table style="display: block;">';
+            for (i = 0; i < countedItems.length; i++) { 
+                myhtml += '<tr>';
+                if ( countedItems[i].val()  ){
+                	score += 1
+                	myhtml += '<td class="has-value-true">&nbsp;</td>';
+                }
+                else{
+                	myhtml += '<td class="has-value-false">&nbsp;</td>';
+                }                
+                myhtml += '<td class="lbl-progress"><b>';
+                myhtml += jQuery("label[for='"+countedItems[i].attr('id')+"']").text();
+                myhtml += '</b></td>';
+                myhtml += '</tr>';
+            }
+            myhtml += '</table><br/>';
+            var perc = Math.round((score/total)*100);
+            jQuery('#compScore').html(score + '/' + total + "(" + perc + "%)" );
+            jQuery('#progressTable').html( myhtml );
+            jQuery('#frmProgress').css( "width",  + (perc*1.5) );
+            
+        }
+</script>
+
+<div>
+Progress
+<span style="width:150px; background-color: black; display: inline-block"><span id="frmProgress" style="background-color:#017dc3; display: inline-block">&nbsp;</span></span>
+<span id="compScore"></span>
+</div>
+<div id="progressTable"></div>
+<div style="display: none;" onclick="setUpCompletionMonitor();" >Refresh</div>
+
+</apex:component>
