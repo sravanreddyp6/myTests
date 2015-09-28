@@ -108,6 +108,8 @@
     function changeDelegate() {
     	selectDelegate(j$('[id$=selectDelegateId]').val());
     }
+    
+    
     </script> 
     
     <apex:actionStatus id="loadingBusy" stopText="">
@@ -172,10 +174,13 @@
     </apex:form>
     <apex:outputPanel layout="block" styleClass="block-title" rendered="{!hasAccess}" >
     <apex:form >
+    		<apex:actionFunction name="selectDelegate" action="{!selectDelegate}"   reRender="wfReports,wfAttest"  >
+             <apex:param name="aliasName" value="" assignTo="{!aliasName}" />
+            </apex:actionFunction>
+            
         Manage Workforce on Behalf of:&nbsp;
-        <apex:selectList value="{!aliasName}" size="1" label="Delegation Selected" id="WorkforceOnBehalf">
-            <apex:actionSupport event="onchange" reRender="wfReports,wfAttest" />
-            <apex:selectOptions value="{!DelValues}" >
+        <apex:selectList value="{!aliasName}" size="1" label="Delegation Selected" id="WorkforceOnBehalf" onchange="changeDelegate2()">
+             <apex:selectOptions value="{!DelValues}" >
             </apex:selectOptions>
         </apex:selectList>
     </apex:form>

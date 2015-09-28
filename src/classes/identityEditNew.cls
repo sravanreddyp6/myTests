@@ -87,18 +87,18 @@ public class identityEditNew {
  	public String managerFirstName  {set;get;}
  	public String managerLastName  {set;get;}
  			public PageReference getManagerList() {
- 				List<TMN_User__c> matchingList;
+ 				list<AggregateResult> userAggregateResult;
  					if(managerFirstName!=null && managerFirstName.length() > 0 && (managerLastName ==null || managerLastName.length() ==0)){
- 				 matchingList = [select id,Manager_First_Name__c,Manager_Last_Name__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' limit 500];
+ 				 userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' group by Manager_Email__c limit 100];
  					} else 	if(managerFirstName==null || managerFirstName.length() == 0 && (managerLastName !=null && managerLastName.length() >0)){
- 						matchingList = [select id,Manager_First_Name__c,Manager_Last_Name__c from TMN_User__c where Manager_Last_Name__c like : '%'+managerLastName +'%' limit 500];
+ 						userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_Last_Name__c like : '%'+managerLastName +'%' group by Manager_Email__c limit 500];
  					} else {
- 					matchingList = [select id,Manager_First_Name__c,Manager_Last_Name__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_Last_Name__c like : '%'+managerLastName +'%' limit 500];
+ 					userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_Last_Name__c like : '%'+managerLastName +'%' group by Manager_Email__c limit 100];
  					}
 					 tmnManagerList = new List<TMN_User__c>();
 					 Set<String> managerIds = new Set<String>();
-					for(TMN_User__c tmn:matchingList) {
-						List<TMN_User__c> tmnManager = [select id,Name,Email__c,Employee_Number__c,Employee_Type__c,Job_Title__c,Manager_Email__c,Work_State__c,Operating_Group__c from TMN_User__c where Last_Name__c =:tmn.Manager_Last_Name__c  and First_Name__c=:tmn.Manager_First_Name__c limit 1];
+					for(AggregateResult tmn:userAggregateResult) {
+						List<TMN_User__c> tmnManager = [select id,Name,Email__c,Employee_Number__c,Employee_Type__c,Job_Title__c,Manager_Email__c,Work_State__c,Operating_Group__c from TMN_User__c where Manager_Email__c =:string.valueof(tmn.get('Manager_Email__c'))   limit 1];
 							if(tmnManager!=null && tmnManager.size()>0 && !managerIds.Contains(tmnManager[0].id)){
 								managerIds.add(tmnManager[0].id);
 								tmnManagerList.addAll(tmnManager);
@@ -111,7 +111,7 @@ public class identityEditNew {
  
      @RemoteAction
     public static TMN_User__c LocationDetails(String location) {
-       return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_flag__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
+       return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_flag__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c = 'Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
     
     public  Attachment attDeatils {set;get;}
@@ -187,8 +187,19 @@ public class identityEditNew {
 		}
 	
         ID managerId = TMNUser.Manager_Lookup__c;
+        String managerEmail = TMNUser.Manager_Email__c;
         ID aliasId = TMNUser.Alias_Lookup__c;
-        TMN_User__c managerInfo = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
+        TMN_User__c managerInfo ;
+        List<TMN_User__c> managerInfoList = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
+        		if(managerInfoList!=null&& managerInfoList.size()>0){
+        				managerInfo = managerInfoList[0];
+        		}else {
+        		managerInfoList = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Manager_Email__c = :managerEmail LIMIT 1];
+        				if(managerInfoList!=null&& managerInfoList.size()>0){
+        				managerInfo = managerInfoList[0];
+        			}		
+        		}
+        
         Alias__c aliasInfo = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name FROM Alias__c WHERE Id = :aliasID LIMIT 1];
         TMNUser.Manager_Email__c = managerInfo.Email__c;
         TMNUser.Manager_Name__c = managerInfo.Name;
@@ -287,6 +298,7 @@ public class identityEditNew {
     public PageReference goCancel() {
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        	retURL = retURL+'?cancel=true';
         PageReference cancelPage = new PageReference(retURL);
         cancelPage.setRedirect(true);   
         return cancelPage;

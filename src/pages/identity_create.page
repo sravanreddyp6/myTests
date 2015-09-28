@@ -170,7 +170,7 @@ function autoCompleteRender(ul, item) {
                         j$('[id$=hiddenlocationZip]').val(checkUndefined(result.Zip_Code__c));
                         var locationType = checkUndefined(result.Office_Flag__c);
                        	if(locationType == null || locationType === " "  ) {
-                       		j$('[id*="OfficeLocationType"]').text('No');
+                       		j$('[id*="OfficeLocationType"]').text('N');
                        	} else {
                        	j$('[id*="OfficeLocationType"]').text(locationType);
                        	}
@@ -411,8 +411,8 @@ function autoCompleteRender(ul, item) {
                     <apex:outputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" id="locationLine1" />
                     <apex:outputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" id="locationZip"/>
                     <apex:outputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" id="locationLine2"/>
-                    <apex:outputText label="Office Location" value="Yes"  rendered="{!TMNUser.Office_Flag__c=='Y'}" id="OfficeLocationType1"/>
-                    <apex:outputText label="Office Location" value="No"  rendered="{!TMNUser.Office_Flag__c!='Y'}" id="OfficeLocationType2"/>                 
+                    <apex:outputText label="Office Location" value="Y"  rendered="{!TMNUser.Office_Flag__c=='Y'}" id="OfficeLocationType1"/>
+                    <apex:outputText label="Office Location" value="N"  rendered="{!TMNUser.Office_Flag__c!='Y'}" id="OfficeLocationType2"/>                 
                     <apex:outputField label="City" value="{!TMNUser.Work_City__c}" id="locationCity"/>     
                 </apex:pageBlockSection>
                     <apex:inputhidden value="{!TMNUser.Office_Location__c}" id="hiddenlocationLine1" />
