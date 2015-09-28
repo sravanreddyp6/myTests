@@ -5,6 +5,7 @@ public with sharing class NpaTrigger_Utilities {
 	public static void setDefaults(List<Npa_Audit__c> audits){
 		set<string> careFields = new set< string>();
 		set<string> ARY_PER_Fields = new set<string>();
+		set<string> ADH_NA_Fields = new set<string>();
 		careFields.clear();
 		ARY_PER_Fields.clear();
 		
@@ -18,6 +19,10 @@ public with sharing class NpaTrigger_Utilities {
             	    ARY_PER_Fields.Add(f.getFieldPath());                
         	}        	
 
+        	for(Schema.FieldSetMember f :
+             	SObjectType.Npa_Audit__c.FieldSets.NA_Adult_Day_Health.getFields()) {
+            	    ADH_NA_Fields.Add(f.getFieldPath());                
+        	}   
 		
         for(Npa_Audit__c item: audits){
         		
@@ -25,7 +30,14 @@ public with sharing class NpaTrigger_Utilities {
 			if(item.Operating_Group__c == 'CareMeridian' && item.Billing_Audit__c){
     			item = NpaTrigger_Utilities.setNA(careFields, item);
 			}
-
+			if(item.Operating_Group__c == 'Adult Day Health' && item.QA_Audit__c){
+    			item = NpaTrigger_Utilities.setNA(ADH_NA_Fields, item);
+    			if(item.Q12a__c == null){item.Q12a__c = 'Neither Rep-Payee nor Assists';}
+    			if(item.Q13a__c == null){item.Q13a__c = '11 Not applicable for this consumer (no vocational goal)';}
+    			if(item.Q14a__c == null){item.Q14a__c = '05 Not Applicable, because of scope of service';}
+    			if(item.Q14b__c == null){item.Q14b__c = 'No';}
+    			
+			}
 			//QA checks
 			if(item.QA_Audit__c){
 				item = setNA(new set<string>{'Q8b__c'}, item);
@@ -48,6 +60,7 @@ public with sharing class NpaTrigger_Utilities {
 			}
 			
 			//end QA checks
+			//ADH check
 
 
         	

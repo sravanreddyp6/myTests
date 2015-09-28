@@ -88,7 +88,7 @@
 			<apex:outputPanel layout="none" rendered="{!objectName=='Person Being Served'}">
 				<apex:outputText rendered="{!(PBSCreate==true) && ($User.Operating_Group__c == 'Cambridge' || (
 																   $User.Operating_Group__c == 'Redwood' && !BEGINS($UserRole.DeveloperName, 'IA')
-																   ))}">
+																   )) && !isCAFSS}">
 					<a href="{!URLFOR($Action.Account.New)}">Add New Person Being Served</a><br />
 				</apex:outputText>
 				<apex:outputText rendered="{!$User.Operating_Group__c != 'Care Meridian' &&
@@ -96,7 +96,7 @@
 					<a href="/apex/PersonsBeingServedListView?filterId={!personsBeingServedViews['recent']}">My Recently Viewed Persons Being Served</a><br />
 				</apex:outputText>
 				<apex:outputPanel rendered="{!$ObjectType.Clinical_Catalog__c.updateable}"><apex:outputLink value="/apex/CatalogAndPrograms">Manage Plan Builder Content</apex:outputLink><br /></apex:outputPanel>
-				<apex:outputPanel rendered="{!$ObjectType.PB_DocPacket__c.updateable}"><apex:outputLink value="/apex/PB_DocPack_Admin_Form">Manage Admission Packet Content</apex:outputLink><br /></apex:outputPanel>
+				<apex:outputPanel rendered="{!$ObjectType.PB_DocPacket__c.updateable}"><apex:outputLink value="/apex/PB_NetworkSelection">Manage Admission Packet Content</apex:outputLink><br /></apex:outputPanel>
 			</apex:outputPanel>
 
 			<apex:outputPanel layout="none" rendered="{!objectName=='TMN Contacts'}">

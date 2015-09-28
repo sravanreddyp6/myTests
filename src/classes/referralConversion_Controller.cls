@@ -439,7 +439,8 @@ public with sharing class referralConversion_Controller {
                                 Current_Medications__pc = referralRecord.Current_Medications__c,
                                 Other_id__pc = referralRecord.Payer_Medical_Record_Number__c ,
                                 Other_ID_Description__pc = referralRecord.Payer_Medical_Record_Number_Description__c,
-                                Level_of_Education__pc = pbrCurr.Level_of_Education__c
+                                Level_of_Education__pc = pbrCurr.Level_of_Education__c,
+                                Flavor__pc = Utility.getRecordTypeForReferral(this.referralRecord.RecordtypeId)
                                 );
 
     insert accNew;
@@ -626,7 +627,8 @@ public with sharing class referralConversion_Controller {
                                             Prior_Location_Zip__c = refCurr.Zip_Code__c,
                                             Prior_Location_Phone__c = refCurr.Phone__c,
                                             Prior_Location_Email__c = refCurr.Email_Address__c,
-                                            Referral__c = refCurr.Id
+                                            Referral__c = refCurr.Id,
+                                            Flavor__c = Utility.getRecordTypeForReferral(refCurr.RecordtypeId)
 
                                             );
 

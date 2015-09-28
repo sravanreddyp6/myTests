@@ -134,7 +134,7 @@ public without sharing class ServiceAssignmentExt {
 	}
 
 	public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
-	public Boolean modelReq { get { return (pOpGroup == 'Cambridge');} set; }
+	public Boolean modelReq { get { return (pOpGroup == 'Cambridge' || this.theServAssign.Flavor__c == 'CA FSS');} set; }
 
 	public List<Action_Plan__c> getActivePlan(){
 
@@ -218,10 +218,10 @@ public without sharing class ServiceAssignmentExt {
 			} else {
 				pOpGroup = tmnUsers[0].Operating_Group__c;
 				// added NeuroRestorative to show diagnosis for EB-434
-				pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' ;
-				pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
+				pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' || this.theServAssign.Flavor__c == 'CA FSS' ;
+				pshowLocation =  ( pOpGroup =='Redwood' && this.theServAssign.Flavor__c != 'CA FSS'); // CTEAE-86 && admission.State__c != 'AZ');
 				pshowCodes = ( ( pOpGroup == 'Redwood'  && admission.State__c == 'AZ' && theservassign.service_location__r.programid__c != '114165002')
-						|| ( pOpGroup != 'Care Meridian'  && pOpGroup != 'Redwood'));
+						|| ( pOpGroup != 'Care Meridian'  && pOpGroup != 'Redwood') || this.theServAssign.Flavor__c == 'CA FSS');
 				pshowNurseAssessment = (pOpGroup == 'Care Meridian');
 				psetFlags = true;
 			}
@@ -351,13 +351,14 @@ public without sharing class ServiceAssignmentExt {
 			editSA = true;
 			theServAssign = new Service_Assignment__c();
 			initialRecord = new Service_Assignment__c();
-			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
+			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid, person_being_served__r.Flavor__c FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
 			admissionId = admission.Id;
 			theServAssign.Admission__c = admission.Id;
 			theServAssign.Name = 'TBD - Autofilled';
 			theServAssign.Program_Detail__c = 'TBD - Autofilled';
 			theServAssign.Person_Being_Served__c = admission.Person_Being_Served__c;
 			theServAssign.Phase__c = 0;
+			theServAssign.Flavor__c = admission.person_being_served__r.Flavor__c;
 			diagnoses = new List<Diagnosis__c>();
 			recordType = ApexPages.currentPage().getParameters().get('recordType');
 			theRecordType = new RecordType();
@@ -390,7 +391,7 @@ public without sharing class ServiceAssignmentExt {
 			                 Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
 			                 Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
 			                 Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, Person_Being_Served__r.Name, Person_Being_Served__r.Age__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-			                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c, clinician__c
+			                 Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, service_location__r.programid__c, clinician__c, Flavor__c
 			                 FROM Service_Assignment__c
 			                 WHERE Id = :controller.getid()];
 			initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,Admission__r.Person_Being_Served__r.LastName,
@@ -578,7 +579,7 @@ public without sharing class ServiceAssignmentExt {
 		if (tmnUsers.size() == 0) {
 			return false;
 		}
-		return tmnUsers[0].Operating_Group__c=='Redwood';
+		return tmnUsers[0].Operating_Group__c=='Redwood' && this.theServAssign.Flavor__c != 'CA FSS';
 	}
 
 	public boolean canCreateWorksheet {
@@ -1389,7 +1390,12 @@ public without sharing class ServiceAssignmentExt {
 	}
 
 	public String getOperatingGroup() {
-		return pOpGroup;
+		if(this.theServAssign.Flavor__c == 'CA FSS'){
+			return 'CA FSS';
+		}
+		else{
+			return pOpGroup;
+		}
 	}
 
 
@@ -1884,6 +1890,9 @@ public without sharing class ServiceAssignmentExt {
 		}
 		else if(opGroup == 'NeuroRestorative'){
 			return 'NeuroRestorative';
+		}
+		else if(opGroup == 'CA FSS'){
+			return 'CA FSS';
 		}
 		else{
 			return null; //For now since Service Assignment level funding sources are supported only for CM and NR operating groups.

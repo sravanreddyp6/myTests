@@ -247,7 +247,9 @@ var selected = j$(item).val() ;
                 </div>
                 </apex:facet>  
                 <apex:facet name="stop">     </apex:facet>         
-            </apex:actionStatus>     
+            </apex:actionStatus>
+            <apex:commandButton onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!Assessment__c.Admission__r.Person_Being_Served__c}' , '_blank'); return false;" value="Plan Of Care" 
+                                rendered="{!(AND(Assessment__c.Admission__r.State__c == 'IA', BEGINS($UserRole.DeveloperName, 'IA'), mode == 'view', Assessment__c.Status__c == 'Active Final'))}" />
             <apex:commandButton action="{!myEdit}" value="Edit" reRender="myfrm" oncomplete="commonLoad();" status="myStatus" rendered="{! mode='view' && (Assessment__c.Status__c = 'Inactive Draft') && canEditRisk }"/>&nbsp;
             <apex:commandButton action="{!mySave}" value="Save" reRender="myfrm" status="myStatus" rendered="{!mode='edit' || mode = 'new'}" />&nbsp; 
              <!--  -->
@@ -751,7 +753,17 @@ var selected = j$(item).val() ;
 				<apex:outputPanel layout="block" >
 				Explain<br/>			
 				<apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c_input" value="{!Assessment__c.Individual_Rights_Review_Explain__c}"/>
-				</apex:outputPanel>     
+				</apex:outputPanel>
+
+                <br/>  
+                <span class="risk-section-subhead">Strengths</span>
+                <br/>
+                <apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c_input" value="{!Assessment__c.Strengths__c}"/>
+                
+                <br/><br/>  
+                <span class="risk-section-subhead">Needs</span>
+                <br/>
+                <apex:inputField rendered="{! mode =='edit'}" styleClass="Individual_Rights_Review_Explain__c_input" value="{!Assessment__c.Needs__c}"/>
             </apex:outputPanel>
             <apex:outputPanel rendered="{! mode!='edit' && Assessment__c.Admission__r.State__c == 'IA'}">
             	<br/>
@@ -791,7 +803,17 @@ var selected = j$(item).val() ;
 				<apex:outputPanel rendered="{!Assessment__c.Individual_Rights_Review_Explain__c != null}" layout="block" >
 				<br/>			
 				<apex:outputText value="{!Assessment__c.Individual_Rights_Review_Explain__c}"/>  
-				</apex:outputPanel>     
+				</apex:outputPanel>
+				
+                <br/>  
+                <span class="risk-section-subhead">Strengths</span>
+                <br/>
+                <apex:outputText value="{!Assessment__c.Strengths__c}"/>
+                
+                <br/><br/>  
+                <span class="risk-section-subhead">Needs</span>
+                <br/>
+                <apex:outputText value="{!Assessment__c.Needs__c}"/>     
             </apex:outputPanel>            
             <!-- end IA extras -->
 			</apex:pageBlock>

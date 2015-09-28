@@ -617,7 +617,7 @@ public pagereference mySave(){
         
     public ActionPlan_Form(ApexPages.StandardController controller) {
         if(!test.isRunningTest()){
-            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c', 'Service_Assignment__r.Service_location__r.ProgramID__c'});
+            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c', 'Service_Assignment__r.Service_location__r.ProgramID__c', 'Service_Assignment__r.Flavor__c'});
         }
         ActionPlan = (Action_Plan__c)controller.getRecord();
         
@@ -626,7 +626,7 @@ public pagereference mySave(){
         isRedwood = false;
         tmp = string.valueof(system.now()).remove(' ').remove(':').remove('-');
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
-            if (TU.Operating_Group__c == 'Redwood'){isRedwood = true;}
+            if (TU.Operating_Group__c == 'Redwood' && ActionPlan.Service_Assignment__r.Flavor__c != 'CA FSS' ){isRedwood = true;}
             userOpGrp = TU.Operating_Group__c;
         }
         refreshPlan(); 
@@ -678,7 +678,9 @@ public pagereference mySave(){
         boolean showThis = (mc.ActnPln_CtlgEnabledFor_CM__c && userOpGrp == 'Care Meridian')
                             || (mc.ActnPln_CtlgEnabledFor_Cambridge__c && userOpGrp == 'Cambridge')
                             || (mc.ActnPln_CtlgEnabledFor_NR__c && userOpGrp == 'NeuroRestorative')
-                            || (mc.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood');
+                            || (mc.ActnPln_CtlgEnabledFor_Redwood__c && userOpGrp == 'Redwood')
+                            || (mc.ActnPln_CtlgEnabledFor_CAFSS__c && Actionplan.Service_Assignment__r.Flavor__c == 'CA FSS');
+                            
         system.debug('catalog enabled - ' + showThis);
         system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
         if(showThis){

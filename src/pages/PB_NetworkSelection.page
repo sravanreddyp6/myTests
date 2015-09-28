@@ -1,0 +1,22 @@
+<apex:page controller="PB_networkselectionController" sidebar="false">
+	<apex:sectionheader subtitle="Choose a Network" />
+	
+	<apex:form >
+	<apex:pageMessages id="msgs"/>
+		<apex:pageBlock >
+			<apex:pageBlockSection columns="1" >
+				<apex:pageBlockSectionItem >
+					<apex:outputlabel value="Network offering" />
+					<apex:selectList value="{!selectedNetwork}" size="1">
+						<apex:selectoptions value="{!networkOfferings}" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:pageBlockButtons location="bottom" >
+				<apex:commandbutton value="Continue" action="{!proceed}" rerender="msgs"/>
+			</apex:pageBlockButtons>
+			
+		</apex:pageBlock>
+	</apex:form>
+
+</apex:page>
