@@ -20,7 +20,6 @@
   
 
     <style>
-        
         .dialogLoadingSpinner {
             margin-left: 5px;
         }
@@ -2600,8 +2599,9 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
         
         <a id="Funding_Sources"></a>
-        <apex:pageBlock id="fundingSources" title="Funding Sources" mode="maindetail" rendered="{!(vfVarIsCM || isNR) && !newSA && canViewFundingSource}">
-            <div class="pbHeaderButton">
+        <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!(vfVarIsCM || isNR) && !newSA && canViewFundingSource}">
+            <apex:pageBlockSection id="_Alt1_Header" title="Funding Sources" collapsible="false"/>
+            <div class="blockbtns">
                 <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
                 <apex:actionStatus id="AddFundingSourceStatus">
                     <apex:facet name="start">
@@ -2668,7 +2668,8 @@ END: Uncomment to have the element collapsed by default -->
         </apex:actionStatus>
         <!-- end Funding sources section-->
 
-        <apex:pageBlock title="Referral Detail" mode="maindetail" rendered="{!referral != null }">
+        <apex:pageBlock mode="maindetail" rendered="{!referral != null }">
+			<apex:pageBlockSection id="_Alt1_Header" title="Referral Detail" collapsible="false"/>        
             <apex:pageBlockSection columns="2" title="Originating Referral" collapsible="true">
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Name" />
@@ -3105,4 +3106,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:facet name="stop" />
     </apex:actionStatus>
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />    
+	    <style>
+        .pbHeaderButton{    top: 0px !important;} 
+        </style>
 </apex:page>
