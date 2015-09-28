@@ -543,6 +543,7 @@ public with sharing class IdentityHomeController {
                             WHERE Id =:selectedID];    
         attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:theTMNUser.id order by createddate desc];               
         showInfo();
+        onloadDialog = false;
         return null;
     }
 
