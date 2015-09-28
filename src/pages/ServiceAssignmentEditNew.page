@@ -1200,18 +1200,24 @@
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="System Information" showHeader="true" columns="2" collapsible="true" id="ServAssignSystemInfo">
-                <apex:outputPanel >
-                    <apex:outputLabel value="Created By" for="CreatedByLink" style="font-size: 75%;font-family: 'Arial','Helvetica',sans-serif; font-weight:bold;" />&nbsp;&nbsp;
-                    <apex:outputLink id="CreatedByLink" value="/{!Service_Assignment__c.CreatedBy.Id}">{!Service_Assignment__c.CreatedBy.Name}</apex:outputLink>
-                    <apex:outputText value=", " rendered="{!Service_Assignment__c.CreatedDate!=null}" />
-                    <apex:outputText value=" {!Service_Assignment__c.CreatedDate}" />
-                </apex:outputPanel>
-                <apex:outputPanel >
-                    <apex:outputLabel style="font-size: 75%;font-family: 'Arial','Helvetica',sans-serif; font-weight:bold;" value="Last Modified By" for="LastModifiedByLink" />&nbsp;&nbsp;
-                    <apex:outputLink id="LastModifiedByLink" value="/{!Service_Assignment__c.LastModifiedBy.Id}">{!Service_Assignment__c.LastModifiedBy.Name}</apex:outputLink>
-                    <apex:outputText value=", " rendered="{!Service_Assignment__c.LastModifiedDate!=null}" />
-                    <apex:outputText value=" {!Service_Assignment__c.LastModifiedDate}" />
-                </apex:outputPanel>
+                <apex:pageBlockSectionItem >
+                	<apex:outputLabel value="Created By" for="CreatedByLink" />
+                	
+	                <apex:outputPanel >	                    
+	                    <apex:outputLink id="CreatedByLink" value="/{!Service_Assignment__c.CreatedBy.Id}">{!Service_Assignment__c.CreatedBy.Name}</apex:outputLink>
+	                    <apex:outputText value=", " rendered="{!Service_Assignment__c.CreatedDate!=null}" />
+	                    <apex:outputText value=" {!Service_Assignment__c.CreatedDate}" />
+	                </apex:outputPanel>                	
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                	<apex:outputLabel value="Last Modified By" for="LastModifiedByLink" />
+                	
+					<apex:outputPanel >
+                    	<apex:outputLink id="LastModifiedByLink" value="/{!Service_Assignment__c.LastModifiedBy.Id}">{!Service_Assignment__c.LastModifiedBy.Name}</apex:outputLink>
+                    	<apex:outputText value=", " rendered="{!Service_Assignment__c.LastModifiedDate!=null}" />
+                    	<apex:outputText value=" {!Service_Assignment__c.LastModifiedDate}" />
+                	</apex:outputPanel>
+                </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
 
             <!-- START:  Uncomment to have the element collapsed by default
