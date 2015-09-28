@@ -588,7 +588,7 @@
 					</apex:outputPanel>             
 				</apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!editSA}">
-                    <apex:outputLabel value="Start Date" />
+                    <apex:outputLabel for="startdate" value="Start Date" />
                     <apex:outputPanel >
                             <apex:inputText id="startdate" value="{!saStrStartDateTime}" onblur="changeEffectiveDates();" html-data-countInFormProgress="1" />
                     </apex:outputPanel>
@@ -929,16 +929,19 @@
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
-                    <apex:outputLabel for="pEduStart" value="Educational Involvement at Start of Service" />
+                    <apex:outputPanel >
+                    	<apex:outputLabel for="pEduStart2" value="Educational Involvement at Start of Service"  rendered="{!admission.Network_Offering__c == 'ARY'}"/>
+                    	<apex:outputLabel for="pEduStart3" value="Educational Involvement at Start of Service" rendered="{!admission.Network_Offering__c != 'ARY'}"  />
+                    </apex:outputPanel>
                     <apex:outputPanel >
                         <apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}" >
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
-                            <apex:inputField id="pEduStart" value="{!theServAssign.Educational_Involvement_at_Start__c}"  html-data-countInFormProgress="1"  />
+                            <apex:inputField id="pEduStart2" value="{!theServAssign.Educational_Involvement_at_Start__c}"  html-data-countInFormProgress="1" html-data-secondId="test"  />
                         </div>
                     </apex:outputPanel>
                     <apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
-                        <apex:inputField value="{!theServAssign.Educational_Involvement_at_Start__c}"  html-data-countInFormProgress="1" />
+                        <apex:inputField id="pEduStart3" value="{!theServAssign.Educational_Involvement_at_Start__c}"  html-data-countInFormProgress="1" />
                     </apex:outputPanel>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
