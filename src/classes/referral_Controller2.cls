@@ -140,7 +140,8 @@ public with sharing class referral_Controller2 {
                 (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || 
                 (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) ||
                 (operatinggroup == 'Redwood' && referralrecordtype == 'Wisconsin' && showCANS ) ||
-                (operatinggroup == 'NeuroRestorative' && referralRecord.State_for_Preferred_Service__c == 'Illinois' )
+                (operatinggroup == 'NeuroRestorative' && referralRecord.State_for_Preferred_Service__c == 'Illinois' ) ||
+                (referralrecordtype == 'CA FSS' && isCAFSS)
             );
             
     } set;}
@@ -225,6 +226,8 @@ public with sharing class referral_Controller2 {
         }
         set;
     }
+    
+    public boolean isCAFSS{get; set;}
 
     public static final String REFERRAL_EDIT_URL = '/apex/referral';
     public static final String REFERRAL_CONVERT_URL = '/apex/referralConversion';
@@ -235,8 +238,14 @@ public with sharing class referral_Controller2 {
             ctl.addFields(new list<string>{'Service_Location__r.Name', 'Service_Location__r.Alias__c', 'Service_Location__r.ProgramID__c'});
         }
         this.referralRecord = (Referral__c) ctl.getRecord();
-        this.operatinggroup=([select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty())?''
-                :[select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1][0].operating_group__c;
+       /* this.operatinggroup=([select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty())?''
+                :[select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1][0].operating_group__c;*/
+                
+        list<Tmn_User__c> tmnUser = [SELECT Id,operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1]; //Using list to prevent system.query exception 
+		if(tmnUser.size() > 0){
+			this.operatinggroup = tmnUser[0].operating_group__c;
+			this.isCAFSS = (null != tmnUser[0].Business_Unit__c && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
+		}
         this.referralRecord = (Referral__c) ctl.getRecord();
         this.agencies = new List<Agency_Involved_With_Individual__c>();
         this.fundingSources = new List<Funding_Source__c>();
@@ -624,12 +633,12 @@ public with sharing class referral_Controller2 {
     }
     public PageReference redirectToConversion() {
         //EC-110 Sravan - 03/27/2015 
-        if (checkRequiredFields() && OperatingGroup == 'CareMeridian') {
+        if (checkRequiredFields() && referralRecordType == 'CareMeridian') {
             this.openLocationPopup = 'open';
             return null;
             
         }
-        else if (checkRequiredFields() && OperatingGroup != 'CareMeridian'){
+        else if (checkRequiredFields() && referralRecordType != 'CareMeridian'){
             pageReference pg = new PageReference(REFERRAL_CONVERT_URL +'?id='+referralRecord.id);
             pg.setRedirect(true);
             return pg;
@@ -780,7 +789,7 @@ public with sharing class referral_Controller2 {
 
         // requirements for admission and service assignment: anticipated admission date, anticipated location
         //Ec-110 Sravan 03/27/2014
-        if ( this.referralRecord.Anticipated_Admission_DateTime__c == null && OperatingGroup != 'CareMeridian') {
+        if ( this.referralRecord.Anticipated_Admission_DateTime__c == null && OperatingGroup != 'CareMeridian' && referralRecordType != 'CareMeridian') {
             messages.Add( 'Anticipated Admission Date Time' );
             hasReq = false;
         }
@@ -788,8 +797,8 @@ public with sharing class referral_Controller2 {
         System.Debug( ' anticipated service location = ' +this.referralRecord.Service_Location__c );
         //Added the And condtion to bypass the conversion error for CareMerdian Flavor - Sravan 5/15/2014.
         //EB214. Closing a referral with the reason 'admitted' mandates the admission location for all flavours. So be logic applies to all. - Neeraj 10/22/2014
-        //Latest Update - EC-110 Service Location will be entered in the ontermediate screen by CM users. - Sravan 03/27/2014 10:45 AM
-        if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) && OperatingGroup != 'CareMeridian') {
+        //Latest Update - EC-110 Service Location will be entered in the intermediate screen by CM users. - Sravan 03/27/2014 10:45 AM
+        if ( String.IsBlank(this.referralRecord.Service_Location_Program__c) && OperatingGroup != 'CareMeridian'  && referralRecordType != 'CareMeridian') {
             messages.Add( 'Anticipated Service Location' );
             hasReq = false;
         }

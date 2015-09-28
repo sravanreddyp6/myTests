@@ -15,6 +15,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
+    <apex:variable value="{!theServAssign.Flavor__c == 'CA FSS'}" var="isCAFSS" />
 
 	<style>
 		.dialogLoadingSpinner {
@@ -376,6 +377,7 @@
 
 			<div class="pbHeaderButton">
 			    <apex:outputPanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA'), !editSA))}">
+                    <a class="btn" href="#" onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!admission.Person_Being_Served__c}' , '_blank'); return false;" id="PlanOfCare">Plan Of Care</a>&nbsp;&nbsp;
                     <a class="btn" href="#" onClick="openModalDialogSA('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700);" id="IowaDailyDataSummaryGenerate">Create Daily Data Summary</a>&nbsp;&nbsp;
                 </apex:outputPanel>
 				<apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
@@ -476,9 +478,9 @@
 				<apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
 				<apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !(vfVarIsCM || isNR) }" />
 				<apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR)}" required="{!episodeReq}" />
-				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
-				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
-				<apex:pageblocksectionitem rendered="{! !vfVarIsCB}" />
+				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && (vfVarIsCB || isCAFSS)}" />
+				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && (vfVarIsCB || isCAFSS)}" />
+				<apex:pageblocksectionitem rendered="{! !(vfVarIsCB || isCAFSS)}" />
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
 				<apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR}">
 					<apex:outputLabel value="Model" for="modelfield" />
@@ -583,9 +585,9 @@
 				</apex:pageblocksectionitem>
 				
 				<!--  EB-526 -->
-				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
-				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
-				<apex:outputText value="" rendered="{! vfVarIsCB}" />
+				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && (vfVarIsCB || isCAFSS)}" />
+				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && (vfVarIsCB || isCAFSS)}" />
+				<apex:outputText value="" rendered="{! (vfVarIsCB || isCAFSS)}" />
 
 
 
@@ -604,7 +606,7 @@
 				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection title="Program Association" showHeader="true" columns="1" collapsible="false" id="ProgAssocViewNEW" rendered="{!!editSA && !showLocation && vfVarIsCB}">
+			<apex:pageBlockSection title="Program Association" showHeader="true" columns="1" collapsible="false" id="ProgAssocViewNEW" rendered="{!!editSA && !showLocation && (vfVarIsCB || isCAFSS)}">
 				<hr />
 				<apex:outputText id="saProgram" value="{!theServAssign.Program__c}" />
 				<apex:outputPanel id="ProgAssocPanelView2NEW" layout="block" styleClass="col" rendered="{!!editSA && !showLocation }">
@@ -638,7 +640,7 @@
 					</apex:pageBlockTable>
 				</apex:outputPanel>
 			</apex:pageBlockSection>
-			<apex:pageBlockSection title="Program Association" showHeader="true" columns="1" collapsible="false" id="ProgAssoc" rendered="{!editSA && !showLocation && vfVarIsCB}">
+			<apex:pageBlockSection title="Program Association" showHeader="true" columns="1" collapsible="false" id="ProgAssoc" rendered="{!editSA && !showLocation && (vfVarIsCB || isCAFSS)}">
 
 				<apex:outputPanel id="ProgAssocPanelEdit" layout="block" styleClass="col" rendered="{!editSA}">
 					<apex:actionStatus id="myStatus">
@@ -1085,7 +1087,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW && !isNR}">
+        <apex:pageBlock id="SeizureTrackingList" title="Seizures" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW && !isNR && !isCAFSS}">
             <div class="pbHeaderButton">
 <!--             <apex:actionStatus id="AddSeizureStatus"> -->
 <!--                 <apex:facet name="start"> -->
@@ -1482,7 +1484,7 @@ END: Uncomment to have the element collapsed by default -->
 		<apex:pageBlock id="Notes" title="Notes" rendered="{! !editSA}">
 			<div class="pbHeaderButton">
 				<!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || vfVarIsCM)}" value="Goal/Objective Documentation" />
+				<apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || vfVarIsCM || isCAFSS)}" value="Goal/Objective Documentation" />
 				<apex:commandButton rendered="{!ActivePlan.size = 1  && !vfVarIsCM && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
 				<apex:commandButton rendered="{! vfVarIsCM && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
 			</div>
@@ -1500,7 +1502,7 @@ END: Uncomment to have the element collapsed by default -->
 					</apex:column>
 					<apex:column value="{!note.Start_time__c }" rendered="{! !vfVarIsCM }"/>
 					<apex:column value="{!note.End_Time__c }" rendered="{! !vfVarIsCM }"/>
-					<apex:column value="{!note.Clinician__c}" rendered="{! vfVarIsCB && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
+					<apex:column value="{!note.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS) && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
 					<apex:column value="{!note.createddate }" />
 					<apex:column value="{!note.createdby.name }" />
 					
@@ -2367,7 +2369,7 @@ END: Uncomment to have the element collapsed by default -->
 	        </script>
 	        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
 	        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
-		        <apex:pageBlockSection>    
+		        <apex:pageBlockSection >    
 		            <apex:pageBlockSectionItem >
 		            <apex:outputLabel value="Service date" />
 		                <apex:outputPanel layout="none">
@@ -2391,7 +2393,7 @@ END: Uncomment to have the element collapsed by default -->
 	    </div> 
 	</apex:form>
 	<a id="shiftSummaries" />
-	<apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
+	<apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), !isCAFSS, $ObjectType.Action_Summary__c.accessible, !editSA)}" />
 	<c:SObjectNotesAndAttachments parentPage="ServAssign" parentId="{!Service_Assignment__c.id}" showAction="true" rendered="{!!editSA && newSA==false}"   pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
 	<c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 

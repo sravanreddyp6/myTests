@@ -11,7 +11,7 @@ public with sharing class Notes_ProgressNote_Approval {
         LoadData(thePN);
     } 
     public void LoadData(Progress_Note__c tmp){
-        thePN = [select id, Name, No_Approval_Needed__c, Person_Being_Served__r.Name, RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
+        thePN = [select id, Name, No_Approval_Needed__c, Person_Being_Served__r.Name, Approval_User__c , RecordType.Name, Number_of_Required_Signatures__c, Status__c, start_time__c, end_time__c, admission__c, service_assignment__c, plan__c, owner.name, recordtype.developername from Progress_Note__c where id= :tmp.id limit 1];
         
     	List<Progress_Note__c> samepbsNotes = [select id, Name, Person_being_served__r.Name, start_time__c, end_time__c, status__c, Owner.Name from Progress_Note__c 
         			where id != :thePN.id 
