@@ -1132,6 +1132,17 @@
                             </apex:outputPanel>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+                    <apex:outputLabel value="End of Service Circumstances" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.End_of_Service_Circumstances__c}"  />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Service Assignment End" id="saEndSectionRead" collapsible="true" columns="2" showHeader="true" rendered="{!!editSA}" >
@@ -1167,6 +1178,10 @@
                 <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && theServAssign.Was_dissatisfaction_reason_for_service_e__c=='Yes'}" >
                     <apex:outputLabel value="Primary Reason for Dissatisfaction" />
                     <apex:outputField value="{!theServAssign.Primary_Reason_for_Dissatisfaction__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+                    <apex:outputLabel value="End of Service Circumstances" />
+                    <apex:outputField value="{!theServAssign.End_of_Service_Circumstances__c}" />
                 </apex:pageBlockSectionItem>
                 
             </apex:pageBlockSection>
