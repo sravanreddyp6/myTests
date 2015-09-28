@@ -54,10 +54,13 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>National Performance Audit</description>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableEnhancedLookup>true</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fieldSets>
         <fullName>ClearBillingFields</fullName>
         <description>These fields will be cleared out if the audit doesn&apos;t have the Billing Audit Section field as true (checked)</description>
@@ -752,6 +755,86 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <label>ClearQaFields</label>
+    </fieldSets>
+    <fieldSets>
+        <fullName>NA_Adult_Day_Health</fullName>
+        <description>sets certain fields to NA if they are blank and OG = Adult Day Health. see triggers</description>
+        <displayedFields>
+            <field>Q12B__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12C1__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12D3__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12D2__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12D1__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12C3__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12C2__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12E3__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12E2__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12E1__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12G3__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12G2__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12G1__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q12F__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Q14c__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>NA_Adult Day Health</label>
     </fieldSets>
     <fieldSets>
         <fullName>NA_Bill_Fields_CareM</fullName>
@@ -3063,11 +3146,15 @@ HHPExceptions_BgCheck__c</formula>
         <label>Operating Group</label>
         <picklist>
             <picklistValues>
+                <fullName>Adult Day Health</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Cambridge</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Redwood</fullName>
+                <fullName>CareMeridian</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -3075,7 +3162,7 @@ HHPExceptions_BgCheck__c</formula>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>CareMeridian</fullName>
+                <fullName>Redwood</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -3091,6 +3178,10 @@ HHPExceptions_BgCheck__c</formula>
         <inlineHelpText>Based on Business VP</inlineHelpText>
         <label>Operating Region</label>
         <picklist>
+            <picklistValues>
+                <fullName>ADH MA</fullName>
+                <default>false</default>
+            </picklistValues>
             <picklistValues>
                 <fullName>CareMeridian North</fullName>
                 <default>false</default>
@@ -3120,15 +3211,15 @@ HHPExceptions_BgCheck__c</formula>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>East</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>North</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>South</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>East</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -3146,6 +3237,10 @@ HHPExceptions_BgCheck__c</formula>
         <externalId>false</externalId>
         <label>Partner Company</label>
         <picklist>
+            <picklistValues>
+                <fullName>ADH Inc</fullName>
+                <default>false</default>
+            </picklistValues>
             <picklistValues>
                 <fullName>CareMeridian</fullName>
                 <default>false</default>
@@ -3307,6 +3402,10 @@ HHPExceptions_BgCheck__c</formula>
         <picklist>
             <picklistValues>
                 <fullName>ABI - Acquired Brain Injury</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ADH - Adult Day Health</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -5131,6 +5230,10 @@ QualityExceptions_ClientFunds__c</formula>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>Day Health</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Early Intervention</fullName>
                 <default>false</default>
             </picklistValues>
@@ -5645,7 +5748,7 @@ ISPICKVAL( Q12G1__c , &apos;Not Applicable&apos;)</errorConditionFormula>
         <active>true</active>
         <errorConditionFormula>( ISPICKVAL(Q12C2__c, &apos;No&apos;)  ||  ISPICKVAL(Q12C2__c, &apos;Not Applicable&apos;) )  &amp;&amp; ! ISPICKVAL( Q12C3__c, &apos;Not Applicable&apos; )</errorConditionFormula>
         <errorDisplayField>Q12C3__c</errorDisplayField>
-        <errorMessage>3.	If Quality Tab 12c-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12c-iii must be &apos;Not Applicable&apos;.</errorMessage>
+        <errorMessage>If Quality Tab 12c-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12c-iii must be &apos;Not Applicable&apos;.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Q12d1_No_NA</fullName>
@@ -6167,6 +6270,20 @@ ISPICKVAL(Status__c,&apos;Final&apos;)</errorConditionFormula>
         <errorMessage>Host Home Tab 9b is required if 9a is &apos;no&apos;</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>q12a_Adult_Day_Health</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q12A__c , &apos;Neither Rep-Payee nor Assists&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
+        <errorDisplayField>Q12A__c</errorDisplayField>
+        <errorMessage>ADH Q12a Quality Tab - When Operating Group is &apos;Adult Day Health&apos;, question Q12a should be ‘Neither Rep-Payee nor Assists&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>q12b_Adult_Day_Health</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q12B__c , &apos;Not Applicable&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
+        <errorDisplayField>Q12B__c</errorDisplayField>
+        <errorMessage>ADH Q12b Quality Tab - When Operating Group is ‘Adult Day Health’, question 12b should be ‘Not Applicable’</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>q12ci_block_NA_12cii</fullName>
         <active>true</active>
         <errorConditionFormula>ISPICKVAL(Q12C1__c,&apos;Yes&apos;)&amp;&amp;ISPICKVAL(Q12C2__c,&apos;Not Applicable&apos;)</errorConditionFormula>
@@ -6209,6 +6326,13 @@ ISPICKVAL(Status__c,&apos;Final&apos;)</errorConditionFormula>
         <errorMessage>Quality Tab - 12E-iii must be Yes or No if 12E-ii is Yes.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>q12f_Adult_Day_Health</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q12F__c , &apos;Not Applicable&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
+        <errorDisplayField>Q12F__c</errorDisplayField>
+        <errorMessage>ADH Q12f Quality Tab - When Operating Group is ‘Adult Day Health’, question 12f should be ‘Not Applicable’</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>q12gi_block_NA_12gii</fullName>
         <active>true</active>
         <errorConditionFormula>ISPICKVAL(Q12G1__c,&apos;Yes&apos;) &amp;&amp; 
@@ -6224,6 +6348,27 @@ ISPICKVAL(Q12G2__c,&apos;&apos;))</errorConditionFormula>
         <errorConditionFormula>ISPICKVAL(Q12G2__c,&apos;Yes&apos;)&amp;&amp; ISPICKVAL(Q12G3__c,&apos;Not Applicable&apos;)</errorConditionFormula>
         <errorDisplayField>Q12G3__c</errorDisplayField>
         <errorMessage>Quality Tab - 12g-iii must be Yes or No if 12g-ii is Yes.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>q13a_Adult_Day_Health</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q13A__c , &apos;11 Not Applicable for this consumer (no vocational goal)&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
+        <errorDisplayField>Q13A__c</errorDisplayField>
+        <errorMessage>ADH Q13a Quality Tab - When Operating Group is &apos;Adult Day Health&apos;, question Q13a should be &apos;11 Not Applicable for this consumer (no vocational goal)&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>q14a_Adult_Day_Health</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q14A__c , &apos;05 Not Applicable, because of scope of service&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
+        <errorDisplayField>Q14A__c</errorDisplayField>
+        <errorMessage>ADH Q14a Quality Tab - When Operating Group is &apos;Adult Day Health&apos;, question Q14a should be &apos;05 Not Applicable, because of scope of service&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>q14b_Adult_Day_Health</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q14B__c , &apos;No&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
+        <errorDisplayField>Q14B__c</errorDisplayField>
+        <errorMessage>ADH Q14b Quality Tab - When Operating Group is ‘Adult Day Health’, question Q14B should be ‘No’</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>q1b</fullName>

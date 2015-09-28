@@ -539,6 +539,14 @@ IF( Score__c &gt; 35, &apos;Poor&apos;, &apos;&apos;)))</formula>
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Needs__c</fullName>
+        <externalId>false</externalId>
+        <label>Needs</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
         <fullName>Overall_Score__c</fullName>
         <description>Calculated Score of the assessment</description>
         <externalId>false</externalId>
@@ -653,23 +661,19 @@ IF( Score__c &gt; 35, &apos;Poor&apos;, &apos;&apos;)))</formula>
         <label>Service Line</label>
         <picklist>
             <picklistValues>
-                <fullName>TFC Vistas</fullName>
+                <fullName>Vistas Primary</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>TFC Non-Vistas</fullName>
+                <fullName>Vistas TFC</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Basic</fullName>
+                <fullName>Vistas Hi AC</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
                 <fullName>CI</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Day TX</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -690,6 +694,10 @@ IF( Score__c &gt; 35, &apos;Poor&apos;, &apos;&apos;)))</formula>
             </picklistValues>
             <picklistValues>
                 <fullName>OPT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Wraparound</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -780,6 +788,14 @@ IF( Score__c &gt; 35, &apos;Poor&apos;, &apos;&apos;)))</formula>
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Strengths__c</fullName>
+        <externalId>false</externalId>
+        <label>Strengths</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
     </fields>
     <fields>
         <fullName>Submitted__c</fullName>
