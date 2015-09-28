@@ -105,8 +105,7 @@ public with sharing class ServiceAssignmentClosure_Approval {
 	            }
 	            else {
 	            	update theServAssignClose;
-					 //return new PageReference('/p/process/Submit?retURL=%2F'+theServAssignClose.Id +'&id='+theServAssignClose.id);
-	             	 // Create an approval request for the this evaluation
+	             	// Create an approval request for the this evaluation
            			Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
             		req1.setObjectId(theServAssignClose.id);
             		req1.setNextApproverIds(new Id[]{theServAssignClose.Approver__c});
