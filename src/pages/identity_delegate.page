@@ -160,7 +160,7 @@
         <apex:form id="empForm" >
             <apex:pageBlockTable value="{!myEmployees}" var="e" id="empTable">
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rendered="{!e.BAA_Signed__c}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
                 </apex:column>

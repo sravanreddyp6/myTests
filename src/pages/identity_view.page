@@ -7,7 +7,7 @@
                     <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
                     <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
                     <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c == 'Non-Employee'}"/>                    
-                    <apex:commandButton value="Provision Access" action="{!URLFOR($Page.identity_canvas, '')}" />
+                    <apex:commandButton value="Request Access" action="{!URLFOR($Page.identity_canvas, '')}" />
                 </apex:pageblockButtons>            
                 <apex:pageBlockSection columns="2" title="Person Information">                   
                     <apex:outputField label="First Name" value="{!TMNUser.First_Name__c}"/>
@@ -31,7 +31,7 @@
                     <apex:outputField label="Operating Group" value="{!TMNUser.Operating_Group__c}" />
                     <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                     
                     <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>
-                    <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}"/>                    
+                   <!--   <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}"/>    -->                
                 </apex:pageBlockSection>
                 <apex:pageBlockSection columns="2" title="Location">
                     <apex:outputField label="Location Name" value="{!TMNUser.Location_Name__c}"/>
