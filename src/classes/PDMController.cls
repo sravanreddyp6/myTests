@@ -55,9 +55,6 @@ public String searchingForQuery {set;get;}
          city = apexpages.currentpage().getparameters().get('city');
          state = apexpages.currentpage().getparameters().get('state');
          operationGroup = apexpages.currentpage().getparameters().get('operationGroup');
-         if(null != operationGroup && operationGroup.startsWith('Hast')){
-         	operationGroup = 'Cambridge';
-         }
          searchTitle = apexpages.currentpage().getparameters().get('JobTitle');
         // list generation
         BuildQuery();  
@@ -164,7 +161,8 @@ searchingForQuery = queryString;
 				QueryWhere =  BuildWhere( QueryWhere , 'Last_Name__c like \'%' + lastName +'%\' ');
 				}
 				if(operationGroup!=null && operationGroup.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
+					if(operationGroup.startsWithIgnoreCase('Has')) operationGroup = 'Cambridge';
+					QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
 				}
 				if(searchTitle!=null && searchTitle.length() > 0) {
 				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like \'%' + searchTitle +'%\' ');
