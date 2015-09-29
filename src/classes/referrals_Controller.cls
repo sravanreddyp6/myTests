@@ -609,6 +609,7 @@ public with sharing class referrals_Controller{
 	public referrals_Controller(ApexPages.standardController ctl){
 		system.debug('in constructor');
 		list<Tmn_User__c> tmnUser = [SELECT Id,operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1]; //Using list to prevent system.query exception 
+		this.isCAFSS = false;
 		if(tmnUser.size() > 0){
 			this.operatinggroup = tmnUser[0].operating_group__c;
 			this.businessUnit =  tmnUser[0].Business_Unit__c;
