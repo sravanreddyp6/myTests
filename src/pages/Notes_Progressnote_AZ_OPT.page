@@ -407,7 +407,7 @@
     <!-- New Page Starts  -->
     <apex:outputpanel rendered="{!NewBlock}">
         <apex:pageBlock >
-            <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy,myFRM,OutputpanelId" >
+            <apex:actionFunction action="{!RenderSelectedIds}" name="SelectedIds" rerender="dummy,OutputpanelId" >
             <apex:param name="selectedKey" value="" />
             <apex:param name="DeselectedKey" value="" />
             </apex:actionFunction>
@@ -421,7 +421,7 @@
                 
                 <apex:commandButton action="{!cancelEditNote}" value="Cancel" style="float:right"  rendered="{!inlinemode}" immediate="true"></apex:commandButton> 
                 <apex:commandButton action="{!cancel}" value="Cancel" style="float:right"  rendered="{!!inlinemode}" immediate="true"></apex:commandButton>
-                <apex:commandButton action="{!saveProgressNote}" value="Save" style="float:right" status="myStatus" onclick="keyselectedvalue()" rendered="{!!inlinemode}" rerender="myFRM,relatedToPgblk,OutputpanelId"></apex:commandButton>
+                <apex:commandButton action="{!saveProgressNote}" value="Save" style="float:right" onclick="keyselectedvalue()" status="myStatus" rendered="{!!inlinemode}" rerender="OutputpanelId"></apex:commandButton>
                 <apex:commandButton value="Save" rendered="{!inlinemode}" style="float:right" onclick="keyselectedvalue()" oncomplete="saveProgressNote()" ><!--</apex:commandButton>rerender="myFRM,relatedToPgblk,OutputpanelId">--></apex:commandButton>
     
                 
