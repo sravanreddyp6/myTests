@@ -132,6 +132,29 @@ public without sharing class ServiceAssignmentExt {
 		Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
 		canCreateSummary = oSchema.IsCreateable();
 	}
+	
+	//Model picklist 
+	public list<Selectoption> modelValues{get{
+		
+		if(modelValues == null){
+			modelValues = new List<SelectOption>();
+			Schema.DescribeFieldResult fieldResult = Service_Assignment__c.Model__c.getDescribe();
+			List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+			modelValues.add(new selectOption('--None--', '--None--'));
+	        for( Schema.PicklistEntry f : ple){
+	        	if(this.theServAssign.Flavor__c == 'CA FSS' && f.getLabel() == 'Family Vistas Intensive In Home' ){
+	        		continue;
+	        	}
+	        	modelValues.add(new SelectOption(f.getValue(), f.getLabel()));
+	     
+	  		}  
+		}
+	  		     
+  		return modelValues;
+		
+	}
+	set;}
+	
 
 	public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
 	public Boolean modelReq { get { return (pOpGroup == 'Cambridge' || this.theServAssign.Flavor__c == 'CA FSS');} set; }
@@ -1122,10 +1145,15 @@ public without sharing class ServiceAssignmentExt {
 
 	public PageReference SaveServAssign() {
 
-		if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
+		if(theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
 			ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
 			return null;
-		}else if (!AssessmentOnly && theServAssign.SA_Start_DateTime__c == null) {
+		}
+		if(modelreq && (theServAssign.Model__c == '--None--' || theServAssign.Model__c == null)){
+			ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Model: You must select a value.'));
+			return null;
+		}
+		if(!AssessmentOnly && theServAssign.SA_Start_DateTime__c == null) {
 			ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Start date: You must enter a value.'));
 			return null;
 		}

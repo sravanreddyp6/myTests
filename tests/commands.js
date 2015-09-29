@@ -157,7 +157,8 @@ module.exports = function (client, done) {
             }
             $inputEl.focus();
             $inputEl.val(value);
-            $inputEl.trigger('blur');
+            $inputEl.trigger("blur");
+            $inputEl.trigger("change");
             doneAsync();
           });
         });

@@ -306,11 +306,11 @@ public class identityEditNew {
 
     public PageReference goBack() {
         if(retURL == null){
-            PageReference backPage = new PageReference('/apex/identity_home');
+			PageReference backPage = new PageReference('/apex/identity_home?cancel=true');
             backPage.setRedirect(true);   
             return backPage;
         }
-        PageReference backPage = new PageReference(retURL);
+        PageReference backPage = new PageReference(retURL+'?cancel=true');
         backPage.setRedirect(true);   
         return backPage;
     }
