@@ -71,11 +71,20 @@
       var j$ = jQuery.noConflict(); 
              jQuery(document).ready(function($) {
              j$('[id$=BAASigned]').prop('disabled', true);
-             j$('[id$=VendorName]').prop('disabled', true);
              j$('input[id$="AddAttachments"]').prop('disabled', true);
              j$('input[id$="Alias"]').prop("readonly", true);
- 			
+             j$('[Id$=operatingGrp]').on('change', function(){document.toggleTherapyInfo();});
+ 			 document.toggleTherapyInfo();
         });
+ 			
+    document.toggleTherapyInfo = function(){
+        var opGrp = j$('[Id$=operatingGrp]').val();
+        if (opGrp == 'Care Meridian') {
+            j$('[id$=TherapistInformation]').show();
+        }else{
+            j$('[id$=TherapistInformation]').hide();
+        }    
+    }
 
     function dataTable() {
                 j$('table.dataTable').dataTable({
@@ -206,19 +215,6 @@ function autoCompleteRender(ul, item) {
      j$('[id*=AttachmentsModel]').dialog("close");
     }
    
-    function selectVendor() {
-   // alert(j$('[id$=vendorList]').val());
-        if (j$('[id$=vendorList]').val()==='OTHER') {
-        	j$('[id$=BAASigned]').prop('disabled', false);
-            j$('[id$=VendorName]').prop('disabled', false);
-            j$('input[id$="AddAttachments"]').prop('disabled', false);
-        }else {
-         j$('[id$=BAASigned]').prop('disabled', true);
-         j$('[id$=VendorName]').prop('disabled', true);
-         j$('input[id$="AddAttachments"]').prop('disabled', true);
-        }
-    }
-    
     function setEndDate() {
     var startDate = new Date(j$('[id$=startDate]').val());
     if(!isNaN(startDate)){
@@ -328,14 +324,18 @@ function autoCompleteRender(ul, item) {
                 </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem />
                     <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7" id="MobileNumber" onkeydown="validateMobilePhone()"/>
+                    <apex:inputField label="Location" value="{!TMNUser.Personal_Location__c}" taborderhint="7" />
+                    <apex:inputField label="City" value="{!TMNUser.Personal_City__c}" taborderhint="7" />
+                    <apex:inputField label="Zip" value="{!TMNUser.Personal_Zip__c}" taborderhint="7" />
+
                 </apex:pageBlockSection>
                 <apex:actionRegion >
                 <apex:pageBlockSection columns="2" title="Management Hierarchy" id="aliasBlock">                    
                     <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" taborderhint="13" id="Alias">
-                        <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="aliasBlock" onComplete="disableAlias();return false;"/>
+                        <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="aliasBlock" onComplete="disableAlias();j$('[Id$=operatingGrp]').on('change', function(){document.toggleTherapyInfo();}); document.toggleTherapyInfo();return false;"/>
                     </apex:inputField>                    
                     <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}" id="servline"/>                                                                                                                           
-                    <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="13">
+                    <apex:selectList Id="operatingGrp" label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="13">
                         <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
                         <apex:selectOption itemValue="Cambridge" itemLabel="Cambridge"/>         
                         <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
@@ -473,7 +473,19 @@ function autoCompleteRender(ul, item) {
             </apex:pageBlock>                  
 
                     </apex:outputPanel> -->
+                </apex:pageBlockSection>
                         
+                <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}"> 
+                        <apex:inputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" />
+                        <apex:inputField label="GL Code" value="{!TMNUser.GL_Code__c}" />
+                        <apex:inputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />
+                        <apex:inputField label="Account #" value="{!TMNUser.Account_Number__c}" /> 
+                        <apex:inputField label="Rate (per Hour)" value="{!TMNUser.Rate__c}" />
+                        <apex:inputField label="IC Agreement Executed On" value="{!TMNUser.IC_Agreement_Executed_Date__c}" />
+                        <apex:inputField label="CPR Expires" value="{!TMNUser.CPR_Expires__c}" />
+                        <apex:inputField label="License Expires" value="{!TMNUser.License_Expires__c}" />
+                        <apex:inputField label="Insurance Expires" value="{!TMNUser.Insurance_Expires__c}" />
+                        <apex:inputField label="Notes" value="{!TMNUser.Notes__c}" />
                 </apex:pageBlockSection>
                 
                  <apex:outputPanel id="ManagerSearchModal" title="Manager Search" style="display:none">

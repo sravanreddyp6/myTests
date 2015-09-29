@@ -74,15 +74,25 @@
       jQuery(document).ready(function($) {
       		if({!TMNUser.Vendor_list__c=='OTHER'}) {
              j$('[id$=BAASigned]').prop('disabled', false);
-             j$('[id$=VendorName]').prop('disabled', false);
              j$('input[id$="AddAttachments"]').prop('disabled', false);
           }  else {
              j$('[id$=BAASigned]').prop('disabled', true);
-             j$('[id$=VendorName]').prop('disabled', true);
              j$('input[id$="AddAttachments"]').prop('disabled', true);
           } 
            j$('input[id$="Alias"]').prop("readonly", true);
+           
+            j$('[Id$=operatingGrp]').on('change', function(){document.toggleTherapyInfo();});
+            document.toggleTherapyInfo();
         });
+        
+	    document.toggleTherapyInfo = function(){
+	        var opGrp = j$('[Id$=operatingGrp]').val();
+	        if (opGrp == 'Care Meridian') {
+	            j$('[id$=TherapistInformation]').show();
+	        }else{
+	            j$('[id$=TherapistInformation]').hide();
+	        }    
+	    }
     
      function disableAlias() {
         j$('input[id$="Alias"]').prop("readonly", true);
@@ -259,18 +269,7 @@ function autoCompleteRender(ul, item) {
     }).parent().appendTo(j$('form[id$=identity_edittmnu]'));
 });
     
-      function selectVendor() {
-        if (j$('[id$=vendorList]').val()==='OTHER') {
-        	j$('[id$=BAASigned]').prop('disabled', false);
-            j$('[id$=VendorName]').prop('disabled', false);
-            j$('input[id$="AddAttachments"]').prop('disabled', false);
-        }else {
-         j$('[id$=BAASigned]').prop('disabled', true);
-         j$('[id$=VendorName]').prop('disabled', true);
-         j$('input[id$="AddAttachments"]').prop('disabled', true);
-        }
-    }
-    
+
       function setEndDate() {
     var startDate = new Date(j$('[id$=startDate]').val());
    if(!isNaN(startDate)){
@@ -357,9 +356,9 @@ function autoCompleteRender(ul, item) {
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true" taborderhint="1"/>
                     <apex:outputField label="Company Email" value="{!TMNUser.Email__c}"/>
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2"/>
-                    <apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
         					<apex:outputLabel value="Personal Email" for="PE" />
-       						<apex:inputField  id="PE" value="{!TMNUser.Personal_Email__c}" taborderhint="9"/>
+       						<apex:inputField id="PE" value="{!TMNUser.Personal_Email__c}" taborderhint="9"/>
     				</apex:pageBlockSectionItem>
                     <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true" taborderhint="3"/>
                     <apex:inputField label="Professional Title" value="{!TMNUser.Professional_Title__c}" taborderhint="10"/>
@@ -383,6 +382,10 @@ function autoCompleteRender(ul, item) {
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                         <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7" id="MobileNumber" onkeydown="validateMobilePhone()"/>
+	                    <apex:inputField label="Location" value="{!TMNUser.Personal_Location__c}" taborderhint="7" />
+	                    <apex:inputField label="City" value="{!TMNUser.Personal_City__c}" taborderhint="7" />
+	                    <apex:inputField label="Zip" value="{!TMNUser.Personal_Zip__c}" taborderhint="7" />
+
                    <apex:pageBlockSectionItem helpText="End Date Cann't be more than 90 days from Start Date">
                     <apex:outputLabel value="End Date" />
                          <apex:outputPanel layout="block" >
@@ -395,10 +398,10 @@ function autoCompleteRender(ul, item) {
                <apex:actionRegion >
                <apex:pageBlockSection columns="2" title="Management Hierarchy" id="aliasDetails" >
                     <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" taborderhint="13" id="Alias">
-                        <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="aliasDetails" onComplete="disableAlias();return false;"/>
+                        <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="aliasDetails" onComplete="disableAlias();j$('[Id$=operatingGrp]').on('change', function(){document.toggleTherapyInfo();}); document.toggleTherapyInfo();return false;"/>
                     </apex:inputField>
                     <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/> 
-                    <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="16">
+                    <apex:selectList Id="operatingGrp" label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="16">
                         <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
                         <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
                         <apex:selectOption itemValue="Corporate" itemLabel="Corporate"/>
@@ -507,6 +510,20 @@ function autoCompleteRender(ul, item) {
 
                        </apex:outputPanel>     -->                   
                 </apex:pageBlockSection>
+
+                <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}"> 
+                        <apex:inputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" />
+                        <apex:inputField label="GL Code" value="{!TMNUser.GL_Code__c}" />
+                        <apex:inputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />
+                        <apex:inputField label="Account #" value="{!TMNUser.Account_Number__c}" /> 
+                        <apex:inputField label="Rate (per Hour)" value="{!TMNUser.Rate__c}" />
+                        <apex:inputField label="IC Agreement Executed On" value="{!TMNUser.IC_Agreement_Executed_Date__c}" />
+                        <apex:inputField label="CPR Expires" value="{!TMNUser.CPR_Expires__c}" />
+                        <apex:inputField label="License Expires" value="{!TMNUser.License_Expires__c}" />
+                        <apex:inputField label="Insurance Expires" value="{!TMNUser.Insurance_Expires__c}" />
+                        <apex:inputField label="Notes" value="{!TMNUser.Notes__c}" />
+                </apex:pageBlockSection>
+                
   				 <apex:pageBlockSection title="System IDs" columns="2" collapsible="false">
                         <apex:outputField label="Identity ID" value="{!TMNUser.Identity_ID__c}" />
                         <apex:outputField label="Salesforce Account" value="{!TMNUser.Salesforce_User_Account__c}"/>
