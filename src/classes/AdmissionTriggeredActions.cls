@@ -13,7 +13,7 @@ public with sharing class AdmissionTriggeredActions {
 	    	
 	    	if(currentUser.size() > 0){
 	    		for(Admission__c adm: updatedObjects){
-		    		if((adm.Network_offering__c == 'ABI' && currentUser[0].Operating_group__c == 'Care Meridian') || (adm.Network_offering__c == 'ARY' && currentUser[0].Business_unit__c.startsWith('BU 008'))){
+		    		if((adm.Network_offering__c == 'ABI' && currentUser[0].Operating_group__c == 'Care Meridian') || (adm.Network_offering__c == 'ARY' && (null != currentUser[0].Business_unit__c && currentUser[0].Business_unit__c.startsWith('BU 008')))){
 		    			networks.add(adm.Network_offering__c);
 		    		}
 	    		}	
