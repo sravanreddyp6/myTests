@@ -13,7 +13,7 @@ public with sharing class ViewContractExtension {
     public PageReference Submit() {
         // Create an approval request for the this evaluation
         Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
-        req1.setObjectId(tmnContract .id);
+        req1.setObjectId(tmnContract.id);
         req1.setNextApproverIds(new Id[]{tmnContract.Approver_1__c});
         Approval.ProcessResult result = Approval.process(req1);
         return new PageReference('/'+tmnContract.id);   
