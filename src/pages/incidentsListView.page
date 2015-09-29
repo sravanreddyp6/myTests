@@ -1,7 +1,8 @@
 <apex:page controller="incidentsListViewController">
-	
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />	
 	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-	<apex:form>
+	<apex:form >
 	<apex:pageBlock title="{!IF(myIncidents, 'My Incidents','All Incidents')}">
 		<apex:pageBlockButtons location="top" > 
  				 <table width="100%"> 
