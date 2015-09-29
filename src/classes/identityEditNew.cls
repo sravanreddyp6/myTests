@@ -22,6 +22,18 @@ public class identityEditNew {
     public String attchmentId {set;get;}
     public String aliasName = TAU;
     
+    public String getGlCodesForTherapist(){
+    	map<String, String> keyVal = new map<String, String>();
+    	keyVal.put('Physical Therapy','542009');
+    	keyVal.put('PT-Massage','542009');
+		keyVal.put('Occupational Therapy','542010');
+		keyVal.put('Speech Therapy','542011');
+		keyVal.put('Social Services','542009');
+		keyVal.put('Respiratory','542009');
+		keyVal.put('Dietitian','542003');
+    	return JSON.Serialize(keyVal); 
+    }
+    
     public identityEditNew() {
                                     
         Id id = ApexPages.currentPage().getParameters().get('ID');

@@ -68,13 +68,15 @@
     </style>
      <script type="text/javascript" >
     
-      var j$ = jQuery.noConflict(); 
-             jQuery(document).ready(function($) {
-             j$('[id$=BAASigned]').prop('disabled', true);
-             j$('input[id$="AddAttachments"]').prop('disabled', true);
-             j$('input[id$="Alias"]').prop("readonly", true);
-             j$('[Id$=operatingGrp]').on('change', function(){document.toggleTherapyInfo();});
- 			 document.toggleTherapyInfo();
+        var j$ = jQuery.noConflict();
+        var glCode = {!glCodesForTherapist};
+        jQuery(document).ready(function($) {
+            j$('[id$=BAASigned]').prop('disabled', true);
+            j$('input[id$="AddAttachments"]').prop('disabled', true);
+            j$('input[id$="Alias"]').prop("readonly", true);
+            j$('[Id$=operatingGrp]').on('change', function(){document.toggleTherapyInfo();});
+ 			document.toggleTherapyInfo();
+            j$('[Id$=therapistDiscipline]').on('change', function(){j$('[Id$=glCode]').val(glCode[this.value]);});
         });
  			
     document.toggleTherapyInfo = function(){
@@ -324,9 +326,9 @@ function autoCompleteRender(ul, item) {
                 </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem />
                     <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7" id="MobileNumber" onkeydown="validateMobilePhone()"/>
-                    <apex:inputField label="Location" value="{!TMNUser.Personal_Location__c}" taborderhint="7" />
+                    <apex:inputField label="Location" value="{!TMNUser.Personal_Location__c}" taborderhint="12" />
                     <apex:inputField label="City" value="{!TMNUser.Personal_City__c}" taborderhint="7" />
-                    <apex:inputField label="Zip" value="{!TMNUser.Personal_Zip__c}" taborderhint="7" />
+                    <apex:inputField label="Zip" value="{!TMNUser.Personal_Zip__c}" taborderhint="12" />
 
                 </apex:pageBlockSection>
                 <apex:actionRegion >
@@ -476,8 +478,8 @@ function autoCompleteRender(ul, item) {
                 </apex:pageBlockSection>
                         
                 <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}"> 
-                        <apex:inputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" />
-                        <apex:inputField label="GL Code" value="{!TMNUser.GL_Code__c}" />
+                        <apex:inputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" Id="therapistDiscipline" />
+                        <apex:inputField label="GL Code" value="{!TMNUser.GL_Code__c}" Id="glCode"/>
                         <apex:inputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />
                         <apex:inputField label="Account #" value="{!TMNUser.Account_Number__c}" /> 
                         <apex:inputField label="Rate (per Hour)" value="{!TMNUser.Rate__c}" />
