@@ -6,6 +6,8 @@
 <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
 <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
 <apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
+
+<apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
 <script type="text/javascript">
 function setFocusOnLoad() {}
 j$ = jQuery.noConflict();
@@ -108,7 +110,7 @@ function setupDates() {
                 
                 
                 <!-- PRI-277  -->
-                    <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && $User.Operating_Group__c != 'CareMeridian' )}" id="dischargeD1" >
+                    <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && !vfVarIsCM )}" id="dischargeD1" >
                             <apex:outputLabel value="Discharged Date" />
                             <apex:outputPanel >
                             <div class="requiredInput">
@@ -118,6 +120,14 @@ function setupDates() {
                                 </apex:inputField>
                             </div>
                             </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                     <apex:pageBlockSectionItem rendered="{! admission.Status__c != 'Discharged' && !vfVarIsCM }"  id="dischargeD2" >
+                        <apex:outputLabel value="Discharged Date" />
+                        <apex:outputPanel >
+                        	<apex:inputField value="{!admission.Discharged_Date__c}" id="disdate" rendered="{! !useDischargeSection }">
+                            <apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); "/>
+                            </apex:inputField>
+                        </apex:outputPanel>           
                     </apex:pageBlockSectionItem>
                        
                   
