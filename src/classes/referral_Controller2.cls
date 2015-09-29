@@ -242,6 +242,7 @@ public with sharing class referral_Controller2 {
                 :[select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1][0].operating_group__c;*/
                 
         list<Tmn_User__c> tmnUser = [SELECT Id,operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1]; //Using list to prevent system.query exception 
+		this.isCAFSS = false;
 		if(tmnUser.size() > 0){
 			this.operatinggroup = tmnUser[0].operating_group__c;
 			this.isCAFSS = (null != tmnUser[0].Business_Unit__c && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
