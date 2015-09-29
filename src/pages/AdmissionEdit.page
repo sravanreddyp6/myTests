@@ -119,14 +119,6 @@ function setupDates() {
                             </div>
                             </apex:outputPanel>
                     </apex:pageBlockSectionItem>
-                     <apex:pageBlockSectionItem rendered="{!(admission.Status__c != 'Discharged' || (admission.Status__c == 'Discharged' && $User.Operating_Group__c == 'CareMeridian' ))}"  id="dischargeD2" >
-                        <apex:outputLabel value="Discharged Date" />
-                        <apex:outputPanel >
-                        	<apex:inputField value="{!admission.Discharged_Date__c}" id="disdate" rendered="{! !useDischargeSection }">
-                            <apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); "/>
-                            </apex:inputField>
-                        </apex:outputPanel>           
-                    </apex:pageBlockSectionItem>
                        
                   
                 <apex:outputText value="" rendered="{! useDischargeSection }" />
