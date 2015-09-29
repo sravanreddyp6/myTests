@@ -55,6 +55,9 @@ public String searchingForQuery {set;get;}
          city = apexpages.currentpage().getparameters().get('city');
          state = apexpages.currentpage().getparameters().get('state');
          operationGroup = apexpages.currentpage().getparameters().get('operationGroup');
+         if(null != operationGroup && operationGroup.startsWith('Hast')){
+         	operationGroup = 'Cambridge';
+         }
          searchTitle = apexpages.currentpage().getparameters().get('JobTitle');
         // list generation
         BuildQuery();  
