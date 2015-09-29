@@ -308,35 +308,23 @@
         <label>Authorization Type</label>
         <picklist>
             <picklistValues>
-                <fullName>Initial</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>true</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Stay</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Stay - Open Ended</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Charge</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Transportation</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>1:1 Sitter</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Bed Holds</fullName>
+                <fullName>Single Charge</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -2920,6 +2908,37 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Rate_unit__c</fullName>
+        <externalId>false</externalId>
+        <label>Per</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Readmission__c</fullName>
         <externalId>false</externalId>
         <label>Readmission</label>
@@ -3243,7 +3262,6 @@
     </fields>
     <fields>
         <fullName>Service_Being_Funded_String__c</fullName>
-        <description>Used to help populate picklist value from UI. DO NOT DISPLAY</description>
         <externalId>false</externalId>
         <label>Service Being Funded String</label>
         <length>255</length>
@@ -4025,6 +4043,17 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Taken_By__c</fullName>
+        <externalId>false</externalId>
+        <label>Taken By</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Term_Date_of_Cost_therapy_Auth__c</fullName>
         <externalId>false</externalId>
         <label>Term Date of Cost/therapy Auth</label>
@@ -4223,39 +4252,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -4481,6 +4490,29 @@
             </values>
             <values>
                 <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5439,39 +5471,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -5685,6 +5697,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>California Integrated Services</fullName>
@@ -5810,39 +5845,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -6376,6 +6391,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -6573,39 +6611,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -7139,6 +7157,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -7520,39 +7561,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -8158,6 +8179,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -8407,39 +8451,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9039,6 +9063,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9311,39 +9358,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -9881,6 +9908,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -10110,39 +10160,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -10738,6 +10768,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -10954,39 +11007,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -11614,6 +11647,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -11822,39 +11878,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -12384,6 +12420,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -12593,39 +12652,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -13217,6 +13256,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -13425,39 +13487,27 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Charge</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>High Cost Pharmacy</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
+                <fullName>Single Charge</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14027,6 +14077,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Readmission__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -14321,39 +14394,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14539,6 +14592,29 @@
             </values>
             <values>
                 <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14729,39 +14805,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -14947,6 +15003,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Host Home</fullName>
@@ -15013,39 +15092,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15267,6 +15326,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Behavioral Supports</fullName>
@@ -15345,39 +15427,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15579,6 +15641,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>HCBS - Adult</fullName>
@@ -15661,39 +15746,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -15923,6 +15988,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Apartment Model</fullName>
@@ -16005,39 +16093,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16569,6 +16637,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Relationship_To_Patient__c</picklist>
             <values>
                 <fullName>Employer</fullName>
@@ -16718,39 +16809,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -16944,6 +17015,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>DAY - Day Program</fullName>
@@ -17022,39 +17116,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17256,6 +17330,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Brain Injury</fullName>
@@ -17342,39 +17439,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -17596,6 +17673,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Community Employment</fullName>
@@ -17706,39 +17806,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18039,6 +18119,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Case Management - Brokerage</fullName>
@@ -18152,39 +18255,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18394,6 +18477,29 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Service_Being_Funded__c</picklist>
             <values>
                 <fullName>Clinic Rehab Services</fullName>
@@ -18488,39 +18594,19 @@
         <picklistValues>
             <picklist>Authorization_Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
-            </values>
-            <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
-                <default>true</default>
             </values>
             <values>
                 <fullName>Other</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -18782,6 +18868,29 @@
             </values>
             <values>
                 <fullName>Yearly</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
