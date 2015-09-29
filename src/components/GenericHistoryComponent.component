@@ -4,8 +4,9 @@
     <apex:attribute name="recordLimit" description="Number of lines of history to display" type="Integer" required="false" assignTo="{!recordLimit}" />
     
     <!-- Object History Related List -->
-    <apex:pageBlock title="{!objectLabel} History">
-        <apex:pageBlockTable value="{!ObjectHistory}" var="History" >
+    <apex:pageBlock mode="maindetail" >
+    	<div class="tmn-h1">{!objectLabel} History</div>
+        <apex:pageBlockTable value="{!ObjectHistory}" var="History"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
             <apex:column headerValue="Date" value="{!History.thedate}" />
 
             <apex:column headerValue="User">

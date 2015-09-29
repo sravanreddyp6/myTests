@@ -7,6 +7,7 @@
      <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
     <style type="text/css">
         .nowrap {
             white-space: nowrap;
@@ -577,7 +578,7 @@
             <!--Additional Information Section-->
 
             <a name="AI" id="AI" />
-            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo" rendered="{! pbsEditModeOn}">
+            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="true" id="pbsOutputAdditionalInfo" rendered="{! pbsEditModeOn}">
 
 				<apex:inputField taborderhint="20" value="{!Contact.Family_Member_Other__c}" />
 <!-- 				<apex:inputField taborderhint="21" value="{!Contact.Legal_Guardianship_Status__c}" /> -->
@@ -799,14 +800,15 @@
         <!--Agencies Related to Person Section-->
         <a name="Agency" id="Agency"></a>
         <apex:pageBlock id="relatedAgenciesId" rendered="{!showDiagnosis}" mode="maindetail" >
-                <div style="float: right;">
+             <div class="tmn-h1">Agencies Involved With Individual</div>   
+                <div class="blockbtns" >
                     <apex:actionRegion >
                         <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
                     </apex:actionRegion>        
                     <apex:commandButton rendered="{!AND(isEditor, canEdit)}" value="Add Agency Involved With Individual" id="addAgency" onclick="showAddAgency(); openDialog('agencyModal', 'span', 'Add Agency','none'); return false;" />
   
                 </div> 
-            <div class="tmn-h1">Agencies Involved With Individual</div>                
+                         
             <apex:pageBlockSection columns="1" id="relatedAgencies" collapsible="false">
                 <apex:pageBlockSectionItem >
                 </apex:pageBlockSectionItem>
@@ -1105,11 +1107,12 @@
                 <apex:outputText value="No Attachments to display" rendered="{!(attachments.size=0)}" />
             </apex:pageBlockSection>
         </apex:pageBlock> -->
-        <apex:pageBlock >
+        <apex:pageBlock mode="maindetail">
+        	<div class="tmn-h1">Person Being Served History</div>
             <!--PersonBeing Served History Section-->
-            <apex:pageBlockSection title="Person Being Served History" showHeader="true" columns="1" collapsible="false">
+            <apex:pageBlockSection  columns="1" collapsible="false"  >
                 <apex:outputText />
-                <apex:pageBlockTable value="{!personHistory}" var="PBSHistory" rendered="{!(personHistory.size>0)}">
+                <apex:pageBlockTable value="{!personHistory}" var="PBSHistory" rendered="{!(personHistory.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Date" value=" {!PBSHistory.createddate}" />
                     <apex:column headerValue="User" value="{!PBSHistory.CreatedBy.Name}" />
                     <apex:column headerValue="Action">

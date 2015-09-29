@@ -1,8 +1,11 @@
 <apex:component controller="SObjectHistoriesController">
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
     <apex:attribute name="object" description="The SObject from which we fetch the field histories" type="sObject" required="true" assignTo="{!item}" />
     <apex:attribute name="title" description="The title for the page block" type="string" default="Object History" /> 
-    <apex:pageBlock title="{!title}" >
-        <apex:pageBlockTable value="{!Histories}" var="hist" rendered="{!(Histories.size>0)}">
+    <apex:pageBlock mode="maindetail" >
+    <div class="tmn-h1"> {!title}</div>
+        <apex:pageBlockTable value="{!Histories}" var="hist" rendered="{!(Histories.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
             <apex:column headerValue="Date">
                 <apex:outputText value="{0, date, MM/dd/yyyy h:mm a}">
                     <apex:param value="{!hist.createddate}" />
