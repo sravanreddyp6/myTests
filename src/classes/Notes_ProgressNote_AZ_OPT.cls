@@ -261,6 +261,9 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 goalsOrObSelected='NoGoal';
             }  
             list<string> finallisttocreate = new list<string>();
+            if (!Test.isRunningTest()) {
+                controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
+            }
             pn = (Progress_Note__c) controller.getRecord();
             progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Signature_on_File__c ,Service_Location__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
@@ -346,7 +349,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 pbsname = [SELECT Name FROM Contact WHERE Id=:pbsId].Name;
             }
             if (!Test.isRunningTest()) {
-                controller.addFields(new string[] {'RecordType.Name'});
+                controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
             }
             pn = (Progress_Note__c) controller.getRecord();
             pn.RecordTypeId = AZ_OPT_ID;
@@ -354,7 +357,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             pn.End_Time__c = datetime.now();
             String programId ;
             if( ApexPages.currentPage() != null){
-                theServAssign = [ SELECT Id, Name, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :ApexPages.currentPage().getParameters().get('ServAssignId') ];
+                theServAssign = [ SELECT Id, Name,Start_date__c, end_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :ApexPages.currentPage().getParameters().get('ServAssignId') ];
                 theServAssignId = theServAssign.Id;
                 pbsName = theServAssign.Person_Being_Served__c;
                 programid = theServAssign.service_location__r.programid__c;
@@ -369,7 +372,10 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         else if (dispMode == 'Inlineedit'){
             NewBlock = true;
             inlinemode = true;
-            insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
+            insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
+            if (!Test.isRunningTest()) {
+                controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
+            }
             pn = (Progress_Note__c) controller.getRecord();
             progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
@@ -649,6 +655,12 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         if(pn.Start_Time__c > system.now()){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start time cannot be in the future'));     
             ErrorMsg = ErrorMsg + 'Start time future';
+            return null;
+        }
+        if((theservassign.Start_Date__c > pn.Start_Time__c.date()) || (theservassign.End_Date__c < pn.Start_Time__c.date()) || ( theservassign.Start_Date__c > pn.End_Time__c.date()) || (theservassign.End_Date__c < pn.End_Time__c.date())){
+          
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
+            ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;
         }
         if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
