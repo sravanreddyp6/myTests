@@ -22,7 +22,11 @@ public with sharing class Action_Summary_ApprovalForm {
         ActionSummary.status__c = 'Final';
         update ActionSummary;
         if (ActionSummary.No_Approval_Needed__c == false) {
-            return new PageReference('/p/process/Submit?id='+controller.getid());
+            // Create an approval request for the this evaluation
+            Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
+            req1.setObjectId(controller.getid());
+            req1.setNextApproverIds(new Id[]{ActionSummary.Approver__c});
+            Approval.ProcessResult result = Approval.process(req1);
         }
         return new PageReference('/' + ActionSummary.Id);
     }
