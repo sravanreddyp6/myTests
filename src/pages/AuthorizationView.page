@@ -1,0 +1,66 @@
+<apex:page standardController="Authorization__c" extensions="AuthorizationExt">
+
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+<script>
+function setFocusOnLoad() {}
+
+var j$ = jQuery.noConflict();
+    
+</script>
+
+<c:PersonalRecord pbsId="{!pbsID}" parentPage="Authorization" servAssignId="{!saID}" admId="{!admID}"/>
+
+<apex:form id="authForm">
+<apex:pageMessages />   
+<apex:pageBlock title="Authorization">
+<apex:pageBlockButtons >
+<div class="pbHeaderButton" style="top: 0px;" >  
+        <apex:commandButton action="{!editAuth}" value="Edit" reRender="authForm"  status="myStatus" rendered="{! canEditAuth && authorization.Authorization_Status__c = 'Inactive Draft'}" />
+        <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!authorization.Authorization_Status__c = 'Active Final' && !HasDraft && canEditAuth }"/>  
+        <apex:commandButton action="{!finalizeAuth}" value="Finalize" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c = 'Inactive Draft'}"/>
+        <apex:commandButton action="{!cloneAuth}" value="Clone" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c = 'Inactive Draft'}"/>
+</div>
+</apex:pageBlockButtons>   
+
+<apex:pageBlockSection collapsible="false" columns="1">
+ <apex:outputField value="{!authorization.Authorization_Status__c}" label="Status" /> 
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Authorization Detail" collapsible="False" columns="2"> 
+		
+        <apex:outputField value="{!authorization.Type__c}"/>
+        <apex:outputField value="{!authorization.Reason_for_New_Authorization__c}"/>
+        <apex:outputField value="{!authorization.Service_Being_Funded_String__c}"/>
+        <apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number"/>    
+        <apex:outputField value="{!authorization.Rate__c}"/>   
+        <apex:pageBlockSectionItem>
+        	<apex:outputLabel value="Received Date/Time" />
+        	<c:militarydatetime datetimeval="{!authorization.Received_Date_time__c}" />
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!authorization.Rate_Unit__c}"/>
+        <apex:outputField value="{!authorization.Payer_effective_date__c}" label="Start Date"/>
+        <apex:outputField value="{!authorization.Contract_used__c}"/> 
+        <apex:outputField value="{!authorization.Payer_End_Date__c}" label="End Date"/>
+        <apex:outputField value="{!authorization.Level__c}" />
+        <apex:outputField value="{!authorization.Received_From__c}" />
+        <apex:outputField value="{!authorization.Justification__c}" />
+        <apex:outputField value="{!authorization.Representing_Received__c}" />
+        <apex:outputText value="" />
+        <apex:outputField value="{!authorization.Taken_By__c}" />
+        <apex:outputText value="" />
+        <apex:outputField value="{!authorization.Auth_Given_Method__c}" />
+        
+</apex:pageBlockSection>
+<apex:pageBlockSection columns="1"> 
+<apex:outputField value="{!authorization.Comments__c}" />
+</apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form>
+<c:SObjectNotesAndAttachments parentId="{!authorization.Id}" parentPage="Authorization" pbsID="{!pbsID}" servAssignId="{!saID}" admId="{!admID}" /> 
+
+</apex:page>
