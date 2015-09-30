@@ -21,6 +21,12 @@ public without sharing class ServiceAssignmentExt {
 	public Boolean canEditPlan { get; private set; }
 	public Boolean canCreateSummary { get; set; }
 	public Boolean canEditSA { get; set; }
+	
+	public Boolean canViewAuths { get; private set; }
+	public Boolean canEditAuths { get; private set; }
+	public Boolean canCreateAuths { get; private set; }
+	public List<Authorization__c> authList { get; set; }
+	
 	public static Boolean showdiagModal { get; set; }
 	public string diagEditId {get; set; }
 	public static Boolean showServAssignCloseModal { get; set; }
@@ -447,6 +453,10 @@ public without sharing class ServiceAssignmentExt {
 		setcanEditSA();
 		setcanCreatePlan();
 		setcanCreateSummary();
+		
+		// CMAUTH
+		setAuthPerms();
+		populateAuths();
 
 		getContractsAndXrefs();
 		contractsList = new List<SelectOption>();
@@ -834,6 +844,8 @@ public without sharing class ServiceAssignmentExt {
 			referral = null;
 
 		populateFundingSources();
+		populateAuths();
+		
 		if (!newSA) {
 			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_being_served__r.LastName FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
 			plans = [select name, id, createddate, status__c, effective_date__c, target_date__c from Action_Plan__c where Service_Assignment__c = :currentID Order by CreatedDate DESC];
@@ -1936,6 +1948,26 @@ public without sharing class ServiceAssignmentExt {
 				 order by Type_of_Coverage__c
 				 limit 150];
 	}
+
+
+	// CMAUTH work  - Sept 2015
+	public void setauthPerms () {  
+		Schema.DescribeSObjectResult oSchema = Authorization__c.sObjectType.getDescribe();
+		canCreateAuths = oSchema.isCreateable();
+		canEditAuths = oSchema.isUpdateable();
+		canViewAuths = oSchema.isAccessible();	
+	}
+
+	@testvisible private void populateAuths() {
+		this.authList =
+				[select id, funding_Source__c, payer_authorization_id__c, authorization_Status__c, type__c, service_being_Funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_Date__c, payer_end_date__c, received_date_time__c
+				 from Authorization__c
+				 where funding_source__r.Service_Assignment__c = :this.theServAssign.Id and authorization_status__c != 'Disregard'
+				 order by received_date_time__c desc
+				 limit 150];
+	}
+
+	// END CMAUTH work
 
 	public class MyException extends Exception {}
 

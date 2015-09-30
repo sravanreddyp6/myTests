@@ -679,93 +679,6 @@ public with sharing class referralConversion_Controller {
         insert newDiag;
     }
 
-/*
-This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
- * Sravan's Conversion code
- 
-
-
-    //Nurses Evaluation Creation - Sravan 5/15/2014
-    if(referralRecordType.startsWith('CareMeridian')){
-        List <Evaluation__c> refEval = [
-            SELECT ID, NAME FROM Evaluation__c
-            WHERE Referral__c =:refCurr.Id LIMIT 1
-        ]; //using List to avoid System.Query Exception when no records are returned
-        
-        string pbslastName =  this.referralRecord.Name_PBR__c.Substringbefore(',') != null ? this.referralRecord.Name_PBR__c.Substringbefore(',') : '' ; //newSA.Admission__r.Person_Being_Served__r.LastName;
-        string pbsfirstinitial = this.referralRecord.Name_PBR__c.substringAfter(', ') != null ? this.referralRecord.Name_PBR__c.substringAfter(', ').substring(0,1) : '';
-        string ownerfirstInitial = userinfo.getFirstName() != null ? userinfo.getFirstName().Substring(0,1) : ''; 
-
-        if(refEval.isEmpty()){
-            
-            Evaluation__c nurseEval = new Evaluation__c(
-                                            ServiceAssignment__c = newSA.id,
-                                            Name = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName(),
-                                            RecordtypeId = Utility.getEvaluationRecordType('NursesAssessment')
-            );
-            insert nurseEval;
-        }
-        else {
-            id evalID = refEval[0].id;
-            list<Evaluation_Response__c> tobeCreated = new List<Evaluation_Response__c>();
-            String asmtName = pbsFirstinitial+'. '+pbsLastName+' - '+DateTime.Now().format('MM/dd/yy') +' - '+'Res.Asmt'+' - '+ownerfirstInitial+'. '+userinfo.getLastName();
-            String query = 'SELECT ';
-            FieldSet copyFields = SObjectType.Evaluation__c.FieldSets.NursingAssessment;
-
-            for(Schema.FieldSetMember f : copyFields.getFields()) {
-                query += f.getFieldPath() + ', ';
-            }
-            query += 'Name FROM Evaluation__c WHERE ID =:evalID';
-            // refEval = Database.query(query);
-            // system.debug('REFEVALREFEVAL>>>'+refEval);
-
-            SObject refEval1=database.query(query);
-            string evaluationObj='Evaluation__c';
-            sObject dynObjectEvaluationRecord= Schema.getGlobalDescribe().get(evaluationObj).newSObject() ;
-
-            for(Schema.FieldSetMember f : copyFields.getFields()) {
-                dynObjectEvaluationRecord.put(f.getfieldPath(), refEval1.get(f.getfieldPath()));
-            }
-            dynObjectEvaluationRecord.put('RecordTypeID', Utility.getEvaluationRecordType('NursesAssessment'));
-            dynObjectEvaluationRecord.put('ServiceAssignment__c', newSA.id);
-            dynObjectEvaluationRecord.put('Name',asmtName );
-
-            insert dynObjectEvaluationRecord;
-
-            if(tobeCreated.isEmpty()){
-                system.debug('inside the loop,,,,,,,,');
-
-                list<string> respRectypes = new List<string>{'Allergy','Pressure Ulcer Detail','Wound Detail','Annotation'};
-                String respQuery ='SELECT ';
-                FieldSet copyrespFields = SObjectType.Evaluation_Response__c.FieldSets.CloneevalResponses;
-
-                for(Schema.FieldSetMember f : copyrespFields.getFields()) {
-                    respQuery +=f.getFieldPath() + ', ';
-                }
-
-                respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c ';
-                respQuery += 'WHERE Evaluation__c =:evalID AND RecordType.Name IN:respRectypes';
-                List<Evaluation_Response__c> evalResponses = database.query(respQuery);
-                if(evalResponses!=null){
-                    for(Evaluation_Response__c erp : evalResponses){
-                        Evaluation_Response__c newRecord = erp.clone(false);
-                        newRecord.Evaluation__c = dynobjectEvaluationRecord.Id;
-                        if (newRecord.RecordType.Name == 'Allergy') {
-                            newRecord.Person_Being_Served__c = idPBS;
-                        }
-                        tobeCreated.add(newRecord);
-                    }
-
-                    insert tobeCreated;
-                    System.debug('Created Records+++++++'+tobeCreated);
-                }
-            }
-        }
-    }
-
- 
-  * End of Sravan's Conversion Code
-  */
 
     Contact pbsmed = [select id, medicaid_id__c from contact where id = :idPBS ];
     Boolean trytoupdatePBS = String.IsBlank( pbsmed.medicaid_id__c );
@@ -813,20 +726,19 @@ This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
             // now create auths for funding sources that have them
             for ( Funding_Source__c fs : newfunds ) {
 
-                // there's an auth if the status populated
-                if ( !String.IsEmpty(fs.status__c)) {
-
-                    // temporary authorization number
-                    string authid = fs.authorization_number__c;
-
-                    // we can do this becuase there is only 1 auth at the time of conversion
-                    if (fs.status__c == 'Pending')
-                        authid= fs.name + ' - Auth Pending';
-
-                     System.Debug( 'funding source status is: ' + fs.status__c + ' - adding authorization');
-                    // for now this will be for CM only.  working on other flavors.
+                // CMAUTH-2 - check for populated fields before transferring over
+                integer numFields = getNumAuthPopulatedFields( fs );
+                    
+                // for now this will be for CM only.  working on other flavors.
+                if (  numFields > 0 ) {
+                	string authstatus = 'Draft';
+                    
+                    //	
+                	//if ( numFields == ALLFIELDS )
+                	//	authstatus = 'Final';
+                    		
                     Authorization__c auth = new Authorization__c ( RecordTypeID = recType.ID,
-                                                                    authorization_status__c = fs.status__c,
+                                                                    authorization_status__c = authstatus,
                                                                     funding_source__c = fs.Id,
                                                                     type__c = fs.authorization_type__c,
                                                                     admission__c = newSA.Admission__c,
@@ -844,21 +756,23 @@ This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
                                                                     received_from__c = fs.given_by__c,
                                                                     representing_received__c = fs.representing_received__c,
                                                                     auth_given_method__c = fs.auth_given_method__c,
-                                                                    payer_authorization_id__c = authid,
-                                                                    payer_cm_name__c = fs.internal_contact__c,
-                                                                    payer_cm_phone__c = fs.internal_phone__c,
-                                                                    payer_cm_email__c = fs.internal_email__c,
-                                                                    payer_cm_fax__c = fs.internal_fax__c,
+                                                                    //payer_authorization_id__c = authid,
+                                                                    //payer_cm_name__c = fs.internal_contact__c,
+                                                                    //payer_cm_phone__c = fs.internal_phone__c,
+                                                                    //payer_cm_email__c = fs.internal_email__c,
+                                                                    //payer_cm_fax__c = fs.internal_fax__c,
                                                                     comments__c = fs.authorization_comments__c,
                                                                     level__c = fs.level__c,
                                                                     rate__c = fs.rate__c,
                                                                     justification__c = fs.justification__c,
-                                                                    level_confirmed__c = fs.did_cm_confirm_level__c
+                                                                    //level_confirmed__c = fs.did_cm_confirm_level__c,
+                                                                    service_being_funded_string__c = fs.service_being_funded_string__c,
+                                                                    rate_unit__c = fs.rate_unit__c,
+                                                                    payer_authorization_id__c = fs.authorization_number__c,
+                                                                    received_date_time__c = fs.received_date_time__c,
+                                                                    taken_by__c = fs.taken_by__c
                                                                     );
-
-                    if ( fs.received_date_time__c != null )
-                        auth.payer_authorization_date__c = (fs.received_date_time__c).dateGMT();
-
+                                                                    
                     newauths.Add( auth);
 
                 }
@@ -1008,4 +922,33 @@ public class personRecord {
 }
 class referralConversionException extends Exception {
     }
+    
+private integer getNumAuthPopulatedFields ( Funding_Source__c fs ) {
+	integer numFields = 0;
+	
+	numFields += (String.IsBlank( fs.authorization_type__c )) ? 0 : 1;
+	numFields += ( fs.days_authorized_from__c  == null ) ? 0 : 1;
+	numFields += ( fs.days_authorized_to__c == null ) ? 0 : 1;
+	numFields += (String.IsBlank( fs.requested_by__c )) ? 0 : 1;
+	numFields += ( fs.request_date__c == null ) ? 0 : 1;
+	numFields += (String.IsBlank( fs.request_contact_name__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.representing_request__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.reference_number__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.review_nurse__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.request_phone__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.request_fax__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.given_by__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.representing_received__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.auth_given_method__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.authorization_comments__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.level__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.rate__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.justification__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.service_being_funded_string__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.rate_unit__c )) ? 0 : 1;
+	numFields += (String.IsBlank( fs.authorization_number__c )) ? 0 : 1;
+	numFields += ( fs.received_date_time__c == null) ? 0 : 1;
+	numFields += (String.IsBlank( fs.taken_by__c )) ? 0 : 1;
+	return numFields;
+}
 }
