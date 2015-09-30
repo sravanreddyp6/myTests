@@ -55,7 +55,21 @@
                      <!--    <apex:outputField label="Vendor Name"  value="{!TMNUser.Vendor_Name__c}"  rendered="{!TMNUser.Vendor_list__c='OTHER'}"/> -->
                           <apex:outputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" /> 
                       <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
-                 </apex:PageBlockSection>  
+                 </apex:PageBlockSection>
+                 
+                <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}"> 
+                        <apex:outputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" />
+                        <apex:outputField label="GL Code" value="{!TMNUser.GL_Code__c}" />
+                        <apex:outputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />
+                        <apex:outputField label="Account #" value="{!TMNUser.Account_Number__c}" /> 
+                        <apex:outputField label="Rate (per Hour)" value="{!TMNUser.Rate__c}" />
+                        <apex:outputField label="IC Agreement Executed On" value="{!TMNUser.IC_Agreement_Executed_Date__c}" />
+                        <apex:outputField label="CPR Expires" value="{!TMNUser.CPR_Expires__c}" />
+                        <apex:outputField label="License Expires" value="{!TMNUser.License_Expires__c}" />
+                        <apex:outputField label="Insurance Expires" value="{!TMNUser.Insurance_Expires__c}" />
+                        <apex:outputField label="Notes" value="{!TMNUser.Notes__c}" />
+                </apex:pageBlockSection>
+                   
                    <apex:pageBlockSection title="System IDs" columns="2">
                     <apex:outputField label="Identity ID" value="{!TMNUser.Identity_ID__c}" />
                     <apex:outputField label="Salesforce Account" value="{!TMNUser.Salesforce_User_Account__c}"/>
