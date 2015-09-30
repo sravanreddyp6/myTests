@@ -1209,6 +1209,13 @@ public without sharing class ServiceAssignmentExt {
             if(theServAssign.End_of_Service_Circumstances__c == null){
                 errors.add('End of Service Circumstances : You must enter a value.');
             }
+            if(theServAssign.End_of_Service_Status__c == null){
+                errors.add('End of Service Status : You must enter a value.');
+            }
+            if(theServAssign.End_of_Service_Status__c =='Other' && theServAssign.Specify_Other__c == null){
+                errors.add('Specify Other : You must enter a value.');
+            }
+            
         }
     
         if(errors.size() > 0){
