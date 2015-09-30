@@ -571,7 +571,7 @@
 					</apex:outputPanel>             
 				</apex:pageBlockSectionItem>
                 <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  html-data-countInFormProgress="1" >
-                    <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" onComplete=" setUpCompletionMonitor(); ">
+                    <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" onComplete="setStatusDefaults(); setUpCompletionMonitor();setUpFields();">
                     </apex:actionSupport>
                 </apex:inputField>
 
@@ -2879,7 +2879,7 @@ END: Uncomment to have the element collapsed by default -->
 	    </div> 
     </apex:form>
     <a id="shiftSummaries" />
-    <apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
+    <apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(vfVarIsRW, vfVarIsCM), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
     <c:SObjectNotesAndAttachments parentPage="ServAssign" parentId="{!Service_Assignment__c.id}" showAction="true" rendered="{!!editSA && newSA==false}"   pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
     <c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 
