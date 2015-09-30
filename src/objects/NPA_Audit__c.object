@@ -3405,7 +3405,7 @@ HHPExceptions_BgCheck__c</formula>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>ADH-Adult Day Health</fullName>
+                <fullName>ADH - Adult Day Health</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -5748,7 +5748,7 @@ ISPICKVAL( Q12G1__c , &apos;Not Applicable&apos;)</errorConditionFormula>
         <active>true</active>
         <errorConditionFormula>( ISPICKVAL(Q12C2__c, &apos;No&apos;)  ||  ISPICKVAL(Q12C2__c, &apos;Not Applicable&apos;) )  &amp;&amp; ! ISPICKVAL( Q12C3__c, &apos;Not Applicable&apos; )</errorConditionFormula>
         <errorDisplayField>Q12C3__c</errorDisplayField>
-        <errorMessage>3.	If Quality Tab 12c-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12c-iii must be &apos;Not Applicable&apos;.</errorMessage>
+        <errorMessage>If Quality Tab 12c-ii is &apos;No&apos; or &apos;Not Applicable&apos;, then 12c-iii must be &apos;Not Applicable&apos;.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Q12d1_No_NA</fullName>
@@ -6272,9 +6272,16 @@ ISPICKVAL(Status__c,&apos;Final&apos;)</errorConditionFormula>
     <validationRules>
         <fullName>q12a_Adult_Day_Health</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q12A__c , &apos;Neither Rep-Payee nor Assists&apos;)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q12A__c , &apos;Neither Rep-Payee nor Assists&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
         <errorDisplayField>Q12A__c</errorDisplayField>
         <errorMessage>ADH Q12a Quality Tab - When Operating Group is &apos;Adult Day Health&apos;, question Q12a should be ‘Neither Rep-Payee nor Assists&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>q12b_Adult_Day_Health</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q12B__c , &apos;Not Applicable&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
+        <errorDisplayField>Q12B__c</errorDisplayField>
+        <errorMessage>ADH Q12b Quality Tab - When Operating Group is ‘Adult Day Health’, question 12b should be ‘Not Applicable’</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>q12ci_block_NA_12cii</fullName>
@@ -6319,6 +6326,13 @@ ISPICKVAL(Status__c,&apos;Final&apos;)</errorConditionFormula>
         <errorMessage>Quality Tab - 12E-iii must be Yes or No if 12E-ii is Yes.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>q12f_Adult_Day_Health</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q12F__c , &apos;Not Applicable&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
+        <errorDisplayField>Q12F__c</errorDisplayField>
+        <errorMessage>ADH Q12f Quality Tab - When Operating Group is ‘Adult Day Health’, question 12f should be ‘Not Applicable’</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>q12gi_block_NA_12gii</fullName>
         <active>true</active>
         <errorConditionFormula>ISPICKVAL(Q12G1__c,&apos;Yes&apos;) &amp;&amp; 
@@ -6338,21 +6352,21 @@ ISPICKVAL(Q12G2__c,&apos;&apos;))</errorConditionFormula>
     <validationRules>
         <fullName>q13a_Adult_Day_Health</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q13A__c , &apos;11 Not Applicable for this consumer (no vocational goal)&apos;)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q13A__c , &apos;11 Not Applicable for this consumer (no vocational goal)&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
         <errorDisplayField>Q13A__c</errorDisplayField>
         <errorMessage>ADH Q13a Quality Tab - When Operating Group is &apos;Adult Day Health&apos;, question Q13a should be &apos;11 Not Applicable for this consumer (no vocational goal)&apos;</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>q14a_Adult_Day_Health</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q14A__c , &apos;05 Not Applicable, because of scope of service&apos;)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q14A__c , &apos;05 Not Applicable, because of scope of service&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
         <errorDisplayField>Q14A__c</errorDisplayField>
         <errorMessage>ADH Q14a Quality Tab - When Operating Group is &apos;Adult Day Health&apos;, question Q14a should be &apos;05 Not Applicable, because of scope of service&apos;</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>q14b_Adult_Day_Health</fullName>
         <active>true</active>
-        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q14B__c , &apos;No&apos;)</errorConditionFormula>
+        <errorConditionFormula>ISPICKVAL( Operating_Group__c  , &apos;Adult Day Health&apos;) &amp;&amp; !ISPICKVAL( Q14B__c , &apos;No&apos;) &amp;&amp;   QA_Audit__c</errorConditionFormula>
         <errorDisplayField>Q14B__c</errorDisplayField>
         <errorMessage>ADH Q14b Quality Tab - When Operating Group is ‘Adult Day Health’, question Q14B should be ‘No’</errorMessage>
     </validationRules>

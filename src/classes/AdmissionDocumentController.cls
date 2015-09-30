@@ -15,28 +15,34 @@ public with sharing class AdmissionDocumentController {
     public PB_AssociatedDoc__c currrentAssocDoc {get; set;}
     public PB_Document__c currrentDoc {get; set;}
     
+    public string network; //used to differentiate the Packets and Documents for display base don Admission's network offering
+    
     // An in-memory mapping to list docPacketJo's with the packet ID
     public Map<Id, List<PB_DocPacket_Document_JO__c>> pcktJos = new Map<Id, List<PB_DocPacket_Document_JO__c>>();
      
     
     public AdmissionDocumentController(ApexPages.StandardController stdController) {
-    	if(!test.isRunningTest()) stdController.addFields(new String[] {'Name', 'Effective_Date__c'});                
+    	if(!test.isRunningTest()) stdController.addFields(new String[] {'Name', 'Effective_Date__c', 'Network_Offering__c'});                
         this.admission = (Admission__c) stdController.getRecord();
+        
+        if(this.admission.Network_Offering__c != null){
+        	network = this.admission.Network_Offering__c;
+        }
        	    
        	// get the list of all packets, docs and their junction. And the associated docs - to build an in-memory model for interaction with fancyTree component.
-		Map<id, PB_DocPacket__c> pcktMap = new map<id, PB_DocPacket__c>([SELECT id, Packet_Name__c FROM PB_DocPacket__c]);
+		Map<id, PB_DocPacket__c> pcktMap = new map<id, PB_DocPacket__c>([SELECT id, Packet_Name__c FROM PB_DocPacket__c WHERE Recordtype.name = :network]);
    		Map<id, PB_Document__c> docMap = new map<id, PB_Document__c>([SELECT id, Document_Name__c, Due__c, Due_Date__c, Effective_Date__c, Expiration_Date__c, Recurring_Frequency__c, 
    																			 Recurring_Interval__c, Status__c, Type__c, Version__c, (SELECT id, DocSigner__c FROM DocSignatures__r)
-   																		FROM PB_Document__c]);
+   																		FROM PB_Document__c WHERE Recordtype.Name = :network]);
 
-   		for (PB_DocPacket_Document_JO__c jo : [SELECT id, DocPacket__r.id, Document__r.id FROM PB_DocPacket_Document_JO__c]){
+   		for (PB_DocPacket_Document_JO__c jo : [SELECT id, DocPacket__r.id, Document__r.id FROM PB_DocPacket_Document_JO__c WHERE DocPacket__r.Recordtype.Name = :network AND Document__r.Recordtype.Name = :network]){
    			treeModel.put(jo.id, new DocumentWrapper(docMap.get(jo.Document__r.id), pcktMap.get(jo.DocPacket__r.id), docMap.get(jo.Document__r.id).DocSignatures__r));
    		}
 
        	refreshInMemoryMapAndAssocDocs();
 		
 	    // An in-memory mapping to list of docPacketJo's with the packet ID		
-		List<PB_DocPacket__c> pckt_pcktDocJos = [Select id, (SELECT id, DocPacket__r.id, Document__r.id FROM DocPacketJOs__r) from PB_DocPacket__c];		
+		List<PB_DocPacket__c> pckt_pcktDocJos = [Select id, (SELECT id, DocPacket__r.id, Document__r.id FROM DocPacketJOs__r) from PB_DocPacket__c WHERE Recordtype.name = :network];		
 		for (PB_DocPacket__c pckt: pckt_pcktDocJos) {
 			pcktJos.put(pckt.id, pckt.DocPacketJOs__r);
 		}
@@ -142,6 +148,10 @@ public with sharing class AdmissionDocumentController {
     	Date dueDate;
         if (due == 'Treatment Start Date')  dueDate = admissionEffDt; 
         else if (due == '72 Hours after Treatment Start') dueDate = admissionEffDt.addDays(3);
+	    else if(due == '2 days from Treatment Start Date') dueDate = admissionEffDt.addDays(2);
+	    else if(due == '5 days from Treatment Start Date') dueDate = admissionEffDt.addDays(5);
+	    else if(due == '7 days from Treatment Start Date') dueDate = admissionEffDt.addDays(7);
+	    else if(due == '90 days from Treatment Start Date') dueDate = admissionEffDt.addDays(90);
         else dueDate = null;
         
         return dueDate;
@@ -191,7 +201,7 @@ public with sharing class AdmissionDocumentController {
                                             (SELECT PB_DocPacket_Document_JO__c.id, DocPacket__r.id, Document__r.id, Document__r.document_name__c, Document__r.Recurring_Interval__c FROM DocPacketJOs__r ORDER BY DocPacket__r.ID, Document__r.ID),
                                             (SELECT DocPacket__r.id, Document__r.id, Due_Date__c, Effective_Date__c, Status__c, Status_Date__c
                                                FROM AssociatedDocuments__r WHERE sObject_id__c =: this.admission.id AND sObject_type__c = 'Admission' AND IsAdded__c = true)
-                                     from   PB_DOCPacket__c];
+                                     from   PB_DOCPacket__c WHERE Recordtype.Name = :network];
                                      
 		for (PB_DocPacket__c pkt : pkts) {
 			TMN_TreePktDocTable.node pckt_node= new TMN_TreePktDocTable.node(pkt.id, pkt.Packet_Name__c);

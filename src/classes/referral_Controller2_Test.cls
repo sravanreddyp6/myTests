@@ -64,7 +64,7 @@ public class referral_Controller2_Test{
         controller.saveLocation();
         system.assertEquals(2, controller.locations.size());
         System.assertEquals(0, controller.Attachments.size());
-        System.assertEquals('', controller.OperatingGroup);
+        System.assertEquals(null, controller.OperatingGroup);
 
         ref.oldPBR__c = pbr.id;
         ref.person_being_referred__c = null;
