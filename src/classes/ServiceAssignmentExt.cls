@@ -1206,10 +1206,10 @@ public without sharing class ServiceAssignmentExt {
             if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == 'Yes' && theServAssign.Primary_Reason_for_Dissatisfaction__c == null){
                 errors.add('Primary Reason for Dissatisfaction : You must enter a value.');
             }
-            if(theServAssign.End_of_Service_Circumstances__c == null){
+            if(theServAssign.End_of_Service_Circumstances__c == null && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'Care Meridian')){
                 errors.add('End of Service Circumstances : You must enter a value.');
             }
-            if(theServAssign.End_of_Service_Status__c == null){
+            if(theServAssign.End_of_Service_Status__c == null && opGroup == 'NeuroRestorative'){
                 errors.add('End of Service Status : You must enter a value.');
             }
             if(theServAssign.End_of_Service_Status__c =='Other' && theServAssign.Specify_Other__c == null){
