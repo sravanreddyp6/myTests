@@ -1,0 +1,61 @@
+public with sharing class Evaluation_ApprovalForm {
+    private ApexPages.StandardController controller;
+    private Evaluation__c thisEval {get;set;}
+    
+    public Evaluation_ApprovalForm(ApexPages.StandardController controller) {
+        this.controller = controller;
+        thisEval = (Evaluation__c)controller.getrecord();
+        getPermSets();
+    }
+
+
+    public boolean No_Approval_Needed {
+    get {
+        // TO DO: is this a supervisor user?
+        if ( isTierIII || isDON )
+        	return true;
+        else
+            return false;
+    }
+    }
+    /////////////////
+    // Actions
+    /////////////////
+    
+    public PageReference myFinal(){
+        Evaluation__c thisEval = (Evaluation__c)controller.getrecord();
+        thisEval.status__c = 'Final';
+        thisEval.Signed_At__c = system.Now();
+        update thisEval;
+        if ( !No_Approval_Needed) {
+            return new PageReference('/p/process/Submit?id='+controller.getid());
+        }
+        return new PageReference('/' + thisEval.Id);
+    }
+    
+    private boolean isDON;
+    private boolean isTierIII;
+    private void getPermSets() {
+    		PermissionSetAssignment[] assignments = [
+		                                         SELECT Id, PermissionSet.Name
+		                                         FROM PermissionSetAssignment
+		                                         WHERE AssigneeId = :UserInfo.getUserId()
+		                                         ];
+		Set<String> permissionSets = new Set<String>();
+		for (PermissionSetAssignment assignment: assignments) {
+			permissionSets.add(assignment.PermissionSet.Name);
+		}
+
+		if (permissionSets.contains('iServe_DON')) {
+			isDON = true;
+		} else {
+			isDON = false;
+		}
+		if (permissionSets.contains('iServe_Tier_III')) {
+			isTierIII = true;
+		} else {
+			isTierIII = false;
+		}
+    }
+    
+}
