@@ -17,13 +17,46 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
         <apex:remoteObjectModel jsShorthand="serviceAssignment" name="Service_Assignment__c" fields="Id,pbsLastName__c,pbsFirstName__c">
             <apex:remoteObjectField name="Service_Location__c" jsShorthand="ServiceLocation"/>
         </apex:remoteObjectModel>
-        <apex:remoteObjectModel jsShorthand="myHoursObj" name="Therapy_Hour__c" 
-            fields="Id,Name,Appointment_Type__c,Approver_Note__c,End_Time__c,Narrative_Note__c,Start_Time__c,Status__c,pbsLastName__c,pbsFirstName__c,createdDate,Number_of_Hours__c">
-        </apex:remoteObjectModel>
+        <apex:remoteObjectModel jsShorthand="myHoursObj" name="Therapy_Hour__c" fields="Id,Name,Appointment_Type__c,Approver_Note__c,End_Time__c,Narrative_Note__c,Start_Time__c,Status__c,pbsLastName__c,pbsFirstName__c,createdDate,Number_of_Hours__c" />
     </apex:remoteObjects>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+        div#container {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+        }
+ 
+        div[data-role="header"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+ 
+        div[.ui-content] {
+            position: absolute;
+            top: 41px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+ 
+        .ui-content {
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
     
+            /* iOS specific fix, don't use it on Android devices */
+        .ui-content > * {
+            -webkit-transform: translateZ(0px);
+        }
+    </style>    
     <script type="text/javascript">
         //if(self != top) { top.location = self.location; }
         var $j = jQuery.noConflict();
@@ -65,7 +98,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
                         table += '<tr><td><strong>End Time:<strong></td><td>' + formatDateTime(record.get("End_Time__c")) + '</td></tr>';
                         table += '<tr><td><strong>Number of Hours:<strong></td><td>' + record.get("Number_of_Hours__c") + '</td></tr>';
                         table += '<tr><td><strong>My Notes:<strong></td><td>' + record.get("Narrative_Note__c") + '</td></tr>';
-                        table += '<tr><td><strong>Approvers Notes:<strong></td><td>' + record.get("Approver_Note__c") + '</td></tr>';
+                        table += '<tr><td><strong>Approvers Notes:<strong></td><td>' + (record.get("Approver_Note__c") == undefined  ? '' : record.get("Approver_Note__c") ) + '</td></tr>';
                         table += '</table>';
                         $j('#myHoursDetail').html(table);
                         $j.mobile.changePage('#detailpage', {changeHash: true});
@@ -113,7 +146,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
             });
             $j('.datetime').on('change', function(e) {
                 var hoursDiff = moment(document.getElementById('endDateTime').value).diff(moment(document.getElementById('startDateTime').value),'Hours', true);
-                $j('#numberOfHours').html('Number of hours: ' + (isNaN(hoursDiff) ? '0' : hoursDiff ) );
+                $j('#numberOfHours').html('Number of hours: ' + (isNaN(hoursDiff) ? '0' : hoursDiff.toFixed(2) ) );
             });
         }
         function getPbs() {
@@ -162,6 +195,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
     </script>
 </head>
 <body>
+    <div id="container">
     <div data-role="page" data-theme="a" id="listpage" data-dom-cache="true">                
         <div data-role="header" data-position="fixed" data-theme="a">
             <h2>My Hours</h2>
@@ -187,7 +221,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
         </div>
         <div role="main" class="ui-content">
             <form id="myForm">
-                <h2 style="color:red" id="error"></h2>
+                <span style="color:red" id="error"></span>
                 <div data-role="fieldcontain" class="ui-field-contain">
                     <label for="selectprograms">Program Location:</label>
                     <select name="selectprograms" id="selectprograms"  onChange="getPbs();">
@@ -219,10 +253,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
                     <label for="endDateTime">End Time:</label>
                     <input type="datetime-local" id="endDateTime" name="endDateTime" class="datetime"/>
                 </div>
-                <div data-role="fieldcontain" class="ui-field-contain">
-                    <label for="numberOfHours"></label>
-                    <div style="color:red" id="numberOfHours"></div>
-                </div>
+                <span style="color:red; width: 100%; padding-left: 1em;" id="numberOfHours"> </span>
                 <div data-role="fieldcontain" class="ui-field-contain">
                     <label for="narrativeNotes">Notes:</label>
                     <textarea rows="3" id="narrativeNotes" name="narrativeNotes"></textarea>
@@ -234,7 +265,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
             </form>
         </div> 
     </div>
-    
+    </div>
     </body>
 </html>        
 </apex:page>
