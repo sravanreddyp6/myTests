@@ -48,9 +48,12 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>NOTES Authorizations are records from AVATAR for Persons Being Served showing their authorized units and services that can be performed by The MENTOR Network. This should be populated by an integration with AVATAR. Authorizations are master-detail to Service Assignments.</description>
     <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Admission__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
@@ -226,6 +229,27 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Esigned_At__c</fullName>
+        <externalId>false</externalId>
+        <label>Esigned At</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Esigned_By__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Esigned By</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Authorizations</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Funding_Source__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <description>lookup to funding source - optional</description>
@@ -285,6 +309,17 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Other_Authorization_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Other Authorization Type</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -421,6 +456,81 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Rate_unit__c</fullName>
+        <externalId>false</externalId>
+        <label>Per</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Reason_for_New_Authorization__c</fullName>
+        <externalId>false</externalId>
+        <label>Reason for New Authorization</label>
+        <picklist>
+            <picklistValues>
+                <fullName>New Authorization</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>New Payer</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>New Contract</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Contract Change</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Level/Rate Change</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Error on Finalized Authorization</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Received_Date_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>Received Date/Time</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
     </fields>
     <fields>
         <fullName>Received_From__c</fullName>
@@ -562,12 +672,70 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Service_Being_Funded_String__c</fullName>
+        <externalId>false</externalId>
+        <label>Item/Service</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Taken_By__c</fullName>
+        <externalId>false</externalId>
+        <label>Taken By</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Type__c</fullName>
         <externalId>false</externalId>
         <label>Authorization Type</label>
         <picklist>
             <picklistValues>
+                <fullName>1:1 Sitter</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Bed Hold</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Bed Holds</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Defined Stay</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DME</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>High Cost Pharmacy</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>Initial</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Open Ended Charge</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Open Ended Stay</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Single Charge</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -579,23 +747,7 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>DME</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
                 <fullName>Transportation</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>1:1 Sitter</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Bed Holds</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -645,6 +797,56 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             <picklist>Authorized_Provider__c</picklist>
             <values>
                 <fullName>Cambridge Family %26 Children%27s Service %28CFCS%29</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Reason_for_New_Authorization__c</picklist>
+            <values>
+                <fullName>Contract Change</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Error on Finalized Authorization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Level%2FRate Change</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Authorization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Contract</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Payer</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -716,25 +918,71 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Rate_unit__c</picklist>
+            <values>
+                <fullName>Day</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hour</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Month</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Unit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Week</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Reason_for_New_Authorization__c</picklist>
+            <values>
+                <fullName>Contract Change</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Error on Finalized Authorization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Level%2FRate Change</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Authorization</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Contract</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Payer</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Type__c</picklist>
             <values>
-                <fullName>1%3A1 Sitter</fullName>
+                <fullName>Bed Hold</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Bed Holds</fullName>
+                <fullName>Defined Stay</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>DME</fullName>
+                <fullName>Open Ended Charge</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>High Cost Pharmacy</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Initial</fullName>
+                <fullName>Open Ended Stay</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -742,15 +990,7 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
                 <default>false</default>
             </values>
             <values>
-                <fullName>Stay</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Stay - Open Ended</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Transportation</fullName>
+                <fullName>Single Charge</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
