@@ -656,9 +656,7 @@
         <apex:pageBlock mode="edit">
             <apex:pageblockButtons location="bottom" rendered="{!AND(ISNULL(personBeingRefRecord.Id),ISNULL(personBeingServedRecord.Id))}">
                 <apex:commandButton value="Create Person Being Referred" id="createPBRButton" action="{!createPBR}" rendered="{!ISNULL(personBeingRefRecord.Id)}" />
-                <apex:actionRegion >
-                	<apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}" html-formnovalidate="formnovalidate" />
-                </apex:actionRegion>
+                <apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}" html-formnovalidate="formnovalidate" />
             </apex:pageblockButtons>
 
             <apex:pageblockButtons location="Top">
