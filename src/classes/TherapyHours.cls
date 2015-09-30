@@ -15,14 +15,15 @@ global with sharing class TherapyHours {
     
     @RemoteAction
     global static void saveFields(String dataObj) {
-            map<String, String> values = (Map<String, String>) JSON.deserialize(dataObj, map<String, String>.class);    
-            system.debug(dataObj);
+            map<String, String> values = (Map<String, String>) JSON.deserialize(dataObj, map<String, String>.class);
+            system.debug(values);    
             Therapy_Hour__c therapyHr = new Therapy_Hour__c();
             therapyHr.Service_Assignment__c = values.get('pbsList');
             therapyHr.Appointment_Type__c = values.get('entryType');
-            therapyHr.Start_Time__c = DateTime.valueOf(values.get('startDateTime').length() == 19 ? values.get('startDateTime').replace('T',' ') : values.get('startDateTime').replace('T',' ')+ ':00' );
-            therapyHr.End_Time__c = DateTime.valueOf(values.get('endDateTime').length() == 19 ? values.get('endDateTime').replace('T',' ') : values.get('endDateTime').replace('T',' ')+ ':00' );
+            therapyHr.Start_Time__c = DateTime.valueOf(values.get('startDateTime').replace('T',' ').substringBeforeLast(':') + ':00');
+            therapyHr.End_Time__c = DateTime.valueOf(values.get('endDateTime').replace('T',' ').substringBeforeLast(':') + ':00');
             therapyHr.Narrative_Note__c = values.get('narrativeNotes');
+            therapyHr.Status_Time__c = Datetime.now();
             insert therapyHr;
     }
 }
