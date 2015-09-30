@@ -236,7 +236,11 @@ public with sharing class Shift_Note_Basic {
             insert attachmentPDF;
             /**/
             if(!note.No_approval_Needed__c){
-                return new PageReference('/p/process/Submit?retURL=%2F'+note.id+'&id='+note.id);
+            // Create an approval request for the this evaluation
+            Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
+            req1.setObjectId(note.id);
+            req1.setNextApproverIds(new Id[]{note.Approval_User__c});
+            Approval.ProcessResult result = Approval.process(req1);
             }
             update note;
             return new PageReference('/'+note.id);

@@ -8,7 +8,7 @@ public with sharing class ServiceAssignmentClosure_Approval {
 
 	public ServiceAssignmentClosure_Approval(ApexPages.StandardController controller) {
 		//this.theServAssignClose = (Service_Assignment_Closure__c)controller.getRecord();
-		theServAssignClose = [ SELECT No_Approval_Needed__c, Service_Assignment__c, Discharge_Type__c, Placement_Status_at_Discharge__c, Reason_for_Discharge__c,
+		theServAssignClose = [ SELECT No_Approval_Needed__c, Approver__c, Service_Assignment__c, Discharge_Type__c, Placement_Status_at_Discharge__c, Reason_for_Discharge__c,
 								Primary_Treatment_Goal__c, FCS_Staff_Report__c, Family_Individual_Report__c, Family_Individual_Rating__c, Follow_up_Request_Received__c,
 								Aftercare_Plan_Services__c, Service_Assignment__r.Person_Being_Served__c, Service_Assignment__r.Admission__c, Status__c 
 								FROM Service_Assignment_Closure__c WHERE Id = :theServAssignClosureId ];	
@@ -105,8 +105,13 @@ public with sharing class ServiceAssignmentClosure_Approval {
 	            }
 	            else {
 	            	update theServAssignClose;
-					return new PageReference('/p/process/Submit?retURL=%2F'+theServAssignClose.Id +'&id='+theServAssignClose.id);
-	            }
+	             	// Create an approval request for the this evaluation
+           			Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
+            		req1.setObjectId(theServAssignClose.id);
+            		req1.setNextApproverIds(new Id[]{theServAssignClose.Approver__c});
+            		Approval.ProcessResult result = Approval.process(req1);
+					return new PageReference('/'+theServAssignClose.id);              
+                }
 			}
 			catch(Exception e) {
 				addError(e.getMessage());
