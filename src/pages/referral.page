@@ -656,7 +656,9 @@
         <apex:pageBlock mode="edit">
             <apex:pageblockButtons location="bottom" rendered="{!AND(ISNULL(personBeingRefRecord.Id),ISNULL(personBeingServedRecord.Id))}">
                 <apex:commandButton value="Create Person Being Referred" id="createPBRButton" action="{!createPBR}" rendered="{!ISNULL(personBeingRefRecord.Id)}" />
-                <apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}" />
+                <apex:actionRegion >
+                	<apex:commandButton value="Cancel" id="cancelButton" action="{!cancel}" html-formnovalidate="formnovalidate" />
+                </apex:actionRegion>
             </apex:pageblockButtons>
 
             <apex:pageblockButtons location="Top">
@@ -671,8 +673,8 @@
                             
                 <apex:pageBlockSectionItem helpText="First Name is required to convert this referral to Admission">
                     <apex:outputLabel value="First Name" />
-                         <apex:outputPanel  layout="block" >
-                            <apex:outputPanel  layout="block" />
+                         <apex:outputPanel layout="block" >
+                            <apex:outputPanel layout="block" />
                             <apex:inputText value="{!personBeingRefRecord.First_Name__c}" tabindex="10"  required="{!ReferralRecordType =='NeuroRestorative'}"  styleclass="refRequiedFields" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
@@ -683,8 +685,8 @@
                         
                          <apex:pageBlockSectionItem helpText="Last Name is required to convert this referral to Admission">
                     <apex:outputLabel value="Last Name" />
-                         <apex:outputPanel  layout="block" >
-                            <apex:outputPanel  layout="block" />
+                         <apex:outputPanel layout="block" >
+                            <apex:outputPanel layout="block" />
                             <apex:inputText value="{!personBeingRefRecord.Last_Name__c}"  tabindex="10"  required="{!ReferralRecordType =='NeuroRestorative'}"  styleclass="refRequiedFields" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem> 
@@ -693,8 +695,8 @@
                 <apex:inputField value="{!personBeingRefRecord.Marital_Status__c}" taborderhint="2"  />
                 <apex:pageBlockSectionItem helpText="Date of Birth is required to convert this referral to Admission">
                     <apex:outputLabel value="Date of Birth" />
-                         <apex:outputPanel  layout="block" >
-                            <apex:outputPanel  layout="block" />
+                         <apex:outputPanel layout="block" >
+                            <apex:outputPanel layout="block" />
                             <apex:inputField value="{!personBeingRefRecord.Date_of_Birth__c}" taborderhint="1" styleclass="refRequiedFields" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
@@ -725,8 +727,8 @@
                
                <apex:pageBlockSectionItem helpText="Select the person's legal gender.Gender is required to convert this referral to Admission">
                     <apex:outputLabel value="Gender" />
-                         <apex:outputPanel  layout="block" >
-                            <apex:outputPanel  layout="block" />
+                         <apex:outputPanel layout="block" >
+                            <apex:outputPanel layout="block" />
                             <apex:inputField value="{!personBeingRefRecord.Gender__c}" taborderhint="1" styleclass="refRequiedFields"/>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem> 
