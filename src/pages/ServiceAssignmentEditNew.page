@@ -385,7 +385,7 @@
         <!-- end seizure actions-->
 
         <!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
-        <apex:pageBlock mode="maindetail"  >
+        <apex:pageBlock id="SAblock" mode="maindetail"  >
         	<apex:pageBlockSection id="_Alt1_Header" title="Service Assignment{!if(editSA==true,' Edit','')}" collapsible="false">
         	</apex:pageBlockSection>
         	<apex:pageBlockButtons >
@@ -429,7 +429,7 @@
                     <apex:outputPanel >
                         <apex:actionRegion >
                         <apex:inputField id="saStatus" value="{!theServAssign.Status__c}"  html-data-countInFormProgress="1"  >
-                            <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpCompletionMonitor();">
+                            <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpCompletionMonitor();setUpFields();">
                             </apex:actionSupport>
                         </apex:inputField>
                         </apex:actionRegion>                    
@@ -893,7 +893,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY' && servicelocation.Setting__c == 'Residential'}" >
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY'}" >
                     <apex:outputLabel for="childGoalStart" value="Child Service Goal at Start of Service" />
                     <apex:outputPanel id="serviceGoalPanel">
                         <apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c == null}">
@@ -910,7 +910,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY' && (servicelocation.Setting__c == 'Residential' || servicelocation.Setting__c == 'Non-Residential' || servicelocation.Setting__c == null )}" >
+                <apex:pageBlockSectionItem rendered="{!((vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY' )}" >
                     <apex:outputLabel for="childPermGoalStart" value="Child Permanency Goal at Start of Service" />
                     <apex:outputPanel id="permanencyGoalPanel">
                         <apex:outputPanel rendered="{!theServAssign.Child_Service_Goal__c == null}">
@@ -1052,7 +1052,7 @@
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Service Assignment End" id="saEndSectionEdit" collapsible="true" columns="2" showHeader="true" rendered="{!editSA}" >
-                <apex:pageBlockSectionItem helpText="This person's service is ending because The Network no longer owns this operation" rendered="{!theServAssign.Status__c == 'Inactive'}" >
+                <apex:pageBlockSectionItem helpText="This person's service is ending because The MENTOR Network no longer owns this operation" rendered="{!theServAssign.Status__c == 'Inactive'}" >
                     <apex:outputLabel value="Service Ended via Business Divested?" />
                     <apex:outputPanel >
                         <div class="requiredInput">
@@ -1110,35 +1110,34 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && ((!AssessmentOnly && ($User.Operating_Group__c == 'Redwood'||$User.Operating_Group__c == 'Cambridge'|| $User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'))||$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'))}">
+                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && ((!AssessmentOnly && (vfVarIsRW||vfVarIsCB|| vfVarIsCM))||isNR))}">
                  <apex:outputLabel value="Was dissatisfaction the reason for service ending?" />
                     <apex:outputPanel ><apex:actionRegion >
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
-                            <apex:inputField value="{!theServAssign.Was_dissatisfaction_reason_for_service_e__c}"  >
-                            <apex:actionSupport event="onchange" status="pageProcessing" reRender="ServAssignDetail,saEndSectionEdit,dissatisfactionpanel1,dissatisfactionpanel2"/>
+                            <apex:inputField value="{!theServAssign.Was_dissatisfaction_reason_for_service_e__c}" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.myFRM.SAblock.saEndSectionEdit.dissatisfactionPanel1.dis1}&quot;,&quot;{!$Component.myFRM.SAblock.saEndSectionEdit.dissatisfactionPanel1.whoDissatisfied}&quot;,&quot;{!$Component.myFRM.SAblock.saEndSectionEdit.dissatisfactionPanel2.dis2}&quot;,&quot;{!$Component.myFRM.SAblock.saEndSectionEdit.dissatisfactionPanel2.dissatisfactionReason}&quot;] }"  >
                             </apex:inputField>
                         </div></apex:actionRegion>
                      </apex:outputPanel> 
                  </apex:pageBlockSectionItem>
                
-                     <apex:pageBlockSectionItem id="dissatisfactionpanel1" rendered="{!(theServAssign.Status__c == 'Inactive' && theServAssign.Was_dissatisfaction_reason_for_service_e__c =='Yes'&& ((!AssessmentOnly && ($User.Operating_Group__c == 'Redwood'||$User.Operating_Group__c == 'Cambridge'|| $User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'))||$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'))}">
-                        <apex:outputLabel value="Who was dissatisfied?" />
+                     <apex:pageBlockSectionItem id="dissatisfactionPanel1" rendered="{!(theServAssign.Status__c == 'Inactive' && ((!AssessmentOnly && (vfVarIsRW||vfVarIsCB|| vfVarIsCM))||isNR))}">
+                        <apex:outputLabel id="dis1" value="Who was dissatisfied?" />
                         <apex:outputPanel >
 	                        <div class="requiredInput">
 	                            <div class="requiredBlock"></div>
-	                            <apex:inputField value="{!theServAssign.Who_was_dissatisfied__c}"  />
+	                            <apex:inputField id="whoDissatisfied" value="{!theServAssign.Who_was_dissatisfied__c}"  />
 	                        </div>
                         </apex:outputPanel>
                       </apex:pageBlockSectionItem>
                     
                       
-					 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && theServAssign.Was_dissatisfaction_reason_for_service_e__c == 'Yes'&& ((!AssessmentOnly && ($User.Operating_Group__c == 'Redwood'||$User.Operating_Group__c == 'Cambridge'|| $User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'))||$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'))}">
-                        <apex:outputLabel value="Primary Reason for Dissatisfaction" />
-                            <apex:outputPanel id="dissatisfactionpanel2" >
+					 <apex:pageBlockSectionItem id="dissatisfactionPanel2" rendered="{!(theServAssign.Status__c == 'Inactive' && ((!AssessmentOnly && (vfVarIsRW||vfVarIsCB|| vfVarIsCM))||isNR))}">
+                        <apex:outputLabel id="dis2" value="Primary Reason for Dissatisfaction" />
+                            <apex:outputPanel >
                         	  <div class="requiredInput">
                             	<div class="requiredBlock"></div>
-                            	<apex:inputField value="{!theServAssign.Primary_Reason_for_Dissatisfaction__c}"  />
+                            	<apex:inputField id="dissatisfactionReason" value="{!theServAssign.Primary_Reason_for_Dissatisfaction__c}"  />
                         	  </div>  
                         	</apex:outputPanel>
                     </apex:pageBlockSectionItem>
@@ -1157,6 +1156,25 @@
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}" >
+                    <apex:outputLabel value="End of Service Status" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.End_of_Service_Status__c}" html-data-visibility-rules="{&quot;Other&quot;: [&quot;{!$Component.myFRM:SAblock:saEndSectionEdit:otherLabel:specifyOther_label}&quot;,&quot;{!$Component.myFRM:SAblock:saEndSectionEdit:otherLabel:endofserviceOther}&quot;] }"  />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem id="otherLabel" rendered="{!theServAssign.Status__c == 'Inactive'}" >
+                    <apex:outputLabel id="specifyOther_label" value="Specify Other" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField id="endofserviceOther" value="{!theServAssign.Specify_Other__c}"  />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 
             </apex:pageBlockSection>
             
@@ -3059,7 +3077,7 @@ END: Uncomment to have the element collapsed by default -->
 
 
         function saveLocation() {
-
+            
             ServiceAssignmentExt.loadServiceLocation(j$('input[id$=lookupElement_lkid]').val(),
                 function (result, event) {
                     if (event.status) {
@@ -3075,6 +3093,7 @@ END: Uncomment to have the element collapsed by default -->
                             j$('[id$=LocationField]').val(result.City__c);
                             j$('[id$=ServiceLineField]').val(sl);
                          */
+                        /**alert(result.Setting__c);**/
                         j$('input[id$=currentProgramID]').val(result.ProgramID__c);
                         j$('input[id$=currentProgramID]').change();
                     }
