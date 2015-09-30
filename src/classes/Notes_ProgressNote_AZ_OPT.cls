@@ -261,6 +261,9 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 goalsOrObSelected='NoGoal';
             }  
             list<string> finallisttocreate = new list<string>();
+            if (!Test.isRunningTest()) {
+                controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
+            }
             pn = (Progress_Note__c) controller.getRecord();
             progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,Signature_on_File__c ,Service_Location__c ,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
@@ -346,7 +349,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
                 pbsname = [SELECT Name FROM Contact WHERE Id=:pbsId].Name;
             }
             if (!Test.isRunningTest()) {
-                controller.addFields(new string[] {'RecordType.Name'});
+                controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
             }
             pn = (Progress_Note__c) controller.getRecord();
             pn.RecordTypeId = AZ_OPT_ID;
@@ -354,7 +357,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             pn.End_Time__c = datetime.now();
             String programId ;
             if( ApexPages.currentPage() != null){
-                theServAssign = [ SELECT Id, Name, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :ApexPages.currentPage().getParameters().get('ServAssignId') ];
+                theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :ApexPages.currentPage().getParameters().get('ServAssignId') ];
                 theServAssignId = theServAssign.Id;
                 pbsName = theServAssign.Person_Being_Served__c;
                 programid = theServAssign.service_location__r.programid__c;
@@ -369,11 +372,15 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         else if (dispMode == 'Inlineedit'){
             NewBlock = true;
             inlinemode = true;
-            insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id'); 
+            insertedProgressNoteId = ApexPages.currentPage().getParameters().get('id');
+            if (!Test.isRunningTest()) {
+                controller.addFields(new string[] {'RecordType.Name', 'Service_Assignment__c','Service_Assignment__r.Start_Date__c', 'Service_Assignment__r.End_Date__c'});
+            }
             pn = (Progress_Note__c) controller.getRecord();
-            progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c ,Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
+            progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
             pnOverlap = new List<Progress_Note__c>();
+            theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :pn.Service_Assignment__c];
             theServAssignId =  pnedit.Service_Assignment__c ;
             pbsName = pnedit.Service_Assignment__r.Person_Being_Served__c;
             admissionId = pnedit.Service_Assignment__r.Admission__c;  
@@ -641,6 +648,22 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             ErrorMsg = ErrorMsg + 'Start Time Greater';
             return null;
         }
+        if((pn.Date_of_Service__c > system.today()) || ( pn.start_Time__c > system.NOW() ) || ( pn.End_Time__c > system.NOW() )){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'All service dates and times must have occurred in the past. Please check your dates and try again.'));     
+            ErrorMsg = ErrorMsg + 'Start,End Time Past';
+            return null;
+        }
+        if(pn.Start_Time__c > system.now()){
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Start time cannot be in the future'));     
+            ErrorMsg = ErrorMsg + 'Start time future';
+            return null;
+        }
+        if((theservAssign.Start_Date__c > pn.Start_Time__c.date()) || (theservassign.End_Date__c < pn.Start_Time__c.date()) || ( theservassign.Start_Date__c > pn.End_Time__c.date()) || (theservassign.End_Date__c < pn.End_Time__c.date())){
+          
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
+            ErrorMsg = ErrorMsg + 'Date Range Incorrect';
+            return null;
+        }
         if(decimal.valueof((pn.End_Time__c.getTime())/1000/60 - (pn.Start_Time__c.getTime())/1000/60) > 120.0){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The total duration cannot be more than 120 mins. Please correct start and/or end time for accuracy'));     
             ErrorMsg = ErrorMsg + 'More Than 120';
@@ -678,30 +701,9 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,start_time__c,Approval_User__c, end_time__c, status__c, Owner.Name ,ownerid from Progress_Note__c where id != :insertedprogressnoteId and disregard_note__c = false and Person_Being_Served__c = :pbsName and Admission__c = :admissionId and  Service_Assignment__c = :theServAssignId and Action_Plan__c = :ActivePlanId and ((start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c) or (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)or ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c ) ) ]; 
         }
         else{
-            samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,Approval_User__c,start_time__c, end_time__c, status__c, Owner.Name,ownerid from Progress_Note__c 
-                where Person_Being_Served__c = :pbsName
-                and disregard_note__c = false
-                and Admission__c = :admissionId
-                and  Service_Assignment__c = :theServAssignId
-                and Action_Plan__c = :ActivePlanId
-                and (
-                    (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
-                    or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)
-                    or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )
-                )
-            ];
+            samepbsNotes = [select id, Name, Person_being_served__r.Name, Action_Plan__c,Approval_User__c,start_time__c, end_time__c, status__c, Owner.Name,ownerid from Progress_Note__c where Person_Being_Served__c = :pbsName and disregard_note__c = false and Admission__c = :admissionId and  Service_Assignment__c = :theServAssignId and Action_Plan__c = :ActivePlanId and ((start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c) or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c) or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )) ];
         }
-        list<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,Approval_User__c, end_time__c, status__c, Owner.Name,ownerid from Progress_Note__c 
-            where id != :insertedprogressnoteId 
-            and disregard_note__c = false
-            and Person_Being_Served__c != :pn.Person_Being_Served__c
-            and OwnerId =: UserInfo.getUserId()
-            and (
-                (start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c)
-                or   (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c)
-                or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )
-            ) 
-        ]; 
+        list<Progress_Note__c> diffpbsNotes = [SELECT Id, Name, Person_being_served__r.Name, start_time__c,Approval_User__c, end_time__c, status__c, Owner.Name,ownerid from Progress_Note__c where id != :insertedprogressnoteId and disregard_note__c = false and Person_Being_Served__c != :pn.Person_Being_Served__c and OwnerId =: UserInfo.getUserId() and ((start_time__c >= :pn.start_Time__c and start_time__c <= :pn.end_time__c) or (end_time__c >= :pn.start_time__c and end_time__c <= :pn.end_time__c) or  ( start_time__c <= :pn.start_time__c and end_time__c >= :pn.end_time__c )) ]; 
         overlappingProgressNote.addall(samepbsNotes);
         overlappingProgressNote.addall(diffpbsNotes);
         if(overlappingProgressNote.size()>0){

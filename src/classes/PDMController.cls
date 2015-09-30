@@ -161,7 +161,8 @@ searchingForQuery = queryString;
 				QueryWhere =  BuildWhere( QueryWhere , 'Last_Name__c like \'%' + lastName +'%\' ');
 				}
 				if(operationGroup!=null && operationGroup.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
+					if(operationGroup.startsWithIgnoreCase('Has')) operationGroup = 'Cambridge';
+					QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
 				}
 				if(searchTitle!=null && searchTitle.length() > 0) {
 				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like \'%' + searchTitle +'%\' ');
