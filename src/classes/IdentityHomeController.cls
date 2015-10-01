@@ -28,7 +28,7 @@ public with sharing class IdentityHomeController {
     private Integer limitSizeDel = 10;
     @testVisible  private String searchType{set;get;}
 	@testVisible private String tmlUserQuery;
-	@testVisible private noOfRecords {get;set;}
+	@testVisible private Integer noOfRecords {get;set;}
     public List<Attachment> attachments {get; set;}
     Date currentDate = Date.today();
     Date endDate = currentDate.addDays(30);
