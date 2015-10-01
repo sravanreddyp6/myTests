@@ -23,14 +23,14 @@
             if (e == 1){ 
 	            countedItems.push( jQuery(element) );
 	            jQuery(element).on("change", function (event) {
-	                   calcCompletionScore(event.target);
+	              //     calcCompletionScore(event.target);
 	                }); 
 	            if ( !jQuery(element).val()  ){}
-	            	jQuery(element).css('border-left','3px solid #017dc3');
-	            	jQuery(element).css('padding-left','2px');
+	            	//jQuery(element).css('border-left','3px solid #017dc3');
+	            	//jQuery(element).css('padding-left','2px');
 		            if( {!viewMode} ){ }
 		            
-		            	jQuery("label[for='"+jQuery(element).attr('id')+"']").css({'border-right':'2px solid #017dc3','padding-right':'1px'});
+		            	//jQuery("label[for='"+jQuery(element).attr('id')+"']").css({'border-right':'2px solid #017dc3','padding-right':'1px'});
 		            	            	
 	               
 
@@ -42,7 +42,7 @@
             //console.log('test 2 '+e);
             var score = 0;
             var total = countedItems.length;
-            var myhtml = '<br/><table style="display: block;">';
+            var myhtml = '<br/><table style="display: none;">';
             for (i = 0; i < countedItems.length; i++) { 
                 myhtml += '<tr>';
                 if ( countedItems[i].val()  ){
