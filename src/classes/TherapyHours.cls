@@ -24,6 +24,9 @@ global with sharing class TherapyHours {
             therapyHr.End_Time__c = DateTime.valueOf(values.get('endDateTime').replace('T',' ').substringBeforeLast(':') + ':00');
             therapyHr.Narrative_Note__c = values.get('narrativeNotes');
             therapyHr.Status_Time__c = Datetime.now();
+            
+            system.debug('Total Number of minutes being submitted: ' + (therapyHr.End_Time__c.getTIme() - therapyHr.Start_Time__c.getTime())/60000 );
+            
             insert therapyHr;
     }
 }

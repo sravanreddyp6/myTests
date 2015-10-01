@@ -3,7 +3,7 @@
     <fieldUpdates>
         <fullName>update_therapy_hour_name</fullName>
         <field>Name</field>
-        <formula>pbsFirstName__c+&apos; &apos;+pbsLastName__c+ &apos; &apos;+ TEXT(MONTH(DATEVALUE(Start_Time__c)))+ &apos;/&apos;+TEXT(DAY(DATEVALUE(Start_Time__c)))+&apos;/&apos;+TEXT(YEAR(DATEVALUE(Start_Time__c)))</formula>
+        <formula>pbsFirstName__c+&apos; &apos;+pbsLastName__c+ &apos; &apos;+ TEXT(MONTH(DATEVALUE(Start_Time__c)))+ &apos;/&apos;+TEXT(DAY(DATEVALUE(Start_Time__c)))+&apos;/&apos;+RIGHT(TEXT(YEAR(DATEVALUE(Start_Time__c))),2)</formula>
         <name>update therapy hour name</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Formula</operation>
