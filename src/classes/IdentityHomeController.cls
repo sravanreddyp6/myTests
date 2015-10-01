@@ -11,8 +11,8 @@ public with sharing class IdentityHomeController {
     public List<TMN_User__c> Records {get; set;}
     public List<TMN_User__c> mySubordinates {get; set;}
     public List<TMN_User__c> searchResult {get; set;}
-    public List<TMN_User__c> searchDelegateResult {get; set;}
-    public List<TMN_User__c> searchNonEmpResult {get; set;}
+    public List<TMN_User__c> searchDelegateResult ;
+    public List<TMN_User__c> searchNonEmpResult ;
     public List<TMN_User__c> tmnUserList {get; set;}
     public List<TMN_User_Delegate__c> myDelegation {get; set;}
     public List<PermissionSetAssignment> fullAccess {get; set;}
@@ -26,6 +26,9 @@ public with sharing class IdentityHomeController {
     private Integer totalRecsDel = 0;
     private Integer offsetSizeDel = 0;
     private Integer limitSizeDel = 10;
+    @testVisible  private String searchType{set;get;}
+	@testVisible private String tmlUserQuery;
+	@testVisible private noOfRecords {get;set;}
     public List<Attachment> attachments {get; set;}
     Date currentDate = Date.today();
     Date endDate = currentDate.addDays(30);
@@ -46,6 +49,8 @@ public with sharing class IdentityHomeController {
     public String tmnEmail = t.Email__c;                          
     public Boolean onloadDialog {set;get;}
     public IdentityHomeController() {
+       searchDelegateResult = new List<TMN_User__c> (); 
+        searchNonEmpResult = new List<TMN_User__c> (); 
         Records = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c 
                    FROM TMN_User__c 
                    WHERE lastvieweddate != null 
@@ -141,23 +146,12 @@ public with sharing class IdentityHomeController {
     // Get list of direct reports who are employees for user.
     List<TMN_User__c> myEmployees;
     public List<TMN_User__c> getMyEmployees() {
-        myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,BAA_Signed__c
+        myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,Salesforce_User_Account__c 
                        FROM TMN_User__c 
                        WHERE Manager_Email__c=:aliasName 
                        AND Current_Person_Type__c IN ('Employee')
                        AND Job_Status__c IN ('Active') ];
-           List<TMN_User__c>    employeeWithSFAccount = new List<TMN_User__c>();        
-                       for(TMN_User__c tmn:myEmployees){
-                       	String email = tmn.Email__c;
-                       		if(email!=null && email.length() >0){ 
-                       List<User> user = [select id,email from user where username like :'%'+email.subString(0,email.indexOf('@')) +'%'];
-                       			if(user!=null&&user.size()>0){
-                       				tmn.BAA_Signed__c = true;//using field only for display add delegate link in page
-                       			}
-                       		}
-                       		employeeWithSFAccount.add(tmn);
-                       }
-        return employeeWithSFAccount;    
+        return myEmployees;
     }
     
     //Get list of all direct reports for user.
@@ -302,72 +296,66 @@ public with sharing class IdentityHomeController {
         doQueryDel();
         showDelSrch();
     }
+    
+     public ApexPages.StandardSetController setCon {
+        get{
+            if(setCon == null){
+                setCon = new ApexPages.StandardSetController(Database.getQueryLocator(tmlUserQuery));
+                setCon.setPageSize(limitSizeDel);
+                noOfRecords = setCon.getResultSize();
+            }
+            if(noOfRecords == 0 && searchType.equals('Delegate') ) {
+                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found.')); 
+            } else if(noOfRecords == 0 && searchType.equals('Non-employee')) { 
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
+            }else if(noOfRecords > 0 && searchType.equals('Non-employee')){
+       			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
+              }              
+            return setCon;
+        }set;
+    }
+	Public List<TMN_User__c> getsearchDelegateResult(){
+        List<TMN_User__c> Tlist = new List<TMN_User__c>();
+        for(TMN_User__c t : (List<TMN_User__c>)setCon.getRecords()){
+            Tlist.add(t);
+        }
+        return Tlist;
+    }
+    
+    	Public List<TMN_User__c> getsearchNonEmpResult(){
+        List<TMN_User__c> Tlist = new List<TMN_User__c>();
+        for(TMN_User__c t : (List<TMN_User__c>)setCon.getRecords()){
+            Tlist.add(t);
+        }
+        return Tlist;
+    }
 
     //Delegate search      
     public PageReference doQueryDel(){
+        searchType = 'Delegate';
+    	setCon = null;
+        searchDelegateResult.clear();
         if (String.IsBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter a first name, last name or both.'));
         }else if (srchFNameDel.length()<2 && srchLNameDel.length()<2){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
         }else if (String.IsNotBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
-            totalRecsDel = [SELECT COUNT()
-                         FROM TMN_User__c
-                         WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%')
-                         AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];   
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,BAA_Signed__c 
-                                    FROM TMN_User__c 
-                                    WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%')
-                                    AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
-                                    ORDER BY Last_Name__c,First_Name__c
-                                    LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];              
+            tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__c  FROM TMN_User__c '; 
+            tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+   generatedKey2 +'%\') ';
+            tmlUserQuery += '  AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) ';
+            tmlUserQuery +=  '  ORDER BY First_Name__c,Last_Name__c';
         }else if (String.IsBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
-            totalRecsDel = [SELECT COUNT()
-                         FROM TMN_User__c
-                         WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%') 
-                         AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,BAA_Signed__c 
-                                    FROM TMN_User__c 
-                                    WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%')  
-                                    AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
-                                    ORDER BY Last_Name__c,First_Name__c
-                                    LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];                              
+            tmlUserQuery =  'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__c   FROM TMN_User__c'; 
+            tmlUserQuery += ' WHERE (Last_Name__c like \'%'+ generatedKey1 +'%\' OR Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\') ';  
+            tmlUserQuery += ' AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) ORDER BY First_Name__c,Last_Name__c';
         }else if (String.IsNotBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
-            totalRecsDel = [SELECT COUNT()
-                         FROM TMN_User__c 
-                         WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%') 
-                         OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
-                         OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%')
-                         OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
-                         AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,BAA_Signed__c 
-                                    FROM TMN_User__c 
-                                    WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%') 
-                                    OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
-                                    OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
-                                    OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
-                                    AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
-                                    ORDER BY Last_Name__c,First_Name__c 
-                                    LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];
-              if(searchDelegateResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found.')); 
-              }              
+            tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__c  FROM TMN_User__c';
+            tmlUserQuery +=' WHERE ((Last_Name__c like \'%'+  generatedKey1 +'%\' AND First_Name__c like \'%'+  generatedKey2 +'%\') ';
+            tmlUserQuery +=' OR (Preferred_Last_Name__c like \'%'+  generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+  generatedKey2 +'%\') ';
+            tmlUserQuery +=' OR (Last_Name__c like \'%'+  generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 
+            tmlUserQuery +=' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND First_Name__c like \'%'+ generatedKey2 +'%\')) ';
+            tmlUserQuery +=' AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\'))  ORDER BY First_Name__c,Last_Name__c' ;
         }
-        			if(!searchDelegateResult.isEmpty()){
-		           List<TMN_User__c>    employeeWithSFAccount = new List<TMN_User__c>();        
-                       for(TMN_User__c tmn:searchDelegateResult){
-                       	String email = tmn.Email__c;
-                       		if(email!=null && email.length() >0){ 
-                       List<User> user = [select id,email from user where username like :'%'+email.subString(0,email.indexOf('@')) +'%'];
-                       			if(user!=null&&user.size()>0){
-                       				tmn.BAA_Signed__c = true;//using field only for display add delegate link in page
-                       			}
-                       		}
-                       		employeeWithSFAccount.add(tmn);
-                       }
-                       searchDelegateResult = new List<TMN_User__c>();
-                        searchDelegateResult.addAll(employeeWithSFAccount);
-                        totalRecsDel = searchDelegateResult.size();
-        			}
         return null;
     }       
 
@@ -384,9 +372,12 @@ public with sharing class IdentityHomeController {
         generatedKey2 = srchFNameNonEmp;
         doQuery();
     }
-
+   
     //Non-employee search.      
     public PageReference doQuery(){
+        searchType = 'Non-employee';
+        setCon = null;
+        searchNonEmpResult.clear();
         if (String.IsBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter a first name, last name or both.'));
             btnDisable = true;
@@ -394,62 +385,23 @@ public with sharing class IdentityHomeController {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
             btnDisable = true;
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
-            totalRecsNE = [SELECT COUNT()
-                         FROM TMN_User__c 
-                         WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%') 
-                         ];   
-            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
-                                  FROM TMN_User__c 
-                                  WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like : generatedKey2 +'%') 
-                                  ORDER BY Last_Name__c,First_Name__c
-                                  LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
-            btnDisable = false;
-            showPopup();
-              if(searchNonEmpResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
-              }else if(searchNonEmpResult.size()>0){
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
-              }              
+             tmlUserQuery  = 'SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c FROM TMN_User__c '; 
+            tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 
+            tmlUserQuery += '  ORDER BY Last_Name__c,First_Name__c';
         }else if (String.IsBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
-            totalRecsNE = [SELECT COUNT()
-                         FROM TMN_User__c 
-                         WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%') 
-                         ];
-            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
-                                  FROM TMN_User__c 
-                                  WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like :  generatedKey1 +'%') 
-                                  ORDER BY Last_Name__c,First_Name__c
-                                  LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
-            btnDisable = false;
-            showPopup();
-              if(searchNonEmpResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
-              }else if(searchNonEmpResult.size()>0){
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create Non Employee Record to create the Non Employee record.'));
-              }                              
+             tmlUserQuery = 'SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c  FROM TMN_User__c '; 
+             tmlUserQuery += ' WHERE (Last_Name__c like \'%'+ generatedKey1 +'%\' OR Preferred_Last_Name__c like \'%'+  generatedKey1 +'%\') ';
+             tmlUserQuery += '  ORDER BY Last_Name__c,First_Name__c ';
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
-            totalRecsNE = [SELECT COUNT()
-                         FROM TMN_User__c 
-                         WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%') 
-                         OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
-                         OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
-                         OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) ];
-            searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
-                                  FROM TMN_User__c 
-                                  WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%') 
-                                  OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
-                                  OR (Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
-                                  OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%')) 
-                                  ORDER BY Last_Name__c,First_Name__c
-                                  LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
-            btnDisable = false;
-            showPopup();
-              if(searchNonEmpResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
-              }else if(searchNonEmpResult.size()>0){
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create Non Employee Record to create the Non Employee record.'));
-              }              
+             tmlUserQuery  = 'SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c FROM TMN_User__c '; 
+             tmlUserQuery += ' WHERE ((Last_Name__c like \'%'+  generatedKey1 +'%\' AND First_Name__c like \'%'+ generatedKey2 +'%\') '; 
+             tmlUserQuery += ' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 
+             tmlUserQuery += ' OR (Last_Name__c like \'%'+ generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+  generatedKey2 +'%\') ';
+             tmlUserQuery += ' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND First_Name__c like \'%'+  generatedKey2 +'%\'))  ORDER BY Last_Name__c,First_Name__c';
         }
+                btnDisable = false;
+                showPopup();
+        System.debug('tmlUserQuery' + tmlUserQuery);
         onloadDialog = false;
         return null;
     }      
@@ -547,75 +499,42 @@ public with sharing class IdentityHomeController {
         return null;
     }
 
-    //Pagination navigation methods
-    public void FirstPageNE(){
-        OffsetSizeNE = 0;
-        nonEmpSearch();
+ public Boolean hasNext {
+        get {
+            return setCon.getHasNext();
+        }
+        set;
     }
-    
-    public void previousNE(){
-        OffsetSizeNE = OffsetSizeNE - LimitSizeNE;
-        nonEmpSearch();
+    public Boolean hasPrevious {
+        get {
+            return setCon.getHasPrevious();
+        }
+        set;
     }
-    
-    public void nextNE(){
-        OffsetSizeNE = OffsetSizeNE + LimitSizeNE;
-        nonEmpSearch();
+  
+    public Integer pageNumber {
+        get {
+            return setCon.getPageNumber();
+        }
+        set;
     }
-    
-    public void LastPageNE(){
-        OffsetSizeNE = totalrecsNE - math.mod(totalRecsNE,LimitSizeNE);
-        nonEmpSearch();
+  
+   
+    public void previous() {
+        setCon.previous();
     }
-
-    public void FirstPageDel(){
-        OffsetSizeDel = 0;
-        delSearch();
+  
+    public void next() {
+        setCon.next();
     }
-    
-    public void previousDel(){
-        OffsetSizeDel = OffsetSizeDel - LimitSizeDel;
-        delSearch();
+        
+     public void first() {
+        setCon.first();
     }
-    
-    public void nextDel(){
-        OffsetSizeDel = OffsetSizeDel + LimitSizeDel;
-        delSearch();
+  
+    public void last() {
+        setCon.last();
     }
-    
-    public void LastPageDel(){
-        OffsetSizeDel = totalrecsDel - math.mod(totalRecsDel,LimitSizeDel);
-        delSearch();
-    }
-
-    public boolean getprevDel(){
-        if(OffsetSizeDel == 0)
-            return true;
-        else
-            return false;
-    }
-
-    public boolean getnxtDel(){
-        if((OffsetSizeDel + LimitSizeDel) > totalRecsDel)
-            return true;
-        else
-            return false;
-    }    
- 
-    public boolean getprevNE(){
-        if(OffsetSizeNE == 0)
-            return true;
-        else
-            return false;
-    }
-
-    public boolean getnxtNE(){
-        if((OffsetSizeNE + LimitSizeNE) > totalRecsNE)
-            return true;
-        else
-            return false;
-    }
-         
 }
 //Script to update Soundex Keys
 //List<TMN_User__c> tmnusers = [select id,name,Last_Name_Soundex_Key__c,First_Name_Soundex_Key__c 

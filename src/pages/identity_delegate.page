@@ -120,7 +120,7 @@
         <apex:form id="srchForm">
             <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" >
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rendered="{!dr.BAA_Signed__c}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rendered="{!dr.Salesforce_User_Account__c!=null }" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
                         <apex:param value="{!dr.Id}" assignTo="{!selectedID}" name="addSrchIdParam"/>
                     </apex:commandLink>
                 </apex:column>           
@@ -130,10 +130,10 @@
                 <apex:column headerValue="Manager" value="{!dr.Manager_Name__c}"/>
                 <apex:column headerValue="Operating Group" value="{!dr.Operating_Group__c}"/>                         
             </apex:pageBlockTable>
-                <apex:commandButton value="First Page" rerender="details" action="{!FirstPageDel}" disabled="{!prevDel}" status="loadingBusy"/>
-                <apex:commandButton value="Previous" rerender="details" action="{!previousDel}" disabled="{!prevDel}" status="loadingBusy"/>
-                <apex:commandButton value="Next" rerender="details" action="{!nextDel}" disabled="{!nxtDel}" status="loadingBusy"/>
-                <apex:commandButton value="Last Page" rerender="details" action="{!LastPageDel}" disabled="{!nxtDel}" status="loadingBusy"/>
+                <apex:commandButton value="First Page" rerender="details" action="{!first}" disabled="{!!hasPrevious}" status="loadingBusy"/>
+                <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!!hasPrevious}" status="loadingBusy"/>
+                <apex:commandButton value="Next" rerender="details" action="{!next}" disabled="{!!hasNext}" status="loadingBusy"/>
+                <apex:commandButton value="Last Page" rerender="details" action="{!last}" disabled="{!!hasNext}" status="loadingBusy"/>
         </apex:form>
     </apex:pageBlockSection>
     </apex:outputPanel>        
@@ -160,7 +160,7 @@
         <apex:form id="empForm" >
             <apex:pageBlockTable value="{!myEmployees}" var="e" id="empTable">
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rendered="{!e.BAA_Signed__c}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rendered="{!e.Salesforce_User_Account__c!=null }" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
                 </apex:column>

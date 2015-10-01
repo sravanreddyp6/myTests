@@ -283,10 +283,10 @@
                         <apex:commandButton value="Cancel" action="{!closePopup}"/>
                         <apex:commandButton value="Create Non Employee Record" action="{!newTmnUser}" id="createBtn"/>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <apex:commandButton value="First Page" rerender="details" action="{!FirstPageNE}" disabled="{!prevNE}" status="loadingBusy"/>
-                        <apex:commandButton value="Previous" rerender="details" action="{!previousNE}" disabled="{!prevNE}" status="loadingBusy"/>
-                        <apex:commandButton value="Next" rerender="details" action="{!nextNE}" disabled="{!nxtNE}" status="loadingBusy"/>
-                        <apex:commandButton value="Last Page" rerender="details" action="{!LastPageNE}" disabled="{!nxtNE}" status="loadingBusy"/>
+                        <apex:commandButton value="First Page" rerender="details" action="{!first}" disabled="{!!hasPrevious}" status="loadingBusy"/>
+                <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!!hasPrevious}" status="loadingBusy"/>
+                <apex:commandButton value="Next" rerender="details" action="{!next}" disabled="{!!hasNext}" status="loadingBusy"/>
+                <apex:commandButton value="Last Page" rerender="details" action="{!last}" disabled="{!!hasNext}" status="loadingBusy"/>
                     </apex:pageBlockButtons>
                     <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
                         <apex:column headerValue="Action" >
@@ -317,7 +317,6 @@
             <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayInfo}" >
                 <apex:form >
                     <apex:pageBlock title="{!theTMNUser.Name}" mode="view" >
-                        <apex:pageMessages />
                         <apex:pageblockButtons location="Bottom" >    
                         <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=theTMNUser.id])}"/>-->
                         <!--<apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>-->
@@ -359,8 +358,8 @@
                         <apex:outputField label="Address Line 1" value="{!theTMNUser.Office_Location__c}" />
                         <apex:outputField label="Zip" value="{!theTMNUser.Zip_Code__c}"/>
                         <apex:outputField label="Address Line 2" value="{!theTMNUser.Office_Location_2__c}"/>
-                        <apex:outputText label="Office Location" value="Yes"  rendered="{!theTMNUser.Office_Flag__c=='Y'}"/>
-                        <apex:outputText label="Office Location" value="No"  rendered="{!theTMNUser.Office_Flag__c!='Y'}"/>
+                        <apex:outputText label="Office Location" value="Y"  rendered="{!theTMNUser.Office_Flag__c=='Y'}"/>
+                        <apex:outputText label="Office Location" value="N"  rendered="{!theTMNUser.Office_Flag__c!='Y'}"/>
                         <apex:outputField label="City" value="{!theTMNUser.Work_City__c}" />
                         <apex:outputPanel ></apex:outputPanel>                                                                                                                                                                                                                                                                                                         
                     </apex:pageBlockSection>
