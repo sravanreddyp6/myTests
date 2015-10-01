@@ -61,6 +61,21 @@
 			padding: 2px;
 		}
 	</style>
+	
+<apex:pageBlock mode="maindetail"  >
+		<apex:pageBlockButtons location="top">	
+			<apex:outputPanel layout="none" rendered="{!(addEnabled && canCreate) || enableReportButton}">	
+				<apex:outputPanel layout="block" styleClass="blockbtns"  >
+					<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Adult')}" onclick="window.open('/{!AdultimmunizationReport}?pv0={!PBSName}'); return false;"/>
+					<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Child')}" onclick="window.open('/{!ChildimmunizationReport}?pv0={!PBSName}'); return false;"/>
+					<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign && (addEnabled && canCreate)}" />
+				</apex:outputPanel>
+				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign && (addEnabled && canCreate)}" />
+			</apex:outputPanel>	
+		</apex:pageBlockButtons>
+		
+		
+			
 	<apex:outputPanel rendered="{!!showTitle}">
 	<style>
 		/* if title is turned off, title is being set at the pageblock level so the add button has to come up higher */
@@ -84,14 +99,6 @@
 		</apex:outputPanel>
         </apex:pageBlockSectionItem>
 
-		<apex:outputPanel layout="none" rendered="{!(addEnabled && canCreate) || enableReportButton}">
-			<apex:outputPanel layout="block" styleClass="blockbtns"  >
-				<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Adult')}" onclick="window.open('/{!AdultimmunizationReport}?pv0={!PBSName}'); return false;"/>
-				<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Child')}" onclick="window.open('/{!ChildimmunizationReport}?pv0={!PBSName}'); return false;"/>
-				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign && (addEnabled && canCreate)}" />
-			</apex:outputPanel>
-			<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign && (addEnabled && canCreate)}" />
-		</apex:outputPanel>
 		<apex:outputPanel id="responseTableWrapper">
 				<apex:outputPanel rendered="{! formProgressLabel != null }" style="display: none;" >
 					<label for="{!uniqueId}progressInput" >{!formProgressLabel}</label>					
@@ -263,7 +270,7 @@
 			</apex:pageBlock>
 		</apex:outputPanel>
 	</apex:pageBlockSection>
-	<hr />
+
 	<apex:outputPanel layout="block" id="authenticationPanel" rendered="{!eSign}" style="display: none; ">
 		<apex:dynamicComponent componentValue="{!authentication}" />
 	</apex:outputPanel>
@@ -277,4 +284,5 @@
 		</apex:facet>
 		<apex:facet name="stop" />
 	</apex:actionStatus>
+</apex:pageBlock>	
 </apex:component>
