@@ -273,10 +273,4 @@
         <errorConditionFormula>(End_Time__c - Start_Time__c)*24*60 &gt; 180</errorConditionFormula>
         <errorMessage>The total duration cannot be more than 3 Hrs. Please correct start and/or end time for accuracy.</errorMessage>
     </validationRules>
-    <validationRules>
-        <fullName>Time_5min_increment</fullName>
-        <active>true</active>
-        <errorConditionFormula>MOD((End_Time__c - Start_Time__c)*24*60, 5) != 0</errorConditionFormula>
-        <errorMessage>Please enter time in 5 minutes increments.</errorMessage>
-    </validationRules>
 </CustomObject>
