@@ -7,7 +7,6 @@
      <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
-    <apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
     <style type="text/css">
         .nowrap {
             white-space: nowrap;
@@ -289,8 +288,8 @@
     <div id="theWholeForm">
     <apex:form id="FormId">
     	<c:FormCompletionControl viewMode="{! !pbsEditModeOn}"/>
-        <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
-        <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
+        <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,msgs" />
+        <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,msgs" />
         <!-- START: CTEAE-39; siblings -->
         <apex:actionFunction name="showAddSibling" action="{!showAddSibling}" rerender="siblings,msgs" />
         <!-- END: CTEAE-39; siblings -->
@@ -578,7 +577,7 @@
             <!--Additional Information Section-->
 
             <a name="AI" id="AI" />
-            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="true" id="pbsOutputAdditionalInfo" rendered="{! pbsEditModeOn}">
+            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo" rendered="{! pbsEditModeOn}">
 
 				<apex:inputField taborderhint="20" value="{!Contact.Family_Member_Other__c}" />
 <!-- 				<apex:inputField taborderhint="21" value="{!Contact.Legal_Guardianship_Status__c}" /> -->
@@ -616,7 +615,7 @@
                 <apex:inputField taborderhint="21" value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
 
 			</apex:pageBlockSection>
-            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
+            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="true" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
 				<apex:outputField value="{!Contact.Family_Member_Other__c}" />
 				<apex:pageBlocksectionitem >
 					<apex:outputPanel >
@@ -722,16 +721,18 @@
             </apex:pageBlockSection>
 
         </apex:pageBlock>
+        <hr/>
         <!--Related Parties Section-->
         <a name="RP" id="RP"></a>
 
         <apex:pageBlock mode="maindetail" id="relatedPartiesListId">
-        	<div class="tmn-h1"> Related Parties</div>
-            <div class="pbSubHeadButton">
-                <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
-                <apex:commandButton value="Add Related Party" onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}" />
-            </div>
-            <apex:pageBlockSection columns="1" id="relatedParties" collapsible="false">
+            <apex:pageBlockButtons location="top">
+	            <div class="blockbtns">
+	                <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
+	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}" />
+	            </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Related Parties" columns="1" id="relatedParties_Alt1_Header" collapsible="true">
                 <div style="display: none;">
                 	<label for="pRelParty">At least one Related Party</label>
 					<input id="pRelParty" value="{! if(relParties.size > 0,'True','') }"  data-countInFormProgress="1" />
@@ -800,16 +801,16 @@
         <!--Agencies Related to Person Section-->
         <a name="Agency" id="Agency"></a>
         <apex:pageBlock id="relatedAgenciesId" rendered="{!showDiagnosis}" mode="maindetail" >
-             <div class="tmn-h1">Agencies Involved With Individual</div>   
-                <div class="blockbtns" >
-                    <apex:actionRegion >
-                        <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
-                    </apex:actionRegion>        
-                    <apex:commandButton rendered="{!AND(isEditor, canEdit)}" value="Add Agency Involved With Individual" id="addAgency" onclick="showAddAgency(); openDialog('agencyModal', 'span', 'Add Agency','none'); return false;" />
-  
-                </div> 
-                         
-            <apex:pageBlockSection columns="1" id="relatedAgencies" collapsible="false">
+                <apex:pageBlockButtons location="top">
+	                <div class="blockbtns">
+	                    <apex:actionRegion >
+	                        <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
+	                    </apex:actionRegion>        
+	                    <apex:commandButton rendered="{!AND(isEditor, canEdit)}" value="Add Agency Involved With Individual" id="addAgency" onclick="showAddAgency(); openDialog('agencyModal', 'span', 'Add Agency','none'); return false;" />
+	  
+	                </div> 
+                </apex:pageBlockButtons>             
+            <apex:pageBlockSection title="Agencies Involved With Individual" columns="1" id="relatedAgencies_Alt1_Header" collapsible="true">
                 <apex:pageBlockSectionItem >
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockTable value="{!relAgencies}" var="relAgency" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
@@ -882,13 +883,8 @@
         </apex:outputpanel>         
         <!--Diagnosis Section -->
         <a name="Diag" id="Diag" />
-        <apex:pageBlock mode="maindetail" id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">
-        	<div class="tmn-h1">Diagnosis</div>
-                <div style="display: none;">
-                	<label for="pDiagnosis">At least one Diagnosis</label>
-					<input id="pDiagnosis" value="{! if(diagnosis.size > 0,'true','') }"  data-countInFormProgress="1" />
-                </div>        	
-            <apex:pageBlockSection columns="1" collapsible="false">
+        <apex:pageBlock mode="maindetail" id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">    	
+            <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="trur">
                 <apex:pageblockTable value="{!diagnosis}" var="diag" rendered="{!(diagnosis.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}" />
                     <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a>
@@ -909,11 +905,12 @@
         <!--Admissions Section-->
         <a name="Adm" id="Adm"></a>
         <apex:pageBlock id="AdmissionListId" mode="maindetail" >
-            <div class="blockbtns">
-                <apex:commandButton Value="Add New Admission" onclick="window.open('/apex/AdmissionEdit?pbsId={!Contact.Id}&retURL={!URLENCODE(currentUrl)}', '_self'); return false;" rendered="{!AND(canCreateAdm,disableAddAdm, isEditor)}" />
-            </div>
-			<div class="tmn-h1">Admissions</div>            
-            <apex:pageBlockSection columns="1" collapsible="false">
+            <apex:pageBlockButtons location="top">
+	            <div class="blockbtns">
+	                <apex:commandButton Value="Add New Admission" onclick="window.open('/apex/AdmissionEdit?pbsId={!Contact.Id}&retURL={!URLENCODE(currentUrl)}', '_self'); return false;" rendered="{!AND(canCreateAdm,disableAddAdm, isEditor)}" />
+	            </div>           
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="admit__Alt1_Header" title="Admissions" columns="1" collapsible="true">
                 <apex:pageblockTable value="{!admissions}" var="admsns" id="adminsId" rendered="{!(admissions.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action">
                         <a href="/apex/AdmissionEdit?id={!admsns.ID}">Edit</a>
@@ -931,8 +928,7 @@
         </apex:pageBlock>
         <!-- Incidents Section Start -->
        	<apex:pageBlock id="incidentsBlock" rendered="{!$ObjectType.Incident__c.accessible}"  mode="maindetail" >
-       	<div class="tmn-h1">Incidents</div>
-            <apex:pageBlockSection columns="1" id="incidentsSection" collapsible="false"  >
+            <apex:pageBlockSection title="Incidents" columns="1" id="incidentsSection_Alt1_Header" collapsible="true"  >
             <apex:outputText value="No Incident Records to Display" rendered="{!incidents.size= 0}" />
                 <apex:pageBlockTable value="{!incidents}" var="i" rendered="{!incidents.size != 0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                 	<apex:column headerValue="Incident Number" >
@@ -1031,7 +1027,7 @@
 	                <apex:commandButton style="float: right;" onclick="window.open('/apex/PBS_AddTask_Page?PBS={!Contact.Id}&accID={!currentContact.AccountID}', '_self'); return false;" value="Add Task"/>
 	            </div>
             </apex:pageBlockButtons>
-            <apex:pageBlockSection columns="1" id="_Alt1_Header" title="Open Tasks" collapsible="true">
+            <apex:pageBlockSection columns="1" id="task_Alt1_Header" title="Open Tasks" collapsible="true">
                 <apex:pageBlockTable value="{!taskOnCurrentPBSAccount}" var="OpenActivity" rendered="{!(taskOnCurrentPBSAccount.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column >
                         <apex:outputlink value="/{!OpenActivity.Id}">{!OpenActivity.Subject}</apex:outputLink>
@@ -1055,8 +1051,7 @@
                 <apex:outputPanel rendered="{!taskOnCurrentPBSAccount.size!=0}">Showing the 10 most recent tasks click&nbsp;
                     <apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlockSection>
-			<div class="tmn-h1">Task History</div>
-            <apex:pageBlockSection columns="1">
+            <apex:pageBlockSection columns="1" id="taskHist_Alt1_Header" title="Task History" collapsible="true">
 
                 <apex:pageBlockTable value="{!eventOnCurrentPBSAccount}" var="ActiveHis" rendered="{!(eventOnCurrentPBSAccount.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
@@ -1108,11 +1103,11 @@
             </apex:pageBlockSection>
         </apex:pageBlock> -->
         <apex:pageBlock mode="maindetail">
-        	<div class="tmn-h1">Person Being Served History</div>
             <!--PersonBeing Served History Section-->
-            <apex:pageBlockSection  columns="1" collapsible="false"  >
+
+            <apex:pageBlockSection title="Person Being Served History" id="history_Alt1_Header"  columns="1" collapsible="true"  >
                 <apex:outputText />
-                <apex:pageBlockTable value="{!personHistory}" var="PBSHistory" rendered="{!(personHistory.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:pageBlockTable value="{!personHistory}" var="PBSHistory" rendered="{!(personHistory.size>0)}"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Date" value=" {!PBSHistory.createddate}" />
                     <apex:column headerValue="User" value="{!PBSHistory.CreatedBy.Name}" />
                     <apex:column headerValue="Action">
