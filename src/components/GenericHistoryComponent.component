@@ -5,14 +5,15 @@
     
     <!-- Object History Related List -->
     <apex:pageBlock mode="maindetail" >
-    	<div class="tmn-h1">{!objectLabel} History</div>
-        <apex:pageBlockTable value="{!ObjectHistory}" var="History"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-            <apex:column headerValue="Date" value="{!History.thedate}" />
-
-            <apex:column headerValue="User">
-                <apex:outputLink value="/{!History.userId}"> {!History.who} </apex:outputLink>
-            </apex:column>
-            <apex:column headerValue="Action"><apex:outputText escape="false" value="{!History.action}"/></apex:column>
-        </apex:pageBlockTable>
+        <apex:pageBlockSection id="_Alt1_Header" title="{!objectLabel} History" collapsible="true" columns="1">
+	        <apex:pageBlockTable value="{!ObjectHistory}" var="History"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+	            <apex:column headerValue="Date" value="{!History.thedate}" />
+	
+	            <apex:column headerValue="User">
+	                <apex:outputLink value="/{!History.userId}"> {!History.who} </apex:outputLink>
+	            </apex:column>
+	            <apex:column headerValue="Action"><apex:outputText escape="false" value="{!History.action}"/></apex:column>
+	        </apex:pageBlockTable>
+        </apex:pageBlockSection>
     </apex:pageBlock>
 </apex:component>
