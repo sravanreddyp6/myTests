@@ -1101,6 +1101,19 @@
                             </apex:outputPanel>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
+                        <apex:outputLabel value="Total Number of Internal Moves During Service" />
+                        <apex:outputPanel >
+                            <apex:outputPanel id="Total_no_of_Internal_moves_during_Servic__c_wrapper">
+                            <div class="requiredInput">
+                                <apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }"> <div class="requiredBlock"></div> </apex:outputPanel>
+                                    <apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
+                            </div>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
                 <!-- Added by Amruth-->
                 
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !isNR)}" >
@@ -1164,20 +1177,6 @@
                         	  </div>  
                         	</apex:outputPanel>
                     </apex:pageBlockSectionItem>
-                 
-                    
-                
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
-                        <apex:outputLabel value="Total Number of Internal Moves During Service" />
-                        <apex:outputPanel >
-                            <apex:outputPanel id="Total_no_of_Internal_moves_during_Servic__c_wrapper">
-                            <div class="requiredInput">
-                                <apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }"> <div class="requiredBlock"></div> </apex:outputPanel>
-                                    <apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
-                            </div>
-                            </apex:outputPanel>
-                        </apex:outputPanel>
-                </apex:pageBlockSectionItem>
 
                 
             </apex:pageBlockSection>
