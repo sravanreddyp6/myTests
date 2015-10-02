@@ -884,7 +884,7 @@
         <!--Diagnosis Section -->
         <a name="Diag" id="Diag" />
         <apex:pageBlock mode="maindetail" id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">    	
-            <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="trur">
+            <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true">
                 <apex:pageblockTable value="{!diagnosis}" var="diag" rendered="{!(diagnosis.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}" />
                     <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a>
