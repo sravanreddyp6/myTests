@@ -596,9 +596,9 @@
                     <apex:outputPanel styleClass="nowrap">
                         <apex:inputField value="{!personBeingRefRecord.Primary_Language__c}"  taborderhint="2" />&nbsp;
                         <apex:outputLabel value="Non-Verbal" />&nbsp;
-                        <apex:inputField value="{!personBeingRefRecord.Non_Verbal__c}"  taborderhint="2" />&nbsp;
+                        <apex:inputField id="nonverb" value="{!personBeingRefRecord.Non_Verbal__c}"  taborderhint="2" />&nbsp;
                         <apex:outputLabel value="Sign Language" />&nbsp;
-                        <apex:inputField value="{!personBeingRefRecord.Sign_Language__c}"  taborderhint="2" />
+                        <apex:inputField id="signLan" value="{!personBeingRefRecord.Sign_Language__c}"  taborderhint="2" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                  <apex:inputField value="{!personBeingRefRecord.Age__c}" taborderhint="1"  id="pbrAge" />
@@ -1247,7 +1247,7 @@
                             <apex:outputLabel value="Alias" />
                             <apex:pageBlockSectionItem >
                                 <apex:inputText html-readonly="true" id="locationEntry_ServiceLocation" value="{!searchedServiceLocationName}" size="20" />
-                                <a onClick="locationLookup();"><img valign="bottom" src="/s.gif" alt="Service Location Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Service Location Lookup (New Window)" />
+                                <a id="aliaslookup" onClick="locationLookup();"><img valign="bottom" src="/s.gif" alt="Service Location Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Service Location Lookup (New Window)" />
                                 </a>
                             </apex:pageBlockSectionItem>
                         </apex:pageBlockSectionItem>
@@ -1290,7 +1290,7 @@
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!cityFilter}" />
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!stateFilter}" />&nbsp;&nbsp;&nbsp;
+                    <apex:inputText id="addlocationstate" value="{!stateFilter}" />&nbsp;&nbsp;&nbsp;
                     <apex:commandButton value="Search!" action="{!search}" reRender="table,block" status="searchStatus" />
                     <apex:actionStatus id="searchStatus" startText=" Searching..." />
                     <br />
@@ -1357,7 +1357,7 @@
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!cityFilter2}" />
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!stateFilter2}" />&nbsp;&nbsp;&nbsp;
+                    <apex:inputText id="originstate" value="{!stateFilter2}" />&nbsp;&nbsp;&nbsp;
                     <apex:commandButton value="Search!" action="{!search2}" reRender="table2,block2" status="searchStatus2" />
                     <apex:actionStatus id="searchStatus2" startText=" Searching..." />
                     <br />
@@ -1484,7 +1484,7 @@
                     <apex:outputLabel for="refSourceTypeOtherField" value="Other (Describe)" />
                     <apex:actionRegion >
                         <apex:inputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" rendered="{!Referral__c.Referral_Source_Type__c!='Other'}" html-disabled="true" />
-                        <apex:inputField id="refSourceTypeOtherField" value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" required="{!Referral__c.Referral_Source_Type__c=='Other'}" rendered="{!Referral__c.Referral_Source_Type__c=='Other'}" />
+                        <apex:inputField value="{!Referral__c.Referral_Source_Type_Other_Describe__c}" required="{!Referral__c.Referral_Source_Type__c=='Other'}" rendered="{!Referral__c.Referral_Source_Type__c=='Other'}" />
                     </apex:actionRegion>
                 </apex:pageBlockSectionItem>
 
@@ -1622,7 +1622,7 @@
                 <apex:inputField value="{!Referral__c.Current_Location__c}" rendered="{!referralRecordType=='CareMeridian'}" />
                 <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!referralRecordType=='CareMeridian'}" />
 
-                <apex:inputField value="{!Referral__c.Legal_Guardian_Status__c}" />
+                <apex:inputField value="{!Referral__c.Legal_Guardian_Status__c}" id="legalGuardian_status"/>
                 
 
              	<apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}"  rendered="{!referralRecordType == 'NeuroRestorative'}" required="true" />
@@ -1647,7 +1647,7 @@
                         ReferralRecordType=='CA FSS' }">
                 <!-- added section item for CTEAE-37 -->
                 <apex:pageBlockSectionItem >
-                    <apex:outputLabel >
+                    <apex:outputLabel for="mentalHealthEmot">
                         Reason Category: Mental Health/Emotional
                         <br/>
                         <apex:actionStatus id="statusMental_Health">
@@ -1661,7 +1661,7 @@
                     </apex:outputLabel>
                     <apex:outputPanel id="itemMental_Health">
                         <apex:actionRegion >
-                            <apex:inputField value="{!Referral__c.Reason_Category_Mental_Health_Emotional__c}">
+                            <apex:inputField id="mentalHealthEmot" value="{!Referral__c.Reason_Category_Mental_Health_Emotional__c}">
                                 <apex:actionSupport event="onchange" rerender="itemMental_Health" status="statusMental_Health" oncomplete="clearReason_MentalHealth(); return false;" />
                             </apex:inputField>
                         </apex:actionRegion>
@@ -1669,14 +1669,14 @@
                         <apex:outputLabel >Discrimination Reason</apex:outputLabel>
                         <apex:actionRegion >
                             <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" id="clearReason_MentalHealth_input" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),false,true)}" html-disabled="true" />
-                            <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" required="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" />
+                            <apex:inputField value="{!Referral__c.Discrimination_Reason__c}" id="clearReason_MentalHealth_input2" required="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" rendered="{!IF(CONTAINS(Referral__c.Reason_Category_Mental_Health_Emotional__c,'Victim of Discrimination'),true,false)}" />
                         </apex:actionRegion>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:inputField value="{!Referral__c.Reason_Category_School_Problems__c}" />
-                <apex:inputField value="{!Referral__c.Reason_Category_Medical_Problems__c}" />
-                <apex:inputField value="{!Referral__c.Reason_Category_Physical_Environment__c}" />
-                <apex:inputField value="{!Referral__c.Reason_Category_Behavioral_Problems__c}" />
+                <apex:inputField id="schoolProb" value="{!Referral__c.Reason_Category_School_Problems__c}" />
+                <apex:inputField id="medicProb" value="{!Referral__c.Reason_Category_Medical_Problems__c}" />
+                <apex:inputField id="physEnv" value="{!Referral__c.Reason_Category_Physical_Environment__c}" />
+                <apex:inputField id="behavProb" value="{!Referral__c.Reason_Category_Behavioral_Problems__c}" />
             </apex:pageBlockSection>
 
             <!-- START: CTEAE-106, MA Referral Flavor Fields -->
@@ -1731,7 +1731,7 @@
                         <apex:actionSupport event="onchange" rerender="placementRiskBlock" status="statusPlaceTypeRisk" />
                     </apex:inputField>
                     <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" html-disabled="true" rendered="{!Referral__c.Placement_Type_Risk__c!='Other (specify)' || Referral__c.Risk_of_Out_of_Home_Placement__c!='Yes'}" />
-                    <apex:inputField label="Other (specify)" value="{!Referral__c.Other_Placement_Type_Desc__c}" rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)' && Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}" />
+                    <apex:inputField label="Other (specify)" id="placeOther" value="{!Referral__c.Other_Placement_Type_Desc__c}" rendered="{!Referral__c.Placement_Type_Risk__c=='Other (specify)' && Referral__c.Risk_of_Out_of_Home_Placement__c=='Yes'}" />
                     <script type="text/javascript">
                         clearDisableField('placementRiskBlock');
                     </script>
@@ -1804,7 +1804,7 @@
                         </apex:inputField>
                     </apex:pageBlockSectionItem>
                     <apex:inputField label="Other (specify)" value="{!Referral__c.Placement_Type_Current_Other__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Current__c!='Yes' || Referral__c.Placement_Type_Current__c!='Other (specify)'}" />
-                    <apex:inputField label="Other (specify)" value="{!Referral__c.Placement_Type_Current_Other__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes' && Referral__c.Placement_Type_Current__c=='Other (specify)'}" />
+                    <apex:inputField label="Other (specify)" id="CurrOther" value="{!Referral__c.Placement_Type_Current_Other__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Current__c=='Yes' && Referral__c.Placement_Type_Current__c=='Other (specify)'}" />
                     <apex:pageBlockSectionItem >
                         <hr />
                     </apex:pageBlockSectionItem>
@@ -1844,7 +1844,7 @@
                     <apex:pageBlocksectionItem rendered="{!Referral__c.Placement_History__c=='Yes'}">
                         <apex:outputlabel value="Other (how many times?)" for="placementotherCount" />
                         <apex:inputField value="{!Referral__c.Placement_Other_Count__c}" id="placementotherCount">
-                            <apex:actionStatus id="statusPlaceOtherCount">
+                            <apex:actionStatus id="statusPlaceOCount">
                                 <apex:facet name="start">
                                     <div class="waitingHolder" style="display: inline; margin-left: 5px; position: relative; top: 5px;">
                                         <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
@@ -1852,12 +1852,12 @@
                                 </apex:facet>
                                 <apex:facet name="stop"></apex:facet>
                             </apex:actionStatus>
-                            <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceOtherCount" />
+                            <apex:actionSupport event="onchange" rerender="PlacementHxBlockSection" status="statusPlaceOCount" />
                         </apex:inputField>
 
                     </apex:pageBlocksectionItem>
-                    <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
-                    <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
+                    <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" id="PrevOther2" html-disabled="true" rendered="{!Referral__c.Placement_History__c!='Yes' || Referral__c.Placement_Other_Count__c == null || Referral__c.Placement_Other_Count__c == 0}" />
+                    <apex:inputField value="{!Referral__c.Placement_Past_Other_Describe__c}" id="PrevOther" rendered="{!Referral__c.Placement_History__c=='Yes' && Referral__c.Placement_Other_Count__c != null && Referral__c.Placement_Other_Count__c > 0}" />
                     <script type="text/javascript">
                         clearDisableField('PlacementHxBlockSection');
                     </script>
@@ -2014,7 +2014,7 @@
                     <apex:outputLabel value="Alias" />
                     <apex:pageBlockSectionItem >
                         <apex:inputText html-readonly="true" id="sl"  value="{!searchedServiceLocationName2}" size="20"  />
-                        <a onClick="locationLookup2();">
+                        <a id="originlookup" onClick="locationLookup2();">
                             <img valign="bottom" src="/s.gif" alt="Service Location Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Service Location Lookup (New Window)" />
                         </a>
                     </apex:pageBlockSectionItem>
@@ -2313,7 +2313,7 @@
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralServices">
                 <apex:inputField value="{!Referral__c.Program_Category__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <br />
-                <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputField id="servicesLine" value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <br />
                 <apex:inputField id="servicesRequested" value="{!Referral__c.Services_Requested__c}" Rendered="{!referralRecordType!='CareMeridian'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Family_History__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
@@ -2322,7 +2322,7 @@
                 <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Current_Medications__c}" rendered="{!(isCambridge || ReferralRecordType == 'CA FSS') && !isLinkedPersonBeingServed}" />
                 <apex:outputField value="{!personBeingServedRecord.Current_Medications__c}" rendered="{!(isCambridge || ReferralRecordType == 'CA FSS') && isLinkedPersonBeingServed}" />
                 <apex:inputField value="{!Referral__c.Prior_Program_Information__c}" style="width: 90%;" Rendered="{!referralRecordType!='CareMeridian'}" />
-                <apex:inputField value="{!Referral__c.Comments__c}" style="width: 90%;" />
+                <apex:inputField value="{!Referral__c.Comments__c}" id="DiagComments" style="width: 90%;" />
             </apex:pageBlockSection>
 
             <apex:pageBlockSection showHeader="true" title="Evaluation" columns="1" collapsible="false" rendered="{!OR(ReferralRecordType=='CareMeridian', AND(ReferralRecordType=='NeuroRestorative', showNeuroFeatures))}">
@@ -2835,7 +2835,7 @@
             <apex:inputField value="{!Referral__c.Mobility__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Gender_Specific_Staffing__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'Nevada'}" />
-            <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}" rendered="{!ReferralRecordType = 'Iowa' ||
+            <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}" id="AccessHouseNeeds" rendered="{!ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Illinois' ||
                         ReferralRecordType = 'Minnesota' ||
@@ -3440,11 +3440,11 @@
             <!-- TADA -->
             </apex:pageBlockSection>
             <apex:pageBlockSection columns="1" id="progConsiderationsDetail" rendered="{!OR(ReferralRecordType != 'NeuroRestorative', showNeuroFeatures)}">
-                <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
+                <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" id="resrictHealthCond" rendered="{!ReferralRecordType == 'Cambridge Georgia'}" />
                 <apex:outputPanel layout="none" rendered="{!ReferralRecordType = 'NeuroRestorative'}">
                     <hr />
                 </apex:outputPanel>
-                <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" cols="80" rendered="{!isCambridge || ReferralRecordType = 'NeuroRestorative' || ReferralRecordType = 'CA FSS'}" />
+                <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" id="ProgConsComment" cols="80" rendered="{!isCambridge || ReferralRecordType = 'NeuroRestorative' || ReferralRecordType = 'CA FSS'}" />
             </apex:pageBlockSection>
             </span>
 
