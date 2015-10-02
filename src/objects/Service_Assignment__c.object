@@ -3808,9 +3808,9 @@ PRI-161 removed the check for Start_Date__c see rule &apos;Start_Date_before_Adm
     <validationRules>
         <fullName>Start_Date_before_Admin_Effective_Date</fullName>
         <active>true</active>
-        <errorConditionFormula>Start_Date__c &lt;  Admission__r.Effective_Date__c</errorConditionFormula>
+        <errorConditionFormula>(Start_Date__c &lt;  Admission__r.Effective_Date__c) || ( SA_Start_DateTime__c &lt;  Admission__r.Admission_Effective_DateTime__c )</errorConditionFormula>
         <errorDisplayField>Start_Date__c</errorDisplayField>
-        <errorMessage>The Start Date cannot be before the Admission Effective Date</errorMessage>
+        <errorMessage>The Start Date cannot be before the Admission Date</errorMessage>
     </validationRules>
     <webLinks>
         <fullName>New_Assessment_Only_Service_Assignment</fullName>
