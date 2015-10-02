@@ -306,11 +306,19 @@
 	            </div>
         	</apex:pageBlockButtons>    
             <apex:pageBlockSection title="Demographics" showHeader="true" columns="2" collapsible="true" id="pbsOutPutsectionId">
-                <apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput" required="true"  html-data-countInFormProgress="1" />
+                
+                <apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" >
+                	<apex:outputLabel value="First Name" for="FirstNameInput" />
+                	<apex:outputPanel>
+                		<apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput" required="true"  html-data-countInFormProgress="1" />
+                		<label for="pLastName2" style="display: none;" >Last Name</label>
+                		<input id="pLastName2" value="{!Contact.LastName}" style="display: none;"  data-countInFormProgress="1" /> 
+                	</apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Contact.Race__c }" taborderhint="2" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
                 <apex:inputField value="{!Contact.Middle_Name__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
                 <apex:inputField value="{!Contact.Ethnicity_Picklist__c}" taborderhint="2" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
-                <apex:inputField value="{!Contact.LastName}" taborderhint="1" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
+                <apex:inputField value="{!Contact.LastName}" taborderhint="1" rendered="{! pbsEditModeOn }"  />
                 <apex:inputField value="{!Contact.Marital_Status__c}" taborderhint="2" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
                 <apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" >
                     <apex:outputLabel value="Date of Birth" for="txtDOB" />
@@ -348,6 +356,7 @@
 						<apex:outputField value="{!Contact.FirstName}"  />
 						<!-- used in Progress score -->
 						<input id="pFirstName" value="{!Contact.FirstName}" style="display: none;"  data-countInFormProgress="1" tabindex="10"/> 
+						<input id="pLastName" value="{!Contact.LastName}" style="display: none;"  data-countInFormProgress="1" /> 
 					</apex:outputPanel>             
 				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }">
@@ -371,8 +380,6 @@
 					<label for="pLastName" >Last Name</label>					
 					<apex:outputPanel >					
 						<apex:outputField value="{!Contact.LastName}" />
-						<!-- used in Progress score -->
-						<input id="pLastName" value="{!Contact.LastName}" style="display: none;"  data-countInFormProgress="1" /> 
 					</apex:outputPanel>             
 				</apex:pageBlockSectionItem>                
 
