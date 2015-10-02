@@ -118,7 +118,9 @@ public with sharing class AdmissionValidation {
                             	if( (curEnd > prevStart ) && (curEnd <  prevEnd) )
                             		hasError = true;
                             	if( (curEnd > prevStart ) && (curEnd >  prevEnd) && (curStart < prevEnd) )
-                            		hasError = true;                              		                             		                          		
+                            		hasError = true;
+                            	if( (curStart <= prevStart)  && (curEnd >  prevStart) )
+                            		hasError = true;                             		                              		                             		                          		
                             }
                             
                             if (hasError)
@@ -129,7 +131,7 @@ public with sharing class AdmissionValidation {
                     for(Service_Assignment__c sa : allSAs){
                     	if(sa.Admission__c == tAdmit.id ){
                     		
-                    		if(sa.SA_Start_DateTime__c < curStart)                    		
+                    		if(sa.SA_Start_DateTime__c.date() < curStart)                    		
                     			tAdmit.addError('Admission Date cannot be after a Service Assignment Start Date (' + sa.name + ' starts on: ' + sa.SA_Start_DateTime__c + ')'  );
                     		
                     		if(sa.End_Date__c > curEnd)
