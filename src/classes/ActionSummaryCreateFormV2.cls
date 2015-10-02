@@ -12,6 +12,8 @@ public with sharing class ActionSummaryCreateFormV2 {
 			});
 		}
 		summary = (Action_Summary__c) controller.getRecord();
+        id sa = apexpages.currentpage().getparameters().get('saID');
+        if(sa !=null){summary.service_assignment__c = sa;}		
 		serviceAssignment = [
 			SELECT Person_Being_Served__r.Id, Person_Being_Served__r.Name,
 			       Admission__c

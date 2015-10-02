@@ -233,11 +233,11 @@
         function loadSeizure(seizureId) {
             showEditSeizure(seizureId);
         }
-		function setStatusDefaults(){
-		if(j$('[id$=highEduAtEnd]').val() == '')
-			j$('[id$=highEduAtEnd]').val( j$('[id$=highEduAtStart]').val() );
-		
-		}
+        function setStatusDefaults(){
+        if(j$('[id$=highEduAtEnd]').val() == '')
+            j$('[id$=highEduAtEnd]').val( j$('[id$=highEduAtStart]').val() );
+        
+        }
         validateSeizure = function () {
             var seizureErrors = [];
             var startValue = j$('[id$=seizureEntry_startDateTime]').val();
@@ -351,7 +351,7 @@
     <c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock2.addShiftDocStatus}" />
     <c:NursesShiftDocAddModal uniqueId="2" parentId="{!theServAssign.Id}" shiftType="CNA Workbook" onShowRerender="msgs, evaluationscna" status="{!$Component.myFRM.CNABlock.AddCNAStatus}" />
     <apex:form id="myFRM">
-    	<c:FormCompletionControl viewMode="{! !editSA}"/>
+        <c:FormCompletionControl viewMode="{! !editSA}"/>
         <apex:actionFunction name="finalizeFundingSource" action="{!finalizeFundingSource}" status="fundingSouceModalStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
         <apex:actionFunction name="fundingSourceInactivate" action="{!inactivateFundingSource}" status="fundingSouceModalStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
         <apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="fundingSouceModalStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
@@ -389,44 +389,44 @@
 
         <!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
         <apex:pageBlock id="SAblock" mode="maindetail"  >
-        	<apex:pageBlockSection id="_Alt1_Header" title="Service Assignment{!if(editSA==true,' Edit','')}" collapsible="false">
-        	</apex:pageBlockSection>
-        	<apex:pageBlockButtons >
-	            <div class="blockbtns">
-				    <apex:outputPanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA'), !editSA))}">
-	                    <a class="btn" href="#" onClick="openModalDialogSA('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700);" id="IowaDailyDataSummaryGenerate">Create Daily Data Summary</a>&nbsp;&nbsp;
-	                </apex:outputPanel>
-	                <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
-	                <apex:actionStatus id="SaveStatus1">
-	                    <apex:facet name="stop">
-	                        <apex:outputPanel id="buttons">
-	                            <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"
-	                                                 onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/> &nbsp;
-	                            <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" onComplete=" setUpCompletionMonitor(); "/> &nbsp;
-	                            <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
-	
-	                        </apex:outputPanel>
-	                    </apex:facet>
-	                    <apex:facet name="start">
-	                        <apex:outputPanel >
-	                            <apex:image value="/img/loading.gif" style="height: 15px;" />
-	                            <apex:commandButton value="Processing..." status="SaveStatus1" rendered="{!editSA}" disabled="true" />
-	                        </apex:outputPanel>
-	                    </apex:facet>
-	                </apex:actionStatus>
-	            </div>
+            <apex:pageBlockSection id="_Alt1_Header" title="Service Assignment{!if(editSA==true,' Edit','')}" collapsible="false">
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <div class="blockbtns">
+                    <apex:outputPanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA'), !editSA))}">
+                        <a class="btn" href="#" onClick="openModalDialogSA('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700);" id="IowaDailyDataSummaryGenerate">Create Daily Data Summary</a>&nbsp;&nbsp;
+                    </apex:outputPanel>
+                    <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
+                    <apex:actionStatus id="SaveStatus1">
+                        <apex:facet name="stop">
+                            <apex:outputPanel id="buttons">
+                                <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"
+                                                     onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/> &nbsp;
+                                <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" onComplete=" setUpCompletionMonitor(); "/> &nbsp;
+                                <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
+    
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:outputPanel >
+                                <apex:image value="/img/loading.gif" style="height: 15px;" />
+                                <apex:commandButton value="Processing..." status="SaveStatus1" rendered="{!editSA}" disabled="true" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="ServAssignDetail" collapsible="true" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
-				<apex:pageBlockSectionItem rendered="{!!editSA}">
-					<label for="pStatus" >Service Assignment Status</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theServAssign.Status__c}" />
-						<!-- used in Progress score -->
-						<input id="pStatus" value="{!theServAssign.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
-					</apex:outputPanel>             
-				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!!editSA}">
+                    <label for="pStatus" >Service Assignment Status</label>                 
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theServAssign.Status__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pStatus" value="{!theServAssign.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
+                    </apex:outputPanel>             
+                </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!editSA}">
                     <apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
                     <apex:outputPanel >
@@ -444,9 +444,9 @@
                 <apex:pageBlockSectionItem rendered="{!!editSA}">
                     <label for="pStartDate">Start Date</label>
                     <apex:outputPanel >
-                    	<apex:outputText value="{!saStrStartDateTime}" />
-						<!-- used in Progress score -->
-						<input id="pStartDate" value="{!saStrStartDateTime}" style="display: none;"  data-countInFormProgress="1" />                     	
+                        <apex:outputText value="{!saStrStartDateTime}" />
+                        <!-- used in Progress score -->
+                        <input id="pStartDate" value="{!saStrStartDateTime}" style="display: none;"  data-countInFormProgress="1" />                        
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!editSA}">
@@ -528,7 +528,7 @@
                         <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Active' && editSA)}"  id="end2" >
                         <apex:outputLabel value="End Date" />
                         <apex:outputPanel >
-                        	<apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
+                            <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
                     </apex:outputPanel>           
                 </apex:pageBlockSectionItem>
                 
@@ -538,17 +538,17 @@
                 <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
                 <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !(vfVarIsCM || isNR) }" />
                 <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR)}" required="{!episodeReq}" />
-				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
-				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
+                <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
+                <apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
                 <apex:pageblocksectionitem rendered="{! !vfVarIsCB}" />
-				<apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}">
-					<label for="pModel" >Model</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theservAssign.Model__c}"  />
-						<!-- used in Progress score -->
-						<input id="pModel" value="{!theservAssign.Model__c}" style="display: none;"  data-countInFormProgress="1" /> 
-					</apex:outputPanel>             
-				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}">
+                    <label for="pModel" >Model</label>                  
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theservAssign.Model__c}"  />
+                        <!-- used in Progress score -->
+                        <input id="pModel" value="{!theservAssign.Model__c}" style="display: none;"  data-countInFormProgress="1" /> 
+                    </apex:outputPanel>             
+                </apex:pageBlockSectionItem>
                 <apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR}">
                     
                     <apex:outputLabel value="Model" for="modelfield" />
@@ -565,14 +565,14 @@
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
 
-				<apex:pageBlockSectionItem rendered="{!!editSA}">
-					<label for="pStatus" >Service Assignment Status</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theServAssign.Status__c}" />
-						<!-- used in Progress score -->
-						<input id="pStatus" value="{!theServAssign.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
-					</apex:outputPanel>             
-				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!!editSA}">
+                    <label for="pStatus" >Service Assignment Status</label>                 
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theServAssign.Status__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pStatus" value="{!theServAssign.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
+                    </apex:outputPanel>             
+                </apex:pageBlockSectionItem>
                 <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  html-data-countInFormProgress="1" >
                     <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" onComplete="setStatusDefaults(); setUpFields();">
                     </apex:actionSupport>
@@ -581,14 +581,14 @@
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
 
-				<apex:pageBlockSectionItem rendered="{!!editSA}">
-					<label for="pStartDate" >Start Date</label>					
-					<apex:outputPanel >					
-						<apex:outputText value="{!saStrStartDateTime}" />
-						<!-- used in Progress score -->
-						<input id="pStartDate" value="{!saStrStartDateTime}" style="display: none;"  data-countInFormProgress="1" /> 
-					</apex:outputPanel>             
-				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!!editSA}">
+                    <label for="pStartDate" >Start Date</label>                 
+                    <apex:outputPanel >                 
+                        <apex:outputText value="{!saStrStartDateTime}" />
+                        <!-- used in Progress score -->
+                        <input id="pStartDate" value="{!saStrStartDateTime}" style="display: none;"  data-countInFormProgress="1" /> 
+                    </apex:outputPanel>             
+                </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!editSA}">
                     <apex:outputLabel for="startdate" value="Start Date" />
                     <apex:outputPanel >
@@ -667,7 +667,7 @@
                         <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Active' && editSA)}"  id="end2" >
                         <apex:outputLabel value="End Date" />
                         <apex:outputPanel >
-                        	<apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
+                            <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
                     </apex:outputPanel>           
                 </apex:pageBlockSectionItem>
 
@@ -680,14 +680,14 @@
                 <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR}" />
                 <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR}" />
 
-				<apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}">
-					<label for="pModel" >Model</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theservAssign.Model__c}"  />
-						<!-- used in Progress score -->
-						<input id="pModel" value="{!theservAssign.Model__c}" style="display: none;"  data-countInFormProgress="1" /> 
-					</apex:outputPanel>             
-				</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}">
+                    <label for="pModel" >Model</label>                  
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theservAssign.Model__c}"  />
+                        <!-- used in Progress score -->
+                        <input id="pModel" value="{!theservAssign.Model__c}" style="display: none;"  data-countInFormProgress="1" /> 
+                    </apex:outputPanel>             
+                </apex:pageBlockSectionItem>
                 <apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR}">
                     <apex:outputLabel value="Model" for="modelfield" />
                     <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()"  html-data-countInFormProgress="1" >
@@ -695,10 +695,10 @@
                     </apex:inputField>                    
                 </apex:pageblocksectionitem>
 
-				<!--  EB-526 -->
-				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
-				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
-				<apex:outputText value="" rendered="{! vfVarIsCB}" />
+                <!--  EB-526 -->
+                <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
+                <apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
+                <apex:outputText value="" rendered="{! vfVarIsCB}" />
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="true" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR}">
@@ -900,12 +900,12 @@
                     <apex:outputLabel for="childGoalStart" value="Child Service Goal at Start of Service" />
                     <apex:outputPanel id="serviceGoalPanel">
                         <apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c == null}">
-	                        <div class="requiredInput">
-	                            <div class="requiredBlock"></div>
-	                            <apex:inputField id="childGoalStart" value="{!theServAssign.Child_Service_Goal__c}"  html-data-countInFormProgress="1" >
-	                                <apex:actionSupport event="onchange" reRender="permanencyGoalPanel" onComplete=" "/>
-	                            </apex:inputField>
-	                        </div>
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField id="childGoalStart" value="{!theServAssign.Child_Service_Goal__c}"  html-data-countInFormProgress="1" >
+                                    <apex:actionSupport event="onchange" reRender="permanencyGoalPanel" onComplete=" "/>
+                                </apex:inputField>
+                            </div>
                         </apex:outputPanel>
                         <apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c != null}" >
                             <apex:inputField value="{!theServAssign.Child_Service_Goal__c}" html-disabled="true" />
@@ -925,15 +925,15 @@
                         </div>
                         </apex:outputPanel>
                         <apex:outputPanel rendered="{!theServAssign.Child_Service_Goal__c != null}" >
-                            <apex:inputField value="{!theServAssign.Child_Permanency_Goal__c}" html-disabled="true" />
+                            <apex:inputField id="childPermGoal2" value="{!theServAssign.Child_Permanency_Goal__c}" html-disabled="true" />
                         </apex:outputPanel>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
                     <apex:outputPanel >
-                    	<apex:outputLabel for="pEduStart2" value="Educational Involvement at Start of Service"  rendered="{!admission.Network_Offering__c == 'ARY'}"/>
-                    	<apex:outputLabel for="pEduStart3" value="Educational Involvement at Start of Service" rendered="{!admission.Network_Offering__c != 'ARY'}"  />
+                        <apex:outputLabel for="pEduStart2" value="Educational Involvement at Start of Service"  rendered="{!admission.Network_Offering__c == 'ARY'}"/>
+                        <apex:outputLabel for="pEduStart3" value="Educational Involvement at Start of Service" rendered="{!admission.Network_Offering__c != 'ARY'}"  />
                     </apex:outputPanel>
                      <apex:outputPanel >
                         <apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}" >
@@ -958,7 +958,7 @@
                             </div>
                         </apex:outputPanel>
                         <apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
-                        	<apex:outputLabel for="highEduAtStart2" value="Highest Level of Education at Start of Service" style="display:none;" />
+                            <apex:outputLabel for="highEduAtStart2" value="Highest Level of Education at Start of Service" style="display:none;" />
                             <apex:inputField id="highEduAtStart2" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}"  html-data-countInFormProgress="{!if(vfVarIsCM,'0','1')}" />
                         </apex:outputPanel>
                     </apex:outputPanel>
@@ -994,66 +994,66 @@
             <apex:pageBlockSection title="Service Assignment Start" id="saStartSectionRead" collapsible="true" columns="2" showHeader="true" rendered="{!!editSA}" >
                 
                 <apex:pageBlockSectionItem helpText="This person's service is beginning because the company providing their services was purchased by The MENTOR Network after 2016" >
-					<label for="pServBeginAqu" >Service Began via Acquisition Company (as of 2016)?</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theServAssign.Service_Began_via_Acquisition_Company__c}" />
-						<!-- used in Progress score -->
-						<input id="pServBeginAqu" value="{!theServAssign.Service_Began_via_Acquisition_Company__c}" style="display: none;"  data-countInFormProgress="1" /> 
-					</apex:outputPanel>
+                    <label for="pServBeginAqu" >Service Began via Acquisition Company (as of 2016)?</label>                 
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theServAssign.Service_Began_via_Acquisition_Company__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pServBeginAqu" value="{!theServAssign.Service_Began_via_Acquisition_Company__c}" style="display: none;"  data-countInFormProgress="1" /> 
+                    </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY'}" >
-					<label for="pChldGoalAtStart" >Child Service Goal at Start of Service</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theServAssign.Child_Service_Goal__c}" />
-						<!-- used in Progress score -->
-						<input id="pChldGoalAtStart" value="{!theServAssign.Child_Service_Goal__c}" style="display: none;"  data-countInFormProgress="{!if(theServAssign.Child_Permanency_Goal__c ==null,'1','0')}" /> 
-					</apex:outputPanel> 
+                    <label for="pChldGoalAtStart" >Child Service Goal at Start of Service</label>                   
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theServAssign.Child_Service_Goal__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pChldGoalAtStart" value="{!theServAssign.Child_Service_Goal__c}" style="display: none;"  data-countInFormProgress="{!if(theServAssign.Child_Permanency_Goal__c ==null,'1','0')}" /> 
+                    </apex:outputPanel> 
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY'}" >
-					<label for="pChldPermGoal" >Child Permanency Goal at Start of Service</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theServAssign.Child_Permanency_Goal__c}" />
-						<!-- used in Progress score -->
-						<input id="pChldPermGoal" value="{!theServAssign.Child_Permanency_Goal__c}" style="display: none;"  data-countInFormProgress="{!if(theServAssign.Child_Service_Goal__c ==null,'1','0')}" /> 
-					</apex:outputPanel>                     
+                    <label for="pChldPermGoal" >Child Permanency Goal at Start of Service</label>                   
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theServAssign.Child_Permanency_Goal__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pChldPermGoal" value="{!theServAssign.Child_Permanency_Goal__c}" style="display: none;"  data-countInFormProgress="{!if(theServAssign.Child_Service_Goal__c ==null,'1','0')}" /> 
+                    </apex:outputPanel>                     
                     
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
-					<label for="pEduInvlStart" >Educational Involvement at Start of Service</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theServAssign.Educational_Involvement_at_Start__c}" />
-						<!-- used in Progress score -->
-						<input id="pEduInvlStart" value="{!theServAssign.Educational_Involvement_at_Start__c}" style="display: none;"  data-countInFormProgress="1" /> 
-					</apex:outputPanel>
+                    <label for="pEduInvlStart" >Educational Involvement at Start of Service</label>                 
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theServAssign.Educational_Involvement_at_Start__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pEduInvlStart" value="{!theServAssign.Educational_Involvement_at_Start__c}" style="display: none;"  data-countInFormProgress="1" /> 
+                    </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem >
-					<label for="pHighestEduStart" >Highest Level of Education at Start of Service</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
-						<!-- used in Progress score -->
-						<input id="pHighestEduStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" style="display: none;"  data-countInFormProgress="{! if(vfVarIsCM,'0','1') }" /> 
-					</apex:outputPanel>
+                    <label for="pHighestEduStart" >Highest Level of Education at Start of Service</label>                   
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pHighestEduStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}" style="display: none;"  data-countInFormProgress="{! if(vfVarIsCM,'0','1') }" /> 
+                    </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!vfVarIsCB}" >
                     <label for="outofhomeplace" >Number of Out-of-Home Placements Pre-Service</label>
-                    <apex:outputPanel >	
-                    	<apex:outputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
-                    	<input id="outofhomeplace" value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" style="display: none;"  data-countInFormProgress="1" />
+                    <apex:outputPanel > 
+                        <apex:outputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
+                        <input id="outofhomeplace" value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" style="display: none;"  data-countInFormProgress="1" />
                     </apex:outputPanel> 
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!isNR}">
-					<label for="pRanchoScore" >Rancho Score at Start of Service</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!theServAssign.Rancho_Score__c}" />
-						<!-- used in Progress score -->
-						<input id="pRanchoScore" value="{!theServAssign.Rancho_Score__c}" style="display: none;"  data-countInFormProgress="1" /> 
-					</apex:outputPanel> 
+                    <label for="pRanchoScore" >Rancho Score at Start of Service</label>                 
+                    <apex:outputPanel >                 
+                        <apex:outputField value="{!theServAssign.Rancho_Score__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pRanchoScore" value="{!theServAssign.Rancho_Score__c}" style="display: none;"  data-countInFormProgress="1" /> 
+                    </apex:outputPanel> 
                 </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
             
@@ -1163,22 +1163,22 @@
                      <apex:pageBlockSectionItem id="dissatisfactionPanel1" rendered="{!(theServAssign.Status__c == 'Inactive' && ((!AssessmentOnly && (vfVarIsRW||vfVarIsCB|| vfVarIsCM))||isNR))}">
                         <apex:outputLabel id="dis1" value="Who was dissatisfied?" />
                         <apex:outputPanel >
-	                        <div class="requiredInput">
-	                            <div class="requiredBlock"></div>
-	                            <apex:inputField id="whoDissatisfied" value="{!theServAssign.Who_was_dissatisfied__c}"  />
-	                        </div>
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField id="whoDissatisfied" value="{!theServAssign.Who_was_dissatisfied__c}"  />
+                            </div>
                         </apex:outputPanel>
                       </apex:pageBlockSectionItem>
                     
                       
-					 <apex:pageBlockSectionItem id="dissatisfactionPanel2" rendered="{!(theServAssign.Status__c == 'Inactive' && ((!AssessmentOnly && (vfVarIsRW||vfVarIsCB|| vfVarIsCM))||isNR))}">
+                     <apex:pageBlockSectionItem id="dissatisfactionPanel2" rendered="{!(theServAssign.Status__c == 'Inactive' && ((!AssessmentOnly && (vfVarIsRW||vfVarIsCB|| vfVarIsCM))||isNR))}">
                         <apex:outputLabel id="dis2" value="Primary Reason for Dissatisfaction" />
                             <apex:outputPanel >
-                        	  <div class="requiredInput">
-                            	<div class="requiredBlock"></div>
-                            	<apex:inputField id="dissatisfactionReason" value="{!theServAssign.Primary_Reason_for_Dissatisfaction__c}"  />
-                        	  </div>  
-                        	</apex:outputPanel>
+                              <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputField id="dissatisfactionReason" value="{!theServAssign.Primary_Reason_for_Dissatisfaction__c}"  />
+                              </div>  
+                            </apex:outputPanel>
                     </apex:pageBlockSectionItem>
 
                 
@@ -1237,22 +1237,22 @@
 
             <apex:pageBlockSection title="System Information" showHeader="true" columns="2" collapsible="true" id="ServAssignSystemInfo">
                 <apex:pageBlockSectionItem >
-                	<apex:outputLabel value="Created By" for="CreatedByLink" />
-                	
-	                <apex:outputPanel >	                    
-	                    <apex:outputLink id="CreatedByLink" value="/{!Service_Assignment__c.CreatedBy.Id}">{!Service_Assignment__c.CreatedBy.Name}</apex:outputLink>
-	                    <apex:outputText value=", " rendered="{!Service_Assignment__c.CreatedDate!=null}" />
-	                    <apex:outputText value=" {!Service_Assignment__c.CreatedDate}" />
-	                </apex:outputPanel>                	
+                    <apex:outputLabel value="Created By" for="CreatedByLink" />
+                    
+                    <apex:outputPanel >                     
+                        <apex:outputLink id="CreatedByLink" value="/{!Service_Assignment__c.CreatedBy.Id}">{!Service_Assignment__c.CreatedBy.Name}</apex:outputLink>
+                        <apex:outputText value=", " rendered="{!Service_Assignment__c.CreatedDate!=null}" />
+                        <apex:outputText value=" {!Service_Assignment__c.CreatedDate}" />
+                    </apex:outputPanel>                 
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem >
-                	<apex:outputLabel value="Last Modified By" for="LastModifiedByLink" />
-                	
-					<apex:outputPanel >
-                    	<apex:outputLink id="LastModifiedByLink" value="/{!Service_Assignment__c.LastModifiedBy.Id}">{!Service_Assignment__c.LastModifiedBy.Name}</apex:outputLink>
-                    	<apex:outputText value=", " rendered="{!Service_Assignment__c.LastModifiedDate!=null}" />
-                    	<apex:outputText value=" {!Service_Assignment__c.LastModifiedDate}" />
-                	</apex:outputPanel>
+                    <apex:outputLabel value="Last Modified By" for="LastModifiedByLink" />
+                    
+                    <apex:outputPanel >
+                        <apex:outputLink id="LastModifiedByLink" value="/{!Service_Assignment__c.LastModifiedBy.Id}">{!Service_Assignment__c.LastModifiedBy.Name}</apex:outputLink>
+                        <apex:outputText value=", " rendered="{!Service_Assignment__c.LastModifiedDate!=null}" />
+                        <apex:outputText value=" {!Service_Assignment__c.LastModifiedDate}" />
+                    </apex:outputPanel>
                 </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
 
@@ -1467,9 +1467,9 @@ END: Uncomment to have the element collapsed by default -->
         <a name="Diag" id="Diag"></a>
         <apex:pageBlock id="pbDiagnosis" mode="maindetail" rendered="{!showDiagnosis}">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" />
-	            </div>
+                <div class="blockbtns">
+                    <apex:commandButton value="Add Diagnosis" id="addDiagnosis" rendered="{!canAddDiagnosis}" onClick="showAddDiagnosis();return false;" />
+                </div>
             </apex:pageBlockButtons> 
             <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true">
 
@@ -1554,41 +1554,41 @@ END: Uncomment to have the element collapsed by default -->
         <a id="Seizure_Tracking"></a>
         <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW && !isNR}">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	<!--             <apex:actionStatus id="AddSeizureStatus"> -->
-	<!--                 <apex:facet name="start"> -->
-	<!--                     <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
-	<!--                 </apex:facet> -->
-	<!--                 <apex:facet name="stop" > -->
-	<!--                <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" /> -->
-	                    <input type="button" class="btn" value="Add Seizure" onclick="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
-	<!--                <input type="button" class="btn" value="Add Seizure" onclick="showAddSeizure(); return false;"/> -->
-	                    <input type="button" class="btn" value="Seizure Report" onclick="window.open('/apex/SeizureTrackingRpt?saId={!Service_Assignment__c.Id}', '_self'); return false;" />
-	<!--                 </apex:facet> -->
-	<!--             </apex:actionStatus> -->
-	            </div>
+                <div class="blockbtns">
+    <!--             <apex:actionStatus id="AddSeizureStatus"> -->
+    <!--                 <apex:facet name="start"> -->
+    <!--                     <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
+    <!--                 </apex:facet> -->
+    <!--                 <apex:facet name="stop" > -->
+    <!--                <apex:commandButton value="Add Seizure" onclick="showAddSeizure(); return false;" /> -->
+                        <input type="button" class="btn" value="Add Seizure" onclick="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
+    <!--                <input type="button" class="btn" value="Add Seizure" onclick="showAddSeizure(); return false;"/> -->
+                        <input type="button" class="btn" value="Seizure Report" onclick="window.open('/apex/SeizureTrackingRpt?saId={!Service_Assignment__c.Id}', '_self'); return false;" />
+    <!--                 </apex:facet> -->
+    <!--             </apex:actionStatus> -->
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="_Alt1_Header" title="Seizures" collapsible="true" columns="1">
-	            <apex:outputText value="No seizures to display" rendered="{!seizures.size==0}" />
-	            <apex:outputPanel rendered="{!seizures.size > 5}">Showing 5 most recent Records. Click <a href="/apex/SeizureListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
-	
-	<!--             <apex:actionStatus id="editSeizureStatus"> -->
-	<!--                 <apex:facet name="start"> -->
-	<!--                     <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
-	<!--                 </apex:facet> -->
-	<!--                 <apex:facet name="stop"></apex:facet> -->
-	<!--             </apex:actionStatus> -->
-	
-	            <apex:pageBlockTable value="{!seizures}" var="seizure" rendered="{!seizures.size>0}" rows="5" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                <apex:column headerValue="Action" width="12%">
-	                     <a href="#" onclick="loadSeizure('{!seizure.Id}');return false; ">Edit</a>
-	                </apex:column>
-	                <apex:column headerValue="Seizure Start Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.Start_DateTime__c}"/></apex:column>
-	                <apex:column headerValue="Seizure End Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.End_DateTime__c}"/></apex:column>
-	                <apex:column value="{!seizure.Observed_By__c}" width="16%"/>
-	                <apex:column value="{!seizure.Comments__c}" width="40%"/>
-	                <apex:column value="{!seizure.Duplicate_Entry__c}" width="5%"/>
-	            </apex:pageBlockTable>
+                <apex:outputText value="No seizures to display" rendered="{!seizures.size==0}" />
+                <apex:outputPanel rendered="{!seizures.size > 5}">Showing 5 most recent Records. Click <a href="/apex/SeizureListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+    
+    <!--             <apex:actionStatus id="editSeizureStatus"> -->
+    <!--                 <apex:facet name="start"> -->
+    <!--                     <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
+    <!--                 </apex:facet> -->
+    <!--                 <apex:facet name="stop"></apex:facet> -->
+    <!--             </apex:actionStatus> -->
+    
+                <apex:pageBlockTable value="{!seizures}" var="seizure" rendered="{!seizures.size>0}" rows="5" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action" width="12%">
+                         <a href="#" onclick="loadSeizure('{!seizure.Id}');return false; ">Edit</a>
+                    </apex:column>
+                    <apex:column headerValue="Seizure Start Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.Start_DateTime__c}"/></apex:column>
+                    <apex:column headerValue="Seizure End Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.End_DateTime__c}"/></apex:column>
+                    <apex:column value="{!seizure.Observed_By__c}" width="16%"/>
+                    <apex:column value="{!seizure.Comments__c}" width="40%"/>
+                    <apex:column value="{!seizure.Duplicate_Entry__c}" width="5%"/>
+                </apex:pageBlockTable>
             </apex:pageBlockSection>
         </apex:pageBlock>
 
@@ -1620,41 +1620,41 @@ END: Uncomment to have the element collapsed by default -->
     <!-- Restraint Events Start -->
         <a name="Assessment_res" id="Assessment_res"></a>
         <apex:pageBlock mode="maindetail" id="Assessment_res" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}">
-	        <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && canAddShiftDoc}"/>
-	                <apex:commandButton value="Restraint Reduction Report" onclick="openModalDialogSA('restraintReportModal', 'span', 'Generate Restraint Reduction Report'); return false; " />
-	            </div>
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:commandButton value="New Restraint Event"  action="{!addrestraintEvent}" reRender="msgs" status="AddResidentAssessmentStatus" rendered="{!Service_Assignment__c.Status__c != 'Inactive' && canAddShiftDoc}"/>
+                    <apex:commandButton value="Restraint Reduction Report" onclick="openModalDialogSA('restraintReportModal', 'span', 'Generate Restraint Reduction Report'); return false; " />
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="assess_Alt1_Header" title="Restraint Events" collapsible="true" columns="1">
-	            <apex:pageBlockTable value="{!restraintEvents}" var="event" rendered="{!restraintEvents.size > 0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	<!--                <apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
-	<!--                </apex:column> -->
-	                <apex:column headerValue="Name">
-	                    <apex:outputLink value="/apex/EvaluationView?id={!event.Id}">{!event.Name}</apex:outputLink>
-	                </apex:column>
-	                <apex:column headerValue="Restraint Status">
-	                    <apex:outputText value="{!event.Status__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Restraint Event Start Time" >
-	                    <c:MilitaryDatetime dateTimeVal="{!event.Shift_Start_Time__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Restraint Event End Time" >
-	                    <c:MilitaryDatetime dateTimeVal="{!event.Shift_End_Time__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Owner Name">
-	                    <apex:outputText value="{!event.Owner.Name}" />
-	                </apex:column>
-	                <apex:column headerValue="Last Modified">
-	                    <apex:outputText value=" {!event.LastModifiedDate}" />
-	                </apex:column>
-	<!--                <apex:column headerValue="Event End At"> -->
-	<!--                    <apex:outputfield value=" {!event.Signed_At__c}" /> -->
-	<!--                </apex:column> -->
-	            </apex:pageBlockTable>
-            	<apex:outputText value="No Restraint Events to display" rendered="{!restraintEvents.size=0 || restraintEvents == null}" />
-            	<apex:outputPanel rendered="{!restraintEvents.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Restraint Event" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
-        	</apex:pageBlockSection>
+                <apex:pageBlockTable value="{!restraintEvents}" var="event" rendered="{!restraintEvents.size > 0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+    <!--                <apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!event.Id}" rendered="{!!event.Is_Signed__c}">Edit</apex:outputLink> -->
+    <!--                </apex:column> -->
+                    <apex:column headerValue="Name">
+                        <apex:outputLink value="/apex/EvaluationView?id={!event.Id}">{!event.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Restraint Status">
+                        <apex:outputText value="{!event.Status__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Restraint Event Start Time" >
+                        <c:MilitaryDatetime dateTimeVal="{!event.Shift_Start_Time__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Restraint Event End Time" >
+                        <c:MilitaryDatetime dateTimeVal="{!event.Shift_End_Time__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Owner Name">
+                        <apex:outputText value="{!event.Owner.Name}" />
+                    </apex:column>
+                    <apex:column headerValue="Last Modified">
+                        <apex:outputText value=" {!event.LastModifiedDate}" />
+                    </apex:column>
+    <!--                <apex:column headerValue="Event End At"> -->
+    <!--                    <apex:outputfield value=" {!event.Signed_At__c}" /> -->
+    <!--                </apex:column> -->
+                </apex:pageBlockTable>
+                <apex:outputText value="No Restraint Events to display" rendered="{!restraintEvents.size=0 || restraintEvents == null}" />
+                <apex:outputPanel rendered="{!restraintEvents.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Restraint Event" style="color: blue;">here</a>&nbsp;to view All </apex:outputPanel>
+            </apex:pageBlockSection>
         </apex:pageBlock>
 <!--        End -->
 
@@ -1683,21 +1683,21 @@ END: Uncomment to have the element collapsed by default -->
         <a name="Plan" id="Plan"></a>
         <!--  Added isNR by Amruth for EB-434 -->
         <apex:pageBlock id="Plan" mode="maindetail" rendered="{! (!AssessmentOnly || isNR) && !editSA}">
-        	<apex:pageBlockButtons location="top">    
-	            <div class="blockbtns">
-	                <apex:actionStatus id="planstatus">
-	                    <apex:facet name="stop">
-	                    <!--  Added isNR by Amruth for EB-434 -->
-	                    <apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA && !isNR }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
-	                    </apex:facet>
-	                    <apex:facet name="start">
-	                        <apex:commandButton value="Loading..." disabled="true" />
-	                    </apex:facet>
-	                </apex:actionStatus>
-	                <apex:commandButton onclick="window.open('/{!Ack_Overview}?pv0={!Service_Assignment__c.Name}', '_self'); return false;" rendered="{! plans.size!=0 && !editSA}" value="Acknowledgment Overview" />
-	
-	            </div>
-           	</apex:pageBlockButtons>
+            <apex:pageBlockButtons location="top">    
+                <div class="blockbtns">
+                    <apex:actionStatus id="planstatus">
+                        <apex:facet name="stop">
+                        <!--  Added isNR by Amruth for EB-434 -->
+                        <apex:commandButton value="New Plan" rendered="{!(plans.size=0) && canCreatePlan && !editSA && !isNR }" immediate="true" onclick="this.disabled='disabled'; makeNewPlan(); return false;" />
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:commandButton value="Loading..." disabled="true" />
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <apex:commandButton onclick="window.open('/{!Ack_Overview}?pv0={!Service_Assignment__c.Name}', '_self'); return false;" rendered="{! plans.size!=0 && !editSA}" value="Acknowledgment Overview" />
+    
+                </div>
+            </apex:pageBlockButtons>
             <apex:pageBlockSection id="ap_Alt1_Header" title="Action Plans" columns="1" collapsible="true">
 
                 <apex:pageblockTable value="{!plans}" var="pl" rendered="{!(plans.size>0) }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
@@ -1722,9 +1722,9 @@ END: Uncomment to have the element collapsed by default -->
         <a name="SkillWorksheet" id="SkillWorksheetAnchor"></a>
         <apex:pageBlock id="SkillWorksheet" mode="maindetail" rendered="{! showWorksheetBlocks && vfVarCanAccessWS}">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <apex:outputPanel onclick="j$('[id *=newswsbtn]').toggle();" styleclass="btn">New Skill Worksheet</apex:outputPanel>
-	            </div>
+                <div class="blockbtns">
+                    <apex:outputPanel onclick="j$('[id *=newswsbtn]').toggle();" styleclass="btn">New Skill Worksheet</apex:outputPanel>
+                </div>
             </apex:pageBlockButtons>
             <apex:outputPanel id="newswsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
                 <apex:repeat value="{!uncheckedWeeks}" var="week">
@@ -1768,9 +1768,9 @@ END: Uncomment to have the element collapsed by default -->
         <a name="BehaviorWorksheet" id="BehaviorWorksheetAnchor"></a>
         <apex:pageBlock id="BehaviorWorksheet" mode="maindetail" rendered="{! showWorksheetBlocks && vfVarCanAccessWS}">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <apex:outputPanel layout="panel" onclick="j$('[id *=newbwsbtn]').toggle();" styleclass="btn">New Behavior Worksheet</apex:outputPanel>
-	            </div>
+                <div class="blockbtns">
+                    <apex:outputPanel layout="panel" onclick="j$('[id *=newbwsbtn]').toggle();" styleclass="btn">New Behavior Worksheet</apex:outputPanel>
+                </div>
             </apex:pageBlockButtons>
             <apex:outputPanel id="newbwsbtn" layout="block" style="display: none; border: 1px solid black;width:600px;-webkit-columns:120px 4;columns:150px 4">
                 <apex:repeat value="{!BehaviorMonthsAvailable}" var="week">
@@ -1814,132 +1814,132 @@ END: Uncomment to have the element collapsed by default -->
         <a id="residentAssessment"></a>
         <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <apex:CommandButton value="Add Resident Assessment" rendered="{! AND(Service_Assignment__c.Status__c != 'Inactive', showResAsmt, canAddShiftDoc)}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" id="residentAsmtButton" />
-	                    <apex:actionStatus id="AddResidentAssessmentStatus" >
-	                        <apex:facet name="start">
-	                            <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
-	                            <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
-	                                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
-	                            </div>
-	                        </apex:facet>
-	                        <apex:facet name="stop" />
-	                    </apex:actionStatus>
-	            </div>
+                <div class="blockbtns">
+                    <apex:CommandButton value="Add Resident Assessment" rendered="{! AND(Service_Assignment__c.Status__c != 'Inactive', showResAsmt, canAddShiftDoc)}" action="{!addResAsmt}" status="AddResidentAssessmentStatus" rerender="none,msgs" id="residentAsmtButton" />
+                        <apex:actionStatus id="AddResidentAssessmentStatus" >
+                            <apex:facet name="start">
+                                <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+                                <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+                                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                                </div>
+                            </apex:facet>
+                            <apex:facet name="stop" />
+                        </apex:actionStatus>
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="resAssess_Alt1_Header" title="Resident Assessment" collapsible="true" columns="1">
-	            <apex:pageBlockTable styleclass="pcBody-list" value="{!residentAssessments}" var="evs"  rendered="{!residentAssessments.size > 0}" id="evaluations" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                    <apex:column >
-	                         <apex:facet name="header">Action</apex:facet>
-	                        <apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c && canAddShiftDoc}">Edit</apex:outputLink>
-	                    </apex:column>
-	                    <apex:column >
-	                         <apex:facet name="header">Name</apex:facet>
-	                        <apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
-	                    </apex:column>
-	                    <apex:column >
-	                         <apex:facet name="header">Status</apex:facet>
-	                         <apex:outputText >{!evs.Status__c}</apex:outputText>
-	                    </apex:column>
-	                    <apex:column headerValue="Signed At" >
-	                        <apex:outputfield value=" {!evs.Signed_At__c}" />
-	                    </apex:column>
-	                    <apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
-	                    <apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
-	            </apex:pageBlockTable>
-	            <apex:outputText value="No records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
-	            <apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
-	        </apex:pageBlockSection>
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!residentAssessments}" var="evs"  rendered="{!residentAssessments.size > 0}" id="evaluations" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                        <apex:column >
+                             <apex:facet name="header">Action</apex:facet>
+                            <apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c && canAddShiftDoc}">Edit</apex:outputLink>
+                        </apex:column>
+                        <apex:column >
+                             <apex:facet name="header">Name</apex:facet>
+                            <apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column >
+                             <apex:facet name="header">Status</apex:facet>
+                             <apex:outputText >{!evs.Status__c}</apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Signed At" >
+                            <apex:outputfield value=" {!evs.Signed_At__c}" />
+                        </apex:column>
+                        <apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+                        <apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+                </apex:pageBlockTable>
+                <apex:outputText value="No records to display"  rendered="{!residentAssessments.size=0 || residentAssessments == null}"/>
+                <apex:outputPanel rendered="{!residentAssessments.size > 0}" >Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Residential" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
+            </apex:pageBlockSection>
         </apex:pageBlock>
 
         <a name="ShiftAssessments" id="ShiftAssessments"></a>
         <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="residentAssessmentShiftDocBlock2">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddShiftDoc) }" />
-	                <apex:actionStatus id="AddShiftDocStatus">
-	                    <apex:facet name="start">
-	                        <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
-	                        <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
-	                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
-	                        </div>
-	                    </apex:facet>
-	                    <apex:facet name="stop" />
-	                </apex:actionStatus>
-	            </div>
+                <div class="blockbtns">
+                    <apex:commandButton value="Add Nurses Shift Documentation" onclick="showAddShiftDoc1(); return false;" status="AddShiftDocStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddShiftDoc) }" />
+                    <apex:actionStatus id="AddShiftDocStatus">
+                        <apex:facet name="start">
+                            <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+                            <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+                                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                            </div>
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="shiftAssess_Alt1_Header" title="Nurses Shift Documentation" collapsible="true" columns="1">
-	            <apex:pageBlockTable styleclass="pcBody-list" value="{!shiftAssessments}" var="evs" rendered="{!shiftAssessments.size > 0}" id="evaluations2" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                <apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c && canADdShiftDoc}">Edit</apex:outputLink>
-	                </apex:column>
-	                <apex:column headerValue="Name">
-	                    <apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
-	                </apex:column>
-	                <apex:column headerValue="Shift Start Time" >
-	                    <c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Shift End Time" >
-	                    <c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Head to Toe Status">
-	                    <apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Signed At" >
-	                    <apex:outputfield value=" {!evs.Head_to_Toe_Signed_At__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Shift Status">
-	                    <apex:outputText value="{!evs.Status__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Signed At">
-	                    <apex:outputfield value=" {!evs.Signed_At__c}" />
-	                </apex:column>
-	                <apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
-	                <apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
-	            </apex:pageBlockTable>
-	            <apex:outputText value="No records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
-	            <apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Nurses Shift Documentation" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
-        	</apex:pageBlockSection>
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!shiftAssessments}" var="evs" rendered="{!shiftAssessments.size > 0}" id="evaluations2" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c && canADdShiftDoc}">Edit</apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Name">
+                        <apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Shift Start Time" >
+                        <c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Shift End Time" >
+                        <c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Head to Toe Status">
+                        <apex:outputText value="{!evs.Head_to_Toe_Status__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Signed At" >
+                        <apex:outputfield value=" {!evs.Head_to_Toe_Signed_At__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Shift Status">
+                        <apex:outputText value="{!evs.Status__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Signed At">
+                        <apex:outputfield value=" {!evs.Signed_At__c}" />
+                    </apex:column>
+                    <apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+                    <apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+                </apex:pageBlockTable>
+                <apex:outputText value="No records to display" rendered="{!shiftAssessments.size=0 || shiftAssessments == null}" />
+                <apex:outputPanel rendered="{!shiftAssessments.size>0}">Showing 5 most recent Records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=Nurses Shift Documentation" style="color: blue;">here</a>&nbsp;to view all</apex:outputPanel>
+            </apex:pageBlockSection>
         </apex:pageBlock>
         <apex:pageBlock mode="maindetail" rendered="{!!editSA && vfVarIsCM && $Setup.SystemSettings__c.Referral_ConvertCMEnabled__c}" id="CNABlock">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <apex:commandButton value="Add CNA Workbook" onclick="showAddShiftDoc2(); return false;" status="AddCNAStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddCNA)}" />
-	                <apex:actionStatus id="AddCNAStatus">
-	                    <apex:facet name="start">
-	                        <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
-	                        <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
-	                            <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
-	                        </div>
-	                    </apex:facet>
-	                    <apex:facet name="stop" />
-	                </apex:actionStatus>
-	            </div>
-			</apex:pageBlockButtons>
-			<apex:pageBlockSection id="cnaWB_Alt1_Header" title="CNA Workbooks" collapsible="true" columns="1">
-	            <apex:pageBlockTable styleclass="pcBody-list" value="{!cnaWorkbooks}" var="evs" rendered="{!cnaWorkbooks.size > 0}" id="evaluationscna" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                <apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c && canAddCNA}">Edit</apex:outputLink>
-	                </apex:column>
-	                <apex:column headerValue="Name">
-	                    <apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
-	                </apex:column>
-	                <apex:column headerValue="Shift Start Time" >
-	                    <c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Shift End Time" >
-	                    <c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Status">
-	                    <apex:outputText value="{!evs.Status__c}" />
-	                </apex:column>
-	                <apex:column headerValue="Signed At" >
-	                    <apex:outputfield value=" {!evs.Signed_At__c}" />
-	                </apex:column>
-	                <apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
-	                <apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
-	            </apex:pageBlockTable>
-	            <apex:outputText value="No records to display" rendered="{!cnaWorkbooks== null || cnaWorkbooks.size=0 }" />
-	            <apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
-			</apex:pageBlockSection>
+                <div class="blockbtns">
+                    <apex:commandButton value="Add CNA Workbook" onclick="showAddShiftDoc2(); return false;" status="AddCNAStatus" reRender="msgs,none" rendered="{!AND(Service_Assignment__c.Status__c != 'Inactive', canAddCNA)}" />
+                    <apex:actionStatus id="AddCNAStatus">
+                        <apex:facet name="start">
+                            <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+                            <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+                                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                            </div>
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="cnaWB_Alt1_Header" title="CNA Workbooks" collapsible="true" columns="1">
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!cnaWorkbooks}" var="evs" rendered="{!cnaWorkbooks.size > 0}" id="evaluationscna" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action"><apex:outputLink value="/apex/EvaluationEdit?id={!evs.Id}" rendered="{!!evs.Is_Signed__c && canAddCNA}">Edit</apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Name">
+                        <apex:outputLink value="/apex/EvaluationView?id={!evs.Id}">{!evs.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Shift Start Time" >
+                        <c:MilitaryDatetime dateTimeVal="{!evs.Shift_Start_Time__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Shift End Time" >
+                        <c:MilitaryDatetime dateTimeVal="{!evs.Shift_End_Time__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Status">
+                        <apex:outputText value="{!evs.Status__c}" />
+                    </apex:column>
+                    <apex:column headerValue="Signed At" >
+                        <apex:outputfield value=" {!evs.Signed_At__c}" />
+                    </apex:column>
+                    <apex:column value="{!evs.Owner.Name}" headerValue="Owner Name"/>
+                    <apex:column headerValue="Last Modified" value="{!evs.LastModifiedDate}" />
+                </apex:pageBlockTable>
+                <apex:outputText value="No records to display" rendered="{!cnaWorkbooks== null || cnaWorkbooks.size=0 }" />
+                <apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
+            </apex:pageBlockSection>
         </apex:pageBlock>
         
         <!--  Time Log section - IADAY-10 -->
@@ -1969,12 +1969,12 @@ END: Uncomment to have the element collapsed by default -->
         <a name="Notes" id="Notes"></a>
         <apex:pageBlock id="Notes" mode="maindetail" rendered="{! !editSA}">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-	                <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || vfVarIsCM)}" value="Goal/Objective Documentation" />
-	                <apex:commandButton rendered="{!ActivePlan.size = 1  && !vfVarIsCM && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
-	                <apex:commandButton rendered="{! vfVarIsCM && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
-	            </div>
+                <div class="blockbtns">
+                    <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
+                    <apex:commandButton onclick="window.open('/apex/ActionPlan_GoalObjective_rpt?ID={!Service_Assignment__c.id}', '_self'); return false;" rendered="{! notes.size!=0 && !(vfVarIsCB || isNR || vfVarIsCM)}" value="Goal/Objective Documentation" />
+                    <apex:commandButton rendered="{!ActivePlan.size = 1  && !vfVarIsCM && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?plan={!ActivePlan[0].id}&service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
+                    <apex:commandButton rendered="{! vfVarIsCM && canCreateNote}" value="New Note" onclick="window.open('{!$Page.Notes_ProgressNote_Create}?service_assignment={!Service_Assignment__c}&admission={!Service_Assignment__c.Admission__c}&person={!Service_Assignment__c.Admission__r.Person_Being_Served__c}&state={!Service_Assignment__c.Admission__r.State__c}&retURL={!$CurrentPage.URL}', '_self'); return false;" />
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="notes_Alt1_Header" title="Notes" collapsible="true" columns="1">
                 <apex:pageblockTable value="{!notes}" var="note" rendered="{!(notes != null && notes.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
@@ -1990,7 +1990,7 @@ END: Uncomment to have the element collapsed by default -->
                     </apex:column>
                     <apex:column value="{!note.Start_time__c }" rendered="{! !vfVarIsCM }"/>
                     <apex:column value="{!note.End_Time__c }" rendered="{! !vfVarIsCM }"/>
-		    <apex:column value="{!note.Clinician__c}" rendered="{! vfVarIsCB && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
+            <apex:column value="{!note.Clinician__c}" rendered="{! vfVarIsCB && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
                     <apex:column value="{!note.createddate }" />
                     <apex:column value="{!note.createdby.name }" />
                 </apex:pageblockTable>
@@ -2006,25 +2006,25 @@ END: Uncomment to have the element collapsed by default -->
         <a name="Assessments_fad" id="assess_fad"></a>
         <apex:pageBlock id="Assessments_FAD" mode="maindetail" rendered="{! !editSA && Service_Assignment__c.Program__c ='IFCS' }">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
-	                <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment Summary" />
-	            </div>
+                <div class="blockbtns">
+                    <!--  <apex:commandButton action="{!NewNote}" value="New Note" />-->
+                    <apex:commandButton action="{!createFadAssess}" value="New FAD Assessment Summary" />
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="fad_Alt1_Header" title="FAD Assessment Summaries" collapsible="true" columns="1">
-	            <apex:outputText value="No FAD Assessment Summaries to display" rendered="{!(Assessments_Fad.size=0)}" />
-	            <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                <apex:column headerValue="Action" styleClass="editcol">
-	                    <a href="/apex/Assessment_FAD_Form?id={!assess.ID}&edit=1">Edit</a>
-	                </apex:column>
-	                <apex:column headerValue="Name">
-	                    <a href="/apex/Assessment_FAD_Form?id={!assess.ID}">{!assess.name}</a>
-	                </apex:column>
-	                <apex:column value="{!Assess.Assessment_Date__c}" headerValue="Date of Admistration" />
-	                <apex:column value="{!Assess.Phase__c}" />
-	                <apex:column value="{!Assess.Status__c}" />
-	                <apex:column value="{!Assess.Disregard__c }" />
-	            </apex:pageBlockTable>
+                <apex:outputText value="No FAD Assessment Summaries to display" rendered="{!(Assessments_Fad.size=0)}" />
+                <apex:pageBlockTable value="{!Assessments_Fad}" var="assess" rendered="{!(Assessments_Fad.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action" styleClass="editcol">
+                        <a href="/apex/Assessment_FAD_Form?id={!assess.ID}&edit=1">Edit</a>
+                    </apex:column>
+                    <apex:column headerValue="Name">
+                        <a href="/apex/Assessment_FAD_Form?id={!assess.ID}">{!assess.name}</a>
+                    </apex:column>
+                    <apex:column value="{!Assess.Assessment_Date__c}" headerValue="Date of Admistration" />
+                    <apex:column value="{!Assess.Phase__c}" />
+                    <apex:column value="{!Assess.Status__c}" />
+                    <apex:column value="{!Assess.Disregard__c }" />
+                </apex:pageBlockTable>
             </apex:pageBlockSection>
         </apex:pageBlock>
         <!-- end FAD Assessments -->
@@ -2032,22 +2032,22 @@ END: Uncomment to have the element collapsed by default -->
         <!-- Incidents Section -->
         <a name="Incidents" id="incidents"></a>
         <apex:pageblock id="incidentsBlock" mode="maindetail" rendered="{!!editSA && $ObjectType.Incident__c.accessible}">
-			<apex:pageBlockButtons location="top">
-	            <div class="blockbtns" rendered="{!$ObjectType.Incident__c.createable}">
-	                <apex:commandButton value="Create Incident" action="{!createIncident}" status="fundingSouceModalStatus" rerender="none"/>
-	            </div>
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns" rendered="{!$ObjectType.Incident__c.createable}">
+                    <apex:commandButton value="Create Incident" action="{!createIncident}" status="fundingSouceModalStatus" rerender="none"/>
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="Inc_Alt1_Header" title="Incidents" collapsible="true" columns="1">
-	            <apex:outputText value="No Incidents to display" rendered="{!(incidents.size=0)}" />
-	            <apex:pageblockTable value="{!incidents}" var="i" rendered="{!(incidents.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                <apex:column headerValue="Action" rendered="{!$ObjectType.Incident__c.updateable}">
-	                    <a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>
-	                </apex:column>
-	                <apex:column headerValue="Incident Number" >
-	                        <a href="/{!i.id}" >{!i.Name}</a>
-	                </apex:column>
-	                <apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
-	            </apex:pageblockTable>
+                <apex:outputText value="No Incidents to display" rendered="{!(incidents.size=0)}" />
+                <apex:pageblockTable value="{!incidents}" var="i" rendered="{!(incidents.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action" rendered="{!$ObjectType.Incident__c.updateable}">
+                        <a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>
+                    </apex:column>
+                    <apex:column headerValue="Incident Number" >
+                            <a href="/{!i.id}" >{!i.Name}</a>
+                    </apex:column>
+                    <apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
+                </apex:pageblockTable>
             </apex:pageBlockSection>
         </apex:pageblock>
         
@@ -2663,61 +2663,61 @@ END: Uncomment to have the element collapsed by default -->
         <a id="Funding_Sources"></a>
         <apex:pageBlock id="fundingSources" mode="maindetail" rendered="{!(vfVarIsCM || isNR) && !newSA && canViewFundingSource}">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
-	                <apex:actionStatus id="AddFundingSourceStatus">
-	                    <apex:facet name="start">
-	                        <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
-	                    </apex:facet>
-	                    <apex:facet name="stop" />
-	                </apex:actionStatus>
-	            </div>
+                <div class="blockbtns">
+                    <apex:commandButton value="Add Funding Source" onclick="showAddFundingSource(); return false;" rendered="{!canViewFundingSource}" />
+                    <apex:actionStatus id="AddFundingSourceStatus">
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop" />
+                    </apex:actionStatus>
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="fs_Alt1_Header" title="Funding Sources" collapsible="true" columns="1">
-	            <apex:outputText value="No Funding Sources to display" rendered="{!(fundingSources.size=0)}" />
-	
-	            <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0  && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                <apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
-	                </apex:column>
-	                <apex:column value="{!fundingSource.Funding_Source__c}" />
-	                <apex:column value="{!fundingSource.Funding_Source_ID__c}" />
-	                <apex:column value="{!fundingSource.Service_Being_Funded__c}" rendered="{!fundingSourceRecordType!='CareMeridian'}" />
-	                <apex:column value="{!fundingSource.Payor__c}" rendered="{!fundingSourceRecordType=='CareMeridian'}" />
-	                <apex:column value="{!fundingSource.Status__c}" />
-	                <apex:column value="{!fundingSource.Comment__c}" />
-	                <apex:column value="{!fundingSource.CreatedDate}" />
-	            </apex:pageBlockTable>
-	
-	            <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0 && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                <apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
-	                </apex:column>
-	                <apex:column value="{!fundingSource.Type_of_Coverage__c}" />
-	                <apex:column value="{!fundingSource.Payer_Name__c}" />
-	                <apex:column value="{!fundingSource.Effective_Date__c}" />
-	                <apex:column value="{!fundingSource.Termination_Date__c}" />
-	                <apex:column value="{!fundingSource.Status__c}" />
-	                <apex:column value="{!fundingSource.Comment__c}" />
-	                <apex:column value="{!fundingSource.CreatedDate}" />
-	            </apex:pageBlockTable>
-	
-	            <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0 && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                <apex:column headerValue="Action" >
-	                    <apex:outputPanel rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}" >
-	                        <a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
-	                    </apex:outputPanel>
-	                    <apex:outputPanel rendered="{!fundingSource.Funding_Source_Status__c == 'Active Final' || fundingSource.Funding_Source_Status__c == 'Inactive'}">
-	                        <a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false;">View</a>
-	                    </apex:outputPanel>
-	                </apex:column>
-	                <apex:column value="{!fundingSource.Funding_Source_Status__c}" />
-	                <apex:column value="{!fundingSource.Type_of_Coverage__c}" />
-	                <apex:column value="{!fundingSource.Payer_Name__c}" />
-	                <apex:column value="{!fundingSource.Effective_Date__c}" />
-	                <apex:column value="{!fundingSource.Termination_Date__c}" />
-	                <apex:column value="{!fundingSource.Status__c}" />
-	                <apex:column value="{!fundingSource.Comment__c}" />             
-	                <apex:column value="{!fundingSource.CreatedDate}" />
-	            </apex:pageBlockTable>
+                <apex:outputText value="No Funding Sources to display" rendered="{!(fundingSources.size=0)}" />
+    
+                <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' && fundingSources.size!=0  && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
+                    </apex:column>
+                    <apex:column value="{!fundingSource.Funding_Source__c}" />
+                    <apex:column value="{!fundingSource.Funding_Source_ID__c}" />
+                    <apex:column value="{!fundingSource.Service_Being_Funded__c}" rendered="{!fundingSourceRecordType!='CareMeridian'}" />
+                    <apex:column value="{!fundingSource.Payor__c}" rendered="{!fundingSourceRecordType=='CareMeridian'}" />
+                    <apex:column value="{!fundingSource.Status__c}" />
+                    <apex:column value="{!fundingSource.Comment__c}" />
+                    <apex:column value="{!fundingSource.CreatedDate}" />
+                </apex:pageBlockTable>
+    
+                <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'CareMeridian' && fundingSources.size!=0 && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action"><a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
+                    </apex:column>
+                    <apex:column value="{!fundingSource.Type_of_Coverage__c}" />
+                    <apex:column value="{!fundingSource.Payer_Name__c}" />
+                    <apex:column value="{!fundingSource.Effective_Date__c}" />
+                    <apex:column value="{!fundingSource.Termination_Date__c}" />
+                    <apex:column value="{!fundingSource.Status__c}" />
+                    <apex:column value="{!fundingSource.Comment__c}" />
+                    <apex:column value="{!fundingSource.CreatedDate}" />
+                </apex:pageBlockTable>
+    
+                <apex:pageBlockTable value="{!fundingSources}" var="fundingSource" rendered="{!fundingSourceRecordType == 'NeuroRestorative' && fundingSources.size!=0 && canEditFundingSource }" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action" >
+                        <apex:outputPanel rendered="{!fundingSource.Funding_Source_Status__c == 'Active'}" >
+                            <a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false; ">Edit</a>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!fundingSource.Funding_Source_Status__c == 'Active Final' || fundingSource.Funding_Source_Status__c == 'Inactive'}">
+                            <a href="#" onclick="loadFundingSource('{!fundingSource.Id}');return false;">View</a>
+                        </apex:outputPanel>
+                    </apex:column>
+                    <apex:column value="{!fundingSource.Funding_Source_Status__c}" />
+                    <apex:column value="{!fundingSource.Type_of_Coverage__c}" />
+                    <apex:column value="{!fundingSource.Payer_Name__c}" />
+                    <apex:column value="{!fundingSource.Effective_Date__c}" />
+                    <apex:column value="{!fundingSource.Termination_Date__c}" />
+                    <apex:column value="{!fundingSource.Status__c}" />
+                    <apex:column value="{!fundingSource.Comment__c}" />             
+                    <apex:column value="{!fundingSource.CreatedDate}" />
+                </apex:pageBlockTable>
             </apex:pageBlockSection>
         </apex:pageBlock>
         
@@ -2734,7 +2734,7 @@ END: Uncomment to have the element collapsed by default -->
         <!-- end Funding sources section-->
 
         <apex:pageBlock mode="maindetail" rendered="{!referral != null }">
-			<apex:pageBlockSection id="_Alt1_Header" title="Referral Detail" collapsible="false"/>        
+            <apex:pageBlockSection id="_Alt1_Header" title="Referral Detail" collapsible="false"/>        
             <apex:pageBlockSection columns="2" title="Originating Referral" collapsible="true">
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Name" />
@@ -2786,20 +2786,20 @@ END: Uncomment to have the element collapsed by default -->
         <!-- START: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
         <apex:pageBlock id="pbServAssignClose" mode="maindetail" rendered="{!showServAssignClose}">
             <apex:pageBlockButtons location="top">
-	            <div class="blockbtns">
-	                <apex:commandButton action="{!addServAssignClose}" value="Add Service Assignment Closure" id="addServAssignClose" rendered="{!editSA && (ServAssignCloses.size==0)}" />
-	            </div>
+                <div class="blockbtns">
+                    <apex:commandButton action="{!addServAssignClose}" value="Add Service Assignment Closure" id="addServAssignClose" rendered="{!editSA && (ServAssignCloses.size==0)}" />
+                </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="saCloser_Alt1_Header" title="Service Assignment Closure" collapsible="true" columns="1">
-	            <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-	                <apex:column headerValue="Action" styleClass="editcol">
-	                    <a href="/{!servAssignLineItem.ID}">Edit</a>
-	                </apex:column>
-	                <apex:column headerValue="Name">
-	                    <a href="/{!servAssignLineItem.ID}">{!servAssignLineItem.name}</a>
-	                </apex:column>
-	                <apex:column value="{!servAssignLineItem.Status__c}" />
-	            </apex:pageBlockTable>
+                <apex:pageBlockTable value="{!ServAssignCloses}" var="servAssignLineItem" rendered="{!(ServAssignCloses.size!=0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action" styleClass="editcol">
+                        <a href="/{!servAssignLineItem.ID}">Edit</a>
+                    </apex:column>
+                    <apex:column headerValue="Name">
+                        <a href="/{!servAssignLineItem.ID}">{!servAssignLineItem.name}</a>
+                    </apex:column>
+                    <apex:column value="{!servAssignLineItem.Status__c}" />
+                </apex:pageBlockTable>
             </apex:pageBlockSection>
         </apex:pageBlock>
         <!-- END: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
@@ -2883,45 +2883,58 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:pageBlockButtons>
             </apex:pageBlock>
         </apex:outputPanel>
-	    <div id="IowaDailyDataSummaryDialog" style="display:none;" >
-	    <apex:outputpanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA')))}" >
-	        <script>
-	            jQuery.noConflict();
-	            jQuery(document).ready(function($) {
-	                $('.datepicker').datetimepicker({
-	                    timepicker: false,
-	                    format: 'm/d/Y',
-	                    closeOnDateSelect: true
-	                });
-	            });
-	        </script>
-	        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
-	        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock" mode="maindetail">
-		        <apex:pageBlockSection >    
-		            <apex:pageBlockSectionItem >
-		            <apex:outputLabel value="Service date" />
-		                <apex:outputPanel layout="none">
-		<!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
-	                        <input id="IowaDailyDataSummaryServiceDate" type="text" class="datepicker" />
-		<!--                     </div> -->
-		                </apex:outputPanel>
-		            </apex:pageBlockSectionItem>
-		
-		            <apex:pageBlockSectionItem >
-		                <apex:outputPanel layout="block">
-		                    <a class="btn" href="#" id="IowaDailyDataSummaryGenerate" onClick="window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
-		                                + '&saId='+ '{!theServAssign.Id}'
-		                                , '_blank');return false;">Generate</a>&nbsp;&nbsp; 
-		                    <a class="btn" href="#" onClick="closeModalDialogSA('IowaDailyDataSummaryDialog', 'div');return false;">Close</a>
-		                </apex:outputPanel>
-		            </apex:pageBlockSectionItem>
-		        </apex:pageBlockSection>
-	        </apex:pageBlock>
-	    </apex:outputpanel>  
-	    </div> 
+        <div id="IowaDailyDataSummaryDialog" style="display:none;" >
+        <apex:outputpanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA')))}" >
+            <script>
+                jQuery.noConflict();
+                jQuery(document).ready(function($) {
+                    $('.datepicker').datetimepicker({
+                        timepicker: false,
+                        format: 'm/d/Y',
+                        closeOnDateSelect: true
+                    });
+                });
+            </script>
+            <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+            <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock" mode="maindetail">
+                <apex:pageBlockSection >    
+                    <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Service date" />
+                        <apex:outputPanel layout="none">
+        <!--                     <div class="requiredInput"><div class="requiredBlock"></div> -->
+                            <input id="IowaDailyDataSummaryServiceDate" type="text" class="datepicker" />
+        <!--                     </div> -->
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+        
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel layout="block">
+                            <a class="btn" href="#" id="IowaDailyDataSummaryGenerate" onClick="window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
+                                        + '&saId='+ '{!theServAssign.Id}'
+                                        , '_blank');return false;">Generate</a>&nbsp;&nbsp; 
+                            <a class="btn" href="#" onClick="closeModalDialogSA('IowaDailyDataSummaryDialog', 'div');return false;">Close</a>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputpanel>  
+        </div> 
     </apex:form>
     <a id="shiftSummaries" />
-    <apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(vfVarIsRW, vfVarIsCM), $ObjectType.Action_Summary__c.accessible, !editSA)}" />
+    <apex:pageBlock mode="maindetail" rendered="{!AND(OR(vfVarIsRW, vfVarIsCM), $ObjectType.Action_Summary__c.accessible, !editSA)}" >
+        <apex:pageBlockButtons location="top">
+            <div class="blockbtns">
+                <input type="button" class="btn" value="New Action Plan Summary" onclick="window.open('/apex/ActionPlanSummaryNew?saID={!Service_Assignment__c.id}', '_self'); return false;" />
+            </div>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection id="summary_Alt1_Header" title="Action Plan Summaries" collapsible="true" columns="1">
+            <!-- <apex:relatedList list="Action_Summaries__r" /> -->
+            <apex:pageBlockTable value="{!theServAssign.Action_Summaries__r}" var="summary" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:column value="{!summary.name}"></apex:column>
+                <apex:column value="{!summary.Status__c}"></apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
     <c:SObjectNotesAndAttachments parentPage="ServAssign" parentId="{!Service_Assignment__c.id}" showAction="true" rendered="{!!editSA && newSA==false}"   pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
     <c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
 
@@ -3147,9 +3160,11 @@ END: Uncomment to have the element collapsed by default -->
                         if(setting == 'Non-Residential'){
                             j$('[id$=lblchildperm]').hide();
                             j$('[id$=childPermGoalStart]').hide();
+                            j$('[id$=childPermGoal2]').hide();
                         }else{
                             j$('[id$=lblchildperm]').show();
                             j$('[id$=childPermGoalStart]').show();
+                            j$('[id$=childPermGoal2]').hide();
                         }
                         callrerender();
                     }
@@ -3193,8 +3208,8 @@ END: Uncomment to have the element collapsed by default -->
         </apex:facet>
         <apex:facet name="stop" />
     </apex:actionStatus>
-	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />    
-	    <style>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />    
+        <style>
         .pbHeaderButton{    top: 0px !important;} 
         </style>
 </apex:page>
