@@ -1,0 +1,524 @@
+<apex:component controller="GenerateEvalComponent">
+	<apex:attribute name="parentId"
+		description="Id of the parent Evaluation record" type="Id"
+		assignTo="{!evaluationId}" />
+	<apex:attribute name="pbsParentId"
+		description="Id of the parent PBS record" type="Id"
+		assignTo="{!pbsId}" />
+	<apex:attribute name="editEnabled"
+		description="Whether Edit functionality is enabled" type="Boolean"
+		default="true" />
+	<apex:attribute name="onEdit"
+		description="The Javascript function to call when Edit is clicked"
+		type="String" />
+	<apex:attribute name="formId"
+		description="Id of the form element that includes this component"
+		type="String" />
+	<apex:attribute name="uniqueId"
+		description="Unique ID so we can differentiate JS functions"
+		type="String" required="true" />
+	<apex:attribute name="isPdf"
+		description="Boolean describing whether or not this is for a PDF rendering"
+		type="Boolean" required="false" default="false" />
+	<apex:attribute name="rules"
+		description="The rules for the fields in the dialog. Use the field names in the rules instead of field IDs."
+		type="String" required="false" />
+	<apex:attribute name="onEntrySaveSuccess"
+		description="The Javascript to call when an entry is successfully saved"
+		type="String" required="false" />
+
+	<apex:attribute name="evaltype" description="Kind of eval"
+		type="string" assignTo="{!evalname}" required="true" />
+	<apex:attribute name="category" description="Section of the Eval"
+		type="string" assignTo="{!cat}" required="true" />
+	<apex:attribute name="subcategory"
+		description="Sub-Section of the Eval" type="string"
+		assignTo="{!subcat}" required="true" />
+	<apex:attribute name="subsubcategory" description="Section of the Eval"
+		type="string" assignTo="{!subsubcat}" required="false" />
+	<apex:attribute name="evalSectionUuid"
+		description="The identifier for the eval repeater section"
+		type="string" assignTo="{!evalSectionId}" required="false" />
+	<apex:attribute name="evalSectionType"
+		description="The type of the repeater section" type="string"
+		assignTo="{!evalSecType}" required="false" />
+
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+	<apex:includeScript value="{!$Resource.AnnotoriousDev}" />
+	<apex:includeScript value="{!$Resource.AnotoJS}" />
+	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+	<apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
+
+	<style>
+		tr.border_bottom td {
+			border-bottom: 1pt solid #F0F0EF;
+		}
+
+		td.text_right {
+			text-align: right;
+			float: right;
+		}
+
+		.qtip {
+			font-size: 13px;
+			line-height: 18px;
+		}
+	</style>
+
+	<form id="evalForm" method="post">
+		<apex:pageBlock rendered="{!cat != ''}">
+			<label class="labelCol">Created By:</label>{!evalSectionOwner}
+ 			<br /><label class="labelCol">Last Modified By:</label>{!evalSectionLastMod}
+
+			<apex:outputPanel layout="block"
+				style="right: 10px;float: right;position: relative;"
+				rendered="{!editEnabled}">
+				<input class="btn" type="submit" value="Save" id="btnSave"
+					onclick="isModified=false;" />
+				<input class="btn" type="button" value="Cancel"
+					onclick="clearPanel(); return false;" />
+			</apex:outputPanel>
+			<span id="evalSecValMsgs" style="color: red;"></span>
+			<apex:outputText value="{!htmlTable}" escape="false" />
+
+		</apex:pageBlock>
+	</form>
+	<script>
+        jQuery.noConflict();
+
+        function addOrModifyAnnotation(annotation, isNew) {
+            if (isNew) {
+                if (annotation.Id !== undefined) {
+                    return; // So that annotations added at initial page loads are not duplicated
+                };
+                annotation.Id = null;
+            }
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.GenerateEvalComponent.addOrModifyAnnotation}',
+                annotation.Id,
+                annotation.src,
+                annotation.shapes[0].geometry.x,
+                annotation.shapes[0].geometry.y,
+                annotation.shapes[0].geometry.width,
+                annotation.shapes[0].geometry.height,
+                annotation.shapes[0].type,
+                annotation.text,
+                '{!parentId}',
+                function(result, event) {
+                    if (event.status) {
+                        annotation.Id = result.Id;
+                    } else {
+                        alert("Failed to update annotation! Error: " + event.message);
+                    }
+                }
+            );
+        }
+
+
+        function removeAnnotation(annotation) {
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.GenerateEvalComponent.deleteAnnotation}',
+                annotation.Id,
+                function(result, event) {
+                    if (!event.status) {
+                        alert("Failed to delete annotation! Error: " + event.message);
+                        anno.addAnnotation(annotation);
+                    }
+                }
+            );
+        }
+
+
+        jQuery(document).ready(function($) {
+
+            window.beforeEvaluationSave = function() {
+                // Temporarily enable all the disabled fields before saving the
+                // record, so that they are included in the POST to the server.
+                $('body select, body input').each(function(_, target) {
+                    $target = $(target);
+                    if ($target.prop("disabled")) {
+                        $target.prop("disabled", false);
+                    }
+                });
+            };
+
+            window.refreshQtips = function () {
+                // All qtips share the same config, so we refactor it here.
+                var qtip_options = function (fn) {
+                    return $("div[data-previous-entry]")
+                        .find("input, select, textarea")
+                        .qtip({
+                            style: {
+                                classes: 'bPageBlock'
+                            },
+                            show: {
+                                delay: 500
+                            },
+                            hide: {
+                                fixed: true,
+                                delay: 500
+                            },
+                            content: {
+                                text: fn
+                            },
+                            position: {
+                                my: 'bottom left',
+                                at: 'top left'
+                            }
+                        });
+                };
+                qtip_options(function(e, api) {
+                    var composite = $(e.target).closest("div[data-previous-entry]").data("previous-entry");
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.GenerateEvalComponent.getPreviousEntries}',
+                        composite,
+                        '{!serviceAssignmentId}',
+                        function (result, event) {
+                            if (event.status) { // Success
+                                resultText =
+                                    '<div class="pbHeader"><strong>Previous Entries</strong></div>';
+                                if (result.length == 0) {
+                                   resultText += 'No previous entry';
+                                }
+                                $.each(result, function (index, entry) {
+                                    if (entry !== undefined && entry.value !== undefined) {
+                                        resultText += '<a href="/' + entry.evaluationId + '">' + entry.value + '</a> at ' + entry.lastModifiedDate + '<br />';
+                                    }
+                                });
+                               api.set('content.text', resultText);
+                            } else if (event.type === 'exception') {
+                               api.set('content.text', 'Error: <br/>' + event.message);
+                               console.log(event);
+                            } else {
+                               api.set('content.text', event.message);
+                            }
+                       });
+                    return "Loading ...";
+                });
+            };
+
+            window.setUpFields = function() {
+                // if not editable, make all input fields disabled and do not apply rules
+                <apex:outputPanel rendered="{!!editEnabled}" layout="none">
+                $('#evalForm :input').prop('disabled', true);
+                return;
+                </apex:outputPanel>
+
+                // Apply rules to input fields
+                $('#evalForm input').on("change", function(event) {
+                    applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
+                });
+                $('#evalForm select').on("change", function(event) {
+                    applyShowHideRulesToField(event.target);
+                    applyRulesToField(event.target);
+                });
+                $('#evalForm input').each(function(_, target) {
+                    applyRulesToField(target);
+                });
+                $('#evalForm input').each(function(_, target) {
+                    applyShowHideRulesToField(target);
+                });
+                $('#evalForm select').each(function(_, target) {
+                    applyShowHideRulesToField(target);
+                    applyRulesToField(target);
+                });
+
+                // set isModified to true on a field value change
+                $('#evalForm input, #evalForm select').on("change", function(event) {
+                    isModified = true;
+                });
+
+                refreshQtips();
+            };
+
+            window.handleFormErros = function() {
+                var errorMsg = '';
+                // select all the required input fields and set the hidden boolean and the error message fields.
+                $(".requiredInput :input").filter(":visible").each(function(_, target) {
+                    var $target = $(target);
+                    if ($target.val() == '')
+                        errorMsg += '<li>' + $('label[for="' + $target.attr('id') + '"]')[0].innerHTML + ' field is mandatory.</li>';
+                });
+
+                // This logic below looks for any multi checkboxes marked as required.
+                $(".requiredInput").prev().filter(":visible").each(function(_, target) {
+                    var $target = $(target);
+                    var multiCheckValid = false;
+                    $('[id^=' + $target.prop("for") +'] :input').each(function(_, multiCheckBox) {
+                        if (multiCheckBox.checked){
+                            multiCheckValid = true;
+                            return false;
+                        }
+                    });
+                    if (!multiCheckValid && $('[id^=' + $target.prop("for") +'] :input').length > 0 ) {
+                        errorMsg += '<li>At least one checkbox is required from the multiple checkboxes for - ' + $target.prop('innerHTML') + '.</li>';
+                    }
+                });
+
+                if (errorMsg != '') {
+                    $('#IsValid').val("false").trigger('change');
+                    $('#ErrorMsg').val(errorMsg).trigger('change');
+                } else {
+                    $('#IsValid').val("true").trigger('change');
+                    $('#ErrorMsg').val("").trigger('change');
+                }
+            };
+            window.bindSubmitEvent = function () {
+                $('#evalForm').on("submit", function(event) {
+                    beforeEvaluationSave();
+                    handleFormErros();
+                    event.preventDefault();
+                    var formData = $(this).serializeArray();
+                    var jsonData = JSON.stringify(formData);
+                    var uuid = (new Date()).getTime();
+
+                   //console.log(jsonData);
+                    // vf remote to save data
+                    GenerateEvalComponent.saveFields('{!parentID}', (('{!evalSectionUuid}' != '') ? '{!evalSectionUuid}' : '{!$User.Id}' + '-' + uuid), '{!evalSectionType}', '{!evaltype}', '{!category}', '{!subcategory}', jsonData, function(result, event) {
+                        if (!event.status) {
+                            $('#evalSecValMsgs').html(event.message);
+                        } else {
+                            {!onEntrySaveSuccess}
+                        }
+                    });
+                });
+            };
+
+
+
+            var serializeObject = function($) {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function() {
+                    if (o[this.name] !== undefined) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+            $('.datepicker').datetimepicker({
+                timepicker: false,
+                format: 'm/d/Y',
+                closeOnDateSelect: true
+            });
+            $('.datetimepicker').datetimepicker({format:'m/d/Y H:i'});
+
+
+            <apex:outputPanel layout="none" rendered="{!subcategory == 'Current Pain' || subcategory == 'Pain'}">
+
+            var options =  [0,1,2,3,4,5,6,7,8,9,10];
+            var initialValue = '0';
+
+            var $initialValue = $(document.getElementById('painLevel'));
+            if ( $initialValue != null) {
+                if ($initialValue.val() != '')
+                    initialValue = $initialValue.val();
+            }
+
+            $(document.getElementById('painSlider')).slider({
+                min: 0,
+                max: 10,
+                step: 1,
+                value: initialValue,
+                disabled: false,
+                change: function (event, ui) {
+                handleSliderChange('painLevel', options[ui.value]);
+                }
+            });
+
+
+            handleSliderChange = function (inputIdToUpdate, value) {
+
+                var $inputToUpdate = $(document.getElementById(inputIdToUpdate));
+                return ($inputToUpdate.val(value));
+            };
+
+            getSliderInitial = function ( inputIdForInitial ) {
+                var $initalValue = $(document.getElementById(inputIdForInitial));
+                if ($initialValue.val() == '')
+                    return '0';
+                else
+                    return $initialValue.val();
+                }
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="none" rendered="{!(subcategory == 'Body Map' || subcategory=='Current Pain' || subcategory == 'Pain')}">
+            anno.reset();
+            var el = $('#bodyMap{!evalSectionUuid}').get(0);
+            if (el) {
+                anno.makeAnnotatable(el);
+            }
+            var $el = $(el);
+
+            <apex:repeat value="{!annotations}" var="annotation">
+            anno.addAnnotation({
+                Id: "{!annotation.Id}",
+                src: $("#bodyMap{!evalSectionUuid}").prop("src"),
+                text: "{!JSENCODE(annotation.Annotation_Text__c)}",
+                shapes: [{
+                    type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
+                    geometry: {
+                        x: {!annotation.Annotation_X__c},
+                        y: {!annotation.Annotation_Y__c},
+                        width: {!annotation.Annotation_Width__c},
+                        height: {!annotation.Annotation_Height__c}
+                    }
+                }]
+            });
+            </apex:repeat>
+            var createAnnotationElements = function(annotations) {
+                $('.annotation-number').remove();
+                $('table#annotations tr').remove();
+                $.each(annotations, function(index, annotation) {
+                    var $divEl = $("<div class='annotation-number' style='pointer-events:none; position: absolute; text-align: center; left: " + annotation.shapes[0].geometry.x * 100 + "%; width: " + annotation.shapes[0].geometry.width * 100 + "%; top: " + annotation.shapes[0].geometry.y * 100 + "%; height: " + annotation.shapes[0].geometry.height * 100 + "%;'></div>");
+                    $el.parent().append($divEl);
+                    var $textEl = $("<span style='line-height: " + $divEl.height() + "px; color: red; font-size: 1.5em;'>" + (index + 1) + "</span>");
+                    $divEl.append($textEl);
+                    $("table#annotations tbody").append("<tr><td>" + (index + 1) + "</td><td>" + annotation.text + "</td></tr>");
+                });
+            }
+            createAnnotationElements(anno.getAnnotations());
+            anno.addHandler('onAnnotationCreated', function(annotation) {
+                createAnnotationElements(anno.getAnnotations());
+                addOrModifyAnnotation(annotation, true);
+            });
+            anno.addHandler('onAnnotationUpdated', function(annotation) {
+                createAnnotationElements(anno.getAnnotations());
+                addOrModifyAnnotation(annotation, false);
+            });
+            anno.addHandler('onAnnotationRemoved', function(annotation) {
+                createAnnotationElements(anno.getAnnotations());
+                removeAnnotation(annotation);
+            });
+            </apex:outputPanel>
+        });
+    </script>
+
+	<apex:outputPanel layout="none"
+		rendered="{! subcategory == 'Vitals Signs' || subcategory == 'Elimination - Bowel'}">
+		<script type="text/javascript">
+
+        var lbs;
+        var oz;
+        var kg;
+        var ft;
+        var inc;
+        var cm;
+
+        j$=jQuery.noConflict();
+
+        jQuery(document).ready(function($) {
+
+            // setup the auto calc
+            if ( '{!subcategory}' == 'Vitals Signs') {
+                calculate($('#weightAtAdmission'), 'kg');
+                calculate($('#heightAtAdmission'), 'cm');
+            } else if ( {!subcategory == 'Elimination - Bowel'}) {
+                calculate($('#kg'), 'kg');
+            }
+        });
+
+        function calculate(formField,type){
+
+          var kgfield;
+          var lbfield;
+          var ozfield;
+          var cmfield;
+          var ftfield;
+          var infield;
+
+          if ( '{!subcategory}' == 'Vitals Signs') {
+              kgfield = j$('[id=weightAtAdmission]');
+              lbfield = j$('[id=weightAtAdmissionlb]');
+              ozfield = j$('[id=weightAtAdmissionoz]');
+          }
+          else {
+              kgfield = j$('[id=kg]');
+              lbfield = j$('[id=weightlb]');
+              ozfield = j$('[id=weightoz]');
+          }
+
+
+        if(type=='lb' || type == 'oz'){
+            var total=getlbsValue( lbfield ) + getOzValue( ozfield );
+            kgfield.val(Math.round(total*100)/100);
+        }
+
+        if(type=='kg'){
+            kg=kgfield.val();
+            var kgtolbs = kg*2.2046226218488;
+
+            lbfield.val(Math.floor(kgtolbs));
+            var newoz = (kgtolbs- Math.floor(kgtolbs)) * 16;
+            ozfield.val(Math.round(newoz* 100) / 100);
+        }
+
+        if(type=='ft' || type== 'inc'){
+            var htotal = getftValue() + getincValue();
+            j$('[id=heightAtAdmission]').val(Math.round( htotal * 100) / 100 );
+
+        }
+
+        if(type=='cm'){
+            cm=j$('[id=heightAtAdmission]').val();
+            var inches = cm/2.54;
+            var newft = Math.floor(inches/12);
+            var newinch = inches - (newft*12);
+            j$('[id=heightAtAdmissionft]').val(newft);
+            j$('[id=heightAtAdmissionin]').val(Math.round(newinch*100)/100);
+
+            }
+
+
+        }
+
+        function getlbsValue( fldlb ){
+            lbs= fldlb.val();
+            var lbtokgs = 0;
+            if(lbs!=null && lbs!='')
+                lbtokgs = lbs/2.2046226218488;
+            return lbtokgs;
+
+        }
+        function getOzValue( fldoz ){
+            oz= fldoz.val();
+            var oztokg=0;
+            if(oz!=null && oz!='')
+                oztokg = oz/(16*2.2046226218488);
+            return oztokg;
+
+        }
+
+        function getftValue(){
+            ft=j$('[id=heightAtAdmissionft]').val();
+            var fttocm = 0;
+            if(ft!= null && ft!='')
+                fttocm = ft*12*2.54;
+            return fttocm;
+
+
+        }
+
+        function getincValue(){
+            inc=j$('[id=heightAtAdmissionin]').val();
+            var inctocm = 0;
+            if(inc!= null && inc!='')
+                inctocm = inc*2.54;
+            return inctocm;
+        }
+    </script>
+	</apex:outputPanel>
+</apex:component>
