@@ -731,7 +731,7 @@ public with sharing class referralConversion_Controller {
                     
                 // for now this will be for CM only.  working on other flavors.
                 if (  numFields > 0 ) {
-                	string authstatus = 'Draft';
+                	string authstatus = 'Inactive Draft';
                     
                     //	
                 	//if ( numFields == ALLFIELDS )
