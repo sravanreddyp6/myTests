@@ -20,10 +20,10 @@ var j$ = jQuery.noConflict();
 <apex:pageBlock title="Authorization">
 <apex:pageBlockButtons >
 <div class="pbHeaderButton" style="top: 0px;" >  
-        <apex:commandButton action="{!editAuth}" value="Edit" reRender="authForm"  status="myStatus" rendered="{! canEditAuth && authorization.Authorization_Status__c = 'Inactive Draft'}" />
-        <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!authorization.Authorization_Status__c = 'Active Final' && !HasDraft && canEditAuth }"/>  
-        <apex:commandButton action="{!finalizeAuth}" value="Finalize" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c = 'Inactive Draft'}"/>
-        <apex:commandButton action="{!cloneAuth}" value="Clone" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c = 'Inactive Draft'}"/>
+        <apex:commandButton action="{!editAuth}" value="Edit" reRender="authForm"  status="myStatus" rendered="{! canEditAuth && authorization.Authorization_Status__c = 'Draft'}" />
+        <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!authorization.Authorization_Status__c = 'Final' && !HasDraft && canEditAuth }"/>  
+        <apex:commandButton action="{!finalizeAuth}" value="Finalize" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c = 'Draft'}"/>
+        <apex:commandButton action="{!cloneAuth}" value="Clone" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c != 'Draft'}"/>
 </div>
 </apex:pageBlockButtons>   
 
@@ -33,18 +33,38 @@ var j$ = jQuery.noConflict();
 
 <apex:pageBlockSection title="Authorization Detail" collapsible="False" columns="2"> 
 		
-        <apex:outputField value="{!authorization.Type__c}"/>
-        <apex:outputField value="{!authorization.Reason_for_New_Authorization__c}"/>
-        <apex:outputField value="{!authorization.Service_Being_Funded_String__c}"/>
-        <apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number"/>    
-        <apex:outputField value="{!authorization.Rate__c}"/>   
-        <apex:pageBlockSectionItem>
-        	<apex:outputLabel value="Received Date/Time" />
-        	<c:militarydatetime datetimeval="{!authorization.Received_Date_time__c}" />
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Type" />
+		<apex:outputPanel layout="none">
+        <apex:outputField value="{!authorization.Type__c}"/> <apex:outputField value="{!authorization.Other_Authorization_Type__c}" rendered="{!authorization.Type__c == 'Other'}" />
+        </apex:outputPanel>
         </apex:pageBlockSectionItem>
-        <apex:outputField value="{!authorization.Rate_Unit__c}"/>
-        <apex:outputField value="{!authorization.Payer_effective_date__c}" label="Start Date"/>
-        <apex:outputField value="{!authorization.Contract_used__c}"/> 
+        <apex:outputField value="{!authorization.Reason_for_New_Authorization__c}"/>
+        <apex:outputField value="{!authorization.Service_Being_Funded_String__c}" rendered="{!authorization.Type__c != 'Bed Hold'}"/>
+        <apex:outputField value="{!authorization.Bed_Hold_Type__c}" rendered="{!authorization.Type__c == 'Bed Hold'}"/>
+        <apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number"/>    
+        <apex:outputField value="{!authorization.Rate__c}" rendered="{!authorization.Type__c != 'Bed Hold'}"/>   
+        <apex:outputField value="{!authorization.Bed_Hold_Type_Detail__c}" rendered="{!authorization.Type__c == 'Bed Hold'}"/>
+        
+        <apex:pageBlockSectionItem >
+        	<apex:outputLabel value="Received Date/Time" />
+        	<c:MilitaryDatetime datetimeval="{!authorization.Received_Date_Time__c}" />
+        </apex:pageBlockSectionItem>
+        
+    	<apex:pageBlockSectionItem rendered="{!authorization.Type__c != 'Bed Hold'}">
+        <apex:outputLabel value="Per" />
+        <apex:outputPanel layout="none" >
+        	<apex:outputField value="{!authorization.Rate_unit__c}" /> <apex:outputField value="{! authorization.rate_unit_other__c}" rendered="{!authorization.Rate_unit__c == 'Other'}" />
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!authorization.Bed_Hold_Additional_Detail__c}" rendered="{!authorization.Type__c == 'Bed Hold'}"/>
+        <apex:outputField value="{!authorization.Payer_Effective_Date__c}" label="Start Date"/>
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Funding Source" />
+        <apex:outputPanel layout="none">
+        	<apex:outputField value="{!authorization.Contract_Used__c}"/> <apex:outputField value="{!authorization.Funding_Source__r.Payer_Name__c}" />
+        </apex:outputPanel> 
+        </apex:pageBlockSectionItem>
         <apex:outputField value="{!authorization.Payer_End_Date__c}" label="End Date"/>
         <apex:outputField value="{!authorization.Level__c}" />
         <apex:outputField value="{!authorization.Received_From__c}" />
