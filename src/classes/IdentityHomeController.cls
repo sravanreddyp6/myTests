@@ -15,7 +15,7 @@ public with sharing class IdentityHomeController {
     public List<TMN_User__c> searchNonEmpResult ;
     public List<TMN_User__c> tmnUserList {get; set;}
     public List<TMN_User_Delegate__c> myDelegation {get; set;}
-    public List<PermissionSetAssignment> fullAccess {get; set;}
+    public List<PermissionSetAssignment> hasRecruiter {get; set;}
     public TMN_User__c theTMNUser {get; set;}
     public ID selectedID {get; set;}
     public Boolean displayPopup {get; set;}
@@ -70,10 +70,11 @@ public with sharing class IdentityHomeController {
                         LIMIT 1];
         System.debug('myDelegation Count is ' + myDelegation.size());
         
-        fullAccess = [SELECT PermissionSetId,PermissionSet.Name 
-                      FROM PermissionSetAssignment WHERE assignee.Id = :userId 
-                      AND PermissionSet.Name = 'TMN_Users_Full_Access' 
-                      LIMIT 1];
+        hasRecruiter = [SELECT PermissionSetId,PermissionSet.Name 
+                        FROM PermissionSetAssignment WHERE assignee.Id = :userId 
+                        AND PermissionSet.Name = 'TMNAccess_Recruiter' 
+                        LIMIT 1];
+        System.debug('hasRecruiter count is ' + hasRecruiter.size());
                       
         aliasName = getAliasNameValue();
         System.Debug('Value of aliasName is ' + aliasName);      
@@ -199,10 +200,13 @@ public with sharing class IdentityHomeController {
     }
 
     //Boolean value to show if someone should see any output on the page. Used to conditionally render page panels.
-    Boolean hasAccess;
     public Boolean getHasAccess() {
         if(mySubordinates.isEmpty() && myDelegation.isEmpty()){
-            hasAccess = false;
+                if(hasRecruiter.isEmpty()){
+                    hasAccess = false;
+                }else{
+                    hasAccess = true;
+                }
         }else{
             hasAccess = true;
         }
@@ -229,6 +233,16 @@ public with sharing class IdentityHomeController {
             hasSubs = true;
         }
         return hasSubs;
+    }
+
+    Boolean isRecruiter;
+    public Boolean getIsRecruiter(){
+        if(hasRecruiter.isEmpty()){
+            isRecruiter = false;
+        }else{
+            isRecruiter = true;
+        }
+        return isRecruiter;    
     }
 
     Boolean btnDisable = true;
