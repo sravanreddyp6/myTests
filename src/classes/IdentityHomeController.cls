@@ -200,6 +200,7 @@ public with sharing class IdentityHomeController {
     }
 
     //Boolean value to show if someone should see any output on the page. Used to conditionally render page panels.
+    Boolean hasAccess;
     public Boolean getHasAccess() {
         if(mySubordinates.isEmpty() && myDelegation.isEmpty()){
                 if(hasRecruiter.isEmpty()){
