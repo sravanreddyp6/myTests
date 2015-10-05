@@ -314,34 +314,38 @@ public with sharing class IdentityHomeController {
     
      public ApexPages.StandardSetController setCon {
         get{
-            if(setCon == null){
+            if(setCon == null && tmlUserQuery!=null){
                 setCon = new ApexPages.StandardSetController(Database.getQueryLocator(tmlUserQuery));
                 setCon.setPageSize(limitSizeDel);
                 noOfRecords = setCon.getResultSize();
-            }
             if(noOfRecords == 0 && searchType.equals('Delegate') ) {
                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found.')); 
             } else if(noOfRecords == 0 && searchType.equals('Non-employee')) { 
                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
             }else if(noOfRecords > 0 && searchType.equals('Non-employee')){
        			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
-              }              
+              }  
+           }     
             return setCon;
         }set;
     }
 	Public List<TMN_User__c> getsearchDelegateResult(){
         List<TMN_User__c> Tlist = new List<TMN_User__c>();
+        if(setCon!=null){
         for(TMN_User__c t : (List<TMN_User__c>)setCon.getRecords()){
             Tlist.add(t);
         }
+        }    
         return Tlist;
     }
     
     	Public List<TMN_User__c> getsearchNonEmpResult(){
         List<TMN_User__c> Tlist = new List<TMN_User__c>();
+            if(setCon!=null){
         for(TMN_User__c t : (List<TMN_User__c>)setCon.getRecords()){
             Tlist.add(t);
         }
+        }        
         return Tlist;
     }
 
@@ -352,8 +356,10 @@ public with sharing class IdentityHomeController {
         searchDelegateResult.clear();
         if (String.IsBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter a first name, last name or both.'));
+            return null;
         }else if (srchFNameDel.length()<2 && srchLNameDel.length()<2){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
+            return null;
         }else if (String.IsNotBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
             tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__c  FROM TMN_User__c '; 
             tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+   generatedKey2 +'%\') ';
@@ -396,27 +402,32 @@ public with sharing class IdentityHomeController {
         if (String.IsBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter a first name, last name or both.'));
             btnDisable = true;
+             return null;
         }else if (srchFNameNonEmp.length()<2 && srchLNameNonEmp.length()<2){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
             btnDisable = true;
+             return null;
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
              tmlUserQuery  = 'SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c FROM TMN_User__c '; 
             tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 
             tmlUserQuery += '  ORDER BY Last_Name__c,First_Name__c';
+            btnDisable = false;
+            showPopup();
         }else if (String.IsBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
              tmlUserQuery = 'SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c  FROM TMN_User__c '; 
              tmlUserQuery += ' WHERE (Last_Name__c like \'%'+ generatedKey1 +'%\' OR Preferred_Last_Name__c like \'%'+  generatedKey1 +'%\') ';
              tmlUserQuery += '  ORDER BY Last_Name__c,First_Name__c ';
+            btnDisable = false;
+           showPopup();
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
              tmlUserQuery  = 'SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c FROM TMN_User__c '; 
              tmlUserQuery += ' WHERE ((Last_Name__c like \'%'+  generatedKey1 +'%\' AND First_Name__c like \'%'+ generatedKey2 +'%\') '; 
              tmlUserQuery += ' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 
              tmlUserQuery += ' OR (Last_Name__c like \'%'+ generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+  generatedKey2 +'%\') ';
              tmlUserQuery += ' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND First_Name__c like \'%'+  generatedKey2 +'%\'))  ORDER BY Last_Name__c,First_Name__c';
+            btnDisable = false;
+        	showPopup();
         }
-                btnDisable = false;
-                showPopup();
-        System.debug('tmlUserQuery' + tmlUserQuery);
         onloadDialog = false;
         return null;
     }      
@@ -472,6 +483,7 @@ public with sharing class IdentityHomeController {
         srchLNameNonEmp = null;        
         displayPopup = false;    
         onloadDialog = false;
+        ApexPages.getMessages().clear();
     } 
         
     public void showPopup() {        
@@ -516,39 +528,46 @@ public with sharing class IdentityHomeController {
 
  public Boolean hasNext {
         get {
+            if(setCon!=null){
             return setCon.getHasNext();
+            }
+            return false;
         }
         set;
     }
     public Boolean hasPrevious {
         get {
+             if(setCon!=null){
             return setCon.getHasPrevious();
-        }
-        set;
-    }
-  
-    public Integer pageNumber {
-        get {
-            return setCon.getPageNumber();
+            }
+            return false;     
         }
         set;
     }
   
    
     public void previous() {
-        setCon.previous();
+        if(setCon!=null){
+            setCon.previous();
+        }    
     }
   
     public void next() {
+        if(setCon!=null){
         setCon.next();
+        }      
     }
         
      public void first() {
+         if(setCon!=null){
         setCon.first();
+         }      
     }
   
     public void last() {
+        if(setCon!=null){
         setCon.last();
+        }     
     }
 }
 //Script to update Soundex Keys
