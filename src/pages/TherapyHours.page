@@ -115,7 +115,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
             $j.mobile.changePage('#listpage', {changeHash: true});
         }
         function displayError(e){
-            $j('#error').html(e.message);
+            $j('#error').html('Insert failed. ' + e.message.substr(e.message.lastIndexOf('FIELD_CUSTOM_VALIDATION_EXCEPTION,')+('FIELD_CUSTOM_VALIDATION_EXCEPTION,').length) );
         }
         function formatDateTime(val){
             return moment(val).format('L LT');
