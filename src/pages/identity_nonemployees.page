@@ -203,7 +203,7 @@
                 <apex:commandButton value="Find or Create" action="{!nonEmpSearch}" id="srchBtn" status="loadingBusy" />                               
         </apex:form>        
     <apex:pageBlockSection ></apex:pageBlockSection>
-    <apex:pageBlockSection columns="1" title="Workforce Reporting to Me" id="wfReports" >
+    <apex:pageBlockSection columns="1" title="Workforce Reporting to Me" id="wfReports" rendered="{!hasSubs}" >
         <apex:form >
             <apex:pageBlockTable value="{!myWorkforce}" var="wf">
                 <apex:column headerValue="Action" >
