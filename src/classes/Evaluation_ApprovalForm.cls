@@ -1,7 +1,7 @@
 public with sharing class Evaluation_ApprovalForm {
     private ApexPages.StandardController controller;
     private Evaluation__c thisEval {get;set;}
-    
+
     public Evaluation_ApprovalForm(ApexPages.StandardController controller) {
         this.controller = controller;
         thisEval = (Evaluation__c)controller.getrecord();
@@ -21,10 +21,23 @@ public with sharing class Evaluation_ApprovalForm {
     /////////////////
     // Actions
     /////////////////
-    
+
     public PageReference myFinal(){
         Evaluation__c thisEval = (Evaluation__c)controller.getrecord();
-        thisEval.status__c = 'Final';
+        if (thisEval.RecordType.Name == 'NursesAssessment') {
+            Evaluation__c[] residentials = [
+                SELECT Id FROM Evaluation__c
+                 WHERE ServiceAssignment__c = :thisEval.ServiceAssignment__c
+                   AND Status__c LIKE 'Final%'
+            ];
+            if (residentials.size() == 0) {
+                thisEval.Status__c = 'Final Admission';
+            } else {
+                thisEval.Status__c = 'Final Revision';
+            }
+        } else {
+            thisEval.status__c = 'Final';
+        }
         thisEval.Signed_At__c = system.Now();
         update thisEval;
         if ( !No_Approval_Needed) {
@@ -32,7 +45,7 @@ public with sharing class Evaluation_ApprovalForm {
         }
         return new PageReference('/' + thisEval.Id);
     }
-    
+
     private boolean isDON;
     private boolean isTierIII;
     private void getPermSets() {
@@ -57,5 +70,5 @@ public with sharing class Evaluation_ApprovalForm {
 			isTierIII = false;
 		}
     }
-    
+
 }
