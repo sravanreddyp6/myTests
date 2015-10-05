@@ -193,7 +193,7 @@
     </apex:outputPanel> 
     <br/>
     
-    <apex:outputPanel styleClass="inner-block" layout="block" rendered="{!hasAccess}">
+    <apex:outputPanel styleClass="inner-block" layout="block" id="wfReports" rendered="{!hasAccess}">
     <apex:pageBlock title="Find or Create" id="blkSecNonEmpSrch" >
         <apex:form id="frmNonEmpSrch" >  
                 <apex:inputText label="srchFN" value="{!srchFNameNonEmp}" html-placeholder="First Name"/>
@@ -203,7 +203,7 @@
                 <apex:commandButton value="Find or Create" action="{!nonEmpSearch}" id="srchBtn" status="loadingBusy" />                               
         </apex:form>        
     <apex:pageBlockSection ></apex:pageBlockSection>
-    <apex:pageBlockSection columns="1" title="Workforce Reporting to Me" id="wfReports" rendered="{!hasSubs}" >
+    <apex:pageBlockSection columns="1" title="Workforce Reporting to Me"  rendered="{!myWorkforce.size!=0}" >
         <apex:form >
             <apex:pageBlockTable value="{!myWorkforce}" var="wf">
                 <apex:column headerValue="Action" >
