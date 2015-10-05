@@ -731,7 +731,7 @@ public with sharing class referralConversion_Controller {
                     
                 // for now this will be for CM only.  working on other flavors.
                 if (  numFields > 0 ) {
-                	string authstatus = 'Inactive Draft';
+                	string authstatus = 'Draft';
                     
                     //	
                 	//if ( numFields == ALLFIELDS )
@@ -770,7 +770,8 @@ public with sharing class referralConversion_Controller {
                                                                     rate_unit__c = fs.rate_unit__c,
                                                                     payer_authorization_id__c = fs.authorization_number__c,
                                                                     received_date_time__c = fs.received_date_time__c,
-                                                                    taken_by__c = fs.taken_by__c
+                                                                    taken_by__c = fs.taken_by__c,
+                                                                    reason_for_new_authorization__c = 'New Authorization'
                                                                     );
                                                                     
                     newauths.Add( auth);
