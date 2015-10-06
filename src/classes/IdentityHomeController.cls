@@ -402,11 +402,9 @@ public with sharing class IdentityHomeController {
         if (String.IsBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter a first name, last name or both.'));
             btnDisable = true;
-             return null;
         }else if (srchFNameNonEmp.length()<2 && srchLNameNonEmp.length()<2){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
             btnDisable = true;
-             return null;
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
              tmlUserQuery  = 'SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c FROM TMN_User__c '; 
             tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 

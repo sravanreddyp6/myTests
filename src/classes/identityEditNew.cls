@@ -196,6 +196,14 @@ public class identityEditNew {
     	 	error = true;
         }
 		
+		if(TMNUser.Personal_Email__c !=null){
+    	 	if(!ValidEmail.validate(TMNUser.Personal_Email__c)) {
+    	 	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Personal Email: Enter a valid email address'));
+                error = true;
+    	 	}
+        }
+        
+		
 		if(error){
 		return null;
 		}

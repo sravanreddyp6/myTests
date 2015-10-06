@@ -3,7 +3,6 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
-    <!-- <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/> -->
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
     <style type="text/css">
@@ -318,13 +317,13 @@
             <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayInfo}" >
                 <apex:form >
                     <apex:pageBlock title="{!theTMNUser.Name}" mode="view" >
-                        <apex:pageblockButtons location="Bottom" >    
+                        <div class="pbHeaderButton">   
                         <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=theTMNUser.id])}"/>-->
                         <!--<apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>-->
                         <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
                         <apex:commandButton value="Request Access" action="{!URLFOR($Page.identity_canvas, '')}" />
-                    </apex:pageblockButtons>            
+                    </div>            
                     <apex:pageBlockSection columns="2" title="Person Information">                   
                         <apex:outputField label="First Name" value="{!theTMNUser.First_Name__c}"/>
                         <apex:outputField label="Company Email" value="{!theTMNUser.Email__c}"/>
