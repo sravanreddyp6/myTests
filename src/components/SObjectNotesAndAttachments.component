@@ -1,0 +1,47 @@
+<apex:component controller="SObjectNotesAndAttachmentsController" allowDML="true">
+    <apex:attribute name="parentId" assignTo="{!parent}" type="ID" description="The ID of the parent SObject" />
+    <apex:attribute name="showAction" type="Boolean" default="true" description="Whether to show the Action column or not" />
+    <apex:attribute name="showType" type="Boolean" default="true" description="Whether to show the Type column or not" />
+    <apex:attribute name="retURL" type="string" description="Specify a return url, usefull if this comp is renendered"/>
+    <apex:attribute name="parentPage" type="string" description="This id used for personal Record component"/>
+    <apex:attribute name="pbsId" type="string" description="PBS Id"/>
+    <apex:attribute name="apId" type="string" description="Action Plan Id"/>
+    <apex:attribute name="servAssignId" type="string" description="Service Assignment Id"/>
+    <apex:attribute name="admId" type="string" description="Admission Id"/>
+    <apex:attribute name="asmtType" type="string" description="Assessment Type" default="false"  />
+	<apex:attribute name="asmtId" type="string" description="Assessment Id" default="false"  />
+	<apex:attribute name="ReferralName" type="string" description="Referral Name" default="false"   />
+    <apex:variable value="{!if(retURL != null, retURL ,$CurrentPage.URL)}" var="theRetUrl"/>
+    <apex:variable var="v" value="val"   rendered="{!parentPage != 'referral'}">
+        <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    </apex:variable>
+    
+    <apex:form id="wholeForm">
+        <apex:pageBlock id="AttachmentsBlock">
+        <div class="pbSubHeadButton">
+                 <apex:commandButton value="Attach File" onclick="window.location='/apex/uploader?parentid={!parentId}&fileUploadVal=true&retURL={!theRetUrl}&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}';return false;" /> &nbsp;&nbsp;
+                <apex:commandButton rendered="{!entries.size>0}" onclick="window.location='/apex/AttachmentListView?id={!LEFT(parentID, 15)}&retURL={!theRetUrl}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}'; return false;" value="View All" />
+       </div> 
+       <apex:pageBlockSection title="Attachments" columns="1" collapsible="false" id="AttachmentsId">
+            <apex:outputText rendered="{!entries.size=0}" value="No records to display" />
+            <apex:pageBlockTable style="width: 100%;" id="NotesAndAttachments" value="{!entries}" var="entry" styleClass="list" rendered="{!entries.size>0}">
+                <apex:column style="padding-right: 9px;" headerValue="Action"  rendered="{!showAction}">
+                    <apex:outputLink value="/apex/UpdateAttachment?docId={!entry.Id}&retURL={!theRetUrl}&parentId={!parentId}&parentPage={!parentPage}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" styleClass="actionLink">Edit</apex:outputLink>
+                </apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Title">
+                    <apex:outputLink value="/apex/ViewAttachment?docId={!entry.Id}&retURL={!theRetUrl}&parentId={!parentId}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}">{!entry.Title}</apex:outputLink>
+                </apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Description">
+                    <apex:outputText >{!entry.Description}</apex:outputText>
+                </apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
+                    <apex:outputText value="{!entry.CreatedDate}" />
+                </apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Created By">
+                    <apex:outputLink value="/{!entry.OwnerId}">{!entry.OwnerName}</apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:component>

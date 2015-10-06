@@ -1,0 +1,427 @@
+<apex:page controller="IdentityHomeController" sidebar="false" id="idNoEmpPage" tabStyle="TMN_User__c">
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />  
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <!-- <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/> -->
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+    <style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9997;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            /* These are the 3 css properties you will need to change so the popup 
+            displays in the center of the screen. First set the width. Then set 
+            margin-left to negative half of what the width is. You can add 
+            the height property for a fixed size pop up if you want.*/
+            width: 1000px;
+            margin-left: -500px;
+            top:10px;
+        }
+        .waitPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            width: 100px;
+            margin-left: -50px;
+            top:100px;
+        }        
+        .popupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9996;
+        }
+        .waitPopupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;            
+        }
+        .block {
+            border-width: 10px 4px;
+            border-style: solid;
+            border-color: #066463;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 12px;
+            width: 230px;
+        }                    
+        .block-title {
+            color: #000000;
+            padding: 0 4px;
+            font-size: 1.25em;
+            font-weight: bold;
+        }       
+        .block-inner {
+            color: #000000;
+            padding: 0 4px;
+            font-size: 1em;
+            font-weight: bold;
+        }
+                             
+    </style>
+<script type="text/javascript" >
+   var j$ = jQuery.noConflict(); 
+             jQuery(window).load(function($) {
+             if({!onloadDialog}){
+             	 j$('[id$=selectDelegateId]').val('');
+                  j$('[id*=DelegateOnBehalfOf]').dialog("open");
+                }
+        });
+    
+    j$(function() {
+    j$('[id*=DelegateOnBehalfOf]').dialog({
+      resizable: false,
+      draggable: false,
+      height:300,
+      width : 500,
+      modal: true,
+      autoOpen: false,
+      top: 400
+    }).parent().appendTo(j$('form[id$=identityNonEmployee]'));
+}); 
+ 
+    function CloseDialog() {
+    j$('[id*=DelegateOnBehalfOf]').dialog("close");
+    }
+    function changeDelegate() {
+    	selectDelegate(j$('[id$=selectDelegateId]').val());
+    }
+    
+    function changeDelegate2(){
+        if(j$('[id$=WorkforceOnBehalf]').val().length>1){
+    	selectDelegate2(j$('[id$=WorkforceOnBehalf]').val());
+        }    
+    }
+    
+    </script> 
+    
+    <apex:actionStatus id="loadingBusy" stopText="">
+        <apex:facet name="start">
+            <div>
+                <div class="waitPopupBackground" />
+                <div class="waitPopup">
+                    <table border="0" width="100%" height="100%">
+                        <tr>
+                            <td align="center"><b>Please Wait</b></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><img src="{!$Resource.AjaxLoad}"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
+
+    <apex:panelGrid >                
+        <apex:panelGroup >
+            <apex:outputPanel layout="block" styleClass="block-title" rendered="{!hasSubs}">
+                I Would Like to ...
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" styleClass="block" rendered="{!hasSubs}">
+                <apex:form styleClass="block-inner">
+                    <!--<apex:outputLink value="/apex/identity_home" rendered="{!hasAccess}"> View Recently Accessed Identities...</apex:outputLink><br />-->
+                    <apex:outputLink value="/apex/identity_delegate" rendered="{!hasSubs}"> Manage my Delegates...</apex:outputLink><br />
+                   <!-- <apex:outputLink value="/apex/identity_employees" rendered="{!isDelegate}">Maintain Employees...</apex:outputLink><br /> -->
+                    <!--<apex:outputLink value="/apex/identity_nonemployees" rendered="{!isDelegate}">Maintain Non-Employees...</apex:outputLink><br />-->
+                    <apex:outputLink value="/apex/identity_edit" rendered="{!$Profile.Name=='System Administrator'}">Manage TMN Users</apex:outputLink>
+                </apex:form>
+            </apex:outputPanel>
+        </apex:panelGroup>
+    </apex:panelGrid>
+    
+    <apex:outputPanel >
+        <apex:pageMessages />
+    </apex:outputPanel>
+       
+    <apex:form >
+     <apex:actionFunction name="selectDelegate" action="{!selectDelegate}"   reRender="WorkforceOnBehalf,wfReports,wfAttest" oncomplete="CloseDialog();" >
+             <apex:param name="aliasName" value="" assignTo="{!aliasName}" />
+            </apex:actionFunction>
+        
+        <apex:outputPanel id="DelegateOnBehalfOf" title="Delegate On Behalf Of" style="display:none">
+            <apex:pageBlock >
+                <apex:pageBlockSection columns="2" > 
+                    <apex:pageBlockSectionItem >
+                        <apex:outputText value="Manage Workforce on Behalf of" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:selectList value="{!aliasName}" size="1" label="Select Delegation" id="selectDelegateId" onchange="changeDelegate()" style="margin-right: 20px;">
+                            <apex:selectOptions value="{!DelValues}" />
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>  
+        
+    </apex:form>
+    <apex:outputPanel layout="block" styleClass="block-title" rendered="{!hasAccess}" >
+    <apex:form >
+    		<apex:actionFunction name="selectDelegate2" action="{!selectDelegate}"   reRender="wfReports,wfAttest"  >
+             <apex:param name="aliasName" value="" assignTo="{!aliasName}" />
+            </apex:actionFunction>
+            
+        Manage Workforce on Behalf of:&nbsp;
+        <apex:selectList value="{!aliasName}" size="1" label="Delegation Selected" id="WorkforceOnBehalf" onchange="changeDelegate2()">
+             <apex:selectOptions value="{!DelValues}" >
+            </apex:selectOptions>
+        </apex:selectList>
+    </apex:form>
+    </apex:outputPanel> 
+    <br/>
+    
+    <apex:outputPanel styleClass="inner-block" layout="block" id="wfReports" rendered="{!hasAccess}">
+    <apex:pageBlock title="Find or Create" id="blkSecNonEmpSrch" >
+        <apex:form id="frmNonEmpSrch" >  
+                <apex:inputText label="srchFN" value="{!srchFNameNonEmp}" html-placeholder="First Name"/>
+                <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
+                <apex:inputText label="srchLN" value="{!srchLNameNonEmp}" html-placeholder="Last Name"/>
+                <apex:outputPanel >&nbsp;&nbsp;</apex:outputPanel>
+                <apex:commandButton value="Find or Create" action="{!nonEmpSearch}" id="srchBtn" status="loadingBusy" />                               
+        </apex:form>        
+    <apex:pageBlockSection ></apex:pageBlockSection>
+    <apex:pageBlockSection columns="1" title="Workforce Reporting to Me"  rendered="{!myWorkforce.size!=0}" >
+        <apex:form >
+            <apex:pageBlockTable value="{!myWorkforce}" var="wf">
+                <apex:column headerValue="Action" >
+                    <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=wf.id,retURL=$Page.RequestAccess])}">View</apex:outputLink>-->
+                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
+                        <apex:param value="{!wf.Id}" assignTo="{!selectedID}" name="userIdParam"/>
+                    </apex:commandLink> 
+                       
+                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Request Access</apex:outputLink></apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!wf.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                        &nbsp;
+                                       
+                </apex:column>
+                <apex:column headerValue="Name" value="{!wf.Name}"/>
+                <apex:column headerValue="Email" value="{!wf.Email__c}"/>
+                <apex:column headerValue="Title" value="{!wf.Professional_Title__c}"/>
+                <apex:column headerValue="Status" value="{!wf.Job_Status__c}"/>
+                <apex:column headerValue="Person Type" value="{!wf.Current_Person_Type__c}"/>                           
+            </apex:pageBlockTable>
+        </apex:form>      
+    </apex:pageBlockSection>
+
+        <apex:pageBlockSection columns="1" title="My Recently Edited Workforce">
+            <apex:form >
+            <apex:pageBlockTable value="{!Records}" var="r">
+                <apex:column headerValue="Action" >
+                    <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=r.id,retURL=$Page.RequestAccess])}">View</apex:outputLink>-->
+                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
+                        <apex:param value="{!r.Id}" assignTo="{!selectedID}" name="userIdParam"/>
+                    </apex:commandLink>
+                     
+                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!r.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                        &nbsp;
+
+                </apex:column>
+                <apex:column headerValue="Name" value="{!r.Name}"/>
+                <apex:column headerValue="Email" value="{!r.Email__c}"/>
+                <apex:column headerValue="Title" value="{!r.Professional_Title__c}" />
+                <apex:column headerValue="Status" value="{!r.Job_Status__c}"/>
+                <apex:column headerValue="Person Type" value="{!r.Current_Person_Type__c}"/>           
+            </apex:pageBlockTable>
+            </apex:form>
+        </apex:pageBlockSection>
+    
+<!--        <apex:pageBlockSection columns="1" title="Workforce Attestation" id="wfAttest">
+            <apex:form >
+            <apex:pageBlockTable value="{!attestNonEmployees}" var="e">
+                <apex:column headerValue="Action" >
+                    <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=e.id,retURL=$Page.RequestAccess])}">View</apex:outputLink> &nbsp;-->
+                 <!--   <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
+                        <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="userIdParam"/>
+                    </apex:commandLink>
+                     &nbsp;&#124;&nbsp;                    
+                    <apex:commandLink value="Extend 30 Days" id="ExtCommand" action="{!add30Days}" rerender="wfBlock" status="loadingBusy"> 
+                        <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Name" value="{!e.Name}"/> -->
+                <!--<apex:column headerValue="Operating Group" value="{!e.Operating_Group__c}"/>-->
+               <!-- <apex:column headerValue="Manager Name" value="{!e.Manager_Name__c}"/>
+                <apex:column headerValue="Last Day" value="{!e.Last_Day__c}"/>           
+            </apex:pageBlockTable>
+            </apex:form>
+            </apex:pageBlockSection> -->               
+        </apex:pageBlock>  
+        </apex:outputPanel> 
+
+    <apex:outputPanel id="srchpopup">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+            <apex:outputPanel styleClass="custPopup" id="details" layout="block" rendered="{!displayPopUp}">
+               <apex:pageMessages /> 
+                <apex:form >
+                <apex:pageBlock title="Potential Matches" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
+                    <apex:pageBlockButtons location="Bottom">
+                        <apex:commandButton value="Cancel" action="{!closePopup}"/>
+                        <apex:commandButton value="Create Non Employee Record" action="{!newTmnUser}" id="createBtn"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:commandButton value="First Page" rerender="details" action="{!first}" disabled="{!!hasPrevious}" status="loadingBusy"/>
+                <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!!hasPrevious}" status="loadingBusy"/>
+                <apex:commandButton value="Next" rerender="details" action="{!next}" disabled="{!!hasNext}" status="loadingBusy"/>
+                <apex:commandButton value="Last Page" rerender="details" action="{!last}" disabled="{!!hasNext}" status="loadingBusy"/>
+                    </apex:pageBlockButtons>
+                    <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
+                        <apex:column headerValue="Action" >
+                        <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
+                            <apex:param value="{!ner.Id}" assignTo="{!selectedID}" name="userIdParam"/>
+                        </apex:commandLink>
+                        <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}">View</apex:outputLink>-->
+                     
+                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!ner.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
+                        &nbsp;
+                        </apex:column>
+                        <apex:column headerValue="Name" value="{!ner.Name}"/>
+                        <apex:column headerValue="Title" value="{!ner.Professional_Title__c}"/>                                               
+                        <apex:column headerValue="Manager Name" value="{!ner.Manager_Name__c}"/>
+                        <apex:column headerValue="Operating Group" value="{!ner.Operating_Group__c}"/>
+                        <apex:column headerValue="Person Type" value="{!ner.Current_Person_Type__c}"/> 
+                        <apex:column headerValue="Job Status" value="{!ner.Job_Status__c}"/>           
+                    </apex:pageBlockTable>    
+                </apex:pageBlock>
+                </apex:form>
+            </apex:outputPanel>            
+    </apex:outputPanel>
+
+     <apex:outputPanel id="viewpopup">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayInfo}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayInfo}" >
+                <apex:form >
+                    <apex:pageBlock title="{!theTMNUser.Name}" mode="view" >
+                        <apex:pageblockButtons location="Bottom" >    
+                        <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=theTMNUser.id])}"/>-->
+                        <!--<apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>-->
+                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
+                        <apex:commandButton value="Close" action="{!closeInfo}"/>
+                        <apex:commandButton value="Request Access" action="{!URLFOR($Page.identity_canvas, '')}" />
+                    </apex:pageblockButtons>            
+                    <apex:pageBlockSection columns="2" title="Person Information">                   
+                        <apex:outputField label="First Name" value="{!theTMNUser.First_Name__c}"/>
+                        <apex:outputField label="Company Email" value="{!theTMNUser.Email__c}"/>
+                        <apex:outputField label="Middle Name" value="{!theTMNUser.Middle_Name__c}"/>
+                        <apex:outputField label="Personal Email" value="{!theTMNUser.Personal_Email__c}"/> 
+                        <apex:outputField label="Last Name" value="{!theTMNUser.Last_Name__c}"/>
+                        <apex:outputField label="Job Title" value="{!theTMNUser.Job_Title__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/>
+                        <apex:outputText rendered="{!theTMNUser.Current_Person_Type__c!='Employee'}" >  </apex:outputText> 
+                        <apex:outputField label="Preferred First Name" value="{!theTMNUser.Preferred_First_Name__c}"/>
+                        <apex:outputField label="Professional Title" value="{!theTMNUser.Professional_Title__c}"/>     
+
+                        <apex:outputField label="Preferred Last Name" value="{!theTMNUser.Preferred_Last_Name__c}"/>
+                        <apex:outputField label="Job Status" value="{!theTMNUser.Job_Status__c}" />
+                        <apex:outputField label="Mobile Phone" value="{!theTMNUser.Mentor_Cell_Phone__c}"/>
+                        <apex:outputField label="Person Type" value="{!theTMNUser.Current_Person_Type__c}" />                                                                                 
+                        <apex:outputField label="Office Phone" value="{!theTMNUser.Office_Phone__c}"/>
+                        <apex:outputField label="Start Date" value="{!theTMNUser.Hire_Date__c}" />
+ 					    <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
+                        <apex:outputField label="End Date" value="{!theTMNUser.Last_Day__c}" />
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="2" title="Management Hierarchy">
+                        <apex:outputField label="Alias" value="{!theTMNUser.Alias__c}" />                    
+                        <apex:outputField label="Service Line" value="{!theTMNUser.Service_Line__c}"/>
+                        <apex:outputField label="Operating Group" value="{!theTMNUser.Operating_Group__c}" />
+                        <apex:outputField label="Business Unit" value="{!theTMNUser.Business_Unit__c}"/>                     
+                        <apex:outputField label="Service Region" value="{!theTMNUser.Service_Region__c}"/>
+                        <!--  <apex:outputField label="Program String" value="{!theTMNUser.Program_String__c}"/> -->                    
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="2" title="Location">
+                        <apex:outputField label="Location Name" value="{!theTMNUser.Location_Name__c}"/>
+                        <apex:outputField label="State" value="{!theTMNUser.Work_State__c}" />
+                        <apex:outputField label="Address Line 1" value="{!theTMNUser.Office_Location__c}" />
+                        <apex:outputField label="Zip" value="{!theTMNUser.Zip_Code__c}"/>
+                        <apex:outputField label="Address Line 2" value="{!theTMNUser.Office_Location_2__c}"/>
+                        <apex:outputText label="Office Location" value="Y"  rendered="{!theTMNUser.Office_Flag__c=='Y'}"/>
+                        <apex:outputText label="Office Location" value="N"  rendered="{!theTMNUser.Office_Flag__c!='Y'}"/>
+                        <apex:outputField label="City" value="{!theTMNUser.Work_City__c}" />
+                        <apex:outputPanel ></apex:outputPanel>                                                                                                                                                                                                                                                                                                         
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection title="Manager Information" columns="2">
+                        <apex:outputField label="Manager Name" value="{!theTMNUser.Manager_Name__c}" />
+                        <apex:outputField label="Accountable Approval Manager" value="{!theTMNUser.Accountable_Approval_Manager__c}"/>
+                        <apex:outputField label="Manager Email" value="{!theTMNUser.Manager_Email__c}" />
+                        <apex:outputField label="Accountable Approval Manager Email" value="{!theTMNUser.Accountable_Manager_Mentor_Email__c}"/>                     
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection title="System IDs" columns="2">
+                        <apex:outputField label="Identity ID" value="{!theTMNUser.Identity_ID__c}" />
+                        <apex:outputField label="Network Username" value="{!theTMNUser.Network_Username__c}"/>
+                        <apex:outputField label="Employee ID" value="{!theTMNUser.Employee_Number__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/>
+                        <apex:outputField label="Unique ID" value="{!theTMNUser.Unique_Id__c}"/>
+                        <apex:outputField label="Taleo ID" value="{!theTMNUser.Pre_Hire_ID__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                        <apex:outputField label="Salesforce Account" value="{!theTMNUser.Salesforce_User_Account__c}"/>
+                    </apex:pageBlockSection>
+ 
+                    <apex:PageBlockSection columns="2" title="Other Information" >
+                         <apex:outputField label="Job Code"  value="{!theTMNUser.Job_Code__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                         <apex:outputField label="Recruiter Name"  value="{!theTMNUser.Recruiter_Name__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                          <apex:outputField label="Pay Basis" value="{!theTMNUser.Pay_Basis__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                      <apex:outputField label="Recruiter Email"  value="{!theTMNUser.Recruiter_Email_Address__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                         <apex:outputField label="Approval Level"  value="{!theTMNUser.Approval_Level__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                          <apex:outputField label="Custodians" value="{!theTMNUser.Custodians__c}" /> 
+                        </apex:PageBlockSection>  
+
+ 
+                    <apex:PageBlockSection columns="2" rendered="{!theTMNUser.Current_Person_Type__c=='Non-Employee'}">
+                         <apex:outputField label="Vendor"  value="{!theTMNUser.Vendor_list__c}" /> 
+                         <apex:outputField label="Vendor Name"  value="{!theTMNUser.Vendor_Name__c}"  rendered="{!theTMNUser.Vendor_list__c='OTHER'}"/> 
+                          <apex:outputField label="BAA Signed?" value="{!theTMNUser.BAA_Signed__c}" /> 
+                      <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
+                        </apex:PageBlockSection>  
+                        <!--  
+                        <apex:pageBlock title="Existing Attachments" rendered="{!theTMNUser.Vendor_list__c='OTHER'}">
+                       <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
+                    <apex:column style="padding-right: 9px;" headerValue="Title">
+                    <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Description">{!attachment.Description}</apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
+                  <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>
+                </apex:column>
+                 <apex:column style="padding-right: 9px;" headerValue="Created By">
+                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
+                </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+            -->
+                    </apex:pageBlock>
+                       
+ 
+                </apex:form>
+            </apex:outputPanel>            
+        </apex:outputPanel> 
+
+    <apex:outputPanel layout="block" styleClass="block-title" rendered="{!noAccess}" >
+    <apex:form >
+        You do not have access to any TMN Accounts or you are not assigned as a delegate.
+    </apex:form>
+    </apex:outputPanel>
+    
+</apex:page>

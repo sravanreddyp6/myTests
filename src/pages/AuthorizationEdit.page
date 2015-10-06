@@ -1,0 +1,124 @@
+<apex:page standardController="Authorization__c" extensions="AuthorizationExt" standardStylesheets="false" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+<script>
+function setFocusOnLoad() {}
+
+var j$ = jQuery.noConflict();
+    
+</script>
+
+<c:PersonalRecord pbsId="{!pbsID}" parentPage="Authorization" servAssignId="{!saID}" admId="{!admID}"/>
+<br/>
+<apex:form id="authForm">
+<apex:pageMessages />   
+<apex:pageBlock title="Authorization">
+<apex:pageBlockButtons >
+<div class="pbHeaderButton" style="top: 0px;" >  
+        <apex:commandButton action="{!saveAuth}" value="Save" reRender="authForm"  status="myStatus" rendered="{! authorization.Authorization_Status__c = 'Draft' || authorization.Authorization_Status__c = ''}" />
+        <apex:commandButton action="{!cancel}" value="{!if (authorization.Authorization_Status__c = 'Final', 'Close','Cancel')}" reRender="authForm" status="myStatus" immediate="true"/>
+</div>
+</apex:pageBlockButtons>   
+
+<apex:pageBlockSection collapsible="false" columns="1">
+ <apex:outputField value="{!authorization.Authorization_Status__c}" label="Status" /> 
+</apex:pageBlockSection>
+
+<apex:pageBlockSection id="authdetail" title="Authorization Detail" collapsible="False" columns="2"> 
+		
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Type" />
+		<apex:outputPanel layout="none">
+		<apex:actionregion immediate="true">
+			<apex:actionStatus id="typeStatus">
+								<apex:facet name="start">
+									<div class="thinkingwheel">
+										<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+									</div>
+								</apex:facet>
+								<apex:facet name="stop"> </apex:facet>
+							</apex:actionStatus>
+	        <apex:inputField value="{!authorization.Type__c}"> 
+    	    <apex:actionSupport event="onchange" action="{!changeAuthType}" status="typeStatus" rerender="authdetail"/>
+    	    </apex:inputField>
+    	    <apex:inputField value="{!authorization.Other_Authorization_Type__c}" rendered="{!authorization.Type__c == 'Other'}" />
+        </apex:actionregion>
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!authorization.Reason_for_New_Authorization__c}"/>
+        <apex:inputField value="{!authorization.Service_Being_Funded_String__c}" rendered="{!authorization.Type__c != 'Bed Hold'}"/>
+        <apex:inputField value="{!authorization.Bed_Hold_Type__c}" rendered="{!authorization.Type__c == 'Bed Hold'}"/>
+        <apex:inputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered='{! authorization.isRootAuth__c || authorization.id = null }'/>    
+        <apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered='{! !authorization.isRootAuth__c && authorization.id != null }'/>
+        <apex:inputField value="{!authorization.Rate__c}" rendered="{!authorization.Type__c != 'Bed Hold'}"/>   
+        <apex:inputField value="{!authorization.Bed_Hold_Type_Detail__c}" rendered="{!authorization.Type__c == 'Bed Hold'}"/>
+        
+        <apex:pageBlockSectionItem >
+        	<apex:outputLabel value="Received Date/Time" />
+        	<apex:outputPanel layout="none">
+        		<c:MilitaryDatetime datetimeval="{!authorization.Received_Date_Time__c}" edit="true" hiddenFieldId="receivedDateTime" />
+				<apex:inputHidden id="receivedDateTime" value="{!authorization.Received_Date_Time__c}" />
+			</apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+    	<apex:pageBlockSectionItem rendered="{!authorization.Type__c != 'Bed Hold'}" id="perRegion">
+        <apex:outputLabel value="Per" />
+        <apex:outputPanel layout="none" >
+        	<apex:actionStatus id="perStatus">
+								<apex:facet name="start">
+									<div class="thinkingwheel">
+										<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+									</div>
+								</apex:facet>
+								<apex:facet name="stop"> </apex:facet>
+							</apex:actionStatus>
+        	<apex:inputField value="{!authorization.Rate_unit__c}" >
+        	<apex:actionSupport event="onchange" status="perStatus" rerender="perRegion"/>
+    	    </apex:inputField> 
+        	<apex:inputField value="{! authorization.rate_unit_other__c}" rendered="{!authorization.Rate_unit__c == 'Unit'}" />
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!authorization.Bed_Hold_Additional_Detail__c}" rendered="{!authorization.Type__c == 'Bed Hold'}"/>
+        <apex:outputText value="" rendered="{!authorization.Type__c != 'Bed Hold'}"/>
+        <apex:pageBlockSectionItem rendered="{!authorization.type__c != 'Single Charge'}">
+	        <apex:outputLabel value="{! if (authorization.type__c == 'Bed Hold', 'Start Date', 'Effective Date')}" />
+	        <apex:inputField value="{!authorization.Payer_Effective_Date__c}" />
+	    </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Funding Source" />
+        <apex:outputPanel layout="none">
+        	<apex:selectList value="{!authorization.funding_Source__c}" size="1">
+        	<apex:selectOptions value="{!fsList}" />
+        	</apex:selectList>
+        </apex:outputPanel> 
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Single Charge'}" >
+        	<apex:outputLabel value="{!if(authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other' || authorization.type__c = 'Open Ended Stay', 'Review Date', if (authorization.type__c = 'Bed Hold', 'Return Date', 'Last Covered Day'))}"  />
+	        <apex:inputField value="{!authorization.Payer_End_Date__c}" label="End Date"/>
+	    </apex:pageBlockSectionItem>
+	    <apex:inputField value="{!authorization.Level__c}" rendered="{! authorization.type__c != 'Bed Hold' && authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
+	    <apex:inputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c = 'Single Charge'}"/>
+        <apex:outputText value="" rendered="{! authorization.type__c = 'Bed Hold' || authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
+        <apex:inputField value="{!authorization.Received_From__c}" rendered="{! authorization.type__c != 'Bed Hold' && authorization.type__c != 'Single Charge' }"/>
+        <apex:inputField value="{!authorization.Justification__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Bed Hold' && authorization.type__c != 'Single Charge'}"/>
+        <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
+        <apex:inputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}"/>
+        <apex:outputText value="" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' }"/>
+        <apex:inputField value="{!authorization.Taken_By__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
+        <apex:outputText value="" />
+        <apex:inputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.type__c != 'Single Charge'}"/>
+        
+</apex:pageBlockSection>
+<apex:pageBlockSection columns="1"> 
+<apex:inputField value="{!authorization.Comments__c}" />
+</apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form>
+<c:SObjectNotesAndAttachments parentId="{!authorization.Id}" parentPage="Authorization" pbsID="{!pbsID}" servAssignId="{!saID}" admId="{!admID}" /> 
+
+</apex:page>
