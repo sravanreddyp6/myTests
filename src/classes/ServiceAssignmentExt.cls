@@ -26,6 +26,7 @@ public without sharing class ServiceAssignmentExt {
 	public Boolean canEditAuths { get; private set; }
 	public Boolean canCreateAuths { get; private set; }
 	public List<Authorization__c> authList { get; set; }
+	public ID authRecTypeId { get; set; }
 	
 	public static Boolean showdiagModal { get; set; }
 	public string diagEditId {get; set; }
@@ -457,6 +458,7 @@ public without sharing class ServiceAssignmentExt {
 		// CMAUTH
 		setAuthPerms();
 		populateAuths();
+		
 
 		getContractsAndXrefs();
 		contractsList = new List<SelectOption>();
@@ -1955,7 +1957,10 @@ public without sharing class ServiceAssignmentExt {
 		Schema.DescribeSObjectResult oSchema = Authorization__c.sObjectType.getDescribe();
 		canCreateAuths = oSchema.isCreateable();
 		canEditAuths = oSchema.isUpdateable();
-		canViewAuths = oSchema.isAccessible();	
+		canViewAuths = oSchema.isAccessible();
+		
+		authRecTypeID = [ select id from RecordType where sobjecttype = 'Authorization__c' and DeveloperName like '%CM%' LIMIT 1].ID;
+			
 	}
 
 	@testvisible private void populateAuths() {

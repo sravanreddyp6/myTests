@@ -5,12 +5,13 @@ public ID saID { get; set; }
 public ID admID { get; set; }
 public ID pbsID { get; set; }
 public Authorization__c authorization { get; set; }
-public List<Funding_Source__c> fsList { get; set; }
 
 public Boolean canEditAuth { get; private set; }
 public Boolean canCreateAuth { get; private set; }
 public Boolean canFinalize { get; private set; }
 public Boolean hasDraft { get; private set;}
+
+public List<SelectOption> fsList { get; set; }
 
 public List<Authorization__c> relatedAuthsList { get; set; }
     
@@ -23,8 +24,9 @@ public AuthorizationExt(ApexPages.StandardController controller) {
     ID authID = ApexPages.currentPage().getParameters().get('ID');
     system.debug( authID );
     
+    List<Funding_Source__c> fsources;
     if ( saID != null ) {
-        fsList =  [ select id, name from funding_source__c where service_assignment__c = :saID and status__c != 'Inactive'];
+        fsources =  [ select id, name, type_of_coverage__c, payer_name__c from funding_source__c where service_assignment__c = :saID and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
         Service_Assignment__c sa = [ select id, admission__c, admission__r.person_being_served__c from service_assignment__c where id = :saID LIMIT 1];
         if ( sa != null ) {
             admID = sa.Admission__c;
@@ -32,8 +34,15 @@ public AuthorizationExt(ApexPages.StandardController controller) {
         }
     }
     else
-        fsList = new LIst<Funding_Source__c>(); 
+        fsources = new LIst<Funding_Source__c>(); 
     
+    fsList = new List<SelectOption>();
+    
+    for ( Funding_Source__c f: fsources ) {
+    	
+    	SelectOption option = new SelectOption( f.id, f.type_of_coverage__c + ' - ' + f.payer_name__c );
+    	fsList.Add( option );
+    }
    
     if (authID != null ) {
         authorization = (Authorization__c)controller.getRecord();
@@ -63,7 +72,7 @@ public AuthorizationExt(ApexPages.StandardController controller) {
     hasDraft = false;
     
     // get a list of auths with the same ultimate parent auth   
-    relatedAuthsList = [ select id, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c from authorization__c where original_auth__c = :authorization.original_auth__c and isRootAuth__c = false order by payer_effective_Date__c desc ];    //for ( Authorization__c r : relatedAuthsList) {
+    relatedAuthsList = [ select id, payer_authorization_id__c, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, service_being_funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c from authorization__c where original_auth__c = :authorization.original_auth__c and isRootAuth__c = false order by payer_effective_Date__c desc ];    //for ( Authorization__c r : relatedAuthsList) {
     for (Authorization__c r : relatedAuthsList ) {
             
         if ( r.Authorization_Status__c == 'Draft') {
@@ -97,8 +106,31 @@ public AuthorizationExt(ApexPages.StandardController controller) {
             authorization.Id = null;
         }
 
+		if ( authorization.type__c != 'Other')
+			authorization.other_authorization_Type__c = '';
+		else {
+			if ( String.IsEmpty( authorization.other_authorization_type__c)) {
+				 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please enter a description for the type of authorization.'));
+           		 return null;
+			}
+		}
+			
+		if ( authorization.rate_unit__c != 'Unit')
+			authorization.rate_unit_other__c = '';
+		else {
+			if ( String.IsEmpty( authorization.rate_unit_other__c)) {
+				 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please enter a description for the rate unit.'));
+           		 return null;
+			}
+		}
         try {
-            authorization.Authorization_Status__c = 'Inactive Draft';
+            authorization.Authorization_Status__c = 'Draft';
+            
+            if ( authorization.type__c == 'Single Charge' ) {
+            	authorization.payer_effective_date__c = authorization.received_date_time__c.date();
+            	authorization.payer_end_date__c = authorization.payer_effective_date__c;
+            }
+            
             upsert authorization;
             
             if ( authorization.original_auth__c == null )
@@ -107,6 +139,8 @@ public AuthorizationExt(ApexPages.StandardController controller) {
         	return redirectToView( authorization.Id, saID );        
         }
         catch (Exception e) {
+        	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to save this authorization.'));
             return null;
         }
 
@@ -115,7 +149,78 @@ public AuthorizationExt(ApexPages.StandardController controller) {
     public PageReference finalizeAuth(){
         try{
             
-            // TO DO: check for required fields before finalizing
+            List<String> fielderrs = new List<String>();
+            
+            // check for required fields before finalizing
+           
+            if ( string.isblank(authorization.type__c)) {
+            	fielderrs.add( 'Type');
+            } 
+		
+ 			if ( string.isblank( authorization.reason_for_new_Authorization__c)) {
+            	fielderrs.add('Reason for New Authorization');
+            }
+            
+
+			// put this here so we can preserve field order of Type and Reason
+ 			if ( !string.isblank( authorization.type__c)) {
+            	if ( authorization.type__c == 'Open Ended Stay' || authorization.type__c == 'Defined Stay') {
+            		if (string.isblank(authorization.service_Being_Funded_string__c)) {
+            			fielderrs.add('Item/Service');
+            		}
+            		if (string.isblank(authorization.rate__c)) {
+            			fielderrs.add('Rate');
+            		}
+            		if (string.isblank(authorization.rate_unit__c)) {
+            			fielderrs.add('Per');
+            		}
+            		if (string.isblank(authorization.payer_authorization_id__c)) {
+            			fielderrs.add('Authorization Number');
+            		}
+            	} else if (authorization.type__c == 'Open Ended Charge' || authorization.type__c == 'Other') {
+            		if (string.isblank(authorization.service_Being_Funded_string__c)) {
+            			fielderrs.add('Item/Service');
+            		}
+            		if (string.isblank(authorization.rate__c)) {
+            			fielderrs.add('Rate');
+            		}
+            		if (string.isblank(authorization.rate_unit__c)) {
+            			fielderrs.add('Per');
+            		}
+            		
+            	} else if (authorization.type__c == 'Single Charge') {
+            		if (string.isblank(authorization.service_Being_Funded_string__c)) {
+            			fielderrs.add('Item/Service');
+            		}
+            		if (string.isblank(authorization.payer_authorization_id__c)) {
+            			fielderrs.add('Authorization Number');
+            		}
+            		
+            	} else if ( authorization.type__c == 'Bed Hold') {
+            		if (string.isblank(authorization.bed_hold_type__c)) {
+            			fielderrs.add('Bed Hold Type');
+            		}
+            		
+            	}
+            	
+            }
+            
+            if ( fielderrs.size() > 0 ) {
+            	
+	            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
+	            for ( String e : fielderrs) {
+	            	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e));
+	            }
+            	return null;
+            
+            }
+            
+            
+            
+            
+            
+            
+            
             // set status to final and save, then redirect to view page
             authorization.Authorization_Status__c = 'Final';  
             authorization.Finalized_at__c = DateTime.Now();
@@ -156,6 +261,7 @@ public AuthorizationExt(ApexPages.StandardController controller) {
             return pr;
         } 
         catch (Exception e) {
+        	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to copy this authorization.'));
             return null;
         }
@@ -196,6 +302,15 @@ public AuthorizationExt(ApexPages.StandardController controller) {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
             return null;
         }
+    }
+    
+    public void changeAuthType() {
+    	system.debug( 'BEFORE: ' + authorization.type__c + ', ' + authorization.other_authorization_type__c);
+    	if ( authorization.type__c != 'Other')
+    		authorization.other_authorization_type__c = '';
+    	
+    	system.debug( 'AFTER: ' + authorization.type__c + ', ' + authorization.other_authorization_type__c);
+    	 
     }
             
         
