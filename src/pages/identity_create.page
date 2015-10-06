@@ -93,7 +93,7 @@
                     searching: false,
 				paging: false,
 				bInfo: false,
-			"order": [[ 0, "desc" ]]
+			"order": [[ 0, "asc" ]]
 		});
     }
         function disableAlias() {
@@ -286,15 +286,15 @@ function autoCompleteRender(ul, item) {
             </apex:actionFunction>   
              <apex:pageBlock title="TMN User" mode="edit" id="createBlock" >
                 <apex:pageMessages id="pageMsg"/>
-                <apex:pageblockButtons location="Bottom" >    
+               <div class="pbHeaderButton">  
                     <apex:commandButton value="Save" action="{!Save}" />
                     <apex:commandButton value="Cancel" action="{!goCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
-                </apex:pageblockButtons>            
+                </div>      
                 <apex:pageBlockSection columns="2" title="Person Information" id="perInfo">
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true" taborderhint="1"/>
                     <apex:pageBlockSectionItem >
         					<apex:outputLabel value="Personal Email" for="PE" />
-       						<apex:inputField id="PE" value="{!TMNUser.Personal_Email__c}" taborderhint="8"/>
+       						<apex:inputText id="PE" value="{!TMNUser.Personal_Email__c}" />
     				</apex:pageBlockSectionItem>
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2"/>
                     <apex:inputField label="Professional Title" value="{!TMNUser.Professional_Title__c}" taborderhint="9"/>
