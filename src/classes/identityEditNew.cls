@@ -196,7 +196,7 @@ public class identityEditNew {
     	 	error = true;
         }
 		
-		if(TMNUser.Personal_Email__c !=null){
+		if(TMNUser.Personal_Email__c !=null && TMNUser.Personal_Email__c.length()>0 ){
     	 	if(!ValidEmail.validate(TMNUser.Personal_Email__c)) {
     	 	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Personal Email: Enter a valid email address'));
                 error = true;
