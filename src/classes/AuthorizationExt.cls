@@ -61,7 +61,7 @@ public AuthorizationExt(ApexPages.StandardController controller) {
     
     }
     else
-        authorization = new Authorization__c( recordtypeID= ApexPages.currentPage().getParameters().get('RecordType') );
+        authorization = new Authorization__c( recordtypeID= ApexPages.currentPage().getParameters().get('RecordType'), person_being_served__c = pbsID, authorization_status__c = 'Draft' );
 
 
     Schema.DescribeSObjectResult oSchema = Authorization__c.sObjectType.getDescribe();
@@ -132,9 +132,6 @@ public AuthorizationExt(ApexPages.StandardController controller) {
             }
             
             upsert authorization;
-            
-            if ( authorization.original_auth__c == null )
-                authorization.original_auth__c = authorization.id;
         
         	return redirectToView( authorization.Id, saID );        
         }

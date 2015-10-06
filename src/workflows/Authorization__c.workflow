@@ -21,6 +21,10 @@
             <field>Authorization__c.CreatedDate</field>
             <operation>notEqual</operation>
         </criteriaItems>
+        <criteriaItems>
+            <field>Authorization__c.Payer_Authorization_ID__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
         <triggerType>onAllChanges</triggerType>
     </rules>
 </Workflow>
