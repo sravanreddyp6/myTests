@@ -1492,6 +1492,18 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
     <searchLayouts/>
     <sharingModel>ControlledByParent</sharingModel>
     <startsWith>Vowel</startsWith>
+    <validationRules>
+        <fullName>Validate_Auth_Type</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL( Type__c , &apos;Other&apos;), ISBLANK(Other_Authorization_Type__c))</errorConditionFormula>
+        <errorMessage>Please enter details about this Other type of authorization</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Validate_Rate_Units</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL( Rate_unit__c , &apos;Unit&apos;), ISBLANK(Rate_Unit_Other__c))</errorConditionFormula>
+        <errorMessage>Please enter a rate unit for the Per value.</errorMessage>
+    </validationRules>
     <webLinks>
         <fullName>New_Authorization</fullName>
         <availability>online</availability>
