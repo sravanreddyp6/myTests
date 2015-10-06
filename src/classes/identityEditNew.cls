@@ -22,6 +22,10 @@ public class identityEditNew {
     public String attchmentId {set;get;}
     public String aliasName = TAU;
     
+  private static final String EMAIL_PATTERN = '([a-zA-Z0-9_\\-\\.]+)@((\\[a-z]{1,3}\\.[a-z]{1,3}\\.[a-z]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})';
+  public static boolean validate(String email) {
+    return Pattern.matches(EMAIL_PATTERN, email);
+  }
     public String getGlCodesForTherapist(){
     	map<String, String> keyVal = new map<String, String>();
     	keyVal.put('Physical Therapy','542009');
@@ -197,7 +201,7 @@ public class identityEditNew {
         }
 		
 		if(TMNUser.Personal_Email__c !=null && TMNUser.Personal_Email__c.length()>0 ){
-    	 	if(!ValidEmail.validate(TMNUser.Personal_Email__c)) {
+    	 	if(!validate(TMNUser.Personal_Email__c)) {
     	 	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Personal Email: Enter a valid email address'));
                 error = true;
     	 	}
