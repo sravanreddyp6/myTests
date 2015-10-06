@@ -346,9 +346,8 @@ function autoCompleteRender(ul, item) {
              <apex:param name="managerFirstName" value="" assignTo="{!managerFirstName}" />
         	<apex:param name="managerLastName" value="" assignTo="{!managerLastName}" />
        </apex:actionFunction>   
-   
+   <apex:pageMessages />
             <apex:pageBlock title="TMN User" mode="edit" >
-                <apex:pageMessages />
                 <div class="pbHeaderButton">   
                     <apex:commandButton value="Save" action="{!Save}"/>
                     <apex:commandButton value="Cancel" action="{!goCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
