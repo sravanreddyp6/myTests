@@ -167,7 +167,18 @@ var j$ = jQuery.noConflict();
 	    <apex:inputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c = 'Single Charge'}"/>
         <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
         <apex:inputField value="{!authorization.Received_From__c}" rendered="{! authorization.type__c != 'Single Charge' }"/>
-        <apex:inputField value="{!authorization.Justification__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
+        
+        <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}">
+			<apex:outputPanel layout="none">   		
+	        <div class="helpButtonOn" id="justification-_help">
+	        <apex:outputLabel value="Justification" />
+	        <img src="/s.gif" alt="" class="helpOrb" title=""/>
+	            <script type="text/javascript">sfdcPage.setHelp('justification', 'e.g. complex wound, IV abx, trach, vent, etc.');</script>
+			</div>
+			</apex:outputPanel>
+	        <apex:inputField value="{!authorization.Justification__c}" />
+	    </apex:pageBlockSectionItem>
+	    
         <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
         <apex:inputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}"/>
         <apex:outputText value="" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' }"/>
