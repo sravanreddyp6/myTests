@@ -21,7 +21,7 @@ var j$ = jQuery.noConflict();
 <apex:pageBlockButtons >
 <div class="pbHeaderButton" style="top: 0px;" >  
         <apex:commandButton action="{!editAuth}" value="Edit" reRender="authForm"  status="myStatus" rendered="{! canEditAuth && authorization.Authorization_Status__c == 'Draft'}" />
-        <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!authorization.Authorization_Status__c == 'Final' && !HasDraft && canEditAuth }"/>  
+        <apex:commandButton action="{!reviseAuth}" value="Revise" reRender="authForm" rendered="{!authorization.Authorization_Status__c == 'Final' && canEditAuth }"/>  
         <apex:commandButton action="{!finalizeAuth}" value="Finalize" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c = 'Draft'}"/>
         <apex:commandButton action="{!cloneAuth}" value="Clone" reRender="authForm" status="myStatus" rendered="{! canFinalize && authorization.Authorization_Status__c != 'Draft'}"/>
 </div>
@@ -42,7 +42,7 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!authorization.Reason_for_New_Authorization__c}"/>
 </apex:pageBlockSection>
         
-        <apex:pageBlockSection  collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
+        <apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
         
 	        <apex:outputField value="{!authorization.Bed_Hold_Type__c}" />
         	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" />
@@ -59,7 +59,7 @@ var j$ = jQuery.noConflict();
 		    <apex:outputField value="{!authorization.Bed_Hold_Classification__c}"  />
 		    <apex:outputField value="{!authorization.Payer_End_Date__c}" label="Return Date" />
 	
-	        <apex:outputField label="Contract Used"  value="{!authorization.contract_used__c}" />
+	        <apex:outputField label="Contract Used"  value="{!authorization.Contract_Used__c}" />
 
           	<apex:outputField value="{!authorization.Received_From__c}" label="Given By"/>
           	
@@ -74,7 +74,7 @@ var j$ = jQuery.noConflict();
         
         </apex:pageBlockSection>
         
-	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.type__c != 'Bed Hold'}">    
+	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c != 'Bed Hold'}">    
         
         <apex:outputField value="{!authorization.Service_Being_Funded_String__c}" />
        	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" />
@@ -88,20 +88,20 @@ var j$ = jQuery.noConflict();
         
     	<apex:pageBlockSectionItem id="perRegion">
         <apex:outputLabel value="Per" />
-        <apex:outputPanel>
+        <apex:outputPanel >
         	<apex:outputField value="{!authorization.Rate_unit__c}"/>  
         	<apex:outputText value=": {! authorization.rate_unit_other__c}" rendered="{!authorization.Rate_unit__c == 'Unit'}" />
         </apex:outputPanel>
         </apex:pageBlockSectionItem>
         
-        <apex:outputField value="{!authorization.Payer_Effective_Date__c}" label="Effective Date" rendered="{!authorization.type__c != 'Single Charge'}"/>
+        <apex:outputField value="{!authorization.Payer_Effective_Date__c}" label="Effective Date" rendered="{!authorization.Type__c != 'Single Charge'}"/>
 	    <apex:outputText value="" rendered="{! authorization.type__c = 'Single Charge'}" />
 	    
-	    <apex:outputField label="Contract Used"  value="{!authorization.contract_used__c}" />
+	    <apex:outputField label="Contract Used"  value="{!authorization.Contract_Used__c}" />
 
         
         <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Single Charge' }" >
-        	<apex:outputLabel value="{!if(authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other' || authorization.type__c = 'Open Ended Stay', 'Review Date', 'Last Covered Day')}"  />
+        	<apex:outputLabel value="{!if(authorization.Type__c = 'Open Ended Charge' || authorization.Type__c = 'Other' || authorization.Type__c = 'Open Ended Stay', 'Review Date', 'Last Covered Day')}"  />
 	        <apex:outputField value="{!authorization.Payer_End_Date__c}" label="End Date"/>
 	    </apex:pageBlockSectionItem>
 	    
@@ -115,7 +115,7 @@ var j$ = jQuery.noConflict();
         <apex:outputText value="" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' }"/>
         <apex:outputField value="{!authorization.Taken_By__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
         <apex:outputText value="" />
-        <apex:outputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.type__c != 'Single Charge'}"/>
+        <apex:outputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c != 'Single Charge'}"/>
        
 </apex:pageBlockSection>
 <apex:pageBlockSection columns="1"> 
@@ -135,7 +135,7 @@ var j$ = jQuery.noConflict();
 				<apex:column value="{!auth.Reason_for_New_Authorization__c}" headervalue="Reason for Auth"/>
 				<apex:column value="{!auth.Service_Being_Funded_String__c}" headervalue="Item/Service"/>
 				<apex:column value="{!auth.Rate__c}" headervalue="Rate"/>
-				<apex:column value="{!auth.Rate_Unit__c}" headervalue="Per"/>
+				<apex:column value="{!auth.Rate_unit__c}" headervalue="Per"/>
 				<apex:column value="{!auth.Payer_Effective_Date__c}" headervalue="Start Date"/>
 				<apex:column value="{!auth.Payer_End_Date__c}" headervalue="End Date"/>
 				<apex:column value="{!auth.Authorization_Status__c}" headervalue="Status"/>
