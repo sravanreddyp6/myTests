@@ -70,10 +70,10 @@ var j$ = jQuery.noConflict();
         	</apex:pageBlockSectionItem>	
 
 	        <apex:inputField value="{!authorization.Bed_Hold_Additional_Detail__c}" />
-		    <apex:inputField value="{!authorization.Payer_Effective_Date__c}" label="Start Date"/>
+		    <apex:inputField id="startdate" value="{!authorization.Payer_Effective_Date__c}" label="Start Date"/>
 		    
 		    <apex:inputField value="{!authorization.Bed_Hold_Classification__c}"  />
-		    <apex:inputField value="{!authorization.Payer_End_Date__c}" label="Return Date" />
+		    <apex:inputField id="retdate" value="{!authorization.Payer_End_Date__c}" label="Return Date" />
 	
 	        <apex:pageBlockSectionItem >
 	        <apex:outputLabel value="Funding Source" />
@@ -135,7 +135,7 @@ var j$ = jQuery.noConflict();
         
         <apex:pageBlockSectionItem rendered="{!authorization.type__c != 'Single Charge'}">
 	        <apex:outputLabel value="Effective Date" />
-	        <apex:inputField value="{!authorization.Payer_Effective_Date__c}" />
+	        <apex:inputField id="effdate" value="{!authorization.Payer_Effective_Date__c}" />
 	    </apex:pageBlockSectionItem>
 	    <apex:outputText value="" rendered="{! authorization.type__c = 'Single Charge'}" />
 	    
@@ -150,7 +150,7 @@ var j$ = jQuery.noConflict();
         
         <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Single Charge' }" >
         	<apex:outputLabel value="{!if(authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other' || authorization.type__c = 'Open Ended Stay', 'Review Date', 'Last Covered Day')}"  />
-	        <apex:inputField value="{!authorization.Payer_End_Date__c}" label="End Date"/>
+	        <apex:inputField id="enddate" value="{!authorization.Payer_End_Date__c}" label="End Date"/>
 	    </apex:pageBlockSectionItem>
 	    
 	    <apex:inputField value="{!authorization.Level__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
