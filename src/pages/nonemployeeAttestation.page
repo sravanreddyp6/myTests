@@ -1,4 +1,4 @@
-<apex:page controller="nonemployeeAttestationPageController" showheader="false" >
+<apex:page controller="nonemployeeAttestationPageController" docType="html-5.0" showHeader="false" >
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 	<style type="text/css">
 		.colHeadr {text-align:center;} 
@@ -8,10 +8,12 @@
 			<apex:pageMessages id="msgs" />
 			<apex:pageBlockSection title="Non-Employees Terminating in next 14 days" columns="1" id="oneTable" >
 				<apex:PageBlockTable value="{!nonemployeesTransactional}" var="one"  >
-					<apex:column headerValue="Name"  >
+				
+					<apex:column headerValue="Name"  style="{!IF(one.LastModifiedBy.Name == 'Non Employee Attestation Site Guest User', 'Background-color: grey;', '')}">
+	
 						<apex:outputText >{!one.First_Name__c} {!one.Last_Name__c}</apex:outputText> 
 					</apex:column>
-					<apex:column  >
+					<apex:column >
 						<apex:facet name="header">Job title</apex:facet>
 						<apex:outputText >{!one.Job_Title__c}</apex:outputText> 
 					</apex:column>
@@ -21,9 +23,10 @@
 					</apex:column>
 					<apex:column headerClass="colHeadr" styleClass="colHeadr">
 						<apex:facet name="header">Extend</apex:facet>
-						<apex:commandButton value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs" >
+						
+						<apex:commandButton value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
 							<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
-							<apex:param value="ninety" assignTo="{!flag}" name="flag"/>
+							<apex:param value="thirty" assignTo="{!flag}" name="flag"/>
 						</apex:commandButton>
 						&nbsp;
 						<apex:commandButton value="60 Days" action="{!updateTMNUser}" reRender="theBlock,msgs" >
@@ -31,13 +34,15 @@
 							<apex:param value="sixty" assignTo="{!flag}" name="flag"/>
 						</apex:commandButton>
 						&nbsp;
-						<apex:commandButton value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs">
+						<apex:commandButton value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs" >
 							<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
-							<apex:param value="thirty" assignTo="{!flag}" name="flag"/>
+							<apex:param value="ninety" assignTo="{!flag}" name="flag"/>
 						</apex:commandButton>
 						&nbsp;
-						<apex:inputField value="{!one.Last_Day__C}" />
+						<apex:input type="date" value="{!lastDay}" />
 					</apex:column>
+					
+					
 					<apex:column headerValue="Terminate On" headerClass="colHeadr" styleClass="colHeadr">
 						<apex:commandButton value=" {!Today()}" action="{!updateTMNUser}" reRender="theBlock,msgs" >
 							<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
@@ -49,6 +54,7 @@
 							<apex:param value="termDate" assignTo="{!flag}" name="flag"/>
 						</apex:commandButton>
 					</apex:column>
+					
 				</apex:PageBlockTable>
 			</apex:pageBlockSection>
 <!-- 			<apex:pageBlocksection columns="1" title="Non-Employees Terminating in 7 days" rendered="{!showSeven}" id="SevenTable" > -->

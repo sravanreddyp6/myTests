@@ -339,7 +339,21 @@ function validate() {
                 
     
     </apex:repeat>
-</apex:repeat>        
+</apex:repeat>   
+
+
+		line += fontsize*2; // skip another 2 lines 
+        context.font = "14px sans-serif";
+        text = "Behaviors Exhibited:: ";
+        metrics = context.measureText(text);
+        context.fillText(text, 2, line);
+        fontsize = 14;
+        line += fontsize;
+
+        context.font = "12px sans-serif";
+        text = "{!JSENCODE(Progress_Note__c.Behaviors_Exhibited__c)}";
+        line = wrapText(context, text, col1, line, width- col1, fontsize);
+        line += fontsize*2;     
 
 
 		line += fontsize*2; // skip another 2 lines 
