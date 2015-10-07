@@ -71,13 +71,14 @@
             })
         });
     </script>
-     <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!objId}" parentPage="PBS" upload="true" />
+   <c:PersonalRecord rendered="{!parentPage='PBS'}" pbsId="{!objId}" parentPage="PBS" upload="true" />
    <c:PersonalRecord rendered="{!parentPage='ServAssign'}"   pbsId="{!pbsId}" servAssignId="{!servAssignId}" parentPage="ServAssign" servAssignNew="{true}" admId="{!admId}" upload="true"  />
    <c:PersonalRecord rendered="{!parentPage='ActionPlan'}" pbsId="{!pbsId}" parentPage="ActionPlan" apId="{!apId}" servAssignId="{!servAssignId}" admId="{!admId}" upload="true" />
    <c:PersonalRecord rendered="{!parentPage='Assessment'}" pbsId="{!pbsId}" parentPage="Assessment" admId="{!admId}" asmtType="{!asmtType}" asmtId="{!asmtId}" servAssignId="{!servAssignId}" upload="true" />
     <c:PersonalRecord rendered="{!parentPage='Admission'}" pbsId="{!pbsId}" parentPage="Admission" admId="{!admId}" upload="true" />
     <c:PersonalRecord rendered="{!parentPage='ActionSummaryReport'}" pbsId="{!pbsId}" parentPage="ActionSummaryReport" admId="{!admId}" apId="{!apId}" servAssignId="{!servAssignId}"  upload="true"/>
     <c:PersonalRecord rendered="{!parentPage='ShiftNote'}" pbsId="{!pbsId}" parentPage="ShiftNote" admId="{!admId}" apId="{!apId}" servAssignId="{!servAssignId}"  upload="true"/>
+     <c:PersonalRecord rendered="{!parentPage='Authorization'}" pbsId="{!pbsId}" parentPage="Authorization" admId="{!admId}" authId="{!objId}" servAssignId="{!servAssignId}"  upload="true"/>
  	<apex:variable var="v" value="val"   rendered="{!parentPage = 'referral'}">
     <div class="breadcrumb" >
         <a href="/">Home</a> > <a href="/{!parentId}">Referral: {!ReferralName}</a> > Upload Attachments

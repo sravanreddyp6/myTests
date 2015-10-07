@@ -8,6 +8,7 @@
 	<apex:attribute name="servAssignNew" description="Indicates whether the Service Assignment is new or a pre-existing one being edited." type="Boolean" required="false" assignTo="{!saNew}" />
 	<apex:attribute name="apId" description="The id of the action plan" type="String" required="false" assignTO="{!planId}" />
 	<apex:attribute name="evaluationId" description="The id of the Evaluation (Can be nurses Assessment, Shift Assessment or Admission Assessment)" type="String" assignTo="{!evalId}" required="false" />
+	<apex:attribute name="authId" description="The id of the Authorization" type="String" assignTo="{!authorizationId}" required="false" />
 	<apex:attribute name="servAssignClose" description="The id of the current Service Assignment Closure" type="String" required="false" assignTo="{!servAssignClosure}" />
 	<apex:attribute name="viewAttachment" description="View Attachment" type="Boolean" required="false" />
 	<apex:attribute name="editAttachemnt" description="Edit Attachemnt" type="Boolean" required="false" />
@@ -116,6 +117,8 @@
         <apex:outputPanel id="servAssignTextLog" rendered="{!parentPage=='Progress_Notes_Log' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Progress Notes Log</apex:outputPanel>
         <apex:outputLink id="servAssignTextAtt" rendered="{!parentPage == 'ServAssign' &&  (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputLink>
 		<apex:outputPanel id="servAssignLink" rendered="{!parentPage == 'CaseDocs' || parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;<a href="/apex/ServiceAssignmentEditNew?id={!servAssignId}">Service Assignment</a></apex:outputPanel>
+		<apex:outputPanel id="authorizationtxt" rendered="{! parentPage == 'Authorization' &&  NOT(upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;Authorization</apex:outputPanel>
+		<apex:outputPanel id="authorizationlnk" rendered="{! parentPage == 'Authorization' && (upload || viewall ||editAttachemnt ||viewAttachment)}">&nbsp;>&nbsp;<a href="/apex/AuthorizationView?id={!authId}&saID={!servAssignId}">Authorization</a></apex:outputPanel>
 		<apex:outputPanel id="caseDocsText" rendered="{!parentPage == 'CaseDocs'}">&nbsp;>&nbsp;Case Docs</apex:outputPanel>
 		<apex:outputPanel id="fidelityChecklistText" rendered="{!parentPage == 'FidelityChecklist'}">&nbsp;>&nbsp;Fidelity Checklist</apex:outputPanel>
 		<apex:outputPanel id="servAssignCloseText" rendered="{!parentPage == 'ServAssignClose'}">&nbsp;>&nbsp;Service Assignment Closure</apex:outputPanel>
@@ -126,7 +129,6 @@
 		<apex:outputPanel id="editAttachemnt" rendered="{!editAttachemnt}">&nbsp;> Edit Attachment</apex:outputPanel>
 		<apex:outputPanel id="viewall" rendered="{!viewall}">&nbsp;> View All Attachments</apex:outputPanel>
 		<apex:outputPanel id="upload" rendered="{!upload}">&nbsp;> Upload Attachments</apex:outputPanel>
-		<apex:outputPanel id="authorization" rendered="{! parentPage == 'Authorization'}">&nbsp;> Authorization</apex:outputPanel>
 	</div>
 	<br />
 
