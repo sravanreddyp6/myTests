@@ -87,6 +87,7 @@ public with sharing class PersonalRecordController {
 	public String servAssignClosure { get; set; }
 	public PageReference breadcrumb { get; set; }
 	public String evalId {get; set; }
+	public string authorizationId { get; set; }
 
 	public String opGrp {
 		get {
