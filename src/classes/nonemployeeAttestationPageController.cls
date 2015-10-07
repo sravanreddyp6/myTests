@@ -4,6 +4,7 @@ public without sharing class nonemployeeAttestationPageController {
 	public string flag {get;set;}
 	public List<string> infoMessages;
 	public Map<id,Tmn_user__c> initialMap;
+	public Date lastDay {get;set;}
 	
 	public nonemployeeAttestationPageController(){
 		managerId = Apexpages.currentPage().getParameters().get('managerId');
@@ -45,13 +46,13 @@ public without sharing class nonemployeeAttestationPageController {
 		if(nonemployeesinitial == null){
 			system.debug('i am not null');
 			system.debug('Why i am here again');
-			nonemployeesinitial = [SELECT Id, Job_Status__c, Job_title__c, Last_Day__c, First_Name__c, Termination_Date__c ,Last_Name__c, Manager_Lookup__c FROM TMN_user__c WHERE Manager_Lookup__c = :managerId AND Current_Person_Type__c ='Non-Employee' AND Job_Status__c = 'Active' AND Last_Day__c <= :System.Today().addDays(14) order by Last_Day__c asc];
+			nonemployeesinitial = [SELECT Id, Job_Status__c, Job_title__c, Last_Day__c, First_Name__c, Termination_Date__c ,Last_Name__c, Manager_Lookup__c, LastmodifiedBy.name FROM TMN_user__c WHERE Manager_Lookup__c = :managerId AND Current_Person_Type__c ='Non-Employee' AND Job_Status__c = 'Active' AND Last_Day__c <= :System.Today().addDays(14) order by Last_Day__c asc];
 		}
 		return nonemployeesinitial;
 	}set;}
 	
 	public list<Tmn_user__c> nonemployeesTransactional{get{
-		nonemployeesTransactional = [SELECT Id, Job_title__c, Last_Day__c, First_name__c, Termination_date__c, Last_Name__c, Manager_lookup__c FROM TMN_User__c WHERE Id IN: nonemployeesinitial];
+		nonemployeesTransactional = [SELECT Id, Job_title__c, Last_Day__c, First_name__c, Termination_date__c, Last_Name__c, Manager_lookup__c, Lastmodifiedby.Name FROM TMN_User__c WHERE Id IN: nonemployeesinitial];
 		return nonemployeesTransactional;
 	}set;}
 	

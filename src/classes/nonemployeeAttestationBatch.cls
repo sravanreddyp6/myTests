@@ -26,7 +26,7 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>{
 			Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
 			mail.setTemplateId(myEMailTemplate.id);
 			mail.setTargetObjectId(managerMap.get(m));
-			mail.setWhatId(m);
+			mail.setWhatId(m);//Populates the Visualforce Email template
 			mail.setSenderDisplayName('TMN Access');
 			mail.SaveAsActivity = false;
 			mails.add(mail);
