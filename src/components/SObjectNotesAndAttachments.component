@@ -11,7 +11,7 @@
     <apex:attribute name="asmtType" type="string" description="Assessment Type" default="false"  />
 	<apex:attribute name="asmtId" type="string" description="Assessment Id" default="false"  />
 	<apex:attribute name="ReferralName" type="string" description="Referral Name" default="false"   />
-    <apex:variable value="{!if(retURL != null, retURL ,$CurrentPage.URL)}" var="theRetUrl"/>
+    <apex:variable value="{!if(retURL != null, retURL ,URLENCODE($CurrentPage.URL))}" var="theRetUrl"/>
     <apex:variable var="v" value="val"   rendered="{!parentPage != 'referral'}">
         <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     </apex:variable>
