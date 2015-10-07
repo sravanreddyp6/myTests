@@ -50,15 +50,25 @@ var j$ = jQuery.noConflict();
         </apex:actionregion>
         </apex:outputPanel>
         </apex:pageBlockSectionItem>
-        <apex:inputField value="{!authorization.Reason_for_New_Authorization__c}"/>
+        <apex:pageBlockSectionItem>
+			<apex:outputPanel layout="none">   		
+	        <div class="helpButtonOn" id="Reason-_help">
+	        <apex:outputLabel value="Reason for New Authorization" />
+	        <img src="/s.gif" alt="" class="helpOrb" title=""/>
+	            <script type="text/javascript">sfdcPage.setHelp('Reason', 'New Authorization (prior auth expired, same payer and contract)<br/>New Payer (new payer is authorizing, possible new contract)<br />New Contract (same payer, new contract)<br />Contract Change (change within existing contract, same payer)<br />Level/Rate Change (previous auth info is same, except level/rate has changed)');</script>
+			</div>
+			</apex:outputPanel>
+			<apex:inputField value="{!authorization.Reason_for_New_Authorization__c}"/>
+			
+        </apex:pageBlockSectionItem>
         </apex:pageBlockSection>
         
         <apex:outputPanel id="authdetail1">
-    	<apex:pageBlockSection  collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
+    	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
         
 	        <apex:inputField value="{!authorization.Bed_Hold_Type__c}" />
-    	    <apex:inputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered='{! authorization.isRootAuth__c || authorization.id = null }'/>    
-        	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered='{! !authorization.isRootAuth__c && authorization.id != null }'/>
+    	    <apex:inputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! authorization.isRootAuth__c || authorization.id = null }"/>    
+        	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! !authorization.isRootAuth__c && authorization.id != null }"/>
 
 	        <apex:inputField value="{!authorization.Bed_Hold_Type_Detail__c}" />
     	    <apex:pageBlockSectionItem >
@@ -78,7 +88,7 @@ var j$ = jQuery.noConflict();
 	        <apex:pageBlockSectionItem >
 	        <apex:outputLabel value="Funding Source" />
 	        <apex:outputPanel layout="none">
-	        	<apex:selectList value="{!authorization.funding_Source__c}" size="1">
+	        	<apex:selectList value="{!authorization.Funding_Source__c}" size="1">
 	        	<apex:selectOptions value="{!fsList}" />
 	        	</apex:selectList>
 	        </apex:outputPanel> 
@@ -99,11 +109,11 @@ var j$ = jQuery.noConflict();
         </apex:outputPanel>
         
         <apex:outputPanel id="authdetail2">
-    	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.type__c != 'Bed Hold'}">    
+    	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c != 'Bed Hold'}">    
         
         <apex:inputField value="{!authorization.Service_Being_Funded_String__c}" />
-   	    <apex:inputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered='{! authorization.isRootAuth__c || authorization.id = null }'/>    
-       	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered='{! !authorization.isRootAuth__c && authorization.id != null }'/>
+   	    <apex:inputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! authorization.isRootAuth__c || authorization.id = null }"/>    
+       	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! !authorization.isRootAuth__c && authorization.id != null }"/>
 
         <apex:inputField value="{!authorization.Rate__c}" />   
         
@@ -133,7 +143,7 @@ var j$ = jQuery.noConflict();
         </apex:outputPanel>
         </apex:pageBlockSectionItem>
         
-        <apex:pageBlockSectionItem rendered="{!authorization.type__c != 'Single Charge'}">
+        <apex:pageBlockSectionItem rendered="{!authorization.Type__c != 'Single Charge'}">
 	        <apex:outputLabel value="Effective Date" />
 	        <apex:inputField id="effdate" value="{!authorization.Payer_Effective_Date__c}" />
 	    </apex:pageBlockSectionItem>
@@ -142,14 +152,14 @@ var j$ = jQuery.noConflict();
         <apex:pageBlockSectionItem >
         <apex:outputLabel value="Funding Source" />
         <apex:outputPanel layout="none">
-        	<apex:selectList value="{!authorization.funding_Source__c}" size="1">
+        	<apex:selectList value="{!authorization.Funding_Source__c}" size="1">
         	<apex:selectOptions value="{!fsList}" />
         	</apex:selectList>
         </apex:outputPanel> 
         </apex:pageBlockSectionItem>
         
         <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Single Charge' }" >
-        	<apex:outputLabel value="{!if(authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other' || authorization.type__c = 'Open Ended Stay', 'Review Date', 'Last Covered Day')}"  />
+        	<apex:outputLabel value="{!if(authorization.Type__c = 'Open Ended Charge' || authorization.Type__c = 'Other' || authorization.Type__c = 'Open Ended Stay', 'Review Date', 'Last Covered Day')}"  />
 	        <apex:inputField id="enddate" value="{!authorization.Payer_End_Date__c}" label="End Date"/>
 	    </apex:pageBlockSectionItem>
 	    
@@ -163,7 +173,7 @@ var j$ = jQuery.noConflict();
         <apex:outputText value="" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' }"/>
         <apex:inputField value="{!authorization.Taken_By__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
         <apex:outputText value="" />
-        <apex:inputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.type__c != 'Single Charge'}"/>
+        <apex:inputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c != 'Single Charge'}"/>
        
 </apex:pageBlockSection>
 </apex:outputPanel>
