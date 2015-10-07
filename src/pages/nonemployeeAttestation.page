@@ -25,7 +25,7 @@
 					
 					<apex:column >
 						<apex:facet name="header">Job title</apex:facet>
-						<apex:outputText >{!one.Job_Title__c}</apex:outputText> 
+						<apex:outputText >{!one.Job_Title__c}</apex:outputText>
 					</apex:column>
 					
 					<apex:column >
@@ -51,7 +51,7 @@
 							<apex:param value="ninety" assignTo="{!flag}" name="flag"/>
 						</apex:commandButton>
 						&nbsp;
-						<apex:commandButton value="Other"  styleClass="btn btn-success">
+						<apex:commandButton value="Other" styleClass="btn btn-success">
 							
 						</apex:commandButton>
 						&nbsp;
@@ -168,6 +168,28 @@
 			</apex:outputPanel>
 		</apex:pageBlock>
 		
+		<div class="modal fade">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		        <h4 class="modal-title">Choose the termination Date</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p><input type="date" value="{!dateChoosen}" /></p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <apex:commandButton styleclass="btn btn-primary" value="Save" action="{!savelastDate}"/>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
 	</apex:form>
+	
+	<script>
+	
+	</script>
 	</body>
 </apex:page>
