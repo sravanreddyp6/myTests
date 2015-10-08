@@ -222,7 +222,9 @@ public with sharing class GenerateEvalComponent {
 
         // get any populated values for this eval and section
         List<Eval_Value__c> listEvalValues = [
-            select id, boolean__c, currency__c, date_time__c, number_no_decimal__c, text_over_250__c, text_under_250__c, eval__c from eval_value__c
+            select id, boolean__c, currency__c, date_time__c, number_no_decimal__c,
+                   text_over_250__c, text_under_250__c, eval__c, eval__r.length__c
+              from eval_value__c
              where eval__c in :listEvalItems
                and what_id__c = :evaluationID
                and what_id_object__c = 'Evaluation__c'
@@ -354,7 +356,11 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                         if (mapEvalValues.ContainsKey( e.id )) {
                             newHTMLfld += 'value="' ;
-                            strVal = mapEvalValues.get(e.id).text_under_250__c;
+                            if (mapEvalValues.get(e.id).eval__r.length__c < 250) {
+                                strVal = mapEvalValues.get(e.id).text_under_250__c;
+                            } else {
+                                strVal = mapEvalValues.get(e.id).text_over_250__c;
+                            }
 
                             if (strVal != null && strVal != '')
                                 newHTMLfld += strVal;
@@ -396,8 +402,13 @@ public with sharing class GenerateEvalComponent {
                 } else if (e.Field_Type__c == 'DropDown') {
 
                     // get the value
-                    if ( mapEvalValues.ContainsKey( e.id ))
-                        strVal = mapEvalValues.get(e.id).text_under_250__c;
+                    if ( mapEvalValues.ContainsKey( e.id )) {
+                        if (mapEvalValues.get(e.id).eval__r.length__c < 250) {
+                            strVal = mapEvalValues.get(e.id).text_under_250__c;
+                        } else {
+                            strVal = mapEvalValues.get(e.id).text_over_250__c;
+                        }
+                    }
 
                     // get the options
                     List<Eval_drop_Down__c> dropdownopts = ddOptions.get( e.id);
