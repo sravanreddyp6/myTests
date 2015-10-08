@@ -32,8 +32,8 @@ public class identityEditNew {
     	keyVal.put('PT-Massage','542009');
 		keyVal.put('Occupational Therapy','542010');
 		keyVal.put('Speech Therapy','542011');
-		keyVal.put('Social Services','542009');
-		keyVal.put('Respiratory','542009');
+		keyVal.put('Social Services','542003');
+		keyVal.put('Respiratory','542003');
 		keyVal.put('Dietitian','542003');
     	return JSON.Serialize(keyVal); 
     }
