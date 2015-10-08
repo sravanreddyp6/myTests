@@ -3,14 +3,37 @@
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 
+
+
+
+		
 <script>
 function setFocusOnLoad() {}
 
 var j$ = jQuery.noConflict();
-    
+
+jQuery(document).ready(function ($) {    
+	setUpFields = function () {
+				$('body input').on("change", function (event) {
+					applyRulesToField(event.target);
+				});
+				$('body select').on("change", function (event) {
+					applyRulesToField(event.target);
+				});
+				$('body input').each(function (_, target) {
+					applyRulesToField(target);
+				});
+				$('body select').each(function (_, target) {
+					applyRulesToField(target);
+				});
+			}
+			setUpFields();
+		});
+		
 </script>
 
 <c:PersonalRecord pbsId="{!pbsID}" parentPage="Authorization" servAssignId="{!saID}" admId="{!admID}"/>
@@ -21,7 +44,7 @@ var j$ = jQuery.noConflict();
 <apex:pageBlockButtons >
 <div class="pbHeaderButton" style="top: 0px;" >  
         <apex:commandButton action="{!saveAuth}" value="Save" reRender="authForm"  status="myStatus" rendered="{! authorization.Authorization_Status__c = 'Draft' || authorization.Authorization_Status__c = ''}" />
-        <apex:commandButton action="{!cancel}" value="{!if (authorization.Authorization_Status__c = 'Final', 'Close','Cancel')}" reRender="authForm" status="myStatus" immediate="true"/>
+        <apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?id={!saID}#auths', '_self'); return false;" value="{!if (authorization.Authorization_Status__c = 'Final', 'Close','Cancel')}" reRender="authForm" status="myStatus" immediate="true" />
 </div>
 </apex:pageBlockButtons>   
 
@@ -66,11 +89,27 @@ var j$ = jQuery.noConflict();
         <apex:outputPanel id="authdetail1">
     	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
         
-	        <apex:inputField value="{!authorization.Bed_Hold_Type__c}" />
+        	<apex:pageBlockSectionItem>
+        	<apex:outputLabel value="Bed Hold Type" />
+        	<apex:outputPanel>
+	        <apex:inputField value="{!authorization.Bed_Hold_Type__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.bedholdtypeother}&quot;}"/>
+	        &nbsp;<apex:inputField id="bedholdtypeother" value="{!authorization.Bed_Hold_Type_Other__c}" />
+	        </apex:outputPanel>
+	        </apex:pageBlockSectionItem>
+	        
     	    <apex:inputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! authorization.isRootAuth__c || authorization.id = null }"/>    
         	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! !authorization.isRootAuth__c && authorization.id != null }"/>
 
-	        <apex:inputField value="{!authorization.Bed_Hold_Type_Detail__c}" />
+        	<apex:pageBlockSectionItem>
+        	<apex:outputLabel value="Type Detail" />
+        	<apex:outputPanel>
+        	<div class="bedholddetailwrapper">
+	        <apex:inputField id="bedholddetailpicklist" value="{!authorization.Bed_Hold_Type_Detail__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.bedholdtypedetailother}&quot;}" />
+	        &nbsp;<apex:inputField id="bedholdtypedetailother" value="{!authorization.Bed_Hold_Type_Detail_Other__c}" />
+	        </div>
+	        </apex:outputPanel>
+	        </apex:pageBlockSectionItem>
+	        
     	    <apex:pageBlockSectionItem >
         		<apex:outputLabel value="Received Date/Time" />
         		<apex:outputPanel layout="none">
@@ -79,7 +118,14 @@ var j$ = jQuery.noConflict();
 				</apex:outputPanel>
         	</apex:pageBlockSectionItem>	
 
-	        <apex:inputField value="{!authorization.Bed_Hold_Additional_Detail__c}" />
+	        <apex:pageBlockSectionItem>
+        	<apex:outputLabel value="Additional Detail" />
+        	<apex:outputPanel>
+	        <apex:inputField value="{!authorization.Bed_Hold_Additional_Detail__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.bedholdaddldetailother}&quot;}" />
+	        &nbsp;<apex:inputfield id="bedholdaddldetailother" value="{!authorization.Bed_Hold_Additional_Detail_Other__c}" />
+	        </apex:outputPanel>
+	        </apex:pageBlockSectionItem>
+	        
 		    <apex:inputField id="startdate" value="{!authorization.Payer_Effective_Date__c}" label="Start Date"/>
 		    
 		    <apex:inputField value="{!authorization.Bed_Hold_Classification__c}"  />

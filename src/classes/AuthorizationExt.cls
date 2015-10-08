@@ -26,7 +26,7 @@ public AuthorizationExt(ApexPages.StandardController controller) {
     
     List<Funding_Source__c> fsources;
     if ( saID != null ) {
-        fsources =  [ select id, name, type_of_coverage__c, payer_name__c from funding_source__c where service_assignment__c = :saID and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
+        fsources =  [ select id, name, type_of_coverage__c, payer_name__c, cm_contract_used_lookup__r.name from funding_source__c where service_assignment__c = :saID and status__c != 'Inactive' order by type_of_coverage__c, payer_name__c];
         Service_Assignment__c sa = [ select id, admission__c, admission__r.person_being_served__c from service_assignment__c where id = :saID LIMIT 1];
         if ( sa != null ) {
             admID = sa.Admission__c;
@@ -37,10 +37,10 @@ public AuthorizationExt(ApexPages.StandardController controller) {
         fsources = new LIst<Funding_Source__c>(); 
     
     fsList = new List<SelectOption>();
-    
+    fsList.Add( new SelectOption( '', '-- None --'));
     for ( Funding_Source__c f: fsources ) {
     	
-    	SelectOption option = new SelectOption( f.id, f.type_of_coverage__c + ' - ' + f.payer_name__c );
+    	SelectOption option = new SelectOption( f.id, f.type_of_coverage__c + ' - ' + f.CM_Contract_Used_Lookup__r.Name );
     	fsList.Add( option );
     }
    
@@ -49,7 +49,7 @@ public AuthorizationExt(ApexPages.StandardController controller) {
         authorization = [ select id, authorization_status__c, type__c, other_authorization_type__c, reason_for_new_authorization__c, service_being_funded_string__c, payer_authorization_id__c,
                             rate__c, received_date_time__c, rate_unit__c, rate_unit_other__c, payer_effective_date__c, payer_end_date__c, funding_source__c, funding_source__r.payer_name__c, contract_used__c, 
                             received_from__c, taken_by__c, level__c, justification__c, representing_received__c,  auth_given_method__c, comments__c, 
-                            bed_hold_type__c, bed_hold_type_detail__c, bed_hold_additional_detail__c, bed_hold_classification__c, parent_auth__c, original_auth__c, isRootAuth__c
+                            bed_hold_type__c, bed_hold_type_other__c, bed_hold_type_detail__c, bed_hold_type_detail_other__c, bed_hold_additional_detail__c, bed_hold_additional_detail_other__c, bed_hold_classification__c, parent_auth__c, original_auth__c, isRootAuth__c
                             from authorization__c
                             where id = :controller.getRecord().Id ];
     
@@ -214,12 +214,6 @@ public AuthorizationExt(ApexPages.StandardController controller) {
             
             }
             
-            
-            
-            
-            
-            
-            
             // set status to final and save, then redirect to view page
             authorization.Authorization_Status__c = 'Final';  
             authorization.Finalized_at__c = DateTime.Now();
@@ -304,9 +298,34 @@ public AuthorizationExt(ApexPages.StandardController controller) {
     }
     
     public void changeAuthType() {
-    	system.debug( 'BEFORE: ' + authorization.type__c + ', ' + authorization.other_authorization_type__c);
-    	if ( authorization.type__c != 'Other')
-    		authorization.other_authorization_type__c = '';
+    	
+    	
+    	// clear out all fields if the user changes auth type
+    	authorization.other_authorization_type__c = '';
+    	authorization.reason_for_new_authorization__c = '';
+    	authorization.service_being_funded_string__c = '';
+    	authorization.rate__c = '';
+    	authorization.rate_unit__c = '';
+    	authorization.rate_unit_other__c = '';
+    	authorization.funding_source__c = null;
+    	authorization.level__c = '';
+    	authorization.justification__c = '';
+    	authorization.comments__c = '';
+    	authorization.received_date_time__c = null;
+    	authorization.payer_effective_Date__c = null;
+    	authorization.payer_end_date__c = null;
+    	authorization.received_from__c = '';
+    	authorization.representing_Received__c = '';
+    	authorization.taken_by__c = '';
+    	authorization.auth_given_method__c = '';
+    	authorization.bed_hold_type__c = '';
+    	authorization.bed_hold_type_other__c = '';
+    	authorization.bed_hold_classification__c = '';
+    	authorization.bed_hold_type_detail__c = '';
+    	authorization.bed_hold_type_detail_other__c = '';
+    	authorization.bed_hold_additional_detail__c = '';
+    	authorization.bed_hold_additional_detail_other__c = '';
+   		
     	
     	system.debug( 'AFTER: ' + authorization.type__c + ', ' + authorization.other_authorization_type__c);
     	 
