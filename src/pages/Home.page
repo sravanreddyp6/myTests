@@ -165,8 +165,8 @@
 			display it */
 			display: none;
 		}
-		
-		
+
+
 
 	</style>
 	<apex:outputPanel layout="none" rendered="{!OperatingGroup == 'Redwood' && BEGINS($UserRole.DeveloperName, 'IA')}">
@@ -181,7 +181,7 @@
 	<apex:form id="mainForm">
 		<apex:pageMessages id="pageMessages" />
 		<br />
-		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' || 
+		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' ||
 													OperatingGroup = 'NeuroRestorative' ||
 													(AND(OperatingGroup = 'Redwood', !BEGINS($UserRole.DeveloperName, 'IA')))}">
 			<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
@@ -217,7 +217,7 @@
 				</apex:inputCheckbox>
 			</apex:pageBlockSection>
 			<a id="pbsTable"></a>
-					
+
 			<apex:pageBlockTable value="{!serviceAssignments}" var="serviceAssignment" id="serviceAssignmentTable" html-data-highlighted-sa-id="{!highlightedServiceAssignmentId}">
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
@@ -240,10 +240,10 @@
 				</apex:column>
 				<apex:column headerValue="Daily Actions">
 					<apex:selectList styleClass="actionList" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"  size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" /> 
+                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
 					</apex:selectList>
                     <apex:selectList styleClass="actionList" rendered="{!!canCreateProgressNotes}" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
-                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" /> 
+                    <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" />
 					</apex:selectList>
 					<apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!!canCreateProgressNotes}"/>
                     <apex:commandButton value="Go" styleClass="pbsActionButton" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"/>
@@ -251,13 +251,14 @@
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-						 <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}&admission={!serviceAssignment.Admission__c}&pbsID={!serviceAssignment.Person_Being_Served__c}" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" /> 
+						 <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}&admission={!serviceAssignment.Admission__c}&pbsID={!serviceAssignment.Person_Being_Served__c}" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#auths" itemLabel="Authorizations" rendered="{! OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#caseManagementNotes" itemLabel="Case Management Notes" rendered="{! OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis" rendered="{!NOT(canCreateProgressNotes)}" />
                         <apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!OperatingGroup = 'Care Meridian'}"/>
@@ -275,7 +276,7 @@
 				<apex:column headerValue="saId">
 					{!serviceAssignment.Id}
 				</apex:column>
-				
+
 		</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
@@ -357,13 +358,13 @@
 		<apex:actionFunction name="showAddResponse" action="{!newResponse}" rerender="responseDialog" oncomplete="openModalDialog('responseDialog', 'div', 'Add Time Log', null, 1000, 'mainForm','false');" immediate="true">
 			<apex:param name="serviceAssignmentIdForAction" value="" assignTo="{!serviceAssignmentIdForAction}" />
 		</apex:actionFunction>
-		              	
+
 	</apex:form>
 	<div id="shiftDocActionDialog"></div>
 	<div id="searchResultDialog"></div>
-	
+
 	<!-- Dialog Modal -->
-	
+
 	<div id="responseDialog" style="display:none;" >
 	<apex:outputpanel layout="none" rendered="{!(AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}" >
 		<script>
@@ -375,7 +376,7 @@
         		closeModalDialog(dialogId, tagType);
 	            if (keepDialogOpen) {
 	                (functionToOpenNewDialog)(functionarg);
-            	}            	
+            	}
         	}
     	}
     	});
@@ -386,7 +387,7 @@
 		<apex:pageBlock id="responseDialogMainBlock">
 
 		<apex:pageblockButtons location="bottom">
-				<apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');"> 
+				<apex:actionFunction name="saveResponse" action="{!saveResponse}" rerender="responseDialogErrors, responseDialogMainBlock" status="saveResponseStatus" oncomplete="debugger;afterSave('responseDialog', 'div',request.options.parameters.keepDialogOpen,showAddResponse,'{!serviceAssignmentIdForAction}');">
 					<apex:param name="keepDialogOpen" value="" />
 				</apex:actionFunction>
 				<apex:actionStatus id="saveResponseStatus">
@@ -404,7 +405,7 @@
 				</apex:actionStatus>
 			</apex:pageblockButtons>
 			<apex:pageMessages id="responseDialogErrors" />
-			<apex:pageBlockSection >	
+			<apex:pageBlockSection >
 			<apex:pageBlockSectionItem >
 			<apex:outputLabel value="Start Date/Time" />
             	<apex:outputPanel layout="none">
@@ -423,7 +424,7 @@
 			</apex:pageBlockSectionItem>
 
 			<apex:pageBlockSectionItem >
-			
+
 			<apex:outputlabel value="Accompanied By"  />
 			<apex:outputpanel layout="none">
 			<div class="requiredInput"><div class="requiredBlock"></div>
@@ -431,9 +432,9 @@
 			</div>
 			</apex:outputpanel>
 			</apex:pageBlockSectionItem>
-			
+
 			<apex:pageBlockSectionItem >
-			
+
 			<apex:outputlabel value="Location"/>
 			<apex:outputPanel layout="none">
 			<div class="requiredInput"><div class="requiredBlock"></div>
@@ -441,7 +442,7 @@
 			</div>
 			</apex:outputPanel>
 			</apex:pageBlockSectionItem>
-			
+
 			<apex:pageBlockSectionItem >
 			<apex:outputlabel value="Service Type"/>
 			<apex:outputPanel layout="none">
@@ -450,25 +451,25 @@
 			</div>
 			</apex:outputPanel>
 			</apex:pageBlockSectionItem>
-			
+
 			<apex:outputText value="" />
 			<apex:pageBlockSectionItem >
 			<apex:outputlabel value="Narrative Note"  />
 			<apex:inputTextArea value="{! currResponse.narrative_note__c}" />
 			</apex:pageBlockSectionItem>
-			
-			
+
+
 			<apex:pageBlockSectionItem >
 			<apex:outputlabel value="Late Entry"  />
 			<apex:inputField value="{! currResponse.is_late_entry__c}" />
 			</apex:pageBlockSectionItem>
-			
+
 			</apex:pageBlockSection>
-			
+
 		</apex:pageBlock>
-	
+
 	</apex:form>
-    </apex:outputpanel>  
+    </apex:outputpanel>
 	</div>
 
     <div id="IowaDailyDataSummaryDialog" style="display:none;" >
@@ -477,8 +478,8 @@
         </script>
         <span class="ui-helper-hidden-accessible"><input type="text"/></span>
         <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
-        
-        <apex:pageBlockSection >    
+
+        <apex:pageBlockSection >
             <apex:pageBlockSectionItem >
             <apex:outputLabel value="Service date" />
                 <apex:outputPanel layout="none">
@@ -490,17 +491,17 @@
 
             <apex:pageBlockSectionItem >
 	            <apex:outputPanel layout="block">
-	                <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp; 
+	                <a class="btn" href="#" id="IowaDailyDataSummaryGenerate">Generate</a>&nbsp;&nbsp;
 	                <a class="btn" href="#" onClick="closeModalDialog('IowaDailyDataSummaryDialog', 'div');  jQuery('#IowaDailyDataSummaryGenerate').off('click'); return false;">Close</a>
 	            </apex:outputPanel>
             </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
-            
+
         </apex:pageBlock>
-    </apex:outputpanel>  
-    </div>	
-	
-	
+    </apex:outputpanel>
+    </div>
+
+
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
 	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!serviceAssignmentIdForAction}" status="" shiftType="CNA Workbook" id="cnaWorkbookAddModal" />
 	<c:EvalSection id="evalSection" uniqueId="abc" category="{!$CurrentPage.parameters.Category}"
@@ -681,7 +682,7 @@
 					var category = selectedValue.replace('cnaWorkbookAction-', '').split('~')[0];
 					var subcategory = selectedValue.replace('cnaWorkbookAction-', '').split('~')[1];
 					createPanel('CNA Workbook', category, subcategory, null, 'Activity Log', true, latestCNAWorkbookId);
-				} 
+				}
 				// IADAY-9 - RW actions are navigations to new pages
 				else if ( selectedText == 'Create/Revise Action Plan') {
 					makeNewPlan(selectedValue);
@@ -689,13 +690,13 @@
 				else if ( selectedText == 'Create Shift Note' || selectedText == 'Add Behavior Data' || selectedText == 'Add Skill Data') {
 					window.location.href= selectedValue;
 				}
-				else if ( selectedText == 'Create Time Log Entry' ) { 
-					showAddResponse( serviceAssignmentId); 
+				else if ( selectedText == 'Create Time Log Entry' ) {
+					showAddResponse( serviceAssignmentId);
 				}
-                else if ( selectedText == 'Create Daily Data Summary' ) { 
+                else if ( selectedText == 'Create Daily Data Summary' ) {
                     openModalDialog('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700, 'mainForm','false');
                     $('#IowaDailyDataSummaryGenerate').on("click","",{saId:serviceAssignmentId}, function(event){
-                                window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
+                                window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value
                                 + '&saId='+ event.data.saId
                                 , '_blank');});
                 }

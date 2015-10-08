@@ -141,15 +141,15 @@
 			closeFundingSource = isClose;
 			fundingSourceSaveHelper('{!JSENCODE(fundingSourceRecordType)}');
 		}
-		
+
 		fundingSourceFinalize = function(){
 			 var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Room_and_Board_Rate__c}','{!serviceLocation.PRN_DS_Per_Hour__c}',
 					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
 					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
-									
+
 			fundingSourceFinalizeHelper('{!JSENCODE(fundingSourceRecordType)}', tUnits, 'totalAuthUnits');
 		}
-		
+
 		fundingCaltotalUnitsButton = function(){
 			var authUnitErrors = validateAuthCalculations();
 			 if (authUnitErrors.length > 0) {
@@ -163,28 +163,28 @@
 				var tUnits = totalauthTherapyUnits(j$('[id$=receivedRate]').val(),'{!serviceLocation.Room_and_Board_Rate__c}','{!serviceLocation.PRN_DS_Per_Hour__c}',
 					j$('[id$=hoursExpected]').val(),j$('[id$=dmeperDay]').val(),j$('[id$=otherPerDay').val(),j$('[id$=medicationperDay]').val(),
 					j$('[id$=nutritionalPerDay]').val(),'{!serviceLocation.Per_Productive_Unit__c}');
-					
-				j$('[id$=totalAuthUnits]').val(tUnits); 
-				
+
+				j$('[id$=totalAuthUnits]').val(tUnits);
+
 					if(tUnits < parseFloat(j$('[id$=authGrandTotalUnits]').val())){
 						j$('[id$=authGrandTotalUnits]').addClass("grandtotalwarning");
 					}else{
 						j$('[id$=authGrandTotalUnits]').removeClass("grandtotalwarning");
 					}
-				
+
 			}
 		}
-		
-		
+
+
 		inactivateFunding = function(){
 			if(window.confirm('You will not be able to edit the funding source once you inactivate it. Do you want to proceed?')){
 				fundingSourceInactivate();
 			}else{
 				return null;
-			}	
-			
+			}
+
 		}
-		
+
 		function loadFundingSource(fundingId) {
 			// This provides backward-compatibility with code the Appirio wrote
 			showEditFundingSource(fundingId);
@@ -201,7 +201,7 @@
 				j$('[id*=FundingSourceModal] input[id*=saveAndNewFundingSource]').hide();
 			}
 		}
-		
+
 		function getToday() {
 			var today = new Date();
 			var dd = today.getDate();
@@ -313,7 +313,7 @@
 		                 }
 		    });
         });
-        
+
         jQuery(document).ready(function ($) {
 		        setUpFields = function () {
 		            $('body input').on("change", function (event) {
@@ -331,7 +331,7 @@
 		        }
 		        setUpFields();
 		    });   //end "
-        
+
 
 	</script>
 	<apex:pagemessages id="msgs" />
@@ -579,7 +579,7 @@
 				<!-- Added by Amruth for EB-434 -->
 				<apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR}" />
 				<apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR}" />
-				
+
 				<apex:outputField value="{!theservAssign.Model__c}" rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}" />
 				<apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR}">
 					<apex:outputLabel value="Model" for="modelfield" />
@@ -588,7 +588,7 @@
 					</apex:selectList>
 <!-- 					<apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()" /> -->
 				</apex:pageblocksectionitem>
-				
+
 				<!--  EB-526 -->
 				<apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && (vfVarIsCB || isCAFSS)}" />
 				<apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && (vfVarIsCB || isCAFSS)}" />
@@ -597,7 +597,7 @@
 
 
 			</apex:pageBlockSection>
-			
+
 			<apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="false" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR}">
 				<apex:pageBlockSectionItem rendered="{!editSA && !isNR}">
 					<apex:outputLabel value="Contract" />
@@ -1460,9 +1460,9 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:outputPanel rendered="{!cnaWorkbooks.size>0}">Showing 5 most recent records. Click <a href="/apex/CMShiftAssessmentListView?saId={!Service_Assignment__c.Id}&recType=CNA Workbook" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
 
 		</apex:pageBlock>
-		
+
 		<!--  Time Log section - IADAY-10 -->
-		
+
 		<a name="TimeLog" id="TimeLog"></a>
 		<apex:pageBlock id="TimeLog" title="Time Log Entries" rendered="{! !editSA && AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'))}">
 				<c:EvaluationResponseTable saParentId="{!Service_Assignment__c.Id}"
@@ -1477,13 +1477,36 @@ END: Uncomment to have the element collapsed by default -->
                                            addEnabled="true"
                                            editEnabled="true"
                                            customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" />
-                                          
+
             <apex:outputPanel >Showing the 10 most recent entries. Click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!theServAssign.Person_Being_Served__c}&SA={!Service_Assignment__c.Id}&FS=Time Log" >here</apex:outputLink>&nbsp;to view all</apex:outputPanel>
             </apex:pageBlock>
-             		
-
-	
 		<!--  end time log section  -->
+
+		<a name="caseManagementNotes" id="caseManagementNotes"></a>
+		<apex:pageBlock id="CaseManagementNotes" title="Case Management Notes" rendered="{!AND(!editSA, OperatingGroup == 'Care Meridian')}">
+			<div class="pbHeaderButton">
+				<apex:commandButton onclick="window.open('/apex/Notes_Case_Management?saId={!Service_Assignment__c.id}', '_self'); return false;" value="New Case Management Note" rendered="{!canCreateNote}" />
+			</div>
+			<apex:pageBlockSection columns="1" collapsible="false">
+				<apex:pageblockTable value="{!caseManagementNotes}" var="note" rendered="{!(caseManagementNotes != null && caseManagementNotes.size>0)}">
+					<apex:column headerValue="Name">
+						<apex:outputLink value="/apex/Notes_Case_Management?id={!note.id}">
+							<apex:outputField value="{!note.name}" />
+						</apex:outputLink>
+					</apex:column>
+					<apex:column value="{!note.CreatedDate }" />
+					<apex:column value="{!note.Status__c }" />
+					<apex:column headerValue="Owner">
+						<a href="/{!note.CreatedBy.Id}">{!note.CreatedBy.Name}</a>
+					</apex:column>
+				</apex:pageblockTable>
+				<apex:outputText value="No notes to display" rendered="{!caseManagementNotes.size=0}" />
+				<apex:outputPanel rendered="{!caseManagementNotes.size!=0}">
+					Showing the 10 most recent notes click <a href="/apex/Notes_Case_Management_List?saId={!Service_Assignment__c.id}" style="color: blue; ">here</a>&nbsp;to view all
+				</apex:outputpanel>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+
 		<!--  Notes section -->
 		<a name="Notes" id="Notes"></a>
 		<apex:pageBlock id="Notes" title="Notes" rendered="{! !editSA}">
@@ -1510,14 +1533,18 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:column value="{!note.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS) && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
 					<apex:column value="{!note.createddate }" />
 					<apex:column value="{!note.createdby.name }" />
-					
+
 				</apex:pageblockTable>
 				<apex:outputText value="No notes to display" rendered="{!(notes.size=0)}" />
-				<apex:outputPanel rendered="{!notes.size!=0 && ($Setup.SystemSettings__c.AZ_OPT_Enabler__c == False || ($Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup != 'Redwood'))}">Showing the 10 most recent notes click&nbsp;
-                    <apex:outputLink value="/a0L?id={!Service_Assignment__c.id}&rlid=00NU00000036mQ0&lsr=0">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
-                <apex:outputPanel rendered="{!notes.size!=0 && $Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup == 'Redwood'}" >Showing the 10 most recent notes click&nbsp;
-                    <apex:outputLink value="/apex/Progress_Notes_Log?saID={!theServAssign}&saname={!theServAssign.Name}&admission={!theServAssign.Admission__c}&pbsID={!theServAssign.Person_Being_Served__c}">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
-            </apex:pageBlockSection>
+				<apex:outputPanel rendered="{!notes.size!=0 && ($Setup.SystemSettings__c.AZ_OPT_Enabler__c == False || ($Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup != 'Redwood'))}">
+					Showing the 10 most recent notes click&nbsp;
+					<apex:outputLink value="/a0L?id={!Service_Assignment__c.id}&rlid=00NU00000036mQ0&lsr=0">here</apex:outputLink>&nbsp;to view all
+				</apex:outputpanel>
+				<apex:outputPanel rendered="{!notes.size!=0 && $Setup.SystemSettings__c.AZ_OPT_Enabler__c && OperatingGroup == 'Redwood'}" >
+					Showing the 10 most recent notes click&nbsp;
+					<apex:outputLink value="/apex/Progress_Notes_Log?saID={!theServAssign}&saname={!theServAssign.Name}&admission={!theServAssign.Admission__c}&pbsID={!theServAssign.Person_Being_Served__c}">here</apex:outputLink>&nbsp;to view all
+				</apex:outputpanel>
+			</apex:pageBlockSection>
 		</apex:pageBlock>
 
 		<!-- Start FAD Assessments -->
@@ -1550,8 +1577,8 @@ END: Uncomment to have the element collapsed by default -->
 			<script>
 			  jQuery(document).ready(function ($) {
 			  	  setUpFields();
-	    		});   //end " 
-	    		
+	    		});   //end "
+
 		    </script>
 			<div id='fundingMessages'></div>
 			<apex:pageBlock title="Add Funding Source" rendered="{!fundingSourceRecordType != 'CareMeridian' && fundingSourceRecordType != 'NeuroRestorative' }">
@@ -1595,7 +1622,7 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputField value="{!fundingSource.Policy_Holder__c}" />
 					<apex:inputField value="{!fundingSource.Relationship_To_Patient__c}" id="policyHolderRelationship" />
 				</apex:pageBlockSection>
-				
+
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:outputField value="{!fundingSource.Funding_Source_Status__c}"  />
 					<apex:pageBlockSectionItem />
@@ -1646,7 +1673,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputField value="{!fundingSource.Additional_Coverage__c}" id="additionalCoverage" />
                     <apex:inputTextarea value="{!fundingSource.Additional_Coverage_Comments__c}" id="additionalCoverageDetail" label="" cols="80" />
                 </apex:pageBlockSection>
-				
+
 
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian' }">
 					<apex:outputText value="Benefit Information" styleClass="modalSubheader" />
@@ -1719,9 +1746,9 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:pageBlockSectionItem />
 					<apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
 				</apex:pageBlockSection>
-				
-				
-				
+
+
+
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:outputText value="Benefit Information" styleClass="modalSubheader" />
 					<apex:pageBlockSectionItem />
@@ -1764,9 +1791,9 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputField value="{!fundingSource.Claims_Submission_Zip__c}" id="Claims_Submission_Zip" label="Zip" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
-			
+
 			<apex:pageBlock title="Red Flags" id="fundingSourceRedFlagsEntry" rendered="{!fundingSourceRecordType == 'CareMeridian' || fundingSourceRecordType == 'NeuroRestorative'}">
-				
+
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'CareMeridian'}">
 					<apex:inputField value="{!fundingSource.Month_to_Month__c}" id="field_validation1" />
 					<apex:inputField value="{!fundingSource.Basis__c}" id="field_check1" />
@@ -1807,8 +1834,8 @@ END: Uncomment to have the element collapsed by default -->
 
 					<apex:pageBlockSectionItem />
 				</apex:pageBlockSection>
-				
-				
+
+
 				<apex:pageBlockSection columns="2" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
 					<apex:inputField value="{!fundingSource.Cobra__c}" id="field_validation20" />
 					<apex:inputField value="{!fundingSource.Payment_Detail__c}" id="field_check20" />
@@ -1826,10 +1853,10 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:inputTextArea value="{!fundingSource.Comment__c}" label="Red Flag Comments" cols="80" />
 				</apex:pageBlockSection>
 			</apex:pageBlock>
-			
-			
+
+
 <!-- 			Added by Sravan for EB-435 -->
-			<apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">       
+			<apex:pageBlock title="Authorization Detail" id="fundingSourceAuthorizationDetailEntry" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}">
                 <apex:pageBlockSection columns="2" id="fundingSourceAuthorizationDetailEntrySection">
                     <apex:inputField value="{!fundingSource.Status__c}" />
                     <apex:pageBlockSectionItem />
@@ -1870,7 +1897,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:inputTextArea value="{!fundingSource.Authorization_Comments__c}" cols="80" />
                 </apex:pageBlockSection>
             </apex:pageBlock>
-            
+
             <apex:pageBlock title="Costs & Therapy Authorization Details" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="CandTblock">
             	<apex:pageBlocksection columns="2" >
             		<apex:pageBlockSectionItem >
@@ -1893,7 +1920,7 @@ END: Uncomment to have the element collapsed by default -->
             		</apex:pageBlockSectionItem>
 <!--             		<apex:inputField value="{!fundingSource.Effective_Date_of_Cost_therapy_Auth__c}" /> -->
             		<apex:pageBlockSectionitem />
-            		
+
             		<apex:pageBlockSectionItem >
             			<apex:outputLabel value="Term Date of Cost/Therapy" />
             			<apex:outputPanel >
@@ -1906,7 +1933,7 @@ END: Uncomment to have the element collapsed by default -->
 <!--             		<apex:inputField value="{!fundingSource.Term_Date_of_Cost_therapy_Auth__c}" /> -->
             	</apex:pageBlocksection>
             </apex:pageBlock>
-			
+
 			<apex:pageBlock title="COSTS PER DAY" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="costperdayBlock">
 				<apex:pageBlockSection columns="1" id="costperdaySection">
 					<apex:pageblocksectionItem >
@@ -1918,7 +1945,7 @@ END: Uncomment to have the element collapsed by default -->
 							</div>
 						</apex:outputPanel>
 					</apex:pageblocksectionItem>
-					
+
 					<apex:pageBlockSectionItem id="hoursexpectedSectionItem">
 						<apex:outputLabel value="Number of Hrs. Expected" styleClass="labelCol" />
 						<apex:outputPanel >
@@ -1928,22 +1955,22 @@ END: Uncomment to have the element collapsed by default -->
 							</div>
 						</apex:outputPanel>
 					</apex:pageBlockSectionItem>
-					
-					
+
+
 					<apex:pageBlockSectionItem id="prndsSectionItem" >
 						<apex:outputLabel value="PRN DS" styleClass="labelCol" />
 						<apex:inputText value="{!fundingSource.PRN_DS__c}" style="width:100px;" id="prnDs" html-readonly="true" Label="PRN DS"/>
 					</apex:pageBlockSectionItem>
 					<apex:pageBlockSectionItem />
-					
+
 				</apex:pageBlockSection>
-				
-				
-				
+
+
+
 				<apex:panelGrid columns="3" style="margin-left: 50px;">
 					<apex:panelGroup >
 						<apex:outputlabel value="DME" styleClass="labelCol" />
-						<apex:inputField value="{!fundingSource.DME__c}" style="width:100px;margin-left:109px;" id="DMECost" onblur="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}'); return false;" 
+						<apex:inputField value="{!fundingSource.DME__c}" style="width:100px;margin-left:109px;" id="DMECost" onblur="costperDay('{!$Component.DMECost}', 'dmeType','{!$Component.dmeperDay}'); return false;"
 							 onkeypress="return isNumberwithDec(event,this)" />
 					</apex:panelGroup>
 					<apex:panelGroup >
@@ -1953,11 +1980,11 @@ END: Uncomment to have the element collapsed by default -->
 							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
 						</apex:selectRadio>
 					</apex:panelGroup>
-					<apex:panelGroup >	
+					<apex:panelGroup >
 						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
 						<apex:inputText value="{!fundingSource.DME_Per_Day__c}" style="width:100px;" id="dmeperDay" html-readonly="true" />
 					</apex:panelGroup>
-					
+
 					<apex:panelGroup >
 						<apex:outputlabel value="Medication" styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.Medication_Costs__c}" style="width:100px;margin-left:74px;" id="medicationCost" onblur="costperDay('{!$Component.medicationCost}', 'medicationType','{!$Component.medicationperDay}'); return false;"
@@ -1970,11 +1997,11 @@ END: Uncomment to have the element collapsed by default -->
 							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
 						</apex:selectRadio>
 					</apex:panelGroup>
-					<apex:panelGroup >	
+					<apex:panelGroup >
 						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
 						<apex:inputText value="{!fundingSource.Medication_Per_Day__c}" style="width:100px;" id="medicationperDay" html-readonly="true"/>
 					</apex:panelGroup>
-					
+
 					<apex:panelGroup >
 						<apex:outputlabel value="Nutritional Supplements" styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.Nutritional_Supplements_Cost__c}" style="width:100px;" id="nutritionalCost" onblur="costperDay('{!$Component.nutritionalCost}', 'nutritionalType','{!$Component.nutritionalPerDay}'); return false;"
@@ -1987,12 +2014,12 @@ END: Uncomment to have the element collapsed by default -->
 							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
 						</apex:selectRadio>
 					</apex:panelGroup>
-					<apex:panelGroup >	
+					<apex:panelGroup >
 						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
 						<apex:inputText value="{!fundingSource.Nutritional_Supplements_Per_Day__c}" style="width:100px;" id="nutritionalPerDay" html-readonly="true"/>
 					</apex:panelGroup>
-					
-					
+
+
 					<apex:panelGroup >
 						<apex:outputlabel value="Other" styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.Other_Cost__c}" style="width:100px;margin-left:100px;" id="otherCost" onblur="costperDay('{!$Component.otherCost}', 'otherType','{!$Component.otherPerDay}'); return false;"
@@ -2005,19 +2032,19 @@ END: Uncomment to have the element collapsed by default -->
 							<apex:selectoption itemLabel="YR" itemvalue="Yearly" />
 						</apex:selectRadio>
 					</apex:panelGroup>
-					<apex:panelGroup >	
+					<apex:panelGroup >
 						<apex:outputLabel value="Cost Per Day" styleClass="labelCol" />
 						<apex:inputtext value="{!fundingSource.Other_Per_Day__c}" style="width:100px;" id="otherPerDay" html-readonly="true" />
 					</apex:panelGroup>
-					
+
 					<apex:panelGroup >
 						<apex:outputLabel value="Other Cost Description" styleClass="labelCol" id="otherCostDescribe"/>
 						<apex:inputField value="{!fundingSource.Other_Cost_Description__c}" id="otherCostDescription"/>
 					</apex:panelGroup>
 				</apex:panelGrid>
-				
+
 			</apex:pageBlock>
-			
+
 			<apex:pageBlock title="THERAPY AUTHORIZATION" rendered="{!fundingSourceRecordType == 'NeuroRestorative'}" id="therapyAuthorizationBlock" >
 				<apex:pageBlockSection columns="1" id="therapyAuthorizationSection">
 					<apex:outputpanel style="margin-right:30px;" >
@@ -2026,7 +2053,7 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:commandLink value="Calculate" styleClass="btn" style="margin-left:20px;" onclick="fundingCaltotalUnitsButton(); return false;" />
 					</apex:outputpanel>
 				</apex:pageBlockSection>
-			
+
 				<apex:panelGrid columns="3" >
 					<apex:panelGroup >
 						<apex:outputLabel value="OT Auth Units" styleClass="labelCol"/>
@@ -2041,7 +2068,7 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.OT_Days_Authorized_To__c}" />
 					</apex:panelGroup>
-					
+
 					<apex:panelGroup >
 						<apex:outputLabel value="PT Auth Units" styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.PT_Auth_units__c}" style="width:100px; margin-left:50px;" id="PTauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
@@ -2055,7 +2082,7 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.PT_Days_Authorized_To__c}" />
 					</apex:panelGroup>
-					
+
 					<apex:panelGroup >
 						<apex:outputLabel value="SLP Auth Units"  styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.SLP_Auth_Units__c}" style="width:100px; margin-left:42px;" id="SLPauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
@@ -2069,7 +2096,7 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.SLP_Days_Authorized_To__c}" />
 					</apex:panelGroup>
-					
+
 					<apex:panelGroup >
 						<apex:outputLabel value="BIT Auth Units"  styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.BIT_Auth_Units__c}" style="width:100px; margin-left:46px;" id="BITauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
@@ -2083,7 +2110,7 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.BIT_Days_Authorized_To__c}" />
 					</apex:panelGroup>
-					
+
 					<apex:panelGroup >
 						<apex:outputLabel value="Counseling Auth Units"  styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.Counselling_Auth_Units__c}" style="width:100px;" id="CounsellingauthUnits" onblur="authUnitsTotal('{!$Component.OTauthUnits}','{!$Component.PTauthUnits}','{!$Component.SLPauthUnits}','{!$Component.BITauthUnits}','{!$Component.CounsellingauthUnits}','{!$Component.therapyAuthorizationBlock:grandtotalSection:authGrandTotalUnits}');return false;"
@@ -2097,9 +2124,9 @@ END: Uncomment to have the element collapsed by default -->
 						<apex:outputLabel value="Days Authorized To" styleClass="labelCol" />
 						<apex:inputField value="{!fundingSource.Counselling_Days_Authorized_To__c}" />
 					</apex:panelGroup>
-					
+
 				</apex:panelgrid>
-				
+
 				<apex:pageBlockSection Columns="1" id="grandtotalSection" >
 					<apex:outputPanel style="margin-right:30px;" >
 						<apex:outputLabel for="authGrandTotalUnits" value="Auth Units Grand Total" styleClass="labelCol" />
@@ -2107,9 +2134,9 @@ END: Uncomment to have the element collapsed by default -->
 					</apex:outputPanel>
 					<apex:inputTextArea value="{!fundingSource.Auth_Excess_Justification__c}" rows="3" cols="20" id="authExcessJustification" />
 				</apex:pageBlockSection>
-				
+
 			</apex:pageBlock>
-			
+
 			<apex:pageBlock title="THERAPY AUTH EXCESS APPROVAL" id="therapyApprovalBlock" rendered="false">
 				<apex:pageBlockSection columns="2" >
 					<apex:pageBlockSectionItem >
@@ -2138,7 +2165,7 @@ END: Uncomment to have the element collapsed by default -->
 					<apex:commandButton id="saveAndNewFundingSource" value="Save & New" onclick="fundingSourceSave(false); return false;" />
 					<apex:commandButton value="Cancel" onclick="closeModalDialogSA('FundingSourceModal', 'span');j$('#fundingErrors').html('');return false;" />
 				</apex:pageblockButtons>
-				
+
 				<apex:pageblockButtons location="bottom" rendered="{!canEditFundingSource && fundingSourceRecordType == 'NeuroRestorative'}" >
 					<apex:commandButton id="saveFundingSource" value="Save" onclick="fundingSourceSave(true);return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
 					<apex:commandbutton id="finalizeFundingSource" value="Finalize" onClick="fundingSourceFinalize(); return false;" rendered="{!fundingSource.Funding_Source_Status__c != 'Active Final' && fundingSource.Funding_Source_Status__c != 'Inactive'}"/>
@@ -2148,7 +2175,7 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageblockButtons>
 			</apex:pageBlock>
 		</apex:outputPanel>
-		
+
 		<a id="Funding_Sources"></a>
 		<apex:pageBlock id="fundingSources" title="Funding Sources" rendered="{!(vfVarIsCM || isNR) && !newSA && canViewFundingSource}">
 			<div class="pbHeaderButton">
@@ -2202,7 +2229,7 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column value="{!fundingSource.Status__c}" />
 			</apex:pageBlockTable>
 		</apex:pageBlock>
-		
+
 <!-- 	common status for all actions on funding source -->
 		<apex:actionStatus id="fundingSouceModalStatus" >
 			<apex:facet name="start">
@@ -2214,8 +2241,8 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:facet name="stop" />
 		</apex:actionStatus>
 		<!-- end Funding sources section-->
-		
-		
+
+
 		<!-- AUTHS SECTION -->
 		<a id="auths"></a>
 		<apex:pageBlock id="authList" title="Authorizations" rendered="{! vfVarIsCM && !newSA && canViewAuths }">
@@ -2231,7 +2258,7 @@ END: Uncomment to have the element collapsed by default -->
 			<apex:outputText value="No Authorizations to display" rendered="{!(authList.size=0)}" />
 		<apex:pageBlockTable value="{!authList}" var="auth" rendered="{! authList.size!=0 && canViewAuths }">
 				<apex:column headerValue="Action" >
-					
+
 					<a href="/apex/AuthorizationView?id={!auth.ID}&saID={!theServAssign.ID}">View</a>
 					<apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
 						&nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
@@ -2395,7 +2422,7 @@ END: Uncomment to have the element collapsed by default -->
 				</apex:pageBlockButtons>
 			</apex:pageBlock>
 		</apex:outputPanel>
-		
+
 	    <div id="IowaDailyDataSummaryDialog" style="display:none;" >
 	    <apex:outputpanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA')))}" >
 	        <script>
@@ -2410,7 +2437,7 @@ END: Uncomment to have the element collapsed by default -->
 	        </script>
 	        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
 	        <apex:pageBlock id="IowaDailyDataSummaryDialogMainBlock">
-		        <apex:pageBlockSection >    
+		        <apex:pageBlockSection >
 		            <apex:pageBlockSectionItem >
 		            <apex:outputLabel value="Service date" />
 		                <apex:outputPanel layout="none">
@@ -2419,19 +2446,19 @@ END: Uncomment to have the element collapsed by default -->
 		<!--                     </div> -->
 		                </apex:outputPanel>
 		            </apex:pageBlockSectionItem>
-		
+
 		            <apex:pageBlockSectionItem >
 		                <apex:outputPanel layout="block">
-		                    <a class="btn" href="#" id="IowaDailyDataSummaryGenerate" onClick="window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value 
+		                    <a class="btn" href="#" id="IowaDailyDataSummaryGenerate" onClick="window.open('/apex/IowaDailyDataSummary?serviceDate=' + document.getElementById('IowaDailyDataSummaryServiceDate').value
 		                                + '&saId='+ '{!theServAssign.Id}'
-		                                , '_blank');return false;">Generate</a>&nbsp;&nbsp; 
+		                                , '_blank');return false;">Generate</a>&nbsp;&nbsp;
 		                    <a class="btn" href="#" onClick="closeModalDialogSA('IowaDailyDataSummaryDialog', 'div');return false;">Close</a>
 		                </apex:outputPanel>
 		            </apex:pageBlockSectionItem>
 		        </apex:pageBlockSection>
 	        </apex:pageBlock>
-	    </apex:outputpanel>  
-	    </div> 
+	    </apex:outputpanel>
+	    </div>
 	</apex:form>
 	<a id="shiftSummaries" />
 	<apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), !isCAFSS, $ObjectType.Action_Summary__c.accessible, !editSA)}" />

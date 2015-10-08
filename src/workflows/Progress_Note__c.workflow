@@ -265,6 +265,11 @@
             <operation>equals</operation>
             <value>False</value>
         </criteriaItems>
+        <criteriaItems>
+            <field>Progress_Note__c.RecordTypeId</field>
+            <operation>notEqual</operation>
+            <value>Case Management Note</value>
+        </criteriaItems>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
     <rules>
