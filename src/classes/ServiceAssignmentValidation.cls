@@ -95,7 +95,7 @@ public class ServiceAssignmentValidation {
     
         // SELECT ALL PROGRESS NOTES FOR THE SERVICE ASSIGNMENT
         List<Progress_Note__c> allProgressNotes = new List<Progress_Note__c>();
-        allProgressNotes = [SELECT Id, Start_Time__c, End_Time__c, Service_Assignment__c FROM Progress_Note__c WHERE Service_Assignment__c IN :theseServAssigns AND Disregard_Note__c = false];
+        allProgressNotes = [SELECT Id, Start_Time__c, End_Time__c, Service_Assignment__c FROM Progress_Note__c WHERE Service_Assignment__c IN :theseServAssigns AND Disregard_Note__c = false AND CreatedBy.Operating_group__c != 'Care Meridian'];
         System.Debug('What is in allProgressNotes?: ' + allProgressNotes);
         
         for(Service_Assignment__c thisSa : theseServAssigns){

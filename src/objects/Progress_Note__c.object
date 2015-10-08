@@ -20363,7 +20363,11 @@ Neurostative IL role</description>
         <fullName>Note_Dates_Must_Be_Within_Serv_Assign</fullName>
         <active>true</active>
         <description>A validation rule to constrain the start and end dates of the note be be on or within the date range defined for the selected service assignment.</description>
-        <errorConditionFormula>(Service_Assignment__r.Start_Date__c &gt; DATEVALUE(Start_Time__c )) || (Service_Assignment__r.End_Date__c &lt; DATEVALUE(Start_Time__c)) || ( Service_Assignment__r.Start_Date__c &gt; DATEVALUE(End_Time__c)) || (Service_Assignment__r.End_Date__c &lt; DATEVALUE(End_Time__c))</errorConditionFormula>
+        <errorConditionFormula>((Service_Assignment__r.Start_Date__c &gt; DATEVALUE(Start_Time__c )) 
+|| (Service_Assignment__r.End_Date__c &lt; DATEVALUE(Start_Time__c)) 
+|| ( Service_Assignment__r.Start_Date__c &gt; DATEVALUE(End_Time__c)) 
+|| (Service_Assignment__r.End_Date__c &lt; DATEVALUE(End_Time__c)) )
+&amp;&amp; ($User.Operating_Group__c &lt;&gt; &apos;Care Meridian&apos;)</errorConditionFormula>
         <errorMessage>The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.</errorMessage>
     </validationRules>
     <validationRules>
