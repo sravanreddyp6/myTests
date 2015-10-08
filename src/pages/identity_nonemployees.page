@@ -379,12 +379,12 @@
                     </apex:pageBlockSection>
  
                     <apex:PageBlockSection columns="2" title="Other Information" >
-                         <apex:outputField label="Job Code"  value="{!theTMNUser.Job_Code__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
-                         <apex:outputField label="Recruiter Name"  value="{!theTMNUser.Recruiter_Name__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
-                          <apex:outputField label="Pay Basis" value="{!theTMNUser.Pay_Basis__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
-                      <apex:outputField label="Recruiter Email"  value="{!theTMNUser.Recruiter_Email_Address__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
-                         <apex:outputField label="Approval Level"  value="{!theTMNUser.Approval_Level__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
-                          <apex:outputField label="Custodians" value="{!theTMNUser.Custodians__c}" /> 
+                         <apex:outputField label="Job Code"  value="{!theTMNUser.Job_Code__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
+                         <apex:outputField label="Recruiter Name"  value="{!theTMNUser.Recruiter_Name__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
+                          <apex:outputField label="Pay Basis" value="{!theTMNUser.Pay_Basis__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
+                      <apex:outputField label="Recruiter Email"  value="{!theTMNUser.Recruiter_Email_Address__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/>  
+                         <apex:outputField label="Approval Level"  value="{!theTMNUser.Approval_Level__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/>  
+                          <apex:outputField label="Custodians" value="{!theTMNUser.Custodians__c}" rendered="{!theTMNUser.Current_Person_Type__c!='Pre-hire'}" /> 
                         </apex:PageBlockSection>  
 
  
