@@ -107,11 +107,11 @@ public class identityEditNew {
  			public PageReference getManagerList() {
  				list<AggregateResult> userAggregateResult;
  					if(managerFirstName!=null && managerFirstName.length() > 0 && (managerLastName ==null || managerLastName.length() ==0)){
- 				 userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' group by Manager_Email__c limit 100];
+ 				 userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and manager_email__c <> '' group by Manager_Email__c limit 100];
  					} else 	if(managerFirstName==null || managerFirstName.length() == 0 && (managerLastName !=null && managerLastName.length() >0)){
- 						userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_Last_Name__c like : '%'+managerLastName +'%' group by Manager_Email__c limit 500];
+ 						userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_Last_Name__c like : '%'+managerLastName +'%' and Manager_Email__c <> '' group by Manager_Email__c limit 500];
  					} else {
- 					userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_Last_Name__c like : '%'+managerLastName +'%' group by Manager_Email__c limit 100];
+ 					userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_Last_Name__c like : '%'+managerLastName +'%' and manager_email__c <> '' group by Manager_Email__c limit 100];
  					}
 					 tmnManagerList = new List<TMN_User__c>();
 					 Set<String> managerIds = new Set<String>();
