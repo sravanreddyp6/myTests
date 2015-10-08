@@ -1,0 +1,641 @@
+<apex:page id="PDM"  Controller="PDMController" sidebar="false">
+
+
+   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+      <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+      <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />	
+	<apex:stylesheet value="{!URLFOR($Resource.pdm_bootstrap)}"/>    
+  <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
+<script type="text/javascript" language="javascript">
+    var j$ = jQuery.noConflict();
+    j$(document).ready(function() {
+	
+        //j$('input[id$="ExportToExcel"]').prop('disabled', true);
+		
+		  
+  j$('#saveButton').keypress(function(event){
+    if (event.keyCode == 10 || event.keyCode == 13) 
+        event.preventDefault();
+    
+  });
+
+	});
+		
+	</script>
+
+	<style>
+     
+        .dataTable {
+			width: 100% !important;
+		}
+		.dataTables_filter {
+			float: right;
+			!important;
+		}
+		.dataTables_length {
+			width: 150px;
+			float: left;
+			!important;
+		}
+		.dataTables_info {
+			float: left;
+			width: 250px;
+			!important;
+		}
+		.dataTables_paginate {
+			float: right;
+			!important;
+		}
+
+
+         
+	 .ui-autocomplete { 
+    position: absolute; 
+    cursor: default; 
+    height: 200px; 
+    overflow-y: scroll; 
+    overflow-x: hidden;
+    }
+    
+  
+  		.sorting {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_both.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_disabled {
+			background: #f2f3f3 !important;
+		}
+
+          .dialogLoadingSpinner {
+            margin-left: 5px;
+        }
+        
+        .HeadButtons {
+  		float: left;
+  		position: relative;
+  		top: -15px;
+  		left: 600px;
+		}
+		
+		.HeadDiv {
+  		float: left;
+  		position: relative;
+  		top: -25px;
+  		left: 700px;
+		}
+		
+		.btn {
+		width: 125px;!important;
+		}
+		.warning {
+ 	 border-color: #f90;
+    display: block;
+	background-color: #FFFFEA;
+  	border-style: solid;
+  	border-width: 1px;
+  	color: #000;
+  	padding: 6px 8px 6px 6px;
+  	margin: 4px 20px;
+  	vertical-align: middle;
+  	margin-left: 400px;
+  margin-right: 800px;
+  }
+  
+  .warning p{
+font-size: -webkit-xxx-large;!important;
+font-style: normal;  !important;
+  }
+ 
+ .headsection {
+   height: 70px;
+  	background-color: #99ccff;
+}
+ 	.floatCol {
+ 	float: right;
+ 	right: 100px;
+ 	margin-right: 400px;
+  	font-size: large;
+  	margin-top: -20px;
+ 	}
+ 	.floatCol1 {
+ 	right: 100px;
+ 	margin-right: 400px;
+  	font-size: large;
+ 	}
+	.buttonsClass{
+        margin-left: 150px;
+        }
+        
+ </style>
+ <style type="text/css">
+    .ui-autocomplete-loading { background: white url('{!URLFOR($Resource.AjaxLoad)}') right center no-repeat; }
+</style>
+ 
+ <script type="text/javascript">
+ 	function openWin(url){
+		window.open(url);
+	}
+	 var currentUrl = window.location.href;
+	currentUrl = currentUrl.substring(0, currentUrl.indexOf("/pdm"));
+ var sourcePage = 'TMNUser_JSON?core.apexpages.devmode.url=0';
+ j$(function() {
+   var txtVal =  j$('input[id$=searchLocation]');
+   	
+         j$('input[id$=searchLocation]').autocomplete({
+            source: function( request, response ) {
+
+                //Abort Ajax
+                var $this = j$(this);
+                var $element = j$(this.element);
+                var jqXHR = $element.data('jqXHR');
+                if(jqXHR)
+                    jqXHR.abort();
+
+                j$('input[id$=searchLocation]').addClass('ui-autocomplete-loading');
+                $element.data('jqXHR',j$.ajax({
+                    url: sourcePage+'&location='+txtVal.val(),
+                    dataType: "json",
+                    data: {
+                    },
+                    success: function( data ) {
+                        response( j$.map( data , function( item ) {
+                            return {
+                                label: '<a>'+item.location+"</a>",
+                                value: item.location
+                            }
+                        }));
+                    },
+                    complete: function() {
+                        $this.removeData('jqXHR');
+                        j$('input[id$=searchLocation]').removeClass('ui-autocomplete-loading');
+                    }
+                })
+                );
+
+            },
+            focus: function() {
+                return false;
+            },
+            select: function(event, ui) {
+                var selectedObj = ui.item;
+                  j$('input[id$="ExportToExcel"]').prop('disabled', false)
+                  j$('input[id$=searchEmployee]').val('');
+                searchByLocation(selectedObj.value);
+                return true;
+            }
+        }).data("autocomplete")._renderItem = autoCompleteRender;
+
+    });
+
+function autoCompleteRender(ul, item) {
+    return j$("<li></li>").data("item.autocomplete", item).append(item.label).appendTo(ul);
+}
+
+function  searchEmp() {
+ j$('input[id$="ExportToExcel"]').prop('disabled', true);
+}
+
+function searchL () {
+searchByLocation(j$('input[id$=searchLocation]').val());
+j$('input[id$="ExportToExcel"]').prop('disabled', false);
+j$('input[id$=searchEmployee]').val('');
+}
+
+	
+	function nextData() {
+		if(j$('input[id$=searchLocation]').val()==null || j$('input[id$=searchLocation]').val().length == 0 ){
+		j$('input[id$="ExportToExcel"]').prop('disabled', false);
+		}
+	}
+
+
+  function AdvanceSearch() {
+      j$('[id*=AdvancedSearchModal]').dialog("close");
+      if(j$('[id$=city]').val().length>=3){
+       j$('input[id$="ExportToExcel"]').prop('disabled', false);
+      }else{
+       j$('input[id$="ExportToExcel"]').prop('disabled', true);
+      }
+	 j$('[id$=hiddenCity]').val(j$('[id$=city]').val());
+      j$('[id$=hiddenState]').val(j$('[id$=StateCode]').val());
+      j$('[id$=searchEmployee]').val('');
+      j$('[id$=searchLocation]').val('');
+  if(j$('[id$=city]').val().length==0 && j$('[id$=StateCode]').val().length == 0 && j$('[id$=FirstName]').val().length == 0 && j$('[id$=OperatingGroup]').val().length == 0 
+  && j$('[id$=LastName]').val().length == 0 && j$('[id$=JobTitle]').val().length == 0){
+ 	j$('[id$=modelError]').show(); 
+  }else {
+  search(j$('[id$=city]').val(),j$('[id$=StateCode]').val(),j$('[id$=FirstName]').val(),j$('[id$=OperatingGroup]').val(),j$('[id$=LastName]').val(),j$('[id$=JobTitle]').val());
+  }
+  }
+  function showAdvancedSearchModal(){
+        j$('[id*=AdvancedSearchModal]').dialog("open");
+ }
+ 
+ j$(function() {
+    j$('[id*=AdvancedSearchModal]').dialog({
+      resizable: false,
+      draggable: false,
+      height:180,
+      width : 750,
+      modal: true,
+      autoOpen: false
+      
+    });
+});
+  
+  function closeDialog () {
+	j$('[id*=AdvancedSearchModal]').dialog("close");      
+  	j$('[id$=city]').val('');
+  	j$('[id$=StateCode]').val('');j$('[id$=FirstName]').val('');j$('[id$=OperatingGroup]').val('');j$('[id$=LastName]').val('');j$('[id$=JobTitle]').val('');
+  	j$('[id$=modelError]').hide();
+  }
+  
+  function exportExcel() {
+     var url =  '/apex/TMNUserLocationExcel?';
+      
+      if(j$('[id$=searchLocation]').val().length>0){
+        url = url +'location='+j$('[id$=searchLocation]').val();
+      } else if(j$('[id$=hiddenCity]').val().length>0){
+        url = url +'location='+j$('[id$=hiddenCity]').val();
+      }
+      if(j$('[id$=hiddenState]').val().length>0){
+        url = url +'&state='+j$('[id$=hiddenState]').val();
+      }
+  openWin(url);
+  }
+  
+    function stopRKey(evt) {
+                          var evt = (evt) ? evt : ((event) ? event : null);
+                          var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+                          if ((evt.keyCode == 13) && (node.type == "text")) {
+                                   return false;
+                          }
+                 }
+
+                 document.onkeypress = stopRKey;
+  
+ </script>
+  <div class="headsection">
+  
+  			<div class= "floatCol1" >
+  			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main  Office :  {!MainOffice}
+  			</div>
+  			<div class="floatCol">
+  			IT Service Center : {!ItServiceCenter}
+  			</div>
+  			<div class= "floatCol1" >
+  			Finance Service Center : {!ServiceCenter}
+  			</div>
+  			<div class="floatCol">
+  			HR Service Center : {!HumanResources}
+  			</div>
+  </div>
+  <br/>
+    <apex:form id="attForm">
+    <apex:actionFunction name="searchEmployee" action="{!searchEmployee}" reRender="datePanelContainer" oncomplete="searchEmp()" status="TableUpdateStatus" />
+    
+    <apex:actionFunction name="savePhone" action="{!save}" oncomplete="saveP()"/>
+    <apex:actionFunction name="searchByLocation" action="{!searchByLocation}" reRender="datePanelContainer" status="TableUpdateStatus" >
+        <apex:param name="selectedLocation" value="" assignTo="{!searchLocation}"/>
+     </apex:actionFunction>
+      <apex:actionFunction name="BuildQuery" action="{!BuildQuery}" reRender="datePanelContainer" status="TableUpdateStatus" >
+        <apex:param name="AlphaFilter" value="" assignTo="{!AlphaFilter}" />
+      </apex:actionFunction>   
+      
+       <apex:actionFunction name="search" action="{!search}" reRender="datePanelContainer"  oncomplete="closeDialog()" status="TableUpdateStatus">
+        <apex:param name="city" value="" assignTo="{!city}" />
+        <apex:param name="State" value="" assignTo="{!state}" />
+        <apex:param name="FirstName" value="" assignTo="{!firstName}" />
+        <apex:param name="OperatingGroup" value="" assignTo="{!operationGroup}" />
+        <apex:param name="LastName" value="" assignTo="{!lastName}" />
+        <apex:param name="JobTitle" value="" assignTo="{!searchTitle}" />
+      </apex:actionFunction>  
+      
+<apex:pageBlock id="PhoneDirectory">
+ 
+<br/>
+
+    <apex:panelGrid columns="6" id="theGrid" styleClass="buttonsClass">
+        <apex:panelGroup >
+            <apex:outputLabel >Find a Location &nbsp; </apex:outputLabel>
+                    <apex:outputPanel layout="none" >
+    <apex:inputText id="searchLocation" value="{!searchLocation}"  html-placeholder="Search City..."   />    
+						    <a onClick="searchL();">
+						    <img valign="bottom" src="/s.gif"  class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Location Lookup " />
+						    </a>             
+	                    </apex:outputPanel>
+        </apex:panelGroup> 
+        <apex:outputText >&nbsp;&nbsp;&nbsp; </apex:outputText>
+
+<apex:panelGroup >
+    <apex:outputLabel >Find a Person &nbsp; </apex:outputLabel>
+                              <apex:inputText id="searchEmployee" title="Search Person..."   html-placeholder="Search Person..." value="{!searchEmployee}"/>
+                        <a onClick="searchEmployee();">
+						    <img valign="bottom" src="/s.gif"  class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Employee Lookup" />
+						    </a>  
+        </apex:panelGroup>
+        <apex:outputText >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputText>
+        <apex:panelGroup >
+          <apex:commandButton id="AdancedSearch" value="Advanced Search"  onClick="showAdvancedSearchModal(); return false;"  reRender="fullpage" />
+          <apex:commandButton value="Export to Excel"  id="ExportToExcel"  disabled="{!noOfRecords=0}" onclick="exportExcel(); return false;"  />
+          </apex:panelGroup>
+    </apex:panelGrid>
+    
+<br/>
+ <apex:outputPanel id="fullpage">
+
+ <apex:outputPanel id="datePanelContainer">
+
+ <apex:inputHidden value="{!noOfRecords}" id="noOfRecords"/>
+ <apex:outputPanel rendered="{! TMNUserList.size>0 || AlphaFilter!='ALL'}" id="LocationInfomation" >
+ 
+ <div id="table_start_filter" >
+                Browse by Name
+                <a href="#" onClick="BuildQuery('A');" data-filter='[A]'>A</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('B');" data-filter='[B]'>B</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('C');" data-filter='[C]'>C</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('D');" data-filter='[D]'>D</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('E');" data-filter='[E]'>E</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('F');" data-filter='[F]'>F</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('G');" data-filter='[G]'>G</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('H');" data-filter='[H]'>H</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('I');" data-filter='[I]'>I</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('J');" data-filter='[J]'>J</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('K')';" data-filter='[K]'>K</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('L');" data-filter='[L]'>L</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('M');" data-filter='[M]'>M</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('N');" data-filter='[N]'>N</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('O');" data-filter='[O]'>O</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('P');" data-filter='[P]'>P</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('Q');" data-filter='[Q]'>Q</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('R');" data-filter='[R]'>R</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('S');" data-filter='[S]'>S</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('T');" data-filter='[T]'>T</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('U');" data-filter='[U]'>U</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('V');" data-filter='[V]'>V</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('W');" data-filter='[W]'>W</a>&nbsp;|&nbsp;<a href="#" onClick="BuildQuery('XYZ');" data-filter='[X]'>X</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('Y');" data-filter='[Y]'>Y</a>&nbsp;|&nbsp; <a href="#" onClick="BuildQuery('Z');" data-filter='[Z]'>Z</a>&nbsp;|&nbsp;
+                <a href="#" onClick="BuildQuery('ALL');" class="active" data-filter='.'>All</a>
+            </div>
+     <apex:outputPanel rendered="{! TMNUserList.size = 0 && AlphaFilter!='ALL' && NOT (errorMsg1 || errorMsg2 || errorMsg3 || errorMsg4  )}">
+                <div class="warning">
+                    <apex:outputText >
+                    Sorry! We cannot find the any data for this <b>{!AlphaFilter}</b> letter
+        		</apex:outputText>	
+                    </div>
+                </apex:outputPanel>
+             <apex:actionStatus id="TableUpdateStatus">
+            <!-- loading message -->
+            <apex:facet name="start">
+               <apex:outputPanel layout="block" styleClass="message infoM4">
+                  <apex:panelGrid columns="2" styleClass="messageTable" columnClasses="messageCell" style="padding:0px;margin:0px;">
+                     <apex:panelGroup >
+                        <img class="loading-icon" src="/img/loading32.gif" />
+                     </apex:panelGroup>
+                     <apex:panelGroup >
+                        <div class="messageText">Please wait...</div>
+                     </apex:panelGroup>
+                  </apex:panelGrid>
+               </apex:outputPanel>
+            </apex:facet>
+
+            <!-- Account table -->
+            <apex:facet name="stop">
+           <apex:pageBlockTable value="{!TMNUserList}" var="user" style="width: 100%;" styleClass="dataTable" id="Tabledata" rendered="{! TMNUserList.size>0}">
+                 
+                    <apex:column headerValue="Location">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Work_City__c" assignTo="{!SortField}" />
+                            <apex:outputText value="Location {!IF(SortField=='Work_City__c',IF(SortDirection='asc','▲','▼'),'')}"/>
+                    </apex:commandLink>
+                    </apex:facet>
+                        <apex:outputText >{!user.Work_City__c}&nbsp;{!user.Work_State_Code__c} </apex:outputText>
+                    </apex:column>
+                <apex:column headerValue="Name">
+       				 <apex:facet name="header">
+       				   <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Last_Name__c" assignTo="{!SortField}" />
+                    <apex:outputText value="Name {!IF(SortField=='Last_Name__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                    </apex:commandLink>
+                    </apex:facet>
+                     <apex:outputText ><a href="mailto:{!user.Email__c}"> {!user.Last_Name__c},{!user.First_Name__c} </a></apex:outputText>
+                    </apex:column>
+               
+               <apex:column headerValue="Title">
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Job_Title__c" assignTo="{!SortField}" />
+                    <apex:outputText value="Title {!IF(SortField=='Job_Title__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                    </apex:commandLink>
+                    </apex:facet>
+                     <apex:outputText value="{!user.Job_Title__c}" />
+                    </apex:column>
+               <apex:column headerValue="Operating Group">
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Operating_Group__c" assignTo="{!SortField}" />
+                    <apex:outputText value="Operating Group {!IF(SortField=='Operating_Group__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                    </apex:commandLink>
+                    </apex:facet>
+                   <apex:outputText value="{!user.Operating_Group__c}" />
+                    </apex:column>
+               <apex:column headerValue="Office">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Office_Phone__c" assignTo="{!SortField}" />
+						<apex:outputText value=" Office {!IF(SortField=='Office_Phone__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                        </apex:commandLink>
+                     </apex:facet>   
+                   <apex:outputField value="{!user.Office_Phone__c}"  >
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
+                        hideOnEdit="cancelButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        </apex:outputField>
+                    </apex:column> 
+               <apex:column headerValue="Extension">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="phone_ext__c" assignTo="{!SortField}" />
+						<apex:outputText value=" Extension {!IF(SortField=='phone_ext__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                        </apex:commandLink>
+                     </apex:facet>   
+                   <apex:outputField value="{!user.phone_ext__c}"  >
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
+                        hideOnEdit="cancelButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        </apex:outputField>
+                    </apex:column> 
+               
+               <apex:column headerValue="Mobile">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Mentor_Cell_Phone__c" assignTo="{!SortField}" />
+						<apex:outputText value=" Mobile {!IF(SortField=='Mentor_Cell_Phone__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                        </apex:commandLink>
+                     </apex:facet>   
+                   <apex:outputField value="{!user.Mentor_Cell_Phone__c}" >
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
+                        hideOnEdit="cancelButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        </apex:outputField>
+                    </apex:column> 
+               <apex:column headerValue="Fax">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="fax__c" assignTo="{!SortField}" />
+						<apex:outputText value=" Fax {!IF(SortField=='fax__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                        </apex:commandLink>
+                     </apex:facet>   
+                   <apex:outputField value="{!user.fax__c}" id="officePhone" >
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
+                        hideOnEdit="cancelButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        </apex:outputField>
+                    </apex:column> 
+               <apex:column headerValue="Manager">
+                     <apex:facet name="header">
+                       <apex:commandLink action="{!SortToggle}" rerender="datePanelContainer" status="TableUpdateStatus">
+                           <apex:param name="SortField" value="Manager_Name__c" assignTo="{!SortField}" />
+                    <apex:outputText value="Manager {!IF(SortField=='Manager_Name__c',IF(SortDirection='asc','▲','▼'),'')}" />
+                    </apex:commandLink>
+                    </apex:facet>
+                   <apex:outputText value="{!user.Manager_Name__c}" rendered="{!user.Manager_Name__c!='n/a'}" />
+                    </apex:column>
+                </apex:pageBlockTable>
+               
+ 				
+		</apex:facet>
+</apex:actionStatus>
+     
+     <apex:outputPanel rendered="{! TMNUserList.size>0 && NOT(errorMsg1 || errorMsg2 || errorMsg3 || errorMsg4  )}">
+       <div class="container">
+  <ul class="pager">
+    <apex:commandButton id="previous" status="TableUpdateStatus" reRender="datePanelContainer" value=" << Previous " action="{!previous}" disabled="{!!hasPrevious}" title=" << Previous"/>
+     <apex:outputText >&nbsp;&nbsp;{!(pageNumber * size)+1-size}-{!IF((pageNumber * size)>noOfRecords, noOfRecords,(pageNumber * size))} of {!noOfRecords}</apex:outputText>
+    <apex:commandButton id="next" status="TableUpdateStatus" reRender="datePanelContainer" value="  Next >>  "  action="{!next}" disabled="{!!hasNext}" title="Next >>"  />
+    <apex:outputPanel style="color:#4AA02C;font-weight:bold">
+                    <apex:actionStatus id="fetchStatus" startText="Fetching..." stopText=""/>
+                </apex:outputPanel>
+  </ul>
+           </div>
+	</apex:outputPanel>
+ <div class="HeadButtons">
+        <apex:commandButton action="{!save}" id="saveButton" value="   Save    " style="display:none" />
+        <apex:commandButton id="cancelButton" value="   Cancel  " style="display:none" oncomplete="cancelEdit()" reRender="datePanelContainer" />
+         </div>
+         <br/><br/><br/>
+			
+        </apex:outputPanel>
+       
+       
+       <apex:outputPanel rendered="{!TMNUserList.size==0 && (errorMsg1 || errorMsg2 || errorMsg3 || errorMsg4  )}" >
+       <div class="warning">
+       	<p > Uh-oh!</p> <BR/>
+        		<apex:outputText rendered="{!errorMsg1}">
+        		We don't have TMN office in that location
+        		</apex:outputText>
+        		<apex:outputText rendered="{!errorMsg2}">
+        		 Sorry! The person you are looking for does not exist in {!searchLocation}
+        		</apex:outputText>
+        		<apex:outputText rendered="{!errorMsg3}">
+        		Sorry! We cannot find the person you are looking for.
+        		</apex:outputText>
+        		<apex:outputText rendered="{!errorMsg4}">
+        		Sorry! We cannot find the any data for this Search. Please give relevant data.
+        		</apex:outputText>
+        		</div>
+       </apex:outputPanel> 
+     	  
+     
+       </apex:outputPanel>
+       
+          <apex:outputPanel id="AdvancedSearchModal" title="Advanced Search" style="display:none">
+            <apex:pageBlock >
+        <apex:pageBlockSection showHeader="true" columns="2" collapsible="false" id="AdvanceSearch" >
+        <apex:inputtext value="{!city}" id="city"   html-placeholder="Search City..."  label="City" />
+         <apex:selectList label="State"  size="1" value="{!state}" id="StateCode">
+             			 <apex:selectOption itemValue="" itemLabel=""/>
+                        <apex:selectOption itemValue="AL" itemLabel="Alabama"/>
+                        <apex:selectOption itemValue="AK" itemLabel="Alaska"/>
+                        <apex:selectOption itemValue="AZ" itemLabel="Arizona"/>
+                        <apex:selectOption itemValue="AR" itemLabel="Arkansas"/>
+                        <apex:selectOption itemValue="CA" itemLabel="California"/>
+                        <apex:selectOption itemValue="CO" itemLabel="Colorado"/>
+                        <apex:selectOption itemValue="CT" itemLabel="Connecticut"/>
+                        <apex:selectOption itemValue="DE" itemLabel="Delaware"/>
+                        <apex:selectOption itemValue="FL" itemLabel="Florida"/>
+                        <apex:selectOption itemValue="GA" itemLabel="Georgia"/>
+                        <apex:selectOption itemValue="HI" itemLabel="Hawaii"/>
+                        <apex:selectOption itemValue="ID" itemLabel="Idaho"/>
+                        <apex:selectOption itemValue="IL" itemLabel="Illinois"/>
+                        <apex:selectOption itemValue="IN" itemLabel="Indiana"/>
+                        <apex:selectOption itemValue="IA" itemLabel="Iowa"/>
+                        <apex:selectOption itemValue="KS" itemLabel="Kansas"/>
+                        <apex:selectOption itemValue="KY" itemLabel="Kentucky"/>
+                        <apex:selectOption itemValue="LA" itemLabel="Louisiana"/>
+                        <apex:selectOption itemValue="ME" itemLabel="Maine"/>
+                        <apex:selectOption itemValue="MD" itemLabel="Maryland"/>
+                        <apex:selectOption itemValue="MA" itemLabel="Massachusetts"/>
+                        <apex:selectOption itemValue="MI" itemLabel="Michigan"/>
+                        <apex:selectOption itemValue="MN" itemLabel="Minnesota"/>
+                        <apex:selectOption itemValue="MS" itemLabel="Mississippi"/>
+                        <apex:selectOption itemValue="MO" itemLabel="Missouri"/>
+                        <apex:selectOption itemValue="MT" itemLabel="Montana"/>
+                        <apex:selectOption itemValue="NE" itemLabel="Nebraska"/>
+                        <apex:selectOption itemValue="NV" itemLabel="Nevada"/>
+                        <apex:selectOption itemValue="NH" itemLabel="New Hampshire"/>
+                        <apex:selectOption itemValue="NJ" itemLabel="New Jersey"/>
+                        <apex:selectOption itemValue="NM" itemLabel="New Mexico"/>
+                        <apex:selectOption itemValue="NY" itemLabel="New York"/>
+                        <apex:selectOption itemValue="NC" itemLabel="North Carolina"/>
+                        <apex:selectOption itemValue="ND" itemLabel="North Dakota"/>
+                        <apex:selectOption itemValue="OH" itemLabel="Ohio"/>
+                        <apex:selectOption itemValue="OK" itemLabel="Oklahoma"/>
+                        <apex:selectOption itemValue="OR" itemLabel="Oregon"/>
+                        <apex:selectOption itemValue="PA" itemLabel="Pennsylvania"/>
+                        <apex:selectOption itemValue="RI" itemLabel="Rhode Island"/>
+                        <apex:selectOption itemValue="SC" itemLabel="South Carolina"/>
+                        <apex:selectOption itemValue="SD" itemLabel="South Dakota"/>
+                        <apex:selectOption itemValue="TN" itemLabel="Tennessee"/>
+                        <apex:selectOption itemValue="TX" itemLabel="Texas"/>
+                        <apex:selectOption itemValue="UT" itemLabel="Utah"/>
+                        <apex:selectOption itemValue="VT" itemLabel="Vermont"/>
+                        <apex:selectOption itemValue="VA" itemLabel="Virginia"/>
+                        <apex:selectOption itemValue="WA" itemLabel="Washington"/>
+                        <apex:selectOption itemValue="WV" itemLabel="West Virginia"/>
+                        <apex:selectOption itemValue="WI" itemLabel="Wisconsin"/>
+                        <apex:selectOption itemValue="WY" itemLabel="Wyoming"/>
+                    </apex:selectList>   
+        <apex:inputtext value="{!firstName}" id="FirstName"  html-placeholder="Search First Name..."   label="First Name" />
+        <apex:inputtext value="{!operationGroup}" id="OperatingGroup"   html-placeholder="Search Operating Group..."  label="Operating Group" />
+        <apex:inputtext value="{!lastName}" id="LastName"   html-placeholder="Search Last Name..."   label="Last Name" />
+        <apex:inputtext value="{!searchTitle}" id="JobTitle"   html-placeholder="Search Job Title..."   label="Job Title" />
+       </apex:pageBlockSection> 
+       <input type="hidden"  value="" id="hiddenCity"/>
+       <input type="hidden" value="" id="hiddenState"/>
+                
+		<apex:inputHidden value="{!searchingForQuery}"/>                
+       <div id="modelError" style="display:none"><p style="font-size:large;  color: red;">Please enter at least one search criteria </p> </div>
+       <apex:pageblockButtons location="bottom">
+       <apex:commandButton id="search" onClick="AdvanceSearch(); return false;" value="Search"  reRender="datePanelContainer" /> 	
+       <apex:commandButton id="cancel"  value="Cancel"  onclick="closeDialog()" /> 	
+       </apex:pageblockButtons>
+     </apex:pageBlock>
+        </apex:outputPanel>
+       
+       </apex:outputPanel> 
+    </apex:pageBlock>
+
+    
+    </apex:form>
+
+</apex:page>
