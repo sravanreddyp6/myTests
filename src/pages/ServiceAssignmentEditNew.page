@@ -528,7 +528,7 @@
                         <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Active' && editSA)}"  id="end2" >
                         <apex:outputLabel value="End Date" />
                         <apex:outputPanel >
-                            <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
+                            <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" onblur="changeEffectiveDates();" />
                     </apex:outputPanel>           
                 </apex:pageBlockSectionItem>
                 
@@ -540,6 +540,7 @@
                 <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR)}" required="{!episodeReq}" />
                 <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
                 <apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
+             
                 <apex:pageblocksectionitem rendered="{! !vfVarIsCB}" />
                 <apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}">
                     <label for="pModel" >Model</label>                  
@@ -558,8 +559,9 @@
                             </apex:inputField>
                         <!--/apex:actionRegion-->
                 </apex:pageblocksectionitem>
-
+			
             </apex:pageBlockSection>
+            
 
             <apex:pageBlockSection id="AOServAssignDetail" collapsible="true" title="Service Assignment Detail" rendered="{!AssessmentOnly}">
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
@@ -679,7 +681,7 @@
                 <!-- Added by Amruth for EB-434 -->
                 <apex:outputField value="{!theServAssign.Outcomes__c}" rendered="{!!editSA && !isNR}" />
                 <apex:inputField value="{!theServAssign.Outcomes__c}" rendered="{!editSA && !isNR}" />
-
+				
                 <apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}">
                     <label for="pModel" >Model</label>                  
                     <apex:outputPanel >                 
@@ -694,6 +696,7 @@
                         <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="saStartSectionEdit, saEndSectionEdit, ContractAssoc, ProgAssoc" status="pageProcessing" onComplete=" "/>   
                     </apex:inputField>                    
                 </apex:pageblocksectionitem>
+             
 
                 <!--  EB-526 -->
                 <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
@@ -885,7 +888,19 @@
                 </apex:outputPanel>
             </apex:pageBlockSection>
             
+
+            
             <apex:pageBlockSection title="Service Assignment Start" id="saStartSectionEdit" collapsible="true" columns="2" showHeader="true" rendered="{!editSA}" >
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel for="transferFrom" value="Was this a transfer from another Service Assignment?" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField id="transferFrom" value="{!theServAssign.Was_this_transfer_frm_another_ServAssig__c}"  html-data-countInFormProgress="1" />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
                 <apex:pageBlockSectionItem helpText="This person's service is beginning because the company providing their services was purchased by The MENTOR Network after 2016" >
                     <apex:outputLabel for="SA_Began_Via_AQU" value="Service Began via Acquisition Company (as of 2016)?" />
                     <apex:outputPanel >
@@ -990,8 +1005,14 @@
                 </apex:pageBlockSectionItem>
             
             </apex:pageBlockSection>
+
             
             <apex:pageBlockSection title="Service Assignment Start" id="saStartSectionRead" collapsible="true" columns="2" showHeader="true" rendered="{!!editSA}" >
+                
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel value="Was this a transfer from another Service Assignment?" />
+                    <apex:outputField value="{!theServAssign.Was_this_transfer_frm_another_ServAssig__c}" />
+                </apex:pageBlockSectionItem> 
                 
                 <apex:pageBlockSectionItem helpText="This person's service is beginning because the company providing their services was purchased by The MENTOR Network after 2016" >
                     <label for="pServBeginAqu" >Service Began via Acquisition Company (as of 2016)?</label>                 
@@ -1058,6 +1079,17 @@
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Service Assignment End" id="saEndSectionEdit" collapsible="true" columns="2" showHeader="true" rendered="{!editSA}" >
+                
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && editSA)}" >
+                    <apex:outputLabel value="Is this a transfer to another Service Assignment?" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Is_this_transfer_to_another_ServAssign__c}" />
+                        </div>
+                    </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+
                 <apex:pageBlockSectionItem helpText="This person's service is ending because The MENTOR Network no longer owns this operation" rendered="{!theServAssign.Status__c == 'Inactive'}" >
                     <apex:outputLabel value="Service Ended via Business Divested?" />
                     <apex:outputPanel >
@@ -1119,7 +1151,7 @@
                 
                 <!-- Added by Amruth-->
                 
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !isNR)}" >
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}" >
                     <apex:outputLabel value="End of Service Circumstances" />
                     <apex:outputPanel >
                         <div class="requiredInput">
@@ -1129,6 +1161,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
+                <!-- removed for PRI 301
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && isNR)}" >
                     <apex:outputLabel value="End of Service Status" />
                     <apex:outputPanel >
@@ -1147,7 +1180,7 @@
                             <apex:inputField id="endofserviceOther" value="{!theServAssign.Specify_Other__c}"  />
                         </div>
                     </apex:outputPanel>
-                </apex:pageBlockSectionItem>
+                </apex:pageBlockSectionItem> -->
                 
                  <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && ((!AssessmentOnly && (vfVarIsRW||vfVarIsCB|| vfVarIsCM))||isNR))}">
                  <apex:outputLabel value="Was dissatisfaction the reason for service ending?" />
@@ -1185,6 +1218,11 @@
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Service Assignment End" id="saEndSectionRead" collapsible="true" columns="2" showHeader="true" rendered="{!!editSA}" >
+                
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel value="Is this a transfer to another Service Assignment?" />
+                    <apex:outputField value="{!theServAssign.Is_this_transfer_to_another_ServAssign__c}" />
+                </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem helpText="This person's service is ending because The Network no longer owns this operation" rendered="{!theServAssign.Status__c == 'Inactive'}" >
                     <apex:outputLabel value="Service Ended via Business Divested?" />
                     <apex:outputField value="{!theServAssign.Service_Ended_via_Business_Divested__c}" />
@@ -1205,11 +1243,12 @@
                     <apex:outputLabel value="Total Number of Internal Moves During Service" />
                     <apex:outputField value="{!theServAssign.Total_no_of_Internal_moves_during_Servic__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !isNR)}" >
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}" >
                     <apex:outputLabel value="End of Service Circumstances" />
                     <apex:outputField value="{!theServAssign.End_of_Service_Circumstances__c}" />
                 </apex:pageBlockSectionItem>
                 
+                <!-- removed for PRI- 301
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && isNR)}" >
                     <apex:outputLabel value="End of Service Status" />
                     <apex:outputField value="{!theServAssign.End_of_Service_Status__c}" />
@@ -1217,7 +1256,8 @@
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && isNR && theServAssign.End_of_Service_Status__c =='Other')}" >
                     <apex:outputLabel value="Specify Other" />
                     <apex:outputField value="{!theServAssign.Specify_Other__c}" />
-                </apex:pageBlockSectionItem>
+                </apex:pageBlockSectionItem> -->
+                 
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && (isNR || ((vfVarIsCB || vfVarIsCM || vfVarIsRW) && !AssessmentOnly)))}" >
                     <apex:outputLabel value="Was dissatisfaction the reason for service ending?" />
                     <apex:outputField value="{!theServAssign.Was_dissatisfaction_reason_for_service_e__c}" />
