@@ -200,7 +200,7 @@ public with sharing class Report_DraftAuths {
     public PageReference runPdf() {
     	pdfRunDateTime = System.now();
 
-    	PageReference toPdfPage = new PageReference('/apex/Report_TimeLogEntry_PDF');
+    	PageReference toPdfPage = new PageReference('/apex/Report_DraftAuths');
     	toPdfPage.setRedirect(false);
     	return toPdfPage;
 
@@ -208,7 +208,7 @@ public with sharing class Report_DraftAuths {
     }
 
     public PageReference cancelToNewRun() {
-    	PageReference pageRef = new PageReference('/apex/Report_TimeLogEntry');
+    	PageReference pageRef = new PageReference('/apex/Report_DraftAuths');
     	pageRef.setRedirect(true);
     	return pageRef;
     }
