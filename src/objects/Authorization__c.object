@@ -166,6 +166,17 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Bed_Hold_Additional_Detail_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>Additional Detail Other</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Bed_Hold_Additional_Detail__c</fullName>
         <externalId>false</externalId>
         <label>Additional Detail</label>
@@ -279,6 +290,17 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Bed_Hold_Type_Detail_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>Other</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Bed_Hold_Type_Detail__c</fullName>
         <externalId>false</externalId>
         <label>Type Detail</label>
@@ -329,6 +351,17 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Bed_Hold_Type_Other__c</fullName>
+        <externalId>false</externalId>
+        <label>Other</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Bed_Hold_Type__c</fullName>
@@ -991,7 +1024,7 @@ TEXT(YEAR(Payer_End_Date__c))  &amp;
     <fields>
         <fullName>isRootAuth__c</fullName>
         <externalId>false</externalId>
-        <formula>Original_Auth__c ==  Id</formula>
+        <formula>ISBLANK(Original_Auth__c)</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Is Root Authorization</label>
         <trackHistory>false</trackHistory>
