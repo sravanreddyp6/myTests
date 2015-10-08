@@ -5,6 +5,7 @@ public without sharing class nonemployeeAttestationPageController {
 	public List<string> infoMessages;
 	public Map<id,Tmn_user__c> initialMap;
 	public Date lastDay {get;set;}
+	public date dateChoosen {get; set;}
 	
 	public nonemployeeAttestationPageController(){
 		managerId = Apexpages.currentPage().getParameters().get('managerId');
@@ -117,5 +118,11 @@ public without sharing class nonemployeeAttestationPageController {
 		}
 		return null;
 	}
+	
+	public pageReference savelastDate(){
+		
+		return null;	
+	}
+	
 
 }
