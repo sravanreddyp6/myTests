@@ -17,29 +17,30 @@ public without sharing class ServiceAssignmentExt {
 	public List<Action_Plan__c> getplans() {return plans;}
 	public List<Progress_Note__c> notes;
 	public List<Progress_Note__c> getNotes() {return notes;}
+	public List<Progress_Note__c> caseManagementNotes { get; set; }
 	public Boolean canCreatePlan { get; private set;  }
 	public Boolean canEditPlan { get; private set; }
 	public Boolean canCreateSummary { get; set; }
 	public Boolean canEditSA { get; set; }
-	
+
 	public Boolean canViewAuths { get; private set; }
 	public Boolean canEditAuths { get; private set; }
 	public Boolean canCreateAuths { get; private set; }
 	public List<Authorization__c> authList { get; set; }
 	public ID authRecTypeId { get; set; }
-	
+
 	public static Boolean showdiagModal { get; set; }
 	public string diagEditId {get; set; }
 	public static Boolean showServAssignCloseModal { get; set; }
 	public string showServAssignCloseEditId {get; set; }
 	public string servAssignCloseEditId { get; set; }
 	public Service_Location__c serviceLocation { get; set; }
-	
-	
+
+
 	//for funding source coverage level
 	public list<selectoption> fundingCoverageOptions {get; set;}
 	public Boolean hasPrimaryActiveFS {get; set;}
-	
+
 	// Get/set info for contracts
 	public List<TMN_Contract__c> contractsForThisServAssignsState { get; set; }
 	public List<ServiceAssignment_Contract_JO__c> servAssignContractXrefs {get;set;}
@@ -139,10 +140,10 @@ public without sharing class ServiceAssignmentExt {
 		Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
 		canCreateSummary = oSchema.IsCreateable();
 	}
-	
-	//Model picklist 
+
+	//Model picklist
 	public list<Selectoption> modelValues{get{
-		
+
 		if(modelValues == null){
 			modelValues = new List<SelectOption>();
 			Schema.DescribeFieldResult fieldResult = Service_Assignment__c.Model__c.getDescribe();
@@ -153,15 +154,15 @@ public without sharing class ServiceAssignmentExt {
 	        		continue;
 	        	}
 	        	modelValues.add(new SelectOption(f.getValue(), f.getLabel()));
-	     
-	  		}  
+
+	  		}
 		}
-	  		     
+
   		return modelValues;
-		
+
 	}
 	set;}
-	
+
 
 	public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
 	public Boolean modelReq { get { return (pOpGroup == 'Cambridge' || this.theServAssign.Flavor__c == 'CA FSS');} set; }
@@ -454,11 +455,11 @@ public without sharing class ServiceAssignmentExt {
 		setcanEditSA();
 		setcanCreatePlan();
 		setcanCreateSummary();
-		
+
 		// CMAUTH
 		setAuthPerms();
 		populateAuths();
-		
+
 
 		getContractsAndXrefs();
 		contractsList = new List<SelectOption>();
@@ -484,7 +485,7 @@ public without sharing class ServiceAssignmentExt {
 		fundingCoverageOptions.add(new selectoption('Tertiary','Tertiary'));
 		fundingCoverageOptions.add(new selectoption('Other','Other'));
 		hasPrimaryActiveFS = false;
-		
+
 		phaseSelectOptions = new List<SelectOption>();
 		phaseSelectOptions.add(new SelectOption('','--None--'));
 		Integer currentPhase = 0;
@@ -847,7 +848,7 @@ public without sharing class ServiceAssignmentExt {
 
 		populateFundingSources();
 		populateAuths();
-		
+
 		if (!newSA) {
 			admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_being_served__r.LastName FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
 			plans = [select name, id, createddate, status__c, effective_date__c, target_date__c from Action_Plan__c where Service_Assignment__c = :currentID Order by CreatedDate DESC];
@@ -867,7 +868,21 @@ public without sharing class ServiceAssignmentExt {
 				              where RecordType.Name = 'Monthly Behavior Result'
 				              and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
 			}
-			notes = [select name, id, Start_Time__c, End_time__c, createddate, clinician__c,createdby.name, action_plan__r.Name, Action_plan__c from Progress_Note__c where Service_Assignment__c = :currentID Order by CreatedDate DESC Limit 10];
+			notes = [
+				select name, id, Start_Time__c, End_time__c, createddate, clinician__c,
+				       createdby.name, action_plan__r.Name, Action_plan__c
+				  from Progress_Note__c
+				 where Service_Assignment__c = :currentID
+				   and RecordType.Name <> 'Case Management Note'
+				order by CreatedDate DESC Limit 10
+			];
+			caseManagementNotes = [
+				select name, id, createddate, CreatedBy.Name, CreatedBy.Id, status__c
+				  from Progress_Note__c
+				 where Service_Assignment__c = :currentID
+				   and RecordType.Name = 'Case Management Note'
+				order by CreatedDate DESC Limit 10
+			];
 			diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
 		}
 		if ( currentrecord.Service_Location__c != null) {
@@ -1816,7 +1831,7 @@ public without sharing class ServiceAssignmentExt {
 		return ref;
 	}
 
-	public boolean canCreateNote { get { 
+	public boolean canCreateNote { get {
 		Schema.DescribeSObjectResult oSchema = Progress_Note__c.sObjectType.getDescribe();
 		return oSchema.isCreateable();
 	}}
@@ -1851,7 +1866,7 @@ public without sharing class ServiceAssignmentExt {
 					fundingCoverageOptions.add(new selectoption('Other','Other'));*/
 				}
 			}
-			
+
 		}
 	}
 
@@ -1872,9 +1887,9 @@ public without sharing class ServiceAssignmentExt {
 					hasPrimaryActiveFS = true;
 				}
 			}
-			
+
 		}
-		
+
 	}
 
 	public void saveFundingSource() {
@@ -1900,10 +1915,10 @@ public without sharing class ServiceAssignmentExt {
 		this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
 		this.fundingSource.Service_Assignment__c = this.theServAssign.Id;
 	}
-	
+
 	public void finalizeFundingSource(){
 		try{
-			
+
 			this.fundingSource.Funding_Source_Status__c = 'Active Final';  //Need to Change When Approval is implemented - Sravan EB-435
 			upsert this.fundingSource;
 		}
@@ -1912,11 +1927,11 @@ public without sharing class ServiceAssignmentExt {
 		}
 		populateFundingSources();
 	}
-	
+
 	public void inactivateFundingSource(){
 		try{
 			Funding_source__c fs = [SELECT Id, Funding_Source_Status__c FROM Funding_Source__c WHERE Id =:this.fundingSource.Id ]; // To make sure only Funding Status field is in scope.
-			fs.Funding_Source_Status__c = 'Inactive';  
+			fs.Funding_Source_Status__c = 'Inactive';
 			update fs;
 		}
 		catch (Exception e) {
@@ -1953,14 +1968,14 @@ public without sharing class ServiceAssignmentExt {
 
 
 	// CMAUTH work  - Sept 2015
-	public void setauthPerms () {  
+	public void setauthPerms () {
 		Schema.DescribeSObjectResult oSchema = Authorization__c.sObjectType.getDescribe();
 		canCreateAuths = oSchema.isCreateable();
 		canEditAuths = oSchema.isUpdateable();
 		canViewAuths = oSchema.isAccessible();
-		
+
 		authRecTypeID = [ select id from RecordType where sobjecttype = 'Authorization__c' and DeveloperName like '%CM%' LIMIT 1].ID;
-			
+
 	}
 
 	@testvisible private void populateAuths() {
@@ -1971,14 +1986,14 @@ public without sharing class ServiceAssignmentExt {
 				 order by received_date_time__c desc
 				 limit 150];
 	}
-	
+
 	 public pageReference newAuth() {
         PageReference pr = new PageReference('/apex/AuthorizationEdit?ID=&saID=' + theServAssign.Id + '&retURL=' + ApexPages.CurrentPage().getURL());
         pr.setRedirect( true);
         return pr;
-        
+
     }
-    
+
 
 	// END CMAUTH work
 
