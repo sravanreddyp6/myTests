@@ -1982,7 +1982,7 @@ public without sharing class ServiceAssignmentExt {
 		this.authList =
 				[select id, funding_Source__c, payer_authorization_id__c, authorization_Status__c, type__c, service_being_Funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_Date__c, payer_end_date__c, received_date_time__c, contract_used__c
 				 from Authorization__c
-				 where funding_source__r.Service_Assignment__c = :this.theServAssign.Id and authorization_status__c != 'Disregard'
+				 where funding_source__r.Service_Assignment__c = :theServAssign.Id and authorization_status__c != 'Disregard'
 				 order by received_date_time__c desc
 				 limit 150];
 	}

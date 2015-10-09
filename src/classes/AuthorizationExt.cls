@@ -37,7 +37,6 @@ public AuthorizationExt(ApexPages.StandardController controller) {
         fsources = new LIst<Funding_Source__c>(); 
     
     fsList = new List<SelectOption>();
-    fsList.Add( new SelectOption( '', '-- None --'));
     for ( Funding_Source__c f: fsources ) {
     	
     	SelectOption option = new SelectOption( f.id, f.type_of_coverage__c + ' - ' + f.CM_Contract_Used_Lookup__r.Name );
@@ -71,10 +70,18 @@ public AuthorizationExt(ApexPages.StandardController controller) {
     
     hasDraft = false;
     
-    // get a list of auths with the same ultimate parent auth, or same direct parent   
-    relatedAuthsList = [ select id, payer_authorization_id__c, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, service_being_funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c 
+    // get a list of auths with the same ultimate parent auth, or same direct parent  
+    if ( authorization.original_auth__c != null )  
+    	relatedAuthsList = [ select id, payer_authorization_id__c, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, service_being_funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c 
     					from authorization__c 
-    					where (original_auth__c = :authorization.original_auth__c or id = :authorization.original_auth__c or id = :authorization.parent_auth__c) and id != :authorization.id order by payer_effective_Date__c desc ];    
+    					where (original_auth__c = :authorization.original_auth__c or id = :authorization.original_auth__c or id = :authorization.parent_auth__c) and id != :authorization.id 
+    					order by payer_effective_Date__c desc ];
+    else // get children
+    	relatedAuthsList = [ select id, payer_authorization_id__c, received_date_time__c, type__c, authorization_status__c, Reason_for_New_Authorization__c, service_being_funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_date__c, payer_end_Date__c, contract_used__c 
+    					from authorization__c 
+    					where (original_auth__c = :authorization.id or parent_auth__c = :authorization.id ) and id != :authorization.id 
+    					order by payer_effective_Date__c desc ];
+    	
     for (Authorization__c r : relatedAuthsList ) {
             
         if ( r.Authorization_Status__c == 'Draft') {
@@ -125,6 +132,17 @@ public AuthorizationExt(ApexPages.StandardController controller) {
            		 return null;
 			}
 		}
+		system.debug( 'FUNDING SOURCE == NULL: ' + authorization.funding_source__c == null);
+		if ( authorization.funding_source__c == null ) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please choose a funding source for this authorization.'));
+			return null;
+		}
+		
+		if ( authorization.received_Date_time__c > DateTime.now()) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Received date/time cannot be in the future.'));
+			return null;
+		} 
+			
         try {
             authorization.Authorization_Status__c = 'Draft';
             
@@ -163,6 +181,7 @@ public AuthorizationExt(ApexPages.StandardController controller) {
 
 			// put this here so we can preserve field order of Type and Reason
  			if ( !string.isblank( authorization.type__c)) {
+ 				
             	if ( authorization.type__c == 'Open Ended Stay' || authorization.type__c == 'Defined Stay') {
             		if (string.isblank(authorization.service_Being_Funded_string__c)) {
             			fielderrs.add('Item/Service');
@@ -173,10 +192,14 @@ public AuthorizationExt(ApexPages.StandardController controller) {
             		if (string.isblank(authorization.rate_unit__c)) {
             			fielderrs.add('Per');
             		}
-            		if (string.isblank(authorization.payer_authorization_id__c)) {
-            			fielderrs.add('Authorization Number');
+            		if (string.isblank(authorization.rate_unit__c)) {
+            			fielderrs.add('Level');
             		}
-            	} else if (authorization.type__c == 'Open Ended Charge' || authorization.type__c == 'Other') {
+            		if (string.isblank(authorization.rate_unit__c)) {
+            			fielderrs.add('Justification');
+            		}
+            		
+            	} else if (authorization.type__c == 'Open Ended Charge' || authorization.type__c == 'Other' || authorization.type__c == 'Single Charge') {
             		if (string.isblank(authorization.service_Being_Funded_string__c)) {
             			fielderrs.add('Item/Service');
             		}
@@ -187,23 +210,56 @@ public AuthorizationExt(ApexPages.StandardController controller) {
             			fielderrs.add('Per');
             		}
             		
-            	} else if (authorization.type__c == 'Single Charge') {
-            		if (string.isblank(authorization.service_Being_Funded_string__c)) {
-            			fielderrs.add('Item/Service');
-            		}
-            		if (string.isblank(authorization.payer_authorization_id__c)) {
-            			fielderrs.add('Authorization Number');
-            		}
-            		
             	} else if ( authorization.type__c == 'Bed Hold') {
             		if (string.isblank(authorization.bed_hold_type__c)) {
             			fielderrs.add('Bed Hold Type');
             		}
+            		if (string.isblank(authorization.bed_hold_classification__c)) {
+            			fielderrs.add('Bed Hold Classification');
+            		}            		
             		
             	}
             	
-            }
-            
+            	if (string.isblank(authorization.payer_authorization_id__c)) {
+            			fielderrs.add('Authorization Number');
+        		}
+        		if (authorization.received_date_time__c == null) {
+        			fielderrs.add('Received Date/Time');
+        		}
+        		
+        		if ( authorization.type__c != 'Single Charge') {
+	        		if (authorization.payer_effective_date__c == null) {
+	        			if ( authorization.type__c == 'Bed Hold')
+	        				fielderrs.add('Start Date');
+	        			else
+	        				fielderrs.add('Effective Date');
+	        		}
+	        		if (authorization.payer_end_date__c == null) {
+	        			if ( authorization.type__c == 'Open Ended Stay' || authorization.type__c == 'Open Ended Charge' )
+	        				fielderrs.add('Review Date');
+	        			else
+	        				fielderrs.add('End Date');
+	        		}
+        		}
+        		
+        		if (String.IsBlank(authorization.received_from__c)) {
+        			fielderrs.add('Given By');
+        		}
+        		if (String.IsBlank(authorization.representing_received__c)) {
+        			fielderrs.add('Representing (Received)');
+        		}
+        		if (String.IsBlank(authorization.taken_by__c)) {
+        			fielderrs.add('Taken By');
+        		}
+        		if (String.IsBlank(authorization.auth_given_method__c)) {
+        			fielderrs.add('How Given');
+        		}
+        		if (authorization.type__c == 'Single Charge') {
+	        		if (String.IsBlank(authorization.comments__c)) {
+	        			fielderrs.add('Comments');
+	        		}
+	            }
+ 			}
             if ( fielderrs.size() > 0 ) {
             	
 	            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please fill in these fields to finalize the authorization:'));
