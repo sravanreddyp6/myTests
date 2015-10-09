@@ -458,7 +458,8 @@ j$('input[id$=searchEmployee]').val('');
                    <apex:outputField value="{!user.Office_Phone__c}"  >
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
                         hideOnEdit="cancelButton" event="ondblclick" 
-                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"
+                        disabled="{!editAccess.size<1}"/>
                         </apex:outputField>
                     </apex:column> 
                <apex:column headerValue="Extension">
@@ -471,7 +472,8 @@ j$('input[id$=searchEmployee]').val('');
                    <apex:outputField value="{!user.phone_ext__c}"  >
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
                         hideOnEdit="cancelButton" event="ondblclick" 
-                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"
+                        disabled="{!editAccess.size<1}"/>
                         </apex:outputField>
                     </apex:column> 
                
@@ -485,7 +487,8 @@ j$('input[id$=searchEmployee]').val('');
                    <apex:outputField value="{!user.Mentor_Cell_Phone__c}" >
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
                         hideOnEdit="cancelButton" event="ondblclick" 
-                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"
+                        disabled="{!editAccess.size<1}"/>
                         </apex:outputField>
                     </apex:column> 
                <apex:column headerValue="Fax">
@@ -498,7 +501,8 @@ j$('input[id$=searchEmployee]').val('');
                    <apex:outputField value="{!user.fax__c}" id="officePhone" >
                     <apex:inlineEditSupport showOnEdit="saveButton, cancelButton"  
                         hideOnEdit="cancelButton" event="ondblclick" 
-                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"
+                        disabled="{!editAccess.size<1}"/>
                         </apex:outputField>
                     </apex:column> 
                <apex:column headerValue="Manager">

@@ -2,6 +2,7 @@ public with sharing class PDMController {
 
  Public Integer size{get;set;}
  Public Integer noOfRecords {get;set;}
+ public List<PermissionSetAssignment> editAccess {get; set;}
  public TMN_User__c curruser  {get{return [ select id,Work_State__c,Work_City__c,Alias__c   from tmn_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];} set;}
  
  public String MainOffice {get{
@@ -57,7 +58,14 @@ public String searchingForQuery {set;get;}
          operationGroup = apexpages.currentpage().getparameters().get('operationGroup');
          searchTitle = apexpages.currentpage().getparameters().get('JobTitle');
         // list generation
-        BuildQuery();  
+        BuildQuery();
+        
+        editAccess = [SELECT PermissionSetId
+              FROM PermissionSetAssignment
+              WHERE assignee.Id = :UserInfo.getUserId()
+              AND PermissionSet.Name = 'Company_Directory_Editor'
+              LIMIT 1];
+          
 	}
 
    public ApexPages.StandardSetController setCon {
