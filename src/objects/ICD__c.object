@@ -83,18 +83,6 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>icd_code__c</fullName>
-        <caseSensitive>true</caseSensitive>
-        <description>The actual ICD code.</description>
-        <externalId>false</externalId>
-        <label>icd_code</label>
-        <length>10</length>
-        <required>true</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>true</unique>
-    </fields>
-    <fields>
         <fullName>icd_description__c</fullName>
         <externalId>false</externalId>
         <label>icd_description</label>
@@ -162,6 +150,38 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>ICDs</pluralLabel>
+    <recordTypes>
+        <fullName>ICD10</fullName>
+        <active>true</active>
+        <label>ICD10</label>
+        <picklistValues>
+            <picklist>code_type__c</picklist>
+            <values>
+                <fullName>ICD-10</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICD-9</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>ICD9</fullName>
+        <active>true</active>
+        <label>ICD9</label>
+        <picklistValues>
+            <picklist>code_type__c</picklist>
+            <values>
+                <fullName>ICD-10</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>ICD-9</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>
 </CustomObject>
