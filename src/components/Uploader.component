@@ -133,7 +133,7 @@
             <apex:pageBlock title="Existing Attachments" rendered="{!showExisting}" >
                 <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column headerValue="Action">
-                    <apex:outputLink value="/apex/UpdateAttachment?docId={!attachment.ID}&retURL={!url}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" >Edit</apex:outputLink>
+                    <apex:outputLink value="/apex/UpdateAttachment?docId={!attachment.ID}&retURL={!URLENCODE(url)}&parentPage={!parentPage}&parentId={!parentId}&pbsId={!pbsId}&servAssignId={!servAssignId}&apId={!apId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}" >Edit</apex:outputLink>
                         <apex:outputPanel rendered="{!showHeadShotSelection}">
                             <apex:commandLink action="{!chooseHeadShot}" value="  | Choose as Head Shot">
                                 <apex:param name="aId" value="{!attachment.ID}" />
@@ -142,7 +142,7 @@
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column style="padding-right: 9px;" headerValue="Title">
-                    <apex:outputLink value="/apex/ViewAttachment?docId={!attachment.ID}&retURL={!url}&parentId={!parentId}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}">{!attachment.Name}</apex:outputLink>
+                    <apex:outputLink value="/apex/ViewAttachment?docId={!attachment.ID}&retURL={!URLENCODE(url)}&parentId={!parentId}&parentPage={!parentPage}&pbsId={!pbsId}&apId={!apId}&servAssignId={!servAssignId}&admId={!admId}&asmtType={!asmtType}&asmtId={!asmtId}&ReferralName={!ReferralName}">{!attachment.Name}</apex:outputLink>
                 </apex:column>
                 <apex:column headerValue="Description">{!attachment.Description}</apex:column>
                 <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
