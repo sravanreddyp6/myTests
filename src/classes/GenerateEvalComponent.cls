@@ -356,7 +356,7 @@ public with sharing class GenerateEvalComponent {
                         newHTMLfld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
                         if (mapEvalValues.ContainsKey( e.id )) {
                             newHTMLfld += 'value="' ;
-                            if (mapEvalValues.get(e.id).eval__r.length__c < 250) {
+                            if (mapEvalValues.get(e.id).eval__r.length__c == null || mapEvalValues.get(e.id).eval__r.length__c < 250) {
                                 strVal = mapEvalValues.get(e.id).text_under_250__c;
                             } else {
                                 strVal = mapEvalValues.get(e.id).text_over_250__c;
@@ -403,7 +403,7 @@ public with sharing class GenerateEvalComponent {
 
                     // get the value
                     if ( mapEvalValues.ContainsKey( e.id )) {
-                        if (mapEvalValues.get(e.id).eval__r.length__c < 250) {
+                        if (mapEvalValues.get(e.id).eval__r.length__c == null ||mapEvalValues.get(e.id).eval__r.length__c < 250) {
                             strVal = mapEvalValues.get(e.id).text_under_250__c;
                         } else {
                             strVal = mapEvalValues.get(e.id).text_over_250__c;
