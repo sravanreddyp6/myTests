@@ -1983,7 +1983,7 @@ public without sharing class ServiceAssignmentExt {
 				 'from Authorization__c' + 
 				 ' where funding_source__r.Service_Assignment__c = :saID ' +
 				 (authsIncDisregard ? ''  : 'and authorization_status__c != \'Disregard\'') +
-				 ' order by received_date_time__c desc limit 10';
+				 ' order by payer_effective_date__c desc limit 10';
 		this.authList = Database.query(query);
 	}
 
