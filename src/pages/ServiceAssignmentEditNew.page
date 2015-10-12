@@ -2265,7 +2265,7 @@ END: Uncomment to have the element collapsed by default -->
 		<apex:pageBlockTable value="{!authList}" var="auth" rendered="{! authList.size!=0 && canViewAuths }">
 				<apex:column headerValue="Action" >
 
-					<a href="/apex/AuthorizationView?id={!auth.ID}&saID={!theServAssign.ID}">View</a>
+					<a href="/apex/AuthorizationView?id={!auth.ID}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
 					<apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
 						&nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!theServAssign.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
 					</apex:outputPanel>
@@ -2278,10 +2278,12 @@ END: Uncomment to have the element collapsed by default -->
 				<apex:column headervalue="Received">
 					<c:MilitaryDatetime datetimeval="{!auth.Received_Date_Time__c}" />
 				</apex:column>
-				<apex:column value="{!auth.Payer_Effective_Date__c}" headervalue="Effective"/>
-				<apex:column value="{!auth.Payer_End_Date__c}" headervalue="Ends"/>
+				<apex:column value="{!auth.Payer_Effective_Date__c}" headervalue="Start"/>
+				<apex:column value="{!auth.Payer_End_Date__c}" headervalue="End"/>
 
 			</apex:pageBlockTable>
+			<apex:outputPanel rendered="{!authList.size = 10}">Showing 10 most recent authorizations. Click <a href="/apex/AuthorizationListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
+			
 		</apex:pageBlock>
 
 		<apex:pageBlock title="Referral Detail" rendered="{!referral != null }">
