@@ -57,7 +57,7 @@ public class identityEditNew {
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c,Office_Flag__c,
             Account_Number__c, CPR_Expires__c, Discipline__c, GL_Code__c, IC_Agreement_Executed_Date__c, Insurance_Expires__c, License_Expires__c, Notes__c, Personal_City__c,
-            Personal_Location__c, Personal_Zip__c, Rate__c
+            Personal_Location__c, Personal_Zip__c, Rate__c,Custodians__c 
             FROM TMN_User__c 
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
@@ -171,7 +171,7 @@ public class identityEditNew {
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c,Program_String__c,
-            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c,phone_ext__c  
+            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c,phone_ext__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
             
@@ -332,7 +332,7 @@ public class identityEditNew {
 
     public PageReference goBack() {
         if(retURL == null){
-			PageReference backPage = new PageReference('/apex/identity_home?cancel=true');
+			PageReference backPage = new PageReference('/apex/identity_nonemployees?cancel=true');
             backPage.setRedirect(true);   
             return backPage;
         }

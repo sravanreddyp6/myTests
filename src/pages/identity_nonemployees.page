@@ -205,23 +205,23 @@
     <apex:pageBlockSection columns="1" title="Workforce Reporting to Me"  rendered="{!myWorkforce.size!=0}" >
         <apex:form >
             <apex:pageBlockTable value="{!myWorkforce}" var="wf">
-                <apex:column headerValue="Action" >
-                    <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=wf.id,retURL=$Page.RequestAccess])}">View</apex:outputLink>-->
-                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
-                        <apex:param value="{!wf.Id}" assignTo="{!selectedID}" name="userIdParam"/>
-                    </apex:commandLink> 
-                       
-                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Request Access</apex:outputLink></apex:outputPanel>
-
-                    <apex:outputPanel rendered="{!wf.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=wf.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
-                        &nbsp;
-                                       
+                 <apex:column headerValue="Name" >
+              <a href="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}" >  {!wf.Name} </a>
                 </apex:column>
-                <apex:column headerValue="Name" value="{!wf.Name}"/>
                 <apex:column headerValue="Email" value="{!wf.Email__c}"/>
                 <apex:column headerValue="Title" value="{!wf.Professional_Title__c}"/>
                 <apex:column headerValue="Status" value="{!wf.Job_Status__c}"/>
-                <apex:column headerValue="Person Type" value="{!wf.Current_Person_Type__c}"/>                           
+                <apex:column headerValue="Person Type" value="{!wf.Current_Person_Type__c}"/>   
+                 <apex:column headerValue="Action" >
+                 <apex:selectList value="{!DropdownList}" size="1">
+						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
+                     <apex:selectOption itemValue="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="View" />
+                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="Edit" rendered="{!(wf.Current_Person_Type__c=='Employee' || wf.Current_Person_Type__c=='Non-Employee' )}"/>  
+                     <apex:selectOption itemValue="/apex/RequestAccess?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="Request Access" />
+                     <apex:selectOption itemValue="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="Terminate" rendered="{!(wf.Current_Person_Type__c=='Employee' || wf.Current_Person_Type__c=='Non-Employee' )}"/>
+                 </apex:selectList>
+                  <apex:commandButton value="Go" action="{!identityGo}"/>   
+                 </apex:column>                        
             </apex:pageBlockTable>
         </apex:form>      
     </apex:pageBlockSection>
@@ -229,23 +229,23 @@
         <apex:pageBlockSection columns="1" title="My Recently Edited Workforce">
             <apex:form >
             <apex:pageBlockTable value="{!Records}" var="r">
-                <apex:column headerValue="Action" >
-                    <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[TAU=tmnAliasUsr,ID=r.id,retURL=$Page.RequestAccess])}">View</apex:outputLink>-->
-                    <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
-                        <apex:param value="{!r.Id}" assignTo="{!selectedID}" name="userIdParam"/>
-                    </apex:commandLink>
-                     
-                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
-
-                    <apex:outputPanel rendered="{!r.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=r.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
-                        &nbsp;
-
+                <apex:column headerValue="Name" >
+              <a href="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}" >  {!r.Name} </a>
                 </apex:column>
-                <apex:column headerValue="Name" value="{!r.Name}"/>
                 <apex:column headerValue="Email" value="{!r.Email__c}"/>
                 <apex:column headerValue="Title" value="{!r.Professional_Title__c}" />
                 <apex:column headerValue="Status" value="{!r.Job_Status__c}"/>
-                <apex:column headerValue="Person Type" value="{!r.Current_Person_Type__c}"/>           
+                <apex:column headerValue="Person Type" value="{!r.Current_Person_Type__c}"/>    
+                 <apex:column headerValue="Action" >
+                 <apex:selectList value="{!DropdownList}" size="1">
+						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
+                     <apex:selectOption itemValue="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}" itemLabel="View" />
+                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!r.id}&TAU={!aliasNameValue}" itemLabel="Edit" rendered="{!(r.Current_Person_Type__c=='Employee' || r.Current_Person_Type__c=='Non-Employee' )}"/>  
+                     <apex:selectOption itemValue="/apex/RequestAccess?id={!r.id}&TAU={!aliasNameValue}" itemLabel="Request Access" />
+                     <apex:selectOption itemValue="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}" itemLabel="Terminate" rendered="{!(r.Current_Person_Type__c=='Employee' || r.Current_Person_Type__c=='Non-Employee' )}"/>
+                 </apex:selectList>   
+                  <apex:commandButton value="Go" action="{!identityGo}"/>     
+                 </apex:column>                        
             </apex:pageBlockTable>
             </apex:form>
         </apex:pageBlockSection>
