@@ -1,0 +1,35 @@
+<apex:page standardController="Project__c">
+    <style>
+        .ttab{
+            background:none; 
+            border:none;
+        }
+        .itab{
+            border:none;
+            font-size:18pt;  
+            background:none;  
+        }
+        .atab{
+            border:none;
+            font-size:18pt;
+            
+            background:none; 
+        }
+        .tabcontent{
+            border:none;
+            background-color:white;
+            font-size:12pt;
+            }
+    </style>
+    <br/>
+<apex:outputPanel layout="block">
+    <apex:tabPanel headerClass="ttab" activeTabClass="atab" inactiveTabClass="itab"  contentClass="tabcontent" headerSpacing="15px" >
+        <apex:tab label="Projects" >
+             <apex:enhancedList type="Project__c" height="450" rowsPerPage="25"/>
+        </apex:tab>
+        <apex:tab label="Tasks" id="tasks" >
+            <apex:enhancedList type="Project_Task__c" height="450" rowsPerPage="25"/>
+        </apex:tab>    
+    </apex:tabPanel>
+</apex:outputPanel>  
+</apex:page>

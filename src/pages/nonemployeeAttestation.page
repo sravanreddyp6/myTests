@@ -1,0 +1,195 @@
+<apex:page controller="nonemployeeAttestationPageController" docType="html-5.0" showHeader="false" applyBodyTag="false" standardStylesheets="false">
+	
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- 		<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" /> -->
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+<!-- 		<style type="text/css"> -->
+<!-- 			.colHeadr {text-align:center;}   -->
+<!-- 		</style> -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	</head>
+	
+	<body>
+	<apex:form >
+		<apex:pageBlock id="theBlock" mode="detail" >
+			<apex:pageMessages id="msgs" />
+			<apex:pageBlockSection title="Non-Employees Terminating in next 14 days (Viewing as {!manager.name})" columns="1" id="oneTable" collapsible="false" >
+				<apex:PageBlockTable value="{!nonemployeesTransactional}" var="one"  styleClass="table table-striped table-condensed" >
+				
+					<apex:column headerValue="Name"  style="{!IF(one.LastModifiedBy.Name == 'Non Employee Attestation Site Guest User', 'Background-color: grey;', '')}">
+						<apex:outputText >{!one.First_Name__c} {!one.Last_Name__c}</apex:outputText> 
+					</apex:column>
+					
+					<apex:column >
+						<apex:facet name="header">Job title</apex:facet>
+						<apex:outputText >{!one.Job_Title__c}</apex:outputText>
+					</apex:column>
+					
+					<apex:column >
+						<apex:facet name="header">Last Day</apex:facet>
+						<apex:outputText Value=" {!one.Last_Day__c}"/>
+					</apex:column>
+					
+					<apex:column >
+						<apex:facet name="header">Extend</apex:facet>
+						
+						<apex:commandButton value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs" styleClass="btn btn-info active">
+							<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
+							<apex:param value="thirty" assignTo="{!flag}" name="flag"/>
+						</apex:commandButton>
+						&nbsp;
+						<apex:commandButton value="60 Days" action="{!updateTMNUser}" reRender="theBlock,msgs" styleClass="btn btn-info active">
+							<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
+							<apex:param value="sixty" assignTo="{!flag}" name="flag"/>
+						</apex:commandButton>
+						&nbsp;
+						<apex:commandButton value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs" styleClass="btn btn-info active">
+							<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
+							<apex:param value="ninety" assignTo="{!flag}" name="flag"/>
+						</apex:commandButton>
+						&nbsp;
+						<apex:commandButton value="Other" styleClass="btn btn-success">
+							
+						</apex:commandButton>
+						&nbsp;
+					</apex:column>
+					
+					
+					<apex:column headerValue="Immediate Action" >
+						<apex:commandButton value="Terminate Now" action="{!updateTMNUser}" reRender="theBlock,msgs" styleClass="btn btn-info active">
+							<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/>
+							<apex:param value="now" assignTo="{!flag}" name="flag"/>
+						</apex:commandButton>
+<!-- 						&nbsp; -->
+<!-- 						<apex:commandButton value=" {!one.Last_Day__c}" action="{!updateTMNUser}" reRender="theBlock,msgs" > -->
+<!-- 							<apex:param value="{!one.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="termDate" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+					</apex:column>
+					
+				</apex:PageBlockTable>
+			</apex:pageBlockSection>
+<!-- 			<apex:pageBlocksection columns="1" title="Non-Employees Terminating in 7 days" rendered="{!showSeven}" id="SevenTable" > -->
+<!-- 				<apex:pageBlockTable value="{!employeeMap[7]}" var="Seven" > -->
+<!-- 					<apex:column headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:facet name="header">Name</apex:facet> -->
+<!-- 						<apex:outputText >{!Seven.First_Name__c} {!Seven.Last_name__c}</apex:outputText>  -->
+<!-- 					</apex:column> -->
+<!-- 					<apex:column headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:facet name="header">Job title</apex:facet> -->
+<!-- 						<apex:outputText >{!Seven.Job_title__c}</apex:outputText>  -->
+<!-- 					</apex:column>  -->
+<!-- 					<apex:column headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:facet name="header">Last Day</apex:facet> -->
+<!-- 						<apex:outputText Value=" {!Seven.Last_Day__c}"/> -->
+<!-- 					</apex:column> -->
+<!-- 					<apex:column headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:facet name="header">Extend</apex:facet> -->
+<!-- 						<apex:commandButton value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs"> -->
+<!-- 							<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="ninety" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 						&nbsp; -->
+<!-- 						<apex:commandButton value="60 Days" action="{!updateTMNUser}" reRender="theBlock,msgs"> -->
+<!-- 							<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="sixty" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 						&nbsp; -->
+<!-- 						<apex:commandButton value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs"> -->
+<!-- 							<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="thirty" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 					</apex:column> -->
+<!-- 					<apex:column headerValue="Terminate On" headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:commandButton value=" {!Today()}" action="{!updateTMNUser}" reRender="theBlock,msgs"> -->
+<!-- 							<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="now" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 						&nbsp; -->
+<!-- 						<apex:commandButton value=" {!Seven.Last_Day__c}" action="{!updateTMNUser}" reRender="theBlock,msgs"> -->
+<!-- 							<apex:param value="{!Seven.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="termDate" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 					</apex:column> -->
+<!-- 				</apex:pageBlockTable> -->
+<!-- 			</apex:pageBlocksection> -->
+<!-- 			<apex:pageBlocksection columns="1" title="Non-Employees Terminating in 14 days" rendered="{!showFourteen}" id="fourteenTable" > -->
+<!-- 				<apex:pageBlockTable value="{!employeeMap[14]}" var="Fourteen"  > -->
+<!-- 					<apex:column headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:facet name="header">Name</apex:facet> -->
+<!-- 						<apex:outputText >{!Fourteen.First_Name__c} {!Fourteen.Last_name__c}</apex:outputText>  -->
+<!-- 					</apex:column> -->
+<!-- 					<apex:column headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:facet name="header">Job title</apex:facet> -->
+<!-- 						<apex:outputText >{!Fourteen.Job_title__c}</apex:outputText>  -->
+<!-- 					</apex:column> -->
+				
+<!-- 					<apex:column headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:facet name="header">Last Day</apex:facet> -->
+<!-- 						<apex:outputText Value=" {!Fourteen.Last_Day__c}"/> -->
+<!-- 					</apex:column> -->
+					
+<!-- 					<apex:column headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:facet name="header">Extend</apex:facet> -->
+<!-- 						<apex:commandButton value="90 Days" action="{!updateTMNUser}" reRender="theBlock,msgs" style="color:blue;"> -->
+<!-- 							<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="ninety" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 						&nbsp; -->
+<!-- 						<apex:commandButton value="60 Days" action="{!updateTMNUser}" reRender="theBlock,msgs" style="color:blue;"> -->
+<!-- 							<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="sixty" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 						&nbsp; -->
+<!-- 						<apex:commandButton value="30 Days" action="{!updateTMNUser}" reRender="theBlock,msgs" style="color:blue;"> -->
+<!-- 							<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="thirty" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 					</apex:column> -->
+					
+<!-- 					<apex:column headerValue="Terminate On" headerClass="colHeadr" styleClass="colHeadr"> -->
+<!-- 						<apex:commandButton value=" {!Today()}" action="{!updateTMNUser}" reRender="theBlock,msgs" style="color:blue;"> -->
+<!-- 							<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="now" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 						&nbsp; -->
+<!-- 						<apex:commandButton value=" {!Fourteen.Last_Day__c}" action="{!updateTMNUser}" reRender="theBlock,msgs" style="color:blue;"> -->
+<!-- 							<apex:param value="{!Fourteen.Id}" assignTo="{!employeeId}" name="employeeId"/> -->
+<!-- 							<apex:param value="termDate" assignTo="{!flag}" name="flag"/> -->
+<!-- 						</apex:commandButton> -->
+<!-- 					</apex:column> -->
+<!-- 				</apex:pageBlockTable> -->
+<!-- 			</apex:pageBlocksection> -->
+			<apex:outputPanel id="noOneFound" rendered="{!nonemployeesinitial.size == 0 }" >
+				<apex:pageMessage summary="No action is pending for non-employee confirmation at this time" severity="info" strength="3"/>
+			</apex:outputPanel>
+		</apex:pageBlock>
+		
+		<div class="modal fade">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		        <h4 class="modal-title">Choose the termination Date</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p><input type="date" value="{!dateChoosen}" /></p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <apex:commandButton styleclass="btn btn-primary" value="Save" action="{!savelastDate}"/>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+	</apex:form>
+	
+	<script>
+	
+	</script>
+	</body>
+</apex:page>
