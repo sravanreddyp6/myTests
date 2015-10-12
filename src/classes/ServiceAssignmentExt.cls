@@ -28,6 +28,7 @@ public without sharing class ServiceAssignmentExt {
 	public Boolean canCreateAuths { get; private set; }
 	public List<Authorization__c> authList { get; set; }
 	public ID authRecTypeId { get; set; }
+	public Boolean authsIncDisregard { get; set; }
 
 	public static Boolean showdiagModal { get; set; }
 	public string diagEditId {get; set; }
@@ -447,7 +448,9 @@ public without sharing class ServiceAssignmentExt {
 		System.debug('Start date:' + effDate + ', End date:' + effEnd);
 
 
-
+		// CMAUTH
+		authsIncDisregard = false;
+		setAuthPerms();
 		LoadData(theServAssign);
 
 		System.debug('recordType AFTER LoadData: ' + recordType);
@@ -455,11 +458,6 @@ public without sharing class ServiceAssignmentExt {
 		setcanEditSA();
 		setcanCreatePlan();
 		setcanCreateSummary();
-
-		// CMAUTH
-		setAuthPerms();
-		populateAuths();
-
 
 		getContractsAndXrefs();
 		contractsList = new List<SelectOption>();
@@ -1978,13 +1976,15 @@ public without sharing class ServiceAssignmentExt {
 
 	}
 
-	@testvisible private void populateAuths() {
-		this.authList =
-				[select id, funding_Source__c, payer_authorization_id__c, authorization_Status__c, type__c, service_being_Funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_Date__c, payer_end_date__c, received_date_time__c, contract_used__c
-				 from Authorization__c
-				 where funding_source__r.Service_Assignment__c = :theServAssign.Id and authorization_status__c != 'Disregard'
-				 order by received_date_time__c desc
-				 limit 150];
+	public void populateAuths() {
+		//system.debug( 'SHOW DISREGARD = ' + authsIncDisregard + ', ' + theServAssign.Id);
+		ID saID = theServAssign.Id;
+		String query = '' + 'select id, funding_Source__c, payer_authorization_id__c, authorization_Status__c, type__c, service_being_Funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_Date__c, payer_end_date__c, received_date_time__c, contract_used__c ' + 
+				 'from Authorization__c' + 
+				 ' where funding_source__r.Service_Assignment__c = :saID ' +
+				 (authsIncDisregard ? ''  : 'and authorization_status__c != \'Disregard\'') +
+				 ' order by received_date_time__c desc limit 10';
+		this.authList = Database.query(query);
 	}
 
 	 
