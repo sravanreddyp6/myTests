@@ -2286,6 +2286,25 @@ END: Uncomment to have the element collapsed by default -->
 			
 		</apex:pageBlock>
 
+        <!-- Therapy SECTION -->
+        <a id="therapyDetails"></a>
+        <apex:pageBlock id="therapyList" title="Therapy" rendered="{! vfVarIsCM && $ObjectType.Therapy_Hour__c.accessible && !editSA}">
+            <apex:outputText value="No Therapy to display" rendered="{!(therapyList.size = 0 )}" />
+            <apex:pageBlockTable value="{!therapyList}" var="therapy" rendered="{! therapyList.size!=0 }" rows="5">
+                <apex:column value="{!therapy.Owner.Name}"  headervalue="Therapist Name"/>
+                <apex:column value="{!therapy.Appointment_Type__c}"  headervalue="Appointment Type"/>
+                <apex:column headervalue="Start Time">
+                    <c:MilitaryDatetime datetimeval="{!therapy.Start_Time__c}" />
+                </apex:column>
+                <apex:column headervalue="End Time">
+                    <c:MilitaryDatetime datetimeval="{!therapy.End_Time__c}" />
+                </apex:column>
+                <apex:column value="{!therapy.Number_of_Hours__c}" headervalue="Number of Hours"/>
+                <apex:column value="{!therapy.Narrative_Note__c}" headervalue="Notes"/>
+            </apex:pageBlockTable>
+            <apex:outputPanel rendered="{!therapyList.size > 5}">Showing 5 most recent Therapys. Click <a href="/apex/TherapyListView?saId={!Service_Assignment__c.Id}" style="color: blue;">here</a>&nbsp;to view all </apex:outputPanel>
+        </apex:pageBlock>
+        
 		<apex:pageBlock title="Referral Detail" rendered="{!referral != null }">
 			<apex:pageBlockSection columns="2" title="Originating Referral" collapsible="false">
 				<apex:pageBlockSectionItem >
@@ -2468,10 +2487,13 @@ END: Uncomment to have the element collapsed by default -->
 	    </apex:outputpanel>
 	    </div>
 	</apex:form>
+
 	<a id="shiftSummaries" />
 	<apex:relatedList list="Action_Summaries__r" rendered="{!AND(OR(OperatingGroup == 'Redwood', OperatingGroup == 'Care Meridian'), !isCAFSS, $ObjectType.Action_Summary__c.accessible, !editSA)}" />
 	<c:SObjectNotesAndAttachments parentPage="ServAssign" parentId="{!Service_Assignment__c.id}" showAction="true" rendered="{!!editSA && newSA==false}"   pbsId="{!admission.Person_Being_Served__c}" servAssignId="{!theServAssign.Id}"  admId="{!admissionId}"></c:SObjectNotesAndAttachments>
 	<c:GenericHistoryComponent myObject="{!Service_Assignment__c}" rendered="{!!editSA && newSA==false}" />
+
+
 
 	<script type="text/javascript">
 		j$(setFocus);

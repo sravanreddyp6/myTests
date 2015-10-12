@@ -34,7 +34,8 @@ public with sharing class TherapyHourTriggerHandler {
         		if ((newhr.start_time__c < oldHr.end_time__c && newhr.start_time__c > oldHr.start_time__c) ||
         		    (newhr.end_time__c < oldHr.end_time__c && newhr.end_time__c > oldHr.start_time__c) ||
         		    (oldHr.start_time__c > newhr.start_time__c && oldHr.start_time__c < newhr.end_time__c) ||
-        		    (oldHr.end_time__c > newhr.start_time__c && oldHr.end_time__c < newhr.end_time__c) ) {
+        		    (oldHr.end_time__c > newhr.start_time__c && oldHr.end_time__c < newhr.end_time__c) ||
+                    (oldHr.start_time__c == newhr.start_time__c && oldHr.end_time__c == newhr.end_time__c)  ) {
 			        	newhr.addError('The submitted hours overlap with the pending/approved hours.');
 			        	break;
         		}
