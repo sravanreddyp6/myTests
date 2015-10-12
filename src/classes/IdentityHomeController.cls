@@ -48,10 +48,11 @@ public with sharing class IdentityHomeController {
     public String tmnOG = t.Operating_Group__c;
     public String tmnEmail = t.Email__c;                          
     public Boolean onloadDialog {set;get;}
+    public String DropdownList {get; set;} 
     public IdentityHomeController() {
        searchDelegateResult = new List<TMN_User__c> (); 
         searchNonEmpResult = new List<TMN_User__c> (); 
-        Records = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c 
+        Records = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c  
                    FROM TMN_User__c 
                    WHERE lastvieweddate != null 
                    ORDER BY lastvieweddate desc 
@@ -101,10 +102,15 @@ public with sharing class IdentityHomeController {
         System.debug('aliasName:' + aliasName);
         return null;
     }
-    
+    public PageReference identityGo(){
+        if(DropdownList!=null && DropdownList.length()>0){
+       return new PageReference(DropdownList);
+        }
+       return null; 
+    }
     // Method used to set aliasName value on page load.
-    String aliasNameValue; 
-    String getAliasNameValue(){
+   public String aliasNameValue; 
+   public String getAliasNameValue(){
         if(mySubordinates.isEmpty()){
             if(myDelegation.isEmpty()){
                 aliasNameValue = tmnEmail;

@@ -68,22 +68,21 @@ public with sharing class IdentityHomeControllerTest {
 				
 				IdentityHome.closeInfo();
 				
-				IdentityHome.FirstPageNE();
+				//IdentityHome.hasNext();
 				
-				IdentityHome.previousNE();
-				IdentityHome.nextNE();
-				IdentityHome.LastPageNE();
-				IdentityHome.FirstPageDel();
+				//IdentityHome.hasPrevious();
+				IdentityHome.next();
+				IdentityHome.previous();
+				IdentityHome.first();
 				//IdentityHome.previousDel();
 				//IdentityHome.nextDel();
 				//IdentityHome.LastPageDel();
 				//IdentityHome.getprevDel();
 				//IdentityHome.getnxtDel();
 				
-				IdentityHome.getprevNE();
-				
-				IdentityHome.getnxtNE();
+				IdentityHome.last();
 				IdentityHome.viewTmnUser();
+				IdentityHome.getIsRecruiter();
 				}
 			}
 }
