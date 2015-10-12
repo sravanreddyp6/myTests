@@ -1,4 +1,4 @@
-<apex:page standardController="TMN_Contract__c" >
+<apex:page standardController="TMN_Contract__c" extensions="ViewContractExtension">
 <apex:variable var="btnIstyle" value="text-align: left; width: 150px"/><!--to control button width styling must be inline this makes for a common location to update styling-->
 <apex:variable var="Renew" value="{!IF(TMN_Contract__c.Status__c = 'Renewed', False, True)}"/><!-- used in renders-->
 <apex:variable var="Approve" value="{!IF(ISNULL(TMN_Contract__c.Approver_1__c),True,False)}"/>
@@ -218,7 +218,7 @@ Note: Styling in classes for button gets ovreriden by SF
 
     <apex:pageBlock title="Approval">
         <apex:outputLabel styleClass="btnCL"></apex:outputLabel>
-        <apex:commandButton rendered="{!NOT(TMN_Contract__c.Submitted_for_approval__c)}" disabled="{!NOT(TMN_Contract__c.ReadyForApproval__c)}" style="{!btnIstyle}" value="Submit For Approval" action="/p/process/Submit?id={!TMN_Contract__c.Id}" />            
+        <apex:commandButton rendered="{!NOT(TMN_Contract__c.Submitted_for_approval__c)}" disabled="{!NOT(TMN_Contract__c.ReadyForApproval__c)}" style="{!btnIstyle}" value="Submit For Approval" action="{!submit}" />            
         <apex:outputPanel style="{!btnIstyle}"  rendered="{!TMN_Contract__c.Submitted_for_approval__c}" layout="block">
         This Contract has been submitted for approval. 
         <br/><br/>
