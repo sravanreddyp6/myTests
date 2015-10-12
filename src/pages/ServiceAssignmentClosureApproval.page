@@ -30,6 +30,11 @@
 				    <apex:facet name="stop"></apex:facet>         
 				</apex:actionStatus>                
             	</apex:inputField>
+                    <br></br>    
+                <apex:pageBlockSectionItem rendered="{!!theServAssignClose.No_Approval_Needed__c}">
+                	<apex:outputLabel value="Approver" for="approver"/>
+                	<apex:inputField id="approver" value="{!theServAssignClose.Approver__c}" />
+            	</apex:pageBlockSectionItem>
 			
 			</apex:pageBlockSection>
 		

@@ -19,6 +19,10 @@
                 <center>Once you submit this record for approval,
                 <br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
             </apex:outputPanel>
+            <apex:pageBlockSectionItem rendered="{!!No_Approval_Needed}">
+                <apex:outputLabel value="Approver" for="approver"/>
+                <apex:inputField id="approver" value="{!Evaluation__c.Approver__c}" required="true"/>
+            </apex:pageBlockSectionItem>
         </apex:pageBlockSection>
     </apex:pageBlock>   
 </apex:form>  

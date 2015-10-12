@@ -41,7 +41,11 @@ public with sharing class Evaluation_ApprovalForm {
         thisEval.Signed_At__c = system.Now();
         update thisEval;
         if ( !No_Approval_Needed) {
-            return new PageReference('/p/process/Submit?id='+controller.getid());
+        	// Create an approval request for the this evaluation
+            Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
+            req1.setObjectId(thisEval.id);
+            req1.setNextApproverIds(new Id[]{thisEval.Approver__c});
+            Approval.ProcessResult result = Approval.process(req1);
         }
         return new PageReference('/' + thisEval.Id);
     }
