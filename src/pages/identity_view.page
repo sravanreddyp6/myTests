@@ -25,7 +25,7 @@
                         <apex:outputField label="Job Status" value="{!TMNUser.Job_Status__c}" />
                         <apex:outputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}"/>
                         <apex:outputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}" />                                                                                 
-                        <apex:outputField label="Office Phone" value="{!TMNUser.Office_Phone__c}"><apex:outputText rendered="{!TMNUser.phone_ext__c!=null}"> Ext:{!TMNUser.phone_ext__c}</apex:outputText></apex:outputField>
+                        <apex:outputText label="Office Phone" > <apex:outputText rendered="{!TMNUser.Office_Phone__c!='Call Manager'}">{!TMNUser.Office_Phone__c}</apex:outputText> <apex:outputText rendered="{!TMNUser.phone_ext__c!=null}"> Ext:{!TMNUser.phone_ext__c}</apex:outputText></apex:outputText>
                         <apex:outputField label="Start Date" value="{!TMNUser.Hire_Date__c}" />
  					    <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         <apex:outputField label="End Date" value="{!TMNUser.Last_Day__c}" />
