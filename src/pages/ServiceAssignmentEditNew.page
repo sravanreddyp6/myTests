@@ -2247,6 +2247,12 @@ END: Uncomment to have the element collapsed by default -->
 		<a id="auths"></a>
 		<apex:pageBlock id="authList" title="Authorizations" rendered="{! vfVarIsCM && !newSA && canViewAuths }">
 			<div class="pbHeaderButton">
+				<apex:outputPanel layout="none">
+					<apex:outputLabel value="Show Disregarded" />
+					<apex:inputCheckbox value="{!authsIncDisregard}" label="Show Disregarded">
+					<apex:actionSupport event="onchange" action="{!populateAuths}" rerender="authList" status="AddAuthStatus" />
+					</apex:inputCheckbox>
+				</apex:outputPanel>
 				<apex:commandButton value="Add Authorization" onclick="window.open('/apex/AuthorizationEdit?saId={!theServAssign.Id}&retURL={!URLENCODE($CurrentPage.URL)}&RecordType={!authRecTypeID}', '_self'); return false;" rendered="{!canCreateAuths && fundingSources.size>0 && fundingSources != null}" />
 				<apex:actionStatus id="AddAuthStatus">
 					<apex:facet name="start">
