@@ -60,7 +60,7 @@ var j$ = jQuery.noConflict();
 		    <apex:outputField value="{!authorization.Bed_Hold_Classification__c}"  />
 		    <apex:outputField value="{!authorization.Payer_End_Date__c}" label="Return Date" />
 	
-	        <apex:outputField label="Contract Used"  value="{!authorization.Contract_Used__c}" />
+	        <apex:outputText label="Funding Source"  value="{!authorization.funding_source__r.type_of_coverage__c + ' - ' + authorization.Contract_Used__c}" />
 
           	<apex:outputField value="{!authorization.Received_From__c}" label="Given By"/>
           	
@@ -98,7 +98,7 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!authorization.Payer_Effective_Date__c}" label="Effective Date" rendered="{!authorization.Type__c != 'Single Charge'}"/>
 	    <apex:outputText value="" rendered="{! authorization.type__c = 'Single Charge'}" />
 	    
-	    <apex:outputField label="Contract Used"  value="{!authorization.Contract_Used__c}" />
+	    <apex:outputText label="Funding Source"  value="{!authorization.funding_source__r.type_of_coverage__c + ' - ' + authorization.Contract_Used__c}" />
 
         
         <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Single Charge' }" >

@@ -39,6 +39,13 @@ jQuery(document).ready(function ($) {
 <c:PersonalRecord pbsId="{!pbsID}" parentPage="Authorization" servAssignId="{!saID}" admId="{!admID}"/>
 <br/>
 <apex:form id="authForm">
+
+<div style="display:block">
+<apex:inputField id="bh" value="{!authorization.bed_hold_type__c}" />
+<apex:inputField id="bhd" value="{!authorization.bed_hold_type_detail__c}" />
+<apex:inputField id="bhad" value="{!authorization.bed_hold_additional_Detail__c}" />
+</div>
+
 <apex:pageMessages />   
 <apex:pageBlock title="Authorization">
 <apex:pageBlockButtons >
