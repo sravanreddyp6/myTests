@@ -43,6 +43,7 @@ tfoot {
     font-weight: bold;
     white-space: nowrap;
 }
+body{background-repeat:repeat-x;background-position:left top;font-size:80%;font-family:'Arial','Helvetica',sans-serif;background-color:#fff}
 </style>
 </head>
 <body>
@@ -51,9 +52,12 @@ tfoot {
         <table style="width: 100%;">
             <tr><th><span>CareMeridian, LLC</span></th>
                 <th style="text-align: center;"><apex:outputLabel value="A/P Accrual for "/>{!startdtStr}</th>
-                <th style="text-align: right; padding-right: 1.5em;"><apex:outputText value="{0, date, yyyy-MM-dd' 'HH:mm:ss}">
-    <apex:param value="{!NOW()}" />
-</apex:outputText></th></tr>
+                <th style="text-align: right; padding-right: 1.5em;">
+                <apex:outputText value="{0, date, yyyy-MM-dd' 'HH:mm:ss}">
+				    <apex:param value="{!NOW()}" />
+				</apex:outputText>
+				</th>
+</tr>
         </table>
     </div>
     <div style="width: 100%; text-align: center; padding-bottom: .5em;" class="footer">
@@ -108,6 +112,16 @@ tfoot {
                     </tr>
             </tfoot>
         </table>
+        <div>
+	        <span>Prepared by: _________________________________</span><br />
+	        <span>Reviewed by: ________________________________</span><br />
+	        <span>Approved by: _________________________________</span><br /><br />
+	        
+            <span>Printed by:&nbsp;<apex:outputText value="{! $User.FirstName + ' ' + $User.LastName}" /></span><br />
+            <span>Printed on:&nbsp;<apex:outputText value="{0, date, yyyy-MM-dd' 'HH:mm:ss}">
+									    <apex:param value="{!NOW()}" />
+									</apex:outputText></span>
+        </div>
     </apex:outputPanel>
 </body>
 </html>
