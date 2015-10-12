@@ -330,8 +330,8 @@
                         <apex:outputField label="Middle Name" value="{!theTMNUser.Middle_Name__c}"/>
                         <apex:outputField label="Personal Email" value="{!theTMNUser.Personal_Email__c}"/> 
                         <apex:outputField label="Last Name" value="{!theTMNUser.Last_Name__c}"/>
-                        <apex:outputField label="Job Title" value="{!theTMNUser.Job_Title__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/>
-                        <apex:outputText rendered="{!theTMNUser.Current_Person_Type__c!='Employee'}" >  </apex:outputText> 
+                        <apex:outputField label="Job Title" value="{!theTMNUser.Job_Title__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/>
+                        <apex:outputText rendered="{!theTMNUser.Current_Person_Type__c =='Non-Employee'}" >  </apex:outputText> 
                         <apex:outputField label="Preferred First Name" value="{!theTMNUser.Preferred_First_Name__c}"/>
                         <apex:outputField label="Professional Title" value="{!theTMNUser.Professional_Title__c}"/>     
 
@@ -373,8 +373,8 @@
                         <apex:outputField label="Identity ID" value="{!theTMNUser.Identity_ID__c}" />
                         <apex:outputField label="Network Username" value="{!theTMNUser.Network_Username__c}"/>
                         <apex:outputField label="Employee ID" value="{!theTMNUser.Employee_Number__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/>
-                        <apex:outputField label="Unique ID" value="{!theTMNUser.Unique_Id__c}"/>
-                        <apex:outputField label="Taleo ID" value="{!theTMNUser.Pre_Hire_ID__c}" rendered="{!theTMNUser.Current_Person_Type__c=='Employee'}"/> 
+                        <apex:outputField label="Unique ID" value="{!theTMNUser.Unique_Id__c}" rendered="{!theTMNUser.Current_Person_Type__c!='Pre-hire'}" />
+                        <apex:outputField label="Taleo ID" value="{!theTMNUser.Pre_Hire_ID__c}" rendered="{!(theTMNUser.Current_Person_Type__c=='Employee' || theTMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
                         <apex:outputField label="Salesforce Account" value="{!theTMNUser.Salesforce_User_Account__c}"/>
                     </apex:pageBlockSection>
  
