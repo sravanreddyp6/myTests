@@ -130,7 +130,7 @@
 	
 		<apex:outputPanel  rendered="{! authCount[pbs] > 0}">
 		
-		<apex:pageBlockTable value="{!logMap[pbs]}" var="n">
+		<apex:pageBlockTable value="{!logMap[pbs]}" var="n" >
 		<apex:column headervalue="Received Date/Time">
 			<c:MilitaryDatetime datetimeval="{!n.received_date_time__c}"/>
 		</apex:column>
@@ -152,11 +152,11 @@
 		<apex:column headervalue="Last Modified Date/Time">
 		<c:militarydatetime datetimeval="{!n.lastmodifieddate}"/>
 		</apex:column>
-		
 		</apex:pageBlockTable>
 		</apex:outputPanel>
+		
 		<apex:outputPanel rendered="{! authCount[pbs] = 0}">
-			No authorizations for selected time period.
+			MISSING! No authorizations of draft or final status for selected time period.
 		</apex:outputPanel>
 	
      </apex:pageBlockSection>
