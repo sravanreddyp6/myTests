@@ -168,13 +168,14 @@ public with sharing class Report_DraftAuths {
                                             (payer_effective_Date__c < :endDateTime.date() OR payer_end_Date__c < :endDateTime.date())
                                         )
                                             AND Person_Being_Served__c In :selectedPBS
-                                            AND authorization_status__c = 'Draft'
+                                            AND authorization_status__c in ('Draft','Final')
                                         ORDER BY payer_effective_date__c, payer_end_Date__c ];
 
      	ID pbsID;
        	for ( authorization__c auth : auths ) {
        		pbsID = auth.person_being_served__c;
        		system.debug('LOGMAP: ' + logmap + ', ' + logmap.size());
+       		
 			integer howmany = authcount.get(pbsID);
 			howmany += 1;
 			authcount.put( pbsID, howmany);
