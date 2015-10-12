@@ -1987,14 +1987,7 @@ public without sharing class ServiceAssignmentExt {
 				 limit 150];
 	}
 
-	 public pageReference newAuth() {
-        PageReference pr = new PageReference('/apex/AuthorizationEdit?ID=&saID=' + theServAssign.Id + '&retURL=' + ApexPages.CurrentPage().getURL());
-        pr.setRedirect( true);
-        return pr;
-
-    }
-
-
+	 
 	// END CMAUTH work
 
 	public class MyException extends Exception {}

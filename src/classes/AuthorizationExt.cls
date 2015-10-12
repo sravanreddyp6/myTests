@@ -46,7 +46,7 @@ public AuthorizationExt(ApexPages.StandardController controller) {
     if (authID != null ) {
         authorization = (Authorization__c)controller.getRecord();
         authorization = [ select id, authorization_status__c, type__c, other_authorization_type__c, reason_for_new_authorization__c, service_being_funded_string__c, payer_authorization_id__c,
-                            rate__c, received_date_time__c, rate_unit__c, rate_unit_other__c, payer_effective_date__c, payer_end_date__c, funding_source__c, funding_source__r.payer_name__c, contract_used__c, 
+                            rate__c, received_date_time__c, rate_unit__c, rate_unit_other__c, payer_effective_date__c, payer_end_date__c, funding_source__c, funding_source__r.type_of_coverage__c, funding_source__r.payer_name__c, contract_used__c, 
                             received_from__c, taken_by__c, level__c, justification__c, representing_received__c,  auth_given_method__c, comments__c, 
                             bed_hold_type__c, bed_hold_type_other__c, bed_hold_type_detail__c, bed_hold_type_detail_other__c, bed_hold_additional_detail__c, bed_hold_additional_detail_other__c, bed_hold_classification__c, parent_auth__c, original_auth__c, isRootAuth__c
                             from authorization__c
@@ -183,9 +183,6 @@ public AuthorizationExt(ApexPages.StandardController controller) {
  			if ( !string.isblank( authorization.type__c)) {
  				
             	if ( authorization.type__c == 'Open Ended Stay' || authorization.type__c == 'Defined Stay') {
-            		if (string.isblank(authorization.service_Being_Funded_string__c)) {
-            			fielderrs.add('Item/Service');
-            		}
             		if (string.isblank(authorization.rate__c)) {
             			fielderrs.add('Rate');
             		}
@@ -235,19 +232,23 @@ public AuthorizationExt(ApexPages.StandardController controller) {
 	        				fielderrs.add('Effective Date');
 	        		}
 	        		if (authorization.payer_end_date__c == null) {
-	        			if ( authorization.type__c == 'Open Ended Stay' || authorization.type__c == 'Open Ended Charge' )
+	        			if ( authorization.type__c == 'Open Ended Stay' || authorization.type__c == 'Open Ended Charge' || authorization.type__c == 'Other')
 	        				fielderrs.add('Review Date');
 	        			else
 	        				fielderrs.add('End Date');
 	        		}
         		}
         		
-        		if (String.IsBlank(authorization.received_from__c)) {
-        			fielderrs.add('Given By');
+        		if ( authorization.type__c != 'Bed Hold') {
+        			if (String.IsBlank(authorization.received_from__c)) {
+        				fielderrs.add('Given By');
+        			}
         		}
+        		
         		if (String.IsBlank(authorization.representing_received__c)) {
         			fielderrs.add('Representing (Received)');
         		}
+        		if ( authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other')
         		if (String.IsBlank(authorization.taken_by__c)) {
         			fielderrs.add('Taken By');
         		}
