@@ -48,6 +48,39 @@ public with sharing class referrals_Controller{
 		set;
 	}
 
+    //Diagnosis changes
+    public list<Diagnosis__c> diagnoses{get; set;}
+    public Diagnosis__c diag {
+        get {
+            if (diag == null)
+                diag = new Diagnosis__c();
+            return diag;
+        }
+        set;
+    }
+    public static Boolean showdiagModal { get; set; }
+    public Boolean newDiagnosis{ get; set;}
+    public string diagEditId {get; set; }
+    public void showAddDiagnosis() {
+        newDiagnosis = true;
+        showdiagModal = true;
+        diag = new Diagnosis__c();
+        System.Debug('showdiagModal='+ showdiagModal);
+    }
+    public void showEditDiagnosis() {
+        showdiagModal = true;
+        System.Debug('showdiagModal=' + showdiagModal);
+    }
+    
+         
+    public void saveDiagnosis() {
+    	system.debug(this.diag);
+		this.diagnoses.add(this.diag);
+		this.diag = new Diagnosis__c();
+    }  
+    
+    //end
+    
 	public Person_Being_Referred__c personBeingRefRecord { get; set; }
 	public List<Person_Being_Referred__c> refResults { get; set; }
 	public Contact personBeingServedRecord { get; set; }
