@@ -34,7 +34,7 @@ public with sharing class TMN_UserTriggerHandler {
     		}
     	}
     	
-        for (User u : [Select id, name, email from User where name IN :nameMap.keySet() OR email IN :emailMap.keySet()]){
+        for (User u : [Select id, name, email from User where isActive = true AND ( name IN :nameMap.keySet() OR email IN :emailMap.keySet())]){
         	if (emailMap.containsKey(u.email)) emailMap.put(u.email, u.id);
         	else nameMap.put(u.name, u.id);
         }
