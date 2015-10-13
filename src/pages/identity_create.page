@@ -1,0 +1,540 @@
+<apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            /* These are the 3 css properties you will need to change so the popup 
+            displays in the center of the screen. First set the width. Then set 
+            margin-left to negative half of what the width is. You can add 
+            the height property for a fixed size pop up if you want.*/
+            width: 500px;
+            margin-left: -250px;
+            top:100px;
+        }
+        .popupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+ .ui-autocomplete-loading { background: white url('{!URLFOR($Resource.AjaxLoad)}') right center no-repeat; }
+          .dataTable {
+			width: 100% !important;
+		}
+   		.sorting {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_both.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_disabled {
+			background: #f2f3f3 !important;
+		}
+        .ui-dialog.ui-widget.ui-widget-content.ui-corner-all{
+        	overflow: auto;
+        }
+        .dialogLoadingSpinner {
+            margin-left: 5px;
+        }
+        .pbHeaderButton1 {
+    float: right;
+    position: relative;
+    top: 10px;
+    right: 10px;
+}
+    </style>
+     <script type="text/javascript" >
+    
+        var j$ = jQuery.noConflict();
+        var glCode = {!glCodesForTherapist};
+        jQuery(document).ready(function($) {
+            j$('[id$=BAASigned]').prop('disabled', true);
+            j$('input[id$="AddAttachments"]').prop('disabled', true);
+            j$('input[id$="Alias"]').prop("readonly", true);
+            j$('[Id$=operatingGrp]').on('change', function(){document.toggleTherapyInfo();});
+ 			document.toggleTherapyInfo();
+            j$('[Id$=therapistDiscipline]').on('change', function(){j$('[Id$=glCode]').val(glCode[this.value]);});
+        });
+ 			
+    document.toggleTherapyInfo = function(){
+        var opGrp = j$('[Id$=operatingGrp]').val();
+        if (opGrp == 'Care Meridian') {
+            j$('[id$=TherapistInformation]').show();
+        }else{
+            j$('[id$=TherapistInformation]').hide();
+        }    
+    }
+
+    function dataTable() {
+                j$('table.dataTable').dataTable({
+                    searching: false,
+				paging: false,
+				bInfo: false,
+			"order": [[ 0, "asc" ]]
+		});
+    }
+        function disableAlias() {
+        j$('input[id$="Alias"]').prop("readonly", true);
+        }
+ var currentUrl = window.location.href;
+ currentUrl = currentUrl.substring(0, currentUrl.indexOf("/identity_create"));
+ var sourcePage = currentUrl +'/TMNUser_JSON?core.apexpages.devmode.url=0&identityPage=yes';
+ j$(function() {
+   var txtVal =  j$('input[id$=locationName]');
+    
+         j$('input[id$=locationName]').autocomplete({
+            source: function( request, response ) {
+
+                //Abort Ajax
+                var $this = j$(this);
+                var $element = j$(this.element);
+                var jqXHR = $element.data('jqXHR');
+                if(jqXHR)
+                    jqXHR.abort();
+
+                j$('input[id$=locationName]').addClass('ui-autocomplete-loading');
+                $element.data('jqXHR',j$.ajax({
+                    url: sourcePage+'&location='+txtVal.val(),
+                    dataType: "json",
+                    data: {
+                    },
+                    success: function( data ) {
+                        response( j$.map( data , function( item ) {
+                            return {
+                                label: '<a>'+
+                                item.location+"<br />"+
+                                '<span style="font-size:0.8em;font-style:italic">'
+                                +item.location +', '+item.state +"</span></a>",
+                                value: item.location
+                            }
+                        }));
+                    },
+                    complete: function() {
+                        $this.removeData('jqXHR');
+                        j$('input[id$=locationName]').removeClass('ui-autocomplete-loading');
+                    }
+                })
+                );
+
+            },
+            focus: function() {
+                return false;
+            },
+            select: function(event, ui) {
+                var selectedObj = ui.item;
+                setLocationDetails(selectedObj.value);
+                return true;
+            }
+        }).data("autocomplete")._renderItem = autoCompleteRender;
+
+    });
+
+function autoCompleteRender(ul, item) {
+    return j$("<li></li>").data("item.autocomplete", item).append(item.label).appendTo(ul);
+}  
+    function checkUndefined(field) {
+        if (field !== undefined) {
+            return field;
+        }
+        return " ";
+    }
+    
+    function setLocationDetails(locationId) {
+                Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.identityEditNew.LocationDetails}',
+                locationId,
+                function (result, event) {
+                    if (event.status) { // Success
+                        j$('[id$=locationLine1]').text(checkUndefined(result.Office_Location__c));
+                        j$('[id$=locationLine2]').text(checkUndefined(result.Office_Location_2__c));
+                        j$('[id$=locationCity]').text(checkUndefined(result.Work_City__c));
+                        j$('[id$=locationState]').text(checkUndefined(result.Work_State__c));                                                      
+                        j$('[id$=locationZip]').text(checkUndefined(result.Zip_Code__c));
+                        //j$('[id$=ManagerName]').val(checkUndefined(result.Manager_Name__c));
+                        j$('[id$=hiddenlocationLine1]').val(checkUndefined(result.Office_Location__c));
+                        j$('[id$=hiddenlocationLine2]').val(checkUndefined(result.Office_Location_2__c));
+                        j$('[id$=hiddenlocationCity]').val(checkUndefined(result.Work_City__c));
+                        j$('[id$=hiddenlocationState]').val(checkUndefined(result.Work_State__c));
+                        j$('[id$=hiddenlocationZip]').val(checkUndefined(result.Zip_Code__c));
+                        var locationType = checkUndefined(result.Office_Flag__c);
+                       	if(locationType == null || locationType === " "  ) {
+                       		j$('[id*="OfficeLocationType"]').text('N');
+                       	} else {
+                       	j$('[id*="OfficeLocationType"]').text(locationType);
+                       	}
+                        j$('[id$=hiddenOfficeLocationType]').val(checkUndefined(result.Office_Flag__c));
+                    } else if (event.type === 'exception') {
+                        console.log(event);
+                    } 
+                }
+            );
+
+    
+    }
+    
+      
+       j$(function() {
+    j$('[id*=AttachmentsModel]').dialog({
+      resizable: false,
+      draggable: false,
+      height:180,
+      width : 1300,
+      modal: true,
+      autoOpen: false
+    }).parent().appendTo(j$('form[id$=createForm]'));
+});
+    
+    function showAttchment() {
+       
+     j$('[id*=AttachmentsModel]').dialog("open");
+    }
+    
+    function CloseAttchment() {
+       
+     j$('[id*=AttachmentsModel]').dialog("close");
+    }
+   
+    function setEndDate() {
+    var startDate = new Date(j$('[id$=startDate]').val());
+    if(!isNaN(startDate)){
+    var endDate = startDate;
+    endDate.setDate(endDate.getDate() + 90);
+    j$('[id$=EndDate]').datepicker('option', 'minDate', startDate)
+    j$('[id$=EndDate]').datepicker('option', 'maxDate', endDate)	
+    j$('[id$=EndDate]').val(endDate.getMonth() + 1+'/'+endDate.getDate()+'/'+endDate.getFullYear());
+      }else {
+    j$('[id$=EndDate]').val('');  
+      }
+    }
+    
+    function validatePhone () {
+    var len = j$('[id$=OfficeNumber]').val();
+    			if (len.length == 10){
+    				alert('This field can\'t take more than 10 characters.');
+    				j$('[id$=OfficeNumber]').val(len.substring(0, 10));
+    			} 
+    }
+    
+    function validateMobilePhone () {
+    var len = j$('[id$=MobileNumber]').val();
+    			if (len.length == 10){
+    			alert('This field can\'t take more than 10 characters.');
+    				j$('[id$=MobileNumber]').val(len.substring(0, 10));
+    			} 
+    }
+    
+    function managerlookUP() {
+    	j$('[id*=ManagerSearchModal]').dialog("open");
+    }
+    
+   j$(function() {
+    j$('[id*=ManagerSearchModal]').dialog({
+      resizable: false,
+      draggable: false,
+      height:400,
+      width : 1200,
+      modal: true,
+      autoOpen: false,
+      top: 400
+    });
+}); 
+    function findManagers() {
+    getManagerList(j$('[id$=managerFirstName]').val(),j$('[id$=managerLastName]').val());
+    }
+    function selected(managerid,ManagerName) {
+        
+    j$('[id*=ManagerSearchModal]').dialog("close");
+        j$('[id$=managerId]').val(managerid);
+        j$('[id$=ManagerName]').val(ManagerName);
+        j$('[id$=managerFirstName]').val('');
+        j$('[id$=managerLastName]').val('');
+    }
+    function closeDialog() {
+    j$('[id*=ManagerSearchModal]').dialog("close");
+        j$('[id$=managerFirstName]').val('');
+        j$('[id$=managerLastName]').val('');
+    }
+    
+    </script>  
+        <apex:form id="createForm" >
+            <apex:actionFunction name="getManagerList" action="{!getManagerList}"   reRender="SearchResults" oncomplete="dataTable();" status="lookupstatus">
+             <apex:param name="managerFirstName" value="" assignTo="{!managerFirstName}" />
+        	<apex:param name="managerLastName" value="" assignTo="{!managerLastName}" />
+            </apex:actionFunction>   
+ 			<apex:pageMessages id="pageMsg"/>            
+             <apex:pageBlock title="TMN User" mode="edit" id="createBlock" >
+               <div class="pbHeaderButton">  
+                    <apex:commandButton value="Save" action="{!Save}" />
+                    <apex:commandButton value="Cancel" action="{!goCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
+                </div>      
+                <apex:pageBlockSection columns="2" title="Person Information" id="perInfo">
+                    <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true" taborderhint="1"/>
+                    <apex:pageBlockSectionItem >
+        					<apex:outputLabel value="Personal Email" for="PE" />
+       						<apex:inputText id="PE" value="{!TMNUser.Personal_Email__c}" />
+    				</apex:pageBlockSectionItem>
+                    <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2"/>
+                    <apex:inputField label="Professional Title" value="{!TMNUser.Professional_Title__c}" taborderhint="9"/>
+                    <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true" taborderhint="3"/>
+                    <apex:outputText label="Job Status" >Active</apex:outputText>
+                    <apex:inputField label="Preferred First Name" value="{!TMNUser.Preferred_First_Name__c}" required="true" taborderhint="4"/>                    
+                    <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Start Date" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                    <apex:inputField label="Start Date" value="{!TMNUser.Hire_Date__c}"  id="startDate" taborderhint="11" onChange="setEndDate()"/>	
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                    <apex:inputField label="Preferred Last Name" value="{!TMNUser.Preferred_Last_Name__c}" required="true" taborderhint="5"/>       
+                    <apex:pageBlockSectionItem helpText="End Date Cann't be more than 90 days from Start Date">
+                    <apex:outputLabel value="End Date" />
+                         <apex:outputPanel layout="block" >
+                            <apex:outputPanel layout="block" />
+                    <apex:inputField value="{!TMNUser.Last_Day__c}" required="false" id="EndDate" taborderhint="12"/>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
+                    <apex:pageBlockSectionItem >
+                    <apex:outputText value="Office Phone" />
+                    <apex:outputPanel styleClass="nowrap">
+                      <apex:inputField label="Office Phone" value="{!TMNUser.Office_Phone__c}" type="tel" taborderhint="6" id="OfficeNumber" onkeydown="validatePhone()"/>
+                        <apex:outputLabel value="Ext " />
+                        <apex:inputField value="{!TMNUser.phone_ext__c}" type="tel" taborderhint="6" style="width: 40px;" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem />
+                    <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7" id="MobileNumber" onkeydown="validateMobilePhone()"/>
+                    <apex:inputField label="Location" value="{!TMNUser.Personal_Location__c}" taborderhint="12" />
+                    <apex:inputField label="City" value="{!TMNUser.Personal_City__c}" taborderhint="7" />
+                    <apex:inputField label="Zip" value="{!TMNUser.Personal_Zip__c}" taborderhint="12" />
+
+                </apex:pageBlockSection>
+                <apex:actionRegion >
+                <apex:pageBlockSection columns="2" title="Management Hierarchy" id="aliasBlock">                    
+                    <apex:inputField label="Alias" value="{!TMNUser.Alias_Lookup__c}" taborderhint="13" id="Alias">
+                        <apex:actionSupport event="onchange" action="{!updateAliasInfo}" rerender="aliasBlock" onComplete="disableAlias();j$('[Id$=operatingGrp]').on('change', function(){document.toggleTherapyInfo();}); document.toggleTherapyInfo();return false;"/>
+                    </apex:inputField>                    
+                    <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}" id="servline"/>                                                                                                                           
+                    <apex:selectList Id="operatingGrp" label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="13">
+                        <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
+                        <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
+                        <apex:selectOption itemValue="Corporate" itemLabel="Corporate"/>
+                        <apex:selectOption itemValue="Cambridge" itemLabel="Hastings"/>         
+                        <apex:selectOption itemValue="NeuroRestorative" itemLabel="NeuroRestorative"/>
+                        <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
+                    </apex:selectList>                    
+                    <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}" id="busunit"/>                                                                                
+                    <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}" id="servregion"/>
+                   <!-- <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}" id="prgstring"/>  -->                                                                                       
+                </apex:pageBlockSection>
+                </apex:actionRegion>               
+                <apex:pageBlockSection columns="2" title="Location" id="locInfo">
+                    <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" id="locationName" required="true" taborderhint="18" style="width: 300px;"/>    
+                   <!--  <apex:selectList label="State" value="{!TMNUser.Work_State__c}" size="1" required="true" tabindex="22">
+                        <apex:selectOption itemValue="AL" itemLabel="Alabama"/>
+                        <apex:selectOption itemValue="AK" itemLabel="Alaska"/>
+                        <apex:selectOption itemValue="AZ" itemLabel="Arizona"/>
+                        <apex:selectOption itemValue="AR" itemLabel="Arkansas"/>
+                        <apex:selectOption itemValue="CA" itemLabel="California"/>
+                        <apex:selectOption itemValue="CO" itemLabel="Colorado"/>
+                        <apex:selectOption itemValue="CT" itemLabel="Connecticut"/>
+                        <apex:selectOption itemValue="DE" itemLabel="Delaware"/>
+                        <apex:selectOption itemValue="FL" itemLabel="Florida"/>
+                        <apex:selectOption itemValue="GA" itemLabel="Georgia"/>
+                        <apex:selectOption itemValue="HI" itemLabel="Hawaii"/>
+                        <apex:selectOption itemValue="ID" itemLabel="Idaho"/>
+                        <apex:selectOption itemValue="IL" itemLabel="Illinois"/>
+                        <apex:selectOption itemValue="IN" itemLabel="Indiana"/>
+                        <apex:selectOption itemValue="IA" itemLabel="Iowa"/>
+                        <apex:selectOption itemValue="KS" itemLabel="Kansas"/>
+                        <apex:selectOption itemValue="KY" itemLabel="Kentucky"/>
+                        <apex:selectOption itemValue="LA" itemLabel="Louisiana"/>
+                        <apex:selectOption itemValue="ME" itemLabel="Maine"/>
+                        <apex:selectOption itemValue="MD" itemLabel="Maryland"/>
+                        <apex:selectOption itemValue="MA" itemLabel="Massachusetts"/>
+                        <apex:selectOption itemValue="MI" itemLabel="Michigan"/>
+                        <apex:selectOption itemValue="MN" itemLabel="Minnesota"/>
+                        <apex:selectOption itemValue="MS" itemLabel="Mississippi"/>
+                        <apex:selectOption itemValue="MO" itemLabel="Missouri"/>
+                        <apex:selectOption itemValue="MT" itemLabel="Montana"/>
+                        <apex:selectOption itemValue="NE" itemLabel="Nebraska"/>
+                        <apex:selectOption itemValue="NV" itemLabel="Nevada"/>
+                        <apex:selectOption itemValue="NH" itemLabel="New Hampshire"/>
+                        <apex:selectOption itemValue="NJ" itemLabel="New Jersey"/>
+                        <apex:selectOption itemValue="NM" itemLabel="New Mexico"/>
+                        <apex:selectOption itemValue="NY" itemLabel="New York"/>
+                        <apex:selectOption itemValue="NC" itemLabel="North Carolina"/>
+                        <apex:selectOption itemValue="ND" itemLabel="North Dakota"/>
+                        <apex:selectOption itemValue="OH" itemLabel="Ohio"/>
+                        <apex:selectOption itemValue="OK" itemLabel="Oklahoma"/>
+                        <apex:selectOption itemValue="OR" itemLabel="Oregon"/>
+                        <apex:selectOption itemValue="PA" itemLabel="Pennsylvania"/>
+                        <apex:selectOption itemValue="RI" itemLabel="Rhode Island"/>
+                        <apex:selectOption itemValue="SC" itemLabel="South Carolina"/>
+                        <apex:selectOption itemValue="SD" itemLabel="South Dakota"/>
+                        <apex:selectOption itemValue="TN" itemLabel="Tennessee"/>
+                        <apex:selectOption itemValue="TX" itemLabel="Texas"/>
+                        <apex:selectOption itemValue="UT" itemLabel="Utah"/>
+                        <apex:selectOption itemValue="VT" itemLabel="Vermont"/>
+                        <apex:selectOption itemValue="VA" itemLabel="Virginia"/>
+                        <apex:selectOption itemValue="WA" itemLabel="Washington"/>
+                        <apex:selectOption itemValue="WV" itemLabel="West Virginia"/>
+                        <apex:selectOption itemValue="WI" itemLabel="Wisconsin"/>
+                        <apex:selectOption itemValue="WY" itemLabel="Wyoming"/>
+                    </apex:selectList>
+                    <apex:inputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" required="true" taborderhint="19" />
+                    <apex:inputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" required="true" taborderhint="23"/>
+                    <apex:inputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" taborderhint="20"/>
+                    <apex:inputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}"/>                                                  
+                    <apex:inputField label="City" value="{!TMNUser.Work_City__c}" required="true" taborderhint="21"/>  -->   
+                    <apex:outputField label="State" value="{!TMNUser.Work_State__c}" id="locationState"/>
+                    <apex:outputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" id="locationLine1" />
+                    <apex:outputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" id="locationZip"/>
+                    <apex:outputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" id="locationLine2"/>
+                    <apex:outputText label="Office Location" value="Y"  rendered="{!TMNUser.Office_Flag__c=='Y'}" id="OfficeLocationType1"/>
+                    <apex:outputText label="Office Location" value="N"  rendered="{!TMNUser.Office_Flag__c!='Y'}" id="OfficeLocationType2"/>                 
+                    <apex:outputField label="City" value="{!TMNUser.Work_City__c}" id="locationCity"/>     
+                </apex:pageBlockSection>
+                    <apex:inputhidden value="{!TMNUser.Office_Location__c}" id="hiddenlocationLine1" />
+                    <apex:inputhidden value="{!TMNUser.Office_Location_2__c}" id="hiddenlocationLine2"/>
+                    <apex:inputhidden value="{!TMNUser.Zip_Code__c}" id="hiddenlocationZip"/>
+                    <apex:inputhidden value="{!TMNUser.Work_City__c}" id="hiddenlocationCity"/>  
+                    <apex:inputhidden value="{!TMNUser.Office_Location_PickList__c}"/>           
+                    <apex:inputhidden value="{!TMNUser.Work_State__c}" id="hiddenlocationState"/>
+                   <apex:inputhidden value="{!TMNUser.Office_Flag__c}" id="hiddenOfficeLocationType"/>  
+
+					<apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo"> 
+					
+					<apex:pageBlockSectionItem >
+					 <apex:outputLabel value="Manager Name"  /> 
+					 <apex:pageBlockSectionItem >
+					<apex:inputText label="Manager Name" value="{!TMNUser.Manager_Name__c}"  id="ManagerName" required="true" />
+					 <a onClick="managerlookUP();">
+                            <img valign="bottom" src="/s.gif" alt="Manager Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Manager Lookup (New Window)" />
+                        </a>
+                       </apex:pageBlockSectionItem> 
+                      </apex:pageBlockSectionItem>  
+					</apex:pageBlockSection>
+					 <apex:inputhidden value="{!TMNUser.Manager_Lookup__c}" id="managerId"/> 
+                    <apex:pageBlockSection columns="2" title="Vendor Information" > 
+				<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Vendor" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                     <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}"  id="vendorList" />	
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                       <apex:pageBlockSectionItem >
+                      <apex:outputText value="BAA Signed " />
+                    <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
+                    </apex:pageBlockSectionItem>
+                   <!-- <apex:pageBlockSectionItem >
+                      <apex:outputText value="Vendor Name" />
+                        <apex:outputPanel styleClass="nowrap">
+                       <apex:inputField value="{!TMNUser.Vendor_Name__c}" id="VendorName"  ></apex:inputField>  
+                       <apex:commandButton value="Add Attachments"  onclick="showAttchment();return false;" id="AddAttachments" />
+                    </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                                    <apex:outputPanel id="AttachmentsModel" style="display:none">
+                          <apex:pageBlock title="Upload Attachments">
+                <apex:repeat value="{!newAttachments}" var="newAtt">
+                <apex:pageBlockSection columns="2" id="files">
+                    <apex:pageBlockSectionItem labelStyle="width: 10%">
+                        <apex:inputFile value="{!newAtt.body}" filename="{!newAtt.name}"/> 
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Description"/>
+                        <apex:inputText value="{!newAtt.Description}"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:repeat>  
+             <apex:commandButton value="OK" onClick="CloseAttchment();return false;"/>
+            <apex:commandButton value="Cancel" />                 
+            </apex:pageBlock>                  
+
+                    </apex:outputPanel> -->
+                </apex:pageBlockSection>
+                        
+                <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}"> 
+                        <apex:inputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" Id="therapistDiscipline" />
+                        <apex:inputField label="GL Code" value="{!TMNUser.GL_Code__c}" Id="glCode"/>
+                        <apex:inputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />
+                        <apex:inputField label="Account #" value="{!TMNUser.Account_Number__c}" /> 
+                        <apex:inputField label="Rate (per Hour)" value="{!TMNUser.Rate__c}" />
+                        <apex:inputField label="IC Agreement Executed On" value="{!TMNUser.IC_Agreement_Executed_Date__c}" />
+                        <apex:inputField label="CPR Expires" value="{!TMNUser.CPR_Expires__c}" />
+                        <apex:inputField label="License Expires" value="{!TMNUser.License_Expires__c}" />
+                        <apex:inputField label="Insurance Expires" value="{!TMNUser.Insurance_Expires__c}" />
+                        <apex:inputField label="Notes" value="{!TMNUser.Notes__c}" />
+                </apex:pageBlockSection>
+                
+                 <apex:outputPanel id="ManagerSearchModal" title="Manager Search" style="display:none">
+                    <apex:outputLabel >First Name &nbsp; </apex:outputLabel> <apex:inputText id="managerFirstName" value="{!managerFirstName}"  html-placeholder="First Name..."   />  &nbsp;&nbsp;&nbsp;&nbsp; 
+                    <apex:outputLabel >Last Name &nbsp; </apex:outputLabel> <apex:inputText id="managerLastName" value="{!managerLastName}"  html-placeholder="Last Name..."   /> &nbsp;&nbsp;&nbsp;&nbsp; 
+                       <apex:commandButton id="search" value="Search"   onclick="findManagers()" status="actionstatus"/> &nbsp;&nbsp;&nbsp;&nbsp;
+                     	<apex:commandButton value="Cancel" onClick="closeDialog();"/>
+                     <br/> <br/>
+                    <apex:actionregion >
+                     <apex:actionStatus id="lookupstatus">
+                                        <apex:facet name="start">
+                                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                        </apex:facet>
+                                        <apex:facet name="stop">
+                     <apex:pageBlockSection id="SearchResults">
+                         <apex:outputText rendered="{!tmnManagerList.size=0}" value="No records to display" />
+             			 <apex:pageBlockTable style="width: 100%;" id="ManagerList" value="{!tmnManagerList}" var="tmn" styleClass="dataTable" rendered="{!(tmnManagerList!=null && tmnManagerList.size>0)}">
+                             <apex:column headerValue="User Name">
+                        <a   href="#" onClick="selected('{!tmn.id}','{!tmn.name}')" >{!tmn.name}</a>
+                </apex:column>
+ 				<apex:column style="padding-right: 9px;" headerValue="Email">
+                   <apex:outputText value="{!tmn.Email__c}" />
+                </apex:column>
+				<apex:column headerValue="Employee Number">{!tmn.Employee_Number__c}</apex:column>
+				<apex:column headerValue="Employee Type">{!tmn.Employee_Type__c}</apex:column>
+				<apex:column headerValue="Job Title">{!tmn.Job_Title__c}</apex:column>
+				<apex:column headerValue="Manager Email">{!tmn.Manager_Email__c}</apex:column>
+				<apex:column headerValue="Work State">{!tmn.Work_State__c}</apex:column>
+				<apex:column headerValue="Operating Group">{!tmn.Operating_Group__c}</apex:column>
+			</apex:pageBlockTable>
+            </apex:pageBlockSection>  
+            		</apex:facet>          
+				</apex:actionStatus>
+				</apex:actionregion>
+            </apex:outputPanel>
+                    <div class="pbHeaderButton1">  
+                    <apex:commandButton value="Save" action="{!Save}" />
+                    <apex:commandButton value="Cancel" action="{!goCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
+                </div>      
+            
+            </apex:pageBlock>
+        </apex:form>
+        
+</apex:page>
