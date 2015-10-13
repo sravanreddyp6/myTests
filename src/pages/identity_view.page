@@ -1,12 +1,7 @@
 <apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c">
 <style>
+
 .pbHeaderButton1 {
-    float: right;
-    position: relative;
-    top: -50px;
-    right: 10px;
-}
-.pbHeaderButton2 {
     float: right;
     position: relative;
     top: 10px;
@@ -120,7 +115,7 @@
                 </apex:column>
                 </apex:pageBlockTable>
             </apex:pageBlock>      -->  
-                    <div class="pbHeaderButton2">   
+                    <div class="pbHeaderButton1">   
                     <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
                    <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/>      
                    <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>

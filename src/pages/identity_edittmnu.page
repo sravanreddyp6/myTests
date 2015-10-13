@@ -66,7 +66,14 @@
         .dialogLoadingSpinner {
             margin-left: 5px;
         }
-    </style>
+ 
+		.pbHeaderButton1 {
+		    float: right;
+		    position: relative;
+		    top: 10px;
+		    right: 10px;
+		}
+</style>
     <script type="text/javascript" >
     
       var j$ = jQuery.noConflict();
@@ -362,7 +369,7 @@ function autoCompleteRender(ul, item) {
         					<apex:outputLabel value="Personal Email" for="PE" />
        						<apex:inputText id="PE" value="{!TMNUser.Personal_Email__c}" />
     				</apex:pageBlockSectionItem>
-    				<apex:outputField  value="{!TMNUser.Personal_Email__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee' }" />
+    				<apex:outputField value="{!TMNUser.Personal_Email__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee' }" />
                     <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true" taborderhint="3" rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}"/>
                     <apex:outputField label="Last Name" value="{!TMNUser.Last_Name__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee' }" />
                     <apex:outputField label="Job Title" value="{!TMNUser.Job_Title__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee' }"/>
@@ -385,7 +392,7 @@ function autoCompleteRender(ul, item) {
                         <apex:inputField value="{!TMNUser.phone_ext__c}" type="tel" taborderhint="6" style="width: 40px;" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>  
-                 <apex:outputField label="Office Phone" value="{!TMNUser.Office_Phone__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee' }" />                    
+                 <apex:outputText label="Office Phone" rendered="{!TMNUser.Current_Person_Type__c=='Employee' }" > <apex:outputText rendered="{!TMNUser.Office_Phone__c!='Call Manager'}">{!TMNUser.Office_Phone__c}</apex:outputText> <apex:outputText rendered="{!TMNUser.phone_ext__c!=null}"> Ext:{!TMNUser.phone_ext__c}</apex:outputText></apex:outputText>                
                 <apex:pageBlockSectionItem rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}">
                     <apex:outputLabel value="Start Date" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
@@ -485,7 +492,7 @@ function autoCompleteRender(ul, item) {
                         </apex:PageBlockSection>  
  
                    <apex:pageBlockSection columns="2" title="Vendor Information"  rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}">                                                                                                                                                                                                                                        
-     				<apex:pageBlockSectionItem  >
+     				<apex:pageBlockSectionItem >
                     <apex:outputLabel value="Vendor" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
@@ -635,6 +642,11 @@ function autoCompleteRender(ul, item) {
 				</apex:actionStatus>
 				</apex:actionregion>
             </apex:outputPanel>
+               <div class="pbHeaderButton1">   
+                    <apex:commandButton value="Save" action="{!Save}"/>
+                    <apex:commandButton value="Cancel" action="{!goCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
+                </div>            
+            
             </apex:pageBlock>
         </apex:form>
         <div id="dialog-confirm" class="dialog" title="Delete Attachment?"  style="display:none">
