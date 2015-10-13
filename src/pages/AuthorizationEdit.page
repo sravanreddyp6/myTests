@@ -20,6 +20,7 @@ jQuery(document).ready(function ($) {
 	setUpFields = function () {
 				$('body input').on("change", function (event) {
 					applyRulesToField(event.target);
+					
 				});
 				$('body select').on("change", function (event) {
 					applyRulesToField(event.target);
@@ -31,8 +32,80 @@ jQuery(document).ready(function ($) {
 					applyRulesToField(target);
 				});
 			}
-			setUpFields();
-		});
+	
+	
+	loadSubtypes = function ( source, target, level, sublevel ) {
+	
+		// for the source value, find the values to load into target
+		var subarray = (level == 1) ?  {!mapdepPL1} : {!mapdepPL2};
+		var $select = $('[id$=' + target + ']');
+		$select.find('option').remove();
+		$select.change();
+		
+		// if sublevel, remove options
+		if ( sublevel ) {
+			var $select2 = $('[id$=' + sublevel + ']');
+			$select2.find('option').remove();
+			$('<option>').val('').text('--None--').appendTo($select2);	// add none option
+			$select2.prop('disabled', true);
+			$select2.change();
+		}
+				
+		var setVals = false;
+		$('<option>').val('').text('--None--').appendTo($select);	// add none option
+		subarray && $.each( subarray, function( key, value ) {
+			if ( key == $(source).val() ) {
+				if ( value instanceof Array && value.length > 0) {
+					$.each( value, function( _, str ) {
+						$('<option>').val(str).text(str).appendTo($select);
+						});
+						
+					setVals = true;
+					return false;
+					}
+
+				} 
+			});
+		if ( !setVals ) { // it was empty
+			$select.prop('disabled', true);
+		} else {
+			$select.prop('disabled', false);		
+	 		}
+	 		 
+		}
+		
+	setInitialTypes = function ( dettype, addtype) {
+		// bed hold type already rendered so trigger the change event on it
+		var $bht =  $('[id$=bht]');
+		$bht.change();
+		
+		// now set the value of the subtype field
+		var $bhd =  $('[id$=bhd]');
+		$bhd.val(dettype);
+		$bhd.change();
+		
+		// now set the sub subtype
+		var $bhad = $('[id$=bhad]');
+		$bhad.val(addtype);
+		
+		// first time around need to reset the "other values" that were cleared by the change calls
+		$('[id$=bedholdtypeother]').val('{!authorization.bed_hold_type_other__c}');
+		$('[id$=bedholdtypedetailother]').val('{!authorization.bed_hold_type_detail_other__c}');
+		$('[id$=bedholdaddldetailother]').val('{!authorization.bed_hold_additional_detail_other__c}');
+	}
+	
+	setHiddenVal = function ( source, target ) {
+		var $source = $(source);
+		var $target = $('[id$=' + target + ']');
+		$target.val( $source.val());
+		
+	}
+		
+		setInitialTypes('{! authorization.bed_hold_type_detail__c}','{! authorization.bed_hold_additional_detail__c}');
+		setUpFields(); 
+	});
+		
+		
 		
 </script>
 
@@ -40,11 +113,8 @@ jQuery(document).ready(function ($) {
 <br/>
 <apex:form id="authForm">
 
-<div style="display:block">
-<apex:inputField id="bh" value="{!authorization.bed_hold_type__c}" />
-<apex:inputField id="bhd" value="{!authorization.bed_hold_type_detail__c}" />
-<apex:inputField id="bhad" value="{!authorization.bed_hold_additional_Detail__c}" />
-</div>
+<apex:inputHidden id="txtbhd" value="{!authorization.bed_hold_type_detail__c}" />
+<apex:inputHidden id="txtbhad" value="{!authorization.bed_hold_additional_detail__c}" />
 
 <apex:pageMessages />   
 <apex:pageBlock title="Authorization">
@@ -74,7 +144,7 @@ jQuery(document).ready(function ($) {
 								<apex:facet name="stop"> </apex:facet>
 							</apex:actionStatus>
 	        <apex:inputField value="{!authorization.Type__c}">  
-    	    <apex:actionSupport event="onchange" action="{!changeAuthType}" status="typeStatus" rerender="authdetail1, authdetail2, authdetail"/>
+    	    <apex:actionSupport event="onchange" action="{!changeAuthType}" oncomplete="setUpFields(); setInitialTypes();" status="typeStatus" rerender="authdetail1, authdetail2, authdetail"/>
     	    </apex:inputField>
     	    <apex:inputField id="typeother" value="{!authorization.Other_Authorization_Type__c}" rendered="{!authorization.Type__c == 'Other'}" />
         </apex:actionregion>
@@ -99,7 +169,7 @@ jQuery(document).ready(function ($) {
         	<apex:pageBlockSectionItem>
         	<apex:outputLabel value="Bed Hold Type" />
         	<apex:outputPanel>
-	        <apex:inputField value="{!authorization.Bed_Hold_Type__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.bedholdtypeother}&quot;}"/>
+        	<apex:inputField id="bht" value="{!authorization.Bed_Hold_Type__c}" onchange="loadSubtypes(this, 'bhd', 1, 'bhad');" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.bedholdtypeother}&quot;}"/>
 	        &nbsp;<apex:inputField id="bedholdtypeother" value="{!authorization.Bed_Hold_Type_Other__c}" />
 	        </apex:outputPanel>
 	        </apex:pageBlockSectionItem>
@@ -110,10 +180,8 @@ jQuery(document).ready(function ($) {
         	<apex:pageBlockSectionItem>
         	<apex:outputLabel value="Type Detail" />
         	<apex:outputPanel>
-        	<div class="bedholddetailwrapper">
-	        <apex:inputField id="bedholddetailpicklist" value="{!authorization.Bed_Hold_Type_Detail__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.bedholdtypedetailother}&quot;}" />
+        	<select id="bhd" onchange="loadSubtypes(this,'bhad', 2, null); setHiddenVal(this, 'txtbhd')" data-rules='{"Other": "{!$Component.bedholdtypedetailother}"}' ></select>
 	        &nbsp;<apex:inputField id="bedholdtypedetailother" value="{!authorization.Bed_Hold_Type_Detail_Other__c}" />
-	        </div>
 	        </apex:outputPanel>
 	        </apex:pageBlockSectionItem>
 	        
@@ -128,7 +196,7 @@ jQuery(document).ready(function ($) {
 	        <apex:pageBlockSectionItem>
         	<apex:outputLabel value="Additional Detail" />
         	<apex:outputPanel>
-	        <apex:inputField value="{!authorization.Bed_Hold_Additional_Detail__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.bedholdaddldetailother}&quot;}" />
+        	<select id="bhad" onchange="setHiddenVal(this, 'txtbhad')" data-rules='{"Other": "{!$Component.bedholdaddldetailother}"}' ></select>
 	        &nbsp;<apex:inputfield id="bedholdaddldetailother" value="{!authorization.Bed_Hold_Additional_Detail_Other__c}" />
 	        </apex:outputPanel>
 	        </apex:pageBlockSectionItem>
