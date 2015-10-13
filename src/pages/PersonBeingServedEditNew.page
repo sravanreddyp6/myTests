@@ -7,6 +7,8 @@
      <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
     <style type="text/css">
         .nowrap {
             white-space: nowrap;
@@ -47,6 +49,11 @@
             }
             setUpFields();
             setUpTabOrder();
+            j$('.datepicker').datetimepicker({
+				timepicker: false,
+				format: 'm/d/Y',
+				closeOnDateSelect: true
+			});
 
             // this is to remove the disabled property from
             $('form').bind('submit', function() {
@@ -309,7 +316,7 @@
                 
                 <apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" >
                 	<apex:outputLabel value="First Name" for="FirstNameInput" />
-                	<apex:outputPanel>
+                	<apex:outputPanel >
                 		<apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput" required="true"  html-data-countInFormProgress="1" />
                 		<label for="pLastName2" style="display: none;" >Last Name</label>
                 		<input id="pLastName2" value="{!Contact.LastName}" style="display: none;"  data-countInFormProgress="1" /> 
@@ -324,7 +331,7 @@
                     <apex:outputLabel value="Date of Birth" for="txtDOB" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                            <apex:inputfield id="txtDOB" taborderhint="1" value="{!Contact.Birthdate}" label="Date of Birth" required="true"  html-data-countInFormProgress="1" />
+                            <apex:inputfield id="txtDOB" taborderhint="1" styleClass="datepicker" value="{!Contact.Birthdate}" label="Date of Birth" required="true"  html-data-countInFormProgress="1" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }">

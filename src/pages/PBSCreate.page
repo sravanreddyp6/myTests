@@ -3,8 +3,9 @@
   <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-
- <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
 
 
   <style type="text/css">
@@ -53,7 +54,16 @@
 			};
 	setUpFields();
     setUpTabOrder();
+    
+    j$('.datepicker').datetimepicker({
+	timepicker: false,
+	format: 'm/d/Y',
+	closeOnDateSelect: true
+	});
+	
   });   //end "ready" function
+  
+  
 
 
   //opens the dialog
@@ -234,7 +244,8 @@
                     <apex:outputLabel value="Date of Birth" for="txtDOB" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                            <apex:inputField id="txtDOB" taborderhint="1" value="{!Account.PersonBirthdate}" label="Date of Birth" required="true" />
+                           
+                            <apex:inputField id="txtDOB" taborderhint="1" styleClass="datepicker" value="{!Account.PersonBirthdate}" label="Date of Birth" required="true" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem >
