@@ -98,7 +98,9 @@ public AuthorizationExt(ApexPages.StandardController controller) {
     initDependentPicklists();
 }
 
-
+// CMAUTH-3 - because the bed hold type dropdowns have "other" option that needs to enable/disable based on choice, we cannot use the
+// standard SF dependent picklists.  Instead we have to setup the dependency maps in the controller and then use jQuery on the edit 
+// page to drive the choices
 private void initDependentPicklists() {
 	
 	dependentPL1= new map<String,List<string>> {'Re-hospitalization' => new List<String>{'Infection','Neurological','Surgery/Procedure','Gastrointestinal','Code','Vital Sign Alteration','Lab Abnormality','Other'}, 
