@@ -14,7 +14,12 @@ public Boolean hasDraft { get; private set;}
 public List<SelectOption> fsList { get; set; }
 
 public List<Authorization__c> relatedAuthsList { get; set; }
-    
+
+public static map<string, list<string>> dependentPL1 { get; set; }
+public static map<string, list<string>> dependentPL2 { get; set; }
+public String mapdepPL1 {get{system.debug( dependentPL1); return JSON.serialize(dependentPL1);}}
+public String mapdepPL2 {get{return JSON.serialize(dependentPL2);}}
+
 public AuthorizationExt(ApexPages.StandardController controller) {
 
      // service assignment ID is passed in - get the other params needed for personal record connection
@@ -90,8 +95,25 @@ public AuthorizationExt(ApexPages.StandardController controller) {
         }
     }
     
+    initDependentPicklists();
 }
-    
+
+
+private void initDependentPicklists() {
+	
+	dependentPL1= new map<String,List<string>> {'Re-hospitalization' => new List<String>{'Infection','Neurological','Surgery/Procedure','Gastrointestinal','Code','Vital Sign Alteration','Lab Abnormality','Other'}, 
+																			'Therapeutic Home Visit'=>  new List<String>{},'Other'=> new List<String>{}
+																			};
+	system.debug( dependentPL1);
+	dependentPL2 = new map<String,List<string>> {'Infection' =>  new List<String>{'Sepsis','URI','UTI','Other'}, 
+																			'Neurological' =>  new List<String>{'Alteration in LOC','Hydrocephalus','Seizure','Other'},
+																			'Surgery/Procedure' =>  new List<String>{'Neuro','Ortho','GI','GU','Skin','Other'}, 
+																			'Gastrointestinal' => new List<String> {'Bleeding','Tube Dislodged'}, 
+																			'Code'=>  new List<String>{'Full Code','No-Code'}};
+	system.debug( dependentPL2);
+	}
+ 	 
+	   
     public pageReference redirectToView( ID authId, ID servAssign ) {
             PageReference pr = new PageReference('/apex/AuthorizationView?id=' + authId + '&saID=' + servAssign);
             pr.setRedirect( true);

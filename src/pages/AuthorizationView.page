@@ -45,16 +45,16 @@ var j$ = jQuery.noConflict();
         
         <apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
         
-	        <apex:outputField value="{!authorization.Bed_Hold_Type__c}" />
+        	<apex:outputText label="Bed Hold Type" value="{!authorization.Bed_Hold_Type__c + if ( authorization.Bed_Hold_Type__c = 'Other', ': ' + authorization.bed_hold_type_other__c, '')} " /> 
         	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" />
 
-	        <apex:outputField value="{!authorization.Bed_Hold_Type_Detail__c}" />
+	        <apex:outputText label="Type Detail" value="{!authorization.Bed_Hold_Type_Detail__c + if ( authorization.Bed_Hold_Type_Detail__c = 'Other', ': ' + authorization.bed_hold_type_detail_other__c, '')}" />
     	    <apex:pageBlockSectionItem >
         		<apex:outputLabel value="Received Date/Time" />
     	    	<c:MilitaryDatetime datetimeval="{!authorization.Received_Date_Time__c}" />
         	</apex:pageBlockSectionItem>	
 
-	        <apex:outputField value="{!authorization.Bed_Hold_Additional_Detail__c}" />
+	        <apex:outputText label="Additional Detail" value="{!authorization.Bed_Hold_Additional_Detail__c  + if ( authorization.Bed_Hold_Additional_Detail__c = 'Other', ': ' + authorization.Bed_Hold_Additional_Detail_Other__c, '')}" />
 		    <apex:outputField value="{!authorization.Payer_Effective_Date__c}" label="Start Date"/>
 		    
 		    <apex:outputField value="{!authorization.Bed_Hold_Classification__c}"  />
