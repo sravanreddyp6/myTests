@@ -21,8 +21,9 @@ public with sharing class Notes_Case_Management implements AuthenticatedAction {
 			this.progressNote.Person_Being_Served__c = serviceAssignment.Admission__r.Person_Being_Served__c;
 			this.progressNote.RecordTypeid = [SELECT id FROM RecordType where DeveloperName='Case_Management_Note' and SobjectType='Progress_Note__c' limit 1].id;
 			this.progressNote.Status__c = 'Draft';
-			this.progressNote.Start_Time__c = DateTime.now().addDays(-10);
-			this.progressNote.End_Time__c = DateTime.now().addDays(-9);
+			DateTime now = DateTime.now();
+			this.progressNote.Start_Time__c = now.addSeconds(-2);
+			this.progressNote.End_Time__c = now.addSeconds(-1);
 		}
 
 		isEditMode = this.progressNote.Id == null || (params.containsKey('mode') && params.get('mode') == 'edit');
