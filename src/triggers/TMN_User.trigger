@@ -3,18 +3,18 @@ after update, before delete, before insert, before update) {
 
     TMN_UserTriggerHandler handler = new TMN_UserTriggerHandler(true);
 
-    /* Before Insert 
+     //Before Insert 
     if(Trigger.isInsert && Trigger.isBefore){
         handler.OnBeforeInsert(Trigger.new);
-    }*/
+    }
     /* After Insert update*/
     if((Trigger.isInsert || Trigger.isUpdate) && Trigger.isAfter){
         handler.OnAfterInsertUpdate(Trigger.oldMap, Trigger.new, Trigger.newMap);
     }
     
-    /* Before Update 
+    // Before Update 
     else if(Trigger.isUpdate && Trigger.isBefore){
-        handler.OnBeforeUpdate(Trigger.old, Trigger.new, Trigger.newMap);
+        handler.OnBeforeUpdate(Trigger.new, Trigger.newMap, Trigger.Old, Trigger.oldMap);
     }
     /* After Update 
     else if(Trigger.isUpdate && Trigger.isAfter){

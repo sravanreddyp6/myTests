@@ -3,7 +3,15 @@ public with sharing class TMN_UserTriggerHandler {
     public TMN_UserTriggerHandler(boolean isExecuting){
         m_isExecuting = isExecuting;
     }
+    //Before Insert
+    public void onBeforeInsert(List<TMN_user__c> newObjects){
+    	setManagerLookup(newObjects, null);
+    }
     
+    //Before update
+    public void onBeforeUpdate(List<TMN_user__c> updatedObjects, map<Id, TMN_User__c> newObjMap,List<TMN_user__c> oldObjects, map<Id, TMN_User__c> oldObjMap){
+    	setManagerLookup(updatedObjects, oldObjMap);
+    }
     
     public void OnAfterInsertUpdate(map<Id, TMN_User__c> oldObjMap, list<TMN_User__c> newObj, map<Id, TMN_User__c> newObjMap){
     	map<String,id> emailMap = new map<String,id>();
@@ -44,6 +52,44 @@ public with sharing class TMN_UserTriggerHandler {
         }
                 
         insert taskToInsert;
+    }
+    
+    //Set the Manager lookup field based on the email address provided - Sravan - 10/13/2015
+    public void setManagerLookup(List<TMN_User__c> tmnUsers, Map<id,TMN_user__c> oldVersion){
+    	set<string> managerEmails = new set<string>();
+    	map<string, id> emailMap = new map<string,id>();
+    	
+    	if(null == oldVersion){
+	    	for(TMN_user__c t: tmnUsers){
+	    		if(string.isNotBlank(t.Manager_Email__c) && string.isBLANK(t.Manager_Lookup__c)){
+	    			managerEmails.add(t.Manager_Email__c);
+	    		}
+	    	}
+    	}else if(oldVersion.size() > 0){
+    		for(TMN_user__c t: tmnUsers){
+	    		if( (string.isNotBlank(t.Manager_Email__c) && string.isBLANK(t.Manager_Lookup__c)) || (null != oldVersion.get(t.Id).Manager_Email__c && null != t.Manager_Email__c && oldVersion.get(t.Id).Manager_Email__c != t.Manager_Email__c) ){
+	    			managerEmails.add(t.Manager_Email__c);
+	    		}
+	    		else if(null != oldVersion.get(t.Id).Manager_Email__c && string.isBLANK(t.Manager_Email__c)){
+	    			t.Manager_lookup__c = null;
+	    		}
+	    	}
+    		
+    	}
+    	
+    	for(TMN_user__c m: [SELECT Id, Email__c FROM TMN_user__c WHERE Email__c IN: managerEmails]){
+    		emailMap.put(m.Email__c, m.Id);
+    	}
+    	
+    	if(emailMap.keySet().size() > 0){
+    		for(TMN_user__c t: tmnUsers){
+	    		if(emailMap.containsKey(t.Manager_Email__c)){
+	    			t.Manager_lookup__c = emailMap.get(t.Manager_Email__c);
+	    		}
+    		
+    		}
+    	}
+    		
     }
     
 }
