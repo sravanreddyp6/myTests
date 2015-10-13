@@ -258,6 +258,10 @@ private void initDependentPicklists() {
 	        		if (authorization.payer_end_date__c == null) {
 	        			if ( authorization.type__c == 'Open Ended Stay' || authorization.type__c == 'Open Ended Charge' || authorization.type__c == 'Other')
 	        				fielderrs.add('Review Date');
+	        			else if (authorization.type__c == 'Bed Hold')
+	        				fielderrs.add('Return Date');
+	        			else if (authorization.type__c == 'Defined Stay')
+	        				fielderrs.add('Last Covered Day');
 	        			else
 	        				fielderrs.add('End Date');
 	        		}
