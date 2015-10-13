@@ -212,15 +212,24 @@
                 <apex:column headerValue="Title" value="{!wf.Professional_Title__c}"/>
                 <apex:column headerValue="Status" value="{!wf.Job_Status__c}"/>
                 <apex:column headerValue="Person Type" value="{!wf.Current_Person_Type__c}"/>   
-                 <apex:column headerValue="Action" >
-                 <apex:selectList id="MyworkForce" size="1">
+                 <apex:column headerValue="Action" rendered="{!wf.Current_Person_Type__c=='Non-Employee'}">
+                 <apex:selectList id="MyworkForce1" size="1" >
                         <apex:selectOption itemValue="" itemLabel="--- Select ---" />
                      <apex:selectOption itemValue="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="View" />
-                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Edit" rendered="{!wf.Current_Person_Type__c=='Non-Employee'}"/>  
+                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Edit" />  
                      <apex:selectOption itemValue="/apex/RequestAccess?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Request Access" />
                      <apex:selectOption itemValue="/apex/identity_Terminate?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" />
                  </apex:selectList>
-                  <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.MyworkForce}')).val(); if (url != '') { window.location = url; } return false;" />
+                  <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.MyworkForce1}')).val(); if (url != '') { window.location = url; } return false;" />
+                 </apex:column>                        
+                <apex:column headerValue="Action" rendered="{!wf.Current_Person_Type__c!='Non-Employee'}">
+                 <apex:selectList id="MyworkForce2" size="1" >
+                        <apex:selectOption itemValue="" itemLabel="--- Select ---" />
+                     <apex:selectOption itemValue="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="View" />
+                     <apex:selectOption itemValue="/apex/RequestAccess?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Request Access" />
+                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" />
+                 </apex:selectList>
+                  <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.MyworkForce2}')).val(); if (url != '') { window.location = url; } return false;" />
                  </apex:column>                        
             </apex:pageBlockTable>
         </apex:form>      
@@ -236,15 +245,24 @@
                 <apex:column headerValue="Title" value="{!r.Professional_Title__c}" />
                 <apex:column headerValue="Status" value="{!r.Job_Status__c}"/>
                 <apex:column headerValue="Person Type" value="{!r.Current_Person_Type__c}"/>    
-                 <apex:column headerValue="Action" >
-                 <apex:selectList id="EditedList" size="1">
+                 <apex:column headerValue="Action" rendered="{!r.Current_Person_Type__c=='Non-Employee'}">
+                 <apex:selectList id="EditedList1" size="1">
                      <apex:selectOption itemValue="" itemLabel="--- Select ---" />
                      <apex:selectOption itemValue="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="View" />
-                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Edit" rendered="{!r.Current_Person_Type__c=='Non-Employee'}"/>  
+                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Edit" />  
                      <apex:selectOption itemValue="/apex/RequestAccess?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Request Access" />
                      <apex:selectOption itemValue="/apex/identity_Terminate?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" />
                  </apex:selectList>   
-                  <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.EditedList}')).val(); if (url != '') { window.location = url; } return false;" />
+                  <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.EditedList1}')).val(); if (url != '') { window.location = url; } return false;" />
+                 </apex:column>                        
+                <apex:column headerValue="Action" rendered="{!r.Current_Person_Type__c!='Non-Employee'}">
+                 <apex:selectList id="EditedList2" size="1">
+                     <apex:selectOption itemValue="" itemLabel="--- Select ---" />
+                     <apex:selectOption itemValue="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="View" />
+                     <apex:selectOption itemValue="/apex/RequestAccess?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Request Access" />
+                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" />
+                 </apex:selectList>   
+                  <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.EditedList2}')).val(); if (url != '') { window.location = url; } return false;" />
                  </apex:column>                        
             </apex:pageBlockTable>
             </apex:form>
