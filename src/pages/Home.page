@@ -270,6 +270,7 @@
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" rendered="{!NOT(canCreateProgressNotes)}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#therapyDetails" itemLabel="Therapy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
 				</apex:column>
