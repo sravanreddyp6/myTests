@@ -12,7 +12,7 @@
         <apex:form >
             <apex:pageBlock title="{!TMNUser.Name}" mode="view" >
                 <apex:pageMessages />
-               <div class="pbHeaderButton1">   
+               <div class="pbHeaderButton">   
                     <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
                    <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/>      
                    <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
