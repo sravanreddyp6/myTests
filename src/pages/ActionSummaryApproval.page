@@ -1,0 +1,34 @@
+<apex:page standardController="Action_Summary__c" extensions="Action_Summary_ApprovalForm" >
+<!-- hide detail buttons -->
+<style>
+    #topButtonRow{display: none;}
+    #bottomButtonRow{display: none;}
+</style>
+
+<apex:form >
+<apex:pageBlock id="block" >
+    <apex:pageBlockButtons >
+        <apex:commandButton value="Submit for Approval" action="{!myFinal}"  rendered="{!!No_Approval_Needed}"/>
+        <apex:commandButton value="Mark Final" action="{!myFinal}" rendered="{!No_Approval_Needed}"/>
+        <apex:commandButton value="Cancel" action="{!cancel}"/>
+    </apex:pageBlockButtons>
+    
+        <apex:pageBlockSection columns="1" >
+        <apex:pageMessages ></apex:pageMessages>
+            <apex:inputField value="{!Action_Summary__c.No_Approval_Needed__c}">
+                <apex:actionSupport event="onclick" reRender="block"/>                
+            </apex:inputField>
+            <apex:outputPanel layout="block" style="font-size: 14px; font-weight: bold; color: #4A4A56; " rendered="{!!No_Approval_Needed}" >
+                <center>Once you submit this record for approval,
+                <br/> you might not be able to edit it or recall it from the approval process depending on your settings.</center>
+            </apex:outputPanel>
+        </apex:pageBlockSection>
+    </apex:pageBlock>   
+</apex:form>  
+<br/>   
+<apex:pageBlock mode="mainDetail" >
+    <apex:detail relatedList="false"/>
+</apex:pageBlock>
+    
+
+</apex:page>
