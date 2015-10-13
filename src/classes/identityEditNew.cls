@@ -324,10 +324,25 @@ public class identityEditNew {
     public PageReference goCancel() {
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
-        	retURL = retURL+'?cancel=true';
-        PageReference cancelPage = new PageReference(retURL);
+        PageReference cancelPage =  new PageReference('/apex/identity_view?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
         cancelPage.setRedirect(true);   
         return cancelPage;
+    }
+
+    public PageReference goTerminate() {
+        Id id = ApexPages.currentPage().getParameters().get('id');
+        String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        PageReference terminatePage =  new PageReference('/apex/identity_Terminate?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
+        terminatePage.setRedirect(true);   
+        return terminatePage;
+    }
+
+    public PageReference goRequestAccess() {
+        Id id = ApexPages.currentPage().getParameters().get('id');
+        String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        PageReference requestAccessPage =  new PageReference('/apex/RequestAccess?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
+        requestAccessPage.setRedirect(true);   
+        return requestAccessPage;
     }
 
     public PageReference goBack() {

@@ -206,7 +206,7 @@
         <apex:form >
             <apex:pageBlockTable value="{!myWorkforce}" var="wf">
                  <apex:column headerValue="Name" >
-              <a href="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}" >  {!wf.Name} </a>
+              <a href="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" >  {!wf.Name} </a>
                 </apex:column>
                 <apex:column headerValue="Email" value="{!wf.Email__c}"/>
                 <apex:column headerValue="Title" value="{!wf.Professional_Title__c}"/>
@@ -214,11 +214,11 @@
                 <apex:column headerValue="Person Type" value="{!wf.Current_Person_Type__c}"/>   
                  <apex:column headerValue="Action" >
                  <apex:selectList value="{!DropdownList}" size="1">
-						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
+                        <apex:selectOption itemValue="" itemLabel="--- Select ---" />
                      <apex:selectOption itemValue="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="View" />
-                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="Edit" rendered="{!(wf.Current_Person_Type__c=='Employee' || wf.Current_Person_Type__c=='Non-Employee' )}"/>  
+                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="Edit" rendered="{!wf.Current_Person_Type__c=='Non-Employee'}"/>  
                      <apex:selectOption itemValue="/apex/RequestAccess?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="Request Access" />
-                     <apex:selectOption itemValue="/apex/identity_view?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="Terminate" rendered="{!(wf.Current_Person_Type__c=='Employee' || wf.Current_Person_Type__c=='Non-Employee' )}"/>
+                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!wf.id}&TAU={!aliasNameValue}" itemLabel="Terminate" />
                  </apex:selectList>
                   <apex:commandButton value="Go" action="{!identityGo}"/>   
                  </apex:column>                        
@@ -230,7 +230,7 @@
             <apex:form >
             <apex:pageBlockTable value="{!Records}" var="r">
                 <apex:column headerValue="Name" >
-              <a href="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}" >  {!r.Name} </a>
+              <a href="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" >  {!r.Name} </a>
                 </apex:column>
                 <apex:column headerValue="Email" value="{!r.Email__c}"/>
                 <apex:column headerValue="Title" value="{!r.Professional_Title__c}" />
@@ -238,13 +238,13 @@
                 <apex:column headerValue="Person Type" value="{!r.Current_Person_Type__c}"/>    
                  <apex:column headerValue="Action" >
                  <apex:selectList value="{!DropdownList}" size="1">
-						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
+                     <apex:selectOption itemValue="" itemLabel="--- Select ---" />
                      <apex:selectOption itemValue="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}" itemLabel="View" />
-                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!r.id}&TAU={!aliasNameValue}" itemLabel="Edit" rendered="{!(r.Current_Person_Type__c=='Employee' || r.Current_Person_Type__c=='Non-Employee' )}"/>  
+                     <apex:selectOption itemValue="/apex/identity_edittmnu?id={!r.id}&TAU={!aliasNameValue}" itemLabel="Edit" rendered="{!r.Current_Person_Type__c=='Non-Employee'}"/>  
                      <apex:selectOption itemValue="/apex/RequestAccess?id={!r.id}&TAU={!aliasNameValue}" itemLabel="Request Access" />
-                     <apex:selectOption itemValue="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}" itemLabel="Terminate" rendered="{!(r.Current_Person_Type__c=='Employee' || r.Current_Person_Type__c=='Non-Employee' )}"/>
+                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!r.id}&TAU={!aliasNameValue}" itemLabel="Terminate" />
                  </apex:selectList>   
-                  <apex:commandButton value="Go" action="{!identityGo}"/>     
+                  <apex:commandButton value="Go" action="{!identityGo}" />     
                  </apex:column>                        
             </apex:pageBlockTable>
             </apex:form>
@@ -341,7 +341,7 @@
                         <apex:outputField label="Person Type" value="{!theTMNUser.Current_Person_Type__c}" />                                                                                 
                         <apex:outputField label="Office Phone" value="{!theTMNUser.Office_Phone__c}"/>
                         <apex:outputField label="Start Date" value="{!theTMNUser.Hire_Date__c}" />
- 					    <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         <apex:outputField label="End Date" value="{!theTMNUser.Last_Day__c}" />
                     </apex:pageBlockSection>
                     <apex:pageBlockSection columns="2" title="Management Hierarchy">
