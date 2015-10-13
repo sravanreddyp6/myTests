@@ -137,11 +137,18 @@
 	}
 	
 	reConfirm = function(flag){
-		 if (window.confirm('You are about to extend the last day by '+flag+ ' days. Do you wish to continue' )) {
+		var message = ''
+		if(flag == 'Now'){
+			message = 'Your action will terminate the account by end of business today. Do you wish to continue?';
+		}else{
+			message = 'You are about to extend the last day by '+flag+ ' days. Do you wish to continue?';
+		}
+		
+		if(window.confirm(message)) {
 		 	updateTMNUser();
-		 }else{
+		}else{
 		 	return null;
-		 }
+		}
 		
 	}	
 	</script>
