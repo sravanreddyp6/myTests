@@ -120,7 +120,7 @@
         <apex:form id="srchForm">
             <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" >
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rendered="{!dr.Salesforce_User_Account__c!=null }" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rendered="{!dr.Salesforce_User_Account__r.isActive }" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
                         <apex:param value="{!dr.Id}" assignTo="{!selectedID}" name="addSrchIdParam"/>
                     </apex:commandLink>
                 </apex:column>           
@@ -160,7 +160,7 @@
         <apex:form id="empForm" >
             <apex:pageBlockTable value="{!myEmployees}" var="e" id="empTable">
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rendered="{!e.Salesforce_User_Account__c!=null }" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rendered="{!e.Salesforce_User_Account__r.isActive }" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
                 </apex:column>
