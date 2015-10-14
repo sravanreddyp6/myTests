@@ -21,7 +21,7 @@ public class identityEditNew {
     public String TAU = ApexPages.currentPage().getParameters().get('TAU'); 
     public String attchmentId {set;get;}
     public String aliasName = TAU;
-    
+    public Boolean isNewUser {set;get;}
   private static final String EMAIL_PATTERN = '([a-zA-Z0-9_\\-\\.]+)@((\\[a-z]{1,3}\\.[a-z]{1,3}\\.[a-z]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})';
   public static boolean validate(String email) {
     return Pattern.matches(EMAIL_PATTERN, email);
@@ -75,6 +75,7 @@ public class identityEditNew {
     
     
     if(TMNUser.Id == null){
+    	isNewUser = true;
         TMNUser.First_Name__c = FN;
         TMNUser.Last_Name__c = LN;
         TMNUser.Preferred_First_Name__c = FN;
@@ -98,6 +99,8 @@ public class identityEditNew {
         TMNUser.BAA_Signed__c = aliasUser.BAA_Signed__c;
         TMNUser.Location_Name__c = aliasUser.Location_Name__c;
         TMNUser.Last_Day__c = defaultLastDay;
+    }else {
+    isNewUser = false;
     }
  }
  
@@ -187,10 +190,15 @@ public class identityEditNew {
     	 	error = true;
        	}
 		
-		if(TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' &&  TMNUser.Hire_Date__c!=null && TMNUser.Last_Day__c!=null && TMNUser.Hire_Date__c.daysBetween(TMNUser.Last_Day__c)>90){
+		if(isNewUser && TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' &&  TMNUser.Hire_Date__c!=null && TMNUser.Last_Day__c!=null && TMNUser.Hire_Date__c.daysBetween(TMNUser.Last_Day__c)>90){
 		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Start Date.'));
     	 	error = true;
 		}
+		if(!isNewUser && TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' &&   TMNUser.Last_Day__c!=null && Date.Today().daysBetween(TMNUser.Last_Day__c)>90){
+		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Current Date.'));
+    	 	error = true;
+		}
+		
 		if(TMNUser.Hire_Date__c ==null){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date is required to save this record'));
     	 	error = true;

@@ -338,9 +338,10 @@
                         <div class="pbHeaderButton">   
                         <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=theTMNUser.id])}"/>-->
                         <!--<apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>-->
-                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
+                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
-                        <apex:commandButton value="Request Access" action="{!URLFOR($Page.identity_canvas, '')}" />
+                   		<apex:commandButton value="Request Access" action="{!URLFOR($Page.RequestAccess,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
+                   		<apex:commandButton value="Terminate" action="{!URLFOR($Page.identity_Terminate,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
                     </div>            
                     <apex:pageBlockSection columns="2" title="Person Information">                   
                         <apex:outputField label="First Name" value="{!theTMNUser.First_Name__c}"/>
