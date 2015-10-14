@@ -519,7 +519,7 @@ public with sharing class referral_Controller2 {
 		}
 		//PRI-166 ensure month is calculated the same way as PBS
 		string monthAlias = pBRRec.Age_month__c;
-		if(integer.valueof(pBRRec.Age_days__c) > 14){
+		if(pBRRec.Age_days__c!=null && integer.valueof(pBRRec.Age_days__c) > 14){
 			monthAlias = string.valueof(integer.valueof(monthAlias) + 1);
 		}
 		system.debug('age ' + String.valueOf(pBRRec.Age_year__c) + ' - ' + pBRRec.Age_month__c + ' - ' + pBRRec.Age_days__c);
