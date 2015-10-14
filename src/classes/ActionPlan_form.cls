@@ -336,7 +336,8 @@ public pagereference myCancel(){
             
                 
             list<task> newtasks= new list<task>();
-            for(Acknowledgment__c  a : [Select user__c from Acknowledgment__c where Action_Plan__c = :actionplan.Previous_Action_plan__c  AND Action_Plan__c != :null]){
+            // EB-551 - 2015-10-14 - only get active users or an error will be thrown
+            for(Acknowledgment__c  a : [Select user__c from Acknowledgment__c where Action_Plan__c = :actionplan.Previous_Action_plan__c  AND Action_Plan__c != :null and user__r.isactive = true]){
                 task tmpTask = new task();
                 
                 tmpTask.whatid=actionplan.id;
