@@ -564,7 +564,7 @@
                             </apex:inputField>
                         <!--/apex:actionRegion-->
                 </apex:pageblocksectionitem>
-                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!!editSA}" />
+                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Specify_Error__c!= null) }" />
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
                     <apex:outputLabel id="SE_label" value="Specify Error" />
                     <apex:outputPanel >
@@ -717,7 +717,7 @@
                         <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="saStartSectionEdit, saEndSectionEdit, ContractAssoc, ProgAssoc" status="pageProcessing" onComplete=" "/>   
                     </apex:inputField>                    
                 </apex:pageblocksectionitem>
-                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!!editSA}" />
+                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Specify_Error__c!= null) }" />
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
                     <apex:outputLabel id="SE_label" value="Specify Error" />
                     <apex:outputPanel >
