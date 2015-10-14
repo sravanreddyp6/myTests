@@ -164,10 +164,10 @@ public with sharing class IdentityHomeController {
     //Get list of all direct reports for user.
     List<TMN_User__c> myWorkforce;
     public List<TMN_User__c> getmyWorkforce() {
-        myWorkforce = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c 
+        myWorkforce = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c ,Salesforce_User_Account__r.isActive
                        FROM TMN_User__c 
                        WHERE  Manager_Email__c=:aliasName
-                       AND Job_Status__c IN ('Active','Pending')
+                       AND Job_Status__c IN ('Active','Pending') 
                        ORDER BY Last_Name__c ASC];        
         return myWorkforce;
     }                           
@@ -373,16 +373,16 @@ public with sharing class IdentityHomeController {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
             return null;
         }else if (String.IsNotBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
-            tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__c  FROM TMN_User__c '; 
+            tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__r.isActive  FROM TMN_User__c '; 
             tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+   generatedKey2 +'%\') ';
             tmlUserQuery += '  AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) ';
             tmlUserQuery +=  '  ORDER BY First_Name__c,Last_Name__c';
         }else if (String.IsBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
-            tmlUserQuery =  'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__c   FROM TMN_User__c'; 
+            tmlUserQuery =  'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__r.isActive   FROM TMN_User__c'; 
             tmlUserQuery += ' WHERE (Last_Name__c like \'%'+ generatedKey1 +'%\' OR Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\') ';  
             tmlUserQuery += ' AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) ORDER BY First_Name__c,Last_Name__c';
         }else if (String.IsNotBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
-            tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__c  FROM TMN_User__c';
+            tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__r.isActive  FROM TMN_User__c';
             tmlUserQuery +=' WHERE ((Last_Name__c like \'%'+  generatedKey1 +'%\' AND First_Name__c like \'%'+  generatedKey2 +'%\') ';
             tmlUserQuery +=' OR (Preferred_Last_Name__c like \'%'+  generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+  generatedKey2 +'%\') ';
             tmlUserQuery +=' OR (Last_Name__c like \'%'+  generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 
