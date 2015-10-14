@@ -131,6 +131,39 @@ public without sharing class ServiceAssignmentExt {
 
     }
 
+    public List<SelectOption> getStatusValues()
+    {
+        List<SelectOption> options = new List<SelectOption>();
+        //options.add(new SelectOption('','--None--'));
+        options.add(new SelectOption('Active','Active'));
+        options.add(new SelectOption('Inactive','Inactive'));
+        if(this.theServAssign.Id!= Null){
+            List<Progress_note__c> ProgNotes = [select id, Name, Status__c,service_assignment__c, owner.name,recordtype.developername,disregard_note__c from Progress_Note__c where service_assignment__c= : this.theServAssign.Id ];//and (status__c =: 'Final' or recordtype.developername =: 'Shift_Note' or disregard_note__c =:True)];
+            if(ProgNotes.size()>0){
+                Boolean AddCIE = False;
+                for(progress_note__C pn: ProgNotes){
+                    if(pn.disregard_note__c == True)
+                        AddCIE = True;
+                    If(pn.RecordType.developername == 'Shift_Note' && pn.disregard_note__c == True)
+                       AddCIE = True ;
+                    If(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final')
+                       AddCIE = True ;
+                    if(pOpGroup == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
+                        AddCIE = True ;
+                    if(pn.status__c == 'Final')
+                        AddCIE = True  ;                      
+                }
+                if(AddCIE == false)
+                options.add(new SelectOption('Created in Error','Created in Error'));
+            }else{
+                options.add(new SelectOption('Created in Error','Created in Error'));
+            }
+        }else{
+                options.add(new SelectOption('Created in Error','Created in Error'));        
+        
+        }
+        return options;
+    }
     private void setcanCreateSummary() {
         Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
         canCreateSummary = oSchema.IsCreateable();
@@ -397,7 +430,7 @@ public without sharing class ServiceAssignmentExt {
                              Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,
                              service_location__r.programid__c, service_location__r.service_value__c,service_location__r.setting__c,
                              Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Was_dissatisfaction_reason_for_service_e__c, Who_was_dissatisfied__c,  Primary_Reason_for_Dissatisfaction__c, End_of_Service_Circumstances__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
-                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c
+                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c
                              FROM Service_Assignment__c
                              WHERE Id = :controller.getid()];
             initialRecord = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
@@ -409,7 +442,7 @@ public without sharing class ServiceAssignmentExt {
                              Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,
                              service_location__r.programid__c, service_location__r.service_value__c,
                              Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Was_dissatisfaction_reason_for_service_e__c, Who_was_dissatisfied__c,  Primary_Reason_for_Dissatisfaction__c, End_of_Service_Circumstances__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
-                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c
+                             Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c
                              FROM Service_Assignment__c
                              WHERE Id = :controller.getid()];
             admission = [ SELECT Id, Name, State__c, Person_Being_Served__c, Person_Being_Served__r.LastName, Network_Offering__c FROM Admission__c WHERE Id = :theServAssign.Admission__c ];
@@ -784,7 +817,7 @@ public without sharing class ServiceAssignmentExt {
             currentState = currentRecord.Admission__r.State__c;
         }
         else {
-        	system.debug('it is a new record');	
+            system.debug('it is a new record'); 
             currentRecord = theServAssign;
             Admission__c admForState = [ SELECT State__c FROM Admission__c WHERE Id = :admission.Id LIMIT 1 ];
             currentState = admForState.State__c;
@@ -1143,7 +1176,10 @@ public without sharing class ServiceAssignmentExt {
         string opGroup = getOperatingGroup();
         
         if(theServAssign.Status__c != 'Inactive'){
-        	theServAssign.Highest_Level_of_Education_at_End_of_Ser__c = null;
+            theServAssign.Highest_Level_of_Education_at_End_of_Ser__c = null;
+        }
+        if(theServAssign.Status__c == 'Created in Error' && theServAssign.Specify_Error__c == null){
+            errors.add('Specify Error: You must select a value.');
         }
 
         if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
@@ -1336,7 +1372,7 @@ public without sharing class ServiceAssignmentExt {
                                  service_location__c, service_location__r.service_value__c, 
                                  Medical_Record_Number__c,
                                  Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Was_dissatisfaction_reason_for_service_e__c,Who_was_dissatisfied__c,Primary_Reason_for_Dissatisfaction__c,End_of_Service_Circumstances__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
-                                 Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c
+                                 Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c
                                  FROM Service_Assignment__c
                                  WHERE Id = :s.id
                                  ];
