@@ -20,13 +20,13 @@ global with sharing class TherapyHours {
             Therapy_Hour__c therapyHr = new Therapy_Hour__c();
             therapyHr.Service_Assignment__c = values.get('pbsList');
             therapyHr.Appointment_Type__c = values.get('entryType');
+            if (values.get('startDateTime').length() == 16) values.put('startDateTime', (string) values.get('startDateTime') + ':00'); 
+            if (values.get('endDateTime').length() == 16) values.put('endDateTime', (string) values.get('endDateTime') + ':00');
             therapyHr.Start_Time__c = DateTime.valueOf(values.get('startDateTime').replace('T',' ').substringBeforeLast(':') + ':00');
             therapyHr.End_Time__c = DateTime.valueOf(values.get('endDateTime').replace('T',' ').substringBeforeLast(':') + ':00');
             therapyHr.Narrative_Note__c = values.get('narrativeNotes');
             therapyHr.Status_Time__c = Datetime.now();
-            
             system.debug('Total Number of minutes being submitted: ' + (therapyHr.End_Time__c.getTIme() - therapyHr.Start_Time__c.getTime())/60000 );
-            
             insert therapyHr;
     }
 }
