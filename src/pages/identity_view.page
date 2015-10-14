@@ -65,13 +65,16 @@
                         <apex:outputField label="Accountable Approval Manager Email" value="{!TMNUser.Accountable_Manager_Mentor_Email__c}"/>                     
                     </apex:pageBlockSection>
                  
-                <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}"> 
+                <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}">
                         <apex:outputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" />
                         <apex:outputField label="GL Code" value="{!TMNUser.GL_Code__c}" />
                         <apex:outputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />
                         <apex:outputField label="Account #" value="{!TMNUser.Account_Number__c}" /> 
+                        <apex:outputField label="Vendor Location" value="{!TMNUser.Personal_Location__c}"/>
                         <apex:outputField label="Rate (per Hour)" value="{!TMNUser.Rate__c}" />
+                        <apex:outputField label="Vendor City" value="{!TMNUser.Personal_City__c}" />
                         <apex:outputField label="IC Agreement Executed On" value="{!TMNUser.IC_Agreement_Executed_Date__c}" />
+                        <apex:outputField label="Vendor ZIP" value="{!TMNUser.Personal_Zip__c}" />
                         <apex:outputField label="CPR Expires" value="{!TMNUser.CPR_Expires__c}" />
                         <apex:outputField label="License Expires" value="{!TMNUser.License_Expires__c}" />
                         <apex:outputField label="Insurance Expires" value="{!TMNUser.Insurance_Expires__c}" />

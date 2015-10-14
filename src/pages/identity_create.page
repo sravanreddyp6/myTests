@@ -89,6 +89,7 @@
         var opGrp = j$('[Id$=operatingGrp]').val();
         if (opGrp == 'Care Meridian') {
             j$('[id$=TherapistInformation]').show();
+            j$('[id$=vendorList]').val('OTHER');
         }else{
             j$('[id$=TherapistInformation]').hide();
         }    
@@ -332,9 +333,6 @@ function autoCompleteRender(ul, item) {
                 </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem />
                     <apex:inputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}" taborderhint="7" id="MobileNumber" onkeydown="validateMobilePhone()"/>
-                    <apex:inputField label="Location" value="{!TMNUser.Personal_Location__c}" taborderhint="12" />
-                    <apex:inputField label="City" value="{!TMNUser.Personal_City__c}" taborderhint="7" />
-                    <apex:inputField label="Zip" value="{!TMNUser.Personal_Zip__c}" taborderhint="12" />
 
                 </apex:pageBlockSection>
                 <apex:actionRegion >
@@ -487,9 +485,12 @@ function autoCompleteRender(ul, item) {
                         <apex:inputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" Id="therapistDiscipline" />
                         <apex:inputField label="GL Code" value="{!TMNUser.GL_Code__c}" Id="glCode"/>
                         <apex:inputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />
-                        <apex:inputField label="Account #" value="{!TMNUser.Account_Number__c}" /> 
+                        <apex:inputField label="Account #" value="{!TMNUser.Account_Number__c}" />
+                        <apex:inputField label="Vendor Location" value="{!TMNUser.Personal_Location__c}"/>
                         <apex:inputField label="Rate (per Hour)" value="{!TMNUser.Rate__c}" />
+                        <apex:inputField label="Vendor City" value="{!TMNUser.Personal_City__c}" />
                         <apex:inputField label="IC Agreement Executed On" value="{!TMNUser.IC_Agreement_Executed_Date__c}" />
+                        <apex:inputField label="Vendor ZIP" value="{!TMNUser.Personal_Zip__c}" />
                         <apex:inputField label="CPR Expires" value="{!TMNUser.CPR_Expires__c}" />
                         <apex:inputField label="License Expires" value="{!TMNUser.License_Expires__c}" />
                         <apex:inputField label="Insurance Expires" value="{!TMNUser.Insurance_Expires__c}" />
