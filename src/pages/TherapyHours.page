@@ -179,6 +179,8 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
             $j(dataObj).each(function(index, obj){
                 formdata[obj.name] = obj.value;
             });
+            if (formdata['startDateTime']== ''){$j('#error').html('Invalid Start Time.'); return false;}
+            if (formdata['endDateTime']== ''){$j('#error').html('Invalid End Time.'); return false;}
             $j.mobile.loading('show');
                     TherapyHours.saveFields(
                         JSON.stringify(formdata),
