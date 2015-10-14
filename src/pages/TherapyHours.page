@@ -17,7 +17,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
         <apex:remoteObjectModel jsShorthand="serviceAssignment" name="Service_Assignment__c" fields="Id,pbsLastName__c,pbsFirstName__c">
             <apex:remoteObjectField name="Service_Location__c" jsShorthand="ServiceLocation"/>
         </apex:remoteObjectModel>
-        <apex:remoteObjectModel jsShorthand="myHoursObj" name="Therapy_Hour__c" fields="Id,Name,Appointment_Type__c,Approver_Note__c,End_Time__c,Narrative_Note__c,Start_Time__c,Status__c,pbsLastName__c,pbsFirstName__c,createdDate,Number_of_Hours__c" />
+        <apex:remoteObjectModel jsShorthand="myHoursObj" name="Therapy_Hour__c" fields="Id,Name,Appointment_Type__c,Approver_Name__c,Approver_Note__c,End_Time__c,Narrative_Note__c,Start_Time__c,Status__c,pbsLastName__c,pbsFirstName__c,createdDate,Number_of_Hours__c" />
     </apex:remoteObjects>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <style type="text/css">
@@ -96,8 +96,9 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
                         table += '<tr><td><strong>Status:<strong></td><td>' + record.get("Status__c") + '</td></tr>';
                         table += '<tr><td><strong>Start Time:<strong></td><td>' + formatDateTime(record.get("Start_Time__c")) + '</td></tr>';
                         table += '<tr><td><strong>End Time:<strong></td><td>' + formatDateTime(record.get("End_Time__c")) + '</td></tr>';
-                        table += '<tr><td><strong>Number of Hours:<strong></td><td>' + record.get("Number_of_Hours__c") + '</td></tr>';
+                        table += '<tr><td><strong>Number of Hours:<strong></td><td>' + record.get("Number_of_Hours__c") + ' hrs</td></tr>';
                         table += '<tr><td><strong>My Notes:<strong></td><td>' + record.get("Narrative_Note__c") + '</td></tr>';
+                        table += '<tr><td><strong>Approver Name:<strong></td><td>' + record.get("Approver_Name__c") + '</td></tr>';
                         table += '<tr><td><strong>Approvers Notes:<strong></td><td>' + (record.get("Approver_Note__c") == undefined  ? '' : record.get("Approver_Note__c") ) + '</td></tr>';
                         table += '</table>';
                         $j('#myHoursDetail').html(table);
@@ -146,7 +147,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
             });
             $j('.datetime').on('change', function(e) {
                 var hoursDiff = moment(document.getElementById('endDateTime').value).diff(moment(document.getElementById('startDateTime').value),'Hours', true);
-                $j('#numberOfHours').html('Number of hours: ' + (isNaN(hoursDiff) ? '0' : hoursDiff.toFixed(2) ) );
+                $j('#numberOfHours').html('Number of hours: ' + (isNaN(hoursDiff) ? '0 hrs' : hoursDiff.toFixed(2) + ' hrs' ) );
             });
         }
         function getPbs() {

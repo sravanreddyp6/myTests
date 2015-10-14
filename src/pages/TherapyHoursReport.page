@@ -1,12 +1,17 @@
 <apex:page controller="TherapyHoursReport" sidebar="false" docType="html-5.0" tabStyle="Persons_Being_Served_New__tab">
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/css/jquery.dataTables.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/css/select.dataTables.min.css')}" />     
+    
     <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jQuery-2.1.4/jquery-2.1.4.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'DataTables-1.10.9/js/jquery.dataTables.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.js')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.DataTables1109, 'jquery-ui-1.11.4.custom/jquery-ui.min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DataTables1109, 'Select-1.0.1/js/dataTables.select.min.js')}" />
+    
     <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+    
     <apex:remoteObjects >
         <apex:remoteObjectModel jsShorthand="myHoursObj" name="Therapy_Hour__c" fields="Id,Name,Appointment_Type__c,Approver__c,Approver_Name__c,Approver_Note__c,End_Time__c,Narrative_Note__c,Number_of_Hours__c,pbsFirstName__c,pbsLastName__c,Service_Assignment__c,Start_Time__c,StartTime_DatePart__c,Status__c,Status_Time__c" />
     </apex:remoteObjects>
@@ -156,14 +161,15 @@ tr.group:hover {
 
     function createtbl() {
         table = j$('#therapyHoursTable').DataTable({
+            "select": true,
             "columnDefs": [{
                 "visible": false,
                 "targets": [0, 3]
-            }],
+            },{ "width": "20%", "targets": 10 }],
             "order": [
                 [3, 'asc']
             ],
-            "displayLength": 25,
+            "displayLength": 10,
             "drawCallback": function(settings) {
                 var api = this.api();
                 var rows = api.rows({
@@ -214,8 +220,12 @@ tr.group:hover {
                 therapyHr.update(function(err, ids) {
                     if (err) {
                         console.log(err);
+                        j$('#error').html(err);
+                        j$('[Id="{!$Component.myStatus}.start"]').toggle();
                     } else {
-                        table.row(tr).data(rowData).draw();
+                        table.row(tr).data(rowData).draw(false);
+                        table.rows().deselect();
+                        table.row(tr).select();
                         j$('[Id="{!$Component.myStatus}.start"]').toggle();
                     }
                 });
@@ -250,8 +260,12 @@ tr.group:hover {
                 dialog.dialog('option', 'customOption.therapyHr').update(function(err, ids) {
                     if (err) {
                         console.log(err);
+                        j$('#error').html(err);
+                        j$('[Id="{!$Component.myStatus}.start"]').toggle();
                     } else {
-                        table.row(dialog.dialog('option', 'customOption.selectedRow')).data(dialog.dialog('option', 'customOption.rowData')).draw();
+                        table.row(dialog.dialog('option', 'customOption.selectedRow')).data(dialog.dialog('option', 'customOption.rowData')).draw(false);
+                        table.rows().deselect();
+                        table.row(dialog.dialog('option', 'customOption.selectedRow')).select();
                         j$('#approverNotes').val('');
                         j$('#error').html('');
                         dialog.dialog("close");
