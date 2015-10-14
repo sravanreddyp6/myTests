@@ -53,7 +53,7 @@
 		<apex:actionFunction name="disregard" action="{!disregard}" immediate="true" />"
 		<c:Authentication id="auth" formId="{!$Component.wholeForm}" title="E-Sign"
 			handler="Notes_Case_Management" objectId="{!Progress_Note__c.Id}"
-			oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialog(); window.location.href='{!$Page.ServiceAssignmentEditNew}';" />
+			oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); window.location.href='/apex/Notes_Case_Management?id={!Progress_Note__c.Id}';" />
 	</apex:form>
 
 	<apex:actionStatus id="pageStatus" >
