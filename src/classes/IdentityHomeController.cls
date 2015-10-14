@@ -27,8 +27,8 @@ public with sharing class IdentityHomeController {
     private Integer offsetSizeDel = 0;
     private Integer limitSizeDel = 10;
     @testVisible  private String searchType{set;get;}
-	@testVisible private String tmlUserQuery;
-	@testVisible private Integer noOfRecords {get;set;}
+    @testVisible private String tmlUserQuery;
+    @testVisible private Integer noOfRecords {get;set;}
     public List<Attachment> attachments {get; set;}
     Date currentDate = Date.today();
     Date endDate = currentDate.addDays(30);
@@ -71,7 +71,7 @@ public with sharing class IdentityHomeController {
                         LIMIT 1];
         System.debug('myDelegation Count is ' + myDelegation.size());
         
-        hasRecruiter = [SELECT PermissionSetId,PermissionSet.Name 
+        hasRecruiter = [SELECT PermissionSetId 
                         FROM PermissionSetAssignment WHERE assignee.Id = :userId 
                         AND PermissionSet.Name = 'TMNAccess_Recruiter' 
                         LIMIT 1];
@@ -80,15 +80,15 @@ public with sharing class IdentityHomeController {
         aliasName = getAliasNameValue();
         System.Debug('Value of aliasName is ' + aliasName);      
         List<SelectOption> dl=getDelValues();
-         	if(dl.size()>1){
+            if(dl.size()>1){
              onloadDialog = true;
-        	}else{
+            }else{
             onloadDialog = false;
-        	} 
-        	
-        	if(ApexPages.currentPage().getParameters().get('cancel')!=null){
-        	onloadDialog = false;
-        	}    
+            } 
+            
+            if(ApexPages.currentPage().getParameters().get('cancel')!=null){
+            onloadDialog = false;
+            }    
                                                                                                                                                                                                          
     }
 
@@ -97,8 +97,8 @@ public with sharing class IdentityHomeController {
         PageReference ePage = new PageReference('/'+selectedID+'/e?retURL=/apex/identity_admin');
         return ePage;
     }
-	
-	Public PageReference selectDelegate(){
+    
+    Public PageReference selectDelegate(){
         System.debug('aliasName:' + aliasName);
         return null;
     }
@@ -175,8 +175,11 @@ public with sharing class IdentityHomeController {
     //Build select option list for creation of TMN_User__c records on behalf of.
     public List<SelectOption> getDelValues(){
         List<SelectOption> dl = new List<SelectOption>();
-        if(mySubordinates.size()>=0){
+        if(mySubordinates.size()>0){
             dl.add(new SelectOption(tmnEmail,'Myself'));    
+        }
+        if(hasRecruiter.size()>0){
+            dl.add(new SelectOption(tmnEmail,'Myself'));
         }
         for(TMN_User_Delegate__c td:[SELECT name,Delegate_Email__c,Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c =:tmnId AND Delegation_Complete__c = FALSE]){
             dl.add(new SelectOption(td.Delegate_for_Email__c,td.Delegate_for_Name__c));
@@ -329,13 +332,13 @@ public with sharing class IdentityHomeController {
             } else if(noOfRecords == 0 && searchType.equals('Non-employee')) { 
                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
             }else if(noOfRecords > 0 && searchType.equals('Non-employee')){
-       			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
               }  
            }     
             return setCon;
         }set;
     }
-	Public List<TMN_User__c> getsearchDelegateResult(){
+    Public List<TMN_User__c> getsearchDelegateResult(){
         List<TMN_User__c> Tlist = new List<TMN_User__c>();
         if(setCon!=null){
         for(TMN_User__c t : (List<TMN_User__c>)setCon.getRecords()){
@@ -345,7 +348,7 @@ public with sharing class IdentityHomeController {
         return Tlist;
     }
     
-    	Public List<TMN_User__c> getsearchNonEmpResult(){
+        Public List<TMN_User__c> getsearchNonEmpResult(){
         List<TMN_User__c> Tlist = new List<TMN_User__c>();
             if(setCon!=null){
         for(TMN_User__c t : (List<TMN_User__c>)setCon.getRecords()){
@@ -358,7 +361,7 @@ public with sharing class IdentityHomeController {
     //Delegate search      
     public PageReference doQueryDel(){
         searchType = 'Delegate';
-    	setCon = null;
+        setCon = null;
         searchDelegateResult.clear();
         if (String.IsBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter a first name, last name or both.'));
@@ -430,7 +433,7 @@ public with sharing class IdentityHomeController {
              tmlUserQuery += ' OR (Last_Name__c like \'%'+ generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+  generatedKey2 +'%\') ';
              tmlUserQuery += ' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND First_Name__c like \'%'+  generatedKey2 +'%\'))  ORDER BY Last_Name__c,First_Name__c';
             btnDisable = false;
-        	showPopup();
+            showPopup();
         }
         onloadDialog = false;
         return null;
