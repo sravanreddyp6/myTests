@@ -467,9 +467,10 @@ public with sharing class Assessment_IssaForm {
             return;
         }
         System.debug('Conditions met to notify people');
+        // EB-551 - 2015-10-14 - only get active users or an error will be thrown
         User[] usersToNotify = [
            SELECT ID, ContactID FROM User
-           WHERE ID IN (SELECT User__c FROM Acknowledgment__c WHERE Assessment__c=:this.assessment.Previous__c)
+           WHERE ID IN (SELECT User__c FROM Acknowledgment__c WHERE Assessment__c=:this.assessment.Previous__c and user__r.isactive = true)
         ];
         System.debug('Users to notify: ' + usersToNotify);
         List<Task> tasks = new List<Task>();
