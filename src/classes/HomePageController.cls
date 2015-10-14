@@ -54,7 +54,7 @@ public with sharing class HomePageController{
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
 	public Boolean canCreateProgressNotes { get; set; }
-	
+
 	// EC-196 - Shift notes
 	public Boolean canCreateNote { get; private set; }
 	//PBS object
@@ -64,20 +64,20 @@ public with sharing class HomePageController{
 	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
 	public Map<Id, Boolean> hasShiftDocMap { get; set; }
 	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
-	
+
 	// IADAY-10 - support creation of Time Log entry from home page
 	public String responseType { get; set; }
 	public Boolean hasError { get; set; }
 	public Evaluation_Response__c currResponse { get; set; }
-	
+
 	public Map<Id, Boolean> saactionMap {get;set;}
     public Map<Id, Id> saActiveactionMap {get;set;}
-    
+
     private boolean isIARole { get; set; }
-	
+
 	//Constructor
 	public HomePageController(){
-		
+
 		//PBS object
 		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
 		canSeePBS = oSchema.isAccessible();
@@ -150,12 +150,12 @@ public with sharing class HomePageController{
 			permissionSets.add(assignment.PermissionSet.Label);
 		}
 		permissionSetString = String.join(new List<String>(permissionSets), '~');
-		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier III')) {
+		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
 			canSeeCNAWorkbook = true;
 		} else {
 			canSeeCNAWorkbook = false;
 		}
-		if (permissionSets.contains('iServe - Tier III')) {
+		if (permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
 			canSeeShiftDoc = true;
 		} else {
 			canSeeShiftDoc = false;
@@ -168,16 +168,16 @@ public with sharing class HomePageController{
         }
         else
           canCreateProgressNotes =false;
-          
+
         if (rolemap.get(UserInfo.getUserRoleID()).DeveloperName == 'IA')
         	isIARole = true;
         else
-        	isIARole = false;  
-        	
+        	isIARole = false;
+
 
 		oSchema = Progress_Note__c.sObjectType.getDescribe();
 		canCreateNote = oSchema.isCreateable();
-		
+
 		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();
@@ -219,9 +219,9 @@ public with sharing class HomePageController{
                 if(ap.Status__c == 'Active Final'){
                     saactionMap.put(serviceAssignment.id,True);
                     saActiveactionMap.put(serviceAssignment.id,ap.Id);
-                } 
+                }
             }
-            
+
         }
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
 			// Get the latest shift doc/CNA Workbook
@@ -278,19 +278,19 @@ public with sharing class HomePageController{
 					}
 				}
 			}
-			
+
 			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
 			if ( operatingGroup == 'Redwood' && isIARole ) {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					optionList.add(new SelectOption(
-										Page.Notes_ProgressNote_Create.getUrl() + 
-										'?service_assignment=' + serviceAssignment.ID + 
-										'&plan=' + serviceAssignment.Action_Plans__r[0].Id + 
-										'&admission=' + serviceAssignment.Admission__r.Id + 
-										'&person=' + serviceAssignment.Person_Being_Served__r.Id + 
+										Page.Notes_ProgressNote_Create.getUrl() +
+										'?service_assignment=' + serviceAssignment.ID +
+										'&plan=' + serviceAssignment.Action_Plans__r[0].Id +
+										'&admission=' + serviceAssignment.Admission__r.Id +
+										'&person=' + serviceAssignment.Person_Being_Served__r.Id +
 										'&state=' + serviceAssignment.Admission__r.State__c +
 										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));
-					
+
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Behavior Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Skill Data'));
 				} else {
@@ -298,7 +298,7 @@ public with sharing class HomePageController{
 				}
 				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
                 optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
-				
+
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
@@ -567,44 +567,44 @@ public with sharing class HomePageController{
 		}
 	}
 	// END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
-	
+
 	// IADAY-9 - to support creation of new plan from home page
 	public String currsaID { get; set; }
 	public pagereference NewPlan( ){
-		
+
 		// we only come into this function if there is no active final plan
 		// find out if there's an inactive draft we can view
 		List<Action_Plan__c> aplist = [ select id, status__c from Action_Plan__c where status__c = 'Inactive Draft' and service_assignment__c = :currsaID order by status__c, lastmodifieddate desc  LIMIT 1];
-		
-		
-		Action_plan__c AP; 
-		
+
+
+		Action_plan__c AP;
+
 		// if an inactive plan exists, take them to that page to view
 		if ( aplist.size() == 1 ) {
 			AP = aplist[0];
 		} else {
-		 
+
 			AP = new Action_plan__c();
 			AP.Service_Assignment__c = currsaID;
 			insert AP;
 		}
-		
+
 		PageReference ref =  new ApexPages.StandardController(AP).view() ;
 		ref.getparameters().put('retURL', Apexpages.CurrentPage().getURL());
 		return ref;
 
 	}
-	
+
 	public void newResponse() {
 		responseType = 'Time Log';
 		currResponse = new Evaluation_Response__c( recordtypeID = Utility.getEvaluationResponseRecordType(responseType), service_assignment__c = serviceAssignmentIDforAction);
 	}
-	
+
 	public pageReference saveResponse() {
-		
-		
+
+
 		hasError = false;
-		
+
 		// check for required fields
 		Map<string, string> columnsToHeadersMap = new Map<String, String>();
 		columnsToHeadersMap.put('start_date_time__c','Start Date/Time');
@@ -612,18 +612,18 @@ public with sharing class HomePageController{
 		columnsToHeadersMap.put('tmn_user__c','Accompanied By');
 		columnsToHeadersMap.put('location__c','Location');
 		columnsToHeadersMap.put('service_type__c','Service Type');
-		
+
 		for(string rCol : new List<String>{'start_date_time__c', 'tmn_user__c', 'location__c', 'service_type__c'}){
 			if(currResponse.get(rCol) == null){
 				currResponse.addError( columnsToHeadersMap.get(rcol) + ' is required' );
 				hasError = true;
 			}
 		}
-		
-		
+
+
 		//system.debug('CURR:' + currResponse);
-		
-		
+
+
 		// IADAY-10 - date rules
 		if ( responseType == 'Time Log') {
 			// compare start and end dates
@@ -649,10 +649,10 @@ public with sharing class HomePageController{
 					currResponse.addError( 'Date and time cannot be in future.' );
 					hasError = true;
 			}
-		
+
 			if (! hasError ) {
 				// check for date overlap with another event
-				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currResponse.Id and service_assignment__c = :currResponse.service_assignment__c and disregard__c = false]; 
+				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currResponse.Id and service_assignment__c = :currResponse.service_assignment__c and disregard__c = false];
 				for ( Evaluation_Response__c tl : otherTimeLogs ) {
 					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currResponse.start_date_time__c, currResponse.end_date_time__c) ) {
 						currResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
@@ -661,7 +661,7 @@ public with sharing class HomePageController{
 					}
 				}
 			}
-		
+
 		} // end IADAY-10
 		try {
 			if(!hasError){
@@ -677,14 +677,14 @@ public with sharing class HomePageController{
 		}
 		return null;
 	}
-		
+
 	@TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
-		
+
 		Boolean overlaps = false;
 		system.debug( 'Times:' + s1 + e1 + s2 + e2);
 		if ( e1 == null ) // first set is not a range - can't compare
 			return overlaps;
-			
+
 		if ( s2 >= s1 && s2 <= e1 ) // starts within first timeframe
 			overlaps = true;
 		else {
@@ -695,7 +695,7 @@ public with sharing class HomePageController{
 					overlaps = true;
 			}
 		}
-		
+
 		return overlaps;
 	}
 }
