@@ -40,6 +40,40 @@ public with sharing class referral_Controller2 {
 	public Map<Id, Boolean> editableTasks { get; set; }
 	public Boolean isCambridge { get; set; }
 	public Boolean isCareMeridian{get; set;}
+    
+    //Diagnosis changes
+    public list<Diagnosis__c> diagnoses{get; set;}
+    public Diagnosis__c diag {
+        get {
+            if (diag == null)
+                diag = new Diagnosis__c();
+            return diag;
+        }
+        set;
+    }
+    public static Boolean showdiagModal { get; set; }
+    public Boolean newDiagnosis{ get; set;}
+    public string diagEditId {get; set; }
+    public void showAddDiagnosis() {
+        newDiagnosis = true;
+        showdiagModal = true;
+        diag = new Diagnosis__c();
+        System.Debug('showdiagModal='+ showdiagModal);
+    }
+    public void showEditDiagnosis() {
+        showdiagModal = true;
+        System.Debug('showdiagModal=' + showdiagModal);
+    }
+    
+         
+    public void saveDiagnosis() {
+        newDiagnosis = true;
+    	system.debug(this.diag);
+		this.diagnoses.add(this.diag);
+		this.diag = new Diagnosis__c();
+    }  
+    
+    //end
 	public String relPartiesJSON {get {
 		List<RelatedParty> relPartiesData = new List<RelatedParty>();
 		if (relParties.size() > 0) {
