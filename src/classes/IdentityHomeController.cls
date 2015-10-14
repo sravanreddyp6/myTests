@@ -175,10 +175,13 @@ public with sharing class IdentityHomeController {
     //Build select option list for creation of TMN_User__c records on behalf of.
     public List<SelectOption> getDelValues(){
         List<SelectOption> dl = new List<SelectOption>();
-        if(mySubordinates.size()>0){
+        if(mySubordinates.size()>0 && hasRecruiter.size()>0){
             dl.add(new SelectOption(tmnEmail,'Myself'));    
         }
-        if(hasRecruiter.size()>0){
+        if(hasRecruiter.size()>0 && mySubordinates.size()<1){
+            dl.add(new SelectOption(tmnEmail,'Myself'));
+        }
+        if(hasRecruiter.size()<1 && mySubordinates.size()>0){
             dl.add(new SelectOption(tmnEmail,'Myself'));
         }
         for(TMN_User_Delegate__c td:[SELECT name,Delegate_Email__c,Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c =:tmnId AND Delegation_Complete__c = FALSE]){
