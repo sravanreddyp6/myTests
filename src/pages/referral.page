@@ -2274,7 +2274,7 @@ function validateDiagnosis() {
                <apex:pageBlockSectionItem >
 					<apex:actionRegion >
            				<apex:commandButton value="Add Diagnosis" id="addDiagnosis"  onClick="showAddDiagnosis();return false;" />
-						<apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/Diagnosis_PDF?id={!referralrecord.id}');return false;" rendered="{!Referral__c.Referral_Status__c=='Active'}"/>						
+						<apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_Referral_PDF?id={!referralrecord.id}');return false;" rendered="{!Referral__c.Referral_Status__c=='Active'}"/>						
                         <apex:actionStatus id="AdddiagStatus">
                             <apex:facet name="start">
                                 <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
