@@ -65,6 +65,6 @@ public with sharing class Notes_Case_Management implements AuthenticatedAction {
 		note.Signature_On_File__c = 'Y';
 		update note;
 
-		return new PageReference('/apex/Notes_Case_Management?id=' + note.Id);
+		return null;
 	}
 }
