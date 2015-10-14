@@ -431,14 +431,19 @@
                     <apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
                     <apex:outputPanel >
                         <apex:actionRegion >
-                        <apex:inputField id="saStatus" value="{!theServAssign.Status__c}"  html-data-countInFormProgress="1"  >
+                        <!--<apex:inputField id="saStatus" value="{!theServAssign.Status__c}"  html-data-countInFormProgress="1"  >
                             <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
                             </apex:actionSupport>
-                        </apex:inputField>
+                        </apex:inputField>-->
+                        <apex:selectList title="Created in Error is only to be used if the wrong program was selected or if the person never received services." id="saStatus" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
+                            <apex:selectOptions value="{!StatusValues}"/>
+                            <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
+                            </apex:actionSupport>
+                        </apex:selectList>
                         </apex:actionRegion>                    
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-
+                
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
                 <apex:pageBlockSectionItem rendered="{!!editSA}">
@@ -559,8 +564,19 @@
                             </apex:inputField>
                         <!--/apex:actionRegion-->
                 </apex:pageblocksectionitem>
+                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!!editSA}" />
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
+                    <apex:outputLabel id="SE_label" value="Specify Error" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Specify_Error__c}" id="Specify" />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
 			
             </apex:pageBlockSection>
+            
             
 
             <apex:pageBlockSection id="AOServAssignDetail" collapsible="true" title="Service Assignment Detail" rendered="{!AssessmentOnly}">
@@ -575,11 +591,16 @@
                         <input id="pStatus" value="{!theServAssign.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
                     </apex:outputPanel>             
                 </apex:pageBlockSectionItem>
-                <apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  html-data-countInFormProgress="1" >
+                <!--<apex:inputField value="{!theServAssign.Status__c}" rendered="{!editSA}"  html-data-countInFormProgress="1" >
                     <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" onComplete="setStatusDefaults(); setUpFields();">
                     </apex:actionSupport>
-                </apex:inputField>
-
+                </apex:inputField>-->
+                <apex:selectList rendered="{!editSA}" title="Created in Error is only to be used if the wrong program was selected or if the person never received services." id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
+                    <apex:selectOptions value="{!StatusValues}"/>
+                    <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
+                    </apex:actionSupport>
+                </apex:selectList>
+                
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
 
@@ -696,6 +717,16 @@
                         <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="saStartSectionEdit, saEndSectionEdit, ContractAssoc, ProgAssoc" status="pageProcessing" onComplete=" "/>   
                     </apex:inputField>                    
                 </apex:pageblocksectionitem>
+                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!!editSA}" />
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
+                    <apex:outputLabel id="SE_label" value="Specify Error" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Specify_Error__c}" id="Specify" />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
              
 
                 <!--  EB-526 -->
@@ -891,7 +922,7 @@
 
             
             <apex:pageBlockSection title="Service Assignment Start" id="saStartSectionEdit" collapsible="true" columns="2" showHeader="true" rendered="{!editSA}" >
-                <apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
                     <apex:outputLabel for="transferFrom" value="Was this a transfer from another Service Assignment?" />
                     <apex:outputPanel >
                         <div class="requiredInput">
@@ -1009,7 +1040,7 @@
             
             <apex:pageBlockSection title="Service Assignment Start" id="saStartSectionRead" collapsible="true" columns="2" showHeader="true" rendered="{!!editSA}" >
                 
-                <apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Was this a transfer from another Service Assignment?" />
                     <apex:outputField value="{!theServAssign.Was_this_transfer_frm_another_ServAssig__c}" />
                 </apex:pageBlockSectionItem> 
@@ -1219,7 +1250,7 @@
             
             <apex:pageBlockSection title="Service Assignment End" id="saEndSectionRead" collapsible="true" columns="2" showHeader="true" rendered="{!!editSA}" >
                 
-                <apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive'}">
                     <apex:outputLabel value="Is this a transfer to another Service Assignment?" />
                     <apex:outputField value="{!theServAssign.Is_this_transfer_to_another_ServAssign__c}" />
                 </apex:pageBlockSectionItem>
