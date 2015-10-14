@@ -1,0 +1,18 @@
+<apex:page Controller="PreICD_Diagnosis_PBS_PDF_Controller" renderAs="pdf" applyHtmlTag="false" sidebar="false" showHeader="false">
+    <apex:pageBlock >
+        <h2>PRE ICD Diagnosis</h2>
+        <apex:pageBlockSection >
+            <apex:pageBlockTable value="{!diagnosis}" var="diag" border="1" > 
+                <apex:column value="{!diag.Effective_Date__c}" headerValue="Effective Date" />  
+                <apex:column value="{!diag.Primary_Diagnosis__c}" headerValue="Primary" />
+                <apex:column value="{!diag.Secondary_Diagnosis__c}" headerValue="Secondary" />
+                <apex:column value="{!diag.Axis_I__c}" headerValue="Axis I" />
+                <apex:column value="{!diag.Axis_II__c}" headerValue="Axis II" />
+                <apex:column value="{!diag.Axis_III__c}" headerValue="Axis III" />
+                <apex:column value="{!diag.Axis_IV__c}" headerValue="Axis IV" />
+                <apex:column value="{!diag.Axis_V__c}" headerValue="Axis V" />
+                <apex:column value="{!diag.Comments__c}" headerValue="Comments"/>			   
+            </apex:pageBlockTable>  
+        </apex:pageBlockSection>
+    </apex:pageBlock> 
+</apex:page>

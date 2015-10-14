@@ -49,6 +49,40 @@ private boolean TMNUser_set = false;
     }
     set;
   }
+    
+    //Diagnosis changes
+    public list<Diagnosis__c> diagnoses{get; set;}
+    public Diagnosis__c diag {
+        get {
+            if (diag == null)
+                diag = new Diagnosis__c();
+            return diag;
+        }
+        set;
+    }
+    public static Boolean showdiagModal { get; set; }
+    public Boolean newDiagnosis{ get; set;}
+    public string diagEditId {get; set; }
+    public void showAddDiagnosis() {
+        newDiagnosis = true;
+        showdiagModal = true;
+        diag = new Diagnosis__c();
+        System.Debug('showdiagModal='+ showdiagModal);
+    }
+    public void showEditDiagnosis() {
+        showdiagModal = true;
+        System.Debug('showdiagModal=' + showdiagModal);
+    }
+    
+         
+    public void saveDiagnosis() {
+        newDiagnosis = true;
+    	system.debug(this.diag);
+		this.diagnoses.add(this.diag);
+		this.diag = new Diagnosis__c();
+    }  
+    
+    //end
   
   public List<Related_Party__c> relParties { get; set; }
   
@@ -188,7 +222,7 @@ public Map<String, String> fieldMap { get; set; }
             || TMNUser.Operating_Group__c=='NeuroRestorative';
     }}
     public list<Diagnosis__c> diagnosis{get{
-        return [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
+        return [select id, Status__c ,Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
     } set;}
     public List<Evaluation_Response__c> getAssessments_ChildImmune (){
 
