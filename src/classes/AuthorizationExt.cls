@@ -170,9 +170,9 @@ private void initDependentPicklists() {
         try {
             authorization.Authorization_Status__c = 'Draft';
             
-            if ( authorization.type__c == 'Single Charge' ) {
-            	authorization.payer_effective_date__c = authorization.received_date_time__c.date();
-            	authorization.payer_end_date__c = authorization.payer_effective_date__c;
+            if ( authorization.type__c == 'Single Charge' && authorization.received_date_time__c != null ) {
+            		authorization.payer_effective_date__c = authorization.received_date_time__c.date();
+            		authorization.payer_end_date__c = authorization.payer_effective_date__c;
             }
             
             upsert authorization;
@@ -265,21 +265,23 @@ private void initDependentPicklists() {
 	        			else
 	        				fielderrs.add('End Date');
 	        		}
+        		
+        		
+	        		if ( authorization.type__c != 'Bed Hold') {
+	        			if (String.IsBlank(authorization.received_from__c)) {
+	        				fielderrs.add('Given By');
+	        			}
+	        		}
+	        		
+	        		if (String.IsBlank(authorization.representing_received__c)) {
+	        			fielderrs.add('Representing (Received)');
+	        		}
+	        		if ( authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other')
+	        		if (String.IsBlank(authorization.taken_by__c)) {
+	        			fielderrs.add('Taken By');
+	        		}
         		}
         		
-        		if ( authorization.type__c != 'Bed Hold') {
-        			if (String.IsBlank(authorization.received_from__c)) {
-        				fielderrs.add('Given By');
-        			}
-        		}
-        		
-        		if (String.IsBlank(authorization.representing_received__c)) {
-        			fielderrs.add('Representing (Received)');
-        		}
-        		if ( authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other')
-        		if (String.IsBlank(authorization.taken_by__c)) {
-        			fielderrs.add('Taken By');
-        		}
         		if (String.IsBlank(authorization.auth_given_method__c)) {
         			fielderrs.add('How Given');
         		}
