@@ -304,14 +304,14 @@ function validate() {
         context.font = "14px sans-serif";
         fontsize = 14;
         line += fontsize*2;
-        text = "Goals Addressed" ;
+        text = "Goals" ;
         metrics = context.measureText(text);
         context.fillText(text, 2, line );
         
-        context.font = "italic 14px sans-serif";
+       /* context.font = "italic 14px sans-serif";
         text = " (Enter exact words from PCP):" ;
         context.fillText(text, metrics.width + 2, line);
-        line += fontsize;
+        line += fontsize;*/
 
 <apex:repeat value="{!apg}" var="g">
         context.font = "bold 14px sans-serif";
@@ -344,7 +344,7 @@ function validate() {
 
 		line += fontsize*2; // skip another 2 lines 
         context.font = "14px sans-serif";
-        text = "Behaviors Exhibited:: ";
+        text = "Behaviors: ";
         metrics = context.measureText(text);
         context.fillText(text, 2, line);
         fontsize = 14;
@@ -358,7 +358,7 @@ function validate() {
 
 		line += fontsize*2; // skip another 2 lines 
         context.font = "14px sans-serif";
-        text = "Intervention/Activity: ";
+        text = "Intervention: ";
         metrics = context.measureText(text);
         context.fillText(text, 2, line);
         fontsize = 14;
@@ -369,7 +369,7 @@ function validate() {
         line = wrapText(context, text, col1, line, width- col1, fontsize);
         line += fontsize*2;
 
-        context.font = "14px sans-serif";
+        /*context.font = "14px sans-serif";
         text = "Client Response: ";
         metrics = context.measureText(text);
         context.fillText(text, 2, line);
@@ -379,7 +379,7 @@ function validate() {
         context.font = "12px sans-serif";
         text = "{!JSENCODE(Progress_Note__c.Persons_Response_to_Interventions__c)}";
         line = wrapText(context, text, col1, line, width- col1, fontsize);
-        line += fontsize*2;
+        line += fontsize*2;*/
 
         context.font = "14px sans-serif";
         text = "Response:";
