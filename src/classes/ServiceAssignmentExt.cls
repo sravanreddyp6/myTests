@@ -134,7 +134,7 @@ public without sharing class ServiceAssignmentExt {
     public List<SelectOption> getStatusValues()
     {
         List<SelectOption> options = new List<SelectOption>();
-        //options.add(new SelectOption('','--None--'));
+        options.add(new SelectOption('','--None--'));
         options.add(new SelectOption('Active','Active'));
         options.add(new SelectOption('Inactive','Inactive'));
         if(this.theServAssign.Id!= Null){
