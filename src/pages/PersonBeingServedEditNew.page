@@ -339,12 +339,12 @@
         <!-- END: CTEAE-39; siblings -->
         
          <!-- Diagnosis changes-->
-         <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="modalWrapper,diagsec,diagnosisEntry,msgs"  />
+         <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diag_Alt1_Header,diagnosisEntry,msgs"  />
         <apex:actionRegion >
-        <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="diagsec,modalWrapper,diagnosisEntry,msgs" />
+        <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" rerender="diag_Alt1_Header,diagnosisEntry,msgs" />
         </apex:actionRegion>
         
-         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="diagsec,modalWrapper,diagnosisEntry,msgs">
+         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="diag_Alt1_Header,diagnosisEntry,msgs">
             <apex:param name="editid" value="" assignTo="{!diagEditId}" />
         </apex:actionFunction>
         <!-- end -->
@@ -981,8 +981,7 @@
 
  <!-- Add diagnosis modal -->
       	<apex:actionRegion >
-        <apex:outputPanel id="modalWrapper">
-            <apex:outputPanel id="diagnosisModal" style="display:none" rendered="{!showdiagModal}">
+            <apex:outputPanel id="diagnosisModal" style="display:none" >
                                
                 <apex:pageBlock title="Add/Edit Diagnosis">
                     <apex:pageblockButtons location="bottom">
@@ -1008,7 +1007,6 @@
                      <apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
                 </apex:pageBlock>
             </apex:outputPanel>
-        </apex:outputPanel> 
         </apex:actionRegion>
            
             <!-- End -->	

@@ -51,7 +51,6 @@ private boolean TMNUser_set = false;
   }
     
     //Diagnosis changes
-    public list<Diagnosis__c> diagnoses{get; set;}
     public Diagnosis__c diag {
         get {
             if (diag == null)
@@ -60,25 +59,18 @@ private boolean TMNUser_set = false;
         }
         set;
     }
-    public static Boolean showdiagModal { get; set; }
-    public Boolean newDiagnosis{ get; set;}
     public string diagEditId {get; set; }
     public void showAddDiagnosis() {
-        newDiagnosis = true;
-        showdiagModal = true;
         diag = new Diagnosis__c();
-        System.Debug('showdiagModal='+ showdiagModal);
+        diag.Status__c = 'Active';
     }
     public void showEditDiagnosis() {
-        showdiagModal = true;
-        System.Debug('showdiagModal=' + showdiagModal);
+       // System.Debug('showdiagModal=' + showdiagModal);
     }
     
          
     public void saveDiagnosis() {
-        newDiagnosis = true;
-    	system.debug(this.diag);
-		this.diagnoses.add(this.diag);
+		this.diagnosis.add(this.diag);
 		this.diag = new Diagnosis__c();
     }  
     
