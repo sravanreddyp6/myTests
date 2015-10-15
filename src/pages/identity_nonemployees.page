@@ -79,7 +79,19 @@
             font-size: 1em;
             font-weight: bold;
         }
-                             
+              
+            .pbHeaderButton1 {
+		    float: right;
+		    position: relative;
+		    top: 10px;
+		    right: 10px;
+		}  
+             .pbHeaderButton2{
+		    float: none;
+		    position: relative;
+		    top: 10px;
+		    right: -300px;
+		}                
     </style>
 <script type="text/javascript" >
    var j$ = jQuery.noConflict(); 
@@ -301,30 +313,25 @@
                         <apex:commandButton value="Cancel" action="{!closePopup}"/>
                         <apex:commandButton value="Create Non Employee Record" action="{!newTmnUser}" id="createBtn"/>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <apex:commandButton value="First Page" rerender="details" action="{!first}" disabled="{!!hasPrevious}" status="loadingBusy"/>
-                <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!!hasPrevious}" status="loadingBusy"/>
-                <apex:commandButton value="Next" rerender="details" action="{!next}" disabled="{!!hasNext}" status="loadingBusy"/>
-                <apex:commandButton value="Last Page" rerender="details" action="{!last}" disabled="{!!hasNext}" status="loadingBusy"/>
-                    </apex:pageBlockButtons>
+                 </apex:pageBlockButtons>       
                     <apex:pageBlockTable value="{!searchNonEmpResult}" var="ner" rendered="{!IF(searchNonEmpResult=null,'false','true')}">
-                        <apex:column headerValue="Action" >
-                        <apex:commandLink value="View" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
+                        <apex:column headerValue="Name" >
+                        <apex:commandLink value="{!ner.Name}" id="viewRecord" action="{!viewTmnUser}" rerender="viewpopup" status="loadingBusy"> 
                             <apex:param value="{!ner.Id}" assignTo="{!selectedID}" name="userIdParam"/>
                         </apex:commandLink>
-                        <!--<apex:outputLink value="{!URLFOR($Page.identity_view,'',[ID=ner.id,retURL=$Page.RequestAccess,TAU=tmnAliasUsr])}">View</apex:outputLink>-->
-                     
-                    <apex:outputPanel > &#124;&nbsp; <apex:outputLink value="{!URLFOR($Page.RequestAccess,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}">Request Access</apex:outputLink></apex:outputPanel>
-
-                    <apex:outputPanel rendered="{!ner.Current_Person_Type__c=='Non-Employee'}"> &#124;&nbsp;  <apex:outputLink value="{!URLFOR($Page.identity_edittmnu,'',[ID=ner.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" >Edit</apex:outputLink> </apex:outputPanel>
-                        &nbsp;
                         </apex:column>
-                        <apex:column headerValue="Name" value="{!ner.Name}"/>
                         <apex:column headerValue="Title" value="{!ner.Professional_Title__c}"/>                                               
                         <apex:column headerValue="Manager Name" value="{!ner.Manager_Name__c}"/>
                         <apex:column headerValue="Operating Group" value="{!ner.Operating_Group__c}"/>
                         <apex:column headerValue="Person Type" value="{!ner.Current_Person_Type__c}"/> 
                         <apex:column headerValue="Job Status" value="{!ner.Job_Status__c}"/>           
                     </apex:pageBlockTable>    
+                    <div class="pbHeaderButton2">
+                  <apex:commandButton value="First Page" rerender="details" action="{!first}" disabled="{!!hasPrevious}" status="loadingBusy"/>
+                <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!!hasPrevious}" status="loadingBusy"/>
+                <apex:commandButton value="Next" rerender="details" action="{!next}" disabled="{!!hasNext}" status="loadingBusy"/>
+                <apex:commandButton value="Last Page" rerender="details" action="{!last}" disabled="{!!hasNext}" status="loadingBusy"/>
+                 </div> 
                 </apex:pageBlock>
                 </apex:form>
             </apex:outputPanel>            
@@ -413,6 +420,13 @@
                           <apex:outputField label="BAA Signed?" value="{!theTMNUser.BAA_Signed__c}" /> 
                       <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         </apex:PageBlockSection>  
+                        <div class="pbHeaderButton1">   
+                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
+                        <apex:commandButton value="Close" action="{!closeInfo}"/>
+                   		<apex:commandButton value="Request Access" action="{!URLFOR($Page.RequestAccess,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
+                   		<apex:commandButton value="Terminate" action="{!URLFOR($Page.identity_Terminate,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
+                    </div>            
+                        
                         <!--  
                         <apex:pageBlock title="Existing Attachments" rendered="{!theTMNUser.Vendor_list__c='OTHER'}">
                        <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
