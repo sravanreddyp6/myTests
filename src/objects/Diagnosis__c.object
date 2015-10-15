@@ -162,7 +162,7 @@
         <description>date diagnosis is effective</description>
         <externalId>false</externalId>
         <label>Date and Time of Diagnosis</label>
-        <required>true</required>
+        <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>DateTime</type>
@@ -214,10 +214,10 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>ICD_10_Code__c</fullName>
+        <fullName>ICD__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
-        <label>ICD 10 Code</label>
+        <label>ICD Code</label>
         <referenceTo>ICD__c</referenceTo>
         <relationshipLabel>Diagnoses</relationshipLabel>
         <relationshipName>Diagnoses</relationshipName>
@@ -436,6 +436,32 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>PBR__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Person Being Referred</label>
+        <referenceTo>Person_Being_Referred__c</referenceTo>
+        <relationshipLabel>Diagnoses</relationshipLabel>
+        <relationshipName>Diagnoses</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>PBS__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Person Being Served</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Diagnoses</relationshipLabel>
+        <relationshipName>Diagnoses</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Primary_Diagnosis__c</fullName>
         <externalId>false</externalId>
         <label>Primary Diagnosis</label>
@@ -487,19 +513,6 @@
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
-    </fields>
-    <fields>
-        <fullName>Referral__c</fullName>
-        <deleteConstraint>SetNull</deleteConstraint>
-        <externalId>false</externalId>
-        <label>Referral</label>
-        <referenceTo>Referral__c</referenceTo>
-        <relationshipLabel>Diagnoses</relationshipLabel>
-        <relationshipName>Diagnoses</relationshipName>
-        <required>false</required>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Secondary_Diagnosis__c</fullName>
