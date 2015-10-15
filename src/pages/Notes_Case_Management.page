@@ -24,6 +24,8 @@
 			<apex:pageBlockButtons location="top" style="float: right; ">
 				<apex:commandButton value="Save" action="{!save}"
 					rendered="{!isEditMode}" />
+				<apex:commandButton value="Edit" onClick="window.location+='&mode=edit'; return false;"
+					rendered="{!!isEditMode && Progress_Note__c.Status__c = 'Draft'}" />
 				<apex:commandButton value="E-sign" onClick="authenticate(); return false;"
 					rendered="{!!isEditMode && Progress_Note__c.Status__c = 'Draft'}" />
 				<apex:commandButton value="Cancel" action="{!cancel}" immediate="true"
