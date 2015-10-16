@@ -137,6 +137,7 @@ public without sharing class ServiceAssignmentExt {
         options.add(new SelectOption('','--None--'));
         options.add(new SelectOption('Active','Active'));
         options.add(new SelectOption('Inactive','Inactive'));
+        
         if(this.theServAssign.Id!= Null){
             List<Progress_note__c> ProgNotes = [select id, Name, Status__c,service_assignment__c, owner.name,recordtype.developername,disregard_note__c from Progress_Note__c where service_assignment__c= : this.theServAssign.Id ];//and (status__c =: 'Final' or recordtype.developername =: 'Shift_Note' or disregard_note__c =:True)];
             if(ProgNotes.size()>0){
@@ -162,6 +163,8 @@ public without sharing class ServiceAssignmentExt {
                 options.add(new SelectOption('Created in Error','Created in Error'));        
         
         }
+        
+      
         return options;
     }
     private void setcanCreateSummary() {
@@ -399,6 +402,7 @@ public without sharing class ServiceAssignmentExt {
             theRecordType = new RecordType();
             theRecordType = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Name = :recordType LIMIT 1 ];
             theServAssign.RecordTypeId = theRecordType.Id;
+            theServAssign.Status__c = 'Active';
             //recordTypeId = theServAssign.RecordTypeId;
             initialRecord.Admission__c = admission.Id;
             initialRecord.Name = 'TBD - Autofilled';
@@ -453,6 +457,7 @@ public without sharing class ServiceAssignmentExt {
             effDate = theServAssign.Start_date__c;
             effEnd = theServAssign.End_date__c;
             locationSetting = theServAssign.service_location__r.setting__c;
+           
         }
 
         System.debug('recordType BEFORE LoadData: ' + recordType);
