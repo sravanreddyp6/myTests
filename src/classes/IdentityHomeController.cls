@@ -91,6 +91,7 @@ public with sharing class IdentityHomeController {
             }    
             if(ApexPages.currentPage().getParameters().get('TAU')!=null){
             aliasName = ApexPages.currentPage().getParameters().get('TAU');
+            aliasNameValue = ApexPages.currentPage().getParameters().get('TAU');
             }  
                                                                                                                                                                                                          
     }
