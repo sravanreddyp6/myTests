@@ -96,7 +96,7 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "123 Something Street")
       .fillInputText("Mailing Street 2", "apt. 456")
-      .fillInputText("Mailing City", "Georgia")
+      .fillInputText("Mailing City", "Massachusetts")
       .chooseSelectOption("Mailing State/Province", "Massachusetts")
       .fillInputText("Mailing Zip/Postal Code", "23456")
       .fillInputText("Mailing County", "Georgia County")
@@ -578,7 +578,7 @@ testSuite("hsMaNewBedfordReferralReferral", suiteTimeout, {
       })
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
-    	 assert.notOk(isExisting, "Convert Button exists.");
+    	 assert.Ok(isExisting, "Convert Button exists.");
       })      
       .getOutputText("First Name")
       .then(function (firstName) {
