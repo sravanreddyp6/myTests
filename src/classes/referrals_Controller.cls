@@ -29,6 +29,10 @@ public with sharing class referrals_Controller{
 		}
 		set;
 	}
+	
+	public boolean isCAFSS{get; set;} // Sravan - CAFSS Tickets - Sep 3, 2015, 5:30 PM.
+	public string businessUnit {get; set;}
+	
 	public Boolean isCambridge { get; set; }  // Makes it easier to implement common stuffs for Cambridge
 	public Referral__c referralRecord { get; set; }
 	// For Neuro - the user Id to assign the admission steps (tasks) to
@@ -645,8 +649,16 @@ public with sharing class referrals_Controller{
 	/**********************************************************/
 	public referrals_Controller(ApexPages.standardController ctl){
 		system.debug('in constructor');
-		this.operatinggroup=([select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty()) ? ''
-				: [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1][0].operating_group__c;
+		list<Tmn_User__c> tmnUser = [SELECT Id,operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1]; //Using list to prevent system.query exception 
+		this.isCAFSS = false;
+		if(tmnUser.size() > 0){
+			this.operatinggroup = tmnUser[0].operating_group__c;
+			this.businessUnit =  tmnUser[0].Business_Unit__c;
+			this.isCAFSS = (tmnUser[0].Business_Unit__c != null && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
+		}
+		/*this.operatinggroup=([select operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].isEmpty()) ? ''
+				: [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1][0].operating_group__c;*/
+				
 		if (!Test.isRunningTest()) {
 			ctl.addFields(new String[]{'Service_Location__r.Alias__c', 'Anticipated_Admission_DateTime__c'});
 		}
@@ -1523,7 +1535,7 @@ public void setAge () {
 		if (this.referralRecord != null) {
 			if(referralRecord.RecordTypeId != Utility.getRecordTypeForReferral('CareMeridian') &&
 					referralRecord.RecordTypeId != Utility.getRecordTypeForReferral('NeuroRestorative') &&
-					(operatinggroup==null || operatinggroup=='' || operatinggroup.equalsIgnoreCase('Redwood') || operatinggroup.equalsIgnoreCase('Cambridge'))){
+					(operatinggroup==null || operatinggroup=='' || operatinggroup.equalsIgnoreCase('Redwood') || operatinggroup.equalsIgnoreCase('Cambridge')) && !isCAFSS ){
 				if (this.referralRecord.State_for_Preferred_Service__c !=null) {
 					try{
 						if (operatinggroup == 'Cambridge') {
@@ -1558,10 +1570,16 @@ public void setAge () {
 					referralRecord.RecordTypeId = Utility.getRecordTypeForReferral('Cambridge Generic');
 				}
 			}
+			
+			if(isCAFSS){ //Assign CA FSS Recordtype irrespective of Operating group
+				referralRecord.RecordTypeId = Utility.getRecordTypeForReferral('CA FSS');
+			}
+			
 			if (this.referralRecord.Id != null && Utility.getRecordTypeNameForReferralObject(this.referralRecord).startsWith('Cambridge')) {
 				this.isCambridge = true;
 			}
 		}
+		
 		System.debug('Referral Record Type: ' + referralRecordType);
 		System.debug('isCambridge: ' + isCambridge);
 	}

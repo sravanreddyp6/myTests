@@ -77,11 +77,11 @@
             // Validate claims submission email
             var $claimsSubmissionEmail = $('[id*=claimsSubmissionEmail]');
             if ($claimsSubmissionEmail.size()>0 && $claimsSubmissionEmail.val()!='' && !validateEmail($claimsSubmissionEmail.val())) {
-                errors.push('Claims Submission Email does not seem to a valid email address');
+                errors.push('Claims Submission Email does not seem to be a valid email address');
             }
             var $payerCmEmail = $('[id*=payerCmEmail]');
             if ($payerCmEmail.size()>0 && $payerCmEmail.val()!='' && !validateEmail($payerCmEmail.val())) {
-                errors.push('Payer CM Email does not seem to a valid email address');
+                errors.push('Payer CM Email does not seem to be a valid email address');
             }
 
             // claims submission zip
@@ -95,7 +95,7 @@
                 }
             }
 
-            if ( j$('input[id$=contractused_lkid]').length > 0 &&  j$('input[id$=contractused]').val().trim() && !(j$('input[id$=contractused_lkid]').val().trim())) {
+            if ( j$('input[id$=contractused_lkid]').length > 0 && j$('input[id$=contractused]').val() && j$('input[id$=contractused]').val().trim() && !(j$('input[id$=contractused_lkid]').val().trim())) {
                 errors.push('Please choose a valid contract using the search icon');
             }
 
@@ -106,19 +106,19 @@
             // Validate email fields
             var $claimsSubmissionEmail = $('[id*=claimsSubmissionEmail]');
             if ($claimsSubmissionEmail.size()>0 && $claimsSubmissionEmail.val()!='' && !validateEmail($claimsSubmissionEmail.val())) {
-                errors.push('Claims Submission Email does not seem to a valid email address');
+                errors.push('Claims Submission Email does not seem to be a valid email address');
             }
             var $payerCmEmail = $('[id*=payerCmEmail]');
             if ($payerCmEmail.size()>0 && $payerCmEmail.val()!='' && !validateEmail($payerCmEmail.val())) {
-                errors.push('Payer CM Email does not seem to a valid email address');
+                errors.push('Payer CM Email does not seem to be a valid email address');
             }
             var $nrCmEmail = $('[id*=nrCmEmail]');
             if ($nrCmEmail.size()>0 && $nrCmEmail.val()!='' && !validateEmail($nrCmEmail.val())) {
-                errors.push('NR CM Email does not seem to a valid email address');
+                errors.push('NR CM Email does not seem to be a valid email address');
             }
-            var $adjusterEmail = $('[id*=adjusterEmail]');
+            var $adjusterEmail = $('[id*=adjuterEmail]');
             if ($adjusterEmail.size()>0 && $adjusterEmail.val()!='' && !validateEmail($adjusterEmail.val())) {
-                errors.push('Adjustor Email does not seem to a valid email address');
+                errors.push('Adjuster Email does not seem to be a valid email address');
             }
 
             // Other validation
@@ -128,12 +128,12 @@
             // depending on which page we're looking at (view or edit page),
             // so we have to use diffferent methods to find its value.
             if (($referralStatus.val() == 'Closed' || $referralStatus.text() == 'Closed') && $payerType.val() == '') {
-                errors.push('You must choose a Payer Type for a closed referral!');
+                errors.push('You must choose a Payer Type for a closed referral');
             }
 
             var $vaPilotClinicalNumber = $('[id$=vaPilotClinicalNumber]');
             if ($payerType.val() == 'VA - Pilot' && $vaPilotClinicalNumber.val() == '') {
-                errors.push('You must enter the VA Pilot Clinical Number because the Payer Type is VA - Pilot!');
+                errors.push('You must enter the VA Pilot Clinical Number because the Payer Type is VA - Pilot');
             }
         }
         return errors;

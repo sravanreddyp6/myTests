@@ -227,6 +227,28 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Custodians__c</fullName>
+        <externalId>false</externalId>
+        <label>Custodians</label>
+        <length>15</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Date_Of_Birth__c</fullName>
+        <externalId>false</externalId>
+        <label>Date_Of_Birth</label>
+        <length>10</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Email__c</fullName>
         <externalId>false</externalId>
         <label>Email</label>
@@ -525,6 +547,17 @@
         <type>Phone</type>
     </fields>
     <fields>
+        <fullName>Nat_Id_Last_Four__c</fullName>
+        <externalId>false</externalId>
+        <label>Nat_Id_Last_Four</label>
+        <length>10</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Network_Username__c</fullName>
         <externalId>false</externalId>
         <label>Network Username</label>
@@ -639,7 +672,7 @@
     <fields>
         <fullName>Personal_Email__c</fullName>
         <externalId>false</externalId>
-        <label>Priv_Personal Email</label>
+        <label>Personal Email</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -1111,7 +1144,7 @@
         <fullName>phone_ext__c</fullName>
         <externalId>false</externalId>
         <label>phone_ext</label>
-        <length>5</length>
+        <length>20</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -1221,6 +1254,37 @@
             <value>Red</value>
         </filters>
         <label>RedWood</label>
+    </listViews>
+    <listViews>
+        <fullName>Shaun_Only</fullName>
+        <columns>First_Name__c</columns>
+        <columns>Last_Name__c</columns>
+        <columns>NAME</columns>
+        <columns>Salesforce_User_Account__c</columns>
+        <columns>Email__c</columns>
+        <columns>Employee_Number__c</columns>
+        <columns>Job_Status__c</columns>
+        <columns>Job_Title__c</columns>
+        <columns>Operating_Group__c</columns>
+        <columns>Work_State__c</columns>
+        <columns>Hire_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>First_Name__c</field>
+            <operation>contains</operation>
+            <value>j</value>
+        </filters>
+        <filters>
+            <field>Last_Name__c</field>
+            <operation>equals</operation>
+            <value>gomez</value>
+        </filters>
+        <filters>
+            <field>Job_Status__c</field>
+            <operation>equals</operation>
+            <value>Inactive</value>
+        </filters>
+        <label>Shaun&apos;s Only</label>
     </listViews>
     <nameField>
         <label>User Name</label>

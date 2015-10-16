@@ -1,3 +1,5 @@
+var url = require("url");
+
 // All the methods in here are injected into the browser context when the test suite is run.
 // Don't include comments in here because apparently WebdriverIO do not like it.
 var injectJS = function () {
@@ -38,7 +40,7 @@ var injectJS = function () {
 
   window.rtGetLabel = function (label, cb) {
     rtInjectJQuery(function ($) {
-      var $el = $("label:contains('" + label +"'), th.labelCol:contains('" + label + "'), th.labelCol span:contains('" + label + "')")
+      var $el = $("label:contains('" + label +"'):visible, th.labelCol:contains('" + label + "'):visible, th.labelCol span:contains('" + label + "'):visible")
         .filter(function () {
           return $(this).pureText().trim() === label;
         });
@@ -84,15 +86,13 @@ var injectJS = function () {
 var defaultOperationTimeout = 30 * 1000;
 
 module.exports = function (client, done) {
-  client.addCommand("logInAs", function(user) {
+  client.addCommand("checkLogin", function () {
     var loginSuccessful = false;
     var loginError = false;
     var changePasswordNeeded = false;
+    var scheduledMaintenance = false;
+
     return client
-      .url("https://test.salesforce.com")
-      .setValue("input#username", user.username)
-      .setValue("input#password", user.password)
-      .click("button#Login")
       .waitUntil(function () {
         return this.isExisting("a=ESD Home").then(function (loginSuccessResult) {
           if (loginSuccessResult) {
@@ -105,8 +105,12 @@ module.exports = function (client, done) {
               return true;
             }
             return this.getTitle().then(function (title) {
-              if (title.indexOf("Change Password") !== -1) {
+              if (title.indexOf("Change Password") !== -1 || title.indexOf("Change Your Password") !== -1) {
                 changePasswordNeeded = true;
+                return true;
+              }
+              if (title.indexOf("Scheduled") !== -1) {
+                scheduledMaintenance = true;
                 return true;
               }
               return false;
@@ -121,10 +125,25 @@ module.exports = function (client, done) {
           throw new Error("Log in failure with user " + user.name);
         } else if (changePasswordNeeded) {
           return this
-            .click("input[value='Cancel']")
+            .url()
+            .then(function (currentUrl) {
+              return this.url(url.resolve(currentUrl.value, '/apex/Home'));
+            })
             .waitForVisible("a=ESD Home", defaultOperationTimeout);
+        } else if (scheduledMaintenance) {
+          return this
+            .click("a.continue")
+            .checkLogin();
         }
       });
+  });
+  client.addCommand("logInAs", function (user) {
+    return client
+      .url("https://test.salesforce.com")
+      .setValue("input#username", user.username)
+      .setValue("input#password", user.password)
+      .click("input#Login")
+      .checkLogin();
   });
   client.addCommand("fillInputText", function (label, value) {
     return client
@@ -136,8 +155,10 @@ module.exports = function (client, done) {
             if ($inputEl.length === 0) {
               throw new Error("No input field associated with label " + label + " can be found");
             }
+            $inputEl.focus();
             $inputEl.val(value);
-            $inputEl.trigger('blur');
+            $inputEl.trigger("blur");
+            $inputEl.trigger("change");
             doneAsync();
           });
         });
@@ -149,6 +170,7 @@ module.exports = function (client, done) {
       .executeAsync(function (label, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
+            $el.focus();
             doneAsync($el.text());
           });
         });
@@ -165,27 +187,44 @@ module.exports = function (client, done) {
             if (options.length === 0) {
               throw new Error("Found label " + label + " but cannot find any select options associated with it.");
             }
+            options.focus();
             doneAsync(options.map(function (index, opt) { return opt.value; }));
           });
         });
       }, label)
       .then(function (result) { return result.value; });
   });
+  client.addCommand("getSelectOptionsBySelector", function (selector) {
+    return client
+      .execute(injectJS)
+      .executeAsync(function (selector, doneAsync) {
+        rtInjectJQuery(function ($) {
+          var options = $(selector).find("option");
+          if (options.length === 0) {
+            throw new Error("Found element with selector " + selector + " but cannot find any select options associated with it.");
+          }
+          options.focus();
+          doneAsync(options.map(function (index, opt) { return opt.value; }));
+        });
+      }, selector)
+      .then(function (result) { return result.value; });
+  });
   client.addCommand("getMultiSelectOptions", function (label) {
-	    return client
-	      .execute(injectJS)
-	      .executeAsync(function (label, doneAsync) {
-	        rtGetLabel(label, function ($labelEl) {
-	          rtFollowLabel($labelEl, label, function ($el) {
-	            var options = $el.find("> select option");
-	            if (options.length === 0) {
-	              throw new Error("Found label " + label + " but cannot find any select options associated with it.");
-	            }
-	            doneAsync(options.map(function (index, opt) { return opt.value; }));
-	          });
-	        });
-	      }, label)
-	      .then(function (result) { return result.value; });
+      return client
+        .execute(injectJS)
+        .executeAsync(function (label, doneAsync) {
+          rtGetLabel(label, function ($labelEl) {
+            rtFollowLabel($labelEl, label, function ($el) {
+              var options = $el.find("> select option");
+              if (options.length === 0) {
+                throw new Error("Found label " + label + " but cannot find any select options associated with it.");
+              }
+              options.focus();
+              doneAsync(options.map(function (index, opt) { return opt.value; }));
+            });
+          });
+        }, label)
+        .then(function (result) { return result.value; });
   });
   client.addCommand("chooseSelectOption", function (label, optionValue) {
     return client
@@ -201,12 +240,35 @@ module.exports = function (client, done) {
             if ($optionEl.length === 0) {
               throw new Error("Found label " + label + " but cannot find a select option with value " + optionValue);
             }
+            $optionEl.focus();
             $optionEl.prop("selected", true);
             $selectEl.trigger('change');
             doneAsync();
           });
         });
       }, label, optionValue);
+  });
+  client.addCommand("selectCheckbox", function (label, selected) {
+    selected = selected !== false;
+    return client
+    .execute(injectJS)
+    .executeAsync(function (label, selected, doneAsync) {
+      rtGetLabel(label, function ($labelEl) {
+        rtFollowLabel($labelEl, label, function ($el) {
+          var $checkboxEl = $el.find("input[type='checkbox']");
+          if ($checkboxEl.length === 0) {
+            throw new Error("Found label " + label + " but cannot find any checkbox associated with it");
+          }
+          $checkboxEl.focus();
+          if ($checkboxEl.is(":checked") !== selected) {
+            $checkboxEl.trigger("click");
+            $checkboxEl.trigger("change");
+            doneAsync();
+          }
+          doneAsync();
+        });
+      });
+    }, label, selected);
   });
   client.addCommand("selectLookup", function (label, optionValue) {
     return client
@@ -239,8 +301,11 @@ module.exports = function (client, done) {
           }
           return handles.value[index];
         }
-        throw new Error("There is only one open window!");
+        return originalHandle;
       })
       .then(client.window);
+  });
+  client.addCommand("waitForActionStatusDisappearance", function (actionStatusId, timeout) {
+    return client.waitForVisible("span[id$=" + actionStatusId + "\\.start]", timeout, true);
   });
 };

@@ -17,7 +17,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
-  
+    <apex:variable value="{!theServAssign.Flavor__c == 'CA FSS'}" var="isCAFSS" />
 
     <style>
         .dialogLoadingSpinner {
@@ -363,6 +363,7 @@
         <!----><apex:actionFunction action="{!updatelocation}" name="rerenderPanel" rerender="dummy">
             <apex:param name="locationSetting" value="" assignTo="{!locationSetting}" />
         </apex:actionFunction>
+	<apex:actionFunction action="{!changeToModel}" name="changeToModel" rerender="ContractAssoc, ProgAssoc, msgs" status="SaveStatus1" />
         <apex:inputhidden value="{!theServAssign.Person_Being_Served__c}" rendered="{!canEditSA}" />
         <!-- To set focus on Top -->
         <input id="hiddenElementId" type="hidden" />
@@ -394,6 +395,7 @@
             <apex:pageBlockButtons >
                 <div class="blockbtns">
                     <apex:outputPanel layout="none" rendered="{!(AND(vfVarIsRW,BEGINS($UserRole.DeveloperName, 'IA'), !editSA))}">
+			<a class="btn" href="#" onClick="window.open('/apex/PlanOfCarePdf?Id=' + '{!admission.Person_Being_Served__c}' , '_blank'); return false;" id="PlanOfCare">Plan Of Care</a>&nbsp;&nbsp;
                         <a class="btn" href="#" onClick="openModalDialogSA('IowaDailyDataSummaryDialog', 'div', 'Generate Daily Data Summary and Progress Note', null, 700);" id="IowaDailyDataSummaryGenerate">Create Daily Data Summary</a>&nbsp;&nbsp;
                     </apex:outputPanel>
                     <apex:commandButton value="Edit" action="{!EditServAssign}" rendered="{!!editSA && canEditSA}" />
@@ -543,10 +545,10 @@
                 <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
                 <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !(vfVarIsCM || isNR) }" />
                 <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR)}" required="{!episodeReq}" />
-                <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
-                <apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
+                <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && (vfVarIsCB || isCAFSS)}" />
+                <apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && (vfVarIsCB || isCAFSS)}" />
              
-                <apex:pageblocksectionitem rendered="{! !vfVarIsCB}" />
+                <apex:pageblocksectionitem rendered="{! !(vfVarIsCB || isCAFSS)}" />
                 <apex:pageBlockSectionItem rendered="{!!editSA && !showLocation && !vfVarIsCM && !isNR}">
                     <label for="pModel" >Model</label>                  
                     <apex:outputPanel >                 
@@ -557,12 +559,10 @@
                 </apex:pageBlockSectionItem>
                 <apex:pageblocksectionitem rendered="{!editSA && !showLocation && !vfVarIsCM &&!isNR}">
                     
-                    <apex:outputLabel value="Model" for="modelfield" />
-                        <!--apex:actionRegion -->
-                            <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}"   html-data-countInFormProgress="1" >
-                                <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="saStartSectionEdit, saEndSectionEdit, ContractAssoc, ProgAssoc" status="pageProcessing" onComplete=""/>   
-                            </apex:inputField>
-                        <!--/apex:actionRegion-->
+                	<apex:outputLabel value="Model" for="modelfield" />
+			<apex:selectList size="1" value="{!theServAssign.Model__c}" onchange="changeToModel()" >
+				<apex:selectOptions value="{!modelValues}" />
+			</apex:selectList>
                 </apex:pageblocksectionitem>
                 <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Specify_Error__c!= null) }" />
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
@@ -713,9 +713,9 @@
                 </apex:pageBlockSectionItem>
                 <apex:pageblocksectionitem rendered="{!editSA && !vfVarIsCM && !isNR}">
                     <apex:outputLabel value="Model" for="modelfield" />
-                    <apex:inputField id="modelfield" value="{!theServAssign.Model__c}" required="{!modelReq}" onchange="changeToModel()"  html-data-countInFormProgress="1" >
-                        <apex:actionsupport event="onchange" action="{!changeToModel}" rerender="saStartSectionEdit, saEndSectionEdit, ContractAssoc, ProgAssoc" status="pageProcessing" onComplete=" "/>   
-                    </apex:inputField>                    
+					<apex:selectList size="1" value="{!theServAssign.Model__c}" onchange="changeToModel()" >
+						<apex:selectOptions value="{!modelValues}" />
+					</apex:selectList>                   
                 </apex:pageblocksectionitem>
                 <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Specify_Error__c!= null) }" />
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
@@ -730,9 +730,9 @@
              
 
                 <!--  EB-526 -->
-                <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && vfVarIsCB}" />
-                <apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && vfVarIsCB}" />
-                <apex:outputText value="" rendered="{! vfVarIsCB}" />
+                <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && (vfVarIsCB || isCAFSS)}" />
+                <apex:outputfield value="{!theServAssign.Clinician__c}" rendered="{! !editSA && (vfVarIsCB || isCAFSS)}" />
+                <apex:outputText value="" rendered="{! (vfVarIsCB || isCAFSS)}" />
             </apex:pageBlockSection>
             
             <apex:pageBlockSection title="Contract Association" showHeader="true" columns="3" collapsible="true" id="ContractAssoc" rendered="{!!showLocation && !AssessmentOnly && !vfVarIsCM && !isNR}">
@@ -748,7 +748,7 @@
                 </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
 
-            <apex:pageBlockSection title="Program Association" showHeader="true" columns="1" collapsible="true" id="ProgAssocViewNEW" rendered="{!!editSA && !showLocation && vfVarIsCB}">
+            <apex:pageBlockSection title="Program Association" showHeader="true" columns="1" collapsible="true" id="ProgAssocViewNEW" rendered="{!!editSA && !showLocation && (vfVarIsCB || isCAFSS)}">
                 <hr />
                 <apex:outputText id="saProgram" value="{!theServAssign.Program__c}" />
                 <apex:outputPanel id="ProgAssocPanelView2NEW" layout="block" styleClass="col" rendered="{!!editSA && !showLocation }">
@@ -782,7 +782,7 @@
                     </apex:pageBlockTable>
                 </apex:outputPanel>
             </apex:pageBlockSection>
-            <apex:pageBlockSection title="Program Association" showHeader="true" columns="1" collapsible="true" id="ProgAssoc" rendered="{!editSA && !showLocation && vfVarIsCB}">
+            <apex:pageBlockSection title="Program Association" showHeader="true" columns="1" collapsible="true" id="ProgAssoc" rendered="{!editSA && !showLocation && (vfVarIsCB || isCAFSS)}">
 
                 <apex:outputPanel id="ProgAssocPanelEdit" layout="block" styleClass="col" rendered="{!editSA}">
                     <apex:actionStatus id="myStatus">
@@ -1623,7 +1623,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW && !isNR}">
+        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW && !isNR && !isCAFSS}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
     <!--             <apex:actionStatus id="AddSeizureStatus"> -->
@@ -2061,7 +2061,7 @@ END: Uncomment to have the element collapsed by default -->
                     </apex:column>
                     <apex:column value="{!note.Start_time__c }" rendered="{! !vfVarIsCM }"/>
                     <apex:column value="{!note.End_Time__c }" rendered="{! !vfVarIsCM }"/>
-            <apex:column value="{!note.Clinician__c}" rendered="{! vfVarIsCB && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
+            <apex:column value="{!note.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS) && (Service_Assignment__c.Admission__r.State__c == 'MD' || Service_Assignment__c.Admission__r.State__c == 'MA')}" />
                     <apex:column value="{!note.createddate }" />
                     <apex:column value="{!note.createdby.name }" />
                 </apex:pageblockTable>

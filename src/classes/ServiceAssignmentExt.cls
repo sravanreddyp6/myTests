@@ -168,9 +168,30 @@ public without sharing class ServiceAssignmentExt {
         Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
         canCreateSummary = oSchema.IsCreateable();
     }
+//Model picklist 
+	public list<Selectoption> modelValues{get{
+		
+		if(modelValues == null){
+			modelValues = new List<SelectOption>();
+			Schema.DescribeFieldResult fieldResult = Service_Assignment__c.Model__c.getDescribe();
+			List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+			modelValues.add(new selectOption('--None--', '--None--'));
+	        for( Schema.PicklistEntry f : ple){
+	        	if(this.theServAssign.Flavor__c == 'CA FSS' && f.getLabel() == 'Family Vistas Intensive In Home' ){
+	        		continue;
+	        	}
+	        	modelValues.add(new SelectOption(f.getValue(), f.getLabel()));
+	     
+	  		}  
+		}
+	  		     
+  		return modelValues;
+		
+	}
+	set;}
 
     public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
-    public Boolean modelReq { get { return (pOpGroup == 'Cambridge');} set; }
+    public Boolean modelReq { get { return (pOpGroup == 'Cambridge'|| this.theServAssign.Flavor__c == 'CA FSS');} set; }
 
     public List<Action_Plan__c> getActivePlan(){
 
@@ -254,10 +275,10 @@ public without sharing class ServiceAssignmentExt {
             } else {
                 pOpGroup = tmnUsers[0].Operating_Group__c;
                 // added NeuroRestorative to show diagnosis for EB-434
-                pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' ;
-                pshowLocation =  ( pOpGroup =='Redwood' ); // CTEAE-86 && admission.State__c != 'AZ');
+                pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' || this.theServAssign.Flavor__c == 'CA FSS';
+                pshowLocation =  ( pOpGroup =='Redwood' && this.theServAssign.Flavor__c != 'CA FSS'); // CTEAE-86 && admission.State__c != 'AZ');
                 pshowCodes = ( ( pOpGroup == 'Redwood'  && admission.State__c == 'AZ' && theservassign.service_location__r.programid__c != '114165002')
-                        || ( pOpGroup != 'Care Meridian'  && pOpGroup != 'Redwood'));
+                        || ( pOpGroup != 'Care Meridian'  && pOpGroup != 'Redwood') || this.theServAssign.Flavor__c == 'CA FSS');
                 pshowNurseAssessment = (pOpGroup == 'Care Meridian');
                 psetFlags = true;
             }
@@ -387,13 +408,14 @@ public without sharing class ServiceAssignmentExt {
             editSA = true;
             theServAssign = new Service_Assignment__c();
             initialRecord = new Service_Assignment__c();
-            admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid, Network_Offering__c FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
+            admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid, person_being_served__r.Flavor__c, Network_Offering__c FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
             admissionId = admission.Id;
             theServAssign.Admission__c = admission.Id;
             theServAssign.Name = 'TBD - Autofilled';
             theServAssign.Program_Detail__c = 'TBD - Autofilled';
             theServAssign.Person_Being_Served__c = admission.Person_Being_Served__c;
             theServAssign.Phase__c = 0;
+	    theServAssign.Flavor__c = admission.person_being_served__r.Flavor__c;
             diagnoses = new List<Diagnosis__c>();
             recordType = ApexPages.currentPage().getParameters().get('recordType');
             theRecordType = new RecordType();
@@ -427,7 +449,7 @@ public without sharing class ServiceAssignmentExt {
                              Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                              Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, 
                              Person_Being_Served__r.Name, Person_Being_Served__r.Age__c,Person_Being_Served__r.Age_month__c,Person_Being_Served__r.Age_year__c,Person_Being_Served__r.Age_days__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,
+                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,Flavor__c,
                              service_location__r.programid__c, service_location__r.service_value__c,service_location__r.setting__c,
                              Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Was_dissatisfaction_reason_for_service_e__c, Who_was_dissatisfied__c,  Primary_Reason_for_Dissatisfaction__c, End_of_Service_Circumstances__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
                              Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c
@@ -439,7 +461,7 @@ public without sharing class ServiceAssignmentExt {
                              Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                              Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, 
                              Person_Being_Served__r.Name, Person_Being_Served__r.Age__c,Person_Being_Served__r.Age_month__c,Person_Being_Served__r.Age_year__c,Person_Being_Served__r.Age_days__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
-                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,
+                             Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,Flavor__c,
                              service_location__r.programid__c, service_location__r.service_value__c,
                              Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Was_dissatisfaction_reason_for_service_e__c, Who_was_dissatisfied__c,  Primary_Reason_for_Dissatisfaction__c, End_of_Service_Circumstances__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
                              Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c
@@ -623,7 +645,7 @@ public without sharing class ServiceAssignmentExt {
         if (tmnUsers.size() == 0) {
             return false;
         }
-        return tmnUsers[0].Operating_Group__c=='Redwood';
+        return tmnUsers[0].Operating_Group__c=='Redwood' && this.theServAssign.Flavor__c != 'CA FSS';
     }
 
     public boolean canCreateWorksheet {
@@ -813,7 +835,7 @@ public without sharing class ServiceAssignmentExt {
         currentID = localRecord.Id;
         if(newSA==false) {
             system.debug('this isnt a new reocrd');
-            currentRecord = [Select start_date__c, SA_Start_DateTime__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c, Service_Location__r.Service_Value__c, Status__c  From Service_Assignment__c Where Id = :currentID Limit 1];
+            currentRecord = [Select start_date__c, SA_Start_DateTime__c, end_date__c, Model__c, Program_code__c, Program__c, RecordType.Name, Service_Line__c, Admission__r.State__c, Location_Region__c, service_location__c, Service_Location__r.Service_Value__c, Status__c, clinician__c  From Service_Assignment__c Where Id = :currentID Limit 1];
             currentState = currentRecord.Admission__r.State__c;
         }
         else {
@@ -1187,6 +1209,9 @@ public without sharing class ServiceAssignmentExt {
             //ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
             //return null;
         }
+	if(modelreq && (theServAssign.Model__c == '--None--' || theServAssign.Model__c == null)){
+		errors.add('Model: You must select a value.');
+	}
         if(!AssessmentOnly && theServAssign.SA_Start_DateTime__c == null) {
             errors.add('Start date: You must enter a value.');
             //ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Start date: You must enter a value.'));

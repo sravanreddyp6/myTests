@@ -18,18 +18,21 @@ public string loadThisAgency {get; set;}
 
 public boolean canViewFamilyInfo { 
     get {
-        return TMNUser == null ? false : TMNUser.Operating_Group__c == 'Cambridge';
+        return TMNUser == null ? false : (TMNUser.Operating_Group__c == 'Cambridge' || isCAFSS);
     }}
 
 public Boolean isUserLevel1or2 { get { return PBS_controller_helper.isUserLevel1or2();} set; }
  
 private TMN_User__c TMNUser_internal;
 private boolean TMNUser_set = false;
+
+public boolean isCAFSS{get; set;}
+
 @TestVisible private TMN_User__c TMNUser {
     get {
         if (!TMNUser_set) {
             TMN_User__c[] users = [
-                SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:currentContact.OwnerID LIMIT 1
+                SELECT ID, Operating_Group__c, Business_Unit__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:currentContact.OwnerID LIMIT 1
             ];
             if (users.size() == 0) {
                 TMNUser_internal = null;
@@ -106,7 +109,7 @@ public string dontShowFields {
     get {
         system.debug('OpGroup:' + TMNUser.Operating_Group__c);
         List<string> dontshow = new List<string>();
-        if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge'){
+        if (TMNUser == null || TMNUser.Operating_Group__c != 'Cambridge' || !isCAFSS){
             dontshow.Add('Current_Medications__c');
         }
         
@@ -123,7 +126,7 @@ public string dontShowFields {
 
 
 
-// In order to show field labels instead of API names for history
+// In order to show field labels instead of API names for histo ry
 public Map<String, String> fieldMap { get; set; }
 
     public void showEditMode(){
@@ -154,7 +157,7 @@ public Map<String, String> fieldMap { get; set; }
     
     //for EPRIQM-51
     private boolean setdisableAddAdm() {
-        if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood')) {
+        if(TMNUser!=null && (TMNUser.Operating_Group__c == 'Care Meridian'  || TMNUser.Operating_Group__c == 'Cambridge' || TMNUser.Operating_Group__c == 'NeuroRestorative'  || TMNUser.Operating_Group__c == 'Redwood' || isCAFSS)) {
         List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c  from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: PBSId];
         if(admissionList.size()>0){
           return false;
@@ -185,7 +188,10 @@ public Map<String, String> fieldMap { get; set; }
         setIsEditor();
         setcanEdit();
         setcanCreateAdm();
-      disableAddAdm =  setdisableAddAdm();
+      	disableAddAdm =  setdisableAddAdm();
+      	
+      	//check for CA FSS - CAFSS-8 Sravan Sep 9, 2015.
+      	isCAFSS = (null != TMNUser.Business_Unit__c && TMNUser.Business_Unit__c.startswith('BU 008')) ? true : false;
         if (ApexPages.currentPage().getParameters().get('edit') == 'true' && IsEditor) {
             showEditMode();
         }
@@ -211,7 +217,8 @@ public Map<String, String> fieldMap { get; set; }
         return TMNUser.Operating_Group__c=='Redwood'
             || TMNUser.Operating_Group__c=='Cambridge'
             //added by Amruth for EB-430
-            || TMNUser.Operating_Group__c=='NeuroRestorative';
+            || TMNUser.Operating_Group__c=='NeuroRestorative'
+            || isCAFSS;
     }}
     public list<Diagnosis__c> diagnosis{get{
         return [select id, Status__c, ICD__c, Type__c, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];

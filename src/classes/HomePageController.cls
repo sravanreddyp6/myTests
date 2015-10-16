@@ -161,12 +161,12 @@ public with sharing class HomePageController{
 			permissionSets.add(assignment.PermissionSet.Label);
 		}
 		permissionSetString = String.join(new List<String>(permissionSets), '~');
-		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier III')) {
+		if (permissionSets.contains('iServe - Tier I') || permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
 			canSeeCNAWorkbook = true;
 		} else {
 			canSeeCNAWorkbook = false;
 		}
-		if (permissionSets.contains('iServe - Tier III')) {
+		if (permissionSets.contains('iServe - Tier II') || permissionSets.contains('iServe - Tier III')) {
 			canSeeShiftDoc = true;
 		} else {
 			canSeeShiftDoc = false;

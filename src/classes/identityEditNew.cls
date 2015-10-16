@@ -39,7 +39,7 @@ public class identityEditNew {
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Program_String__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
-            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c
+            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c,Office_Flag__c
             FROM TMN_User__c 
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
@@ -82,9 +82,36 @@ public class identityEditNew {
         TMNUser.Last_Day__c = defaultLastDay;
     }
  }
+ 
+ 	public List<TMN_User__c> tmnManagerList {set;get;}
+ 	public String managerFirstName  {set;get;}
+ 	public String managerLastName  {set;get;}
+ 			public PageReference getManagerList() {
+ 				list<AggregateResult> userAggregateResult;
+ 					if(managerFirstName!=null && managerFirstName.length() > 0 && (managerLastName ==null || managerLastName.length() ==0)){
+ 				 userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' group by Manager_Email__c limit 100];
+ 					} else 	if(managerFirstName==null || managerFirstName.length() == 0 && (managerLastName !=null && managerLastName.length() >0)){
+ 						userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_Last_Name__c like : '%'+managerLastName +'%' group by Manager_Email__c limit 500];
+ 					} else {
+ 					userAggregateResult = [select Manager_Email__c from TMN_User__c where Manager_First_Name__c like : '%'+managerFirstName +'%' and Manager_Last_Name__c like : '%'+managerLastName +'%' group by Manager_Email__c limit 100];
+ 					}
+					 tmnManagerList = new List<TMN_User__c>();
+					 Set<String> managerIds = new Set<String>();
+					for(AggregateResult tmn:userAggregateResult) {
+						List<TMN_User__c> tmnManager = [select id,Name,Email__c,Employee_Number__c,Employee_Type__c,Job_Title__c,Manager_Email__c,Work_State__c,Operating_Group__c from TMN_User__c where Manager_Email__c =:string.valueof(tmn.get('Manager_Email__c'))   limit 1];
+							if(tmnManager!=null && tmnManager.size()>0 && !managerIds.Contains(tmnManager[0].id)){
+								managerIds.add(tmnManager[0].id);
+								tmnManagerList.addAll(tmnManager);
+							}
+					} 				
+ 			return null;
+ 			}
+ 
+ 
+ 
      @RemoteAction
     public static TMN_User__c LocationDetails(String location) {
-       return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c <> 'Non-Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
+       return   [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_flag__c, zip_code__c,Manager_Name__c from tmn_user__c where current_person_type__c = 'Employee' and location_name__c <> '' and location_name__c like : '%'+location +'%' limit 1];
     }
     
     public  Attachment attDeatils {set;get;}
@@ -125,7 +152,7 @@ public class identityEditNew {
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
-            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c,Program_String__c, 
+            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c,Program_String__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c,phone_ext__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
@@ -146,13 +173,33 @@ public class identityEditNew {
 		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'End Date can\'t be more than 90 days from Start Date.'));
     	 	error = true;
 		}
+		if(TMNUser.Hire_Date__c ==null){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date is required to save this record'));
+    	 	error = true;
+        }
+        if(TMNUser.Vendor_list__c ==null){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Vendor information is required to save this record'));
+    	 	error = true;
+        }
+		
 		if(error){
 		return null;
 		}
 	
         ID managerId = TMNUser.Manager_Lookup__c;
+        String managerEmail = TMNUser.Manager_Email__c;
         ID aliasId = TMNUser.Alias_Lookup__c;
-        TMN_User__c managerInfo = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
+        TMN_User__c managerInfo ;
+        List<TMN_User__c> managerInfoList = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Id = :managerId LIMIT 1];
+        		if(managerInfoList!=null&& managerInfoList.size()>0){
+        				managerInfo = managerInfoList[0];
+        		}else {
+        		managerInfoList = [SELECT Id,Email__c,Name FROM TMN_User__c WHERE Manager_Email__c = :managerEmail LIMIT 1];
+        				if(managerInfoList!=null&& managerInfoList.size()>0){
+        				managerInfo = managerInfoList[0];
+        			}		
+        		}
+        
         Alias__c aliasInfo = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name FROM Alias__c WHERE Id = :aliasID LIMIT 1];
         TMNUser.Manager_Email__c = managerInfo.Email__c;
         TMNUser.Manager_Name__c = managerInfo.Name;
@@ -251,6 +298,7 @@ public class identityEditNew {
     public PageReference goCancel() {
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        	retURL = retURL+'?cancel=true';
         PageReference cancelPage = new PageReference(retURL);
         cancelPage.setRedirect(true);   
         return cancelPage;
@@ -258,11 +306,11 @@ public class identityEditNew {
 
     public PageReference goBack() {
         if(retURL == null){
-            PageReference backPage = new PageReference('/apex/identity_home');
+			PageReference backPage = new PageReference('/apex/identity_home?cancel=true');
             backPage.setRedirect(true);   
             return backPage;
         }
-        PageReference backPage = new PageReference(retURL);
+        PageReference backPage = new PageReference(retURL+'?cancel=true');
         backPage.setRedirect(true);   
         return backPage;
     }

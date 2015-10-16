@@ -6,7 +6,7 @@ public with sharing class Notes_ProgressNote_Create_Audit_pdf {
         PageReference pageRef2 = new PageReference('/' + myId); 
         
         try{
-        thePN = [select id, Name, No_Approval_Needed__c, Person_Being_Served__r.Name, RecordType.Name, Status__c from Progress_Note__c where id= :myId];         
+        thePN = [select id, Name, No_Approval_Needed__c, Approval_User__c, Person_Being_Served__r.Name, RecordType.Name, Status__c from Progress_Note__c where id= :myId];         
             PageReference pageRef = new PageReference('/apex/V2SA_ProgressNotesPDF');
             pageRef.getParameters().put('id', thePN.id);
             Attachment attachmentPDF = new Attachment();
@@ -30,8 +30,11 @@ public with sharing class Notes_ProgressNote_Create_Audit_pdf {
                         return new PageReference('/apex/Notes_ProgressNote_AZ_OPT?Mode=Edit&id='+thePn.id+'&sfdc.override=1');
                     }
                     else{
-                    
-                    return new PageReference('/p/process/Submit?retURL=%2F'+thePN.id+'&id='+thePN.id);
+	                     Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
+			             req1.setObjectId(thePN.id);
+			             req1.setNextApproverIds(new Id[]{thePN.Approval_User__c});
+			             Approval.ProcessResult result = Approval.process(req1);
+                   // return new PageReference('/p/process/Submit?retURL=%2F'+thePN.id+'&id='+thePN.id);
                     }
                 }            
             

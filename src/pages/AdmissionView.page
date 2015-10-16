@@ -300,6 +300,7 @@
     
     <apex:variable value="{! $User.Operating_Group__c = 'CareMeridian' || $User.Operating_Group__c = 'Care Meridian'}" var="isCM" />
     <apex:variable value="{! $User.Operating_Group__c = 'NeuroRestorative' || $User.Operating_Group__c = 'Neuro Restorative'}" var="isNR" />
+    <apex:variable value="{!admission.Person_being_served__r.Flavor__c == 'CA FSS'}" var="isCAFSS" />
 	<c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}" />
 	<br />
 	<apex:form id="admissionForm">
@@ -465,7 +466,7 @@
 		</apex:pageBlock>
 <hr/>
 		<a id="admissionDocuments">
-			<apex:pageBlock mode="maindetail"  rendered="{!isCM && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
+			<apex:pageBlock mode="maindetail"  rendered="{!(isCM || isCAFSS) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
 				<apex:pageBlockButtons location="top">
 					<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
 						<apex:facet name="start">

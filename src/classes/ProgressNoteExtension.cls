@@ -1,6 +1,7 @@
 public with sharing class ProgressNoteExtension {
 	
 	public string MedicaidIDClear{ get; set; }
+	public string OtherId {get;set;}
 	public Progress_Note__c pn { get; set;}
 	// START: EB-210 additions; NC TFC Progress Note fields / data.
 		public Progress_Note__c thePn { get; set; }
@@ -69,11 +70,12 @@ public with sharing class ProgressNoteExtension {
 					}
 				}
 			}
-		// END: EB-210 additions; NC TFC Progress Note fields / data.
 		
-		if ( String.IsBlank(medicaidIDClear) ) {
-			Contact c = [select medicaid_id__c from contact where id= :pn.Person_Being_Served__c];
+		
+		if ( String.IsBlank(medicaidIDClear) ||  String.IsBlank(otherId)) {
+			Contact c = [select medicaid_id__c, Other_id__c from contact where id= :pn.Person_Being_Served__c];
 			medicaidIDClear = c.Medicaid_ID__c;
+			otherId = c.Other_id__c;
     	}
     	
     	if(TU.size()>0 && pnnew.AZ_OPT_Enabler__c && thePn.recordtype.DeveloperName == 'AZ_OPT' && TU[0].Operating_Group__c == 'Redwood'){

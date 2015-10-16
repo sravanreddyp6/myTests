@@ -7,7 +7,7 @@ public with sharing class Notes_ProgressNote_Create {
     public string RTid;
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public String dispMode = ApexPages.currentPage().getParameters().get('Mode');
-    public Id AZ_OPT_ID, SHIFT_NOTE_ID;
+    public Id AZ_OPT_ID, SHIFT_NOTE_ID, CAFSS_ID;
     public String pbsName { get; set; }
     Public Boolean AsmntOnly{get;set;}
     private string usrOpGrp;
@@ -32,6 +32,9 @@ public with sharing class Notes_ProgressNote_Create {
             if (rt.Name == 'Shift Note') {
                 SHIFT_NOTE_ID = rt.Id;
             }
+            if (rt.Name == 'CA FSS') {
+                CAFSS_ID = rt.Id;
+            }
         }
         
         System.Debug('shift note id=' + SHIFT_NOTE_ID);
@@ -45,7 +48,7 @@ public with sharing class Notes_ProgressNote_Create {
         }
         pn = (Progress_Note__c) controller.getRecord();
         ID saID = ApexPages.currentPage().getParameters().get('service_assignment');
-        Service_Assignment__c sa = [select id, name, service_location__r.programid__c,recordtype.name from service_assignment__c where id = :saID LIMIT 1];
+        Service_Assignment__c sa = [select id, name, service_location__r.programid__c,recordtype.name, Flavor__c from service_assignment__c where id = :saID LIMIT 1];
 
        User currUser = [ select id, Operating_Group__c from User where id = :UserInfo.getUserId()];
        usrOpGrp = currUser.Operating_Group__c;
@@ -75,7 +78,7 @@ public with sharing class Notes_ProgressNote_Create {
         
         System.Debug('user op group is: ' + currUser.Operating_Group__c );
         if (currUser != null ) {
-            if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA') && currUser.Operating_Group__c == 'Redwood') {
+            if (( myState == 'MN' || myState == 'IN' || myState == 'CA' || myState == 'IA') && (currUser.Operating_Group__c == 'Redwood' && sa.Flavor__c != 'CA FSS')) {
                 pn.RecordTypeId = SHIFT_NOTE_ID;
                 // special case for CM Ludlow is handled above in AZ
             }
@@ -83,6 +86,11 @@ public with sharing class Notes_ProgressNote_Create {
             // add error to page that shift note cannot be created
         }
         
+        //for CAFSS-12 Sravan - Sep22, 2015.
+        if(sa.Flavor__c == 'CA FSS'){
+        	pn.RecordtypeId = CAFSS_ID;
+        	
+        }
         //EC-196 - skip this step for CM
         if (  usrOpGrp != 'Care Meridian')
             loadData();
@@ -113,7 +121,11 @@ public with sharing class Notes_ProgressNote_Create {
                 rtOptions.Add(SO);
                 break;
             }
-            
+            else if ( myName == 'CA FSS' && pn.RecordTypeId == CAFSS_ID) {
+                SO = new SelectOption( thisRt.Id, thisRt.Name);
+                rtOptions.Add(SO);
+                break;
+            }
             else {
                 if(myName.StartsWith(myState)){
                     SO = new SelectOption(thisRt.Id, thisRt.Name);

@@ -16,7 +16,7 @@ public with sharing class PersonalRecordController {
 		this.con = [
 			SELECT Id, FirstName, LastName, Phone, Ethnicity_Picklist__c,Age_year__c,Age_month__c,Age_days__c,
 			       Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c,
-			       Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c
+			       Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c, Flavor__c
 			  FROM Contact WHERE id=:value
 		];
 		this.evaluationResponses = [
@@ -107,7 +107,7 @@ public with sharing class PersonalRecordController {
 				return primaryDiagnosis;
 			}
 			Diagnosis__c[] d = [select Primary_Diagnosis__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' order by Effective_Date__c desc limit 1];
-			if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian') {
+			if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || this.con.flavor__c == 'CA FSS') {
 				if (d.size() > 0) {
 					primaryDiagnosis = d[0].primary_diagnosis__c;
 				} else {

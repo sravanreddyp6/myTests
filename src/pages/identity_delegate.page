@@ -93,7 +93,7 @@
                     <!--<apex:outputLink value="/apex/identity_home" rendered="{!hasAccess}"> View Recently Accessed Identities...</apex:outputLink><br />-->
                     <!--<apex:outputLink value="/apex/identity_delegate" rendered="{!hasAccess}"> Manage my Delegates...</apex:outputLink><br />-->
                    <!-- <apex:outputLink value="/apex/identity_employees" rendered="{!isDelegate}">Maintain Employees...</apex:outputLink><br /> -->
-                    <apex:outputLink value="/apex/identity_nonemployees" >Maintain Workforce...</apex:outputLink><br />
+                    <apex:outputLink value="/apex/identity_nonemployees" >Manage Workforce...</apex:outputLink><br />
                     <apex:outputLink value="/apex/identity_edit" rendered="{!$Profile.Name=='System Administrator'}">Manage TMN Users</apex:outputLink>
                 </apex:form>
             </apex:outputPanel>
@@ -120,7 +120,7 @@
         <apex:form id="srchForm">
             <apex:pageBlockTable value="{!searchDelegateResult}" var="dr" >
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addSrchCommand" action="{!addDel}" rendered="{!dr.BAA_Signed__c}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
                         <apex:param value="{!dr.Id}" assignTo="{!selectedID}" name="addSrchIdParam"/>
                     </apex:commandLink>
                 </apex:column>           
@@ -160,7 +160,7 @@
         <apex:form id="empForm" >
             <apex:pageBlockTable value="{!myEmployees}" var="e" id="empTable">
                 <apex:column headerValue="Action" >
-                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
+                    <apex:commandLink value="Add Delegate" id="addCommand" action="{!addDel}" rendered="{!e.BAA_Signed__c}" rerender="myAvlDel,curDelSec,delSrchSec,msgPanel,details,srchBlock,blkSecDelSrch,srchForm" status="loadingBusy"> 
                         <apex:param value="{!e.Id}" assignTo="{!selectedID}" name="addIdParam"/>
                     </apex:commandLink>
                 </apex:column>

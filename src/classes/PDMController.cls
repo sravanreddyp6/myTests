@@ -87,7 +87,7 @@ Public List<TMN_User__c> getTMNUserList(){
 public void searchEmployee() {
 	SortField = null;
 	SortDirection = null;
- String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, First_Name__c,Job_Title__c ,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c where   (Last_Name__c LIKE \'' + searchEmployee + '%\' OR First_Name__c  LIKE \'' + searchEmployee + '%\' ) ';
+ String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, Last_Name__c, First_Name__c,Job_Title__c ,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c where office_phone__C <> \'Call Manager\' and   (Last_Name__c LIKE \'' + searchEmployee + '%\' OR First_Name__c  LIKE \'' + searchEmployee + '%\' ) ' +getExcludeJobTitle();
     			if(searchLocation!=null && searchLocation.length() > 0) {
 				queryString =  queryString + ' and Work_City__c like \'%' + searchLocation +'%\' ';
 				}
@@ -110,7 +110,7 @@ public void searchEmployee() {
 public void searchByLocation () {
 	SortField = null;
 	SortDirection = null;
- String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c,  Last_Name__c,First_Name__c, Job_Title__c,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c where Work_City__c like \'%' + searchLocation +'%\' ';
+ String queryString = 'Select Work_State__c, Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c,  Last_Name__c,First_Name__c, Job_Title__c,Email__c ,fax__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c where office_phone__C <> \'Call Manager\' and Work_City__c like \'%' + searchLocation +'%\'  ' +getExcludeJobTitle();
 searchingForQuery = queryString;
     queryString =  queryString +  ' order by ' + SortField + ' ' + SortDirection + ' limit 10000';
                 setCon = new ApexPages.StandardSetController(Database.getQueryLocator(queryString));
@@ -135,7 +135,7 @@ searchingForQuery = queryString;
         }
         
         tmlUserQuery = 'Select Work_State__c,Office_Phone__c,Mentor_Cell_Phone__c, Operating_Group__c, Name, Manager_Name__c, fax__c,';
-     tmlUserQuery = tmlUserQuery +  + 'Last_Name__c, First_Name__c,Job_Title__c,Email__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c  where Work_City__c = \'' + locationSelected +'\' '; 
+     tmlUserQuery = tmlUserQuery +  + 'Last_Name__c, First_Name__c,Job_Title__c,Email__c,phone_ext__c,Work_State_Code__c,Work_City__c From TMN_User__c  where Work_City__c = \'' + locationSelected +'\' ' +getExcludeJobTitle(); 
            if (AlphaFilter != 'All') {
             tmlUserQuery =  tmlUserQuery +' and (Last_Name__c LIKE \'' + AlphaFilter + '%\' OR First_Name__c  LIKE \'' + AlphaFilter + '%\' )' ;
         	}
@@ -161,7 +161,8 @@ searchingForQuery = queryString;
 				QueryWhere =  BuildWhere( QueryWhere , 'Last_Name__c like \'%' + lastName +'%\' ');
 				}
 				if(operationGroup!=null && operationGroup.length() > 0) {
-				QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
+					if(operationGroup.startsWithIgnoreCase('Has')) operationGroup = 'Cambridge';
+					QueryWhere =  BuildWhere( QueryWhere , 'Operating_Group__c like \'' + operationGroup +'%\' ');
 				}
 				if(searchTitle!=null && searchTitle.length() > 0) {
 				QueryWhere =  BuildWhere( QueryWhere , 'Job_Title__c like \'%' + searchTitle +'%\' ');
@@ -195,7 +196,7 @@ searchingForQuery = queryString;
 	
    public String BuildWhere(String QW, String Cond) {
         if (QW == '') {
-            return ' WHERE ' + Cond;
+            return ' WHERE office_phone__C <> \'Call Manager\''+getExcludeJobTitle()+ 'and ' + Cond;
         } else {
             return QW + ' AND ' + Cond;
         }
@@ -213,7 +214,10 @@ update setCon.getRecords();
 }
 
 
-
+public static String getExcludeJobTitle (){
+		String jobTitle ='  AND Job_Status__c<>\'Inactive\' AND (NOT Job_Title__c  like \'%Call Manager%\')  AND Job_Title__c NOT IN (\'Certified Nurses Assistant\',\'Community Outreach Worker\',\'Cook\',\'Co-op\',\'Data Entry Coordinator\',\'Day Program Assistant\',\'Direct Support Professional\',\'Driver\',\'Family Member Caregiver\',\'Family Provider\',\'Housekeeper\',\'Job Coach\',\'Lead Maintenance Worker\',\'Life Skills Trainer\',\'Maintenance Specialist\',\'Maintenance Worker\',\'Personal Care Assistant\',\'Personal Service Attendant\',\'Rehabilitation Specialist\',\'Team Lead\',\'Vocational Program Participant\') ';
+		return jobTitle;
+}
 
 
 public String searchEmployee {set;get;}
