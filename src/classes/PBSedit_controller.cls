@@ -362,9 +362,11 @@ public void showAddRelParty() {
     // END: CTEAE-39
 
   public pageReference cancelPBSController(){
-      
-      pbsEditModeOn=false;
-      return null;
+      PageReference pageRef =  new PageReference('/apex/PersonBeingServedEditNew?id=' + PBSid);
+      pageRef.setRedirect(true);
+      return pageRef;
+//      pbsEditModeOn=false;
+//      return null;
 
   }
 
