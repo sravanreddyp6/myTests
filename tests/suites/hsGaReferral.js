@@ -1,13 +1,26 @@
 var assert = require('chai').assert;
 var testSuite = require("../main.js").testSuite;
 var users = require("../users.js").accounts;
+var stripJsonComments = require("strip-json-comments");
+var fs   = require('fs');
 
+var GaRefPa = JSON.parse(stripJsonComments(fs.readFileSync("./configs/GaReferralPage.json", "utf8")));
 var suiteTimeout = 10 * 60 * 1000;
 var defaultOperationTimeout = 3 * 60 * 1000;
 
 testSuite("hsGaReferral", suiteTimeout, {
   "should create a Hastings GA Referral successfully": function(client, done) {
   var user = users["HS_AL_Auburn_Referral_Intaker"];
+  var refpag1 = GaRefPa["First"];
+  var refpag2 = GaRefPa["Contact"];
+  var refpag3 = GaRefPa["Related"];
+  var refpag4 = GaRefPa["Referral State"];
+  var refpag5 = GaRefPa["Service"];
+  var refpag6 = GaRefPa["Diagnosis"];
+  var refpag7 = GaRefPa["AgencyFund"];
+  var refpag8 = GaRefPa["Tracking"];
+  var refpag9 = GaRefPa["Else"];
+  var today = new Date().getMilliseconds() + new Date().getDate();
     return client
       .logInAs(users["HS_GA_Referral_Intaker"])
       .click("a=Create New Referral")
@@ -81,11 +94,11 @@ testSuite("hsGaReferral", suiteTimeout, {
           "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
         ], states);
       })
-      .fillInputText("First Name", "Darth")
+      .fillInputText("First Name", "Darth" + today)
       .chooseSelectOption("Race", "Caucasian")
-      .fillInputText("Middle Name", "Freaking")
+      .fillInputText("Middle Name", "Freaking" + today)
       .chooseSelectOption("Ethnicity", "North American")
-      .fillInputText("Last Name", "Vader")
+      .fillInputText("Last Name", "Vader" + today)
       .chooseSelectOption("Marital Status", "Divorced")
       .fillInputText("Date of Birth", "7/7/1970")  // not working yet because there are 2 DOB fields on the page
       .chooseSelectOption("Primary Language", "English")
@@ -411,60 +424,424 @@ testSuite("hsGaReferral", suiteTimeout, {
       .click("a img[id$=resrictHealthCond_right_arrow]")
       .setValue("textarea[id$=ProgConsComment]", "test")
       .click("input[value='Save Referral']")
-      .waitForVisible("input[value='activityOwner']", defaultOperationTimeout)
-      .selectLookup("Owner")
-      .switchToNextWindow()
-      .waitForVisible("#searchFrame", defaultOperationTimeout)
-      //.element("#resultsFrame a")
-      //.then(function (el) {
-      //	return this.elementIdClick(el.value.ELEMENT);
-      //})
-      .element("#searchFrame")
-      .then(function (frame) { return frame.value; })
-      .then(client.frame)
-      .setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
-      .click("input[value*='Go']")
-      .frameParent()
-      .waitForExist("#resultsFrame", defaultOperationTimeout)
-      .element("#resultsFrame")
-      .then(function (frame) { return frame.value; })
-      .then(client.frame)
-      .click("tr.dataRow th a:first-child")
-      .switchToNextWindow()
       
-      .click("input[value='Save Referral']")
-      .waitForVisible("input[value=Edit]", defaultOperationTimeout)
+      
+      .waitForVisible("input[value='Edit']", defaultOperationTimeout)
       .url()
       .then(function (url) {
         assert.include(url.value, "referral2");
       })
-      .isExisting("input[value='Convert']")
-      .then(function(isExisting) {
-    	 assert.notOk(isExisting, "Convert Button exists.");
-      })      
-      .getOutputText("First Name")
-      .then(function (firstName) {
-        assert.equal("Darth", firstName);
-      })
+      //.isExisting("input[value='Convert']")
+      //.then(function(isExisting) {
+      //  assert.Ok(isExisting, "Convert Button exists.");
+      //})      
+      //.getOutputText("First Name")
+      //.then(function (firstName) {
+      //  assert.equal(firstName , refpag1["First Name"]); 
+      //})
       .getOutputText("Race")
       .then(function (race) {
-        assert.equal("Caucasian", race);
+        assert.equal(race , refpag1["Race"] );
       })
-      .getOutputText("Middle Name")
-      .then(function (middleName) {
-        assert.equal("Freaking", middleName);
-      })
+      //.getOutputText("Middle Name")
+      //.then(function (middleName) {
+      //  assert.equal(middleName , refpag1["Middle Name"]);
+      //})
       .getOutputText("Ethnicity")
       .then(function (ethnicity) {
-        assert.equal("North American", ethnicity);
+        assert.equal(ethnicity , refpag1["Ethnicity"]);
       })
+      //.getOutputText("Last Name")
+      //.then(function (lastName) {
+      //  assert.equal(lastName , refpag1["Last Name"]);
+      //})
+      .getOutputText("Marital Status")
+      .then(function (maritalstatus) {
+        assert.equal(maritalstatus , refpag1["Marital Status"]);
+      })
+	  .getOutputText("Date of Birth")
+      .then(function (dob) {
+        assert.equal(dob , refpag1["Date of Birth"]);
+      })
+	  //.getOutputText("Primary Language")
+      //.then(function (primarylanguage) {
+      //  assert.equal(primarylanguage , refpag1["Primary Language"]);
+      //})
+	  .getOutputText("Age")
+      .then(function (age) {
+        assert.equal(age , refpag1["Age"]);
+      })
+	  .getOutputText("Highest Level of Education")
+      .then(function (highlevel) {
+        assert.equal(highlevel , refpag1["Highest Level of Education"]);
+      })
+	  .getOutputText("Gender")
+      .then(function (gender) {
+        assert.equal(gender , refpag1["Gender"]);
+      })
+	  .getOutputText("SSN")
+      .then(function (ssn) {
+        assert.equal(ssn , refpag1["SSN"]);
+      })
+	  .getOutputText("Additional Information / Comments")
+      .then(function (addcomments) {
+        assert.equal(addcomments , refpag1["Additional Information / Comments"]);
+      })
+	  .getOutputText("Mailing Street 1")
+      .then(function (mailingstr1) {
+        assert.equal(mailingstr1 , refpag1["Mailing Street 1"]);
+      })
+	  .getOutputText("Mailing Street 2")
+      .then(function (mailingstr2) {
+        assert.equal(mailingstr2 , refpag1["Mailing Street 2"]);
+      })
+	  .getOutputText("Mailing City")
+      .then(function (mailingcity) {
+        assert.equal(mailingcity , refpag1["Mailing City"]);
+      })
+	  .getOutputText("Mailing State/Province")
+      .then(function (mailingstate) {
+        assert.equal(mailingstate , refpag1["Mailing State/Province"]);
+      })
+	  .getOutputText("Mailing Zip/Postal Code")
+      .then(function (mailingzip) {
+        assert.equal(mailingzip , refpag1["Mailing Zip/Postal Code"]);
+      })
+	  .getOutputText("Mailing County")
+      .then(function (mailingcounty) {
+        assert.equal(mailingcounty , refpag1["Mailing County"]);
+      })
+      .getOutputText("Phone")
+      .then(function (phone) {
+        assert.equal(phone ,refpag2["Phone"]);
+      })
+	  .getOutputText("Email")
+      .then(function (email) {
+        assert.equal(email , refpag2["Email"]);
+      })
+      .getOutputText("Email")
+      .then(function (email2) {
+        assert.equal(email2 , refpag3["Email"]);
+      })
+	  .getOutputText("Party Name")
+      .then(function (partname) {
+        assert.equal(partname , refpag3["Party Name"]);
+      })
+	  .getOutputText("Type")
+      .then(function (type) {
+        assert.equal(type , refpag3["Type"]);
+      })
+	  .getOutputText("Phone 1")
+      .then(function (phone11) {
+        assert.equal(phone11 , refpag3["Phone 1"]);
+      })
+	  .getOutputText("Phone 1 Type")
+      .then(function (phone1type) {
+        assert.equal(phone1type , refpag3["Phone 1 Type"]);
+      })
+	  .getOutputText("Phone 2")
+      .then(function (phone21) {
+        assert.equal(phone21 , refpag3["Phone 2"]);
+      })
+	  .getOutputText("Phone 2 Type")
+      .then(function (phone2type) {
+        assert.equal(phone2type , refpag3["Phone 2 Type"]);
+      })
+	  .getOutputText("Address")
+      .then(function (address1) {
+        assert.equal(address1 , refpag3["Address"]);
+      })
+	  .getOutputText("Comments")
+      .then(function (comments1) {
+        assert.equal(comments1 , refpag3["Comments"]);
+      })
+	  .getOutputText("Status")
+      .then(function (status1) {
+        assert.equal(status1 , refpag3["Status"]);
+      })
+      .getOutputText("Referral Status")
+      .then(function (referralstatus) {
+        assert.equal(referralstatus , refpag4["Referral Status"]);
+      })
+      .getOutputText("Referral Source Type")
+      .then(function (referralsourcetype) {
+        assert.equal(referralsourcetype , refpag4["Referral Source Type"]);
+      })    
       .getOutputText("Referral Source")
-      .then(function (source) {
-        assert.equal("Mentor", source);
-      })
+      .then(function (referralsource) {
+        assert.equal(referralsource , refpag4["Referral Source"]);
+      })    
       .getOutputText("Referrer Name")
-      .then(function (name) {
-        assert.equal("Obi-wan Kennobi", name);
-      });
+      .then(function (referrername) {
+        assert.equal(referrername , refpag4["Referrer Name"]);
+      })    
+      .getOutputText("Referrer Phone Number")
+      .then(function (referrerphonenumber) {
+        assert.equal(referrerphonenumber , refpag4["Referrer Phone Number"]);
+      })    
+      .getOutputText("Case Manager Name")
+      .then(function (casemanagername) {
+        assert.equal(casemanagername , refpag4["Case Manager Name"]);
+      })    
+      .getOutputText("Billing ID")
+      .then(function (billingid) {
+        assert.equal(billingid , refpag4["Billing ID"]);
+      })   
+      .getOutputText("Case Manager Phone")
+      .then(function (casemanagerphone) {
+        assert.equal(casemanagerphone , refpag4["Case Manager Phone"]);
+      })    
+      .getOutputText("Current Representative Payee")
+      .then(function (currentreppay) {
+        assert.equal(currentreppay , refpag4["Current Representative Payee"]);
+      })    
+      .getOutputText("legal/Guardian status")
+      .then(function (legalstatus) {
+        assert.equal(legalstatus , refpag4["legal/Guardian status"]);
+      })
+      .getOutputText("Reason for Referral")
+      .then(function (reasonreferral1) {
+        assert.equal(reasonreferral1 , refpag4["Reason for Referral"]);
+      })  
+      .getOutputText("Update Notes")
+      .then(function (updatenotes) {
+        assert.equal(updatenotes , refpag4["Update Notes"]);
+      })   
+      .getOutputText("Anticipated Admission DateTime")
+      .then(function (antadmdateline) {
+        assert.equal(antadmdateline , refpag4["Anticipated Admission DateTime"]);
+      })   
+      .getOutputText("Service Location")
+      .then(function (servicelocation) {
+        assert.equal(servicelocation , refpag4["Service Location"]);
+      })   
+      .getOutputText("Service Value")
+      .then(function (servicevalue) {
+        assert.equal(servicevalue , refpag4["Service Value"]);
+      })    
+      .getOutputText("Setting")
+      .then(function (setting1) {
+        assert.equal(setting1 , refpag4["Setting"]);
+      })   
+      .getOutputText("Street")
+      .then(function (street) {
+        assert.equal(street , refpag4["Street"]);
+      })   
+      .getOutputText("City")
+      .then(function (city) {
+        assert.equal(city , refpag4["City"]);
+      }) 
+      .getOutputText("Alias")
+      .then(function (alias) {
+        assert.equal(alias , refpag5["Alias"]);
+      })
+      .getOutputText("Service Value")
+      .then(function (servicevalue) {
+        assert.equal(servicevalue , refpag5["Service Value"]);
+      })   
+      .getOutputText("Setting")
+      .then(function (setting2) {
+        assert.equal(setting2 , refpag5["Setting"]);
+      }) 
+      .getOutputText("Program")
+      .then(function (program) {
+        assert.equal(program , refpag5["Program"]);
+      })  
+      .getOutputText("Address")
+      .then(function (address2) {
+        assert.equal(address2 , refpag5["Address"]);
+      })   
+      .getOutputText("User Assigned")
+      .then(function (userassigned) {
+        assert.equal(userassigned , refpag5["User Assigned"]);
+      })   
+      .getOutputText("Status")
+      .then(function (status2) {
+        assert.equal(status2 , refpag5["Status"]);
+      })   
+      .getOutputText("Axis I")
+      .then(function (axis1) {
+        assert.equal(axis1 , refpag6["Axis I"]);
+      }) 
+      .getOutputText("Axis II")
+      .then(function (axis2) {
+        assert.equal(axis2 , refpag6["Axis II"]);
+      })     
+      .getOutputText("Axis III")
+      .then(function (axis3) {
+        assert.equal(axis3 , refpag6["Axis III"]);
+      })   
+      .getOutputText("Axis IV")
+      .then(function (axis4) {
+        assert.equal(axis4 , refpag6["Axis IV"]);
+      })    
+      .getOutputText("Axis V")
+      .then(function (axis5) {
+        assert.equal(axis5 , refpag6["Axis V"]);
+      })  
+      .getOutputText("Program Category")
+      .then(function (programcategory) {
+        assert.equal(programcategory , refpag6["Program Category"]);
+      })   
+      .getOutputText("Service Line")
+      .then(function (serviceline) {
+        assert.equal(serviceline , refpag6["Service Line"]);
+      }) 
+      .getOutputText("Services Requested")
+      .then(function (servicesrequested) {
+        assert.equal(servicesrequested , refpag6["Services Requested"]);
+      })    
+      .getOutputText("Family History")
+      .then(function (familyhistory) {
+        assert.equal(familyhistory , refpag6["Family History"]);
+      })    
+      .getOutputText("Medical History")
+      .then(function (medicalhistory) {
+        assert.equal(medicalhistory , refpag6["Medical History"]);
+      }) 
+      .getOutputText("Behavior Summary")
+      .then(function (behaviorsummary) {
+        assert.equal(behaviorsummary , refpag6["Behavior Summary"]);
+      })    
+      .getOutputText("Current Medications")
+      .then(function (currentmedications) {
+        assert.equal(currentmedications , refpag6["Current Medications"]);
+      })    
+      .getOutputText("Prior Program Information")
+      .then(function (priorproginfo) {
+        assert.equal(priorproginfo , refpag6["Prior Program Information"]);
+      })   
+      .getOutputText("Comments")
+      .then(function (comments2) {
+        assert.equal(comments2 , refpag6["Comments"]);
+      })   
+      //.getOutputText("Referral Source")
+      //.then(function (source) {
+      //  assert.equal("Mentor", source);
+      //})
+      //.getOutputText("Referrer Name")
+      //.then(function (name) {
+      //  assert.equal("Obi-wan Kennobi", name);
+      //});
+      .getOutputText("Agency Name")
+      .then(function (agencyname) {
+        assert.equal(agencyname , refpag7["Agency Name"]);
+      })
+      .getOutputText("Address")
+      .then(function (address3) {
+        assert.equal(address3 , refpag7["Address"]);
+      })  
+      .getOutputText("Phone Number")
+      .then(function (phonenumber) {
+        assert.equal(phonenumber , refpag7["Phone Number"]);
+      })  
+      .getOutputText("Reason for Involvement")
+      .then(function (reasoninvolvement2) {
+        assert.equal(reasoninvolvement2 , refpag7["Reason for Involvement"]);
+      })   
+      .getOutputText("Funding Source")
+      .then(function (fundingsource) {
+        assert.equal(fundingsource , refpag7["Funding Source"]);
+      })   
+      .getOutputText("Funding Source ID")
+      .then(function (fundingsourceid) {
+        assert.equal(fundingsourceid , refpag7["Funding Source ID"]);
+      })   
+      .getOutputText("Service Being Funded")
+      .then(function (servicebeingfunded) {
+        assert.equal(servicebeingfunded , refpag7["Service Being Funded"]);
+      })  
+      .getOutputText("Status")
+      .then(function (status3) {
+        assert.equal(status3 , refpag7["Status"]);
+      })   
+      .getOutputText("Comment")
+      .then(function (comment2) {
+        assert.equal(comment2 , refpag7["Comment"]);
+      })  
+      .getOutputText("Subject")
+      .then(function (subject2) {
+        assert.equal(subject2 , refpag8["Subject"]);
+      })  
+      .getOutputText("Due Date")
+      .then(function (duedate) {
+        assert.equal(duedate , refpag8["Due Date"]);
+      })  
+      .getOutputText("Assigned To")
+      .then(function (assignedto) {
+        assert.equal(assignedto , refpag8["Assigned To"]);
+      })    
+      .getOutputText("Priority")
+      .then(function (priority) {
+        assert.equal(priority , refpag8["Priority"]);
+      })   
+      .getOutputText("Status")
+      .then(function (status4) {
+        assert.equal(status4 , refpag8["Status"]);
+      })   
+      .getOutputText("Comments")
+      .then(function (comments3) {
+        assert.equal(comments3 , refpag8["Comments"]);
+      })   
+      .getOutputText("Staffing Needs")
+      .then(function (staffingneeds) {
+        assert.equal(staffingneeds , refpag8["Staffing Needs"]);
+      })    
+      .getOutputText("Staffing Ratio")
+      .then(function (staffingratio) {
+        assert.equal(staffingratio , refpag8["Staffing Ratio"]);
+      })   
+      .getOutputText("Desired Living Environment")
+      .then(function (desiredlivingenv) {
+        assert.equal(desiredlivingenv , refpag8["Desired Living Environment"]);
+      })  
+      .getOutputText("Preferred Setting")
+      .then(function (preferredsetting2) {
+        assert.equal(preferredsetting2 , refpag8["Preferred Setting"]);
+      })    
+      .getOutputText("Mobility")
+      .then(function (mobility) {
+        assert.equal(mobility , refpag8["Mobility"]);
+      })   
+      .getOutputText("Area of State Interested In")
+      .then(function (areainterest) {
+        assert.equal(areainterest , refpag9["Area of State Interested In"]);
+      })
+      .getOutputText("if Yes: Type")
+      .then(function (yestype) {
+        assert.equal(yestype , refpag9["if Yes: Type"]);
+      })
+      .getOutputText("If Yes: Level of Support Required")
+      .then(function (yeslevel) {
+        assert.equal(yeslevel , refpag9["If Yes: Level of Support Required"]);
+      })
+      .getOutputText("If Yes: Length of time")
+      .then(function (yeslength) {
+        assert.equal(yeslength , refpag9["If Yes: Length of time"]);
+      })
+      .getOutputText("If Yes: How Many?")
+      .then(function (yeshow) {
+        assert.equal(yeshow , refpag9["If Yes: How Many?"]);
+      })
+      .getOutputText("If Yes: Age Requirements?")
+      .then(function (yesage) {
+        assert.equal(yesage , refpag9["If Yes: Age Requirements?"]);
+      })
+      .getOutputText("If Yes: Level?")
+      .then(function (ifyeslevel) {
+        assert.equal(ifyeslevel , refpag9["If Yes: Level?"]);
+      })
+      .getOutputText("If Yes: Type")
+      .then(function (ifyestype) {
+        assert.equal(ifyestype , refpag9["If Yes: Type"]);
+      })
+      .getOutputText("Restricted Health Conditions")
+      .then(function (restrictedhealthconditions) {
+        assert.equal(restrictedhealthconditions , refpag9["Restricted Health Conditions"]);
+      })
+      .getOutputText("Programming Considerations Comments")
+      .then(function (progconscomments) {
+        assert.equal(progconscomments , refpag9["Programming Considerations Comments"]);
+      })
   }
 });

@@ -97,8 +97,8 @@ testSuite("hsMa1Referral", suiteTimeout, {
       .fillInputText("Additional Information / Comments", "Really hateful")
       .fillInputText("Mailing Street 1", "123 Something Street")
       .fillInputText("Mailing Street 2", "apt. 456")
-      .fillInputText("Mailing City", "Ohio")
-      .chooseSelectOption("Mailing State/Province", "Ohio")
+      .fillInputText("Mailing City", "Massachusetts")
+      .chooseSelectOption("Mailing State/Province", "Massachusetts")
       .fillInputText("Mailing Zip/Postal Code", "23456")
       .fillInputText("Mailing County", "Georgia County")
       .setValue("input[id$=Perm_Phone]", "6090210")
@@ -188,7 +188,7 @@ testSuite("hsMa1Referral", suiteTimeout, {
                             "Parental Neglect", "Parenting Skills", "Assault",
                             "Property Damage", "Substance Abuse", "Personal Hygiene"], rescatBeProb);
       })
-      .getSelectOptions("If the referral is from the ICC has the care plan been submitted to the insurance company in order for us to obtain an authorization for services?")
+      .getSelectOptionsBySelector("[id$=IccCarePlanSubmittedField]")
       .then(function(Icc) {
           assert.deepEqual(["", "Yes", "No" ], Icc);
       })
@@ -441,6 +441,8 @@ testSuite("hsMa1Referral", suiteTimeout, {
       .fillInputText("Prior Program Information", "test")
       .fillInputText("Comments", "test")
       .click("input[value='Add Agency Involved With Individual']")
+      .waitForVisible("span[id$=agencyModal] input[value='Save']", defaultOperationTimeout)
+      .waitForVisible("label[id$=agencyName]", defaultOperationTimeout)
       .fillInputText("Agency Name:", "test")
       .fillInputText("Address:", "404 test street")
       .fillInputText("Phone Number:", "8008378")
@@ -582,7 +584,7 @@ testSuite("hsMa1Referral", suiteTimeout, {
       })
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
-    	 assert.notOk(isExisting, "Convert Button exists.");
+    	 assert.Ok(isExisting, "Convert Button exists.");
       })      
       .getOutputText("First Name")
       .then(function (firstName) {
