@@ -30,11 +30,25 @@ that has label `label` with `value`.
 - `getSelectOptionsBySelector(selector)`: Get all the options from a `select` tag with
 selector `selector`. Use this only when `getSelectOptions` is not viable (e.g. when there
 are multiple elements with the same label on the page).
+- `getCheckboxOutput(label)`: Get whether a checkbox output with Visualforce `apex:outputField`
+with label `label` is checked or not. If it is, the function returns true, otherwise it returns false.
+- `getCheckboxOutputs(label1, label2, ...)`: A helper to get multiple checkbox output
+values. It returns a list of Booleans, directly corresponding to the checkboxess labels passed in.
+For example: if we have 2 checkboxes: Checkbox 1 (checked) and Checkbox 2 (unchecked), calling
+`getCheckboxes("Checkbox 1", "Checkbox 2")` will return `[true, false]`.
+- `getCheckboxInput(label)`: Get whether a checkbox input with label `label` is checked or
+not. If it is, the function returns true, otherwise it returns false.
+- `getCheckboxInputs(label1, label2, ...)`: same as `getCheckboxOutputs`, but on
+input fields instead of output fields.
 - `chooseSelectOption(label, optionValue)`: Choose the option `optionValue` from
 a `select` tag with label `label`.
-- `selectCheckbox(label, selected)`: Select a checkbox with label `label`. `selected`
-is optional - if it is `undefined` or `true`, the checkbox will be selected, if it is `false`,
-the checkbox will be unselected.
+- `selectCheckbox(label)`: Select a checkbox with label `label`.
+- `unselectCheckbox(label)`: Unselect a checkbox with label `label`.
+- `selectCheckboxes(label1, label2, ...)`: A helper to select multiple checkboxes at the
+same time. Example usage: `selectCheckboxes("Checkbox 1", "Checkbox 2")` will select
+the checkboxes with labels Checkbox 1 and Checkbox 2.
+- `unselectCheckboxes(label1, label2, ...)`: Same as `selectCheckboxes`, but it
+unselects the checkboxes instead.
 - `selectLookup(label)`: Click on a lookup icon that Visualforce generated for certain
 elements (e.g. when we need to look up a user).
 - `switchToNextWindow()`: Sometimes VF will create a new window (e.g. when we look up a
