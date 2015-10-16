@@ -1,6 +1,7 @@
 <apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <style type="text/css">
@@ -32,7 +33,38 @@
             z-index: 9998;
         }
  .ui-autocomplete-loading { background: white url('{!URLFOR($Resource.AjaxLoad)}') right center no-repeat; }
-   
+          .dataTable {
+			width: 100% !important;
+		}
+   		.sorting {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_both.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_asc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_desc_disabled {
+			background: #f2f3f3 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
+			padding-right: 20px !important;
+		}
+		.sorting_disabled {
+			background: #f2f3f3 !important;
+		}
+        .ui-dialog.ui-widget.ui-widget-content.ui-corner-all{
+        	overflow: auto;
+        }
+        .dialogLoadingSpinner {
+            margin-left: 5px;
+        }
     </style>
      <script type="text/javascript" >
     
@@ -42,8 +74,17 @@
              j$('[id$=VendorName]').prop('disabled', true);
              j$('input[id$="AddAttachments"]').prop('disabled', true);
              j$('input[id$="Alias"]').prop("readonly", true);
+ 			
         });
-        
+
+    function dataTable() {
+                j$('table.dataTable').dataTable({
+                    searching: false,
+				paging: false,
+				bInfo: false,
+			"order": [[ 0, "desc" ]]
+		});
+    }
         function disableAlias() {
         j$('input[id$="Alias"]').prop("readonly", true);
         }
@@ -127,13 +168,13 @@ function autoCompleteRender(ul, item) {
                         j$('[id$=hiddenlocationCity]').val(checkUndefined(result.Work_City__c));
                         j$('[id$=hiddenlocationState]').val(checkUndefined(result.Work_State__c));
                         j$('[id$=hiddenlocationZip]').val(checkUndefined(result.Zip_Code__c));
-                        var locationType = checkUndefined(result.Office_Location_PickList__c);
-                       	if(locationType === " ") {
-                       		j$('[id$=OfficeLocationType]').text('No');
+                        var locationType = checkUndefined(result.Office_Flag__c);
+                       	if(locationType == null || locationType === " "  ) {
+                       		j$('[id*="OfficeLocationType"]').text('N');
                        	} else {
-                       	j$('[id$=OfficeLocationType]').text(locationType);
+                       	j$('[id*="OfficeLocationType"]').text(locationType);
                        	}
-                        j$('[id$=hiddenOfficeLocationType]').val(checkUndefined(result.Office_Location_PickList__c));
+                        j$('[id$=hiddenOfficeLocationType]').val(checkUndefined(result.Office_Flag__c));
                     } else if (event.type === 'exception') {
                         console.log(event);
                     } 
@@ -149,7 +190,7 @@ function autoCompleteRender(ul, item) {
       resizable: false,
       draggable: false,
       height:180,
-      width : 750,
+      width : 1300,
       modal: true,
       autoOpen: false
     }).parent().appendTo(j$('form[id$=createForm]'));
@@ -180,11 +221,15 @@ function autoCompleteRender(ul, item) {
     
     function setEndDate() {
     var startDate = new Date(j$('[id$=startDate]').val());
+    if(!isNaN(startDate)){
     var endDate = startDate;
     endDate.setDate(endDate.getDate() + 90);
     j$('[id$=EndDate]').datepicker('option', 'minDate', startDate)
     j$('[id$=EndDate]').datepicker('option', 'maxDate', endDate)	
     j$('[id$=EndDate]').val(endDate.getMonth() + 1+'/'+endDate.getDate()+'/'+endDate.getFullYear());
+      }else {
+    j$('[id$=EndDate]').val('');  
+      }
     }
     
     function validatePhone () {
@@ -203,9 +248,44 @@ function autoCompleteRender(ul, item) {
     			} 
     }
     
+    function managerlookUP() {
+    	j$('[id*=ManagerSearchModal]').dialog("open");
+    }
+    
+   j$(function() {
+    j$('[id*=ManagerSearchModal]').dialog({
+      resizable: false,
+      draggable: false,
+      height:400,
+      width : 1200,
+      modal: true,
+      autoOpen: false,
+      top: 400
+    });
+}); 
+    function findManagers() {
+    getManagerList(j$('[id$=managerFirstName]').val(),j$('[id$=managerLastName]').val());
+    }
+    function selected(managerid,ManagerName) {
+        
+    j$('[id*=ManagerSearchModal]').dialog("close");
+        j$('[id$=managerId]').val(managerid);
+        j$('[id$=ManagerName]').val(ManagerName);
+        j$('[id$=managerFirstName]').val('');
+        j$('[id$=managerLastName]').val('');
+    }
+    function closeDialog() {
+    j$('[id*=ManagerSearchModal]').dialog("close");
+        j$('[id$=managerFirstName]').val('');
+        j$('[id$=managerLastName]').val('');
+    }
     
     </script>  
         <apex:form id="createForm" >
+            <apex:actionFunction name="getManagerList" action="{!getManagerList}"   reRender="SearchResults" oncomplete="dataTable();" status="lookupstatus">
+             <apex:param name="managerFirstName" value="" assignTo="{!managerFirstName}" />
+        	<apex:param name="managerLastName" value="" assignTo="{!managerLastName}" />
+            </apex:actionFunction>   
              <apex:pageBlock title="TMN User" mode="edit" id="createBlock" >
                 <apex:pageMessages id="pageMsg"/>
                 <apex:pageblockButtons location="Bottom" >    
@@ -214,13 +294,22 @@ function autoCompleteRender(ul, item) {
                 </apex:pageblockButtons>            
                 <apex:pageBlockSection columns="2" title="Person Information" id="perInfo">
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true" taborderhint="1"/>
-                    <apex:inputField label="Personal Email" value="{!TMNUser.Personal_Email__c}" type="email" taborderhint="8"/>
+                    <apex:pageBlockSectionItem>
+        					<apex:outputLabel value="Personal Email" for="PE" />
+       						<apex:inputField  id="PE" value="{!TMNUser.Personal_Email__c}" taborderhint="8"/>
+    				</apex:pageBlockSectionItem>
                     <apex:inputField label="Middle Name" value="{!TMNUser.Middle_Name__c}" taborderhint="2"/>
                     <apex:inputField label="Professional Title" value="{!TMNUser.Professional_Title__c}" taborderhint="9"/>
                     <apex:inputField label="Last Name" value="{!TMNUser.Last_Name__c}" required="true" taborderhint="3"/>
                     <apex:outputText label="Job Status" >Active</apex:outputText>
                     <apex:inputField label="Preferred First Name" value="{!TMNUser.Preferred_First_Name__c}" required="true" taborderhint="4"/>                    
-                    <apex:inputField label="Start Date" value="{!TMNUser.Hire_Date__c}" required="true" id="startDate" taborderhint="11" onChange="setEndDate()"/>
+                    <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Start Date" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                    <apex:inputField label="Start Date" value="{!TMNUser.Hire_Date__c}"  id="startDate" taborderhint="11" onChange="setEndDate()"/>	
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                     <apex:inputField label="Preferred Last Name" value="{!TMNUser.Preferred_Last_Name__c}" required="true" taborderhint="5"/>       
                     <apex:pageBlockSectionItem helpText="End Date Cann't be more than 90 days from Start Date">
                     <apex:outputLabel value="End Date" />
@@ -248,19 +337,19 @@ function autoCompleteRender(ul, item) {
                     <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}" id="servline"/>                                                                                                                           
                     <apex:selectList label="Operating Group" value="{!TMNUser.Operating_Group__c}" size="1" required="true" tabindex="13">
                         <apex:selectOption itemValue="Adult Health Services" itemLabel="Adult Health Services"/>
+                        <apex:selectOption itemValue="Cambridge" itemLabel="Cambridge"/>         
                         <apex:selectOption itemValue="Care Meridian" itemLabel="Care Meridian"/>
                         <apex:selectOption itemValue="Corporate" itemLabel="Corporate"/>
-                        <apex:selectOption itemValue="Cambridge" itemLabel="Hastings"/>                       
                         <apex:selectOption itemValue="NeuroRestorative" itemLabel="NeuroRestorative"/>
                         <apex:selectOption itemValue="Redwood" itemLabel="Redwood"/>
                     </apex:selectList>                    
                     <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}" id="busunit"/>                                                                                
                     <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}" id="servregion"/>
-                    <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}" id="prgstring"/>                                                                                         
+                   <!-- <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}" id="prgstring"/>  -->                                                                                       
                 </apex:pageBlockSection>
                 </apex:actionRegion>               
                 <apex:pageBlockSection columns="2" title="Location" id="locInfo">
-                    <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" id="locationName" required="true" taborderhint="18" />    
+                    <apex:inputField label="Location Name" value="{!TMNUser.Location_Name__c}" id="locationName" required="true" taborderhint="18" style="width: 300px;"/>    
                    <!--  <apex:selectList label="State" value="{!TMNUser.Work_State__c}" size="1" required="true" tabindex="22">
                         <apex:selectOption itemValue="AL" itemLabel="Alabama"/>
                         <apex:selectOption itemValue="AK" itemLabel="Alaska"/>
@@ -322,7 +411,8 @@ function autoCompleteRender(ul, item) {
                     <apex:outputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" id="locationLine1" />
                     <apex:outputField label="Zip Code" value="{!TMNUser.Zip_Code__c}" id="locationZip"/>
                     <apex:outputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}" id="locationLine2"/>
-                    <apex:outputField label="Office Location" value="{!TMNUser.Office_Location_PickList__c}" id="OfficeLocationType" />                 
+                    <apex:outputText label="Office Location" value="Y"  rendered="{!TMNUser.Office_Flag__c=='Y'}" id="OfficeLocationType1"/>
+                    <apex:outputText label="Office Location" value="N"  rendered="{!TMNUser.Office_Flag__c!='Y'}" id="OfficeLocationType2"/>                 
                     <apex:outputField label="City" value="{!TMNUser.Work_City__c}" id="locationCity"/>     
                 </apex:pageBlockSection>
                     <apex:inputhidden value="{!TMNUser.Office_Location__c}" id="hiddenlocationLine1" />
@@ -331,13 +421,29 @@ function autoCompleteRender(ul, item) {
                     <apex:inputhidden value="{!TMNUser.Work_City__c}" id="hiddenlocationCity"/>  
                     <apex:inputhidden value="{!TMNUser.Office_Location_PickList__c}"/>           
                     <apex:inputhidden value="{!TMNUser.Work_State__c}" id="hiddenlocationState"/>
-                    <apex:inputhidden value="{!TMNUser.Office_Location_PickList__c}" id="hiddenOfficeLocationType"/>     
+                   <apex:inputhidden value="{!TMNUser.Office_Flag__c}" id="hiddenOfficeLocationType"/>  
 
-					<apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo">  
-					<apex:inputField label="Manager Name" value="{!TMNUser.Manager_Lookup__c}"  id="ManagerName" required="true" taborderhint="24"/>
+					<apex:pageBlockSection columns="2" title="Manager Information" id="mngInfo"> 
+					
+					<apex:pageBlockSectionItem >
+					 <apex:outputLabel value="Manager Name"  /> 
+					 <apex:pageBlockSectionItem >
+					<apex:inputText label="Manager Name" value="{!TMNUser.Manager_Name__c}"  id="ManagerName" required="true" />
+					 <a onClick="managerlookUP();">
+                            <img valign="bottom" src="/s.gif" alt="Manager Lookup (New Window)" class="lookupIcon" onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';" onmouseover="this.className = 'lookupIconOn';" title="Manager Lookup (New Window)" />
+                        </a>
+                       </apex:pageBlockSectionItem> 
+                      </apex:pageBlockSectionItem>  
 					</apex:pageBlockSection>
-                    <apex:pageBlockSection columns="2" title="Vendor Information" >                                                                                                                                                                                                                                        
-                     <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}" required="true" id="vendorList" onchange="selectVendor()"></apex:inputField>
+					 <apex:inputhidden value="{!TMNUser.Manager_Lookup__c}" id="managerId"/> 
+                    <apex:pageBlockSection columns="2" title="Vendor Information" > 
+				<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Vendor" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                     <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}"  id="vendorList" />	
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                        <apex:pageBlockSectionItem >
                       <apex:outputText value="BAA Signed " />
                     <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
@@ -369,7 +475,41 @@ function autoCompleteRender(ul, item) {
                     </apex:outputPanel> -->
                         
                 </apex:pageBlockSection>
-                 
+                
+                 <apex:outputPanel id="ManagerSearchModal" title="Manager Search" style="display:none">
+                    <apex:outputLabel >First Name &nbsp; </apex:outputLabel> <apex:inputText id="managerFirstName" value="{!managerFirstName}"  html-placeholder="First Name..."   />  &nbsp;&nbsp;&nbsp;&nbsp; 
+                    <apex:outputLabel >Last Name &nbsp; </apex:outputLabel> <apex:inputText id="managerLastName" value="{!managerLastName}"  html-placeholder="Last Name..."   /> &nbsp;&nbsp;&nbsp;&nbsp; 
+                       <apex:commandButton id="search" value="Search"   onclick="findManagers()" status="actionstatus"/> &nbsp;&nbsp;&nbsp;&nbsp;
+                     	<apex:commandButton value="Cancel" onClick="closeDialog();"/>
+                     <br/> <br/>
+                    <apex:actionregion >
+                     <apex:actionStatus id="lookupstatus">
+                                        <apex:facet name="start">
+                                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                                        </apex:facet>
+                                        <apex:facet name="stop">
+                     <apex:pageBlockSection id="SearchResults">
+                         <apex:outputText rendered="{!tmnManagerList.size=0}" value="No records to display" />
+             			 <apex:pageBlockTable style="width: 100%;" id="ManagerList" value="{!tmnManagerList}" var="tmn" styleClass="dataTable" rendered="{!(tmnManagerList!=null && tmnManagerList.size>0)}">
+                             <apex:column headerValue="User Name">
+                        <a   href="#" onClick="selected('{!tmn.id}','{!tmn.name}')" >{!tmn.name}</a>
+                </apex:column>
+ 				<apex:column style="padding-right: 9px;" headerValue="Email">
+                   <apex:outputText value="{!tmn.Email__c}" />
+                </apex:column>
+				<apex:column headerValue="Employee Number">{!tmn.Employee_Number__c}</apex:column>
+				<apex:column headerValue="Employee Type">{!tmn.Employee_Type__c}</apex:column>
+				<apex:column headerValue="Job Title">{!tmn.Job_Title__c}</apex:column>
+				<apex:column headerValue="Manager Email">{!tmn.Manager_Email__c}</apex:column>
+				<apex:column headerValue="Work State">{!tmn.Work_State__c}</apex:column>
+				<apex:column headerValue="Operating Group">{!tmn.Operating_Group__c}</apex:column>
+			</apex:pageBlockTable>
+            </apex:pageBlockSection>  
+            		</apex:facet>          
+				</apex:actionStatus>
+				</apex:actionregion>
+            </apex:outputPanel>
+            
             </apex:pageBlock>
         </apex:form>
         

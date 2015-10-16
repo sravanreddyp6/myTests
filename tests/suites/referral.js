@@ -12,6 +12,7 @@ testSuite("Referral", suiteTimeout, {
     return client
       .logInAs(user)
       .click("a=Create New Referral")
+      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
       .getSelectOptions('Race')
       .then(function(races) {
         assert.deepEqual([
@@ -87,7 +88,7 @@ testSuite("Referral", suiteTimeout, {
       .chooseSelectOption("Ethnicity", "Unknown")
       .fillInputText("Last Name", "Vader")
       .chooseSelectOption("Marital Status", "Divorced")
-      // .fillInputText("Date of Birth", "7/7/1970")  // not working yet because there are 2 DOB fields on the page
+      .fillInputText("Date of Birth", "7/7/1970")
       .chooseSelectOption("Highest Level of Education", "Graduate School")
       .chooseSelectOption("Gender", "Male")
       .fillInputText("SSN", "111111111")
@@ -96,6 +97,12 @@ testSuite("Referral", suiteTimeout, {
       .chooseSelectOption("Mailing State/Province", "Arizona")
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
+      .click("input[value='Add Related Party']")
+      .waitForVisible("span[id$=relatedPartyModal]", defaultOperationTimeout)
+      .fillInputText("Party Name", "Anakin Skywalker")
+      .chooseSelectOption("Type", "Family/Friends")
+      .click("span[id$=relatedPartyModal] input[value=Save]")
+      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
       .fillInputText("Referral Source", "Mentor")
       .fillInputText("Referrer Name", "Obi-wan Kennobi")
       .selectLookup("Evaluated By")
@@ -113,6 +120,13 @@ testSuite("Referral", suiteTimeout, {
       .then(client.frame)
       .click("#TMN_User__c_body tr.dataRow th a")
       .switchToNextWindow()
+      .click("input[value='Add Funding Source']")
+      .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
+      .selectCheckbox("More than 1.5 Yrs of Disability", true)
+      .selectCheckbox("ALS/ESRD/Black Lung Disease")
+      .selectCheckbox("Patient Over 64 Years of Age")
+      .click("span[id$=FundingSourceModal] input[value='Save']")
+      .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
       .click("input[value='Save Referral']")
       .waitForVisible("input[value=Edit]", defaultOperationTimeout)
       .url()
@@ -122,6 +136,10 @@ testSuite("Referral", suiteTimeout, {
       .getOutputText("First Name")
       .then(function (firstName) {
         assert.equal("Darth", firstName);
+      })
+      .getOutputText("Date of Birth")
+      .then(function (dateOfBirth) {
+        assert.equal("7/7/1970", dateOfBirth);
       })
       .getOutputText("Race")
       .then(function (race) {

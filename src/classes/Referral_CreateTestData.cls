@@ -194,7 +194,7 @@ public static Id getAccountRecordType(){
                                 operating_group__c=OperatingGroup);*/
         insert testUser;
 
-        Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Salesforce_User_Account__c=testUser.id);
+        Tmn_User__c tmnUser= new Tmn_User__c(operating_group__c=OperatingGroup, Business_unit__c = 'Test', Salesforce_User_Account__c=testUser.id);
         insert tmnUser;
 
         return testUser;

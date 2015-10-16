@@ -53,9 +53,12 @@
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Default_Admission_Packet__c</fullName>
         <defaultValue>false</defaultValue>
@@ -113,6 +116,40 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>PB_DocPackets</pluralLabel>
+    <recordTypes>
+        <fullName>ABI</fullName>
+        <active>true</active>
+        <description>This recordtype is used to support ABI network</description>
+        <label>ABI</label>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Active</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Inactive</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>ARY</fullName>
+        <active>true</active>
+        <description>This recordtype is used to support ARY network</description>
+        <label>ARY</label>
+        <picklistValues>
+            <picklist>Status__c</picklist>
+            <values>
+                <fullName>Active</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Inactive</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

@@ -28,6 +28,7 @@ private class AdmissionTriggeredActionsTest {
 	        // create an admission should create the associatedDocs as well
 	        Admission__c adm = new Admission__c();
 	        adm.person_being_served__c = person.id;
+	        adm.Network_offering__c = 'ABI';
 	        insert adm;
 	        
 	        System.assertequals([select id from PB_AssociatedDoc__c].size(), 3);            
@@ -47,11 +48,12 @@ private class AdmissionTriggeredActionsTest {
         insert person;
         
         //create document
-        PB_Document__c doc = new PB_Document__c(Document_Name__c = 'Test Doc', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
+        Id docRectypeID = Schema.SObjectType.PB_Document__c.getRecordTypeInfosByName().get('ABI').getRecordTypeId();
+        PB_Document__c doc = new PB_Document__c(Document_Name__c = 'Test Doc', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null, RecordtypeId = docRectypeID, 
                                                  Recurring_Frequency__c = 'Recurring', Recurring_Interval__c = 'Annually', Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
-        PB_Document__c doc1 = new PB_Document__c(Document_Name__c = 'Test Doc1', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
+        PB_Document__c doc1 = new PB_Document__c(Document_Name__c = 'Test Doc1', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  RecordtypeId = docRectypeID,
                                                  Recurring_Frequency__c = 'Recurring', Recurring_Interval__c = 'Monthly', Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
-        PB_Document__c doc2 = new PB_Document__c(Document_Name__c = 'Test Doc2', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  
+        PB_Document__c doc2 = new PB_Document__c(Document_Name__c = 'Test Doc2', Due__c = 'Other', Effective_Date__c = Date.parse('10/10/2014'), Expiration_Date__c = null,  RecordtypeId = docRectypeID,
                                                  Recurring_Frequency__c = 'Recurring', Recurring_Interval__c = 'Quarterly', Status__c = 'Active', Type__c = 'Standard', Version__c = 1, External_ID__c = String.valueOf(Math.abs(Math.random())) );
         List<PB_Document__c> docs= new List<PB_Document__c>();
         docs.add(doc);
@@ -60,7 +62,8 @@ private class AdmissionTriggeredActionsTest {
         insert docs;                                        
         
         //create a packet
-        PB_DocPacket__c pckt = new PB_DocPacket__c(Packet_Name__c='Test Packet One', Status__c='Active', Default_Admission_Packet__c =true, External_ID__c = String.valueOf(Math.abs(Math.random())));
+        Id pktrectypeId = Schema.SObjectType.PB_DOCPacket__c.getRecordTypeInfosByName().get('ABI').getRecordTypeId();
+        PB_DocPacket__c pckt = new PB_DocPacket__c(Packet_Name__c='Test Packet One', Status__c='Active', Default_Admission_Packet__c =true, Recordtypeid = pktrectypeId, External_ID__c = String.valueOf(Math.abs(Math.random())));
         insert pckt;
         
         //create the JOs 

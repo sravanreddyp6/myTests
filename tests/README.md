@@ -27,12 +27,20 @@ that has label `label` with `value`.
 - `getOutputText(label)`: Get the value from a Visualforce `outputText` or
 `outputField` with label `label`.
 - `getSelectOptions(label)`: Get all the options from a `select` tag with label `label`.
+- `getSelectOptionsBySelector(selector)`: Get all the options from a `select` tag with
+selector `selector`. Use this only when `getSelectOptions` is not viable (e.g. when there
+are multiple elements with the same label on the page).
 - `chooseSelectOption(label, optionValue)`: Choose the option `optionValue` from
 a `select` tag with label `label`.
+- `selectCheckbox(label, selected)`: Select a checkbox with label `label`. `selected`
+is optional - if it is `undefined` or `true`, the checkbox will be selected, if it is `false`,
+the checkbox will be unselected.
 - `selectLookup(label)`: Click on a lookup icon that Visualforce generated for certain
 elements (e.g. when we need to look up a user).
 - `switchToNextWindow()`: Sometimes VF will create a new window (e.g. when we look up a
 user). You can use this function to switch between windows in that case.
+- `waitForActionStatusDisappearance(actionStatusId, timeout)`: Wait for an
+`apex:actionStatus` to disappear.
 
 A note of caution: NodeJS (and Javascript in general) is inherently a single thread, asynchronous
 language. This means that a lot of the time, code are run on a callback basis - and after awhile,

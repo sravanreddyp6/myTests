@@ -25,7 +25,7 @@ public with sharing class AdmissionViewExtension {
     
     private void setisEditor() {
         List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess
-                FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id ];
+                FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :this.admission.Id];
 
         if (acls.size() > 0) {
             isEditor = acls[0].HasEditAccess;
@@ -43,7 +43,6 @@ public with sharing class AdmissionViewExtension {
     private void setshowCANS() {
     	
     	showCANS = false;
-    	
     	// look for this op grp in the custom setting
     	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :curUser.operating_group__c];
     	// this op group isn't allowed 
@@ -85,8 +84,7 @@ public with sharing class AdmissionViewExtension {
     	}
     	
     	// if we got past other tests, then set flag to true
-    	showCANS = true;	
-    	
+    	showCANS = true;
     	
     }
     
@@ -94,7 +92,14 @@ public with sharing class AdmissionViewExtension {
     	// what is this user's operating group
     	try {
     		TMN_User__c thisTMN = [ select id, operating_group__c from TMN_user__c where salesforce_user_account__c = :UserInfo.getUserId() LIMIT 1];
-    		return thisTMN.operating_group__c;
+    		//Added and using the query below to Support 'CA FSS' or 'BU 008' business unit - Sravan -Sep 9,2015 - CAFSS-5
+    		List<TMN_User__c> pbsOwnerTMN = [SELECT Id, Business_Unit__c, operating_group__c FROM TMN_User__c WHERE salesforce_user_account__c =:this.admission.Person_Being_Served__r.OwnerId LIMIT 1];
+    		if(pbsOwnerTMN.size() > 0 && null != pbsOwnerTMN[0].Business_Unit__c &&  pbsOwnerTMN[0].Business_Unit__c.startswith('BU 008')){
+    			return 'CA FSS';
+    		}
+    		else{
+    			return thisTMN.operating_group__c;
+    		}
     	} catch (Exception e) {
     		return '';
     	}
@@ -107,8 +112,8 @@ public with sharing class AdmissionViewExtension {
            List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c 
         		        from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: admission.Person_Being_Served__c];
         		if(admissionList.size()>0) {
-        	canCreateAdm = false;
-        	}
+        			canCreateAdm = false;
+        		}
         	}
     }
     
@@ -137,7 +142,7 @@ public with sharing class AdmissionViewExtension {
         this.admission = [
                 SELECT ID, Name, CreatedBy.Name, CreatedDate, LastModifiedBy.Name,
                            LastModifiedDate, Effective_Date__c, Admission_Effective_DateTime__c, Status__c,
-                           Discharged_Date__c, Discharged_date_time__c, Person_Being_Served__c, Person_Being_Served__r.AccountID, person_being_served__r.Name,Person_Being_Served__r.OwnerId, person_being_served__r.LastName,
+                           Discharged_Date__c, Discharged_date_time__c, Person_Being_Served__c, Person_Being_Served__r.AccountID, person_being_served__r.Name,Person_Being_Served__r.OwnerId, person_being_served__r.LastName,person_being_served__r.Flavor__c,
                            Network_Offering__c, Discharged_Status__c, Reason_for_Discharge__c, State__c,
                            Referred_Out_Date__c, Referred_Out_Agency_Name__c, Reason_Other__c,Referred_Out_Reason__c, Discharged_Reason__c,
                            Planned_Discharge__c, Discharged_to_category__c, Discharged_to_subcategory__c, Discharged_to_additional__c, Discharged_to_other__c,

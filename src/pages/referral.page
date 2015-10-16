@@ -1722,19 +1722,21 @@ function validateDiagnosis() {
                                                                                 ReferralRecordType = 'Cambridge Maryland' ||
                                                                                 ReferralRecordType = 'Cambridge Indiana' ||
                                                                                 ReferralRecordType = 'Cambridge North Carolina' ||
-                                                                                ReferralRecordType = 'Cambridge Ohio'}" />
+                                                                                ReferralRecordType = 'Cambridge Ohio' ||
+                                                                                ReferralRecordType ='CA FSS'}" />
                 <apex:inputField value="{!Referral__c.Referrer_Email__c}" rendered="{!ReferralRecordType=='NeuroRestorative' ||
                                                                                 ReferralRecordType=='Cambridge Florida' ||
                                                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
                                                                                 ReferralRecordType = 'Cambridge Maryland' ||
                                                                                 ReferralRecordType = 'Cambridge Indiana' ||
                                                                                 ReferralRecordType = 'Cambridge North Carolina' ||
-                                                                                ReferralRecordType = 'Cambridge Ohio'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' || isCambridge}" />
-                <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!isCambridge}" />
+                                                                                ReferralRecordType = 'Cambridge Ohio' ||
+                                                                                ReferralRecordType=='CA FSS'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative' || isCambridge || ReferralRecordType=='CA FSS'}" />
+                <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!isCambridge || ReferralRecordType=='CA FSS'}" />
                 <!-- CTEAE-137 -->
-                <apex:inputField label="Payer/Guarantor Medical Record Number" value="{!Referral__c.Payer_Medical_Record_Number__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina'}" />
-                <apex:inputField label="Payer/Guarantor Medical Record Number Description" value="{!Referral__c.Payer_Medical_Record_Number_Description__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina'}" />
+                <apex:inputField label="Payer/Guarantor Medical Record Number" value="{!Referral__c.Payer_Medical_Record_Number__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina' || ReferralRecordType=='CA FSS'}" />
+                <apex:inputField label="Payer/Guarantor Medical Record Number Description" value="{!Referral__c.Payer_Medical_Record_Number_Description__c}" rendered="{!ReferralRecordType=='Cambridge North Carolina' || ReferralRecordType=='CA FSS'}" />
                 <!-- end CTEAE -137 -->
                 <apex:inputText id="referrerFax" value="{!Referral__c.Referrer_Fax__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" onblur="j$('input[id$=referrerFax]').val(this.value.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3'))" />
                 <apex:inputField value="{!Referral__c.Case_Manager_Name__c}" rendered="{!ReferralRecordType!='NeuroRestorative'}" />
@@ -1842,7 +1844,7 @@ function validateDiagnosis() {
              	<apex:inputField value="{!Referral__c.Evaluated_By_Internal__c}"  rendered="{!referralRecordType == 'NeuroRestorative'}" required="true" />
 
                 
-                <apex:inputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge}" />
+                <apex:inputField value="{!Referral__c.Current_Representative_Payee__c}" rendered="{!isCambridge || ReferralRecordType=='CA FSS'}" />
                 <apex:inputField value="{!Referral__c.Billing_ID__c}" rendered="{!referralRecordType=='NeuroRestorative'}" />
                 <apex:inputField value="{!Referral__c.CYBER_ID_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
                 <apex:inputField value="{!Referral__c.CYBER_Referral_Number__c}" rendered="{!referralRecordType=='Cambridge New Jersey'}" />
@@ -1857,7 +1859,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}">
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType=='CA FSS' }">
                 <!-- added section item for CTEAE-37 -->
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel >
@@ -1915,7 +1918,8 @@ function validateDiagnosis() {
                                                                                         ReferralRecordType = 'Cambridge Maryland' ||
                                                                                         ReferralRecordType = 'Cambridge Indiana' ||
                                                                                         ReferralRecordType = 'Cambridge North Carolina' ||
-                                                                                        ReferralRecordType = 'Cambridge Ohio'}">
+                                                                                        ReferralRecordType = 'Cambridge Ohio' ||
+                                                                                        ReferralRecordType=='CA FSS'}">
                     <apex:inputField label="Is the person at risk of an out of home placement?" value="{!Referral__c.Risk_of_Out_of_Home_Placement__c}">
                         <apex:actionStatus id="statusPlaceRisk">
                             <apex:facet name="start">
@@ -1954,7 +1958,8 @@ function validateDiagnosis() {
                                                                                                 ReferralRecordType = 'Cambridge Maryland' ||
                                                                                                 ReferralRecordType = 'Cambridge Indiana' ||
                                                                                                 ReferralRecordType = 'Cambridge North Carolina' ||
-                                                                                                ReferralRecordType = 'Cambridge Ohio'}">
+                                                                                                ReferralRecordType = 'Cambridge Ohio' ||
+                                                                                                ReferralRecordType=='CA FSS'}">
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel for="placementhist" value="Does the person have a history of placement (past or current)?" />
                         <apex:inputField id="placementhist" value="{!Referral__c.Placement_History__c}">
@@ -2080,7 +2085,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}">
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType=='CA FSS'}">
                 <apex:pageBlockSectionItem >
                     <apex:outputlabel for="previnvolvecb" value="Previous Juvenile Services Involvement?" />
                     <apex:actionregion >
@@ -2123,7 +2129,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}">
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType=='CA FSS'}">
 
                 <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" html-disabled="true" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' }" style="width:95%;" />
                 <apex:inputField label="Current Charges" value="{!Referral__c.Current_Charges__c}" rendered="{!Referral__c.Current_Juvenile_Services_Involvement__c=='Yes' }" style="width:95%;" required="{!Referral__c.Current_Juvenile_Services_Involvement__c == 'Yes'}" />
@@ -2172,7 +2179,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}">
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType=='CA FSS'}">
 
                 <apex:inputField label="Is this client considered pre-court with charges pending?" value="{!Referral__c.Pre_Court__c}" html-disabled="true" rendered="{! Referral__c.Current_Juvenile_Services_Involvement__c!='Yes' || (Referral__c.Felony__c!='Yes' && Referral__c.Misdemeanor__c!='Yes')}" />
 
@@ -2426,16 +2434,18 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType == 'CA FSS'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge || ReferralRecordType == 'CA FSS'}" />
 
                 <apex:inputTextarea value="{!Referral__c.ADL_Summary__c}" cols="50" rows="3" rendered="{!ReferralRecordType == 'Illinois' || ReferralRecordType == 'Cambridge Florida' ||
                                 ReferralRecordType = 'Cambridge Massachusetts' ||
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType == 'CA FSS'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge || ReferralRecordType == 'CA FSS'}" />
 
                 <apex:inputField value="{!Referral__c.Behavior_Summary__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
@@ -2558,16 +2568,16 @@ function validateDiagnosis() {
 
             </apex:pageBlockSection>
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralServices">
-                <apex:inputField value="{!Referral__c.Program_Category__c}" rendered="{!isCambridge}" required="{!isCambridge}" />
+                <apex:inputField value="{!Referral__c.Program_Category__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <br />
-                <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge}" required="{!isCambridge}" />
+                <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <br />
-                <apex:inputField id="servicesRequested" value="{!Referral__c.Services_Requested__c}" Rendered="{!referralRecordType!='CareMeridian'}" required="{!isCambridge}" />
-                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Family_History__c}" rendered="{!isCambridge}" />
-                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Medical_History__c}" rendered="{!isCambridge}" />
-                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Behavior_Summary__c}" rendered="{!isCambridge}" />
-                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Current_Medications__c}" rendered="{!isCambridge && !isLinkedPersonBeingServed}" />
-                <apex:outputField value="{!personBeingServedRecord.Current_Medications__c}" rendered="{!isCambridge && isLinkedPersonBeingServed}" />
+                <apex:inputField id="servicesRequested" value="{!Referral__c.Services_Requested__c}" Rendered="{!referralRecordType!='CareMeridian'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Family_History__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Medical_History__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Behavior_Summary__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Current_Medications__c}" rendered="{!(isCambridge || ReferralRecordType == 'CA FSS') && !isLinkedPersonBeingServed}" />
+                <apex:outputField value="{!personBeingServedRecord.Current_Medications__c}" rendered="{!(isCambridge || ReferralRecordType == 'CA FSS') && isLinkedPersonBeingServed}" />
                 <apex:inputField value="{!Referral__c.Prior_Program_Information__c}" style="width: 90%;" Rendered="{!referralRecordType!='CareMeridian'}" />
                 <apex:inputField value="{!Referral__c.Comments__c}" style="width: 90%;" />
             </apex:pageBlockSection>
@@ -2718,7 +2728,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}"
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}"
         />
         <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Staff__c}"
             rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
@@ -2756,7 +2767,7 @@ function validateDiagnosis() {
             </apex:pageBlockSectionItem>
 
             <!-- Row 1, Col 3 -->
-            <apex:inputField value="{!Referral__c.Uses_Tobacco__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Uses_Tobacco__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Property_Destruction__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -2787,7 +2798,7 @@ function validateDiagnosis() {
             </apex:pageBlockSectionItem>
 
             <!-- Row 1, Col 4 -->
-            <apex:inputField value="{!Referral__c.Maintain_Sibling_Group__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Maintain_Sibling_Group__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -2828,7 +2839,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey' ||
                         ReferralRecordType = 'Iowa' ||
@@ -2847,7 +2859,7 @@ function validateDiagnosis() {
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Verbally_Aggressive__c}" />
 
             <!-- Row 2, Col 3 -->
-            <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -2864,7 +2876,7 @@ function validateDiagnosis() {
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Theft__c}" />
 
             <!-- Row 2, Col 4 -->
-            <apex:inputField value="{!Referral__c.If_Yes_How_Many__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.If_Yes_How_Many__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -2906,7 +2918,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Peers__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey' ||
                         ReferralRecordType = 'Iowa' ||
@@ -2939,7 +2952,7 @@ function validateDiagnosis() {
             </apex:pageBlockSectionItem>
 
             <!-- Row 3, Col 3 -->
-            <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Chemical_Use_Recovery__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -2970,7 +2983,7 @@ function validateDiagnosis() {
             </apex:pageBlockSectionItem>
 
             <!-- Row 3, Col 4 -->
-            <apex:inputField value="{!Referral__c.No_Same_Sex_Peers__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.No_Same_Sex_Peers__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Unsupervised_Time__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3002,7 +3015,7 @@ function validateDiagnosis() {
             </apex:pageBlockSectionItem>
 
             <!-- Row 4, Col 1 -->
-            <apex:inputField value="{!Referral__c.Preferred_Setting__c}" rendered="{!isCambridge }" />
+            <apex:inputField value="{!Referral__c.Preferred_Setting__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Mobility__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3024,7 +3037,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Verbally_Aggressive__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3043,7 +3057,7 @@ function validateDiagnosis() {
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Suicide_Threats__c}" />
 
             <!-- Row 4, Col 3 -->
-            <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Chemical_Use_Current__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3060,7 +3074,7 @@ function validateDiagnosis() {
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Uses_Tobacco__c}" />
 
             <!-- Row 4, Col 4 -->
-            <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Length_of_time__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3077,7 +3091,7 @@ function validateDiagnosis() {
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Current_Pending_Litigation__c}" />
 
             <!-- Row 5, Col 1 -->
-            <apex:inputField value="{!Referral__c.Mobility__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Mobility__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Gender_Specific_Staffing__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'Nevada'}" />
             <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}" rendered="{!ReferralRecordType = 'Iowa' ||
@@ -3113,7 +3127,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Suicide_Threats__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3151,7 +3166,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Elopement__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey'}" />
             <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}" rendered="{!ReferralRecordType = 'Arizona' ||
@@ -3184,7 +3200,7 @@ function validateDiagnosis() {
             </apex:pageBlockSectionItem>
 
             <!-- Row 5, Col 4 -->
-            <apex:inputField value="{!Referral__c.No_Cross_Cultural_Placement__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.No_Cross_Cultural_Placement__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Live_with_Opposite_Sex__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3200,7 +3216,8 @@ function validateDiagnosis() {
             <apex:inputField value="{!Referral__c.Elopement__c}" rendered="{!ReferralRecordType = 'NeuroRestorative'}" />
 
             <!-- Row 6, Col 1 -->
-            <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}" rendered="{!isCambridge ||
+            <apex:inputField value="{!Referral__c.Accessible_Housing_Needed__c}" rendered="{!isCambridge || 
+            			ReferralRecordType = 'CA FSS' ||
                         ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'Nevada'}" />
             <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}" rendered="{!ReferralRecordType = 'California' ||
@@ -3222,7 +3239,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Suicide_Attempts__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3255,7 +3273,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Nevada' ||
                         ReferralRecordType = 'Ohio' ||
                         ReferralRecordType = 'Oregon' ||
-                        ReferralRecordType = 'Wisconsin'}" />
+                        ReferralRecordType = 'Wisconsin' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Unwanted_Sexual_Behavior__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey'}" />
             <apex:inputField value="{!Referral__c.Chemical_Dependency_Treatment__c}" rendered="{!ReferralRecordType = 'Indiana' ||
@@ -3265,7 +3284,7 @@ function validateDiagnosis() {
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Use_Current__c}" />
 
             <!-- Row 6, Col 4 -->
-            <apex:inputField value="{!Referral__c.Can_Be_Placed_With_Other_Children__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Can_Be_Placed_With_Other_Children__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'Nevada'}" />
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'California' ||
@@ -3283,7 +3302,8 @@ function validateDiagnosis() {
             <!-- Row 7, Col 1 -->
             <apex:inputField value="{!Referral__c.Accessible_Vehicle_Needed__c}" rendered="{!isCambridge ||
                         ReferralRecordType = 'Arizona' ||
-                        ReferralRecordType = 'Nevada'}" />
+                        ReferralRecordType = 'Nevada' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Current_Medical_Conditions__c}" rendered="{!ReferralRecordType = 'California'}" />
             <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}" rendered="{!ReferralRecordType = 'Iowa' ||
                         ReferralRecordType = 'Illinois' ||
@@ -3316,7 +3336,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Self_Harm_or_Self_Injurous_Behaviors__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3361,7 +3382,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'North Dakota' ||
                         ReferralRecordType = 'Nevada' ||
                         ReferralRecordType = 'Ohio' ||
-                        ReferralRecordType = 'Oregon'}" />
+                        ReferralRecordType = 'Oregon' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.If_Yes_Type_of_Unwanted_Sexual_Behavior__c}" label="if Yes, Type" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
             <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}" rendered="{!ReferralRecordType = 'Cambridge New Jersey'}" />
             <apex:inputField value="{!Referral__c.Elopement__c}" rendered="{!ReferralRecordType = 'Minnesota' ||
@@ -3385,7 +3407,7 @@ function validateDiagnosis() {
             </apex:pageBlockSectionItem>
 
             <!-- Row 7, Col 4 -->
-            <apex:inputField value="{!Referral__c.If_Yes_Age_Requirements__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.If_Yes_Age_Requirements__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Illinois' ||
@@ -3400,7 +3422,7 @@ function validateDiagnosis() {
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}" />
 
             <!-- Row 8, Col 1 -->
-            <apex:inputField value="{!Referral__c.Geographic_Restrictions__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Geographic_Restrictions__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Lift_Transfer_Assistance__c}" rendered="{!ReferralRecordType = 'Arizona' ||
                         ReferralRecordType = 'Nevada'}" />
             <apex:inputField value="{!Referral__c.Restricted_Health_Conditions__c}" rendered="{!ReferralRecordType = 'California'}" />
@@ -3421,7 +3443,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Fire_Setting__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey' ||
                         ReferralRecordType = 'Iowa' ||
@@ -3447,7 +3470,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Ohio' ||
                         ReferralRecordType = 'California' ||
                         ReferralRecordType = 'Iowa' ||
-                        ReferralRecordType = 'Ohio'}" />
+                        ReferralRecordType = 'Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Nursing_Care_Needed__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
             <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}" rendered="{!ReferralRecordType = 'Cambridge New Jersey'}" />
             <apex:inputField value="{!Referral__c.Visual_Impairment__c}" rendered="{!ReferralRecordType = 'Arizona' ||
@@ -3462,14 +3486,14 @@ function validateDiagnosis() {
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative' && !Referral__c.Chemical_Dependency_Treatment__c}" />
 
             <!-- Row 8, Col 4 -->
-            <apex:inputField value="{!Referral__c.Family_Involvement_Restrictions__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Family_Involvement_Restrictions__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'California'}" />
             <apex:inputField value="{!Referral__c.No_Mixed_Diagnosis__c}" rendered="{!ReferralRecordType = 'Iowa'}" />
             <apex:inputField value="{!Referral__c.Locked_Seclusion_Room_Needed__c}" rendered="{!ReferralRecordType = 'Wisconsin'}" />
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'NeuroRestorative'}" />
 
             <!-- Row 9, Col 1 -->
-            <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Area_of_State_Interested_In__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin' ||
                         ReferralRecordType = 'Iowa'}" />
 
@@ -3479,7 +3503,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Legal_History__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey' ||
                         ReferralRecordType = 'Iowa'}" />
@@ -3491,17 +3516,18 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Level_of_Support_Required__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
             <apex:inputField value="{!Referral__c.Unsupervised_Time__c}" rendered="{!ReferralRecordType = 'Cambridge New Jersey'}" />
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin'}" />
 
             <!-- Row 9, Col 4 -->
-            <apex:inputField value="{!Referral__c.If_Yes_Level__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.If_Yes_Level__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Safety_Measures_Required__c}" label="Restrictive measures or rights restrictions will need to be implemented to safely support this individual" rendered="{!ReferralRecordType = 'Wisconsin'}" />
 
             <!-- Row 10, Col 1 -->
-            <apex:inputField value="{!Referral__c.Access_to_Public_Transportation__c}" rendered="{!isCambridge}" />
+            <apex:inputField value="{!Referral__c.Access_to_Public_Transportation__c}" rendered="{!isCambridge || ReferralRecordType = 'CA FSS'}" />
 
             <!-- Row 10, Col 2 -->
             <apex:inputField value="{!Referral__c.Legal_History__c}" rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3509,7 +3535,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Law_Enforcement_Involvement__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey'}" />
             <!-- Row 10, Col 3 -->
@@ -3518,7 +3545,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Unsupervised_Time__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
             <apex:inputField value="{!Referral__c.Length_of_time__c}" rendered="{!ReferralRecordType = 'Cambridge New Jersey'}" />
             <!-- Row 10, Col 4 -->
@@ -3526,7 +3554,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Massachusetts' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Has_Pets__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge New Jersey'}" />
@@ -3536,7 +3565,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey'}" />
             <!-- Row 11, Col 2 -->
@@ -3545,7 +3575,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Property_Destruction__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia' ||
                         ReferralRecordType = 'Cambridge New Jersey'}" />
             <!-- Row 11, Col 3 -->
@@ -3554,7 +3585,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' || 
+                        ReferralRecordType = 'CA FSS'}" />
             <!-- CTEAE-107, OH referral flavor fields added to Programming Considerations -->
             <apex:inputField value="{!Referral__c.Victim_of_Domestic_Violence__c}" rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
             <apex:inputField value="{!Referral__c.Safe_Plan__c}" rendered="{!ReferralRecordType = 'Cambridge Indiana'}" />
@@ -3566,7 +3598,8 @@ function validateDiagnosis() {
                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
                                                 ReferralRecordType = 'Cambridge Maryland' ||
                                                 ReferralRecordType = 'Cambridge North Carolina' ||
-                                                ReferralRecordType = 'Cambridge New Jersey'}" />
+                                                ReferralRecordType = 'Cambridge New Jersey' ||
+                                                ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.If_Yes_What_kind__c}" label="If Yes, Type" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
             <!-- Row 12, Col 1 -->
             <apex:inputField value="{!Referral__c.Physically_Aggressive_to_Self__c}" rendered="{!ReferralRecordType = 'Cambridge Florida' ||
@@ -3574,7 +3607,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio'}" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
 
 
@@ -3583,7 +3617,8 @@ function validateDiagnosis() {
                                                 ReferralRecordType = 'Cambridge Maryland' ||
                                                 ReferralRecordType = 'Cambridge Indiana' ||
                                                 ReferralRecordType = 'Cambridge North Carolina' ||
-                                                ReferralRecordType = 'Cambridge Ohio'}">
+                                                ReferralRecordType = 'Cambridge Ohio' ||
+                                                ReferralRecordType = 'CA FSS'}">
                 <apex:outputPanel >
                     <apex:outputLabel for="Adjudicated_offense_status">
                         Adjudicated offense status
@@ -3631,7 +3666,8 @@ function validateDiagnosis() {
                         ReferralRecordType = 'Cambridge Maryland' ||
                         ReferralRecordType = 'Cambridge Indiana' ||
                         ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio' }" />
+                        ReferralRecordType = 'Cambridge Ohio' ||
+                        ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Parental_Disability__c}" rendered="{!ReferralRecordType = 'Cambridge Ohio'}" />
 
             <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
@@ -3640,26 +3676,26 @@ function validateDiagnosis() {
                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
                                                 ReferralRecordType = 'Cambridge Maryland' ||
                                                 ReferralRecordType = 'Cambridge Indiana' ||
-                                                ReferralRecordType = 'Cambridge North Carolina'
-                                                }" />
+                                                ReferralRecordType = 'Cambridge North Carolina' ||
+                                                ReferralRecordType = 'CA FSS'}" />
             <apex:inputField value="{!Referral__c.Animal_Cruelty__c}" rendered="{!ReferralRecordType = 'Cambridge Georgia'}" />
 
             <!-- This section is standard among the operating groups, so wwe keep them in one place -->
-            <apex:outputText rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}">
+            <apex:outputText rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}">
                 <h1>Diagnosis Programming Considerations</h1>
                 <hr />
             </apex:outputText>
-            <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:inputField value="{!Referral__c.Choking_Risk__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:inputField value="{!Referral__c.History_of_Bowel_Obstructions__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:inputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:inputField value="{!Referral__c.Ventilator_Dependent__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:inputField value="{!Referral__c.Eating_Disorders__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:inputField value="{!Referral__c.Ingesting_Non_Consumables__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:inputField value="{!Referral__c.Psychiatric_Mental_Hospitalization__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
-            <apex:inputField value="{!Referral__c.Hospitalization_Within_the_past_year__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin'}" />
+            <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+            <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+            <apex:pageBlockSectionItem rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+            <apex:inputField value="{!Referral__c.Choking_Risk__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+            <apex:inputField value="{!Referral__c.History_of_Bowel_Obstructions__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' ||ReferralRecordType = 'CA FSS'}" />
+            <apex:inputField value="{!Referral__c.Takes_Injectible_Medications__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+            <apex:inputField value="{!Referral__c.Ventilator_Dependent__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+            <apex:inputField value="{!Referral__c.Eating_Disorders__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+            <apex:inputField value="{!Referral__c.Ingesting_Non_Consumables__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+            <apex:inputField value="{!Referral__c.Psychiatric_Mental_Hospitalization__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
+            <apex:inputField value="{!Referral__c.Hospitalization_Within_the_past_year__c}" rendered="{!isCambridge || ReferralRecordType = 'Wisconsin' || ReferralRecordType = 'CA FSS'}" />
             <!-- TADA -->
             </apex:pageBlockSection>
             <apex:pageBlockSection columns="1" id="progConsiderationsDetail" rendered="{!OR(ReferralRecordType != 'NeuroRestorative', showNeuroFeatures)}">
@@ -3667,7 +3703,7 @@ function validateDiagnosis() {
                 <apex:outputPanel layout="none" rendered="{!ReferralRecordType = 'NeuroRestorative'}">
                     <hr />
                 </apex:outputPanel>
-                <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" cols="80" rendered="{!isCambridge || ReferralRecordType = 'NeuroRestorative'}" />
+                <apex:inputTextarea value="{!Referral__c.Programming_Considerations_Comments__c}" cols="80" rendered="{!isCambridge || ReferralRecordType = 'NeuroRestorative' || ReferralRecordType = 'CA FSS'}" />
             </apex:pageBlockSection>
             </span>
 

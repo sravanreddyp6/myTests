@@ -44,7 +44,7 @@ public with sharing class IdentityHomeController {
     public String tmnId = t.Id;
     public String tmnOG = t.Operating_Group__c;
     public String tmnEmail = t.Email__c;                          
-    
+    public Boolean onloadDialog {set;get;}
     public IdentityHomeController() {
         Records = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c 
                    FROM TMN_User__c 
@@ -71,16 +71,31 @@ public with sharing class IdentityHomeController {
                       LIMIT 1];
                       
         aliasName = getAliasNameValue();
-        System.Debug('Value of aliasName is ' + aliasName);       
+        System.Debug('Value of aliasName is ' + aliasName);      
+        List<SelectOption> dl=getDelValues();
+         	if(dl.size()>1){
+             onloadDialog = true;
+        	}else{
+            onloadDialog = false;
+        	} 
+        	
+        	if(ApexPages.currentPage().getParameters().get('cancel')!=null){
+        	onloadDialog = false;
+        	}    
                                                                                                                                                                                                          
     }
 
-    //Standard Edit page
+    //Standard Default Edit page
     Public PageReference stdEditPage(){
         PageReference ePage = new PageReference('/'+selectedID+'/e?retURL=/apex/identity_admin');
         return ePage;
     }
-
+	
+	Public PageReference selectDelegate(){
+        System.debug('aliasName:' + aliasName);
+        return null;
+    }
+    
     // Method used to set aliasName value on page load.
     String aliasNameValue; 
     String getAliasNameValue(){
@@ -126,12 +141,23 @@ public with sharing class IdentityHomeController {
     // Get list of direct reports who are employees for user.
     List<TMN_User__c> myEmployees;
     public List<TMN_User__c> getMyEmployees() {
-        myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c 
+        myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,BAA_Signed__c
                        FROM TMN_User__c 
                        WHERE Manager_Email__c=:aliasName 
                        AND Current_Person_Type__c IN ('Employee')
                        AND Job_Status__c IN ('Active') ];
-        return myEmployees;    
+           List<TMN_User__c>    employeeWithSFAccount = new List<TMN_User__c>();        
+                       for(TMN_User__c tmn:myEmployees){
+                       	String email = tmn.Email__c;
+                       		if(email!=null && email.length() >0){ 
+                       List<User> user = [select id,email from user where username like :'%'+email.subString(0,email.indexOf('@')) +'%'];
+                       			if(user!=null&&user.size()>0){
+                       				tmn.BAA_Signed__c = true;//using field only for display add delegate link in page
+                       			}
+                       		}
+                       		employeeWithSFAccount.add(tmn);
+                       }
+        return employeeWithSFAccount;    
     }
     
     //Get list of all direct reports for user.
@@ -151,8 +177,11 @@ public with sharing class IdentityHomeController {
         if(mySubordinates.size()>0){
             dl.add(new SelectOption(tmnEmail,'Myself'));    
         }
-        for(TMN_User_Delegate__c td:[SELECT Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c =:tmnId AND Delegation_Complete__c = FALSE]){
+        for(TMN_User_Delegate__c td:[SELECT name,Delegate_Email__c,Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c FROM TMN_User_Delegate__c WHERE TMN_Delegate_Name__c =:tmnId AND Delegation_Complete__c = FALSE]){
             dl.add(new SelectOption(td.Delegate_for_Email__c,td.Delegate_for_Name__c));
+        }
+        if( dl.size()>1){
+             dl.add(0,new SelectOption('',''));
         }
         return dl;
     }
@@ -285,22 +314,22 @@ public with sharing class IdentityHomeController {
                          FROM TMN_User__c
                          WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%')
                          AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];   
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
+            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,BAA_Signed__c 
                                     FROM TMN_User__c 
                                     WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%')
                                     AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
-                                    ORDER BY Last_Name__c
+                                    ORDER BY Last_Name__c,First_Name__c
                                     LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];              
         }else if (String.IsBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
             totalRecsDel = [SELECT COUNT()
                          FROM TMN_User__c
                          WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%') 
                          AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
+            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,BAA_Signed__c 
                                     FROM TMN_User__c 
                                     WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%')  
                                     AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
-                                    ORDER BY Last_Name__c
+                                    ORDER BY Last_Name__c,First_Name__c
                                     LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];                              
         }else if (String.IsNotBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
             totalRecsDel = [SELECT COUNT()
@@ -310,19 +339,35 @@ public with sharing class IdentityHomeController {
                          OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%')
                          OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
                          AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))];
-            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
+            searchDelegateResult = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,BAA_Signed__c 
                                     FROM TMN_User__c 
                                     WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%') 
                                     OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
                                     OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
                                     OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
                                     AND (Current_Person_Type__c IN ('Employee') AND Job_Status__c IN ('Active'))
-                                    ORDER BY Last_Name__c 
+                                    ORDER BY Last_Name__c,First_Name__c 
                                     LIMIT :LimitSizeDel OFFSET :OffsetSizeDel];
               if(searchDelegateResult.isEmpty()) {
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found.')); 
               }              
         }
+        			if(!searchDelegateResult.isEmpty()){
+		           List<TMN_User__c>    employeeWithSFAccount = new List<TMN_User__c>();        
+                       for(TMN_User__c tmn:searchDelegateResult){
+                       	String email = tmn.Email__c;
+                       		if(email!=null && email.length() >0){ 
+                       List<User> user = [select id,email from user where username like :'%'+email.subString(0,email.indexOf('@')) +'%'];
+                       			if(user!=null&&user.size()>0){
+                       				tmn.BAA_Signed__c = true;//using field only for display add delegate link in page
+                       			}
+                       		}
+                       		employeeWithSFAccount.add(tmn);
+                       }
+                       searchDelegateResult = new List<TMN_User__c>();
+                        searchDelegateResult.addAll(employeeWithSFAccount);
+                        totalRecsDel = searchDelegateResult.size();
+        			}
         return null;
     }       
 
@@ -352,17 +397,16 @@ public with sharing class IdentityHomeController {
             totalRecsNE = [SELECT COUNT()
                          FROM TMN_User__c 
                          WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like :  generatedKey2 +'%') 
-                         AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];   
+                         ];   
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
                                   WHERE (First_Name__c like :  generatedKey2 +'%' OR Preferred_First_Name__c like : generatedKey2 +'%') 
-                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
-                                  ORDER BY Last_Name__c
+                                  ORDER BY Last_Name__c,First_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create New Identity Record to create the new identity record.')); 
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
               }else if(searchNonEmpResult.size()>0){
                   ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
               }              
@@ -370,19 +414,18 @@ public with sharing class IdentityHomeController {
             totalRecsNE = [SELECT COUNT()
                          FROM TMN_User__c 
                          WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like : generatedKey1 +'%') 
-                         AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];
+                         ];
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
                                   WHERE (Last_Name__c like : generatedKey1 +'%' OR Preferred_Last_Name__c like :  generatedKey1 +'%') 
-                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
-                                  ORDER BY Last_Name__c
+                                  ORDER BY Last_Name__c,First_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create New Identity Record to create the new identity record.')); 
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
               }else if(searchNonEmpResult.size()>0){
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create Non Employee Record to create the Non Employee record.'));
               }                              
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
             totalRecsNE = [SELECT COUNT()
@@ -390,25 +433,24 @@ public with sharing class IdentityHomeController {
                          WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%') 
                          OR (Preferred_Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
                          OR (Last_Name__c like :  generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
-                         OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) 
-                         AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c IN ('Non-Employee','Pre-Hire'))];
+                         OR (Preferred_Last_Name__c like :generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%')) ];
             searchNonEmpResult = [SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c 
                                   FROM TMN_User__c 
                                   WHERE ((Last_Name__c like :  generatedKey1 +'%' AND First_Name__c like : generatedKey2 +'%') 
                                   OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like : generatedKey2 +'%') 
                                   OR (Last_Name__c like : generatedKey1 +'%' AND Preferred_First_Name__c like :  generatedKey2 +'%') 
                                   OR (Preferred_Last_Name__c like : generatedKey1 +'%' AND First_Name__c like :  generatedKey2 +'%')) 
-                                  AND (Job_Status__c IN ('Inactive','Pending') OR Current_Person_Type__c NOT IN ('Employee'))
-                                  ORDER BY Last_Name__c
+                                  ORDER BY Last_Name__c,First_Name__c
                                   LIMIT :LimitSizeNE OFFSET :OffsetSizeNE];
             btnDisable = false;
             showPopup();
               if(searchNonEmpResult.isEmpty()) {
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create New Identity Record to create the new identity record.')); 
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Possible matches matches were found. Click Create Non Employee Record to create the Non Employee record.')); 
               }else if(searchNonEmpResult.size()>0){
-                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create New Identity Record to create the new identity record.'));
+                  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Some potential matches have been found for the name you entered. If none of the results match the person you are trying to create, click Create Non Employee Record to create the Non Employee record.'));
               }              
         }
+        onloadDialog = false;
         return null;
     }      
 
@@ -462,6 +504,7 @@ public with sharing class IdentityHomeController {
         srchFNameNonEmp = null;
         srchLNameNonEmp = null;        
         displayPopup = false;    
+        onloadDialog = false;
     } 
         
     public void showPopup() {        
@@ -494,11 +537,13 @@ public with sharing class IdentityHomeController {
                             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
                             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Teleo_ID__c,
                             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,Program_String__c ,
-                            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_Name__c ,Vendor_list__c
+                            Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c,
+                            BAA_Signed__c,Vendor_Name__c ,Vendor_list__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,Custodians__c,office_flag__c,Pre_Hire_ID__c
                             FROM TMN_User__c 
                             WHERE Id =:selectedID];    
         attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:theTMNUser.id order by createddate desc];               
         showInfo();
+        onloadDialog = false;
         return null;
     }
 

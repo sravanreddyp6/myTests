@@ -10,6 +10,7 @@ testSuite("rwAzReferral", suiteTimeout, {
     return client
       .logInAs(users["RW_AZ_Referral_Intaker"])
       .click("a=Create New Referral")
+      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
       .getSelectOptions('Race')
       .then(function(races) {
         assert.deepEqual([
@@ -93,14 +94,14 @@ testSuite("rwAzReferral", suiteTimeout, {
       .chooseSelectOption("Mailing State/Province", "Arizona")
       .click("input[value='Create Person Being Referred']")
       .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
-      
+
       .getSelectOptions('Referral Status')
       .then(function(refStatus) {
         assert.deepEqual(["New", "Active", "On Hold", "Closed"], refStatus);
       })
       .getSelectOptions('Referral Source Type')
       .then(function(refSrcType) {
-          assert.deepEqual(["", "Attorney", "Family", "Hospital Case Manager", 
+          assert.deepEqual(["", "Attorney", "Family", "Hospital Case Manager",
                             "Independent Case Manager", "Internal", "Payor Case Manager",
                             "Physician", "Rehab/Hospital", "School", "Self", "Social Worker", "Unknown", "Other"
                             ], refSrcType);
@@ -117,7 +118,7 @@ testSuite("rwAzReferral", suiteTimeout, {
                             "H2017 - Psychosocial Rehab", "HAB - Habilitation Group Homes", "HAH - Habilitation", "HAI - Habilitation", "HBA - Host Home Habilitation", "HBC - Host Home Habilitation Children",
                             "HID - Habilitation", "HSK - Housekeeping", "RBD - Host Home Room and Board", "RRB - Group Home Room and Board", "RSD - Respite Daily", "RSP - Respite", "T1013 - Interpreted Services",
                             "T1016 - Case Management", "T1019 - Prsnal Services Non Residential", "T1020 - Personal Care", "TRA - Transportation", "HPD - Grp Home Habilitation Comm Protect" ], vals);
-      })      
+      })
       .getSelectOptions('Staffing Needs')
       .then(function(vals) {
           assert.deepEqual(["", "Night Sleep", "Night Awake"], vals);
@@ -137,11 +138,11 @@ testSuite("rwAzReferral", suiteTimeout, {
       .getSelectOptions('Gender Specific Staffing')
       .then(function(vals) {
           assert.deepEqual(["", "Male Preferred", "Female Preferred", "No Preference"], vals);
-      })      
+      })
       .getMultiSelectOptions('Lift Transfer Assistance')
       .then(function(vals) {
           assert.deepEqual(["Able to Transfer", "Use of Hoyer Lift", "One Person Lift", "Two Person Lift" ], vals);
-      })      
+      })
       .fillInputText("Referral Source", "Mentor")
       .fillInputText("Referrer Name", "Obi-wan Kennobi")
       .click("input[value='Save Referral']")
@@ -153,7 +154,7 @@ testSuite("rwAzReferral", suiteTimeout, {
       .isExisting("input[value='Convert']")
       .then(function(isExisting) {
     	 assert.notOk(isExisting, "Convert Button exists.");
-      })      
+      })
       .getOutputText("First Name")
       .then(function (firstName) {
         assert.equal("Darth", firstName);

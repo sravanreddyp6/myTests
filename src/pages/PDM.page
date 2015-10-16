@@ -156,7 +156,7 @@ font-style: normal;  !important;
 	}
 	 var currentUrl = window.location.href;
 	currentUrl = currentUrl.substring(0, currentUrl.indexOf("/pdm"));
- var sourcePage = currentUrl +'/TMNUser_JSON?core.apexpages.devmode.url=0';
+ var sourcePage = 'TMNUser_JSON?core.apexpages.devmode.url=0';
  j$(function() {
    var txtVal =  j$('input[id$=searchLocation]');
    	
@@ -282,11 +282,22 @@ j$('input[id$=searchEmployee]').val('');
       }
   openWin(url);
   }
+  
+    function stopRKey(evt) {
+                          var evt = (evt) ? evt : ((event) ? event : null);
+                          var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+                          if ((evt.keyCode == 13) && (node.type == "text")) {
+                                   return false;
+                          }
+                 }
+
+                 document.onkeypress = stopRKey;
+  
  </script>
   <div class="headsection">
   
   			<div class= "floatCol1" >
-  			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main  Office :  1-617-790-4800
+  			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main  Office :  {!MainOffice}
   			</div>
   			<div class="floatCol">
   			IT Service Center : {!ItServiceCenter}
@@ -344,7 +355,7 @@ j$('input[id$=searchEmployee]').val('');
         </apex:panelGroup>
         <apex:outputText >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputText>
         <apex:panelGroup >
-          <apex:commandButton id="AdancedSearch" value="Adanced Search"  onClick="showAdvancedSearchModal(); return false;"  reRender="fullpage" />
+          <apex:commandButton id="AdancedSearch" value="Advanced Search"  onClick="showAdvancedSearchModal(); return false;"  reRender="fullpage" />
           <apex:commandButton value="Export to Excel"  id="ExportToExcel"  disabled="{!noOfRecords=0}" onclick="exportExcel(); return false;"  />
           </apex:panelGroup>
     </apex:panelGrid>

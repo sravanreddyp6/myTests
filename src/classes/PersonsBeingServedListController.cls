@@ -33,10 +33,10 @@ public with sharing class PersonsBeingServedListController {
 
     private void getcanCreateNew() {
     	
-        list<TMN_User__c> TU = [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1];
+        list<TMN_User__c> TU = [select Operating_Group__c, Business_Unit__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1];
         if (TU.size() == 1){
 	        Schema.DescribeSObjectResult acctSchema = Account.sObjectType.getDescribe();
-	        canCreateNew = TU.get(0).Operating_Group__c=='NeuroRestorative'?False:acctSchema.IsCreateable();        	
+	        canCreateNew = (TU.get(0).Operating_Group__c=='NeuroRestorative' || (null != TU.get(0).Business_unit__c && TU.get(0).Business_unit__c.startswith('BU 008')) || TU.get(0).Operating_Group__c=='Care Meridian') ? False : acctSchema.IsCreateable();        	
         }
     }
     public String filterId {
@@ -246,7 +246,8 @@ public with sharing class PersonsBeingServedListController {
                     Service_Assignment__r.Person_Being_Served__r.Account.OwnerID,
                     Service_Assignment__r.Admission__r.State__c,
                     Service_Assignment__r.Admission__r.Status__c,
-                    Service_assignment__r.service_location__r.programid__c
+                    Service_assignment__r.service_location__r.programid__c,
+                    Service_assignment__r.Flavor__c
                 FROM action_plan__c
                 WHERE Service_Assignment__r.Person_Being_Served__r.ID in :contactIds
                 and     status__c = 'Active Final'

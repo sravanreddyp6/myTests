@@ -7,20 +7,28 @@ public with sharing class PB_DocPack_Admin_Form {
     public TMN_Tree miniFormTreeForDocs {get; set;}
     public string miniFormTreeSelectedKeys {get; set;}
     final string xClasses = 'treeRow';
+    public string networkoffering {get; set;}
+    public string network;
+    public Id DocRecordtype;
+    public Id PackRecordtype;
 
     //////////////////
     //constructs
     /////////////////
 
     public PB_DocPack_Admin_Form(ApexPages.StandardController controller) {
+    	network = ApexPages.currentPage().getParameters().get('network');
+    	DocRecordtype = Schema.SObjectType.PB_Document__c.getRecordTypeInfosByName().get(network).getRecordTypeId();
+    	PackRecordtype = Schema.SObjectType.PB_DocPacket__c.getRecordTypeInfosByName().get(network).getRecordTypeId();
         IntializeClass();
     }
     public PB_DocPack_Admin_Form(){
+    	network = ApexPages.currentPage().getParameters().get('network');
         IntializeClass();
     }
     public void IntializeClass(){
-        SelectedDocument = new PB_Document__c ();
-        SelectedDocPacket = new PB_DocPacket__c();
+        SelectedDocument = new PB_Document__c (RecordtypeId = DocRecordtype);
+        SelectedDocPacket = new PB_DocPacket__c(RecordtypeId = PackRecordtype);
         refreshDataTree();        
     }
 
@@ -34,6 +42,9 @@ public with sharing class PB_DocPack_Admin_Form {
             if(SelectedDocPacket.External_ID__c == null){
                 SelectedDocPacket.External_ID__c = genID(20);
             }
+           /* if(SelectedDocPacket.Network_Offering__c == null){
+                SelectedDocPacket.Network_Offering__c = networkId;
+            }*/
             upsert SelectedDocPacket;
             refreshDataTree();
             refreshMiniForm();
@@ -105,8 +116,10 @@ public with sharing class PB_DocPack_Admin_Form {
     public PageReference resetMiniForm(){
         try{
             refreshMiniFormTree(null);
-            SelectedDocument = new PB_Document__c ();
-            SelectedDocPacket = new PB_DocPacket__c(); 
+            
+            SelectedDocument = new PB_Document__c (RecordtypeId = DocRecordtype);
+            SelectedDocPacket = new PB_DocPacket__c(RecordtypeId = PackRecordtype);
+           
             SelectedItemOption  = ApexPages.CurrentPage().getParameters().get('selection');        
             
         }
@@ -162,15 +175,15 @@ public with sharing class PB_DocPack_Admin_Form {
     //reset all items used on the mini form
     public void refreshMiniForm(){
         SelectedItemOption = null;
-        SelectedDocument = new PB_Document__c();
-        SelectedDocPacket = new PB_DocPacket__c ();
+        SelectedDocument = new PB_Document__c(RecordtypeId = DocRecordtype);
+        SelectedDocPacket = new PB_DocPacket__c (RecordtypeId = packRecordtype);
     
     }
     //refresh the the document records packet tree selector 
     public void refreshMiniFormTree(string DocID){
         miniFormTreeForDocs = new TMN_Tree();
         
-        for(PB_DocPacket__c packet: [select id, name, External_ID__c, Packet_Name__c, Status__c from PB_DocPacket__c]){
+        for(PB_DocPacket__c packet: [select id, name, External_ID__c, Packet_Name__c, Status__c from PB_DocPacket__c WHERE RecordtypeId = :packRecordtype]){
             TMN_Tree.Node packetNode = new TMN_Tree.Node(packet.id, packet.Packet_Name__c);
             packetNode.pbDocPacket = packet;
             miniFormTreeForDocs.root.nodes.add(packetnode);        
@@ -187,7 +200,7 @@ public with sharing class PB_DocPack_Admin_Form {
     public void refreshDataTree(){
     
         dataTree = new TMN_Tree();
-        list<PB_DocPacket__c > allPackets = [select id, name, External_ID__c, Packet_Name__c, Status__c, Default_Admission_Packet__c from PB_DocPacket__c];
+        list<PB_DocPacket__c > allPackets = [select id, name, External_ID__c, Packet_Name__c, Status__c, Default_Admission_Packet__c from PB_DocPacket__c WHERE RecordtypeId = :packRecordtype];
         
         for(PB_DocPacket__c packet: allPackets){
             TMN_Tree.Node packetNode = new TMN_Tree.Node(packet.id, packet.Packet_Name__c);
@@ -200,7 +213,8 @@ public with sharing class PB_DocPack_Admin_Form {
         }
         
         
-        list<PB_DocPacket_Document_JO__c> allPackDocJO = [select id, name, DocPacket__c, Document__r.Recurring_Frequency__c, DocPacket__r.Packet_Name__c, Document__r.Status__c, Document__r.Effective_Date__c, Document__r.Due_Days__c, Document__r.Recurring__c, Document__r.Expiration_Date__c, Document__c, Document__r.Document_Name__c from PB_DocPacket_Document_JO__c];
+        list<PB_DocPacket_Document_JO__c> allPackDocJO = [select id, name, DocPacket__c, Document__r.Recurring_Frequency__c, DocPacket__r.Packet_Name__c, Document__r.Status__c, Document__r.Effective_Date__c, Document__r.Due_Days__c, Document__r.Recurring__c, Document__r.Expiration_Date__c, Document__c, Document__r.Document_Name__c 
+        													from PB_DocPacket_Document_JO__c WHERE DocPacket__c IN: allPackets];
         
         for(PB_DocPacket_Document_JO__c PackDocJO: allPackDocJO){
             TMN_Tree.node docNode = new TMN_Tree.node(PackDocJO.id, PackDocJO.Document__r.Document_Name__c);
