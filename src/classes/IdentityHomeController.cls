@@ -89,6 +89,9 @@ public with sharing class IdentityHomeController {
             if(ApexPages.currentPage().getParameters().get('cancel')!=null){
             onloadDialog = false;
             }    
+            if(ApexPages.currentPage().getParameters().get('TAU')!=null){
+            aliasName = ApexPages.currentPage().getParameters().get('TAU');
+            }  
                                                                                                                                                                                                          
     }
 
@@ -109,7 +112,7 @@ public with sharing class IdentityHomeController {
        return null; 
     }
     // Method used to set aliasName value on page load.
-   public String aliasNameValue; 
+    public String aliasNameValue {set;get;}
    public String getAliasNameValue(){
         if(mySubordinates.isEmpty()){
             if(myDelegation.isEmpty()){

@@ -337,10 +337,15 @@ public class identityEditNew {
         return cancelPage;
     }
 
+ 	public PageReference createCancel() {
+        PageReference createPage =  new PageReference('/apex/identity_nonemployees?cancel=true&TAU=' + TAU);
+        createPage.setRedirect(true);   
+        return createPage;
+    }
     public PageReference goTerminate() {
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
-        PageReference terminatePage =  new PageReference('/apex/identity_Terminate?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
+        PageReference terminatePage =  new PageReference('/apex/identity_Terminate?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU );
         terminatePage.setRedirect(true);   
         return terminatePage;
     }
@@ -355,11 +360,11 @@ public class identityEditNew {
 
     public PageReference goBack() {
         if(retURL == null){
-			PageReference backPage = new PageReference('/apex/identity_nonemployees?cancel=true');
+            PageReference backPage = new PageReference('/apex/identity_nonemployees?cancel=true&TAU=' + TAU);
             backPage.setRedirect(true);   
             return backPage;
         }
-        PageReference backPage = new PageReference(retURL+'?cancel=true');
+	PageReference backPage = new PageReference(retURL+'?cancel=true&TAU=' + TAU);
         backPage.setRedirect(true);   
         return backPage;
     }
