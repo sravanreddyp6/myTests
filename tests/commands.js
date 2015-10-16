@@ -1,4 +1,5 @@
 var url = require("url");
+var _ = require("lodash");
 
 // All the methods in here are injected into the browser context when the test suite is run.
 // Don't include comments in here because apparently WebdriverIO do not like it.
@@ -177,6 +178,46 @@ module.exports = function (client, done) {
       }, label)
       .then(function (result) { return result.value; });
   });
+  client.addCommand("getCheckboxInput", function (label) {
+    return client
+      .execute(injectJS)
+      .executeAsync(function (label, doneAsync) {
+        rtGetLabel(label, function ($labelEl) {
+          rtFollowLabel($labelEl, label, function ($el) {
+            var $checkboxEl = $el.find("input[type=checkbox]");
+            if ($checkboxEl.length === 0) {
+              throw new Error("Found label " + label + " but cannot find any checkbox associated with it.");
+            }
+            $checkboxEl.focus();
+            doneAsync($checkboxEl.attr("checked") == "checked");
+          });
+        });
+      }, label)
+      .then(function (result) { return result.value; });
+  });
+  client.addCommand("getCheckboxInputs", function () {
+    return client.unify(_.map(arguments, function (label) { return client.getCheckboxInput(label); }))
+  });
+  client.addCommand("getCheckboxOutput", function (label) {
+    return client
+      .execute(injectJS)
+      .executeAsync(function (label, doneAsync) {
+        rtGetLabel(label, function ($labelEl) {
+          rtFollowLabel($labelEl, label, function ($el) {
+            var $checkboxEl = $el.find("img.checkImg");
+            if ($checkboxEl.length === 0) {
+              throw new Error("Found label " + label + " but cannot find any checkbox associated with it.");
+            }
+            $checkboxEl.focus();
+            doneAsync($checkboxEl.attr("title") == "Checked" ? true : false);
+          });
+        });
+      }, label)
+      .then(function (result) { return result.value; });
+  });
+  client.addCommand("getCheckboxOutputs", function () {
+    return client.unify(_.map(arguments, function (label) { return client.getCheckboxOutput(label); }))
+  });
   client.addCommand("getSelectOptions", function (label) {
     return client
       .execute(injectJS)
@@ -251,7 +292,7 @@ module.exports = function (client, done) {
         });
       }, label, optionValue);
   });
-  client.addCommand("selectCheckbox", function (label, selected) {
+  client.addCommand("_selectCheckbox", function (label, selected) {
     selected = selected !== false;
     return client
     .execute(injectJS)
@@ -272,6 +313,18 @@ module.exports = function (client, done) {
         });
       });
     }, label, selected);
+  });
+  client.addCommand("selectCheckbox", function (label) {
+    return client._selectCheckbox(label, true);
+  });
+  client.addCommand("unselectCheckbox", function (label) {
+    return client._selectCheckbox(label, false);
+  });
+  client.addCommand("selectCheckboxes", function () {
+    return client.unify(_.map(arguments, function(label) { return client.selectCheckbox(label) }));
+  });
+  client.addCommand("unselectCheckboxes", function () {
+    return client.unify(_.map(arguments, function(label) { return client.unselectCheckbox(label) }));
   });
   client.addCommand("selectLookup", function (label, optionValue) {
     return client
