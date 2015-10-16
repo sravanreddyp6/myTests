@@ -347,11 +347,11 @@
 				</apex:pageBlockSectionItem>			
 				
                 <apex:pageBlockSectionItem >
-                    <label for="pStartDate" >Admission Date</label>
+                    <apex:outputlabel for="pStartDate" >Admission Date</apex:outputlabel>
                     <apex:outputPanel >
-                    	<c:MilitaryDatetime dateTimeVal="{!admission.Admission_Effective_DateTime__c}" />
-						<!-- used in Progress score -->
-						<input id="pStartDate" value="{!admission.Admission_Effective_DateTime__c}" style="display: none;"  data-countInFormProgress="1" />                     
+                        <c:MilitaryDatetime dateTimeVal="{!admission.Admission_Effective_DateTime__c}" />
+                        <!-- used in Progress score -->
+                        <apex:inputField id="pStartDate" showDatePicker="false" value="{!admission.Admission_Effective_DateTime__c}" style="display: none;"  html-data-countInFormProgress="1" ></apex:inputField>                     
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
