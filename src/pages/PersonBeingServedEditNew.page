@@ -344,9 +344,7 @@
         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" rerender="diag_Alt1_Header,diagnosisEntry,msgs" />
         </apex:actionRegion>
         
-         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="loadDiagnosis('{!diagEditId}');" rerender="diag_Alt1_Header,diagnosisEntry,msgs">
-            <apex:param name="editid" value="" assignTo="{!diagEditId}" />
-        </apex:actionFunction>
+        
         <!-- end -->
         
         <apex:pageMessages />
@@ -957,7 +955,12 @@
             </apex:pageBlockButtons> 
             <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true">
                 <apex:pageblockTable value="{!diagnosis}" var="diag" rendered="{!(diagnosis.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-                    <apex:column headerValue="Action"><a href="#Diag" onclick="showEditDiagnosis('{!diag.id}');return false;">Edit</a>
+                    <apex:column headerValue="Action">
+                        <apex:commandLink action="{!loadDiagnosis}" reRender="diagnosisModal" oncomplete="openDialog('diagnosisModal', 'span', 'Edit Diagnosis','none'); return false;">
+                            Edit
+                            <apex:param assignTo="{!loadThisDiag}" value="{!diag.id}" name="loadThisDiag"  />
+                        </apex:commandLink>
+                        
                     </apex:column>
                     <apex:column headerValue="Date and Time of Diagnosis" value="{!diag.Effective_Date__c}" />
                     <apex:column value="{!diag.Status__c}" headerValue="Status" />
