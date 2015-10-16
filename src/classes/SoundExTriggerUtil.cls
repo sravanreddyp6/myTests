@@ -4,6 +4,8 @@ public without sharing class SoundExTriggerUtil {
         for (Account a:accts){
             a.Last_Name_Soundex_Key__c = Soundex.toSoundex(a.LastName);
             a.First_Name_Soundex_Key__c = Soundex.toSoundex(a.FirstName);
+             a.Last_Name_SoundEx_Key__pc = Soundex.toSoundex(a.LastName);
+            a.First_Name_Soundex_Key__pc = Soundex.toSoundex(a.FirstName);
         }
     }
     public void generateKeys(List<Person_Being_Referred__c> pbrs){
