@@ -199,6 +199,9 @@ module.exports = function (client, done) {
       .execute(injectJS)
       .executeAsync(function (selector, doneAsync) {
         rtInjectJQuery(function ($) {
+          if ($(selector).length === 0) {
+            throw new Error("Cannot find element with selector " + selector);
+          }
           var options = $(selector).find("option");
           if (options.length === 0) {
             throw new Error("Found element with selector " + selector + " but cannot find any select options associated with it.");
