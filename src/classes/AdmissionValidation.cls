@@ -132,7 +132,7 @@ public with sharing class AdmissionValidation {
                         if(sa.Admission__c == tAdmit.id ){
                             
                             if(sa.SA_Start_DateTime__c < tAdmit.Admission_Effective_DateTime__c)                          
-                                tAdmit.addError('Admission Date cannot be after a Service Assignment Start Date (' + sa.name + ' starts on: ' + sa.SA_Start_DateTime__c + ')'  );
+                                tAdmit.addError('Admission Date cannot be after a Service Assignment Start Date (' + sa.name + ' starts on: ' + sa.SA_Start_DateTime__c.date() + ')'  );
                             
                             if(sa.End_Date__c > curEnd)
                                 tAdmit.addError('Discharged Date cannot be before a Service Assignment End Date (' + sa.name + ' ends on:  ' + sa.End_Date__c + ')' );
