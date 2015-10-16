@@ -62,20 +62,28 @@ public boolean isCAFSS{get; set;}
         }
         set;
     }
-    public string diagEditId {get; set; }
+    
     public void showAddDiagnosis() {
         diag = new Diagnosis__c();
         diag.Status__c = 'Active';
     }
-    public void showEditDiagnosis() {
-       // System.Debug('showdiagModal=' + showdiagModal);
-    }
     
          
     public void saveDiagnosis() {
-		this.diagnosis.add(this.diag);
-		this.diag = new Diagnosis__c();
-    }  
+        this.diagnosis.add(this.diag);
+        this.diag = new Diagnosis__c();
+    } 
+    
+    public string loadThisDiag {get; set;}
+    
+    public PageReference loadDiagnosis(){
+        for(Diagnosis__c dg : diagnosis){
+            if(dg.id == loadThisDiag){
+                diag = dg;
+            }
+        }
+        return null;
+    }
     
     //end
   
