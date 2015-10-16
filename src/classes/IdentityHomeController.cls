@@ -376,7 +376,7 @@ public with sharing class IdentityHomeController {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING, 'You must enter at least two characters in the first name or last name fields.'));
             return null;
         }else if (String.IsNotBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
-            tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__r.isActive,Salesforce_User_Account__r   FROM TMN_User__c '; 
+            tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__r.isActive  FROM TMN_User__c '; 
             tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+   generatedKey2 +'%\') ';
             tmlUserQuery += '  AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) ';
             tmlUserQuery +=  '  ORDER BY First_Name__c,Last_Name__c';
