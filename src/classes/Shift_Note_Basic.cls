@@ -234,6 +234,7 @@ public with sharing class Shift_Note_Basic {
             attachmentPDF.Name = note.Person_Being_Served__r.Name + ' - ' + note.RecordType.Name +' - (' + date.today().month() + '-' + date.today().day() + '-' + date.today().year() + ').pdf';
             attachmentPDF.body = !Test.isRunningTest() ? Note_Pdf_ref.getContent() : Blob.valueOf('dummy content'); // Modified by Sravan as we cannot invoke getCOntent() method from test class-Salesforce bug. 10/28/2014 1:00 PM
             insert attachmentPDF;
+            update note;
             /**/
             if(!note.No_approval_Needed__c){
             // Create an approval request for the this evaluation
@@ -242,7 +243,6 @@ public with sharing class Shift_Note_Basic {
             req1.setNextApproverIds(new Id[]{note.Approval_User__c});
             Approval.ProcessResult result = Approval.process(req1);
             }
-            update note;
             return new PageReference('/'+note.id);
             
         }
