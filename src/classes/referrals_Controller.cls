@@ -56,31 +56,37 @@ public with sharing class referrals_Controller{
     public list<Diagnosis__c> diagnoses{get; set;}
     public Diagnosis__c diag {
         get {
-            if (diag == null)
+            if (diag == null){
                 diag = new Diagnosis__c();
-            return diag;
+            }
+             return diag; 
         }
+        
         set;
     }
-    public static Boolean showdiagModal { get; set; }
-    public Boolean newDiagnosis{ get; set;}
-    public string diagEditId {get; set; }
+   // public static Boolean showdiagModal { get; set; }
+   // public Boolean newDiagnosis{ get; set;}
+  //  public string diagEditId {get; set; }
     public void showAddDiagnosis() {
-        newDiagnosis = true;
-        showdiagModal = true;
-        diag = new Diagnosis__c();
-        System.Debug('showdiagModal='+ showdiagModal);
+       // newDiagnosis = true;
+      //  showdiagModal = true;
+        this.diag = new Diagnosis__c();
+        this.diag.Status__c = 'Active';
+        this.diag.Effective_Date__c = null;
+       
     }
-    public void showEditDiagnosis() {
+   
+   /* public void showEditDiagnosis() {
         showdiagModal = true;
-        System.Debug('showdiagModal=' + showdiagModal);
-    }
+    }*/
     
          
     public void saveDiagnosis() {
     	system.debug(this.diag);
-		this.diagnoses.add(this.diag);
+		this.diagnoses.add(diag);
 		this.diag = new Diagnosis__c();
+		this.diag.Status__c = 'Active';
+		this.diag.Effective_date__c = null;
     }  
     
     //end
@@ -284,6 +290,7 @@ public with sharing class referrals_Controller{
 
 			this.personBeingRefRecord = getPBRRec();
 			populateRelParties();
+			populateDiagnoses();
 		}
 	}
 
@@ -297,6 +304,7 @@ public with sharing class referrals_Controller{
 
 			this.personBeingServedRecord = getPBSRec();
 			populateRelParties();
+			populateDiagnoses();
 		}
 	}
 
@@ -661,6 +669,7 @@ public with sharing class referrals_Controller{
 		this.agencies = new List<Agency_Involved_With_Individual__c>();
 		this.fundingSources = new List<Funding_Source__c>();
 		this.relParties = new List<Related_Party__c>();
+		this.diagnoses = new List<Diagnosis__c>();
 		this.activities = new List<Task>();
 		this.locations = new List<Referral_Location__c>();
 		this.searchedServiceLocationName2 = this.referralRecord.Service_Location__r.Alias__c;
@@ -674,6 +683,7 @@ public with sharing class referrals_Controller{
 				this.referralRecord.state_for_preferred_service__c = this.personBeingRefRecord.State__c;
 			}
 			populateRelParties();
+			populateDiagnoses();
 		} else {
 			this.personBeingRefRecord = new Person_Being_Referred__c();
 		}
@@ -701,6 +711,7 @@ public with sharing class referrals_Controller{
 		if (pBSId != null) {
 			this.personBeingServedRecord = getPBSRec();
 			populateRelParties();
+			populateDiagnoses();
 		} else {
 			this.personBeingServedRecord = new Contact();
 		}
@@ -750,6 +761,31 @@ public with sharing class referrals_Controller{
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 					'An error occurred retrieving Related Parties. ' + e.getMessage()));
 		}
+	}
+	
+	//For Diagnosis
+	private void populateDiagnoses() {
+		if (this.personBeingRefRecord.Id == null && this.personBeingServedRecord.Id == null) {
+			return;
+		}
+		try {
+			if(this.personBeingRefRecord.Id != null) {
+				this.diagnoses = [
+					select Id,Effective_Date__c, Status__c, Type__c, ICD__c FROM 
+					   Diagnosis__c
+					 where PBR__c = :this.personBeingRefRecord.Id
+				];
+			} else if (this.personBeingServedRecord.Id != null) {
+				this.diagnoses = [
+					select Id, Effective_Date__c, Status__c, Type__c, ICD__c from Diagnosis__c
+					 where PBS__c = :this.personBeingServedRecord.Id
+				];
+			}
+		} catch (Exception e) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+					'An error occurred retrieving Diagnoses. ' + e.getMessage()));
+		}
+		
 	}
 
 	private void populateRefRelLists() {
@@ -1140,6 +1176,7 @@ public with sharing class referrals_Controller{
 			}
 
 			createRelParties();
+			createDiagnoses();
 
 			upsert this.referralRecord;
 
@@ -1308,6 +1345,22 @@ public with sharing class referrals_Controller{
             upsert relParties;        
         }		
 	}
+	
+	//Diagnoses
+	public void createDiagnoses() {
+		if (diagnoses != null && this.personBeingRefRecord.Id != null) {
+			for (Diagnosis__c dg : diagnoses) {
+				dg.PBR__c = this.personBeingRefRecord.Id;
+			}
+			upsert diagnoses;
+		}
+        else if(diagnoses != null && this.personBeingServedRecord.Id != null){
+            for (Diagnosis__c dg : diagnoses) {
+                dg.PBS__c = this.personBeingServedRecord.Id;
+            }
+            upsert diagnoses;        
+        }		
+	}
 
 	
 public void setAge () {
@@ -1364,6 +1417,7 @@ public void setAge () {
 		}
 
 		createRelParties();
+		createDiagnoses();
 
 		this.referralRecord.Person_Being_Referred__c = this.personBeingRefRecord.Id;
 		if (this.referralRecord.State_for_Preferred_Service__c ==null && referralRecord.id == null) {

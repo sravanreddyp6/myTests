@@ -152,4 +152,39 @@ public with sharing class referral_Controller_Helper{
       upsert t;                                  
       return t;
    }
+   
+   @RemoteAction
+    public static Diagnosis__c loadDiagnosis(string diagnosisId) {
+            Diagnosis__c diagnosis = 
+                [select Id, Name, Type__c, Status__c, PBR__c, Effective_Date__c, ICD__c, ICD__r.Name
+                 from Diagnosis__c where id = :diagnosisId];
+            return diagnosis;
+     }
+     
+    
+    @RemoteAction
+    public static Diagnosis__c saveDiagnosis(string diagnosisId, string diagnosisType, string status, string effectiveTime, string ICD, string PBRId) {
+      Diagnosis__c diagnosis;                                        
+      if (String.isEmpty(diagnosisId)) {
+         diagnosis = new Diagnosis__c(Type__c = diagnosisType, Status__c = status, ICD__c = ICD, PBR__c = PBRId );
+      } else {
+         diagnosis = new Diagnosis__c(ID = diagnosisId, Type__c = diagnosisType, Status__c = status, ICD__c = ICD, PBR__c = PBRId);
+      }
+      diagnosis.Effective_Date__c = (!String.isEmpty(effectiveTime)) ? Datetime.parse(effectiveTime) : (Datetime) null;
+      upsert diagnosis;                                  
+      return diagnosis;
+   }
+   
+    @RemoteAction
+    public static Diagnosis__c saveDiagnosisFromPbsID(string diagnosisId, string diagnosisType, string status, string effectiveTime, string ICD, string PBSId) {
+      Diagnosis__c diagnosis;                                        
+      if (String.isEmpty(diagnosisId)) {
+        diagnosis = new Diagnosis__c(Type__c = diagnosisType, Status__c = status, ICD__c = ICD, PBS__c = PBSId );
+      } else {
+         diagnosis = new Diagnosis__c(ID = diagnosisId, Type__c = diagnosisType, Status__c = status,ICD__c = ICD, PBS__c = PBSId);
+      }
+      diagnosis.Effective_Date__c = (!String.isEmpty(effectiveTime)) ? Datetime.parse(effectiveTime) : (Datetime) null;
+      upsert diagnosis;                                  
+      return diagnosis;
+   }
 }
