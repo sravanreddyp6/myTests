@@ -34,7 +34,9 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <type>Default</type>
+        <content>Task</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
     </actionOverrides>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <enableFeeds>false</enableFeeds>
@@ -130,6 +132,21 @@
                 <closed>false</closed>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>Not Approved</fullName>
+                <closed>false</closed>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Approved</fullName>
+                <closed>true</closed>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rejected</fullName>
+                <closed>true</closed>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <type>Picklist</type>
@@ -222,6 +239,10 @@
         <picklistValues>
             <picklist>Status</picklist>
             <values>
+                <fullName>Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Completed</fullName>
                 <default>false</default>
             </values>
@@ -238,8 +259,16 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Not Approved</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Not Started</fullName>
                 <default>true</default>
+            </values>
+            <values>
+                <fullName>Rejected</fullName>
+                <default>false</default>
             </values>
             <values>
                 <fullName>Waiting on someone else</fullName>
