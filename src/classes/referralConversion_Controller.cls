@@ -7,6 +7,7 @@ public with sharing class referralConversion_Controller {
   public personRecord person {get; set;}
   public List<Referral_Location__c> refLocations { get; set; }
   public List<Related_Party__c> refRelParties { get; set;}
+  public list<Diagnosis__c> refDiagnoses {get; set;}
   public List<Agency_Involved_With_Individual__c> refAgencies { get; set;}
   public ID idPBR, idPBS, idAdm, idSA;
   public String NetworkOffering{ get; set; }
@@ -31,6 +32,7 @@ public with sharing class referralConversion_Controller {
     this.refRelParties = new List<Related_Party__c>();
     this.refAgencies = new List<Agency_Involved_With_Individual__c>();
     this.refLocations = new List<Referral_Location__c>();
+    this.refDiagnoses = new List<Diagnosis__c>();
 
     this.referralRecord = getFullReferralRecord(((Referral__c) ctl.getRecord()).Id);
 
@@ -56,6 +58,7 @@ public with sharing class referralConversion_Controller {
             getRelParties ();
             getLocations ();
             getAgencies ();
+            getDiagnoses();
         }
         else
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to retrieve Person Being Referred'));
@@ -126,7 +129,7 @@ public with sharing class referralConversion_Controller {
                         r.Service_Location_City__c,
                         r.service_location__r.alias__c,
                         service_location__r.service_value__c,
-                        r.Secondary_Diagnosis__c,
+                        //r.Secondary_Diagnosis__c, Sravan - 10/19/2015
                         r.Referring_Physician__c,
                         r.Referral_Status__c, r.Referral_Source_Type__c,
                         r.Referral_Phone_Number__c,
@@ -138,7 +141,7 @@ public with sharing class referralConversion_Controller {
                         r.Reason_for_Referral__c,
                         r.Program_Alias__c,
                         r.Prior_Program_Information__c,
-                        r.Primary_Diagnosis__c,
+                       // r.Primary_Diagnosis__c, Sravan - 10/19/2015
                         r.Phone__c,
                         r.Person_Being_Served__c,
                         r.Person_Being_Referred__c,
@@ -177,11 +180,11 @@ public with sharing class referralConversion_Controller {
                         r.Case_Manager_Name__c,
                         r.Case_Manager_Phone__c,
                         r.Billing_ID__c,
-                        r.Axis_V__c,
-                        r.Axis_I__c,
-                        r.Axis_IV__c,
-                        r.Axis_II__c,
-                        r.Axis_III__c,
+                       // r.Axis_V__c,
+                       // r.Axis_I__c,  Sravan - 10/19/2015
+                       // r.Axis_IV__c,  Sravan - 10/19/2015
+                       // r.Axis_II__c,  Sravan - 10/19/2015
+                       // r.Axis_III__c,  Sravan - 10/19/2015
                         r.Anticipated_Admission_Date__c,
                         r.Anticipated_Admission_DateTime__c,
                         r.Agency_Name__c,
@@ -294,6 +297,23 @@ public with sharing class referralConversion_Controller {
         'An error occurred retrieving Related Parties. ' + e.getMessage()));
     }
   }
+  
+  private void getDiagnoses(){
+  	if (this.personBeingRefRecord.Id == null) {
+      return;
+    }
+
+    try {
+      this.refDiagnoses = [select Id, Name, Status__c, Effective_Date__c, Type__c, ICD__c, PBR__c
+                         from Diagnosis__c
+                         where PBR__c = :this.personBeingRefRecord.Id AND Status__c = 'Active' order by Status__c, Effective_Date__c
+                         ];
+    } catch (Exception e) {
+      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'An error occurred retrieving Diagnoses. ' + e.getMessage()));
+    }
+  	
+  }
 
   private void getAgencies() {
     if (this.personBeingRefRecord.Id == null) {
@@ -348,6 +368,28 @@ public with sharing class referralConversion_Controller {
          from Referral_Location__c
          where Referral__c = :this.referralRecord.Id
         ];
+  }
+  
+  
+  private void linkDiagnoses(ID idServ){
+  	List<Diagnosis__c> diagtoInsert = new List<Diagnosis__c>();
+  	for(Diagnosis__c dg: this.refDiagnoses){
+  		Diagnosis__c d = new Diagnosis__c();
+  		d.Effective_Date__c = dg.Effective_Date__c;
+  		d.Status__c = dg.Status__c;
+  		d.Type__c = dg.Type__c;
+  		d.ICD__c = dg.ICD__c;
+  		d.PBS__c = idServ;
+  		
+  		diagtoInsert.add(d);
+  		
+  	}
+  	
+  	if(diagtoInsert.size() > 0){
+  		insert diagtoInsert;
+  		
+  	}
+  	
   }
 
 
@@ -464,6 +506,9 @@ public with sharing class referralConversion_Controller {
 
     // link assistive devices from the referral eval to the person being served.
     linkAssistiveDevices(accNew.PersonContactId);
+    
+    //copy Diagnosis records from Personbeing referred on to PBS
+    linkDiagnoses(accNew.PersonContactId);
      
     // return the contact id, not the account id
     return accNew.PersonContactId;
@@ -658,7 +703,8 @@ public with sharing class referralConversion_Controller {
         if (servCodeXrefsToSave != null) {insert servCodeXrefsToSave;}
     }
     // if none of the diagnosis fields are blank or null, create new diagnosis record and link to SA
-    if ( !String.isEmpty(refCurr.Axis_I__c) ||
+    //Sravan - 10/19/2015 no need to create Diagnosis record at SA Level - PRI-22 
+   /* if ( !String.isEmpty(refCurr.Axis_I__c) ||
          !String.isEmpty(refCurr.Axis_II__c) ||
          !String.isEmpty(refCurr.Axis_III__c) ||
          !String.isEmpty(refCurr.Axis_IV__c) ||
@@ -684,7 +730,7 @@ public with sharing class referralConversion_Controller {
                                         Comments__c = refCurr.Comments__c
         );
         insert newDiag;
-    }
+    }*/
 
 /*
 This is Commented out based on ticket number EC-90 Sravan - 02/04/2015 2:43 PM
