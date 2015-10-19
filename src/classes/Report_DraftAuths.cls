@@ -190,24 +190,6 @@ public with sharing class Report_DraftAuths {
         return null;
     }
 
-    public PageReference runExcel() {
-        pdfRunDateTime = System.now();
-
-        PageReference toPdfPage = new PageReference('/apex/Report_TimeLogEntry_Excel');
-        toPdfPage.setRedirect(false);
-        return toPdfPage;
-    }
-
-    public PageReference runPdf() {
-    	pdfRunDateTime = System.now();
-
-    	PageReference toPdfPage = new PageReference('/apex/Report_DraftAuths');
-    	toPdfPage.setRedirect(false);
-    	return toPdfPage;
-
-
-    }
-
     public PageReference cancelToNewRun() {
     	PageReference pageRef = new PageReference('/apex/Report_DraftAuths');
     	pageRef.setRedirect(true);
