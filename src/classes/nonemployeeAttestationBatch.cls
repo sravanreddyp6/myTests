@@ -20,11 +20,10 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>,
 		Map<id, id> managerMap = new map<id, id>();
 		List<Messaging.singleEmailMessage> managermails = new List<Messaging.singleEmailMessage>();
 		EmailTemplate managerTemplate = [Select id from EmailTemplate where Name =:'nonEmployeeAttestation'];
-		//List<Tmn_user__c> nonemployeeList = new List<TMN_user__c>(); // For dummy update So that the workflow can send the email and hence we do not deplete daily email limit - Sravan
+		List<OrgWideEmailAddress> owa = [Select id, Address, DisplayName from OrgWideEmailAddress WHERE DisplayName = 'TMN Access' LIMIT 1];
 		
 		for(TMN_user__c u: scope){
 			managerMap.put(u.Manager_Lookup__c, u.Manager_Lookup__r.Salesforce_User_Account__c);
-			//nonemployeeList.add(u);
 		}
 		
 		for(id m: managerMap.keySet()){
@@ -32,15 +31,15 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>,
 			mail.setTemplateId(managerTemplate.id);
 			mail.setTargetObjectId(managerMap.get(m));
 			mail.setWhatId(m);//Populates the Visualforce Email template
-			mail.setSenderDisplayName('TMN Access');
+			//mail.setSenderDisplayName('TMN Access');
+			mail.setOrgWideEmailAddressId(owa[0].Id);
 			mail.SaveAsActivity = false;
 			managermails.add(mail);
 		}
 		
 	
 		Messaging.sendEmail(managermails, false); // Send emails. Process goodies even if there is any failure
-		//update nonemployeeList;
-		update scope;
+		update scope; //For dummy update So that the workflow can send the email and hence we do not deplete daily email limit - Sravan
 	}
 
 	global void finish(Database.BatchableContext BC){
