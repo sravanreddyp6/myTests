@@ -807,6 +807,10 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (areainterest) {
         assert.equal(areainterest , refpag9["Area of State Interested In"]);
       })
+      .getCheckboxOutputs(Accessible Housing Needed, Accessible Vehicle Needed, Geographic Restrictions)
+      .then(function (accesshousevehigeo) {
+        assert.equal(accesshousevehigeo , refpag9["Accessible Housing Needed", "Accessible Vehicle Needed", "Geographic Restrictions"]);
+      })
       .getOutputText("if Yes: Type")
       .then(function (yestype) {
         assert.equal(yestype , refpag9["if Yes: Type"]);
@@ -843,5 +847,6 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (progconscomments) {
         assert.equal(progconscomments , refpag9["Programming Considerations Comments"]);
       })
+      .click("input[value='Convert']")
   }
 });
