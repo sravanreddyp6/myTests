@@ -404,14 +404,14 @@ public with sharing class referral_Controller2 {
 				this.diagnoses = [
 					select Name, Type__c,Status__c, PBR__c, ICD__c, Effective_Date__c, CreatedDate
 					from Diagnosis__c
-					where PBR__c = :this.personBeingRefRecord.Id order by Type__c
+					where PBR__c = :this.personBeingRefRecord.Id ORDER BY Effective_Date__c DESC
 					limit 150
 				];
 			} else if (this.personBeingServedRecord != null && this.personBeingServedRecord.Id != null){
 				this.diagnoses = [
 					select Name, Type__c,Status__c, PBR__c, ICD__c, Effective_Date__c, CreatedDate
 					from Diagnosis__c
-					where PBS__c = :this.personBeingServedRecord.Id order by Type__c
+					where PBS__c = :this.personBeingServedRecord.Id ORDER BY Effective_Date__c DESC
 					limit 150
 				];
 			}

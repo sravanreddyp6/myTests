@@ -773,12 +773,12 @@ public with sharing class referrals_Controller{
 				this.diagnoses = [
 					select Id,Effective_Date__c, Status__c, Type__c, ICD__c FROM 
 					   Diagnosis__c
-					 where PBR__c = :this.personBeingRefRecord.Id
+					 where PBR__c = :this.personBeingRefRecord.Id ORDER BY Effective_Date__c DESC
 				];
 			} else if (this.personBeingServedRecord.Id != null) {
 				this.diagnoses = [
 					select Id, Effective_Date__c, Status__c, Type__c, ICD__c from Diagnosis__c
-					 where PBS__c = :this.personBeingServedRecord.Id
+					 where PBS__c = :this.personBeingServedRecord.Id ORDER BY Effective_Date__c DESC
 				];
 			}
 		} catch (Exception e) {
