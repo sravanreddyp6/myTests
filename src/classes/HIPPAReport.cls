@@ -36,7 +36,7 @@ global class HIPPAReport implements Database.Batchable<sObject> {
          			mails.add(mail);
          			taskToInsert.add(new Task(Subject = 'Quarterly Event Log Report', Status = 'Not Approved', Priority = 'High', 
 	        	                           OwnerId = tmn.Salesforce_User_Account__c,
-	        	                           Description = 'Quarterly Event Log Report for ' + tmn.First_Name__c + ' ' + tmn.Last_Name__c, 
+	        	                           //Description = 'Quarterly Event Log Report for ' + tmn.First_Name__c + ' ' + tmn.Last_Name__c, 
 	        	                           WhatId = tmn.Id, ActivityDate = Date.Today() )) ;
 	        	                           
    					}
