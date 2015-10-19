@@ -573,30 +573,26 @@
             var errors = '';
             j$('#diagnosisErrors').html(errors);
 
-            if (j$('input[id$=diagnosisEntry_EffDate]').val() == '') {
-                errors += '<li>Effective Date is a required field.</li>';
+            if (j$('input[id$=diagnosisEntry_icd]').val() == '') {
+                errors += '<li>ICD Code is a required field.</li>';
             }
-			
+            
+            if (j$('input[id$=diagnosisEntry_EffTime]').val() == '') {
+                errors += '<li>Date and Time of Diagnosis is a required field.</li>';
+            }
+            
+            if (j$('select[id$=diagnosisEntry_type]').val() == '') {
+                errors += '<li>Type is a required field.</li>';
+            }
+            
+            if (j$('select[id$=diagnosisEntry_status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }
+            
+            
             j$('#diagnosisErrors').html(errors);
             return (errors == '');
         }
-    
-    	/*function diagnosisSave(isClose) {
-            if (validateDiagnosis()) {
-                j$('input[id$=diagId]').val(j$('input[id$=diagnosisEntry_Id]').val());
-                j$('input[id$=diagEffDate]').val(j$('input[id$=diagnosisEntry_EffDate]').val());
-                j$('input[id$=diagStatus]').val(j$('input[id$=diagnosisEntry_status]').val());
-       
-				saveDiagnosis();
-                j$('input[id$=diagnosisEntry_Id]').val('');
-                j$('input[id$=diagnosisEntry_EffDate]').val('');
-                j$('input[id$=diagnosisEntry_status]').val('');
-        		
-				if (isClose) {
-                 closeModalDialog('diagnosisModal', 'span');
-				}
-			}
-	  }*/
     
     //End
 
@@ -1806,7 +1802,7 @@
                     </apex:column>
                     <apex:column value="{!dg.ICD__c}" />
 					<apex:column value="{!dg.Effective_Date__c}" headerValue="Date and Time of Diagnosis"/>
-					<apex:column value= "{!dg.Type__c}" />
+					<apex:column value="{!dg.Type__c}" />
                     <apex:column value="{!dg.Status__c}" headerValue="Status" />
                 </apex:pageBlockTable>
                 <apex:outputText value="No diagnoses to display"  rendered="{!diagnoses.size == 0}" />
