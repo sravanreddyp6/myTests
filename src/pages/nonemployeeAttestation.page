@@ -1,15 +1,12 @@
-<apex:page controller="nonemployeeAttestationPageController" docType="html-5.0" showHeader="false" applyBodyTag="false" standardStylesheets="false">
+<apex:page controller="nonemployeeAttestationPageController" docType="html-5.0" showHeader="false" applyBodyTag="false" standardStylesheets="false" cache="false">
 	
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-<!-- 		<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" /> -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-<!-- 		<style type="text/css"> -->
-<!-- 			.colHeadr {text-align:center;}   -->
-<!-- 		</style> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		
 	</head>
 	
 	<body>
@@ -31,7 +28,11 @@
 					</apex:column>
 					
 					<apex:column >
-						<apex:facet name="header">Job title</apex:facet>
+						<apex:facet name="header">
+							<apex:outputPanel layout="block" style="text-align:center">
+								Job title
+							</apex:outputPanel>
+						</apex:facet>
 						<apex:outputText >{!lineItem.tmnuser.Job_Title__c}</apex:outputText>
 					</apex:column>
 					
@@ -41,7 +42,11 @@
 					</apex:column>
 					
 					<apex:column >
-						<apex:facet name="header">Extend</apex:facet>
+						<apex:facet name="header">
+							<apex:outputPanel layout="block" style="text-align:center">
+								Extend
+							</apex:outputPanel>
+						</apex:facet>
 						<apex:commandButton value="30 Days" action="{!setparams}" oncomplete="reConfirm('30'); return false;" styleClass="{!If(lineItem.updated == true,'btn btn-info disabled','btn btn-info active')}" disabled="{!lineItem.updated}" >
 							<apex:param value="{!lineItem.tmnuser.Id}" assignTo="{!employeeId}" name="employeeId"/>
 							<apex:param value="thirty" assignTo="{!flag}" name="flag"/>
