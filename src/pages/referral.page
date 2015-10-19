@@ -628,34 +628,46 @@
     
     // Diagnosis changes
     
-	function validateDiagnosis() {
-            var errors = '';
-            j$('#diagnosisErrors').html(errors);
-
-            if (j$('input[id$=diagnosisEntry_EffDate]').val() == '') {
-                errors += '<li>Effective Date is a required field.</li>';
-            }
-			
-            j$('#diagnosisErrors').html(errors);
-            return (errors == '');
+    function validateDiagnosis() {
+        var errors = '';
+        j$('#diagnosisErrors').html(errors);
+        
+        if (j$('input[id$=diagnosisEntry_icd10]').val() == '') {
+            errors += '<li>ICD Code is a required field.</li>';
         }
+        
+        if (j$('input[id$=diagnosisEntry_EffDate]').val() == '') {
+            errors += '<li>Date and Time of Diagnosis is a required field.</li>';
+        }
+        
+        if (j$('select[id$=diagnosisEntry_type]').val() == '') {
+            errors += '<li>Type is a required field.</li>';
+        }
+        
+        if (j$('select[id$=diagnosisEntry_status]').val() == '') {
+            errors += '<li>Status is a required field.</li>';
+        }
+        
+        j$('#diagnosisErrors').html(errors);
+        return (errors == '');
+    }
     
     function diagnosisSave(isClose) {
-            if (validateDiagnosis()) {
-              //  j$('input[id$=diagId]').val(j$('input[id$=diagnosisEntry_Id]').val());
-              //  j$('input[id$=diagEffDate]').val(j$('input[id$=diagnosisEntry_EffDate]').val());
-             //   j$('input[id$=diagStatus]').val(j$('input[id$=diagnosisEntry_status]').val());
-       
-				saveDiagnosis();
-             //   j$('input[id$=diagnosisEntry_Id]').val('');
-             	//  j$('input[id$=diagnosisEntry_EffDate]').val('');
-             //	  j$('input[id$=diagnosisEntry_status]').val('');
-        		
-				if (isClose) {
-                 closeModalDialog('diagnosisModal', 'span');
-				}
-			}
-	}
+        if (validateDiagnosis()) {
+            //   j$('input[id$=diagId]').val(j$('input[id$=diagnosisEntry_Id]').val());
+            //   j$('input[id$=diagEffDate]').val(j$('input[id$=diagnosisEntry_EffDate]').val());
+            //   j$('input[id$=diagStatus]').val(j$('input[id$=diagnosisEntry_status]').val());
+            
+            saveDiagnosis();
+            //   j$('input[id$=diagnosisEntry_Id]').val('');
+            //   j$('input[id$=diagnosisEntry_EffDate]').val('');
+            //	 j$('input[id$=diagnosisEntry_status]').val('');
+            
+            if (isClose) {
+                closeModalDialog('diagnosisModal', 'span');
+            }
+        }
+    }
     
     //End
         
