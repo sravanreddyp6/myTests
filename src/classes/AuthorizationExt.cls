@@ -39,7 +39,7 @@ public AuthorizationExt(ApexPages.StandardController controller) {
         }
     }
     else
-        fsources = new LIst<Funding_Source__c>(); 
+        fsources = new List<Funding_Source__c>(); 
     
     fsList = new List<SelectOption>();
     for ( Funding_Source__c f: fsources ) {
@@ -213,10 +213,10 @@ private void initDependentPicklists() {
             		if (string.isblank(authorization.rate_unit__c)) {
             			fielderrs.add('Per');
             		}
-            		if (string.isblank(authorization.rate_unit__c)) {
+            		if (string.isblank(authorization.level__c)) {
             			fielderrs.add('Level');
             		}
-            		if (string.isblank(authorization.rate_unit__c)) {
+            		if (string.isblank(authorization.justification__c)) {
             			fielderrs.add('Justification');
             		}
             		
