@@ -49,25 +49,26 @@
     <description>Lists the International Classification of Diseases (ICD) 9 and 10 codes.</description>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
-        <fullName>auto_id__c</fullName>
+        <fullName>Auto_Id__c</fullName>
         <description>Auto generated number that can be used by external systems.</description>
         <displayFormat>{000000}</displayFormat>
         <externalId>true</externalId>
-        <label>auto_id</label>
+        <label>Auto Id</label>
         <trackTrending>false</trackTrending>
         <type>AutoNumber</type>
     </fields>
     <fields>
-        <fullName>code_type__c</fullName>
+        <fullName>Code_Type__c</fullName>
         <description>The ICD Code Type per actual code</description>
         <externalId>false</externalId>
-        <label>code_type</label>
+        <label>Code Type</label>
         <picklist>
             <picklistValues>
                 <fullName>ICD-9</fullName>
@@ -83,9 +84,9 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>icd_description__c</fullName>
+        <fullName>Icd_Description__c</fullName>
         <externalId>false</externalId>
-        <label>icd_description</label>
+        <label>Icd Description</label>
         <length>250</length>
         <required>true</required>
         <trackTrending>false</trackTrending>
@@ -93,9 +94,9 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>section_description__c</fullName>
+        <fullName>Section_Description__c</fullName>
         <externalId>false</externalId>
-        <label>section_description</label>
+        <label>Section Description</label>
         <length>250</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -103,10 +104,10 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>section_number__c</fullName>
+        <fullName>Section_Number__c</fullName>
         <description>This is the &quot;chapter&quot; number found in the XML for ICD10 to classify individual codes.</description>
         <externalId>false</externalId>
-        <label>section_number</label>
+        <label>Section Number</label>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
@@ -115,10 +116,10 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>section_range__c</fullName>
+        <fullName>Section_Range__c</fullName>
         <description>This is the range of codes associated with each chapter. Only applies to ICD 10.</description>
         <externalId>false</externalId>
-        <label>section_range</label>
+        <label>Section Range</label>
         <length>10</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -126,9 +127,9 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>short_icd_description__c</fullName>
+        <fullName>Short_Icd_Description__c</fullName>
         <externalId>false</externalId>
-        <label>short_icd_description</label>
+        <label>Short Icd Description</label>
         <length>250</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
@@ -136,11 +137,11 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>visible__c</fullName>
+        <fullName>Visible__c</fullName>
         <defaultValue>true</defaultValue>
         <description>In case we decide there are codes we do not want to show we can set to visible false. Then we don&apos;t have to delete records.</description>
         <externalId>false</externalId>
-        <label>visible</label>
+        <label>Visible</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
@@ -155,7 +156,7 @@
         <active>true</active>
         <label>ICD10</label>
         <picklistValues>
-            <picklist>code_type__c</picklist>
+            <picklist>Code_Type__c</picklist>
             <values>
                 <fullName>ICD-10</fullName>
                 <default>false</default>
@@ -171,7 +172,7 @@
         <active>true</active>
         <label>ICD9</label>
         <picklistValues>
-            <picklist>code_type__c</picklist>
+            <picklist>Code_Type__c</picklist>
             <values>
                 <fullName>ICD-10</fullName>
                 <default>false</default>
@@ -183,12 +184,12 @@
         </picklistValues>
     </recordTypes>
     <searchLayouts>
-        <lookupDialogsAdditionalFields>code_type__c</lookupDialogsAdditionalFields>
-        <lookupDialogsAdditionalFields>icd_description__c</lookupDialogsAdditionalFields>
-        <lookupDialogsAdditionalFields>short_icd_description__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Code_Type__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Icd_Description__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Short_Icd_Description__c</lookupDialogsAdditionalFields>
         <searchFilterFields>NAME</searchFilterFields>
-        <searchFilterFields>icd_description__c</searchFilterFields>
-        <searchFilterFields>code_type__c</searchFilterFields>
+        <searchFilterFields>Icd_Description__c</searchFilterFields>
+        <searchFilterFields>Code_Type__c</searchFilterFields>
     </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
 </CustomObject>
