@@ -24,7 +24,7 @@ global class HIPPAReport implements Database.Batchable<sObject> {
        }
  
 		query  = 'SELECT Name,Email__c,Manager_Name__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Salesforce_User_Account__c  FROM TMN_User__c where';
- 			     query  +=' Salesforce_User_Account__r.isActive= true    email__c in : managerIds';	
+ 			     query  +=' Salesforce_User_Account__r.isActive= true  and  email__c in : managerIds';	
 		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
 		tmnUsers = Database.query(query);
 		for(TMN_User__c tmn:tmnUsers) {
