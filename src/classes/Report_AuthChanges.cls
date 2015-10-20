@@ -193,7 +193,7 @@ public with sharing class Report_AuthChanges {
     }
 
     public PageReference cancelToNewRun() {
-    	PageReference pageRef = new PageReference('/apex/Report_DraftAuths');
+    	PageReference pageRef = new PageReference('/apex/Report_AuthChanges');
     	pageRef.setRedirect(true);
     	return pageRef;
     }
