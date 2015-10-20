@@ -11,6 +11,7 @@ public with sharing class AdmissionEditExtension {
         
     public ApexPages.StandardController stdController;
     public AdmissionEditExtension(ApexPages.StandardController stdController) {
+        String mode ='';
         this.stdController = stdController;
         // Salesforce Bug: addFields cannot be called when tests are running:
         // http://bobbuzzard.blogspot.com/2011/04/dynamic-visualforce-bindings-and.html
@@ -43,14 +44,104 @@ public with sharing class AdmissionEditExtension {
         useDischargeSection = false;
         for(TMN_User__c TU: [select Operating_Group__c from TMN_User__c Where Salesforce_User_Account__r.id = :UserInfo.getUserId() limit 1]){
          	curUser = TU;
-         	if (TU.Operating_Group__c == 'Care Meridian') { 
+         	if (TU.Operating_Group__c == 'Care Meridian' || curUser.Operating_Group__c == 'CareMeridian') { 
          		useDischargeSection = true;
          	} 
          	
         }
+        Mode = apexpages.currentpage().getparameters().get('Mode');
+        
+        if(Mode == 'Discharged'){
+            date dtEnddate = date.valueOf(apexpages.currentpage().getparameters().get('DischDate'));
+            datetime dttimeEnddate = datetime.valueOf(apexpages.currentpage().getparameters().get('DischDate'));
+            //this.admission.status__c = 'Ac';
+            //if(useDischargeSection = true)
+                this.admission.Discharged_Date__c = dtEnddate;
+        }
+
         
         	
     }
+    //PRI-303
+	public PageReference resetDcFields(){
+			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative'){
+				if ( !(admission.discharged_to_category__c =='Another Facility' ||  admission.discharged_to_category__c =='Other')){	
+					admission.discharged_to_other__c = '';
+					admission.discharged_to_subcategory__c = '';
+				}
+					
+				if (  admission.discharged_to_category__c !='Other') 
+					admission.discharged_to_other__c = '';      					
+			}  		
+		
+		return null;
+	}
+    public List<SelectOption> getDcToOptions(){
+    	List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));
+        options.add(new SelectOption('Death','Death'));
+        options.add(new SelectOption('Home','Home'));
+        options.add(new SelectOption('Another Facility','Another Facility'));
+        options.add(new SelectOption('Other','Other'));
+        
+        return options;
+    	
+    }
+    public List<SelectOption> getDcToDetailOptions(){
+    	List<SelectOption> options = new List<SelectOption>();
+    	options.add(new SelectOption('','--None--'));
+    	if(admission.Discharged_To_Category__c =='Another Facility'){
+	        options.add(new SelectOption('Hospice','Hospice'));
+	        options.add(new SelectOption('Skilled Nursing Facility','Skilled Nursing Facility'));
+	        options.add(new SelectOption('Medical Facility','Medical Facility'));    		
+    	}
+    	else if(admission.Discharged_To_Category__c =='Other'){
+	        options.add(new SelectOption('Left Against Medical Advice','Left Against Medical Advice'));
+	        options.add(new SelectOption('Skilled Nursing Facility','Skilled Nursing Facility'));
+	        options.add(new SelectOption('Non-NeuroRestorative Discharge - Same Level of Care','Non-NeuroRestorative Discharge - Same Level of Care'));         	
+    		
+    	}
+        options.add(new SelectOption('Other','Other'));  
+        return options;
+    	
+    }    
+    //PRI-289
+    public List<SelectOption> getStatusValues()
+    {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('','--None--'));
+        options.add(new SelectOption('Active','Active'));
+        options.add(new SelectOption('Discharged','Discharged'));
+        
+        if(this.admission.Id!= null){
+            List<Progress_note__c> ProgNotes = [select id, Name, Status__c,admission__c, owner.name,recordtype.developername,disregard_note__c from Progress_Note__c where admission__c= : this.admission.Id ];
+            if(ProgNotes.size()>0){
+                Boolean HideCIE = False;
+                for(progress_note__C pn: ProgNotes){
+                    if(pn.disregard_note__c == True)
+                        HideCIE = True;
+                    If(pn.RecordType.developername == 'Shift_Note' && pn.disregard_note__c == True)
+                       HideCIE = True ;
+                    If(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final')
+                       HideCIE = True ;
+                    if(curUser.Operating_Group__c == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
+                        HideCIE = True ;
+                    if(pn.status__c == 'Final')
+                        HideCIE = True  ;                      
+                }
+                if(HideCIE == false)
+                options.add(new SelectOption('Created in Error','Created in Error'));
+            }else{
+                options.add(new SelectOption('Created in Error','Created in Error'));
+            }
+        }else{
+                options.add(new SelectOption('Created in Error','Created in Error'));        
+        
+        }
+        
+      
+        return options;
+    }    
     
     //PRI-218 219
     public boolean reqAdmittedFrom {get{return AdmissionEditViewCommon.setReqAdmittedFrom(curUser,allSAforAdmint);} set;}
@@ -82,7 +173,16 @@ public with sharing class AdmissionEditExtension {
 			}
  	
 	    }
-	    
+	    //PRI-303
+    		if ( admission.status__c == 'Discharged' ){
+    			if(curUser.Operating_Group__c == 'Neuro Restorative' || curUser.Operating_Group__c == 'NeuroRestorative'){
+					if ( String.IsBlank(admission.discharged_to_category__c))	
+						messages.add('Please enter Discharged To');
+						
+					if ( String.IsBlank(admission.discharged_to_other__c) && admission.discharged_to_subcategory__c == 'Other') 
+						messages.add('Please enter Discharged To Other');      					
+    			}    			
+    		}	    
 	    
     	// EC-185 - if a discharge for CM, check required fields
     	if ( useDischargeSection && admission.status__c == 'Discharged') {
