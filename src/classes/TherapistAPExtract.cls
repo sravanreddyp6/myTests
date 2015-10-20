@@ -22,6 +22,7 @@ public with sharing class TherapistAPExtract {
     public TherapistAPExtract(){
         List<AggregateResult> slPrgms = [SELECT service_location__r.id slID, service_location__r.Alias__c alias, service_location__r.program__c prgm
                                            FROM service_assignment__c
+                                          Where service_location__c != Null
                                           GROUP BY service_location__r.id, service_location__r.program__c, service_location__r.Alias__c 
                                           ORDER BY service_location__r.program__c];
         for (AggregateResult slPrgm : slPrgms) {
