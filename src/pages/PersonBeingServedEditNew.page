@@ -98,6 +98,7 @@
                    if( $input.attr("tabindex") == ''){
                        $input.attr("tabindex", tabindex);
                        //console.log($input);
+                      }
                    }
               });    
               tabindex = 1000;    
@@ -158,7 +159,6 @@
         function openDialog(dialogId, tagType, titleString) {
             console.log('trying to open modal');
             selector = tagType + '[id$=' + dialogId + ']';
-
             j$(selector).dialog({
                 dialogClass: 'fixed-dialog',
                 title: titleString,
@@ -270,7 +270,7 @@
             var errors = '';
             j$('#diagnosisErrors').html(errors);
 
-            if (j$('input[id$=diagnosisEntry_EffDate]').val() == '') {
+            if (j$('input[id$=diagnosisEntry_EffTime]').val() == '') {
                 errors += '<li>Effective Date is a required field.</li>';
             }
 			
@@ -278,26 +278,61 @@
             return (errors == '');
         }
     
-    	function diagnosisSave(isClose) {
+    	function diagnosisSave(isDialogClose) {
             if (validateDiagnosis()) {
-                j$('input[id$=diagId]').val(j$('input[id$=diagnosisEntry_Id]').val());
-                j$('input[id$=diagEffDate]').val(j$('input[id$=diagnosisEntry_EffDate]').val());
-                j$('input[id$=diagStatus]').val(j$('input[id$=diagnosisEntry_status]').val());
-                j$('input[id$=diagIcd]').val(j$('input[id$=diagnosisEntry_icd]').val());
-                j$('input[id$=diagType]').val(j$('input[id$=diagnosisEntry_type]').val());
-       
-				saveDiagnosis();
-                j$('input[id$=diagnosisEntry_Id]').val('');
-                j$('input[id$=diagnosisEntry_EffDate]').val('');
-                j$('input[id$=diagnosisEntry_status]').val('');
-                j$('input[id$=diagnosisEntry_icd]').val('');
-				j$('input[id$=diagnosisEntry_type]').val('');
-        		
-				if (isClose) {
-                 closeDialog('diagnosisModal', 'span');
-				}
-			}
-		}
+                var diagnosisId = j$('input[id$=diagnosisEntry_Id]').val();
+                var diagnosisType = j$('select[id$=diagnosisEntry_type]').val();
+                var status = j$('select[id$=diagnosisEntry_status]').val();
+                var effectiveTime = j$('input[id$=diagnosisEntry_EffTime]').val();
+                var ICD = j$('input[id$=diagnosisEntry_icd_lkid]').val();
+                var PBSId = '{!Contact.Id}';
+                
+                 if(PBSId != ''){
+                    PBS_controller_helper.saveDiagnosis(diagnosisId, diagnosisType, status, effectiveTime, ICD,
+                        PBSId,
+                        function(result, event) {
+                            saveDiagnosis();
+                            if (isDialogClose) {
+                                closeDialog('diagnosisModal', 'span');
+                            }
+                        }, {
+                            escape: true
+                        }
+                    );                
+                
+                }
+            }
+            return false;
+        }
+        
+        function loadDiagnosis(diagnosisId) {
+            PBS_controller_helper.loadDiagnosis(diagnosisId,
+                function(result, event) {
+                    if (event.status) {
+                    	var d;
+                        var dateString;
+                        if (result.Effective_Date__c != null) {
+                            d = new Date(result.Effective_Date__c);
+                            dateString = d.toString();
+                            dateString = dateString.substring(4,dateString.lastIndexOf(':'));
+                            dateString = DateUtil.getDateTimeStringFromUserLocale(d);
+                        }
+                    
+                        j$('input[id$=diagnosisEntry_Id]').val(result.Id);
+                        j$('input[id$=diagnosisEntry_icd]').val(result.ICD__r.Name);
+                        j$('input[id$=diagnosisEntry_icd_lkid ]').val(result.ICD__c);
+                        j$('input[id$=diagnosisEntry_EffTime]').val(dateString);
+                        j$('select[id$=diagnosisEntry_type]').val(result.Type__c);
+                        j$('select[id$=diagnosisEntry_status]').val(result.Status__c);
+                        
+          
+                        openDialog('diagnosisModal', 'span', 'Add Diagnosis');
+                    }
+                }, {
+                    escape: true
+                }
+            );
+        }
     
     //End
 
@@ -338,12 +373,8 @@
         <!-- END: CTEAE-39; siblings -->
         
          <!-- Diagnosis changes-->
-         <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diag_Alt1_Header,diagnosisEntry,msgs"  />
-        <apex:actionRegion >
+        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diag_Alt1_Header,diagnosisEntry,msgs"  />
         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" rerender="diag_Alt1_Header,diagnosisEntry,msgs" />
-        </apex:actionRegion>
-        
-        
         <!-- end -->
         
         <apex:pageMessages />
@@ -789,7 +820,7 @@
             <apex:pageBlockButtons location="top">
 	            <div class="blockbtns">
 	                <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
-	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}" />
+	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty(); openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}" />
 	            </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection title="Related Parties" columns="1" id="relatedParties_Alt1_Header" collapsible="true">
@@ -953,28 +984,23 @@
 	                </div> 
             </apex:pageBlockButtons> 
             <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true">
-                <apex:pageblockTable value="{!diagnosis}" var="diag" rendered="{!(diagnosis.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-                    <apex:column headerValue="Action">
-                        <apex:commandLink action="{!loadDiagnosis}" reRender="diagnosisModal" oncomplete="openDialog('diagnosisModal', 'span', 'Edit Diagnosis','none'); return false;">
-                            Edit
-                            <apex:param assignTo="{!loadThisDiag}" value="{!diag.id}" name="loadThisDiag"  />
-                        </apex:commandLink>
-                        
+                <apex:pageblockTable value="{!diagnoses}" var="diag" rendered="{!(diagnoses.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action"><a href="#Diag" onclick="loadDiagnosis('{!diag.id}');return false;">Edit</a>
                     </apex:column>
                     <apex:column headerValue="Date and Time of Diagnosis" value="{!diag.Effective_Date__c}" />
                     <apex:column value="{!diag.Status__c}" headerValue="Status" />
                     <apex:column value="{!diag.ICD__c}" headerValue="ICD" />
-                     <apex:column value="{!diag.Type__c}" headerValue="Type" />
+                    <apex:column value="{!diag.Type__c}" headerValue="Type" />
                     
                 </apex:pageblockTable>
-                <apex:outputText value="No diagnoses to display" rendered="{!(diagnosis.size=0)}" />
+                <apex:outputText value="No diagnoses to display" rendered="{!(diagnoses.size=0)}" />
             </apex:pageBlockSection>
             
             <apex:outputpanel style="display:none">
                     <apex:inputHidden value="{!diag.ID}" id="diagId" />
-                    <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagEffDate" />
-                    <apex:inputHidden value="{!diag.Status__c}" id="diagStatus" />
-					<apex:inputHidden value="{!diag.ICD__c}" id="diagIcd" />
+                    <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagEffectiveTime" />
+                    <apex:inputHidden value="{!diag.Status__c}" id="diagnosisStatus" />
+					<apex:inputHidden value="{!diag.ICD__c}" id="diagICD" />
 		            <apex:inputHidden value="{!diag.Type__c}" id="diagType" />
             </apex:outputpanel>
         </apex:pageBlock>
@@ -1004,11 +1030,12 @@
 
                     <apex:pageBlockSection columns="2" id="diagnosisEntry">
                         <apex:inputField value="{!diag.ICD__c}"  id="diagnosisEntry_icd" label="ICD Code"/>
-                        <apex:inputField value="{!diag.Effective_Date__c}" label="Date and Time of Diagnosis" id="diagnosisEntry_EffDate" />
+                        <apex:inputField value="{!diag.Effective_Date__c}" label="Date and Time of Diagnosis" id="diagnosisEntry_EffTime" />
                         <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
                         <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" />
+                        <apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
                      </apex:pageBlockSection>
-                     <apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
+                     
                 </apex:pageBlock>
             </apex:outputPanel>
         </apex:actionRegion>
@@ -1019,24 +1046,24 @@
         
         <!--Diagnosis Section -->
         <a name="Diag" id="Diag" />
-        <apex:pageBlock mode="maindetail" id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">    	
-            <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true">
-                <apex:pageblockTable value="{!diagnosis}" var="diag" rendered="{!(diagnosis.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-                    <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}" />
-                    <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a>
-                    </apex:column>
-                    <apex:column value="{!diag.Primary_Diagnosis__c}" headerValue="Primary" />
-                    <apex:column value="{!diag.Secondary_Diagnosis__c}" headerValue="Secondary" />
-                    <apex:column value="{!diag.Axis_I__c}" headerValue="Axis I" />
-                    <apex:column value="{!diag.Axis_II__c}" headerValue="Axis II" />
-                    <apex:column value="{!diag.Axis_III__c}" headerValue="Axis III" />
-                    <apex:column value="{!diag.Axis_IV__c}" headerValue="Axis IV" />
-                    <apex:column value="{!diag.Axis_V__c}" headerValue="Axis V" />
-                    <apex:column value="{!diag.Comments__c}" headerValue="Comments" />
-                </apex:pageblockTable>
-                <apex:outputText value="No diagnoses to display" rendered="{!(diagnosis.size=0)}" />
-            </apex:pageBlockSection>
-        </apex:pageBlock>
+<!--         <apex:pageBlock mode="maindetail" id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">    	 -->
+<!--             <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true"> -->
+<!--                 <apex:pageblockTable value="{!diagnosis}" var="diag" rendered="{!(diagnosis.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" > -->
+<!--                     <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}" /> -->
+<!--                     <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a> -->
+<!--                     </apex:column> -->
+<!--                     <apex:column value="{!diag.Primary_Diagnosis__c}" headerValue="Primary" /> -->
+<!--                     <apex:column value="{!diag.Secondary_Diagnosis__c}" headerValue="Secondary" /> -->
+<!--                     <apex:column value="{!diag.Axis_I__c}" headerValue="Axis I" /> -->
+<!--                     <apex:column value="{!diag.Axis_II__c}" headerValue="Axis II" /> -->
+<!--                     <apex:column value="{!diag.Axis_III__c}" headerValue="Axis III" /> -->
+<!--                     <apex:column value="{!diag.Axis_IV__c}" headerValue="Axis IV" /> -->
+<!--                     <apex:column value="{!diag.Axis_V__c}" headerValue="Axis V" /> -->
+<!--                     <apex:column value="{!diag.Comments__c}" headerValue="Comments" /> -->
+<!--                 </apex:pageblockTable> -->
+<!--                 <apex:outputText value="No diagnoses to display" rendered="{!(diagnosis.size=0)}" /> -->
+<!--             </apex:pageBlockSection> -->
+<!--         </apex:pageBlock> -->
 
         <!--Admissions Section-->
         <a name="Adm" id="Adm"></a>
