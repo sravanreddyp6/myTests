@@ -54,6 +54,8 @@ public boolean isCAFSS{get; set;}
   }
     
     //Diagnosis changes
+    
+    public list<Diagnosis__c> diagnoses {get; set;}
     public Diagnosis__c diag {
         get {
             if (diag == null)
@@ -63,18 +65,20 @@ public boolean isCAFSS{get; set;}
         set;
     }
     
-    public void showAddDiagnosis() {
+    public void showAddDiagnosis(){
         diag = new Diagnosis__c();
         diag.Status__c = 'Active';
+        diag.Effective_Date__c = null;
     }
+          
+    public void saveDiagnosis(){
+    	populateDiagnoses();
+		this.diag = new Diagnosis__c();
+		diag.Status__c = 'Active';
+        diag.Effective_Date__c = null;
+    }  
     
-         
-    public void saveDiagnosis() {
-        this.diagnosis.add(this.diag);
-        this.diag = new Diagnosis__c();
-    } 
-    
-    public string loadThisDiag {get; set;}
+    /*public string loadThisDiag {get; set;}
     
     public PageReference loadDiagnosis(){
         for(Diagnosis__c dg : diagnosis){
@@ -83,7 +87,7 @@ public boolean isCAFSS{get; set;}
             }
         }
         return null;
-    }
+    }*/
     
     //end
   
@@ -182,7 +186,9 @@ public Map<String, String> fieldMap { get; set; }
         pbsEditModeOn=false;
         PBSId=Apexpages.currentPage().getParameters().get('Id');
         this.relParties = new List<Related_Party__c>();
+        this.diagnoses = new List<Diagnosis__c>();
         populateRelParties();
+        populateDiagnoses();
 
         this.relAgencies = new List<Agency_Involved_With_Individual__c>();
         populateAgencies();
@@ -228,9 +234,11 @@ public Map<String, String> fieldMap { get; set; }
             || TMNUser.Operating_Group__c=='NeuroRestorative'
             || isCAFSS;
     }}
-    public list<Diagnosis__c> diagnosis{get{
+    /*public list<Diagnosis__c> diagnosis{get{
         return [select id, Status__c, ICD__c, Type__c, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
-    } set;}
+    } set;}*/
+    
+   
     public List<Evaluation_Response__c> getAssessments_ChildImmune (){
 
         return [select id, Name  from Evaluation_Response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType('Immunization - Child') AND Person_Being_Served__c = :currentContact.id ];
@@ -294,6 +302,20 @@ public Map<String, String> fieldMap { get; set; }
         'An error occurred retrieving Related Parties. ' + e.getMessage()));
     }
   }
+  
+  private void populateDiagnoses() {
+    try {
+        this.Diagnoses = [select Id, Name, ICD__c, PBS__c, Type__c, Status__c, Effective_Date__c 
+                         from Diagnosis__c
+                         where PBS__c = :pbsId order by Status__c, Type__c
+                         ];
+      }
+    catch (Exception e) {
+      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'An error occurred retrieving Diagnosis. ' + e.getMessage()));
+    }
+  }
+  
    private void populateAgencies() {
     try {
       this.relAgencies = [select Name, Address__c, Person_Being_Served__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
