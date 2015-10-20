@@ -1,10 +1,11 @@
 global class HIPPAReport implements Database.Batchable<sObject> {
 
-	global String manageIds = '';
+	 global List<String> managerIds  ;
 	global List<TMN_User__c> tmnUsers;
 	global list<Task> taskToInsert;
 	global String query = '';
 	global HIPPAReport() {
+		   managerIds = new List<String>();
 		tmnUsers = new List<TMN_User__c>();
 		taskToInsert = new list<Task>();
 	}
@@ -16,14 +17,14 @@ global class HIPPAReport implements Database.Batchable<sObject> {
 
 	global void execute(Database.BatchableContext BC, List<sObject> scope) {
 		Id recordTypeId = Schema.SObjectType.Task.getRecordTypeInfosByName().get('EventLogging').getRecordTypeId();
-		list<AggregateResult> userAggregateResult = [select Manager_Email__c from TMN_User__c where  manager_email__c <> '' and Alias__c= '001140' group by Manager_Email__c ];
-		for(integer i=0;i<userAggregateResult.size()-1;i++) {
-			manageIds += '\''+ string.valueof(userAggregateResult[i].get('Manager_Email__c')) + '\',';
-		}
-		manageIds += '\''+ string.valueof(userAggregateResult[userAggregateResult.size()-1].get('Manager_Email__c')) + '\'';
-		System.debug('manageIds  '+ manageIds);
+
+	  	list<AggregateResult> userAggregateResult = [select Manager_Email__c from TMN_User__c where  manager_email__c <> ''  group by Manager_Email__c ];
+       for(AggregateResult ag:userAggregateResult) {
+           			managerIds.add(string.valueof(ag.get('Manager_Email__c')).toLowerCase());
+       }
+ 
 		query  = 'SELECT Name,Email__c,Manager_Name__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Salesforce_User_Account__c  FROM TMN_User__c where';
-		query  +=' Salesforce_User_Account__r.isActive= true and  Alias__c= \'001140\' and  email__c in  (' +manageIds + ')';
+ 			     query  +=' Salesforce_User_Account__r.isActive= true   and  Alias__c in (\'001140\',\'114190\',\'114100\',\'114050\')  and  email__c in : managerIds';	
 		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
 		tmnUsers = Database.query(query);
 		for(TMN_User__c tmn:tmnUsers) {
@@ -38,7 +39,7 @@ global class HIPPAReport implements Database.Batchable<sObject> {
 			taskToInsert.add(
 				new Task(Subject = 'Quarterly Event Log Report', Status = 'Not Approved', Priority = 'High',
 					OwnerId = tmn.Salesforce_User_Account__c,
-					RecordTypeId = recordTypeId,
+					RecordTypeId = recordTypeId,WhatId = tmn.Id,
 					ActivityDate = Date.Today()
 				)
 			);
