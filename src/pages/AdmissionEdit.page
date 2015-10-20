@@ -8,6 +8,7 @@
 <apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
 
 <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+<apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="vfVarIsNR" />
 <script type="text/javascript">
 function setFocusOnLoad() {}
 j$ = jQuery.noConflict();
@@ -77,9 +78,16 @@ function setupDates() {
                 <apex:outputLabel for="admStatus" value="Admission Status" />
                 <apex:outputPanel >
 	                <apex:actionRegion >
+	                <!-- 
 	                    <apex:inputField id="admStatus" value="{!admission.Status__c}" html-data-countInFormProgress="1" >
 	                    	<apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" onComplete=" setUpCompletionMonitor(); " />
 	                    </apex:inputField>
+	                    -->
+                        <apex:selectList title="Created in Error is only to be used if the wrong program was selected or if the person never received services." 
+                        				id="saStatus" value="{!admission.Status__c}" size="1" html-data-countInFormProgress="1" >
+                            <apex:selectOptions value="{!StatusValues}"/>
+                            <apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" onComplete=" setUpCompletionMonitor(); " />
+                        </apex:selectList>	                
 	                </apex:actionRegion>    
                 </apex:outputPanel>
                 </apex:pageblocksectionitem>
@@ -148,6 +156,38 @@ function setupDates() {
 			<apex:outputPanel id="Discharge2" layout="none">  
 	   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Discharged_Date__c != null}">
 					<apex:inputField value="{!admission.Discharged_To__c}" required="{!reqDcTo}" />
+					<apex:pageBlockSectionItem / >
+	                <apex:pageBlockSectionItem rendered="{!vfVarIsNR}" >
+	                    <apex:outputLabel value="Discharged To" />
+	                    <apex:outputPanel >
+	                	<div class="requiredInput">
+		                    <div class="requiredBlock"></div>
+	                        <apex:selectList size="1"  value="{!admission.Discharged_To_Category__c}" >
+	                            <apex:selectOptions value="{!DcToOptions}"/>
+	                            <apex:actionSupport event="onchange" action="{!resetDcFields}" reRender="nr_DcToDetail,nr_DcToDetail2,nr_DcToDetailOther, nr_DcToDetailOther2" />	 
+	                        </apex:selectList> 
+		                </div>
+		                </apex:outputPanel>
+	                </apex:pageBlockSectionItem>	                
+	                <apex:pageBlockSectionItem rendered="{!vfVarIsNR}" >
+	                    <apex:outputPanel id="nr_DcToDetail">
+	                    	<apex:outputLabel value="Discharged To Detail" rendered="{! (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other')}" />
+	                    </apex:outputPanel>
+	                    <apex:outputPanel id="nr_DcToDetail2">
+	                        <apex:selectList size="1"  value="{!admission.Discharged_To_Subcategory__c}"  rendered="{! (admission.Discharged_To_Category__c=='Another Facility' || admission.Discharged_To_Category__c=='Other')}" >
+	                            <apex:selectOptions value="{!DcToDetailOptions}"/>	
+	                            <apex:actionSupport event="onchange" action="{!resetDcFields}" reRender="nr_DcToDetailOther, nr_DcToDetailOther2" />	 
+	                        </apex:selectList> 
+		                </apex:outputPanel>
+	                </apex:pageBlockSectionItem>	
+		            <apex:pageBlockSectionItem rendered="{!vfVarIsNR}" >
+	                    <apex:outputPanel id="nr_DcToDetailOther">
+	                    	<apex:outputLabel value="Other" rendered="{! admission.Discharged_To_Subcategory__c=='Other'}" />
+	                    </apex:outputPanel>
+	                    <apex:outputPanel id="nr_DcToDetailOther2">
+							<apex:inputField value="{!admission.Discharged_to_other__c}"  rendered="{! admission.Discharged_To_Subcategory__c=='Other'}"/>
+		                </apex:outputPanel>
+	                </apex:pageBlockSectionItem>
 				</apex:pageBlockSection>  
 			</apex:outputPanel>  
 			
@@ -191,8 +231,6 @@ function setupDates() {
                 <apex:outputLabel for="referredoutname" value="Facility Name" />
                 <apex:inputField id="referredoutname" value="{!admission.Referred_Out_Agency_Name__c}" />
                 </apex:pageblocksectionitem>
-                <apex:outputText value="<hr />" escape="false" />
-                <apex:outputText value="<hr />" escape="false" />
 
 
 				<apex:pageBlockSectionItem >
