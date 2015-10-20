@@ -97,7 +97,6 @@ public with sharing class AdmissionEditExtension {
     	}
     	else if(admission.Discharged_To_Category__c =='Other'){
 	        options.add(new SelectOption('Left Against Medical Advice','Left Against Medical Advice'));
-	        options.add(new SelectOption('Skilled Nursing Facility','Skilled Nursing Facility'));
 	        options.add(new SelectOption('Non-NeuroRestorative Discharge - Same Level of Care','Non-NeuroRestorative Discharge - Same Level of Care'));         	
     		
     	}
