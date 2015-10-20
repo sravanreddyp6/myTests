@@ -2,7 +2,7 @@
     <apex:pageBlock >
         <h2>PRE ICD Diagnosis</h2>
         <apex:pageBlockSection >
-            <apex:pageBlockTable value="{!diagnosis}" var="diag" border="1" > 
+            <apex:pageBlockTable value="{!diagnosis}" var="diag" border="1" rendered="{!(diagnosis.size>0)}"> 
                 <apex:column value="{!diag.Effective_Date__c}" headerValue="Effective Date" />  
                 <apex:column value="{!diag.Primary_Diagnosis__c}" headerValue="Primary" />
                 <apex:column value="{!diag.Secondary_Diagnosis__c}" headerValue="Secondary" />
@@ -13,6 +13,7 @@
                 <apex:column value="{!diag.Axis_V__c}" headerValue="Axis V" />
                 <apex:column value="{!diag.Comments__c}" headerValue="Comments"/>			   
             </apex:pageBlockTable>  
+            <apex:outputText value="No diagnoses to display" rendered="{!(diagnosis.size=0)}" />
         </apex:pageBlockSection>
     </apex:pageBlock> 
 </apex:page>
