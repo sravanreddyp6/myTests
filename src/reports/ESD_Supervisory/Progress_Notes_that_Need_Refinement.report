@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>Progress_Note__c.Approval_Status__c</field>
+    </columns>
+    <columns>
+        <field>Progress_Note__c.Approval_Comment__c</field>
+    </columns>
+    <columns>
+        <field>Progress_Note__c.Purpose_Service_is_Billable__c</field>
+    </columns>
+    <description>#notes</description>
+    <filter>
+        <criteriaItems>
+            <column>Progress_Note__c.Approval_Status__c</column>
+            <operator>equals</operator>
+            <value>Needs Refinement</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>FK_NAME</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Progress Notes that Need Refinement</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$Progress_Note__c@Progress_Note__c.Person_Being_Served__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Progress_Note__c.Approval_Status_Date__c</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
