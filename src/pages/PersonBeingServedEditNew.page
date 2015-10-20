@@ -270,8 +270,17 @@
             var errors = '';
             j$('#diagnosisErrors').html(errors);
 
+            if (j$('input[id$=diagnosisEntry_icd]').val() == '') {
+                errors += '<li>ICD Code is a required field.</li>';
+            }
             if (j$('input[id$=diagnosisEntry_EffTime]').val() == '') {
-                errors += '<li>Effective Date is a required field.</li>';
+                errors += '<li>Date and Time of Diagnosis is a required field.</li>';
+            }
+            if (j$('select[id$=diagnosisEntry_status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }
+			 if (j$('select[id$=diagnosisEntry_type]').val() == '') {
+                errors += '<li>Type is a required field.</li>';
             }
 			
             j$('#diagnosisErrors').html(errors);
