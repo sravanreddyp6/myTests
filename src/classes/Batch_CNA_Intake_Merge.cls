@@ -1,5 +1,4 @@
 global without sharing class Batch_CNA_Intake_Merge implements Database.Batchable<sObject>, Database.Stateful {
-	global final List<Id> evalsToDelete;
 	global final Id observedDateTimeId;
 	global final Id mLConsumedId;
 	global final Id isValidId;
@@ -7,14 +6,41 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 
 	global Map<String, Boolean> sectionErrorFound;
 
-	global Batch_CNA_Intake_Merge(List<Id> evalsToDelete, Id observedDateTimeId, Id mLConsumedId, Id isValidId, Id errorMsgId) {
-		this.evalsToDelete = evalsToDelete;
-		this.observedDateTimeId = observedDateTimeId;
-		this.mLConsumedId = mLConsumedId;
-		this.isValidId = isValidId;
-		this.errorMsgId = errorMsgId;
-
+	global Batch_CNA_Intake_Merge() {
 		this.sectionErrorFound = new Map<String, Boolean>();
+
+		List<Eval__c> evalsToUpdate = new List<Eval__c>();
+
+		Boolean mlConsumedFound = false;
+		for (Eval__c mealRecord: [
+			SELECT Id, Sub_Category__c, Visible__c, HtmlId__c
+			  FROM Eval__c
+			 WHERE Eval_Type__r.Name = 'CNA Workbook'
+			   AND Category__c = 'Intake'
+			   AND Sub_Category__c = 'Meals'
+		]) {
+			if (mealRecord.HtmlId__c == 'ObservedDateTime20') {
+				this.observedDateTimeId = mealRecord.Id;
+			} else if (mealRecord.HtmlId__c == 'intakemLConsumed') {
+				if (!mlConsumedFound) {  // There are 2 in the systems that satisfy this right now
+					this.mLConsumedId = mealRecord.Id;
+					mealRecord.Visible__c = true;
+					mlConsumedFound = true;
+				}
+			} else if (mealRecord.HtmlId__c == 'IsValid') {
+				this.isValidId = mealRecord.Id;
+			} else if (mealRecord.HtmlId__c == 'ErrorMsg') {
+				this.errorMsgId = mealRecord.Id;
+			}
+			mealRecord.Sub_Category__c = 'All';
+			evalsToUpdate.add(mealRecord);
+		}
+		System.assertNotEquals(null, observedDateTimeId);
+		System.assertNotEquals(null, mLConsumedId);
+		System.assertNotEquals(null, isValidId);
+		System.assertNotEquals(null, errorMsgId);
+
+		update evalsToUpdate;
 	}
 
 	global Database.QueryLocator start(Database.BatchableContext bc) {
@@ -31,7 +57,6 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 	global void execute(Database.BatchableContext bc, List<sObject> scope) {
 		//  We don't need these this in a *global* context, so we initialize them here to avoid serialization
 		List<Eval_Value__c> valuesToDelete = new List<Eval_Value__c>();
-
 
 		List<Eval_Value__c> values = (List<Eval_Value__c>) scope;
 		for (Eval_Value__c value: values) {
@@ -75,6 +100,12 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 			}
 		}
 		insert valuesToInsert;
-		delete [SELECT Id FROM Eval__c WHERE Id IN :this.evalsToDelete];
+		delete [
+			SELECT Id, Field_Name__c, HtmlId__c, Visible__c
+			  FROM Eval__c
+			 WHERE Eval_Type__r.Name = 'CNA Workbook'
+			   AND Category__c = 'Intake'
+			   AND Sub_Category__c = 'Liquid'
+		];
 	}
 }
