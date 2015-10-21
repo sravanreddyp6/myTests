@@ -37,7 +37,7 @@ public with sharing class referralConversion_Controller {
     this.referralRecord = getFullReferralRecord(((Referral__c) ctl.getRecord()).Id);
 
     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.WARNING,
-            'You have chosen to convert the referral ' + this.referralRecord.Name + '. Please confirm the information below and click Confirm Conversion to continue the conversion process. If you would like to revise the referral, click Edit.' ));
+            'You have chosen to convert the referral ' + this.referralRecord.Name + '. Please confirm the information below and click Confirm Conversion to continue the conversion process. If you would like to revise the referral, click Edit. Once the conversion is complete, the referral and any applicable Assessments are closed as Admitted and locked to further editing.' ));
 
     // get the referral location information
     parseLocationInfo();
