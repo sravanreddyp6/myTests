@@ -171,7 +171,7 @@ public with sharing class Report_AuthChanges {
                                         ((lastmodifieddate >= :startDateTime AND lastmodifieddate <= :endDateTime) OR
                                         (createddate >= :startDateTime AND createddate <= :endDateTime))
                                         AND Person_Being_Served__c In :selectedPBS
-                                        ORDER BY payer_effective_date__c, payer_end_Date__c ];
+                                        ORDER BY lastmodifieddate desc ];
 
      	ID pbsID;
        	for ( authorization__c auth : auths ) {
