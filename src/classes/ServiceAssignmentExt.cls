@@ -327,6 +327,56 @@ public without sharing class ServiceAssignmentExt {
         }
         set;
     }
+    
+    public list<ServiceAssignment_Diagnosis_JO__c> sadiagJOList {get; set;}
+    public ServiceAssignment_Diagnosis_JO__c sadiagJO {
+    	get{
+    		if(sadiagJO == null)
+    		sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
+    		return sadiagJO;
+    	}
+    	set;
+    }
+    
+    public List<SelectOption> pbsDiagnosisList{get{
+   		if(pbsDiagnosisList ==  null){
+   			pbsDiagnosisList = new list<SelectOption>();
+   			pbsDiagnosisList.add(new selectoption('--None--', '--None--'));
+   			for(Diagnosis__c d: [SELECT Id, ICD__c, ICD__r.Icd_Description__c FROM Diagnosis__c WHERE PBS__c = :theServAssign.Person_Being_Served__c AND Status__c = 'Active']){
+   				pbsDiagnosisList.add(new selectoption(d.Id,d.ICD__r.Icd_Description__c));
+   			}
+   			
+   		}
+   		
+   		return pbsDiagnosisList;
+    }
+	set;}
+    	
+    public string selectedDiagnosis {get; set;}
+    
+    private void populatesadiagJO(){
+    try {
+        this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
+                 from ServiceAssignment_Diagnosis_JO__c 
+                 where Service_Assignment__c = : this.theServAssign.Id];
+      }
+    catch (Exception e) {
+      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'An error occurred retrieving Diagnosis information. ' + e.getMessage()));
+    }
+  }
+  
+  public void showAddsadiagJo() {
+  		this.sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
+  		
+  	
+  }
+  
+  public void savesadiagJo() {
+  	
+  		populatesadiagJO();
+  		this.sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
+  }
 
     public Boolean newDiagnosis{ get; set;}
     public void showAddDiagnosis() {
@@ -446,7 +496,7 @@ public without sharing class ServiceAssignmentExt {
             theServAssign.Program_Detail__c = 'TBD - Autofilled';
             theServAssign.Person_Being_Served__c = admission.Person_Being_Served__c;
             theServAssign.Phase__c = 0;
-	    theServAssign.Flavor__c = admission.person_being_served__r.Flavor__c;
+	    	theServAssign.Flavor__c = admission.person_being_served__r.Flavor__c;
             diagnoses = new List<Diagnosis__c>();
             recordType = ApexPages.currentPage().getParameters().get('recordType');
             theRecordType = new RecordType();
@@ -473,14 +523,14 @@ public without sharing class ServiceAssignmentExt {
                 disregardSA = false;
             }
             if(disregardSA == false){
-            System.debug('--------theServAssign.status__c----------'+theServAssign.status__c + '*********'+ theServAssign.Is_this_transfer_to_another_ServAssign__c);
-            if(theServAssign.status__c == 'Inactive' && theServAssign.Is_this_transfer_to_another_ServAssign__c == 'No'){
-                dischargePopup = 'true';System.debug('------------------' + dischargePopup);
-            }
-            else{
-                dischargePopup = 'false';
-            }
-        }
+	            System.debug('--------theServAssign.status__c----------'+theServAssign.status__c + '*********'+ theServAssign.Is_this_transfer_to_another_ServAssign__c);
+	            if(theServAssign.status__c == 'Inactive' && theServAssign.Is_this_transfer_to_another_ServAssign__c == 'No'){
+	                dischargePopup = 'true';System.debug('------------------' + dischargePopup);
+	            }
+	            else{
+	                dischargePopup = 'false';
+	            }
+        	}
         }
         else {
 
@@ -663,6 +713,11 @@ public without sharing class ServiceAssignmentExt {
 
         setShiftDocPermissions();
         canAddDiagnosis = Diagnosis__c.sObjectType.getDescribe().isCreateable();
+        sadiagJOList = new List<ServiceAssignment_Diagnosis_JO__c>();
+        if(!newSA){
+        	populatesadiagJO();
+        }
+        
     }
     // END: CONSTRUCTOR
 
@@ -2292,5 +2347,45 @@ public without sharing class ServiceAssignmentExt {
         return dupeFound;
     }
     // EC-87: Seizure Tracking - End
+    
+    
+    //Sravan - Diagnosis-SA Junction
+    @RemoteAction
+    public static boolean saveDiagnosisJO (string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, String rank) {
+        ServiceAssignment_Diagnosis_JO__c dg;
+        ID newID;
+        if (diagSAJOId == '') {
+
+            dg = new ServiceAssignment_Diagnosis_JO__c ( Service_Assignment__c = saID, Diagnosis__c = diagId, ABI_Diagnosis__c = ABI, Billable__c = Billable, Glasgow_Coma_Score_at_Injury__c = glasgowInjury, Glasgow_Coma_Scale_Severity__c = glasgowSeverity, Injury_Type__c = injType, Ranking__c = rank );
+        }
+        else {
+
+            dg = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
+                 from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
+
+            dg.Date_of_Injury__c = Date.parse(injuryDate);
+            dg.Service_Assignment__c = saID;
+            dg.Diagnosis__c = diagId;
+            dg.ABI_Diagnosis__c = ABI;
+            dg.Billable__c = Billable;
+            dg.Glasgow_Coma_Score_at_Injury__c = glasgowInjury;
+            dg.Glasgow_Coma_Scale_Severity__c = glasgowSeverity;
+            dg.Injury_Type__c = injType;
+            dg.Ranking__c = rank;
+            system.debug('updating ' + dg.Id + ', ' + dg);
+        }
+
+        upsert dg;
+        return true;
+    }
+
+    @RemoteAction
+    public static ServiceAssignment_Diagnosis_JO__c loadDiagnosisJO(string diagSAJOId) {
+        ServiceAssignment_Diagnosis_JO__c dg =
+                [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
+                 from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
+        
+        return dg;
+    }
 
 }

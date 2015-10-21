@@ -431,6 +431,12 @@
             <apex:param name="editid" value="" assignTo="{!diagEditId}" />
         </apex:actionFunction>
         <apex:actionFunction name="refreshDiagnoses" action="{!refreshDiagnoses}" rerender="pbDiagnosis" />
+        
+        <!-- Sa Diag Junction -->
+        <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="sadiagJoSection,sadiagJoEntry,msgs"  />
+        <apex:actionFunction name="showAddsadiagJo" action="{!showAddsadiagJo}" rerender="sadiagJoSection,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Link Diagnosis','none', '700'); return false;"/>
+         <!-- end seizure actions-->
+        
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" immediate="true" rerender="serviceLocationEntry,locationDisplay, msgs" oncomplete="openDialog('serviceLocationModal', 'span', 'Add/Edit Location'); " />
         <apex:actionFunction name="setEffectiveDate" action="{!setEffectiveDate}" rerender="ProgAssocViewNEW, ProgAssoc,ProgramSelect,ServCodeSelect" immediate="true">
             <apex:param name="effstart" value="" assignTo="{!effDate}" />
@@ -445,7 +451,7 @@
         </apex:actionFunction>
         <!-- end seizure actions-->
         
-        <!-- finalize for e sign-->
+        <!-- Discharge popup-->
         <apex:outputPanel id="tstpopupAfterEsign" style="display:none; dispaly: block; height: 500px;">
         <apex:outputPanel styleClass="popupBackground" layout="block" rendered="true"/>
             <!--<apex:outputPanel styleClass="custPopup" layout="block" ><!--rendered="{!displayPopUp}">
@@ -459,7 +465,7 @@
             <br/><br/>
         </apex:outputPanel>
         
-        <!-- Finalize for esign ends-->
+        <!--  Discharge popup ends-->
             
         
         
@@ -1655,6 +1661,29 @@ END: Uncomment to have the element collapsed by default -->
                 </apex:outputpanel>
 
             </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <!-- Sa Diagnosis Junction Section -->
+        <apex:pageBlock id="pbsadiagBlock" mode="maindetail" rendered="{!!newSA}" >
+        	 <apex:pageBlockButtons location="top">
+                <div class="blockbtns">
+                    <apex:commandButton value="Add Diagnosis" id="addsadiagJo" onClick="showAddsadiagJo(); return false;" />
+                </div>
+            </apex:pageBlockButtons>
+        	 <apex:pageBlockSection title="Diagnosis" columns="1" collapsible="true" id="sadiagJoSection">
+        	 	<apex:pageblockTable value="{!sadiagJOList}" var="jo" rendered="{!sadiagJOList != null && (sadiagJOList.size>0)}"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+        	 		<apex:column headerValue="Action"><a href="#Diag" onclick="showEditsadiagJo('{!jo.id}');return false;">Edit</a>
+                    </apex:column>
+        	 		<apex:column value="{!jo.Ranking__c}" />
+	        		<apex:column value="{!jo.Injury_Type__c}" />
+	        		<apex:column value="{!jo.Date_of_Injury__c}" />
+	        		<apex:column value="{!jo.Billable__c}" />
+	        		<apex:column value="{!jo.ABI_Diagnosis__c}" />
+	        		<apex:column value="{!jo.Glasgow_Coma_Score_at_Injury__c}" />
+	        		<apex:column value="{!jo.Glasgow_Coma_Scale_Severity__c}" />
+        	 	</apex:pageblockTable>
+        	 	<apex:outputText value="No diagnoses to display" rendered="{!(sadiagJOList.size=0)}" />
+        	 </apex:pageBlockSection>
         </apex:pageBlock>
 
 
@@ -2953,8 +2982,46 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockSection>
         </apex:pageBlock>
         <!-- END: Service Assignment Closure Section; CTEAE-125 & CTEAE-126 -->
-
-        <!-- Add diagnosis modal -->
+        
+        <!-- Link Diagnosis to SA Modal -->
+        <apex:actionRegion >
+	        <apex:outputPanel id="saDiagModal" style="display:none" >
+	        	<apex:pageBlock title="Add/Edit Diagnosis" mode="maindetail">
+	                 <apex:pageblockButtons location="bottom">
+	                     <apex:commandButton value="Save" onClick="sadiagJoSave(true); return false;" />
+	                     <apex:commandButton value="Save & New" onClick="sadiagJoSave(false);return false;" />
+	                     <apex:commandButton value="Cancel" onClick="closeModalDialogSA('saDiagModal', 'span'); j$('#sadiagJoErrors').html('');return false;" />
+	                 </apex:pageblockButtons>
+	<!-- 		   		 <apex:facet name="header"> -->
+	<!-- 	               <p><strong>Link diagnosis to Service Assigmnment below:</strong> -->
+	<!-- 	               </p> -->
+	<!-- 	           </apex:facet> -->
+		           <div id='sadiagJoErrors' style='color:red'></div>
+	        	
+		        	<apex:pageBlockSection Columns="2" id="sadiagJoEntry" >
+		        		<apex:pageBlockSectionItem  >
+		        			<apex:outputLabel value="Diagnosis" for="pbsdiagSelectList" />
+			        		<apex:selectList size="1" value="{!selectedDiagnosis}" id="pbsdiagSelectList">
+			        			<apex:selectoptions value="{!pbsDiagnosisList}" />
+			        		</apex:selectList>
+		        		</apex:pageBlockSectionItem>
+		        		<apex:inputField  value="{!sadiagJO.Ranking__c}" id="sadiagJoRanking"/>
+		        		<apex:inputField  value="{!sadiagJO.Injury_Type__c}" id="sadiagJoInjuryType"/>
+		        		<apex:inputField  value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoInjuryDate"/>
+		        		<apex:inputField  value="{!sadiagJO.Billable__c}" id="sadiagJoBillable"/>
+		        		<apex:inputField  value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoAbiDiagnosis"/>
+		        		<apex:inputField  value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoInjuryScore"/>
+		        		<apex:inputField  value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoInjuryScale"/>
+		        		<apex:inputHidden value="{!sadiagJO.Id}" id="sadiagJOId" />
+		        	</apex:pageBlockSection>
+	        	</apex:pageBlock>
+	     	</apex:outputPanel>
+     	</apex:actionRegion>
+        
+        
+        
+      
+		<!-- Add diagnosis modal -->
         <apex:outputPanel id="modalWrapper">
             <apex:outputPanel id="diagnosisModal" style="display:none" rendered="{!showdiagModal}">
                 <apex:pageBlock title="Add/Edit Diagnosis" mode="maindetail">
