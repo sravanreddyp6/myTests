@@ -51,14 +51,23 @@ public with sharing class AdmissionEditExtension {
         }
         Mode = apexpages.currentpage().getparameters().get('Mode');
         
-        if(Mode == 'Discharged'){
+         if(Mode == 'Discharged'){
             date dtEnddate = date.valueOf(apexpages.currentpage().getparameters().get('DischDate'));
-            datetime dttimeEnddate = datetime.valueOf(apexpages.currentpage().getparameters().get('DischDate'));
-            //this.admission.status__c = 'Ac';
-            //if(useDischargeSection = true)
-                this.admission.Discharged_Date__c = dtEnddate;
+            datetime dttimeEnddate = datetime.now();
+             System.debug('dttimeEnddate-->'+ dtEnddate);
+            Datetime l = dtEnddate;
+            l = l.addHours((system.Now().hour())+ 4);
+            l = l.addMinutes(Datetime.Now().minute());
+            l = l.addSeconds(Datetime.Now().second());
+            dttimeEnddate = dtEnddate;
+            this.admission.status__c = 'Discharged';
+            this.admission.Discharged_Date__c = dtEnddate;
+            if(useDischargeSection == true)
+                this.admission.Discharged_Date_Time__c = l;
+        
+            System.debug('dttimeEnddate-->'+ dttimeEnddate + l);
+            
         }
-
         
         	
     }
