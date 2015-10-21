@@ -18,7 +18,56 @@
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:variable value="{!theServAssign.Flavor__c == 'CA FSS'}" var="isCAFSS" />
+     
+    <style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 38%;
+            padding:10px;
+            position: absolute;
+            width: 800px;
+            margin-left: -250px;
+            top:100px;
+            position:fixed !important;
+        }
+        .popupBackground{
+            background: #eeeeee url(images/ui-bg_diagonals-thick_90_eeeeee_40x40.png) 50% 50% repeat;
+            opacity: .80;
+            position: absolute;
+              top: 0;
+              left: 0;
+            
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .dateFormat{display: none;}
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }    
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .timePastNoon{
+            background: lightblue;
+        }
+    </style>
 
+     
     <style>
         .dialogLoadingSpinner {
             margin-left: 5px;
@@ -347,7 +396,8 @@
 
     </script>
     <apex:pagemessages id="msgs" />
-    <br />
+    
+     <br />
     <c:NursesShiftDocAddModal uniqueId="1" parentId="{!theServAssign.Id}" onShowRerender="msgs, evaluations2" status="{!$Component.myFRM.residentAssessmentShiftDocBlock2.addShiftDocStatus}" />
     <c:NursesShiftDocAddModal uniqueId="2" parentId="{!theServAssign.Id}" shiftType="CNA Workbook" onShowRerender="msgs, evaluationscna" status="{!$Component.myFRM.CNABlock.AddCNAStatus}" />
     <apex:form id="myFRM">
@@ -356,9 +406,16 @@
         <apex:actionFunction name="fundingSourceInactivate" action="{!inactivateFundingSource}" status="fundingSouceModalStatus" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" oncomplete="closeModalDialogSA('FundingSourceModal', 'span');" />
         <apex:actionFunction name="saveFundingSource" action="{!saveFundingSource}" status="fundingSouceModalStatus" oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
         <apex:actionFunction name="showAddFundingSource" status="fundingSouceModalStatus" action="{!showAddFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
+        <apex:actionFunction name="callcheckFullyDischarge" status="SaveStatus1" action="{!checkFullyDischarge}" rerender="myFRM" /><!--oncomplete="dispdischargePopup();"/-->
+        <!--<apex:param name="bool" value="" assignTo="{!disregardSA}" />
+        </apex:actionFunction>-->
+        <apex:actionFunction name="callSaveMethod" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/>
+        
+        
         <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus">
             <apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
         </apex:actionFunction>
+        <apex:inputhidden value="{!dischargePopup}" id="hiddendischargePopup" />
         <apex:inputhidden value="{!locationSetting}" id="hiddenLocationSetting" /><!--html-data-visibility-rules="{&quot;Outpatient&quot;: [&quot;{!$Component.myFRM:SAblock:saStartSectionEdit:pbSecLocSetting:lblchildperm}&quot;,&quot;{!$Component.myFRM:SAblock:saStartSectionEdit:pbSecLocSetting:childPermGoalStart}&quot;] }" />
         <!----><apex:actionFunction action="{!updatelocation}" name="rerenderPanel" rerender="dummy">
             <apex:param name="locationSetting" value="" assignTo="{!locationSetting}" />
@@ -387,7 +444,26 @@
             <apex:param name="seizureId" value="" />
         </apex:actionFunction>
         <!-- end seizure actions-->
-
+        
+        <!-- finalize for e sign-->
+        <apex:outputPanel id="tstpopupAfterEsign" style="display:none; dispaly: block; height: 500px;">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="true"/>
+            <!--<apex:outputPanel styleClass="custPopup" layout="block" ><!--rendered="{!displayPopUp}">
+            </apex:outputpanel>-->
+            <apex:pageBlock id="blockAfterEsign" >
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="Yes" action="{!gotoAdmissionEditPage}"/>
+                    <apex:commandButton value="No" action="{!gototServAssignViewPage}" />
+                </apex:pageBlockButtons>
+            </apex:pageBlock> 
+            <br/><br/>
+        </apex:outputPanel>
+        
+        <!-- Finalize for esign ends-->
+            
+        
+        
+         
         <!--  STANDARD SERVICE ASSIGNMENT BLOCK  -->
         <apex:pageBlock id="SAblock" mode="maindetail"  >
             <apex:pageBlockSection id="_Alt1_Header" title="Service Assignment{!if(editSA==true,' Edit','')}" collapsible="false">
@@ -402,8 +478,11 @@
                     <apex:actionStatus id="SaveStatus1">
                         <apex:facet name="stop">
                             <apex:outputPanel id="buttons">
-                                <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"
+                                <!--<apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"
                                                      onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/> &nbsp;
+                                action="{!SaveServAssign}"-->
+                                <apex:commandButton value="Save" oncomplete="InactiveStatusAlert();" status="SaveStatus1" rendered="{!editSA}"/> &nbsp;
+                                
                                 <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" onComplete=" setUpCompletionMonitor(); "/> &nbsp;
                                 <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
     
@@ -421,7 +500,7 @@
             <apex:pageBlockSection id="ServAssignDetail" collapsible="true" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
-                <apex:pageBlockSectionItem rendered="{!!editSA}">
+                 <apex:pageBlockSectionItem rendered="{!!editSA}">
                     <label for="pStatus" >Service Assignment Status</label>                 
                     <apex:outputPanel >                 
                         <apex:outputField value="{!theServAssign.Status__c}" />
@@ -564,7 +643,7 @@
 				<apex:selectOptions value="{!modelValues}" />
 			</apex:selectList>
                 </apex:pageblocksectionitem>
-                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Specify_Error__c!= null) }" />
+                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }" />
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
                     <apex:outputLabel id="SE_label" value="Specify Error" />
                     <apex:outputPanel >
@@ -717,7 +796,7 @@
 						<apex:selectOptions value="{!modelValues}" />
 					</apex:selectList>                   
                 </apex:pageblocksectionitem>
-                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Specify_Error__c!= null) }" />
+                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }" />
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
                     <apex:outputLabel id="SE_label" value="Specify Error" />
                     <apex:outputPanel >
@@ -3020,7 +3099,20 @@ END: Uncomment to have the element collapsed by default -->
             window.location.reload();
         }
 
-
+        function dispdischargePopup(){
+            var dis = j$('[id$=hiddendischargePopup]').val();
+            if (dis == 'true') {
+                openDialog('tstpopupAfterEsign', 'span', 'Would like to fully discharge the Admission?');
+             }
+            else{
+                callSaveMethod();
+            }
+        }
+        function InactiveStatusAlert(){
+           //callcheckFullyDischarge();
+           callSaveMethod();
+        }
+        
         function validateDiagnosis() {
             var errors = '';
             j$('#diagnosisErrors').html(errors);
@@ -3250,6 +3342,10 @@ END: Uncomment to have the element collapsed by default -->
             //alert(sd);
             rerenderPanel();
         }
+        function getMode(name){
+            if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+            return decodeURIComponent(name[1]);
+        }
 
         function changeEffectiveDates() {
             var sd = j$('input[id$=startdate]').val().substring(0,10);
@@ -3270,6 +3366,19 @@ END: Uncomment to have the element collapsed by default -->
             }
         }
     </script>
+    <script>
+        window.onload = function() {
+            var modeOfThePage = getMode('Mode');
+            if(modeOfThePage == 'Saved'){
+                var dis = j$('[id$=hiddendischargePopup]').val();
+                if (dis == 'true') {
+                    openDialog('tstpopupAfterEsign', 'span', 'Would like to fully discharge the Admission?');
+                } 
+            }
+        };
+        
+    </script>
+    
     <apex:actionStatus id="pageProcessing">
         <apex:facet name="start">
             <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>

@@ -2,9 +2,11 @@ public without sharing class ServiceAssignmentExt {
 
     public Service_Assignment__c theServAssign { get; set; }
     public string locationSetting{get;set;}
+    public string dischargePopup{get;set;}
     // START:  Parent level properties with get/set methods.
     public Boolean editSA { get; set; }
     public Boolean newSA { get; set; }
+    public Boolean disregardSA { get; set; }
     public Admission__c admission { get; set; }
     public Id admissionId { get; set; }
     public String recordType { get; set; }
@@ -120,6 +122,32 @@ public without sharing class ServiceAssignmentExt {
         System.debug('-----------' + locationSetting);
     }
     
+    Public PageReference gotoAdmissionEditPage(){
+        return new PageReference('/apex/AdmissionEdit?id=' + admissionId +'&Mode=Discharged&DischDate='+ effEnd );
+    }
+    
+    public pagereference gototServAssignViewPage(){
+        PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);
+        backToServAssignPage.setRedirect(true);
+        return backToServAssignPage;
+    }
+    
+    public void checkFullyDischarge(){
+        System.debug('------------------'+disregardSA);
+        if(disregardSA == false){
+            System.debug('--------theServAssign.status__c----------'+theServAssign.status__c + '*********'+ theServAssign.Is_this_transfer_to_another_ServAssign__c);
+            if(theServAssign.status__c == 'Inactive' && theServAssign.Is_this_transfer_to_another_ServAssign__c == 'No'){
+                dischargePopup = 'true';System.debug('------------------' + dischargePopup);
+            }
+            else{
+                dischargePopup = 'false';
+            }
+        }
+        
+    }
+    
+    
+    
     private void setcanCreatePlan() {
         Schema.DescribeSObjectResult oSchema = Action_Plan__c.sObjectType.getDescribe();
         canCreatePlan = oSchema.IsCreateable();
@@ -143,15 +171,11 @@ public without sharing class ServiceAssignmentExt {
             if(ProgNotes.size()>0){
                 Boolean AddCIE = False;
                 for(progress_note__C pn: ProgNotes){
-                    if(pn.disregard_note__c == True)
-                        AddCIE = True;
-                    If(pn.RecordType.developername == 'Shift_Note' && pn.disregard_note__c == True)
-                       AddCIE = True ;
-                    If(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final')
+                    If(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final' && pn.disregard_note__c == False)
                        AddCIE = True ;
                     if(pOpGroup == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
                         AddCIE = True ;
-                    if(pn.status__c == 'Final')
+                    if(pn.status__c == 'Final' && pn.disregard_note__c == False)
                         AddCIE = True  ;                      
                 }
                 if(AddCIE == false)
@@ -405,13 +429,17 @@ public without sharing class ServiceAssignmentExt {
 
     // START: CONSTRUCTOR
     public ServiceAssignmentExt(ApexPages.StandardController controller) {
+        dischargePopup= 'here';System.debug('----------');
         if( ApexPages.currentPage() != null && ApexPages.currentPage().getParameters().get('save_new')=='1'){
+            //checkFullyDischarge();
             pageHeader = 'Add a Service Assignment';
             newSA = true;
             editSA = true;
             theServAssign = new Service_Assignment__c();
             initialRecord = new Service_Assignment__c();
             admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid, person_being_served__r.Flavor__c, Network_Offering__c FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
+            
+            
             admissionId = admission.Id;
             theServAssign.Admission__c = admission.Id;
             theServAssign.Name = 'TBD - Autofilled';
@@ -437,7 +465,22 @@ public without sharing class ServiceAssignmentExt {
             }
             if (effEnd == null )
                 effEnd = initialRecord.End_date__c;
-
+            list<Service_Assignment__c> otherSAforThisAdmission = [SELECT Id, Name, Admission__c FROM Service_Assignment__c WHERE Admission__c = : admissionId];
+            if(otherSAforThisAdmission.size()>0){
+                disregardSA = true;
+            }
+            else{
+                disregardSA = false;
+            }
+            if(disregardSA == false){
+            System.debug('--------theServAssign.status__c----------'+theServAssign.status__c + '*********'+ theServAssign.Is_this_transfer_to_another_ServAssign__c);
+            if(theServAssign.status__c == 'Inactive' && theServAssign.Is_this_transfer_to_another_ServAssign__c == 'No'){
+                dischargePopup = 'true';System.debug('------------------' + dischargePopup);
+            }
+            else{
+                dischargePopup = 'false';
+            }
+        }
         }
         else {
 
@@ -447,6 +490,7 @@ public without sharing class ServiceAssignmentExt {
             }
             pageHeader = 'Service Assignment Detail';
             newSA = false;
+            
             theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                              End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName,Admission__r.Person_Being_Served__r.FirstName, Phase__c, Phase_of_Treatment__c, Program__c,
                              Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
@@ -479,7 +523,22 @@ public without sharing class ServiceAssignmentExt {
             effDate = theServAssign.Start_date__c;
             effEnd = theServAssign.End_date__c;
             locationSetting = theServAssign.service_location__r.setting__c;
-           
+            list<Service_Assignment__c> otherSAforThisAdmission = [SELECT Id, Name, Admission__c FROM Service_Assignment__c WHERE Admission__c = : theServAssign.Admission__c and Id !=: controller.getid()];
+            if(otherSAforThisAdmission.size()>0){
+                disregardSA = true;
+            }
+            else{
+                disregardSA = false;
+            }
+            if(disregardSA == false){
+                System.debug('--------theServAssign.status__c----------'+theServAssign.status__c + '*********'+ theServAssign.Is_this_transfer_to_another_ServAssign__c);
+                if(theServAssign.status__c == 'Inactive' && theServAssign.Is_this_transfer_to_another_ServAssign__c == 'No'){
+                    dischargePopup = 'true';System.debug('------------------' + dischargePopup);
+                }
+                else{
+                    dischargePopup = 'false';
+                }
+            }
         }
 
         System.debug('recordType BEFORE LoadData: ' + recordType);
@@ -1430,7 +1489,7 @@ public without sharing class ServiceAssignmentExt {
                 // ApexPages.addMessage(myMessage);
 
                 //return null;
-                PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);
+                PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id + '&Mode=Saved');
                 backToServAssignPage.setRedirect(true);
                 return backToServAssignPage;
             }
