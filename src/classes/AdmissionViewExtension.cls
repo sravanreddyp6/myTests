@@ -15,6 +15,15 @@ public with sharing class AdmissionViewExtension {
     public boolean showCANS { get; private set; }
     public TMN_User__c curUser{get;set;}
     public list<Service_Assignment__c> allSAforAdmint{get; set;}
+    //pri-206
+    public String getStartDateValue() {
+    	DateTime dateTimeValue = admission.Admission_Effective_DateTime__c;
+        if( dateTimeValue != null ) {
+            String localeFormatDT = dateTimeValue.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString() );
+            return localeFormatDT;
+        }
+        return null;
+    }    
     //PRI-218 219
     public boolean reqAdmittedFrom {get{return AdmissionEditViewCommon.setReqAdmittedFrom(curUser,allSAforAdmint);} set;}
     public boolean reqDcTo { get{ return AdmissionEditViewCommon.setReqDcTo(curUser,allSAforAdmint);} set;}

@@ -112,7 +112,8 @@ public with sharing class AdmissionEditExtension {
         options.add(new SelectOption('Other','Other'));  
         return options;
     	
-    }    
+    }   
+    
     //PRI-289
     public List<SelectOption> getStatusValues()
     {
@@ -126,24 +127,28 @@ public with sharing class AdmissionEditExtension {
             if(ProgNotes.size()>0){
                 Boolean HideCIE = False;
                 for(progress_note__C pn: ProgNotes){
-                    if(pn.disregard_note__c == True)
-                        HideCIE = True;
-                    If(pn.RecordType.developername == 'Shift_Note' && pn.disregard_note__c == True)
-                       HideCIE = True ;
-                    If(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final')
-                       HideCIE = True ;
+                    if(pn.disregard_note__c == false){
+                    	If(pn.status__c == 'Final')
+	                       HideCIE = True ;
+	                    If(pn.RecordType.developername == 'Shift_Note' && pn.disregard_note__c == True)
+	                       HideCIE = True ;
+	                    If(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final')
+	                       HideCIE = True ;
+	                    if(curUser.Operating_Group__c == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
+	                        HideCIE = True ;
+	                    if(pn.status__c == 'Final')
+	                        HideCIE = True  ;  
+                    }  
                     if(curUser.Operating_Group__c == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
-                        HideCIE = True ;
-                    if(pn.status__c == 'Final')
-                        HideCIE = True  ;                      
+	                	HideCIE = True ;
                 }
                 if(HideCIE == false)
-                options.add(new SelectOption('Created in Error','Created in Error'));
+                	options.add(new SelectOption('Created in Error','Created in Error'));
             }else{
                 options.add(new SelectOption('Created in Error','Created in Error'));
             }
         }else{
-                options.add(new SelectOption('Created in Error','Created in Error'));        
+            options.add(new SelectOption('Created in Error','Created in Error'));        
         
         }
         

@@ -329,7 +329,7 @@
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection title="Information" columns="2" collapsible="true">
 				<apex:outputField value="{!admission.name}" />
-				<apex:pageBlockSectionItem >
+				<apex:pageBlockSectionItem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided.">
 					<label for="pStatus" >Admission Status</label>					
 					<apex:outputPanel >					
 						<apex:outputField value="{!admission.Status__c}" />
@@ -347,11 +347,11 @@
 				</apex:pageBlockSectionItem>			
 				
                 <apex:pageBlockSectionItem >
-                    <apex:outputlabel for="pStartDate" >Admission Date</apex:outputlabel>
+                    <label for="pStartDate" >Admission Date</label>
                     <apex:outputPanel >
                         <c:MilitaryDatetime dateTimeVal="{!admission.Admission_Effective_DateTime__c}" />
                         <!-- used in Progress score -->
-                        <apex:inputField id="pStartDate" showDatePicker="false" value="{!admission.Admission_Effective_DateTime__c}" style="display: none;"  html-data-countInFormProgress="1" ></apex:inputField>                     
+                        <input id="pStartDate" value="{!StartDateValue}" style="display: none;"  data-countInFormProgress="1" ></input>                     
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 

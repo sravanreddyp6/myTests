@@ -299,8 +299,9 @@ public with sharing class HomePageController{
 			}
 			}
 			// For incident Creation - Add Security if condition later since We don't have requirements now - Sravan 07/21/2015
+			//removing this option for the moment 10/21/2015 pperisic
 			if(canCreateIncidents){
-				optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
+				//optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
 			}
 				
 			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
