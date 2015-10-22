@@ -160,9 +160,9 @@ private class referralConversion_Controller_Test {
 			System.AssertEquals( funds.size(), 2);
 			
 			
-			// should only convert one authorization with status non-empty
+			// both auths should also be converted
 			List<Authorization__c> auths = [ select id, name from authorization__c where funding_source__r.service_assignment__r.referral__c = :fsref.Id ];
-			System.AssertEquals( auths.size(), 1);
+			System.AssertEquals( auths.size(), 2);
 			
         }
     
