@@ -1,0 +1,132 @@
+<apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c">
+<style>
+
+.pbHeaderButton1 {
+    float: right;
+    position: relative;
+    top: 10px;
+    right: 10px;
+}
+</style>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />   
+        <apex:form >
+            <apex:pageBlock title="{!TMNUser.Name}" mode="view" >
+                <apex:pageMessages />
+               <div class="pbHeaderButton">   
+                    <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
+                   <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/>      
+                   <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
+                   <apex:commandButton value="Request Access" action="{!goRequestAccess}" />
+                   <apex:commandButton value="Terminate" action="{!goTerminate}" /> 
+                </div>   
+                    <apex:pageBlockSection columns="2" title="Person Information">                   
+                        <apex:outputField label="First Name" value="{!TMNUser.First_Name__c}"/>
+                        <apex:outputField label="Company Email" value="{!TMNUser.Email__c}"/>
+                        <apex:outputField label="Middle Name" value="{!TMNUser.Middle_Name__c}"/>
+                        <apex:outputField label="Personal Email" value="{!TMNUser.Personal_Email__c}"/> 
+                        <apex:outputField label="Last Name" value="{!TMNUser.Last_Name__c}"/>
+                        <apex:outputField label="Job Title" value="{!TMNUser.Job_Title__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/>
+                        <apex:outputText rendered="{!TMNUser.Current_Person_Type__c =='Non-Employee'}" >  </apex:outputText> 
+                        <apex:outputField label="Preferred First Name" value="{!TMNUser.Preferred_First_Name__c}"/>
+                        <apex:outputField label="Professional Title" value="{!TMNUser.Professional_Title__c}"/>     
+
+                        <apex:outputField label="Preferred Last Name" value="{!TMNUser.Preferred_Last_Name__c}"/>
+                        <apex:outputField label="Job Status" value="{!TMNUser.Job_Status__c}" />
+                        <apex:outputField label="Mobile Phone" value="{!TMNUser.Mentor_Cell_Phone__c}"/>
+                        <apex:outputField label="Person Type" value="{!TMNUser.Current_Person_Type__c}" />                                                                                 
+                        <apex:outputText label="Office Phone" > <apex:outputText rendered="{!TMNUser.Office_Phone__c!='Call Manager'}">{!TMNUser.Office_Phone__c}</apex:outputText> <apex:outputText rendered="{!TMNUser.phone_ext__c!=null}"> Ext:{!TMNUser.phone_ext__c}</apex:outputText></apex:outputText>
+                        <apex:outputField label="Start Date" value="{!TMNUser.Hire_Date__c}" />
+ 					    <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
+                        <apex:outputField label="End Date" value="{!TMNUser.Last_Day__c}" />
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="2" title="Management Hierarchy">
+                        <apex:outputField label="Alias" value="{!TMNUser.Alias__c}" />                    
+                        <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/>
+                        <apex:outputField label="Operating Group" value="{!TMNUser.Operating_Group__c}" />
+                        <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                     
+                        <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>
+                        <!--  <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}"/> -->                    
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection columns="2" title="Location">
+                        <apex:outputField label="Location Name" value="{!TMNUser.Location_Name__c}"/>
+                        <apex:outputField label="State" value="{!TMNUser.Work_State__c}" />
+                        <apex:outputField label="Address Line 1" value="{!TMNUser.Office_Location__c}" />
+                        <apex:outputField label="Zip" value="{!TMNUser.Zip_Code__c}"/>
+                        <apex:outputField label="Address Line 2" value="{!TMNUser.Office_Location_2__c}"/>
+                        <apex:outputText label="Office Location" value="Y"  rendered="{!TMNUser.Office_Flag__c=='Y'}"/>
+                        <apex:outputText label="Office Location" value="N"  rendered="{!TMNUser.Office_Flag__c!='Y'}"/>
+                        <apex:outputField label="City" value="{!TMNUser.Work_City__c}" />
+                        <apex:outputPanel ></apex:outputPanel>                                                                                                                                                                                                                                                                                                         
+                    </apex:pageBlockSection>
+                    <apex:pageBlockSection title="Manager Information" columns="2">
+                        <apex:outputField label="Manager Name" value="{!TMNUser.Manager_Name__c}" />
+                        <apex:outputField label="Accountable Approval Manager" value="{!TMNUser.Accountable_Approval_Manager__c}"/>
+                        <apex:outputField label="Manager Email" value="{!TMNUser.Manager_Email__c}" />
+                        <apex:outputField label="Accountable Approval Manager Email" value="{!TMNUser.Accountable_Manager_Mentor_Email__c}"/>                     
+                    </apex:pageBlockSection>
+                 
+                <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}">
+                        <apex:outputField label="Therapist Discipline" value="{!TMNUser.Discipline__c}" />
+                        <apex:outputField label="GL Code" value="{!TMNUser.GL_Code__c}" />
+                        <apex:outputField label="Vendor Name" value="{!TMNUser.Vendor_Name__c}" />
+                        <apex:outputField label="Account #" value="{!TMNUser.Account_Number__c}" /> 
+                        <apex:outputField label="Vendor Location" value="{!TMNUser.Personal_Location__c}"/>
+                        <apex:outputField label="Rate (per Hour)" value="{!TMNUser.Rate__c}" />
+                        <apex:outputField label="Vendor City" value="{!TMNUser.Personal_City__c}" />
+                        <apex:outputField label="IC Agreement Executed On" value="{!TMNUser.IC_Agreement_Executed_Date__c}" />
+                        <apex:outputField label="Vendor ZIP" value="{!TMNUser.Personal_Zip__c}" />
+                        <apex:outputField label="CPR Expires" value="{!TMNUser.CPR_Expires__c}" />
+                        <apex:outputField label="License Expires" value="{!TMNUser.License_Expires__c}" />
+                        <apex:outputField label="Insurance Expires" value="{!TMNUser.Insurance_Expires__c}" />
+                        <apex:outputField label="Notes" value="{!TMNUser.Notes__c}" />
+                </apex:pageBlockSection>
+                   
+                     <apex:pageBlockSection title="System IDs" columns="2">
+                        <apex:outputField label="Identity ID" value="{!TMNUser.Identity_ID__c}" />
+                        <apex:outputField label="Network Username" value="{!TMNUser.Network_Username__c}"/>
+                        <apex:outputField label="Employee ID" value="{!TMNUser.Employee_Number__c}" rendered="{!TMNUser.Current_Person_Type__c=='Employee'}"/>
+                        <apex:outputField label="Unique ID" value="{!TMNUser.Unique_Id__c}" rendered="{!TMNUser.Current_Person_Type__c!='Pre-hire'}" />
+                        <apex:outputField label="Taleo ID" value="{!TMNUser.Pre_Hire_ID__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
+                        <apex:outputField label="Salesforce Account" value="{!TMNUser.Salesforce_User_Account__c}"/>
+                    </apex:pageBlockSection>
+ 
+                    <apex:PageBlockSection columns="2" title="Other Information" >
+                         <apex:outputField label="Job Code"  value="{!TMNUser.Job_Code__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
+                         <apex:outputField label="Recruiter Name"  value="{!TMNUser.Recruiter_Name__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
+                          <apex:outputField label="Pay Basis" value="{!TMNUser.Pay_Basis__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/> 
+                      <apex:outputField label="Recruiter Email"  value="{!TMNUser.Recruiter_Email_Address__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/>  
+                         <apex:outputField label="Approval Level"  value="{!TMNUser.Approval_Level__c}" rendered="{!(TMNUser.Current_Person_Type__c=='Employee' || TMNUser.Current_Person_Type__c=='Pre-hire' )}"/>  
+                          <apex:outputField label="Custodians" value="{!TMNUser.Custodians__c}" rendered="{!TMNUser.Current_Person_Type__c!='Pre-hire'}" /> 
+                        </apex:PageBlockSection>  
+                    <apex:PageBlockSection columns="2" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}">
+                         <apex:outputField label="Vendor"  value="{!TMNUser.Vendor_list__c}" /> 
+                         <apex:outputField label="Vendor Name"  value="{!TMNUser.Vendor_Name__c}"  rendered="{!TMNUser.Vendor_list__c='OTHER'}"/> 
+                          <apex:outputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" /> 
+                      <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
+                        </apex:PageBlockSection> 
+                     <!--   <apex:pageBlock title="Existing Attachments" rendered="{!TMNUser.Vendor_list__c='OTHER'}">
+                       <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
+                    <apex:column style="padding-right: 9px;" headerValue="Title">
+                    <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Description">{!attachment.Description}</apex:column>
+                <apex:column style="padding-right: 9px;" headerValue="Created Date/Time">
+                  <apex:outputText value="{0, date, M/d/yyyy h:m a}"><apex:param value="{!attachment.CreatedDate}" /></apex:outputText>
+                </apex:column>
+                 <apex:column style="padding-right: 9px;" headerValue="Created By">
+                    <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
+                </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>      -->  
+                    <div class="pbHeaderButton1">   
+                    <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
+                   <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/>      
+                   <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
+                   <apex:commandButton value="Request Access" action="{!goRequestAccess}" />
+                   <apex:commandButton value="Terminate" action="{!goTerminate}" /> 
+                </div>   
+               
+            </apex:pageBlock>
+        </apex:form>
+        
+</apex:page>
