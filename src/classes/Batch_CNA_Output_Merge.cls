@@ -258,12 +258,22 @@ global without sharing class Batch_CNA_Output_Merge implements Database.Batchabl
 	}
 
 	global void finish(Database.BatchableContext bc) {
-		delete [
-			SELECT Id
+		List<Eval__c> oldEvals = [
+			SELECT Id, HtmlId__c, Visible__c
 			  FROM Eval__c
 			 WHERE Eval_Type__r.Name = 'CNA Workbook'
 			   AND Category__c = 'Output'
 			   AND Sub_Category__c = 'Vomitus'
 		];
+		List<Id> oldEvalIds = new List<Id>();
+		for (Eval__c eval: oldEvals) {
+			oldEvalIds.add(eval.Id);
+		}
+		delete [
+			SELECT Id
+			  FROM Eval_Drop_Down__c
+			 WHERE WhatId__c IN :oldEvalIds
+		];
+		delete oldEvals;
 	}
 }
