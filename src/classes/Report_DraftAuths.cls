@@ -169,7 +169,7 @@ public with sharing class Report_DraftAuths {
                                         )
                                             AND Person_Being_Served__c In :selectedPBS
                                             AND authorization_status__c in ('Draft','Final')
-                                        ORDER BY payer_effective_date__c, payer_end_Date__c ];
+                                        ORDER BY payer_effective_date__c desc, payer_end_Date__c desc ];
 
      	ID pbsID;
        	for ( authorization__c auth : auths ) {
