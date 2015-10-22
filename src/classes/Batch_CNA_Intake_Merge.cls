@@ -3,6 +3,7 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 	global final Id mLConsumedId;
 	global final Id isValidId;
 	global final Id errorMsgId;
+	global final Id liquidConsumedId;
 
 	global String currentCompositeKey;
 
@@ -33,6 +34,8 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 				this.isValidId = mealRecord.Id;
 			} else if (mealRecord.HtmlId__c == 'ErrorMsg') {
 				this.errorMsgId = mealRecord.Id;
+			} else if (mealRecord.HtmlId__c == 'liquidConsumed' && mealRecord.Visible__c) {
+				this.liquidConsumedId = mealRecord.Id;
 			}
 			mealRecord.Sub_Category__c = 'All';
 			evalsToUpdate.add(mealRecord);
@@ -41,13 +44,14 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 		System.assertNotEquals(null, mLConsumedId);
 		System.assertNotEquals(null, isValidId);
 		System.assertNotEquals(null, errorMsgId);
+		System.assertNotEquals(null, liquidConsumedId);
 
 		update evalsToUpdate;
 	}
 
 	global Database.QueryLocator start(Database.BatchableContext bc) {
 		return Database.getQueryLocator(
-			'SELECT Id, Eval__r.HtmlId__c, Eval_Section_Id__c, Text_Under_250__c,' +
+			'SELECT Id, Eval__r.HtmlId__c, Eval_Section_Id__c, Text_Under_250__c, Eval_Section_Type__c,' +
 			'       Text_Over_250__c, What_ID__c, What_ID_Object__c, Eval__r.Visible__c' +
 			'  FROM Eval_Value__c' +
 			' WHERE Eval__r.Eval_Type__r.Name = \'CNA Workbook\'' +
@@ -72,6 +76,14 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 				value.Eval_Section_Type__c = 'Activity Log';
 				if (value.Eval__r.HtmlId__c == 'mLConsumed') {
 					value.Eval__c = this.mLConsumedId;
+					valuesToInsert.add(new Eval_Value__c(
+						Eval__c = this.liquidConsumedId,
+						Eval_Section_Id__c = value.Eval_Section_Id__c,
+						Text_Under_250__c = '1',
+						Eval_Section_Type__c = value.Eval_Section_Type__c,
+						What_Id__c = value.What_Id__c,
+						What_Id_Object__c = value.What_Id_Object__c
+					));
 				} else if (value.Eval__r.HtmlId__c == 'liquidDateTime') {
 					value.Eval__c = this.observedDateTimeId;
 				} else if (value.Eval__r.HtmlId__c == 'IsValid') {
