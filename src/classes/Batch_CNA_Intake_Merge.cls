@@ -4,6 +4,8 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 	global final Id isValidId;
 	global final Id errorMsgId;
 
+	global String currentCompositeKey;
+
 	global Map<String, Boolean> sectionErrorFound;
 
 	global Batch_CNA_Intake_Merge() {
@@ -50,13 +52,15 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 			'  FROM Eval_Value__c' +
 			' WHERE Eval__r.Eval_Type__r.Name = \'CNA Workbook\'' +
 			'   AND Eval__r.Category__c = \'Intake\'' +
-			'   AND Eval__r.Sub_Category__c = \'Liquid\''
+			'   AND Eval__r.Sub_Category__c = \'Liquid\'' +
+			'ORDER BY Eval_Section_Id__c'
 		);
 	}
 
 	global void execute(Database.BatchableContext bc, List<sObject> scope) {
 		//  We don't need these this in a *global* context, so we initialize them here to avoid serialization
 		List<Eval_Value__c> valuesToDelete = new List<Eval_Value__c>();
+		List<Eval_Value__c> valuesToInsert = new List<Eval_Value__c>();
 
 		List<Eval_Value__c> values = (List<Eval_Value__c>) scope;
 		for (Eval_Value__c value: values) {
@@ -81,25 +85,23 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 			} else {
 				valuesToDelete.add(value);
 			}
+			if (currentCompositeKey != null && !sectionErrorFound.get(currentCompositeKey) && currentCompositeKey != compositeKey) {
+				valuesToInsert.add(new Eval_Value__c(
+					Eval__c = errorMsgId,
+					Text_Over_250__c = '<li>Tube Fed field is mandatory.</li>',
+					Eval_Section_Id__c = currentCompositeKey.split('\\+', 0)[0],
+					What_Id__c = currentCompositeKey.split('\\+', 0)[1],
+					What_Id_Object__c = 'Evaluation__c'
+				));
+			}
+			currentCompositeKey = compositeKey;
 		}
 		update values;
+		insert valuesToInsert;
 		delete valuesToDelete;
 	}
 
 	global void finish(Database.BatchableContext bc) {
-		List<Eval_Value__c> valuesToInsert = new List<Eval_Value__c>();
-		for (String compositeKey: sectionErrorFound.keySet()) {
-			if (!sectionErrorFound.get(compositeKey)) {
-				valuesToInsert.add(new Eval_Value__c(
-					Eval__c = errorMsgId,
-					Text_Over_250__c = '<li>Tube Fed field is mandatory.</li>',
-					Eval_Section_Id__c = compositeKey.split('\\+', 0)[0],
-					What_Id__c = compositeKey.split('\\+', 0)[1],
-					What_Id_Object__c = 'Evaluation__c'
-				));
-			}
-		}
-		insert valuesToInsert;
 		delete [
 			SELECT Id, Field_Name__c, HtmlId__c, Visible__c
 			  FROM Eval__c
