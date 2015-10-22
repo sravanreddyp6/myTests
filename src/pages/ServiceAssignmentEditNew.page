@@ -506,7 +506,7 @@
             <apex:pageBlockSection id="ServAssignDetail" collapsible="true" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
-                 <apex:pageBlockSectionItem rendered="{!!editSA}">
+                 <apex:pageBlockSectionItem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided." rendered="{!!editSA}">
                     <label for="pStatus" >Service Assignment Status</label>                 
                     <apex:outputPanel >                 
                         <apex:outputField value="{!theServAssign.Status__c}" />
@@ -514,7 +514,7 @@
                         <input id="pStatus" value="{!theServAssign.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
                     </apex:outputPanel>             
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!editSA}">
+                <apex:pageBlockSectionItem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided." rendered="{!editSA}">
                     <apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
                     <apex:outputPanel >
                         <apex:actionRegion >
@@ -522,7 +522,7 @@
                             <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
                             </apex:actionSupport>
                         </apex:inputField>-->
-                        <apex:selectList title="Created in Error is only to be used if the wrong program was selected or if the person never received services." id="saStatus" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
+                        <apex:selectList id="saStatus" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
                             <apex:selectOptions value="{!StatusValues}"/>
                             <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
                             </apex:actionSupport>
@@ -668,7 +668,7 @@
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
 
-                <apex:pageBlockSectionItem rendered="{!!editSA}">
+                <apex:pageBlockSectionItem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided." rendered="{!!editSA}">
                     <label for="pStatus" >Service Assignment Status</label>                 
                     <apex:outputPanel >                 
                         <apex:outputField value="{!theServAssign.Status__c}" />
@@ -680,11 +680,18 @@
                     <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" onComplete="setStatusDefaults(); setUpFields();">
                     </apex:actionSupport>
                 </apex:inputField>-->
-                <apex:selectList rendered="{!editSA}" title="Created in Error is only to be used if the wrong program was selected or if the person never received services." id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
-                    <apex:selectOptions value="{!StatusValues}"/>
-                    <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
-                    </apex:actionSupport>
-                </apex:selectList>
+				<apex:pageBlockSectionItem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided." rendered="{!editSA}">
+                	<apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
+                    <apex:outputPanel >
+                        <apex:actionRegion >
+						<apex:selectList rendered="{!editSA}" id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
+							<apex:selectOptions value="{!StatusValues}"/>
+							<apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
+							</apex:actionSupport>
+						</apex:selectList>
+						</apex:actionRegion>                    
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
