@@ -86,9 +86,7 @@
 			</apex:outputPanel>
 
 			<apex:outputPanel layout="none" rendered="{!objectName=='Person Being Served'}">
-				<apex:outputText rendered="{!(PBSCreate==true) && ($User.Operating_Group__c == 'Cambridge' || (
-																   $User.Operating_Group__c == 'Redwood' && !BEGINS($UserRole.DeveloperName, 'IA')
-																   )) && !isCAFSS}">
+				<apex:outputText rendered="{! (PBSCreate==true) && ($User.Operating_Group__c == 'Cambridge' ) && !isCAFSS}">
 					<a href="{!URLFOR($Action.Account.New)}">Add New Person Being Served</a><br />
 				</apex:outputText>
 				<apex:outputText rendered="{!$User.Operating_Group__c != 'Care Meridian' &&

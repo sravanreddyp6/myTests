@@ -2210,7 +2210,8 @@ END: Uncomment to have the element collapsed by default -->
         
         <!-- Incidents Section -->
         <a name="Incidents" id="incidents"></a>
-        <apex:pageblock id="incidentsBlock" mode="maindetail" rendered="{!!editSA && $ObjectType.Incident__c.accessible}">
+        <!-- {!!editSA && $ObjectType.Incident__c.accessible} -->
+        <apex:pageblock id="incidentsBlock" mode="maindetail" rendered="false">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns" rendered="{!$ObjectType.Incident__c.createable}">
                     <apex:commandButton value="Create Incident" action="{!createIncident}" status="fundingSouceModalStatus" rerender="none"/>
@@ -2999,19 +3000,19 @@ END: Uncomment to have the element collapsed by default -->
 		           <div id='sadiagJoErrors' style='color:red'></div>
 	        	
 		        	<apex:pageBlockSection Columns="2" id="sadiagJoEntry" >
-		        		<apex:pageBlockSectionItem  >
+		        		<apex:pageBlockSectionItem >
 		        			<apex:outputLabel value="Diagnosis" for="pbsdiagSelectList" />
 			        		<apex:selectList size="1" value="{!selectedDiagnosis}" id="pbsdiagSelectList">
 			        			<apex:selectoptions value="{!pbsDiagnosisList}" />
 			        		</apex:selectList>
 		        		</apex:pageBlockSectionItem>
-		        		<apex:inputField  value="{!sadiagJO.Ranking__c}" id="sadiagJoRanking"/>
-		        		<apex:inputField  value="{!sadiagJO.Injury_Type__c}" id="sadiagJoInjuryType"/>
-		        		<apex:inputField  value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoInjuryDate"/>
-		        		<apex:inputField  value="{!sadiagJO.Billable__c}" id="sadiagJoBillable"/>
-		        		<apex:inputField  value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoAbiDiagnosis"/>
-		        		<apex:inputField  value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoInjuryScore"/>
-		        		<apex:inputField  value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoInjuryScale"/>
+		        		<apex:inputField value="{!sadiagJO.Ranking__c}" id="sadiagJoRanking"/>
+		        		<apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoInjuryType"/>
+		        		<apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoInjuryDate"/>
+		        		<apex:inputField value="{!sadiagJO.Billable__c}" id="sadiagJoBillable"/>
+		        		<apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoAbiDiagnosis"/>
+		        		<apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoInjuryScore"/>
+		        		<apex:inputField value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoInjuryScale"/>
 		        		<apex:inputHidden value="{!sadiagJO.Id}" id="sadiagJOId" />
 		        	</apex:pageBlockSection>
 	        	</apex:pageBlock>
