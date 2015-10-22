@@ -2370,8 +2370,8 @@ public without sharing class ServiceAssignmentExt {
             dg = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
 
-            dg.Date_of_Injury__c = Date.parse(injuryDate);
-            dg.Service_Assignment__c = saID;
+           // dg.Date_of_Injury__c = Date.parse(injuryDate);
+           // dg.Service_Assignment__c = saID; - not needed as we are not allowing the reparenting option
             dg.Diagnosis__c = diagId;
             dg.ABI_Diagnosis__c = ABI;
             dg.Billable__c = Billable;
