@@ -167,7 +167,7 @@ global without sharing class Batch_CNA_Output_Merge implements Database.Batchabl
 
 	global Database.QueryLocator start(Database.BatchableContext bc) {
 		return Database.getQueryLocator(
-			'SELECT Id, Eval__r.HtmlId__c, Eval_Section_Id__c, Text_Under_250__c,' +
+			'SELECT Id, Eval__r.HtmlId__c, Eval_Section_Id__c, Text_Under_250__c, Eval_Section_Type__c,' +
 			'       Text_Over_250__c, What_ID__c, What_ID_Object__c, Eval__r.Visible__c' +
 			'  FROM Eval_Value__c' +
 			' WHERE Eval__r.Eval_Type__r.Name = \'CNA Workbook\'' +
