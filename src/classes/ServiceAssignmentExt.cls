@@ -342,8 +342,13 @@ public without sharing class ServiceAssignmentExt {
    		if(pbsDiagnosisList ==  null){
    			pbsDiagnosisList = new list<SelectOption>();
    			pbsDiagnosisList.add(new selectoption('--None--', '--None--'));
-   			for(Diagnosis__c d: [SELECT Id, ICD__c, ICD__r.Icd_Description__c FROM Diagnosis__c WHERE PBS__c = :theServAssign.Person_Being_Served__c AND Status__c = 'Active']){
-   				pbsDiagnosisList.add(new selectoption(d.Id,d.ICD__r.Icd_Description__c));
+   			set<string> dedupe = new set<string>();
+   			for(Diagnosis__c d: [SELECT Id, ICD__c, ICD__r.Icd_Description__c, Effective_Date__c FROM Diagnosis__c WHERE PBS__c = :theServAssign.Person_Being_Served__c AND Status__c = 'Active' order by Effective_Date__c desc]){
+   				if(dedupe.size() > 0 && dedupe.contains(d.ICD__r.Icd_Description__c)){
+   					continue;
+   				}
+   				dedupe.add(d.ICD__r.Icd_Description__c);
+	   			pbsDiagnosisList.add(new selectoption(d.Id,d.ICD__r.Icd_Description__c));
    			}
    			
    		}
@@ -503,6 +508,8 @@ public without sharing class ServiceAssignmentExt {
             theRecordType = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Name = :recordType LIMIT 1 ];
             theServAssign.RecordTypeId = theRecordType.Id;
             theServAssign.Status__c = 'Active';
+            theServAssign.Is_this_transfer_to_another_ServAssign__c='No';
+            theServAssign.Service_Ended_via_Business_Divested__c='No';
             //recordTypeId = theServAssign.RecordTypeId;
             initialRecord.Admission__c = admission.Id;
             initialRecord.Name = 'TBD - Autofilled';
@@ -2351,7 +2358,7 @@ public without sharing class ServiceAssignmentExt {
     
     //Sravan - Diagnosis-SA Junction
     @RemoteAction
-    public static boolean saveDiagnosisJO (string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, String rank) {
+    public static boolean savesadiagJORemote (string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, String rank) {
         ServiceAssignment_Diagnosis_JO__c dg;
         ID newID;
         if (diagSAJOId == '') {
@@ -2380,7 +2387,7 @@ public without sharing class ServiceAssignmentExt {
     }
 
     @RemoteAction
-    public static ServiceAssignment_Diagnosis_JO__c loadDiagnosisJO(string diagSAJOId) {
+    public static ServiceAssignment_Diagnosis_JO__c loadsadiagJORemote(string diagSAJOId) {
         ServiceAssignment_Diagnosis_JO__c dg =
                 [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
