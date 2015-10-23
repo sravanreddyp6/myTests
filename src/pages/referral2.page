@@ -276,7 +276,7 @@
          function diagnosisSave(isDialogClose) {
             if (validateDiagnosis()) {
                 var diagnosisId = j$('input[id$=diagnosisEntry_Id]').val();
-                var diagnosisType = j$('select[id$=diagnosisEntry_type]').val();
+                //var diagnosisType = j$('select[id$=diagnosisEntry_type]').val();
                 var status = j$('select[id$=diagnosisEntry_status]').val();
                 var effectiveTime = j$('input[id$=diagnosisEntry_EffTime]').val();
                 var ICD = j$('input[id$=diagnosisEntry_icd_lkid]').val();
@@ -285,7 +285,7 @@
                 
                 
                 if(PBRId != ''){
-                    referral_Controller_Helper.saveDiagnosis(diagnosisId, diagnosisType, status, effectiveTime, ICD,
+                    referral_Controller_Helper.saveDiagnosis(diagnosisId, status, effectiveTime, ICD,
                         PBRId,
                         function(result, event) {
                             saveDiagnosis();
@@ -298,7 +298,7 @@
                     );
                 }
                 else if(PBSId != ''){
-                    referral_Controller_Helper.saveDiagnosisFromPbsID(diagnosisId, diagnosisType, status, effectiveTime, ICD,
+                    referral_Controller_Helper.saveDiagnosisFromPbsID(diagnosisId, status, effectiveTime, ICD,
                         PBSId,
                         function(result, event) {
                             saveDiagnosis();
@@ -451,7 +451,7 @@
                         j$('input[id$=diagnosisEntry_icd]').val(result.ICD__r.Name);
                         j$('input[id$=diagnosisEntry_icd_lkid ]').val(result.ICD__c);
                         j$('input[id$=diagnosisEntry_EffTime]').val(dateString);
-                        j$('select[id$=diagnosisEntry_type]').val(result.Type__c);
+                        // j$('select[id$=diagnosisEntry_type]').val(result.Type__c);
                         j$('select[id$=diagnosisEntry_status]').val(result.Status__c);
                         
           
@@ -581,9 +581,9 @@
                 errors += '<li>Date and Time of Diagnosis is a required field.</li>';
             }
             
-            if (j$('select[id$=diagnosisEntry_type]').val() == '') {
-                errors += '<li>Type is a required field.</li>';
-            }
+            //if (j$('select[id$=diagnosisEntry_type]').val() == '') {
+            //    errors += '<li>Type is a required field.</li>';
+            //}
             
             if (j$('select[id$=diagnosisEntry_status]').val() == '') {
                 errors += '<li>Status is a required field.</li>';
@@ -1329,7 +1329,7 @@
                     <apex:pageBlockSection columns="2" id="diagnosisEntry">
                     	<apex:inputField value="{!diag.ICD__c}"  id="diagnosisEntry_icd" />
                         <apex:inputField value="{!diag.Effective_Date__c}" label="Date and Time of Diagnosis" id="diagnosisEntry_EffTime" />
-                        <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" />
+                        <!--<apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" />-->
                         <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
                     	<apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
                     </apex:pageBlockSection>
@@ -1800,8 +1800,10 @@
                    <apex:column headerValue="Action"><a href="#Diag" onclick="loadDiagnosis('{!dg.id}');return false;">Edit</a>
                     </apex:column>
                     <apex:column value="{!dg.ICD__c}" />
+                    <apex:column value="{!dg.ICD__r.Code_Type__c}" />
+                    <apex:column value="{!dg.ICD__r.Icd_Description__c}" />
 					<apex:column value="{!dg.Effective_Date__c}" headerValue="Date and Time of Diagnosis"/>
-					<apex:column value="{!dg.Type__c}" />
+					<!--<apex:column value="{!dg.Type__c}" />-->
                     <apex:column value="{!dg.Status__c}" headerValue="Status" />
                 </apex:pageBlockTable>
                 <apex:outputText value="No diagnoses to display"  rendered="{!diagnoses.size == 0}" />
