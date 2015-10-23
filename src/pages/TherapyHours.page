@@ -91,7 +91,7 @@ applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" >
                         $j('#error').html('');
                         $j('#myHoursDetail').html('');
                         var table = '<table>';
-                        table += '<tr><td><strong>Person Being Served:<strong></td><td>' + record.get("pbsFirstName__c") + ' ' + record.get("pbsLastName__c") + '</td></tr>';
+                        table += '<tr><td><strong>Person Being Served:<strong></td><td>' + record.get("pbsFirstName__c").charAt(0) + ' ' + record.get("pbsLastName__c") + '</td></tr>';
                         table += '<tr><td><strong>Appointment Type:<strong></td><td>' + record.get("Appointment_Type__c") + '</td></tr>';
                         table += '<tr><td><strong>Status:<strong></td><td>' + record.get("Status__c") + '</td></tr>';
                         table += '<tr><td><strong>Start Time:<strong></td><td>' + formatDateTime(record.get("Start_Time__c")) + '</td></tr>';
