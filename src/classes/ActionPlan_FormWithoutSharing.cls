@@ -10,7 +10,9 @@ public without sharing class ActionPlan_FormWithoutSharing {
     public List<Action_Plan_Objective__c> objectives = new List<Action_Plan_Objective__c>();
     public List<Action_Plan_Objective__c> GETobjectives(){return objectives;}    
     public map<string, clsGoal> planStuff = new map<string, clsGoal> ();
-    public map<string, clsGoal> GETplanStuff(){return planStuff;}      
+    public map<string, clsGoal> GETplanStuff(){return planStuff;}    
+    public List<Acknowledgment__c> planAcks = new List<Acknowledgment__c>();
+    public List<AckWrapper> ackwraplist { get; set;}
     public string userOpGrp {get; private set;}
 
     public string getAP_Child_Record(string refID){
@@ -86,7 +88,17 @@ public without sharing class ActionPlan_FormWithoutSharing {
             if(curSV == item.Program_Name__c){
                 mapAllPrgs.put(item.ProgramID__c, item.Program_Name__c );
             }
-        }        
+        } 
+        
+        // get existing acknowledgments on the plan 
+        ackwrapList = new List<AckWrapper>(); 
+       	planAcks = [ select user__r.name, date_acknowledged__c, initials__c from acknowledgment__c where action_plan__c = :actionPlanId LIMIT 1000];
+       	for ( Acknowledgment__c a : planAcks ) {
+       		 AckWrapper aw = new AckWrapper( a.user__r.name, a.date_acknowledged__c, a.initials__c);
+       		 ackwrapList.add( aw );
+       	}
+       	
+       	
     }
     public pagereference addGoal(){  
     //create the goal and put it in the master
@@ -210,6 +222,9 @@ public without sharing class ActionPlan_FormWithoutSharing {
     } //end of refresh plan 
     
     public class clsGoal{
+    	
+    	// added for oneapp
+    	public string description { get; set; }
         public boolean isNew {get; set;}
         public boolean deleteMe {get; set;}
         public string GoalID {get; set;}
@@ -242,6 +257,8 @@ public without sharing class ActionPlan_FormWithoutSharing {
             Blob blobKey = crypto.generateAesKey(128);
             String Randomkey = EncodingUtil.convertToHex(blobKey);
             String RandomCharKey = Randomkey.substring(0,len);
+            description = tmpGoal.Description__c;
+            
                 theGoal = tmpGoal;  
                 string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');
                 tmpIdOfGoal = 'zg' + shortnow + key + RandomCharKey ;
@@ -255,6 +272,13 @@ public without sharing class ActionPlan_FormWithoutSharing {
     }  
     
     public class clsObj{
+    	// added for oneapp
+    	public string description { get; set; }
+    	public string status { get; set; }
+    	public string otype { get; set; }
+    	public date effdate { get; set; }
+    	public date enddate { get; set; }
+    	
         public boolean isNew {get; set;}
         public boolean deleteMe {get; set;}
         public boolean isParentNew{get; set;}
@@ -286,6 +310,12 @@ public without sharing class ActionPlan_FormWithoutSharing {
             Blob blobKey = crypto.generateAesKey(128);
             String Randomkey = EncodingUtil.convertToHex(blobKey);
             String RandomCharKey = Randomkey.substring(0,len);
+            description = tmpObj.Description__c;
+            effdate = tmpObj.Effective_date__c;
+            enddate = tmpObj.Target_End_Date__c;
+            otype = tmpObj.type__c;
+            status = tmpobj.status__c;
+            
                 theObj = tmpObj;
                 GoalID = parentID;
                 string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');  
@@ -308,7 +338,10 @@ public without sharing class ActionPlan_FormWithoutSharing {
     }     
                   
      public class clsAction{
-        public boolean isNew {get; set;}
+     	//added for oneapp
+     	public string description { get; set; }
+     	
+     	public boolean isNew {get; set;}
         public boolean deleteMe {get; set;}
         public boolean isQuestionNew {get; set;}
         public string QuestionID {get; set;}
@@ -336,6 +369,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
                 isNew = false;
                 isQuestionNew = false;
                 deleteMe = false;
+                description = tmpaction.description__c;
                 theAction = tmpAction;  
                 objId = parentID; 
                 string shortnow = string.valueof(system.now()).remove(' ').remove(':').remove('-');               
@@ -350,5 +384,17 @@ public without sharing class ActionPlan_FormWithoutSharing {
                 if(theAction.id == null){isNew = true; theAction.Sort_Order__c =  shortnow;  }
                 if(theAction.id == null && !isObjNew){theAction.Action_Plan_Objective__c = objId.right(18);}        
         }      
+    }
+    
+    public class AckWrapper {
+    	public String AckBy { get; set; }
+    	public Date AckDate { get; set; }
+    	public String AckInit { get; set; }
+    	
+    	public AckWrapper( string b, date d, string i ) {
+    		this.AckBy = b;
+    		this.AckDate = d;
+    		this.AckInit = i;
+    	}
     }
 }
