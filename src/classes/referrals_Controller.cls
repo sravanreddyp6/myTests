@@ -771,13 +771,13 @@ public with sharing class referrals_Controller{
 		try {
 			if(this.personBeingRefRecord.Id != null) {
 				this.diagnoses = [
-					select Id,Effective_Date__c, Status__c, Type__c, ICD__c FROM 
+					select Id,Effective_Date__c, Status__c, Type__c, ICD__c,ICD__r.Code_Type__c,ICD__r.Icd_Description__c FROM 
 					   Diagnosis__c
 					 where PBR__c = :this.personBeingRefRecord.Id ORDER BY Effective_Date__c DESC
 				];
 			} else if (this.personBeingServedRecord.Id != null) {
 				this.diagnoses = [
-					select Id, Effective_Date__c, Status__c, Type__c, ICD__c from Diagnosis__c
+					select Id, Effective_Date__c, Status__c, Type__c, ICD__c,ICD__r.Code_Type__c,ICD__r.Icd_Description__c from Diagnosis__c
 					 where PBS__c = :this.personBeingServedRecord.Id ORDER BY Effective_Date__c DESC
 				];
 			}
