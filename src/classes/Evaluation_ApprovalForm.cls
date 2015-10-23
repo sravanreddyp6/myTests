@@ -28,6 +28,7 @@ public with sharing class Evaluation_ApprovalForm {
             Evaluation__c[] residentials = [
                 SELECT Id FROM Evaluation__c
                  WHERE ServiceAssignment__c = :thisEval.ServiceAssignment__c
+                   AND RecordType.Name = 'NursesAssessment'
                    AND Status__c LIKE 'Final%'
             ];
             if (residentials.size() == 0) {
