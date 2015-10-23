@@ -3,18 +3,26 @@
 	<apex:form id="wholeForm">
 		<apex:pageBlock title="Task: HIPAA Report Confirmation">
 			<apex:pageBlockButtons location="bottom" rendered="{!isEditMode}">
-				<apex:commandButton value="Approve" action="{!approve}" />
-				<apex:commandButton value="Reject" action="{!reject}" />
+				<apex:commandButton value="Save" action="{!save}" />
+				<apex:commandButton value="Cancel" action="{!cancel}" immediate="true" />
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection columns="1">
 				<apex:outputField value="{!Task.Subject}" label="Subject" />
 				<apex:outputField value="{!Task.ActivityDate}" />
-				<apex:outputField value="{!Task.Status}" rendered="{!OR(Task.Status = 'Approved', Task.Status = 'Rejected')}" />
+				<apex:outputField value="{!Task.Status}" rendered="{!!isEditMode}" />
+				<apex:pageBlockSectionItem rendered="{!isEditMode}">
+					<apex:outputLabel value="Status" for="status" />
+					<apex:selectList id="status" value="{!Task.Status}" size="1">
+						<apex:selectOption itemValue="Not Approved" itemLabel="-- None --" />
+						<apex:selectOption itemValue="Approved" itemLabel="Approved" />
+						<apex:selectOption itemValue="Rejected" itemLabel="Rejected" />
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
 				<apex:pageBlockSectionItem>
 					<apex:outputLabel value="HIPAA Report Attachment" for="attachment" />
 					<apex:outputPanel layout="none" id="attachment">
 						<apex:inputFile value="{!attachment.body}" filename="{!attachment.name}" rendered="{!isEditMode}" />
-						<apex:outputLink value="/{!attachment.Id}" rendered="{!!isEditMode}">{!attachment.name}</apex:outputLink>
+						<apex:outputText rendered="{!!isEditMode}">{!attachment.name}</apex:outputText>
 					</apex:outputPanel>
 				</apex:pageBlockSectionItem>
 				<apex:inputField value="{!Task.Description}" label="Comments" rendered="{!isEditMode}" style="width: 90%; " />

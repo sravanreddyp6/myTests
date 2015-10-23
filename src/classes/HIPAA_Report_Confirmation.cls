@@ -26,11 +26,24 @@ public with sharing class HIPAA_Report_Confirmation {
 		return null;
 	}
 
-	private PageReference save() {
+	public PageReference save() {
 		if (this.attachment.name == null) {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Attachment is required'));
+			return null;
+		}
+		if (this.task.Status != 'Approved' && this.task.Status != 'Rejected') {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Status is required'));
 			this.task.Status = 'Not Approved';
 			return null;
+		}
+		if (this.task.Status == 'Rejected') {
+			if (this.task.Description == '' || this.task.Description == null) {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Comment is required'));
+				return null;
+			} else if (this.task.Description != null && this.task.Description.length() < 20) {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Comment must be longer than 20 characters'));
+				return null;
+			}
 		}
 		insert this.attachment;
 		update this.task;
@@ -39,13 +52,9 @@ public with sharing class HIPAA_Report_Confirmation {
 		return page;
 	}
 
-	public PageReference approve() {
-		this.task.Status = 'Approved';
-		return this.save();
-	}
-
-	public PageReference reject() {
-		this.task.Status = 'Rejected';
-		return this.save();
+	public PageReference cancel() {
+		PageReference page = new PageReference('/apex/Home');
+		page.setRedirect(true);
+		return page;
 	}
 }
