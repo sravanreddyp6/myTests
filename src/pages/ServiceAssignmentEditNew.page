@@ -3465,13 +3465,16 @@ END: Uncomment to have the element collapsed by default -->
                 var diagSAJOId = j$('input[id$=sadiagJoEntry_sadiagJOId]').val();
                 var diagId = j$('select[id$=pbsdiagSelectList]').val();
                 var saID = '{!Service_Assignment__c.Id}';
-                var ABI = j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').val();
-                var Billable = j$('input[id$=sadiagJoEntry_sadiagJoBillable]').val();
+                var ABI = j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').is(':checked');
+                var Billable = j$('input[id$=sadiagJoEntry_sadiagJoBillable]').is(':checked');
                 var injuryDate = j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val();
                 var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
                 var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
                 var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
+                
+              
+                
                 
                  if(diagId != ''){
                     ServiceAssignmentExt.savesadiagJORemote(diagSAJOId, diagId, saID, ABI, Billable,injuryDate,
@@ -3518,7 +3521,20 @@ END: Uncomment to have the element collapsed by default -->
         
     </script>
     <script>
-        window.onload = function() {
+        function addLoadEvent(func) {
+            var oldonload = window.onload;
+            if (typeof window.onload != 'function') {
+                window.onload = func;
+            } else {
+                window.onload = function() {
+                    if (oldonload) {
+                        oldonload();
+                    }
+                    func();
+                }
+            }
+        }
+        addLoadEvent(function() {
             var modeOfThePage = getMode('Mode');
             if(modeOfThePage == 'Saved'){
                 var dis = j$('[id$=hiddendischargePopup]').val();
@@ -3526,8 +3542,7 @@ END: Uncomment to have the element collapsed by default -->
                     openDialog('tstpopupAfterEsign', 'span', 'Would like to fully discharge the Admission?');
                 } 
             }
-        };
-        
+        });
     </script>
     
     <apex:actionStatus id="pageProcessing">
