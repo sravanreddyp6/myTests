@@ -1098,8 +1098,8 @@
                 <apex:outputText value="No admissions to display" rendered="{!(admissions.size=0)}" />
             </apex:pageBlockSection>
         </apex:pageBlock>
-        <!-- Incidents Section Start -->
-       	<apex:pageBlock id="incidentsBlock" rendered="{!$ObjectType.Incident__c.accessible}"  mode="maindetail" >
+        <!-- Incidents Section Start {!$ObjectType.Incident__c.accessible}-->
+       	<apex:pageBlock id="incidentsBlock" rendered="false"  mode="maindetail" >
             <apex:pageBlockSection title="Incidents" columns="1" id="incidentsSection_Alt1_Header" collapsible="true"  >
             <apex:outputText value="No Incident Records to Display" rendered="{!incidents.size= 0}" />
                 <apex:pageBlockTable value="{!incidents}" var="i" rendered="{!incidents.size != 0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
