@@ -83,7 +83,7 @@ function setupDates() {
 	                    	<apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" onComplete=" setUpCompletionMonitor(); " />
 	                    </apex:inputField>
 	                    -->
-                        <apex:selectList id="saStatus" value="{!admission.Status__c}" size="1" html-data-countInFormProgress="1" >
+                        <apex:selectList id="admStatus" value="{!admission.Status__c}" size="1" html-data-countInFormProgress="1" >
                             <apex:selectOptions value="{!StatusValues}"/>
                             <apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" onComplete=" setUpCompletionMonitor(); " />
                         </apex:selectList>	                
@@ -151,11 +151,11 @@ function setupDates() {
             <!-- PRI-218/19 -->
 			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="true" rendered="{!reqAdmittedFrom}">
 				<apex:pageBlockSectionItem>                         
-					<apex:outputLabel value="Admitted From (ROLES Scale at Admission)" />
+					<apex:outputLabel for="admitFrom" value="Admitted From (ROLES Scale at Admission)" />
 					<apex:outputPanel >
 					<div class="requiredInput">
 					    <div class="requiredBlock"></div>
-					    <apex:inputField value="{!admission.Admitted_From__c}" />
+					    <apex:inputField id="admitFrom" value="{!admission.Admitted_From__c}" html-data-countInFormProgress="1" />
 					</div>
 					</apex:outputPanel>				
 				</apex:pageBlockSectionItem>
