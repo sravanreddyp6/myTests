@@ -163,25 +163,25 @@ public with sharing class referral_Controller_Helper{
      
     
     @RemoteAction
-    public static Diagnosis__c saveDiagnosis(string diagnosisId, string diagnosisType, string status, string effectiveTime, string ICD, string PBRId) {
-      Diagnosis__c diagnosis;                                        
+    public static Diagnosis__c saveDiagnosis(string diagnosisId, string status, string effectiveTime, string ICD, string PBRId) {
+      Diagnosis__c diagnosis;   
       if (String.isEmpty(diagnosisId)) {
-         diagnosis = new Diagnosis__c(Type__c = diagnosisType, Status__c = status, ICD__c = ICD, PBR__c = PBRId );
+         diagnosis = new Diagnosis__c(Status__c = status, ICD__c = ICD, PBR__c = PBRId );
       } else {
-         diagnosis = new Diagnosis__c(ID = diagnosisId, Type__c = diagnosisType, Status__c = status, ICD__c = ICD, PBR__c = PBRId);
+         diagnosis = new Diagnosis__c(ID = diagnosisId, Status__c = status, ICD__c = ICD, PBR__c = PBRId);
       }
       diagnosis.Effective_Date__c = (!String.isEmpty(effectiveTime)) ? Datetime.parse(effectiveTime) : (Datetime) null;
-      upsert diagnosis;                                  
+      upsert diagnosis;
       return diagnosis;
    }
    
     @RemoteAction
-    public static Diagnosis__c saveDiagnosisFromPbsID(string diagnosisId, string diagnosisType, string status, string effectiveTime, string ICD, string PBSId) {
+    public static Diagnosis__c saveDiagnosisFromPbsID(string diagnosisId, string status, string effectiveTime, string ICD, string PBSId) {
       Diagnosis__c diagnosis;                                        
       if (String.isEmpty(diagnosisId)) {
-        diagnosis = new Diagnosis__c(Type__c = diagnosisType, Status__c = status, ICD__c = ICD, PBS__c = PBSId );
+        diagnosis = new Diagnosis__c(Status__c = status, ICD__c = ICD, PBS__c = PBSId );
       } else {
-         diagnosis = new Diagnosis__c(ID = diagnosisId, Type__c = diagnosisType, Status__c = status,ICD__c = ICD, PBS__c = PBSId);
+         diagnosis = new Diagnosis__c(ID = diagnosisId, Status__c = status,ICD__c = ICD, PBS__c = PBSId);
       }
       diagnosis.Effective_Date__c = (!String.isEmpty(effectiveTime)) ? Datetime.parse(effectiveTime) : (Datetime) null;
       upsert diagnosis;                                  
