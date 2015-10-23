@@ -52,7 +52,7 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 	global Database.QueryLocator start(Database.BatchableContext bc) {
 		return Database.getQueryLocator(
 			'SELECT Id, Eval__r.HtmlId__c, Eval_Section_Id__c, Text_Under_250__c, Eval_Section_Type__c,' +
-			'       Text_Over_250__c, What_ID__c, What_ID_Object__c, Eval__r.Visible__c' +
+			'       Text_Over_250__c, What_ID__c, What_ID_Object__c, Eval__r.Visible__c, OwnerId' +
 			'  FROM Eval_Value__c' +
 			' WHERE Eval__r.Eval_Type__r.Name = \'CNA Workbook\'' +
 			'   AND Eval__r.Category__c = \'Intake\'' +
@@ -82,7 +82,8 @@ global without sharing class Batch_CNA_Intake_Merge implements Database.Batchabl
 						Text_Under_250__c = '1',
 						Eval_Section_Type__c = value.Eval_Section_Type__c,
 						What_Id__c = value.What_Id__c,
-						What_Id_Object__c = value.What_Id_Object__c
+						What_Id_Object__c = value.What_Id_Object__c,
+						OwnerId = value.OwnerId
 					));
 				} else if (value.Eval__r.HtmlId__c == 'liquidDateTime') {
 					value.Eval__c = this.observedDateTimeId;
