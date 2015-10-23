@@ -123,7 +123,7 @@ function setupDates() {
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
                                 <apex:inputField value="{!admission.Discharged_Date__c}" id="disdate" rendered="{! !useDischargeSection }">
-                                <apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); " />
+                                	<apex:actionSupport event="onchange" rerender="Discharge2" onComplete=" setUpCompletionMonitor(); " />
                                 </apex:inputField>
                             </div>
                             </apex:outputPanel>
@@ -150,7 +150,15 @@ function setupDates() {
             
             <!-- PRI-218/19 -->
 			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="true" rendered="{!reqAdmittedFrom}">
-				<apex:inputField value="{!admission.Admitted_From__c}" required="true" html-data-countInFormProgress="1"  />
+				<apex:pageBlockSectionItem>                         
+					<apex:outputLabel value="Admitted From (ROLES Scale at Admission)" />
+					<apex:outputPanel >
+					<div class="requiredInput">
+					    <div class="requiredBlock"></div>
+					    <apex:inputField value="{!admission.Admitted_From__c}" />
+					</div>
+					</apex:outputPanel>				
+				</apex:pageBlockSectionItem>
 			</apex:pageBlockSection>   
 			<apex:outputPanel id="Discharge2" layout="none">  
 	   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Discharged_Date__c != null}">

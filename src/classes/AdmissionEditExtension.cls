@@ -130,14 +130,6 @@ public with sharing class AdmissionEditExtension {
                     if(pn.disregard_note__c == false){
                     	If(pn.status__c == 'Final')
 	                       HideCIE = True ;
-	                    If(pn.RecordType.developername == 'Shift_Note' && pn.disregard_note__c == True)
-	                       HideCIE = True ;
-	                    If(pn.RecordType.developername == 'Shift_Note' && pn.status__c == 'Final')
-	                       HideCIE = True ;
-	                    if(curUser.Operating_Group__c == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
-	                        HideCIE = True ;
-	                    if(pn.status__c == 'Final')
-	                        HideCIE = True  ;  
                     }  
                     if(curUser.Operating_Group__c == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
 	                	HideCIE = True ;
@@ -207,7 +199,9 @@ public with sharing class AdmissionEditExtension {
     			messages.add('Please enter Discharged Date/Time');
     		else
     			admission.discharged_date__c = admission.discharged_date_time__c.date();
-    			
+    		
+    		if ( reqAdmittedFrom&& String.IsBlank(admission.Admitted_From__c))
+    			messages.add('Please enter Planned Discharge');	
     		if ( String.IsBlank(admission.planned_discharge__c))
     			messages.add('Please enter Planned Discharge');		
 
