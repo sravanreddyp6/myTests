@@ -201,7 +201,7 @@ public with sharing class AdmissionEditExtension {
     			admission.discharged_date__c = admission.discharged_date_time__c.date();
     		
     		if ( reqAdmittedFrom&& String.IsBlank(admission.Admitted_From__c))
-    			messages.add('Please enter Planned Discharge');	
+    			messages.add('Please enter Admitted From (ROLES Scale at Admission)');	
     		if ( String.IsBlank(admission.planned_discharge__c))
     			messages.add('Please enter Planned Discharge');		
 
