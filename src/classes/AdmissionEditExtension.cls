@@ -188,7 +188,9 @@ public with sharing class AdmissionEditExtension {
 						messages.add('Please enter Discharged To Other');      					
     			}    			
     		}	    
-	    
+
+    		if ( reqAdmittedFrom && String.IsBlank(admission.Admitted_From__c))
+    			messages.add('Please enter Admitted From (ROLES Scale at Admission)');	    
     	// EC-185 - if a discharge for CM, check required fields
     	if ( useDischargeSection && admission.status__c == 'Discharged') {
     		
@@ -199,9 +201,7 @@ public with sharing class AdmissionEditExtension {
     			messages.add('Please enter Discharged Date/Time');
     		else
     			admission.discharged_date__c = admission.discharged_date_time__c.date();
-    		
-    		if ( reqAdmittedFrom&& String.IsBlank(admission.Admitted_From__c))
-    			messages.add('Please enter Admitted From (ROLES Scale at Admission)');	
+    			
     		if ( String.IsBlank(admission.planned_discharge__c))
     			messages.add('Please enter Planned Discharge');		
 
