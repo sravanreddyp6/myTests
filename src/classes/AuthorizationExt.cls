@@ -274,7 +274,7 @@ private void initDependentPicklists() {
 	        		}
 	        		
 	        		if (String.IsBlank(authorization.representing_received__c)) {
-	        			fielderrs.add('Representing (Received)');
+	        			fielderrs.add('Representing (given)');
 	        		}
 	        		if ( authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other')
 	        		if (String.IsBlank(authorization.taken_by__c)) {
