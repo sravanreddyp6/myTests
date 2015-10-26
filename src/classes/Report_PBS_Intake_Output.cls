@@ -191,7 +191,13 @@ public with sharing class Report_PBS_Intake_Output {
 				} else if (value.Eval__r.htmlid__c == 'fluidType') {
 					pbsMap.get(saId).addIntakeType(value.Eval_Section_Id__c, value.Text_Under_250__c);
 				} else if (value.Eval__r.htmlid__c == 'fluidVolume') {
-					pbsMap.get(saId).addIntakeVolume(value.Eval_Section_Id__c, Double.valueOf(value.Text_Under_250__c));
+					try {
+						pbsMap.get(saId).addIntakeVolume(value.Eval_Section_Id__c, Double.valueOf(value.Text_Under_250__c));
+					} catch (System.TypeException ex) {
+						// This is field is not validated at user input time, so it's not guaranteed to hold correct data.
+						// We handle that case here.
+						pbsMap.get(saId).addInvalidIntakeVolume(value.Eval_Section_Id__c, value.Text_Under_250__c);
+					}
 				}
 			}
 			if (value.Eval__r.Category__c == 'GU/GI/Nutrition' && value.Eval__r.Sub_Category__c == 'Elimination - Bladder') {
@@ -263,6 +269,13 @@ public with sharing class Report_PBS_Intake_Output {
 				fluidIntakeLineItemMap.put(sectionId, new FluidIntakeLineItem());
 			}
 			fluidIntakeLineItemMap.get(sectionId).intakeVolume = intakeVolume;
+		}
+
+		public void addInvalidIntakeVolume(String sectionId, String intakeVolume) {
+			if (!fluidIntakeLineItemMap.containsKey(sectionId)) {
+				fluidIntakeLineItemMap.put(sectionId, new FluidIntakeLineItem());
+			}
+			fluidIntakeLineItemMap.get(sectionId).invalidIntakeVolume = intakeVolume;
 		}
 
 		public void addLiquidIntakeDateTime(String sectionId, DateTime observedDateTime) {
@@ -515,6 +528,7 @@ public with sharing class Report_PBS_Intake_Output {
 		public String feedingType { get; set; }
 		public String intakeType { get; set; }
 		public Double intakeVolume { get; set; }
+		public String invalidIntakeVolume { get; set; }
 	}
 
 	public class LiquidIntakeLineItem extends ComparableByObservedDateTime {

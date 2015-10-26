@@ -131,7 +131,10 @@
 									<td><c:MilitaryDatetime dateTimeVal="{!lineItem.fluidIntakeLineItem.observedDateTime}" /></td>
 									<td>{!lineItem.fluidIntakeLineItem.feedingType}</td>
 									<td>{!lineItem.fluidIntakeLineItem.intakeType}</td>
-									<td>{!lineItem.fluidIntakeLineItem.intakeVolume}</td>
+									<td>
+										<apex:outputPanel layout="none" rendered="{!lineItem.fluidIntakeLineItem.invalidIntakeVolume=null}">{!lineItem.fluidIntakeLineItem.intakeVolume}</apex:outputPanel>
+										<apex:outputPanel layout="none" rendered="{!lineItem.fluidIntakeLineItem.invalidIntakeVolume!=null}"><div style="color: red; ">{!lineItem.fluidIntakeLineItem.invalidIntakeVolume}<c:HelpTooltip helpText="The data is invalid and cannot be included in the calculation" /></div></apex:outputPanel>
+									</td>
 									<td><c:MilitaryDatetime dateTimeVal="{!lineItem.liquidIntakeLineItem.observedDateTime}" /></td>
 									<td>{!lineItem.liquidIntakeLineItem.liquidConsumed}</td>
 									<td><c:MilitaryDatetime dateTimeVal="{!lineItem.outputLineItem.observedDateTime}" /></td>
