@@ -11,7 +11,7 @@ public with sharing class Report_PBS_Intake_Output {
 	public List<Id> selectedPBS { get; set; }
 	public List<SelectOption> pbsList { get; set; }
 
-	public Map<Id, Person> pbsMap { get; set; }
+	public transient Map<Id, Person> pbsMap { get; set; }
 
 	public Report_PBS_Intake_Output() {
 		dummyEvaluation = new Evaluation__c();
