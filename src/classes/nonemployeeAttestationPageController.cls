@@ -3,8 +3,6 @@ public without sharing class nonemployeeAttestationPageController {
 	public Id employeeId{get;set;}
 	public string flag {get;set;}
 	public List<string> infoMessages;
-	public Date lastDay {get;set;}
-	public date dateChoosen {get; set;}
 	public string dateChoosenString {get; set;}
 	public string max {get; set;}
 	public string min {get; set;}
