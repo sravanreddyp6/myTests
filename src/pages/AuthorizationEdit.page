@@ -113,8 +113,8 @@ jQuery(document).ready(function ($) {
 <br/>
 <apex:form id="authForm">
 
-<apex:inputHidden id="txtbhd" value="{!authorization.bed_hold_type_detail__c}" />
-<apex:inputHidden id="txtbhad" value="{!authorization.bed_hold_additional_detail__c}" />
+<apex:inputHidden id="txtbhd" value="{!authorization.Bed_Hold_Type_Detail__c}" />
+<apex:inputHidden id="txtbhad" value="{!authorization.Bed_Hold_Additional_Detail__c}" />
 
 <apex:pageMessages />   
 <apex:pageBlock title="Authorization">
@@ -150,7 +150,7 @@ jQuery(document).ready(function ($) {
         </apex:actionregion>
         </apex:outputPanel>
         </apex:pageBlockSectionItem>
-        <apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
 			<apex:outputPanel layout="none">   		
 	        <div class="helpButtonOn" id="Reason-_help">
 	        <apex:outputLabel value="Reason for New Authorization" />
@@ -166,9 +166,9 @@ jQuery(document).ready(function ($) {
         <apex:outputPanel id="authdetail1">
     	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
         
-        	<apex:pageBlockSectionItem>
+        	<apex:pageBlockSectionItem >
         	<apex:outputLabel value="Bed Hold Type" />
-        	<apex:outputPanel>
+        	<apex:outputPanel >
         	<apex:inputField id="bht" value="{!authorization.Bed_Hold_Type__c}" onchange="loadSubtypes(this, 'bhd', 1, 'bhad');" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.bedholdtypeother}&quot;}"/>
 	        &nbsp;<apex:inputField id="bedholdtypeother" value="{!authorization.Bed_Hold_Type_Other__c}" />
 	        </apex:outputPanel>
@@ -177,9 +177,9 @@ jQuery(document).ready(function ($) {
     	    <apex:inputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! authorization.isRootAuth__c || authorization.id = null }"/>    
         	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! !authorization.isRootAuth__c && authorization.id != null }"/>
 
-        	<apex:pageBlockSectionItem>
+        	<apex:pageBlockSectionItem >
         	<apex:outputLabel value="Type Detail" />
-        	<apex:outputPanel>
+        	<apex:outputPanel >
         	<select id="bhd" onchange="loadSubtypes(this,'bhad', 2, null); setHiddenVal(this, 'txtbhd')" data-rules='{"Other": "{!$Component.bedholdtypedetailother}"}' ></select>
 	        &nbsp;<apex:inputField id="bedholdtypedetailother" value="{!authorization.Bed_Hold_Type_Detail_Other__c}" />
 	        </apex:outputPanel>
@@ -193,9 +193,9 @@ jQuery(document).ready(function ($) {
 				</apex:outputPanel>
         	</apex:pageBlockSectionItem>	
 
-	        <apex:pageBlockSectionItem>
+	        <apex:pageBlockSectionItem >
         	<apex:outputLabel value="Additional Detail" />
-        	<apex:outputPanel>
+        	<apex:outputPanel >
         	<select id="bhad" onchange="setHiddenVal(this, 'txtbhad')" data-rules='{"Other": "{!$Component.bedholdaddldetailother}"}' ></select>
 	        &nbsp;<apex:inputfield id="bedholdaddldetailother" value="{!authorization.Bed_Hold_Additional_Detail_Other__c}" />
 	        </apex:outputPanel>
@@ -207,7 +207,7 @@ jQuery(document).ready(function ($) {
 		    <apex:inputField id="retdate" value="{!authorization.Payer_End_Date__c}" label="Return Date" />
 	
 	        <apex:pageBlockSectionItem >
-	        <apex:outputLabel value="Funding Source" />
+	        <apex:outputLabel value="Contract Accessed" />
 	        <apex:outputPanel layout="none">
 	        	<apex:selectList value="{!authorization.Funding_Source__c}" size="1">
 	        	<apex:selectOptions value="{!fsList}" />
@@ -218,7 +218,7 @@ jQuery(document).ready(function ($) {
           	<apex:inputField value="{!authorization.Received_From__c}" label="Given By"/>
           	
             <apex:outputText value="" />
-	        <apex:inputField value="{!authorization.Representing_Received__c}" />
+	        <apex:inputField value="{!authorization.Representing_Received__c}" label="Representing (given)"/>
 	        
 	        <apex:outputText value="" />
 	        <apex:inputField value="{!authorization.Taken_By__c}" />
@@ -271,7 +271,7 @@ jQuery(document).ready(function ($) {
 	    <apex:outputText value="" rendered="{! authorization.type__c = 'Single Charge'}" />
 	    
         <apex:pageBlockSectionItem >
-        <apex:outputLabel value="Funding Source" />
+        <apex:outputLabel value="Contract Accessed" />
         <apex:outputPanel layout="none">
         	<apex:selectList value="{!authorization.Funding_Source__c}" size="1">
         	<apex:selectOptions value="{!fsList}" />
@@ -301,7 +301,7 @@ jQuery(document).ready(function ($) {
 	    </apex:pageBlockSectionItem>
 	    
         <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
-        <apex:inputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}"/>
+        <apex:inputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}" label="Representing (given)"/>
         <apex:outputText value="" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' }"/>
         <apex:inputField value="{!authorization.Taken_By__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
         <apex:outputText value="" />
