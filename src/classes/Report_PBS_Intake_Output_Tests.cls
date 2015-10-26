@@ -239,6 +239,21 @@ public with sharing class Report_PBS_Intake_Output_Tests {
 				),
 
 			new Eval_Value__c(
+				Eval__c = evals[8].Id,
+				Date_Time__c = now,
+				What_Id_Object__c = 'Evaluation__c',
+				Eval_Section_Id__c = 'sectionWrong',
+				What_Id__c = evaluations[0].Id
+				),
+			new Eval_Value__c(
+				Eval__c = evals[11].Id,
+				Text_Under_250__c = '70 mL',
+				What_Id_Object__c = 'Evaluation__c',
+				Eval_Section_Id__c = 'sectionWrong',
+				What_Id__c = evaluations[0].Id
+				),  // specifically to test issue when a non number is included in the system
+
+			new Eval_Value__c(
 				Eval__c = evals[12].Id,
 				Date_Time__c = Now,
 				What_Id_Object__c = 'Evaluation__c',
