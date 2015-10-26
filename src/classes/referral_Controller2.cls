@@ -763,10 +763,10 @@ public with sharing class referral_Controller2 {
                 messages.Add('One Funding Source must have both "Coverage Level" = "Primary" and any "Payer Type" selected');
                 hasReq = false;
             }                    
-            if(referralRecord.Diagnosis_I__c == null){
+           /* if(referralRecord.Diagnosis_I__c == null){
                 messages.Add('Primary Diagnosis');
                 hasReq = false;             
-            }   
+            }   */
             if(referralRecord.Date_of_Injury__c == null){
                 messages.Add('Date of Injury');
                 hasReq = false;             
