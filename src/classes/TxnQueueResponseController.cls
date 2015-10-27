@@ -31,7 +31,7 @@ public with sharing class TxnQueueResponseController {
 			
 			TxnResponse = thisTxn.return_value__c;
 			
-			if ( thisTxn.request_type__c == 'Action Plan')
+			if ( thisTxn.request_type__c == 'Action Plan' || thisTxn.request_type__c == 'Acknowledge Plan')
 				response = (ActionPlan_FormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, ActionPlan_FormWithoutSharing.class);
 			
 			

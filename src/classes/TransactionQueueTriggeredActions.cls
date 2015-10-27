@@ -25,26 +25,13 @@ public without sharing class TransactionQueueTriggeredActions {
 						ID PBSid = t.input_params__c;
 						
 						// execute the transaction as requested
-						Action_plan__c ap = [ select id, name, status__c, service_assignment__c from action_plan__c where service_assignment__r.admission__r.person_being_served__c = :PBSid LIMIT 1];
+						Action_plan__c ap = [ select id, name, status__c, service_assignment__c from action_plan__c where service_assignment__r.admission__r.person_being_served__c = :PBSid and status__c='Active Final' LIMIT 1];
 	                    ActionPlan_FormWithoutSharing apWithoutSharing = new ActionPlan_FormWithoutSharing(ap.id); 
 	
 						// serialize the result
 						String jsonstring = json.serialize( apWithoutSharing );
 						system.debug( 'GOT RESULT: '  + jsonstring);
 
-	/* 
-						// test that inserts PBS 					
-						ID idPBStype = [SELECT Id FROM RecordType WHERE SObjectType = 'Account' AND DeveloperName ='Person_Being_Served' and IsPersonType=true limit 1].Id;
-						Account accNew = new Account( RecordTypeID = idPBStype,
-	                                FirstName = 'Test',
-	                                Middle_Name__pc = 'Test',
-	                                LastName = 'LAST' + userinfo.getUsername(),
-	                                PersonMailingSTate='Massachusetts',
-	                                 PersonBirthDate = Date.newInstance(1990,09,10));					
-						
-						insert accNew;
-	*/
-						
 						// update the request as having been fulfilled
 						newreq.return_value__c = jsonstring;
 						newreq.fulfilled__c = true;
@@ -54,12 +41,12 @@ public without sharing class TransactionQueueTriggeredActions {
 					catch (Exception e) {	
 						// flag the error
 						newreq.fulfilled__c = false;
-						newreq.return_value__c = json.serialize( e );
+						newreq.return_value__c = json.serialize( e.getMessage() );
 					}
 					
 				}
 				
-				if ( t.request_type__c == 'Person Card' ) {
+				else if ( t.request_type__c == 'Person Card' ) {
 					
 					/*
 					// modify an account - testing
@@ -82,10 +69,43 @@ public without sharing class TransactionQueueTriggeredActions {
 					*/				
 					
 				}
-			}
+			
+			
+				else if ( t.request_type__c == 'Acknowledge Plan') {
+					try {
+							// get the action plan id and initials from the request pararms
+							system.debug( t.input_params__c);
+							Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
+							
+							// execute the transaction as requested
+							Acknowledgment__c a = new Acknowledgment__c ( action_plan__c = inputs.get('Action_plan__c'), initials__c = inputs.get('initials__c'), user__c = Userinfo.getUserId(), date_acknowledged__c = Date.today());
+							system.debug ('ack record:' + a);
+							insert a;
+		
+							// go get the refreshed view of the action plan
+							Action_plan__c ap = [ select id, name, status__c, service_assignment__c from action_plan__c where id = :inputs.get('Action_plan__c') LIMIT 1];
+	                    	ActionPlan_FormWithoutSharing apWithoutSharing = new ActionPlan_FormWithoutSharing(ap.id); 
+	
+							// serialize the result
+							String jsonstring = json.serialize( apWithoutSharing );
+							system.debug( 'GOT RESULT: '  + jsonstring);
+	
+							// update the request as having been fulfilled
+							newreq.return_value__c = jsonstring;
+							newreq.fulfilled__c = true;
+							newreq.Date_Time_Fulfilled__c = DateTime.Now();
+							
+							
+					} catch ( Exception e ) {
+//							newreq.return_code__c = 'ERROR';
+							system.debug( e );
+							newreq.fulfilled__c = false;
+							newreq.return_value__c = json.serialize( e.getMessage() );
+					}
+				}
 			
 			// update the request back to the user
 			update newreq;
-		
+			}
 	}
 }

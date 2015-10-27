@@ -13,7 +13,9 @@ public without sharing class ActionPlan_FormWithoutSharing {
     public map<string, clsGoal> GETplanStuff(){return planStuff;}    
     public List<Acknowledgment__c> planAcks = new List<Acknowledgment__c>();
     public List<AckWrapper> ackwraplist { get; set;}
+    public Boolean acknowledged { get; private set;}
     public string userOpGrp {get; private set;}
+    public ID APId {get; set;}
 
     public string getAP_Child_Record(string refID){
         string myObj = '';
@@ -45,9 +47,11 @@ public without sharing class ActionPlan_FormWithoutSharing {
 				this.GoalAlias=GoalAlias;
 				this.ActionPlan=ActionPlan;
 				this.ActAlias=ActAlias;    	
+				this.APId = ActionPlan.Id;
     }
 
     public ActionPlan_FormWithoutSharing(Id actionPlanId) {
+    	this.APId = actionPlanId;
         String selects = '';
         // Get a map of field name and field token
         Map<String, Schema.SObjectField> fMap = Schema.getGlobalDescribe().get('Action_Plan__c').getDescribe().Fields.getMap();
@@ -91,11 +95,15 @@ public without sharing class ActionPlan_FormWithoutSharing {
         } 
         
         // get existing acknowledgments on the plan 
-        ackwrapList = new List<AckWrapper>(); 
-       	planAcks = [ select user__r.name, date_acknowledged__c, initials__c from acknowledgment__c where action_plan__c = :actionPlanId LIMIT 1000];
+        ackwrapList = new List<AckWrapper>();
+        acknowledged =  false;
+       	planAcks = [ select user__c, user__r.name, date_acknowledged__c, initials__c from acknowledgment__c where action_plan__c = :actionPlanId LIMIT 1000];
        	for ( Acknowledgment__c a : planAcks ) {
        		 AckWrapper aw = new AckWrapper( a.user__r.name, a.date_acknowledged__c, a.initials__c);
        		 ackwrapList.add( aw );
+       		 
+       		 if ( a.user__c == userinfo.getUserId())
+       		 	acknowledged = true;
        	}
        	
        	

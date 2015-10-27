@@ -1,4 +1,4 @@
-<apex:page title="Action Plan View" controller="TxnQueueResponseController" sidebar="false" tabStyle="Persons_Being_Served_New__tab" standardStylesheets="true">
+<apex:page title="Action Plan View" controller="TxnQueueResponseController" extensions="DSPSubmitTxn" sidebar="false" standardStylesheets="true">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -210,11 +210,24 @@ background-color: cornsilk;
     <apex:datatable value="{!response.ackwraplist}" var="ack" id="acktbl" styleclass="mytbl">
     <apex:column headervalue="Acknowledged Date">
     	<apex:outputText value=" {!ack.ackdate}"/>
-    	</apex:column>
+    </apex:column>
 	<apex:column headervalue="Acknowledged By" value="{!ack.ackby}" />
 	<apex:column headervalue="Initials" value="{!ack.ackinit}" />
     
     </apex:datatable> 
-    </apex:pageBLockSection>
+    </apex:pageBlockSection>
+    <apex:form id="theForm">
+    
+    <apex:pageBlockSection collapsible="False" columns="2" rendered="{! !response.acknowledged}">
+    <apex:pageBlockSectionItem >
+    <apex:outputLabel value="Initials" />
+    <apex:inputText id="initials" value="{!initials}"/>
+    </apex:pageBlockSectionItem>
+    
+    <apex:commandlink styleClass="btn" value="Acknowledge" action="{!ackActionPlan}">
+    	<apex:param name="ackAPid" assignTo="{!ackAPid}" value="{!response.APId}" />
+    </apex:commandlink>
+ 	</apex:pageBlockSection>
+    </apex:Form>
 </apex:pageBlock>
 </apex:page>
