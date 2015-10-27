@@ -19,7 +19,7 @@
             <field>Email__c</field>
             <type>email</type>
         </recipients>
-        <senderAddress>ezv-sandbox.test@thementornetwork.com</senderAddress>
+        <senderAddress>tmnaccess@thementornetwork.com</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
         <template>TMN_User/Non_employee_last_day_notification</template>
     </alerts>
@@ -31,7 +31,7 @@
             <field>Email__c</field>
             <type>email</type>
         </recipients>
-        <senderAddress>ezv-sandbox.test@thementornetwork.com</senderAddress>
+        <senderAddress>tmnaccess@thementornetwork.com</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
         <template>TMN_User/Non_employee_last_day_notification</template>
     </alerts>
