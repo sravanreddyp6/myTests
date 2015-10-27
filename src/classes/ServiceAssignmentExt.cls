@@ -23,8 +23,8 @@ public without sharing class ServiceAssignmentExt {
     public Boolean canEditPlan { get; private set; }
     public Boolean canCreateSummary { get; set; }
     public Boolean canEditSA { get; set; }
-    public static Boolean showdiagModal { get; set; }
-    public string diagEditId {get; set; }
+   // public static Boolean showdiagModal { get; set; }
+   // public string diagEditId {get; set; }
     public static Boolean showServAssignCloseModal { get; set; }
     public string showServAssignCloseEditId {get; set; }
     public string servAssignCloseEditId { get; set; }
@@ -242,12 +242,12 @@ public without sharing class ServiceAssignmentExt {
     private Boolean pshowDiag, pshowLocation, pshowCodes, pshowServAssignClose, pshowNurseAssessment;
     private string popGroup;
     private static Boolean psetFlags = false;
-    public Boolean showDiagnosis { get {
+   /* public Boolean showDiagnosis { get {
         if (! psetFlags ) {
             psetFlags = setShowFlags();
         }
         return pshowDiag;
-    }}
+    }}*/
     public Boolean showCodes { get {
         if (! psetFlags ) {
             psetFlags = setShowFlags();
@@ -281,7 +281,7 @@ public without sharing class ServiceAssignmentExt {
     private Boolean setShowFlags() {
         if (! psetFlags) {
 
-            pshowDiag = true;
+           // pshowDiag = true;
 
             // START: CTEAE-125 and 125; Show Service Assignment Closure on page only if Model of Service Assignment == 'FCT'
             if(theServAssign.Model__c=='FCT') pshowServAssignClose = true;
@@ -295,14 +295,14 @@ public without sharing class ServiceAssignmentExt {
                                       SELECT ID, Operating_Group__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:pbsOwner LIMIT 1
                                       ];
             if (tmnUsers.size() == 0) {
-                pshowDiag = false;
+               // pshowDiag = false;
                 pshowLocation = false;
                 psetFlags = false;
                 pshowNurseAssessment = false;
             } else {
                 pOpGroup = tmnUsers[0].Operating_Group__c;
                 // added NeuroRestorative to show diagnosis for EB-434
-                pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' || this.theServAssign.Flavor__c == 'CA FSS';
+              //  pshowDiag = pOpGroup =='Redwood' || pOpGroup =='Cambridge' || pOpGroup == 'Care Meridian' || pOpGroup == 'NeuroRestorative' || this.theServAssign.Flavor__c == 'CA FSS';
                 pshowLocation =  ( pOpGroup =='Redwood' && this.theServAssign.Flavor__c != 'CA FSS'); // CTEAE-86 && admission.State__c != 'AZ');
                 pshowCodes = ( ( pOpGroup == 'Redwood'  && admission.State__c == 'AZ' && theservassign.service_location__r.programid__c != '114165002')
                         || ( pOpGroup != 'Care Meridian'  && pOpGroup != 'Redwood') || this.theServAssign.Flavor__c == 'CA FSS');
@@ -317,7 +317,7 @@ public without sharing class ServiceAssignmentExt {
         // empty for action support
     }
 
-    public list<Diagnosis__c> diagnoses{get; set;}
+   /* public list<Diagnosis__c> diagnoses{get; set;}
 
     public Diagnosis__c diag {
         get {
@@ -326,7 +326,7 @@ public without sharing class ServiceAssignmentExt {
             return diag;
         }
         set;
-    }
+    }*/
     
     public list<ServiceAssignment_Diagnosis_JO__c> sadiagJOList {get; set;}
     public ServiceAssignment_Diagnosis_JO__c sadiagJO {
@@ -383,7 +383,7 @@ public without sharing class ServiceAssignmentExt {
   		this.sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
   }
 
-    public Boolean newDiagnosis{ get; set;}
+ /*   public Boolean newDiagnosis{ get; set;}
     public void showAddDiagnosis() {
         newDiagnosis = true;
         showdiagModal = true;
@@ -444,7 +444,7 @@ public without sharing class ServiceAssignmentExt {
             upsert diagnoses;
         }
 
-    }
+    } */
 
     public list<Funding_Source__c> referralFundingsources {get { return [select id, CreatedDate, name, funding_source__c,Type_of_Coverage__c, Payer_Name__c, recordtype.name, service_being_funded__c, Effective_Date__c,Termination_Date__c,Status__c,Comment__c from funding_source__C where service_Assignment__C = null and Referral__c = :referral.id];} set;}
     
@@ -502,7 +502,7 @@ public without sharing class ServiceAssignmentExt {
             theServAssign.Person_Being_Served__c = admission.Person_Being_Served__c;
             theServAssign.Phase__c = 0;
 	    	theServAssign.Flavor__c = admission.person_being_served__r.Flavor__c;
-            diagnoses = new List<Diagnosis__c>();
+           // diagnoses = new List<Diagnosis__c>();
             recordType = ApexPages.currentPage().getParameters().get('recordType');
             theRecordType = new RecordType();
             theRecordType = [ SELECT Id, Name, DeveloperName FROM RecordType WHERE Name = :recordType LIMIT 1 ];
@@ -1026,7 +1026,7 @@ public without sharing class ServiceAssignmentExt {
                               and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
             }
             notes = [select name, id, Start_Time__c, End_time__c, createddate, clinician__c, createdby.name, action_plan__r.Name, Action_plan__c from Progress_Note__c where Service_Assignment__c = :currentID Order by CreatedDate DESC Limit 10];
-            diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
+            //diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
         }
         if ( currentrecord.Service_Location__c != null) {
             serviceLocation = [ select ID, Name, Service_Value__c, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c,Room_and_Board_Rate__c, PRN_DS_Per_Hour__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
@@ -1502,8 +1502,8 @@ public without sharing class ServiceAssignmentExt {
 
                 upsert s;
 
-                if ( showDiagnosis )
-                    createDiagnoses();
+              /*  if ( showDiagnosis )
+                    createDiagnoses();*/
                 if (!showLocation) {
                     saveContractSelections();
                 }
