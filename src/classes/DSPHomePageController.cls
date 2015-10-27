@@ -86,7 +86,30 @@ public with sharing class DSPHomePageController {
 			return null;
 		}
 		
-		
 	}
+	
+    public pageReference viewPersonBeingServed() {
+        // get the current PBS ID
+        // submit a transaction queue request to get the Person being served
+        // redirect to the PBS page with the transaction queue id
+        Transaction_Queue__c txn  = new Transaction_Queue__c( requesting_user__c = UserInfo.getUserId());
+        txn.request_type__c = 'Person Being Served';
+        txn.requested_date_time__c = DateTime.Now();
+        txn.input_params__c = pbsID;
+        
+        try { 
+            insert txn;
+            PageReference pr =  Page.DSPPersonBeingServedView;
+            pr.getParameters().put('txnID', txn.ID);
+            pr.setRedirect(true);
+            return pr;
+        }
+        catch (Exception e) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+            return null;
+        }
+   
+    }
+	
 	
 }

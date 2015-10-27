@@ -1,0 +1,384 @@
+<apex:page title="Person Being Served View" controller="TxnQueueResponseController" sidebar="false" tabStyle="Persons_Being_Served_New__tab" standardStylesheets="true">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    
+    <apex:variable value="{!pbsViewResponse.contact}" var="contactObj" />
+    <script language="javascript">
+        function setFocusOnLoad() {}
+        var inputsDisabled = []; // global variable to hold the list of inputs disabled unsing below script. These needs to be enabled before submit or else they dont get submitted.
+        jQuery(document).ready(function($) {
+            setUpFields = function() {
+                $('body input').on("change", function(event) {
+                    applyRulesToField(event.target);
+                });
+                $('body select').on("change", function(event) {
+                    applyRulesToField(event.target);
+                });
+                $('body input').each(function(_, target) {
+                    applyRulesToField(target);
+                });
+                $('body select').each(function(_, target) {
+                    applyRulesToField(target);
+                });
+            }
+            setUpFields();
+            setUpTabOrder();
+
+            // this is to remove the disabled property from
+            $('form').bind('submit', function() {
+                $.each(inputsDisabled, function(_, $inDis) {
+                    $inDis.prop("disabled", false);
+                })
+            });
+
+        }); //end "ready" function
+
+        j$ = jQuery.noConflict();
+
+        //PRI-PRI-162
+        function setUpTabOrder(){
+            console.log('start tab order');
+              j$('.setMailStateTab').focus(
+                  function(){
+                      j$('select[id$=MailingStateCode ]').attr("tabindex", 100);
+                      console.log(j$(this).attr("tabindex"));
+                  }
+              );        
+              j$('.setOtherStateTab').focus(
+                  function(){
+                      j$('select[id$=OtherStateCode ]').attr("tabindex", 120);
+                      console.log(j$(this).attr("tabindex"));
+                  }
+              );             
+              j$('.setFamMilInvBranchTab').focusout(
+                  function(){
+                      j$('select[id$=FamMilInvBranch ]').focus();
+                      j$('select[id$=FamMilInvBranch ]').attr("tabindex", 310);
+                      console.log(j$(this).attr("tabindex"));
+                  }
+              );                 
+            var tabindex = 20000;
+              j$('body :input').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                   if( $input.attr("tabindex") == ''){
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+                   }
+                 }
+              });    
+              tabindex = 1000;    
+              j$('#theWholeForm :input').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                   if( $input.attr("tabindex") == 20000){
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+    
+                   }
+                 }
+              });  
+              tabindex = 2000;    
+              j$('.btn').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+    
+                 }
+              });     
+              tabindex = 50;    
+              j$('.fundingInfo').each(function() {
+                 if (this.type != "hidden") {
+                   var $input = j$(this);
+                       $input.attr("tabindex", tabindex);
+                       //console.log($input);
+    
+                 }
+              });    
+              j$('[id$=MailingStateCode] :input').each(function() {
+                j$(this).change(
+                    function(){
+                      j$(this).attr("tabindex", 100);
+                      console.log(j$(this).attr("tabindex"));                    
+                    }
+                );
+              });        
+              j$('select[id$=MailingStateCode ]').attr("tabindex", 100);
+                  console.log(j$('select[id$=MailingStateCode ]').attr("tabindex"));
+              j$('select[id$=OtherStateCode ]').attr("tabindex", 120);
+              j$('select[id$=FamMilInvBranch ]').attr("tabindex", 310);
+                   console.log('end tab order');    
+        }
+              
+        //disable enter key
+        function stopRKey(evt) {
+            var evt = (evt) ? evt : ((event) ? event : null);
+            var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+            if ((evt.keyCode == 13) && (node.type == "text")) {
+                return false;
+            }
+        }
+    </script>
+<!--     <c:PersonalRecord pbsId="{!PBSId}" parentPage="PBS" /> -->
+    <br />
+    <div id="theWholeForm">
+    <apex:form id="FormId">
+        <apex:pageMessages />
+
+        <!--Person Being Served Section-->
+        <apex:pageBlock id="PBSDetailID" title="Person Being Served">            
+            <apex:pageBlockSection title="Person Being Served" showHeader="false" columns="2" collapsible="false" id="pbsOutPutsectionId">
+                <!--  view -->
+                <apex:outputField value="{!contactObj.FirstName}" />
+                <apex:outputField value="{!contactObj.Race__c }" />
+                <apex:outputField value="{!contactObj.Middle_Name__c}" />
+                <apex:outputField value="{!contactObj.Ethnicity_Picklist__c}" />
+                <apex:outputField value="{!contactObj.LastName}" />
+                <apex:outputField value="{!contactObj.Marital_Status__c}" />
+                <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Date of Birth" for="txtDOB" />
+                          <apex:outputPanel layout="block" >
+                           <apex:outputPanel layout="block" />
+                             <apex:outputField id="txtDOB"  value="{!contactObj.Birthdate}"/>
+                             </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="Primary Language" />
+                    <apex:outputPanel styleClass="nowrap">
+                        <apex:outputField value="{!contactObj.Primary_Language__c}" /> &nbsp;&nbsp;
+                        <apex:outputLabel value="Non-Verbal" />&nbsp;
+                        <apex:outputField value="{!contactObj.Non_Verbal__c}"  />&nbsp;
+                        <apex:outputLabel value="Sign Language" />&nbsp;
+                        <apex:outputField value="{!contactObj.Sign_Language__c}"  />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+                
+                <apex:outputField value="{!contactObj.Age__c}" />
+                <apex:outputField value="{!contactObj.Level_of_Education__c}" />
+                <apex:outputField value="{!contactObj.Gender__c}" />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection_view">
+                <apex:outputField value="{!contactObj.Medicaid_ID__c }" />
+                <apex:outputField value="{!contactObj.Other_ID__c }" />
+                <apex:outputField value="{!contactObj.Avatar_ID__c }" />
+                <apex:outputField value="{!contactObj.Other_ID_Description__c }" />
+                <apex:outputField value="{!contactObj.Avatar_Source_System__c }" />
+                <apex:outputField value="{!contactObj.UCI_ID__c }" rendered="{! contactObj.MailingStateCode == 'CA' && !pbsViewResponse.isCAFSS}"/>
+            </apex:pageBlockSection>            
+
+            <!--Contact Information Section-->
+            <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputContactInfo">              
+                <!-- view -->
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mailing Street 1" for="Ma" />
+                    <apex:outputField id="ma"  value="{!contactObj.MailingStreet}" label="Mailing Street 1" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Other Street 1" for="os" />
+                    <apex:outputField id="os"  value="{!contactObj.OtherStreet}" label="Other Street 1" />
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!contactObj.Mailing_Street_2__c}" />
+                <apex:outputField value="{!contactObj.Other_Street_2__c}" />
+                <apex:outputField value="{!contactObj.MailingCity}" />
+                <apex:outputField value="{!contactObj.OtherCity}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mailing Country" for="os" />
+                    <apex:outputField styleClass="setMailStateTab" value="{!contactObj.MailingCountryCode}" label="Mailing Country" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Other Country" for="os" />
+                    <apex:outputField styleclass="setOtherStateTab"  value="{!contactObj.OtherCountryCode}" label="Other Country" />
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mailing State/Province" for="os" />
+                    <apex:outputPanel >
+                        <apex:outputField id="MailingStateCode"  html-class="testingTabs"  value="{!contactObj.MailingStateCode}" label="Mailing State/Province" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Other State/Province" for="os" />
+                    <apex:outputField id="OtherStateCode"  value="{!contactObj.OtherStateCode}" label="Other State/Province" />
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!contactObj.MailingPostalCode}"  styleClass="setMailStateTab"  />
+                <apex:outputField styleclass="setOtherStateTab"     value="{!contactObj.OtherPostalCode}" />
+                <apex:outputField value="{!contactObj.Mailing_County__c}" />
+                <apex:outputField value="{!contactObj.Other_County__c}"  />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Home Phone" for="phone"/>
+                    <apex:outputField value="{!contactObj.Phone}" id="phone"/>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!contactObj.OtherPhone}" />
+                <apex:outputField value="{!contactObj.Email}" />
+                <apex:outputField value="{!contactObj.Other_Contact_Information__c}" />
+            </apex:pageBlockSection>
+
+
+            <!--Additional Information Section-->
+
+            <a name="AI" id="AI" />
+            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo_view">
+                <apex:outputField value="{!contactObj.Family_Member_Other__c}" />
+                <apex:outputField value="{!contactObj.Legal_Guardianship_Status__c}" />
+                
+                <apex:outputField value="{!contactObj.VIP_Indicator__c}" />
+                <apex:outputField value="{!contactObj.Current_Medications__c}" rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Current_Medications__c')}" />
+                <apex:pageBlockSectionItem rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Current_Medications__c')}" /> 
+                
+                <apex:pageBlockSectionItem rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Advanced_Directives__c')}" />
+                <apex:outputField value="{!contactObj.Advanced_Directives__c}" rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}" />                
+                <apex:outputField value="{!contactObj.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Code_Status__c')}" />                
+                
+                <apex:outputField value="{!contactObj.Advanced_Directives_Attached__c}" rendered="{!  !Contains(pbsViewResponse.dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />                
+                <apex:outputField value="{!contactObj.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Code_Status_Other__c')}" />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
+                <apex:pageBlockSectionItem />    
+                <apex:pageBlockSectionItem />    
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Created By" />
+                    <apex:outputPanel layout="none">
+                        <apex:outputField value="{!contactObj.CreatedById}" />,&nbsp;
+                        <apex:outputText value=" {!contactObj.CreatedDate}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Modified By" />
+                    <apex:outputPanel layout="none">
+                        <apex:outputField value="{!contactObj.LastModifiedById}" />,&nbsp;
+                        <apex:outputText value=" {!contactObj.LastModifiedDate}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Owner" />
+                    <apex:outputPanel layout="none">
+                        <apex:outputField value="{!contactObj.OwnerId}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+            
+            <!--Family Information Section-->
+            <apex:pageBlockSection columns="2"  title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo" >
+                <apex:outputfield value="{!contactObj.Family_Annual_Income__c}" />
+                <apex:outputfield value="{!contactObj.Family_Military_Involvement__c}" />
+                <apex:outputfield value="{!contactObj.Family_Native_American_Ancestry__c}" />
+                <apex:outputfield value="{!contactObj.Family_Military_Involvement_Branch__c}" rendered="{! contactObj.Family_Military_Involvement__c != 'None'}" />
+                <apex:outputfield value="{!contactObj.Family_Native_American_Tribe__c}" rendered="{! contactObj.Family_Native_American_Ancestry__c}" />
+                <apex:outputfield value="{!contactObj.Family_Prior_Military_Involvement_Date__c}" rendered="{! contactObj.Family_Military_Involvement__c = 'Prior'}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+
+        <!--Related Parties Section-->
+        <a name="RP" id="RP"></a>
+        <apex:pageBlock id="relatedPartiesListId">
+            <apex:pageBlockSection columns="1" title="Related Parties" id="relatedParties" collapsible="false">
+                <apex:pageBlockTable value="{!pbsViewResponse.relParties}" var="relParty">
+                    <apex:column value="{!relParty.Type__c}" />
+                    <apex:column value="{!relParty.Name}" />
+                    <apex:column value="{!relParty.Address__c}" />
+                    <apex:column value="{!relParty.Email__c}" />
+                    <apex:column value="{!relParty.Phone__c}" />
+                    <apex:column value="{!relParty.Phone_1_Type__c}" />
+                    <apex:column value="{!relParty.Phone_2__c}" />
+                    <apex:column value="{!relParty.Phone_2_Type__c}" />
+                    <apex:column value="{!relParty.Status__c}" />
+                    <apex:column value="{!relParty.Comments__c}" />
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+
+        <!--Agencies Related to Person Section-->
+        <a name="Agency" id="Agency"></a>
+        <apex:pageBlock id="relatedAgenciesId" rendered="{!pbsViewResponse.showDiagnosis}">
+            <apex:pageBlockSection columns="1" title="Agencies Involved With Individual" id="relatedAgencies" collapsible="false">
+                <apex:pageBlockSectionItem >
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockTable value="{!pbsViewResponse.relAgencies}" var="relAgency">
+                    <apex:column value="{!relAgency.Name}" />
+                    <apex:column value="{!relAgency.Address__c}" />
+                    <apex:column value="{!relAgency.Phone__c}" />
+                    <apex:column value="{!relAgency.Reason_for_Involvement__c}" />
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+
+        <!--Diagnosis Section -->
+        <a name="Diag" id="Diag" />
+        <apex:pageBlock id="Diagnosis" rendered="{!pbsViewResponse.showDiagnosis && contactObj.MailingState != 'Arizona'}">
+            <apex:pageBlockSection title="Diagnosis" showHeader="true" columns="1" collapsible="false">
+                <apex:pageblockTable value="{!pbsViewResponse.diagnosis}" var="diag" rendered="{!(pbsViewResponse.diagnosis.size>0)}">
+                    <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}" />
+                    <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a>
+                    </apex:column>
+                    <apex:column value="{!diag.Primary_Diagnosis__c}" headerValue="Primary" />
+                    <apex:column value="{!diag.Secondary_Diagnosis__c}" headerValue="Secondary" />
+                    <apex:column value="{!diag.Axis_I__c}" headerValue="Axis I" />
+                    <apex:column value="{!diag.Axis_II__c}" headerValue="Axis II" />
+                    <apex:column value="{!diag.Axis_III__c}" headerValue="Axis III" />
+                    <apex:column value="{!diag.Axis_IV__c}" headerValue="Axis IV" />
+                    <apex:column value="{!diag.Axis_V__c}" headerValue="Axis V" />
+                    <apex:column value="{!diag.Comments__c}" headerValue="Comments" />
+                </apex:pageblockTable>
+                <apex:outputText value="No diagnoses to display" rendered="{!(pbsViewResponse.diagnosis.size=0)}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+
+        <!--Admissions Section-->
+<!--         <a name="Adm" id="Adm"></a> -->
+<!--         <apex:pageBlock id="AdmissionListId"> -->
+<!--             <apex:pageBlockSection title="Admissions" showHeader="true" columns="1" collapsible="false"> -->
+<!--                 <apex:pageblockTable value="{!pbsViewResponse.admissions}" var="admsns" id="adminsId" rendered="{!(pbsViewResponse.admissions.size>0)}"> -->
+<!--                     <apex:column headerValue="Action"> -->
+<!--                         <a href="/apex/AdmissionEdit?id={!admsns.ID}">Edit</a> -->
+<!--                     </apex:column> -->
+<!--                     <apex:column headerValue="Admission Name"><a href="/apex/AdmissionView?id={!admsns.ID}">{!admsns.Name}</a> -->
+<!--                     </apex:column> -->
+<!--                     <apex:column headerValue="Effective Date"> -->
+<!--                         <c:MilitaryDatetime dateTimeVal="{!admsns.Admission_Effective_DateTime__c}" />            -->
+<!--                     </apex:column> -->
+<!--                     <apex:column value="{!admsns.Discharged_Date__c}" headerValue="Discharge Date" /> -->
+<!--                     <apex:column value="{!admsns.Status__c}" headerValue="Status" /> -->
+<!--                 </apex:pageblockTable> -->
+<!--                 <apex:outputText value="No admissions to display" rendered="{!(pbsViewResponse.admissions.size=0)}" /> -->
+<!--             </apex:pageBlockSection> -->
+<!--         </apex:pageBlock> -->
+        
+        <a id="allergy">
+            <apex:pageBlock >
+                <c:EvaluationResponseTable pbsParentId="{!pbsViewResponse.PBSId}" type="Allergy" formId="{!$Component.FormID}" uniqueId="allergy" />
+            </apex:pageBlock>
+        </a>
+
+        </apex:form>
+        </div>   
+<!--         <c:SObjectNotesAndAttachments parentId="{!contactObj.id}" showAction="true" parentPage="PBS"></c:SObjectNotesAndAttachments>  -->
+    
+        <apex:pageBlock >
+            <!--PersonBeing Served History Section-->
+            <apex:pageBlockSection title="Person Being Served History" showHeader="true" columns="1" collapsible="false">
+                <apex:outputText />
+                <apex:pageBlockTable value="{!pbsViewResponse.personHistory}" var="PBSHistory" rendered="{!(pbsViewResponse.personHistory.size>0)}">
+                    <apex:column headerValue="Date" value=" {!PBSHistory.createddate}" />
+                    <apex:column headerValue="User" value="{!PBSHistory.CreatedBy.Name}" />
+                    <apex:column headerValue="Action">
+                        <apex:outputPanel rendered="{! PBSHistory.field != ''}">
+                            <apex:outputText rendered="{!(PBSHistory.field!='created')}">Changed <b>{!pbsViewResponse.fieldMap[Lower(PBSHistory.field)]}</b> from <b>{!PBSHistory.oldvalue}</b> to <b>{!PBSHistory.newvalue}</b>
+                            </apex:outputText>
+                            <apex:outputText rendered="{!(PBSHistory.field='created')}">Created.</apex:outputText>
+                        </apex:outputPanel>                  
+                    </apex:column>
+                </apex:pageBlockTable>
+                <apex:outputText value="No Recent History to display" rendered="{!(pbsViewResponse.personHistory.size=0)}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+</apex:page>
