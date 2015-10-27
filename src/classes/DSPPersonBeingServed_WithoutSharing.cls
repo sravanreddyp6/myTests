@@ -72,11 +72,6 @@ public boolean isCAFSS{get; set;}
     return true;
     }
     
-    public DSPPersonBeingServed_WithoutSharing(TMN_User__c TMNUser, Boolean showDiagnosis){
-    	this.TMNUser = TMNUser;
-    	this.showDiagnosis = showDiagnosis;
-    }
-    
     public DSPPersonBeingServed_WithoutSharing(Id pbsId) {
         this.PBSId=pbsId;
         String selects = '';
