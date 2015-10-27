@@ -364,31 +364,45 @@ public with sharing class Report_PBS_Intake_Output {
 
 		public void generateLineItems() {
 			for (FluidIntakeLineItem item: this.fluidIntakeLineItemMap.values()) {
-				System.debug(item);
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
 				this.observedDateMap.get(item.observedDateTime.date()).fluidIntakeLineItems.add(item);
 			}
 			for (LiquidIntakeLineItem item: this.liquidIntakeLineItemMap.values()) {
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
 				this.observedDateMap.get(item.observedDateTime.date()).liquidIntakeLineItems.add(item);
 			}
 			for (outputLineItem item: this.outputLineItemMap.values()) {
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
 				this.observedDateMap.get(item.observedDateTime.date()).outputLineItems.add(item);
 			}
 			for (bladderOutputLineItem item: this.bladderOutputLineItemMap.values()) {
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
 				this.observedDateMap.get(item.observedDateTime.date()).bladderOutputLineItems.add(item);
 			}
 			for (bmCharacteristicsLineItem item: this.bmCharacteristicsLineItemMap.values()) {
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
