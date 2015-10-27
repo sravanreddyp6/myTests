@@ -1907,6 +1907,277 @@
                 <apex:inputField value="{!Referral__c.Goals_from_the_Referral_Source__c}" />
             </apex:pageBlockSection>
             <!-- END: CTEAE-106, MA Referral Flavor Fields -->
+            
+            <!-- Diagnosis Old Code, Commented some fields, moving to refferal detail section Start-->
+            <apex:pageBlockSection showHeader="false" title="Diagnosis Information" columns="2" collapsible="false" id="ReferralDetail"> 
+                
+                <!--<apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" /> -->
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
+                <apex:outputText label="Brain Injury Detail" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
+                
+                <!-- <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_I__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" /> -->
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian', referralRecordType != 'NeuroRestorative')}" />
+                <!-- <apex:inputField id="diagIdrop" value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" onchange="enableDiagEff();" /> -->
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
+                <apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                <apex:outputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" /> 
+                
+                <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_II__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" /> -->
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}" />
+                <!--<apex:inputField id="diageffdate" value="{!Referral__c.Diagnosis_Effective_Date__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" html-disabled="true" />-->
+                
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
+                <apex:inputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
+                
+                <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_III__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />-->
+                
+                <apex:pageBlocksectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+                    <apex:outputLabel value="Cause of Injury" for="causepick" />
+                    <apex:outputPanel >
+                        <apex:actionRegion >
+                            <apex:inputField id="causepick" value="{!Referral__c.Cause_of_Injury_pick__c}" label="Cause of Injury">
+                                <apex:actionSupport rerender="othercause" event="onchange" />
+                            </apex:inputField>
+                        </apex:actionRegion>
+                        <apex:outputPanel id="othercause">
+                            <apex:outputLabel value="Specify Other" rendered="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" for="txtothercause" />
+                            <apex:inputField id="txtothercause" value="{!Referral__c.Cause_of_Injury_Other__c}" rendered="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" required="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" label="Specify Other" />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageBlocksectionItem>
+                
+                <!--<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+				<apex:outputPanel id="encephaloPanel">
+                <apex:outputLabel for="typeofEncephalopathy" value="Type of Encephalopathy" styleclass="labelCol" style="margin-left: 10%;" />
+                <apex:inputField value="{!Referral__c.Type_of_Encephalopathy__c}" id="typeofEncephalopathy" />
+                </apex:outputPanel>
+				</apex:pageBlockSectionItem> -->
+                
+                <!--<apex:pageBlockSectionItem rendered="{!referralRecordtype == 'NeuroRestorative'}" /> -->
+                <!-- <apex:inputField Value="{!Referral__c.Diagnosis_II__c}" label="Secondary Diagnosis" rendered="{!referralRecordtype == 'NeuroRestorative'}" /> -->
+                
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian',referralRecordType!='NeuroRestorative')}" />
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}">
+                    <apex:outputText value="Current Location" />
+                    <apex:outputPanel >
+                        <input id="MN_usePermanent" type="checkbox" value="1" onchange="copyPermanent(this);" />&nbsp;Same as Permanent
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_IV__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" /> -->
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
+                    <apex:outputText value="Current Location" />
+                    <apex:outputPanel >
+                        
+                        <input name="which_address" id="NR_usePermanent" type="radio" value="1" onchange="copyPermanentNeuro(this);" />&nbsp;
+                        <apex:outputLabel for="NR_usePermanent">Same as Facility</apex:outputLabel>
+                        <br />
+                        <input name="which_address" id="NR_useContact" type="radio" value="1" onchange="copyPermanent(this);" />&nbsp;
+                        <apex:outputLabel for="NR_usePermanent2">Same as Permanent</apex:outputLabel>
+                        
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <!--<apex:inputField value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!referralRecordtype == 'NeuroRestorative'}" />-->
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian', ReferralRecordType != 'NeuroRestorative')}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                <apex:inputField value="{!Referral__c.New_Address_Location__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                
+                <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                
+                <apex:inputField value="{!Referral__c.Current_Location_Name__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                
+                <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street1" />
+                
+                <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />-->
+                
+                <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" id="Neuro_Street1" />
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota')}" />
+                <apex:inputField value="{!Referral__c.Street_2__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street2" />
+                
+                <!--<apex:inputField value="{!Referral__c.Diagnosis_Date__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
+				<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
+
+				<apex:inputField value="{!Referral__c.Diagnosis_I__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
+				<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
+
+
+				<apex:inputField value="{!Referral__c.Diagnosis_II__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
+				<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
+
+				<apex:inputField value="{!Referral__c.Diagnosis_III__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
+				<apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" /> -->
+                
+                <apex:inputField value="{!Referral__c.Vision__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
+                
+                <apex:inputField value="{!Referral__c.Hearing__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
+                
+                <apex:inputField value="{!Referral__c.Seizures__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
+                
+                <apex:inputField value="{!Referral__c.Other__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
+                
+                <apex:inputTextarea value="{!Referral__c.Communication_Summary__c}" cols="50" rows="3" rendered="{!ReferralRecordType == 'Illinois' || ReferralRecordType == 'Cambridge Florida' ||
+                                                                                                                 ReferralRecordType = 'Cambridge Massachusetts' ||
+                                                                                                                 ReferralRecordType = 'Cambridge Maryland' ||
+                                                                                                                 ReferralRecordType = 'Cambridge Indiana' ||
+                                                                                                                 ReferralRecordType = 'Cambridge North Carolina' ||
+                                                                                                                 ReferralRecordType = 'Cambridge Ohio' ||
+                                                                                                                 ReferralRecordType == 'CA FSS'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge || ReferralRecordType == 'CA FSS'}" />
+                
+                <apex:inputTextarea value="{!Referral__c.ADL_Summary__c}" cols="50" rows="3" rendered="{!ReferralRecordType == 'Illinois' || ReferralRecordType == 'Cambridge Florida' ||
+                                                                                                       ReferralRecordType = 'Cambridge Massachusetts' ||
+                                                                                                       ReferralRecordType = 'Cambridge Maryland' ||
+                                                                                                       ReferralRecordType = 'Cambridge Indiana' ||
+                                                                                                       ReferralRecordType = 'Cambridge North Carolina' ||
+                                                                                                       ReferralRecordType = 'Cambridge Ohio' ||
+                                                                                                       ReferralRecordType == 'CA FSS'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge || ReferralRecordType == 'CA FSS'}" />
+                
+                <apex:inputField value="{!Referral__c.Behavior_Summary__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
+                
+                <apex:inputTextarea value="{!Referral__c.Current_Medications__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
+                
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                <apex:inputField value="{!Referral__c.Street_2__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" id="Neuro_Street2" />
+                <apex:pageBlockSection rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}">
+                    <apex:outputText value="City" />
+                    <apex:outputPanel styleClass="nowrap">
+                        <apex:inputText value="{!Referral__c.City__c}" id="MN_City" />&nbsp;
+                        <apex:outputLabel value="State" />&nbsp;
+                        <apex:inputField value="{!Referral__c.State__c}" id="MN_State" />&nbsp;
+                        <apex:outputLabel value="Zip" />&nbsp;
+                        <apex:inputText value="{!Referral__c.Zip_Code__c}" style="width: 42px;" id="MN_Zip" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                <apex:inputField value="{!Referral__c.Phone__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" id="MN_Phone" />
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                <apex:inputField value="{!Referral__c.Email_Address__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" id="MN_Email" />
+                
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                <apex:inputField value="{!Referral__c.Fax__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" id="MN_Fax" />
+                
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                <apex:inputField value="{!Referral__c.Estimated_Discharge_Date__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                <apex:inputField value="{!Referral__c.Referring_Physician__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                
+                
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <apex:inputField value="{!Referral__c.Previous_Brain_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
+                    <apex:actionSupport event="onchange" reRender="ReferralDetail" />
+                </apex:inputField>
+                
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}" />
+                <apex:inputField value="{!Referral__c.Type_of_Injury_Previous__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}" />
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}" />
+                <apex:inputField value="{!Referral__c.Cause_Of_Injury_Previous__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}" />
+                
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <apex:inputField value="{!Referral__c.Did_Alcohol_Contribute_to_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
+                    <apex:actionSupport event="onchange" reRender="ReferralDetail" />
+                </apex:inputField>
+                
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}" />
+                <apex:inputField value="{!Referral__c.Level_At_Time_of_Injury__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}" />
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}" />
+                <apex:inputField value="{!Referral__c.Current_Alcohol_Use__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}" />
+                
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <apex:inputField value="{!Referral__c.Did_Drug_Use_Contribute_to_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
+                    <apex:actionSupport event="onchange" reRender="ReferralDetail" />
+                </apex:inputField>
+                
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}" />
+                <apex:inputField value="{!Referral__c.Current_Drug_Use__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}" />
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}" />
+                <apex:inputField value="{!Referral__c.Litigation__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}" />
+                
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <apex:inputField value="{!Referral__c.Military_Service_Related_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
+                    <apex:actionSupport event="onchange" reRender="ReferralDetail" />
+                </apex:inputField>
+                
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
+                <apex:inputField value="{!Referral__c.Military_Status__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
+                <apex:inputField value="{!Referral__c.Branch_of_Service__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
+                <apex:inputField value="{!Referral__c.Years_of_Service__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
+                
+                
+                
+                
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <!-- Commented by Sravan For Ticket ERNS-22 07/02/2014 1:11 PM -->
+                <!--  apex:inputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+                <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+                <!--  apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+                <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
+                <apex:inputField value="{!Referral__c.Glasgow_Coma_Scale__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <apex:inputField value="{!Referral__c.Duration_of_Unconsciousness__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                <apex:inputField value="{!Referral__c.Reported_By__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
+                
+                <!--Flavor Specific fields-->
+                
+                <!--<apex:inputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!referralRecordType=='Wisconsin'}" />
+				<apex:outputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!referralRecordType=='CareMeridian'}" /> 
+				<apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}" />
+
+				<apex:inputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='Wisconsin')}" />
+				<apex:outputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!referralRecordType=='CareMeridian'}" />
+				<apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}" /> -->
+                
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'California'}" />
+                <apex:inputField value="{!Referral__c.Level_of_Disability__c}" rendered="{!ReferralRecordType == 'California'}" />
+                
+                <apex:inputField value="{!Referral__c.Health_and_Safety_Needs__c}" rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}" />
+                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}" />
+                <apex:inputField value="{!Referral__c.Anticipated_Job_Accomodations__c}" rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}" />
+                
+                <apex:inputField value="{!Referral__c.Residential_Support_Rate_Established__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
+                
+                <apex:inputField value="{!Referral__c.Residential_Support_Rate__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
+                
+                <apex:inputField label="Patient's Current Location (if other than Home)" value="{!Referral__c.Current_Location__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
+                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
+                
+            </apex:pageBlockSection>
+            <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralServices">
+                <apex:inputField value="{!Referral__c.Program_Category__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <br />
+                <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <br />
+                <apex:inputField id="servicesRequested" value="{!Referral__c.Services_Requested__c}" Rendered="{!referralRecordType!='CareMeridian'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Family_History__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Medical_History__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Behavior_Summary__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Current_Medications__c}" rendered="{!(isCambridge || ReferralRecordType == 'CA FSS') && !isLinkedPersonBeingServed}" />
+                <apex:outputField value="{!personBeingServedRecord.Current_Medications__c}" rendered="{!(isCambridge || ReferralRecordType == 'CA FSS') && isLinkedPersonBeingServed}" />
+                <apex:inputField value="{!Referral__c.Prior_Program_Information__c}" style="width: 90%;" Rendered="{!referralRecordType!='CareMeridian'}" />
+                <apex:inputField value="{!Referral__c.Comments__c}" style="width: 90%;" />
+            </apex:pageBlockSection>
+            
+            <!-- Diagnosis Old Code, Commented some fields, moving to refferal detail section End-->
 
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralDetail_1">
                 <apex:inputField value="{!Referral__c.Reason_for_Referral__c}" style="width: 90%;" />
@@ -2314,272 +2585,6 @@
             <!--- end -->
                         
 
-            <!-- Diagnosis Old Code, Commented some fields -->
-            <apex:pageBlockSection showHeader="false" title="Diagnosis Information" columns="2" collapsible="false" id="ReferralDetail"> 
-                      
-                <apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" /> 
-                <apex:outputText label="Brain Injury Detail" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
-
-               <!-- <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_I__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" /> -->
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian', referralRecordType != 'NeuroRestorative')}" />
-               <!-- <apex:inputField id="diagIdrop" value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" onchange="enableDiagEff();" /> -->
-                <apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-                <apex:outputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" /> 
-
-                <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_II__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" /> -->
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}" />
-                <!--<apex:inputField id="diageffdate" value="{!Referral__c.Diagnosis_Effective_Date__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" html-disabled="true" />-->
-
-
-                <apex:inputField value="{!Referral__c.Cause_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
-
-                <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_III__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />-->
-
-                <apex:pageBlocksectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
-                    <apex:outputLabel value="Cause of Injury" for="causepick" />
-                    <apex:outputPanel >
-                        <apex:actionRegion >
-                            <apex:inputField id="causepick" value="{!Referral__c.Cause_of_Injury_pick__c}" label="Cause of Injury">
-                                <apex:actionSupport rerender="othercause" event="onchange" />
-                            </apex:inputField>
-                        </apex:actionRegion>
-                        <apex:outputPanel id="othercause">
-                            <apex:outputLabel value="Specify Other" rendered="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" for="txtothercause" />
-                            <apex:inputField id="txtothercause" value="{!Referral__c.Cause_of_Injury_Other__c}" rendered="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" required="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" label="Specify Other" />
-                        </apex:outputPanel>
-                    </apex:outputPanel>
-                </apex:pageBlocksectionItem>
-
-               <!-- <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
-                    <apex:outputPanel id="encephaloPanel">
-                        <apex:outputLabel for="typeofEncephalopathy" value="Type of Encephalopathy" styleclass="labelCol" style="margin-left: 10%;" />
-                        <apex:inputField value="{!Referral__c.Type_of_Encephalopathy__c}" id="typeofEncephalopathy" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem> -->
-
-                <apex:pageBlockSectionItem rendered="{!referralRecordtype == 'NeuroRestorative'}" />
-               <!-- <apex:inputField Value="{!Referral__c.Diagnosis_II__c}" label="Secondary Diagnosis" rendered="{!referralRecordtype == 'NeuroRestorative'}" /> -->
-
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian',referralRecordType!='NeuroRestorative')}" />
-
-                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}">
-                    <apex:outputText value="Current Location" />
-                    <apex:outputPanel >
-                        <input id="MN_usePermanent" type="checkbox" value="1" onchange="copyPermanent(this);" />&nbsp;Same as Permanent
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-
-                <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_IV__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" /> -->
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}">
-                    <apex:outputText value="Current Location" />
-                    <apex:outputPanel >
-
-                        <input name="which_address" id="NR_usePermanent" type="radio" value="1" onchange="copyPermanentNeuro(this);" />&nbsp;
-                        <apex:outputLabel for="NR_usePermanent">Same as Facility</apex:outputLabel>
-                        <br />
-                        <input name="which_address" id="NR_useContact" type="radio" value="1" onchange="copyPermanent(this);" />&nbsp;
-                        <apex:outputLabel for="NR_usePermanent2">Same as Permanent</apex:outputLabel>
-
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                <!--<apex:inputField value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!referralRecordtype == 'NeuroRestorative'}" />-->
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota', ReferralRecordType != 'CareMeridian', ReferralRecordType != 'NeuroRestorative')}" />
-
-                <apex:inputField value="{!Referral__c.New_Address_Location__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-
-                <apex:inputField value="{!Referral__c.Current_Location_Type__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-
-                <apex:inputField value="{!Referral__c.Current_Location_Name__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
-
-                <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street1" />
-
-                <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />-->
-
-                <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" id="Neuro_Street1" />
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota')}" />
-                <apex:inputField value="{!Referral__c.Street_2__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street2" />
-
-                <!--<apex:inputField value="{!Referral__c.Diagnosis_Date__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
-
-                <apex:inputField value="{!Referral__c.Diagnosis_I__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
-
-
-                <apex:inputField value="{!Referral__c.Diagnosis_II__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" />
-
-                <apex:inputField value="{!Referral__c.Diagnosis_III__c}" rendered="{!ReferralRecordType == 'Iowa'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Iowa'}" /> -->
-
-                <apex:inputField value="{!Referral__c.Vision__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
-
-                <apex:inputField value="{!Referral__c.Hearing__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
-
-                <apex:inputField value="{!Referral__c.Seizures__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
-
-                <apex:inputField value="{!Referral__c.Other__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
-
-                <apex:inputTextarea value="{!Referral__c.Communication_Summary__c}" cols="50" rows="3" rendered="{!ReferralRecordType == 'Illinois' || ReferralRecordType == 'Cambridge Florida' ||
-                                ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' ||
-                        ReferralRecordType = 'Cambridge Indiana' ||
-                        ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio' ||
-                        ReferralRecordType == 'CA FSS'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge || ReferralRecordType == 'CA FSS'}" />
-
-                <apex:inputTextarea value="{!Referral__c.ADL_Summary__c}" cols="50" rows="3" rendered="{!ReferralRecordType == 'Illinois' || ReferralRecordType == 'Cambridge Florida' ||
-                                ReferralRecordType = 'Cambridge Massachusetts' ||
-                        ReferralRecordType = 'Cambridge Maryland' ||
-                        ReferralRecordType = 'Cambridge Indiana' ||
-                        ReferralRecordType = 'Cambridge North Carolina' ||
-                        ReferralRecordType = 'Cambridge Ohio' ||
-                        ReferralRecordType == 'CA FSS'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois' || isCambridge || ReferralRecordType == 'CA FSS'}" />
-
-                <apex:inputField value="{!Referral__c.Behavior_Summary__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
-
-                <apex:inputTextarea value="{!Referral__c.Current_Medications__c}" rendered="{!ReferralRecordType == 'Illinois'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Illinois'}" />
-
-                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-                <apex:inputField value="{!Referral__c.Street_2__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" id="Neuro_Street2" />
-                <apex:pageBlockSection rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}">
-                    <apex:outputText value="City" />
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:inputText value="{!Referral__c.City__c}" id="MN_City" />&nbsp;
-                        <apex:outputLabel value="State" />&nbsp;
-                        <apex:inputField value="{!Referral__c.State__c}" id="MN_State" />&nbsp;
-                        <apex:outputLabel value="Zip" />&nbsp;
-                        <apex:inputText value="{!Referral__c.Zip_Code__c}" style="width: 42px;" id="MN_Zip" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-
-
-                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-                <apex:inputField value="{!Referral__c.Phone__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" id="MN_Phone" />
-                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-                <apex:inputField value="{!Referral__c.Email_Address__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" id="MN_Email" />
-
-                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-                <apex:inputField value="{!Referral__c.Fax__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" id="MN_Fax" />
-
-                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-                <apex:inputField value="{!Referral__c.Estimated_Discharge_Date__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-
-                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-                <apex:inputField value="{!Referral__c.Referring_Physician__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-
-
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <apex:inputField value="{!Referral__c.Previous_Brain_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
-                    <apex:actionSupport event="onchange" reRender="ReferralDetail" />
-                </apex:inputField>
-
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}" />
-                <apex:inputField value="{!Referral__c.Type_of_Injury_Previous__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}" />
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}" />
-                <apex:inputField value="{!Referral__c.Cause_Of_Injury_Previous__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Previous_Brain_Injury__c=='Yes')}" />
-
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <apex:inputField value="{!Referral__c.Did_Alcohol_Contribute_to_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
-                    <apex:actionSupport event="onchange" reRender="ReferralDetail" />
-                </apex:inputField>
-
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}" />
-                <apex:inputField value="{!Referral__c.Level_At_Time_of_Injury__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}" />
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}" />
-                <apex:inputField value="{!Referral__c.Current_Alcohol_Use__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Alcohol_Contribute_to_Injury__c=='Yes')}" />
-
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <apex:inputField value="{!Referral__c.Did_Drug_Use_Contribute_to_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
-                    <apex:actionSupport event="onchange" reRender="ReferralDetail" />
-                </apex:inputField>
-
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}" />
-                <apex:inputField value="{!Referral__c.Current_Drug_Use__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}" />
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}" />
-                <apex:inputField value="{!Referral__c.Litigation__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Did_Drug_Use_Contribute_to_Injury__c=='Yes')}" />
-
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <apex:inputField value="{!Referral__c.Military_Service_Related_Injury__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}">
-                    <apex:actionSupport event="onchange" reRender="ReferralDetail" />
-                </apex:inputField>
-
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
-                <apex:inputField value="{!Referral__c.Military_Status__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
-                <apex:inputField value="{!Referral__c.Branch_of_Service__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
-                <apex:inputField value="{!Referral__c.Years_of_Service__c}" rendered="{!AND(ReferralRecordType=='NeuroRestorative',Referral__c.Military_Service_Related_Injury__c=='Yes')}" />
-
-
-
-
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <!-- Commented by Sravan For Ticket ERNS-22 07/02/2014 1:11 PM -->
-                <!--  apex:inputField value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
-                <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
-                <!--  apex:inputField value="{!Referral__c.Secondary_Location__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
-                <!--  apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}"/-->
-                <apex:inputField value="{!Referral__c.Glasgow_Coma_Scale__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <apex:inputField value="{!Referral__c.Duration_of_Unconsciousness__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-                <apex:inputField value="{!Referral__c.Reported_By__c}" rendered="{!ReferralRecordType=='NeuroRestorative'}" />
-
-                <!--Flavor Specific fields-->
-
-              <!--  <apex:inputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!referralRecordType=='Wisconsin'}" />
-                <apex:outputField value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!referralRecordType=='CareMeridian'}" /> 
-                <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}" />
-
-                <apex:inputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!OR(ReferralRecordType == 'California',referralRecordType=='Wisconsin')}" />
-                <apex:outputField value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!referralRecordType=='CareMeridian'}" />
-                <apex:pageBlockSectionItem rendered="{!OR(referralRecordType=='CareMeridian',referralRecordType=='Wisconsin' )}" /> -->
-
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'California'}" />
-                <apex:inputField value="{!Referral__c.Level_of_Disability__c}" rendered="{!ReferralRecordType == 'California'}" />
-
-                <apex:inputField value="{!Referral__c.Health_and_Safety_Needs__c}" rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}" />
-                <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}" />
-                <apex:inputField value="{!Referral__c.Anticipated_Job_Accomodations__c}" rendered="{!AND(ReferralRecordType == 'West Virginia',referralRecordType!='CareMeridian')}" />
-
-                <apex:inputField value="{!Referral__c.Residential_Support_Rate_Established__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
-
-                <apex:inputField value="{!Referral__c.Residential_Support_Rate__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
-
-                <apex:inputField label="Patient's Current Location (if other than Home)" value="{!Referral__c.Current_Location__c}" rendered="{!ReferralRecordType == 'Wisconsin'}" />
-                <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
-
-            </apex:pageBlockSection>
-            <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralServices">
-                <apex:inputField value="{!Referral__c.Program_Category__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
-                <br />
-                <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
-                <br />
-                <apex:inputField id="servicesRequested" value="{!Referral__c.Services_Requested__c}" Rendered="{!referralRecordType!='CareMeridian'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
-                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Family_History__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
-                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Medical_History__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
-                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Behavior_Summary__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
-                <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Current_Medications__c}" rendered="{!(isCambridge || ReferralRecordType == 'CA FSS') && !isLinkedPersonBeingServed}" />
-                <apex:outputField value="{!personBeingServedRecord.Current_Medications__c}" rendered="{!(isCambridge || ReferralRecordType == 'CA FSS') && isLinkedPersonBeingServed}" />
-                <apex:inputField value="{!Referral__c.Prior_Program_Information__c}" style="width: 90%;" Rendered="{!referralRecordType!='CareMeridian'}" />
-                <apex:inputField value="{!Referral__c.Comments__c}" style="width: 90%;" />
-            </apex:pageBlockSection>
 
             <apex:pageBlockSection showHeader="true" title="Evaluation" columns="1" collapsible="false" rendered="{!OR(ReferralRecordType=='CareMeridian', AND(ReferralRecordType=='NeuroRestorative', showNeuroFeatures))}">
                 <apex:outputPanel >
