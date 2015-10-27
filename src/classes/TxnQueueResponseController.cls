@@ -2,6 +2,7 @@ public with sharing class TxnQueueResponseController {
 
 	public String TxnResponse { get; private set; }
 	public ActionPlan_FormWithoutSharing  response { get; private set; }
+    public DSPPersonBeingServed_WithoutSharing pbsViewResponse { get; private set; }
 	
 //Constructor
 	public TxnQueueResponseController(){
@@ -33,8 +34,9 @@ public with sharing class TxnQueueResponseController {
 			
 			if ( thisTxn.request_type__c == 'Action Plan' || thisTxn.request_type__c == 'Acknowledge Plan')
 				response = (ActionPlan_FormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, ActionPlan_FormWithoutSharing.class);
-			
-			
+            else if ( thisTxn.request_type__c == 'Person Being Served')
+                pbsViewResponse = (DSPPersonBeingServed_WithoutSharing) JSON.deserialize(thisTxn.return_value__c, DSPPersonBeingServed_WithoutSharing.class);
+
 			system.debug(response);
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to retrieve result'));
