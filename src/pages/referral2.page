@@ -1819,7 +1819,7 @@
               
             <!--Diagnosis Old Code, Commented Some Fields PRI-22 -->
             <apex:pageBlockSection showHeader="false" title="Diagnosis Information" columns="2" collapsible="false" id="ReferralDetail">
-                <!--<apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />-->
+                <apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
                 <apex:outputText label="Brain Injury Detail" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin'}" />
                 <!--apex:pageBlockSectionItem rendered="{!ReferralRecordType != 'Minnesota'}"/-->

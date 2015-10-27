@@ -2317,7 +2317,7 @@
             <!-- Diagnosis Old Code, Commented some fields -->
             <apex:pageBlockSection showHeader="false" title="Diagnosis Information" columns="2" collapsible="false" id="ReferralDetail"> 
                       
-               <!-- <apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" /> -->
+                <apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" /> 
                 <apex:outputText label="Brain Injury Detail" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'Wisconsin'}" />
 
@@ -2325,7 +2325,7 @@
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian', referralRecordType != 'NeuroRestorative')}" />
                <!-- <apex:inputField id="diagIdrop" value="{!Referral__c.Diagnosis_I__c}" label="Primary Diagnosis" rendered="{!ReferralRecordType == 'NeuroRestorative'}" onchange="enableDiagEff();" /> -->
                 <apex:inputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
-                <!--<apex:outputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" /> -->
+                <apex:outputField value="{!Referral__c.Date_of_Injury__c}" rendered="{!ReferralRecordType == 'CareMeridian'}" /> 
 
                 <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_II__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" /> -->
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'Minnesota',ReferralRecordType != 'North Dakota',referralRecordType!='CareMeridian')}" />
