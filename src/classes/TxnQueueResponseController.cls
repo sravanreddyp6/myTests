@@ -3,7 +3,6 @@ public with sharing class TxnQueueResponseController {
 	public String TxnResponse { get; private set; }
 	public ActionPlan_FormWithoutSharing  response { get; private set; }
 	
-
 //Constructor
 	public TxnQueueResponseController(){
 
@@ -23,17 +22,24 @@ public with sharing class TxnQueueResponseController {
 		
 		ID thisUser = UserInfo.getUserID();
 		
-		// get the txn result
-		Transaction_Queue__c thisTxn =[ select id, result_code__c, fulfilled__c, date_time_fulfilled__c, return_value__c
-								from transaction_queue__c
-								where id = :txnID];
-								//and requesting_user__c = :thisUser];
-		
-		TxnResponse = thisTxn.return_value__c;
-		
-		response = (ActionPlan_FormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, ActionPlan_FormWithoutSharing.class);
-		
-		system.debug(response);
+		try {
+			// get the txn result
+			Transaction_Queue__c thisTxn =[ select id, result_code__c, fulfilled__c, date_time_fulfilled__c, return_value__c, request_type__c
+									from transaction_queue__c
+									where id = :txnID];
+									//and requesting_user__c = :thisUser];
+			
+			TxnResponse = thisTxn.return_value__c;
+			
+			if ( thisTxn.request_type__c == 'Action Plan')
+				response = (ActionPlan_FormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, ActionPlan_FormWithoutSharing.class);
+			
+			
+			system.debug(response);
+		} catch (Exception e2) {
+			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to retrieve result'));
+			return;
+		}
 	}
 	
 	
