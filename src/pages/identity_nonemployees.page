@@ -118,12 +118,12 @@
     j$('[id*=DelegateOnBehalfOf]').dialog("close");
     }
     function changeDelegate() {
-    	selectDelegate(j$('[id$=selectDelegateId]').val());
+    	selectDelegate(j$('[id$=selectDelegateId]').val(),j$('[id$=selectDelegateId]').val());
     }
     
     function changeDelegate2(){
         if(j$('[id$=WorkforceOnBehalf]').val().length>1){
-    	selectDelegate2(j$('[id$=WorkforceOnBehalf]').val());
+    	selectDelegate2(j$('[id$=WorkforceOnBehalf]').val(),j$('[id$=WorkforceOnBehalf]').val());
         }    
     }
     
@@ -171,6 +171,7 @@
     <apex:form >
      <apex:actionFunction name="selectDelegate" action="{!selectDelegate}"   reRender="WorkforceOnBehalf,wfReports,wfAttest" oncomplete="CloseDialog();" >
              <apex:param name="aliasName" value="" assignTo="{!aliasName}" />
+             <apex:param name="aliasNameValue" value="" assignTo="{!aliasNameValue}" />
             </apex:actionFunction>
         
         <apex:outputPanel id="DelegateOnBehalfOf" title="Delegate On Behalf Of" style="display:none">
@@ -193,6 +194,7 @@
     <apex:form >
     		<apex:actionFunction name="selectDelegate2" action="{!selectDelegate}"   reRender="wfReports,wfAttest"  >
              <apex:param name="aliasName" value="" assignTo="{!aliasName}" />
+              <apex:param name="aliasNameValue" value="" assignTo="{!aliasNameValue}" />
             </apex:actionFunction>
             
         Manage Workforce on Behalf of:&nbsp;
@@ -345,9 +347,9 @@
                         <div class="pbHeaderButton">   
                         <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=theTMNUser.id])}"/>-->
                         <!--<apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>-->
-                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
-                   		<apex:commandButton value="Request Access" action="{!URLFOR($Page.RequestAccess,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
+                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
+                        <apex:commandButton value="Request Access" action="{!URLFOR($Page.RequestAccess,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
                    		<apex:commandButton value="Terminate" action="{!URLFOR($Page.identity_Terminate,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
                     </div>            
                     <apex:pageBlockSection columns="2" title="Person Information">                   
@@ -421,8 +423,8 @@
                       <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         </apex:PageBlockSection>  
                         <div class="pbHeaderButton1">   
-                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
                         <apex:commandButton value="Close" action="{!closeInfo}"/>
+                        <apex:commandButton value="Edit" action="{!URLFOR($Page.identity_edittmnu,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" rendered="{!theTMNUser.Current_Person_Type__c == 'Non-Employee'}"/>
                    		<apex:commandButton value="Request Access" action="{!URLFOR($Page.RequestAccess,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
                    		<apex:commandButton value="Terminate" action="{!URLFOR($Page.identity_Terminate,'',[ID=theTMNUser.id,retURL=$Page.identity_nonemployees,TAU=tmnAliasUsr])}" />
                     </div>            

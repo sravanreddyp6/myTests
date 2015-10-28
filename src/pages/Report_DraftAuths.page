@@ -1,4 +1,4 @@
-<apex:page controller="report_draftauths" sidebar="false" docType="html-5.0" readOnly="true" >
+<apex:page controller="Report_DraftAuths" sidebar="false" docType="html-5.0" readOnly="true" >
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -42,9 +42,8 @@
     
     
 <apex:pageMessages id="messages" ></apex:pageMessages>
-<apex:actionFunction action="{!runPDF}" name="runPDF"/>
 
-<apex:pageBlock id="DraftAuthsPgBlk" title="Draft Authorizations Report">
+<apex:pageBlock id="DraftAuthsPgBlk" title="Authorization Status Report">
 <apex:actionregion >
 	
 	<apex:pageBlockSection columns="1">
@@ -124,11 +123,11 @@
 <apex:outputPanel id="dataTable">
 
 	<apex:repeat value="{!people}" var="pbs">
-	<apex:pageBlock>
+	<apex:pageBlock >
 	
 	<apex:pageBlockSection title="{!people[pbs]}" columns="1" >
 	
-		<apex:outputPanel  rendered="{! authCount[pbs] > 0}">
+		<apex:outputPanel rendered="{! authCount[pbs] > 0}">
 		
 		<apex:pageBlockTable value="{!logMap[pbs]}" var="n" >
 		<apex:column headervalue="Received Date/Time">
@@ -146,11 +145,11 @@
 		<apex:column headervalue="Contract Used" value="{!n.contract_used__c}" />
 		<apex:column headervalue="Created By" value="{!n.createdbyid}"/>
 		<apex:column headervalue="Created Date/Time">
-		<c:militarydatetime datetimeval="{!n.createddate}"/>
+		<c:MilitaryDatetime datetimeval="{!n.createddate}"/>
 		</apex:column>
 		<apex:column headervalue="Last Modified By" value="{!n.lastmodifiedbyid}"/>
 		<apex:column headervalue="Last Modified Date/Time">
-		<c:militarydatetime datetimeval="{!n.lastmodifieddate}"/>
+		<c:MilitaryDatetime datetimeval="{!n.lastmodifieddate}"/>
 		</apex:column>
 		</apex:pageBlockTable>
 		</apex:outputPanel>

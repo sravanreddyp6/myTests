@@ -13,7 +13,7 @@ public with sharing class Report_PBS_Weight_Tests {
 		Evaluation__c[] evaluations = new Evaluation__c[]{
 			new Evaluation__c(
 				RecordTypeId = residentialRecordTypeId,
-				Status__c = 'Final',
+				Status__c = 'Final Admission',
 				Shift_Start_Time__c = Date.Today().addDays(-2),
 				Shift_End_Time__c = Date.Today().addDays(-1),
 				ServiceAssignment__c = myData.theSA.Id

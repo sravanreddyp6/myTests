@@ -122,7 +122,7 @@ testSuite("Referral", suiteTimeout, {
       .switchToNextWindow()
       .click("input[value='Add Funding Source']")
       .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
-      .selectCheckbox("More than 1.5 Yrs of Disability", true)
+      .selectCheckbox("More than 1.5 Yrs of Disability")
       .selectCheckbox("ALS/ESRD/Black Lung Disease")
       .selectCheckbox("Patient Over 64 Years of Age")
       .click("span[id$=FundingSourceModal] input[value='Save']")

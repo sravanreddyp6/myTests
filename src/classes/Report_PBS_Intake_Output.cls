@@ -11,7 +11,7 @@ public with sharing class Report_PBS_Intake_Output {
 	public List<Id> selectedPBS { get; set; }
 	public List<SelectOption> pbsList { get; set; }
 
-	public Map<Id, Person> pbsMap { get; set; }
+	public transient Map<Id, Person> pbsMap { get; set; }
 
 	public Report_PBS_Intake_Output() {
 		dummyEvaluation = new Evaluation__c();
@@ -191,7 +191,13 @@ public with sharing class Report_PBS_Intake_Output {
 				} else if (value.Eval__r.htmlid__c == 'fluidType') {
 					pbsMap.get(saId).addIntakeType(value.Eval_Section_Id__c, value.Text_Under_250__c);
 				} else if (value.Eval__r.htmlid__c == 'fluidVolume') {
-					pbsMap.get(saId).addIntakeVolume(value.Eval_Section_Id__c, Double.valueOf(value.Text_Under_250__c));
+					try {
+						pbsMap.get(saId).addIntakeVolume(value.Eval_Section_Id__c, Double.valueOf(value.Text_Under_250__c));
+					} catch (System.TypeException ex) {
+						// This is field is not validated at user input time, so it's not guaranteed to hold correct data.
+						// We handle that case here.
+						pbsMap.get(saId).addInvalidIntakeVolume(value.Eval_Section_Id__c, value.Text_Under_250__c);
+					}
 				}
 			}
 			if (value.Eval__r.Category__c == 'GU/GI/Nutrition' && value.Eval__r.Sub_Category__c == 'Elimination - Bladder') {
@@ -263,6 +269,13 @@ public with sharing class Report_PBS_Intake_Output {
 				fluidIntakeLineItemMap.put(sectionId, new FluidIntakeLineItem());
 			}
 			fluidIntakeLineItemMap.get(sectionId).intakeVolume = intakeVolume;
+		}
+
+		public void addInvalidIntakeVolume(String sectionId, String intakeVolume) {
+			if (!fluidIntakeLineItemMap.containsKey(sectionId)) {
+				fluidIntakeLineItemMap.put(sectionId, new FluidIntakeLineItem());
+			}
+			fluidIntakeLineItemMap.get(sectionId).invalidIntakeVolume = intakeVolume;
 		}
 
 		public void addLiquidIntakeDateTime(String sectionId, DateTime observedDateTime) {
@@ -351,31 +364,45 @@ public with sharing class Report_PBS_Intake_Output {
 
 		public void generateLineItems() {
 			for (FluidIntakeLineItem item: this.fluidIntakeLineItemMap.values()) {
-				System.debug(item);
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
 				this.observedDateMap.get(item.observedDateTime.date()).fluidIntakeLineItems.add(item);
 			}
 			for (LiquidIntakeLineItem item: this.liquidIntakeLineItemMap.values()) {
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
 				this.observedDateMap.get(item.observedDateTime.date()).liquidIntakeLineItems.add(item);
 			}
 			for (outputLineItem item: this.outputLineItemMap.values()) {
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
 				this.observedDateMap.get(item.observedDateTime.date()).outputLineItems.add(item);
 			}
 			for (bladderOutputLineItem item: this.bladderOutputLineItemMap.values()) {
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
 				this.observedDateMap.get(item.observedDateTime.date()).bladderOutputLineItems.add(item);
 			}
 			for (bmCharacteristicsLineItem item: this.bmCharacteristicsLineItemMap.values()) {
+				if (item.observedDateTime == null) {
+					continue;
+				}
 				if (!this.observedDateMap.containsKey(item.observedDateTime.date())) {
 					this.observedDateMap.put(item.observedDateTime.date(), new ObservedDate(item.observedDateTime.date()));
 				}
@@ -430,6 +457,32 @@ public with sharing class Report_PBS_Intake_Output {
 			outputLineItems.sort();
 			bladderOutputLineItems.sort();
 			bmCharacteristicsLineItems.sort();
+
+			for (Integer index = fluidIntakeLineItems.size() - 1; index >= 0; index--) {
+				if (fluidIntakeLineItems[index].isEmpty) {
+					fluidIntakeLineItems.remove(index);
+				}
+			}
+			for (Integer index = liquidIntakeLineItems.size() - 1; index >= 0; index--) {
+				if (liquidIntakeLineItems[index].isEmpty) {
+					liquidIntakeLineItems.remove(index);
+				}
+			}
+			for (Integer index = outputLineItems.size() - 1; index >= 0; index--) {
+				if (outputLineItems[index].isEmpty) {
+					outputLineItems.remove(index);
+				}
+			}
+			for (Integer index = bladderOutputLineItems.size() - 1; index >= 0; index--) {
+				if (bladderOutputLineItems[index].isEmpty) {
+					bladderOutputLineItems.remove(index);
+				}
+			}
+			for (Integer index = bmCharacteristicsLineItems.size() - 1; index >= 0; index--) {
+				if (bmCharacteristicsLineItems[index].isEmpty) {
+					bmCharacteristicsLineItems.remove(index);
+				}
+			}
 
 			lineItems = new LineItem[]{};
 			Integer lineItemSize = Math.max(fluidIntakeLineItems.size(), Math.max(liquidIntakeLineItems.size(), Math.max(outputLineItems.size(), bladderOutputLineItems.size())));
@@ -515,26 +568,57 @@ public with sharing class Report_PBS_Intake_Output {
 		public String feedingType { get; set; }
 		public String intakeType { get; set; }
 		public Double intakeVolume { get; set; }
+		public String invalidIntakeVolume { get; set; }
+
+		public Boolean isEmpty {
+			get {
+				return (feedingType == null && intakeType == null && intakeVolume == null && invalidIntakeVolume == null);
+			}
+		}
 	}
 
 	public class LiquidIntakeLineItem extends ComparableByObservedDateTime {
 		public Double liquidConsumed { get; set; }
+
+		public Boolean isEmpty {
+			get {
+				return (liquidConsumed == null);
+			}
+		}
 	}
 
 	public class OutputLineItem extends ComparableByObservedDateTime {
 		public Double voidAmount { get; set; }
 		public Double vomitusAmount { get; set; }
+
+		public Boolean isEmpty {
+			get {
+				return (voidAmount == null && vomitusAmount == null);
+			}
+		}
 	}
 
 	public class BladderOutputLineItem extends ComparableByObservedDateTime {
 		public String bladderContinence { get; set; }
 		public String devices { get; set; }
+
+		public Boolean isEmpty {
+			get {
+				return (bladderContinence == null && devices == null);
+			}
+		}
 	}
 
 	public class BMCharacteristicsLineItem extends ComparableByObservedDateTime {
 		public String bmAmount { get; set; }
 		public String bmColor { get; set; }
 		public String bmConsistency { get; set; }
+
+		public Boolean isEmpty {
+			get {
+				return (bmAmount == null && bmColor == null && bmConsistency == null);
+			}
+		}
 	}
 
 	public class LineItem {
@@ -543,6 +627,13 @@ public with sharing class Report_PBS_Intake_Output {
 		public BladderOutputLineItem bladderOutputLineItem { get; set; }
 		public OutputLineItem outputLineItem { get; set; }
 		public BMCharacteristicsLineItem bmCharacteristicsLineItem { get; set; }
+		public Boolean isEmpty {
+			get {
+				// Sometimes there are panels with observed date/time but none of the data needed,
+				// we'll use this method to exclude them from the report
+				return (fluidIntakeLineItem.isEmpty && liquidIntakeLineItem.isEmpty && bladderOutputLineItem.isEmpty && outputLineItem.isEmpty && bmCharacteristicsLineItem.isEmpty);
+			}
+		}
 
 		public LineItem() {
 			fluidIntakeLineItem = new FluidIntakeLineItem();

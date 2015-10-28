@@ -1,45 +1,32 @@
 @isTest
 public with sharing class Notes_ProgressNote_AZ_OPTTests {
   static testMethod void simpleTests() {
-  		User testUser = TMN_Generic_Core_TestData.createUser('ESD General','tuserAZ', 'testuserAZ@tmn.com' + System.currentTimeMillis(), 'TestAZ', 'TestAZ', 'Redwood');
-		system.debug('calling permsetassign from simpletests');
-		System.runas(new User(Id = UserInfo.getUserId())){
-        	permsetAssign(new list<String>{'ESD_Notes_Common','ESD_Notes_Clinical_Data_User_Arizona'}, testUser.id);
-		}
-		system.runas( testUser ) {
-       	TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
-  	    coredata.loadData( 'AZ');
+        User testUser = TMN_Generic_Core_TestData.createUser('ESD General','tuserAZ', 'testuserAZ@tmn.com' + System.currentTimeMillis(), 'TestAZ', 'TestAZ', 'Redwood');
+        system.debug('calling permsetassign from simpletests');
+        System.runas(new User(Id = UserInfo.getUserId())){
+            permsetAssign(new list<String>{'ESD_Notes_Common','ESD_Notes_Clinical_Data_User_Arizona'}, testUser.id);
+        }
+        system.runas( testUser ) {
+        TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
+        coredata.loadData( 'AZ');
         ID newSLid1 = createServiceLocation( '123456', '123456001', 'New Service Location 1', 1, 'AZ', '1-123456' );
         ID newSLid1a = createServiceLocation( '114165', '114165002', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
         coredata.theSA.service_location__c = newSLid1;
         update coredata.theSA;
-		Action_Plan__c Aplan = new Action_Plan__c();
-        Aplan.Date_Service_Started__c = date.today().adddays(-7);
-        Aplan.Effective_Date__c = date.today().adddays(-7);
-        Aplan.status__c = 'Active Final';
-        Aplan.Service_Assignment__c = coredata.theSA.Id;
-        Aplan.target_Date__c =date.today().adddays(17);
-        Insert APLAn;
-        list<Action_Plan_Goal__c> GoalsList = New List<Action_Plan_Goal__c>();
-        Action_Plan_Goal__c goal1 = new Action_Plan_Goal__c(Action_Plan__c = APLAn.id,Description__c= 'test Goal1');
-        GoalsList.add(goal1); 
-        Action_Plan_Goal__c goal2 = new Action_Plan_Goal__c(Action_Plan__c = APLAn.Id,Description__c= 'test Goal2');
-        GoalsList.add(goal2); 
-        insert GoalsList;
-        Action_Plan_Objective__c obj1 = new Action_Plan_Objective__c();
-        obj1.description__c = 'test obj1';
-        obj1.Action_Plan_Goal__c = goal1.id;
-        obj1.Effective_Date__c = date.today();
-        obj1.Target_End_Date__c = date.today().adddays(7);
-        obj1.status__c = 'New';
-        insert obj1;
-        Action_Plan_Action__c Act1 = New Action_Plan_Action__c();
-        Act1.Action_Plan_Objective__c = obj1.Id;
-        Act1.Description__c = 'test Action1';
-        Act1.start_date__c = date.today();
-        act1.end_date__c = date.today().adddays(3);
-        act1.status__c = 'New';
-        insert act1;
+        ID AplanId = createActionPlan(coredata.theSA.Id);
+        list<string> GoalSelStrs = createGoalsObjActions(APLanId);
+        string goalId,ObjId;
+        for(string s:GoalSelStrs){
+            if(s!=Null && S!=''){
+                if(s.contains('a1A')&& GoalId == Null){
+                    GoalId=s;
+                }
+                else if(s.contains('a1B')){
+                    ObjId=s;
+                }
+            }
+        }
+        String deselected = goalId + ',' + objId;
         Progress_Note__c p = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now());
         ApexPages.StandardController sc = new ApexPages.StandardController(p);
         PageReference pageRef = Page.Notes_Progressnote_AZ_OPT;
@@ -48,82 +35,236 @@ public with sharing class Notes_ProgressNote_AZ_OPTTests {
         ApexPages.currentPage().getParameters().put('person', coredata.contactID);
         ApexPages.currentPage().getParameters().put('ServAssignId', coredata.theSA.ID);
         ApexPages.currentPage().getParameters().put('admission', coredata.theAdm.id);
-        ApexPages.currentPage().getParameters().put('plan', Aplan.Id);
+        ApexPages.currentPage().getParameters().put('plan', AplanId);
         ApexPages.currentPage().getParameters().put('Id', P.id);
         ApexPages.currentPage().getParameters().put('Mode', 'New'); 
-        Progress_Note__c pt = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c=Aplan.Id);
+        ApexPages.currentPage().getParameters().put('DeselectedKey', deselected); 
+        Progress_Note__c pt = new Progress_Note__c(approval_user__c = testuser.id, Number_of_Required_Signatures__c=2, start_time__c = system.now().addMinutes(-72),end_time__c=system.now().addMinutes(-70),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c=AplanId);
         insert pt;
+        ProgressNote_ActionPlanChildren_mjo__c objectJunction = createJuncObject(goalId,objId,Pt.Id);
         Notes_Progressnote_AZ_OPT objNpncTest = new Notes_Progressnote_AZ_OPT(sc);
         list<progress_note__c> pnote = New list<progress_note__c>();
         pnote.add(pt);
         objNpncTest.loaddata(pt);
-        testAZ1( objNpncTest, pnote );
-        testAZ2( objNpncTest );
-        /*
-        sc = new ApexPages.StandardController(pt);
-        ApexPages.currentPage().getParameters().put('Mode', 'Inlineedit'); 
-        ApexPages.currentPage().getParameters().put('GoalsSelected', goal1.id);
-        ApexPages.currentPage().getParameters().put('Id', Pt.id);
-        Notes_Progressnote_AZ_OPT objNpncTest2 = new Notes_Progressnote_AZ_OPT(sc);
-        testAZ3( objNpncTest2, goal1, goal2, obj1, pnote );
-        ApexPages.currentPage().getParameters().put('Mode', 'Edit'); 
-        Notes_Progressnote_AZ_OPT objNpncTest3 = new Notes_Progressnote_AZ_OPT(sc);
-        //testAZ3( objNpncTest3, goal1, goal2, obj1, pnote );
-        */
-        }
-  }
-  
-   static void testAZ1( Notes_Progressnote_AZ_OPT objnpnctest, List<Progress_Note__c> pnote  ) {     
-        try{
-            objnpnctest.renderselectedIds();
-            objnpnctest.SubmitForApp();
-            objNpncTest.validateFinalizeEsign(pnote,'NoGoal');
-            objnpnctest.validateesign();
-            objnpnctest.showpopup();
-            objnpnctest.saveprogressnote();
-            
-           List<Attachment> att = objnpnctest.Attachments;
-        }
-        catch(exception e){
-        }
+        pagereference pr = objnpnctest.saveprogressnote();
+        
         objNpncTest.showPopupComp();
-        objNpncTest.editInline();
         objNpncTest.closepopup();
         objNpncTest.closepopupcomp();
-        objNpncTest.cancelEditNote();
-        objNpncTest.disregardnote();
-      
-   }
-   static void testAZ2( Notes_Progressnote_AZ_OPT objnpnctest  ) {
+        
+        List<Attachment> att = objnpnctest.Attachments;
+        system.assertEquals(att.size()<1, true);
+        
         try{
-            objnpnctest.saveprogressnote();
+            objnpnctest.showpopup();
         }
         catch(exception e){
+            system.assertEquals(e.getmessage().contains('A Progress Note cannot be finalized'), true);
         }
-   }
-   static void testAZ3(Notes_Progressnote_AZ_OPT objnpnctest, Action_Plan_Goal__c goal1, Action_Plan_Goal__c goal2, Action_Plan_Objective__c obj1, List<Progress_Note__c> pnote ) {
-        List<string> GoalAndObj = New List<String>();
-        goalAndObj.add(goal1.id);
-        goalAndObj.add(goal2.id);
-        goalAndObj.add(obj1.id);
+        
+        pagereference submitForApproval = objnpnctest.SubmitForApp();
+        system.assertEquals(string.valueof(submitForApproval).contains('Notes_ProgressNote_Create_Flavor_PDF'), true);
+        
+        list<progress_note__C> Overlappingnotes = objnpnctest.lookForOverLappingNotes(pnote[0].Id);
+        system.assertEquals(Overlappingnotes.size()<1, true);
+        
+        pagereference disregard = objNpncTest.disregardnote();
+        system.assertEquals(string.valueof(disregard).contains('Notes_ProgressNote_AddlActions'), true);
+        
+        pagereference editInline = objNpncTest.editInline();
+        system.assertEquals(string.valueof(editInline).contains('Notes_ProgressNote_AZ_OPT'), true);
+        
+        pagereference cancel = objNpncTest.cancelEditNote();
+        system.assertEquals(string.valueof(cancel).contains(ApexPages.currentPage().getParameters().get('ServAssignId')), true);
+   
+        //With multiple updates getting SOQL 101 because of the triggers.So included all in one.
         try{
-            //objnpnctest.saveProgressNoteInlineEdit();
+        objnpnctest.validateesign();
         }
-        catch(exception e){
+        catch (exception e){
+            system.assertEquals(e.getmessage().contains('You must select a Goal before continuing.'), true);
+            system.assertEquals(e.getmessage().contains('You must select a Service Location before continuing.'), true);
+            system.assertEquals(e.getmessage().contains('You must select the Type of Contact before continuing.'), true);
+            system.assertEquals(e.getmessage().contains('You must select a Service Code before continuing'), true);
+            system.assertEquals(e.getmessage().contains('You must populate the Intervention field before continuing'), true);
+            system.assertEquals(e.getmessage().contains('You must populate the Notes For Next Visit fie'), true);
+            system.assertEquals(e.getmessage().contains('You must populate the Progress field before continuin'), true);
+            
         }
     }
-    static void testAZ4 (Notes_Progressnote_AZ_OPT objnpnctest, Action_Plan_Goal__c goal1, Action_Plan_Goal__c goal2, Action_Plan_Objective__c obj1, List<Progress_Note__c> pnote ) {
-      
-        
-        List<string> GoalAndObj = New List<String>();
-        goalAndObj.add(goal1.id);
-        goalAndObj.add(goal2.id);
-        goalAndObj.add(obj1.id);
-        try{
-            //objnpnctest.savemodifiedprogressnote();
+  }  
+   static testmethod void testAZ3() {
+        User testUser = TMN_Generic_Core_TestData.createUser('ESD General','tuserAZ', 'testuserAZ@tmn.com' + System.currentTimeMillis(), 'TestAZ', 'TestAZ', 'Redwood');
+        system.debug('calling permsetassign from simpletests');
+        System.runas(new User(Id = UserInfo.getUserId())){
+            permsetAssign(new list<String>{'ESD_Notes_Common','ESD_Notes_Clinical_Data_User_Arizona'}, testUser.id);
         }
-        catch(exception e){
+        system.runas( testUser ) {
+            TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
+            coredata.loadData( 'AZ');
+            ID newSLid1 = createServiceLocation( '123456', '123456001', 'New Service Location 1', 1, 'AZ', '1-123456' );
+            ID newSLid1a = createServiceLocation( '114165', '114165002', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
+            coredata.theSA.service_location__c = newSLid1;
+            update coredata.theSA;
+            ID AplanId = createActionPlan(coredata.theSA.Id);
+            list<string> GoalSelStrs = createGoalsObjActions(APLanId);
+            string goalId,ObjId;
+            for(string s:GoalSelStrs){
+                if(s!=Null && S!=''){
+                    if(s.contains('a1A')&& GoalId == Null){
+                        GoalId=s;
+                    }
+                    else if(s.contains('a1B')){
+                        ObjId=s;
+                    }
+                }
+            }
+            String deselected = goalId + ',' + objId;
+            Progress_Note__c pt = new Progress_Note__c(Number_of_Required_Signatures__c=2, start_time__c = system.now().addMinutes(-72),end_time__c=system.now().addMinutes(-70),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c=AplanId);
+            insert pt;
+            Progress_Note__c p = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now());
+            ApexPages.StandardController sc = new ApexPages.StandardController(p);
+            PageReference pageRef = Page.Notes_Progressnote_AZ_OPT;
+            Test.setCurrentPageReference(pageRef);
+            ApexPages.currentPage().getParameters().put('state', 'AZ');
+            ApexPages.currentPage().getParameters().put('person', coredata.contactID);
+            ApexPages.currentPage().getParameters().put('ServAssignId', coredata.theSA.ID);
+            ApexPages.currentPage().getParameters().put('admission', coredata.theAdm.id);
+            ApexPages.currentPage().getParameters().put('plan', AplanId);
+            ApexPages.currentPage().getParameters().put('Id', pt.id);
+            ApexPages.currentPage().getParameters().put('Mode', 'Edit');
+            Notes_Progressnote_AZ_OPT objNpncTest12 = new Notes_Progressnote_AZ_OPT(sc);
+            objNpncTest12.reformedittree(GoalSelStrs);
+            objNpncTest12.retrieveAllGoals();
         }
+    }
+    
+    static testmethod void testAZ2() {
+        User testUser = TMN_Generic_Core_TestData.createUser('ESD General','tuserAZ', 'testuserAZ@tmn.com' + System.currentTimeMillis(), 'TestAZ', 'TestAZ', 'Redwood');
+        System.runas(new User(Id = UserInfo.getUserId())){
+            permsetAssign(new list<String>{'ESD_Notes_Common','ESD_Notes_Clinical_Data_User_Arizona'}, testUser.id);
+        }
+        system.runas( testUser ) {
+            TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
+            coredata.loadData( 'AZ');
+            ID newSLid1 = createServiceLocation( '123456', '123456001', 'New Service Location 1', 1, 'AZ', '1-123456' );
+            ID newSLid1a = createServiceLocation( '114165', '114165002', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
+            coredata.theSA.service_location__c = newSLid1;
+            update coredata.theSA;
+            
+            ID AplanId = createActionPlan(coredata.theSA.Id);
+            list<string> GoalSelStrs = createGoalsObjActions(APLanId);
+            string goalId,ObjId;
+            for(string s:GoalSelStrs){
+                if(s!=Null && S!=''){
+                    if(s.contains('a1A')&& GoalId == Null){
+                        GoalId=s;
+                    }
+                    else if(s.contains('a1B')){
+                        ObjId=s;
+                    }
+                }
+            }
+            Progress_Note__c pt = new Progress_Note__c(Number_of_Required_Signatures__c=2, start_time__c = system.now().addMinutes(-72),end_time__c=system.now().addMinutes(-70),Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c=AplanId);
+            insert pt;
+            Progress_Note__c p = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now());
+            ApexPages.StandardController sc = new ApexPages.StandardController(p);
+            PageReference pageRef = Page.Notes_Progressnote_AZ_OPT;
+            Test.setCurrentPageReference(pageRef);
+            ApexPages.currentPage().getParameters().put('state', 'AZ');
+            ApexPages.currentPage().getParameters().put('person', coredata.contactID);
+            ApexPages.currentPage().getParameters().put('ServAssignId', coredata.theSA.ID);
+            ApexPages.currentPage().getParameters().put('admission', coredata.theAdm.id);
+            ApexPages.currentPage().getParameters().put('plan', AplanId);
+            ApexPages.currentPage().getParameters().put('Id', pt.id);
+            ApexPages.currentPage().getParameters().put('Mode', 'InlineEdit'); 
+            Notes_Progressnote_AZ_OPT objNpncTest12 = new Notes_Progressnote_AZ_OPT(sc);
+            //pagereference Render = objNpncTest12.RenderSelectedIds();
+            //system.assertEquals(string.valueof(Render).contains('Notes_ProgressNote_AZ_OPT'), true);
+        }
+    }
+    
+   static testmethod void testAZ4() {
+        User testUser = TMN_Generic_Core_TestData.createUser('ESD General','tuserAZ', 'testuserAZ@tmn.com' + System.currentTimeMillis(), 'TestAZ', 'TestAZ', 'Redwood');
+        System.runas(new User(Id = UserInfo.getUserId())){
+            permsetAssign(new list<String>{'ESD_Notes_Common','ESD_Notes_Clinical_Data_User_Arizona'}, testUser.id);
+        }
+        system.runas( testUser ) {
+            TMN_Generic_Core_TestData coredata = new TMN_Generic_Core_TestData();
+            coredata.loadData( 'AZ');
+            ID newSLid1 = createServiceLocation( '123456', '123456001', 'New Service Location 1', 1, 'AZ', '1-123456' );
+            ID newSLid1a = createServiceLocation( '114165', '114165002', 'New Service Location 1a', 1, 'AZ', '1-123456a' );
+            coredata.theSA.service_location__c = newSLid1;
+            update coredata.theSA;
+            
+            ID AplanId = createActionPlan(coredata.theSA.Id);
+            list<string> GoalSelStrs = createGoalsObjActions(APLanId);
+            
+            string goalId,ObjId;
+            for(string s:GoalSelStrs){
+                if(s!=Null && S!=''){
+                    if(s.contains('a1A')&& GoalId == Null){
+                        GoalId=s;
+                    }
+                    else if(s.contains('a1B')){
+                        ObjId=s;
+                    }
+                }
+            }
+            String deselected = goalId + ',' + objId;
+            Progress_Note__c pt = new Progress_Note__c(Number_of_Required_Signatures__c=2, start_time__c = system.now().addMinutes(-72),end_time__c=system.now().addMinutes(-70), Service_Assignment__c =coredata.theSA.ID,Person_Being_Served__c=coredata.contactID,action_plan__c=AplanId);
+            insert pt;
+            Progress_Note__c p = new Progress_Note__c(start_time__c = system.now().addhours(-1),end_time__c=system.now(),Sleep_Check_Conducted__c= true,Purpose_Service_is_Billable__c = true);
+            ApexPages.StandardController sc = new ApexPages.StandardController(p);
+            PageReference pageRef = Page.Notes_Progressnote_AZ_OPT;
+            Test.setCurrentPageReference(pageRef);
+            ApexPages.currentPage().getParameters().put('state', 'AZ');
+            ApexPages.currentPage().getParameters().put('person', coredata.contactID);
+            ApexPages.currentPage().getParameters().put('ServAssignId', coredata.theSA.ID);
+            ApexPages.currentPage().getParameters().put('admission', coredata.theAdm.id);
+            ApexPages.currentPage().getParameters().put('plan', AplanId);
+            ApexPages.currentPage().getParameters().put('Id', pt.id);
+            ApexPages.currentPage().getParameters().put('DeselectedKey', deselected); 
+            ApexPages.currentPage().getParameters().put('Mode', 'InlineEdit'); 
+            ProgressNote_ActionPlanChildren_mjo__c objectJunction = createJuncObject(goalId,objId,Pt.Id);
+            Notes_Progressnote_AZ_OPT objNpncTest12 = new Notes_Progressnote_AZ_OPT(sc);
+            try{
+                objNpncTest12.saveProgressNote();
+            }
+            catch(exception e){
+                
+            }
+        }
+    }
+    static ID createActionPlan(id servAssgId) {
+        Action_Plan__c Aplan = new Action_Plan__c(Date_Service_Started__c = date.today().adddays(-7),Effective_Date__c = date.today().adddays(-7),status__c = 'Active Final',Service_Assignment__c = servAssgId,target_Date__c =date.today().adddays(17));
+        Insert APLAn;
+        return APLAn.Id;
+    }
+    
+    static ProgressNote_ActionPlanChildren_mjo__c createJuncObject(string goalId,string ObjID,Id ProgNoteId) {
+        ProgressNote_ActionPlanChildren_mjo__c jobj = new ProgressNote_ActionPlanChildren_mjo__c(Progress_Note__c =ProgNoteId,Goal__c = goalid, Objective__c = ObjId);
+        Insert jobj;
+        return jobj;
+    }
+    
+    static List<String> createGoalsObjActions(id Aplanid) {
+        list<string> GoalSelStrs = New List<string>();
+        list<Action_Plan_Goal__c> GoalsList = New List<Action_Plan_Goal__c>();
+        Action_Plan_Goal__c goal1 = new Action_Plan_Goal__c(Action_Plan__c = AplanId,Description__c= 'test Goal1');
+        GoalsList.add(goal1); 
+        Action_Plan_Goal__c goal2 = new Action_Plan_Goal__c(Action_Plan__c = AplanId,Description__c= 'test Goal2');
+        GoalsList.add(goal2); 
+        insert GoalsList;
+        GoalSelStrs.add(GoalsList[0].id);
+        GoalSelStrs.add(GoalsList[1].id);
+        Action_Plan_Objective__c obj1 = new Action_Plan_Objective__c(description__c = 'test obj1',Action_Plan_Goal__c = goal1.id,Effective_Date__c = date.today(),Target_End_Date__c = date.today().adddays(7),status__c = 'New');
+        insert obj1;
+        GoalSelStrs.add(obj1.id);
+        Action_Plan_Action__c Act1 = New Action_Plan_Action__c(Action_Plan_Objective__c = obj1.Id,Description__c = 'test Action1',start_date__c = date.today(),end_date__c = date.today().adddays(3),status__c = 'New');
+        insert act1;
+        GoalSelStrs.add(act1.id);
+        return GoalSelStrs;
     }
         
     static ID createServiceLocation( string alias, string pgmCode, string pgmVal, integer facility, string slState, string uid ) {
@@ -133,13 +274,13 @@ public with sharing class Notes_ProgressNote_AZ_OPTTests {
        }
        
     static void permsetAssign(string[]permSets, Id assigntoId){
-       	system.debug('calling permsetassign');
-		List<PermissionSet> theSets = [SELECT ID, Name FROM PermissionSet WHERE Name IN :permSets];
-		List<PermissionSetAssignment> thepermAssigns = new List<PermissionSetAssignment>();
-		for(PermissionSet ps : theSets){
-			thepermAssigns.add(new PermissionSetAssignment(PermissionSetId = ps.Id, AssigneeId = assigntoId));
-		}
-		insert thepermAssigns;
-	}
-	
+        system.debug('calling permsetassign');
+        List<PermissionSet> theSets = [SELECT ID, Name FROM PermissionSet WHERE Name IN :permSets];
+        List<PermissionSetAssignment> thepermAssigns = new List<PermissionSetAssignment>();
+        for(PermissionSet ps : theSets){
+            thepermAssigns.add(new PermissionSetAssignment(PermissionSetId = ps.Id, AssigneeId = assigntoId));
+        }
+        insert thepermAssigns;
+    }
+    
 }

@@ -73,41 +73,43 @@ tfoot {
         <apex:actionFunction action="{!cancelToNewRun}" name="reset" immediate="true"/>
         <apex:actionFunction action="{!runReport}" name="getTherapyHours" oncomplete="createtbl()" reRender="therapyHours, messages, pbsOPTS" status="myStatus"/>
         <apex:actionFunction action="{!therapyHrsExtract}" name="exportToPDF" immediate="true" status="myStatus"/>
+        <apex:actionFunction action="{!therapyHrsExtractToEXCEL}" name="exportToExcel" immediate="true" status="myStatus"/>
         <apex:pageBlock title="Therapist's AP Extract" >
             <apex:actionregion >
                 <apex:pageBlockSection columns="1" id="section">
                     <apex:outputPanel layout="block" style="width:100%;" >
                         <apex:outputLabel styleclass="labelCol" value="Select Month" for="start_date" />
-                        <apex:inputText id="start_date" styleClass="date-picker" value="{!startdtStr}" required="true" />
+                        <apex:inputText id="start_date" styleClass="date-picker" value="{!startdtStr}" />
                     </apex:outputPanel>
                 </apex:pageBlockSection>
 
-                <apex:pageBlockSection id="programs" title="Programs (Please select one or more Programs from the below list to view Therapists.)" columns="1" collapsible="false">
-                    <apex:outputpanel >
-		                <table>
-		                    <tr>
-		                        <td><apex:selectList id="selectprograms"
-		                                value="{!selectedPrograms}" size="7" multiselect="true"
-		                                style="min-width:235px">
-		                                <apex:selectOptions value="{!programslist}" />
-		                            </apex:selectList></td>
-		                        <td style="vertical-align: middle"><apex:commandButton value="add" action="{!AddPrograms}" reRender="programs, pbsOPTS"
-		                                status="myStatus" oncomplete="createtbl()"
-		                                style="height: 25px; width: 35px;" /><br /> <apex:commandButton value="remove" action="{!RemovePrograms}"
-		                                reRender="programs, pbsOPTS" status="myStatus"
-		                                oncomplete="createtbl()" style="height: 25px; width: 50px;" /></td>
-		                        <td><apex:selectList id="select2" value="{!select2PrmIds}"
-		                                size="7" multiselect="true" style="min-width:235px">
-		                                <apex:selectOptions value="{!select2list}" />
-		                            </apex:selectList></td>
-		                    </tr>
-		                </table>
-                        </apex:outputPanel>
-                </apex:pageBlockSection>
+<!--                 <apex:pageBlockSection id="programs" title="Programs (Please select all Programs from the below list to view Therapists.)"  collapsible="false"> -->
+<!--                     <apex:outputpanel > -->
+<!-- 		                <table> -->
+<!-- 		                    <tr> -->
+<!-- 		                        <td><apex:selectList id="selectprograms" -->
+<!-- 		                                value="{!selectedPrograms}" size="7" multiselect="true" -->
+<!-- 		                                style="min-width:235px"> -->
+<!-- 		                                <apex:selectOptions value="{!programslist}" /> -->
+<!-- 		                            </apex:selectList></td> -->
+<!-- 		                        <td style="vertical-align: middle"><apex:commandButton value="add" action="{!AddPrograms}" reRender="programs, pbsOPTS" -->
+<!-- 		                                status="myStatus" oncomplete="createtbl()" -->
+<!-- 		                                style="height: 25px; width: 35px;" /><br /> <apex:commandButton value="remove" action="{!RemovePrograms}" -->
+<!-- 		                                reRender="programs, pbsOPTS" status="myStatus" -->
+<!-- 		                                oncomplete="createtbl()" style="height: 25px; width: 50px;" /></td> -->
+<!-- 		                        <td><apex:selectList id="select2" value="{!select2PrmIds}" -->
+<!-- 		                                size="7" multiselect="true" style="min-width:235px"> -->
+<!-- 		                                <apex:selectOptions value="{!select2list}" /> -->
+<!-- 		                            </apex:selectList></td> -->
+<!-- 		                    </tr> -->
+<!-- 		                </table> -->
+<!--                     </apex:outputPanel> -->
+<!--                 </apex:pageBlockSection> -->
                 
-		        <apex:pageBlockSection id="pbsOPTS"
-		            title="Therapist (Please select one or more names from the list. Type a name in the field below to filter the list.)"
-		            columns="1" collapsible="false">
+		        <apex:pageBlockSection id="pbsOPTS" columns="1" collapsible="false">
+		        <apex:facet name="header">
+		        <span style="padding-left: 1em;">Therapist (Please select one or more names from the list. Type a name in the field below to filter the list.)</span>
+		        </apex:facet>
 		            <div id="pbslinks" style="position: relative; left: 180px; top: 10px">
 		                <a class="btn" href="#" onclick="clearAllPBS();return false;">Clear</a>&nbsp;&nbsp; 
 		                <a class="btn" href="#" onclick="selectAllPBS();return false;">Select All</a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -128,7 +130,8 @@ tfoot {
                 <apex:pageBlockSection id="therapyHours" columns="1" collapsible="false">
                     <apex:outputPanel layout="block" rendered="{! therapistAPLineItems != null && therapistAPLineItems.size > 0}">
 	                    <div style="padding: 1em; text-align: right;">
-	                        <a  class="btn" href="#" onclick="exportToPDF(); return false;">Export to PDF</a>
+                            <a class="btn" href="#" onclick="exportToExcel(); return false;">Export to EXCEL</a>&nbsp;
+	                        <a class="btn" href="#" onclick="exportToPDF(); return false;">Export to PDF</a>
 	                    </div>
                         <table id="therapyHoursTable" class="display" cellspacing="0" width="100%">
                             <thead>

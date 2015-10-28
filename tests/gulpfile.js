@@ -45,7 +45,7 @@ gulp.task("inspector", function (done) {
   done();
 });
 
-gulp.task("manage-user", function (done) {
+gulp.task("manage-user", ["install-dependencies"], function (done) {
   manageUsers(done, argv.force);
 });
 

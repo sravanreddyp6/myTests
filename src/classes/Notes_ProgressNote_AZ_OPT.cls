@@ -15,7 +15,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     public list<string> GoalSelStrsremvd {get;set;}
     public list<string> GoaldeSelStrs {get;set;}
     public string GoalsSelected{get;set;}
-    public string GoalsdeSelected{get;set;}
+    public string GoalsdeSelected{get;set;} 
     Public string ErrorMsg{get;set;}
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public list<action_plan_objective__c> allObjectives  = new list<action_plan_objective__c>();
@@ -120,7 +120,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
         listids.add(thePN.Approval_User__c);
         req1.setNextApproverIds(listids);
         try{
-        	Approval.ProcessResult result = Approval.process(req1);
+            Approval.ProcessResult result = Approval.process(req1);
         }
         catch (Exception e) {
             ApexPages.addMessage( new ApexPages.message(ApexPages.severity.ERROR, 'The following exception has occurred: ' + e.getMessage()));
@@ -230,7 +230,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
     
     public Notes_ProgressNote_AZ_OPT(ApexPages.StandardController controller){
         ErrorMsg ='';
-    	GoalsSelected='';overlappingProgressNote = new list<progress_note__c>();GoalsDeSelected='';
+        GoalsSelected='';overlappingProgressNote = new list<progress_note__c>();GoalsDeSelected='';
         GoalSelStrs = New List<string>();
         goalsOrObSelected ='';
         GoalSelStrsremvd = New List<string>();
@@ -380,6 +380,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             progress_note__c pnedit = [select Service_Assignment__r.Admission__r.State__c,owner.name,Person_Being_Served__r.Name,Approval_User__c,End_Time__c,Start_Time__c,Service_Assignment__c ,Service_Assignment__r.service_location__r.programid__c,No_Approval_Needed__c , Service_Assignment__r.Person_Being_Served__c,Service_Assignment__r.Person_Being_Served__r.Name,Action_Plan__c ,Service_Assignment__r.Admission__c from progress_note__c where id =: insertedProgressNoteId ];
             this.thePN = pn;
             pnOverlap = new List<Progress_Note__c>();
+            if(pn.Service_Assignment__c!=Null)
             theServAssign = [ SELECT Id, Name, Start_date__c, End_date__c, Person_Being_Served__c,service_location__r.programid__c,Person_Being_Served__r.name,Admission__c,Admission__r.Person_Being_Served__c,Person_Being_Served__r.AccountId, person_being_served__r.LastName, person_being_served__r.ownerid FROM Service_Assignment__c WHERE Id = :pn.Service_Assignment__c];
             theServAssignId =  pnedit.Service_Assignment__c ;
             pbsName = pnedit.Service_Assignment__r.Person_Being_Served__c;
@@ -658,8 +659,7 @@ public with sharing class Notes_ProgressNote_AZ_OPT {
             ErrorMsg = ErrorMsg + 'Start time future';
             return null;
         }
-        if((theservAssign.Start_Date__c > pn.Start_Time__c.date()) || (theservassign.End_Date__c < pn.Start_Time__c.date()) || ( theservassign.Start_Date__c > pn.End_Time__c.date()) || (theservassign.End_Date__c < pn.End_Time__c.date())){
-          
+        if(theservAssign != Null && ((theservAssign.Start_Date__c > pn.Start_Time__c.date()) || (theservassign.End_Date__c < pn.Start_Time__c.date()) || ( theservassign.Start_Date__c > pn.End_Time__c.date()) || (theservassign.End_Date__c < pn.End_Time__c.date()))){
             ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'The date range you have specified for this Note does not seem to fall completely within the selected Service Assignment.'));     
             ErrorMsg = ErrorMsg + 'Date Range Incorrect';
             return null;

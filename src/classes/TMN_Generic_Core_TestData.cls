@@ -18,8 +18,8 @@ public without sharing class TMN_Generic_Core_TestData {
 		String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') LIMIT 1].Id;
 		theAccount = new Account(
 				RecordTypeID=RecTypeId,
-				FirstName= 'FName' + h.substring(0,10),
-				LastName='LName'+ h.substring(0,10),
+				FirstName= 'FName' + h.substring(0,5),
+				LastName='LName'+ h.substring(0,5),
 				PersonMailingStreet='123 Test Street',
 				PersonMailingPostalCode='12345',
 				PersonMailingCity='SFO',

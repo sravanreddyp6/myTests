@@ -802,38 +802,74 @@ testSuite("hsGaReferral", suiteTimeout, {
       .getOutputText("Mobility")
       .then(function (mobility) {
         assert.equal(mobility , refpag8["Mobility"]);
-      })   
+      })
+      .getCheckboxOutputs(Accessible Housing Needed, Accessible Vehicle Needed, Geographic Restrictions)
+      .then(function (accesshousevehigeo) {
+        assert.equal(accesshousevehigeo , refpag8["Accessible Housing Needed", "Accessible Vehicle Needed", "Geographic Restrictions"]);
+      })
       .getOutputText("Area of State Interested In")
       .then(function (areainterest) {
         assert.equal(areainterest , refpag9["Area of State Interested In"]);
+      })
+      .getCheckboxOutputs(Access to Public Transportation, Physically Aggressive to Staff, Physically Aggressive to Self, Physically Aggressive to Peers, Verbally Aggressive, Suicide Threats, Suicide Attempts, Self Harm or Self-Injurious Behaviors, Fire Setting, Legal History, Law Enforcement Involvement, Property Destruction, Tobacco Use (Current), Chemical Use (Recovery), Chemical Use (Current), Chemical Dependency Treatment, Elopement, Unwanted Sexual Behavior)
+      .then(function (accessmost1) {
+        assert.equal(accessmost1 , refpag9["Access to Public Transportation", "Physically Aggressive to Staff", "Physically Aggressive to Self", "Physically Aggressive to Peers", "Verbally Aggressive", "Suicide Threats", "Suicide Attempts", "Self Harm or Self-Injurious Behaviors", "Fire Setting", "Legal History", "Law Enforcement Involvement", "Property Destruction", "Tobacco Use (Current)", "Chemical Use (Recovery)", "Chemical Use (Current)", "Chemical Dependency Treatment", "Elopement", "Unwanted Sexual Behavior"]);
       })
       .getOutputText("if Yes: Type")
       .then(function (yestype) {
         assert.equal(yestype , refpag9["if Yes: Type"]);
       })
+      .getCheckboxOutput(Nursing Oversight Required)
+      .then(function (nurseoverreq) {
+        assert.equal(nurseoverreq , refpag9["Nursing Oversight Required"]);
+      })
       .getOutputText("If Yes: Level of Support Required")
       .then(function (yeslevel) {
         assert.equal(yeslevel , refpag9["If Yes: Level of Support Required"]);
+      })
+      .getCheckboxOutput(Unsupervised Time)
+      .then(function (unsupervisedtime) {
+        assert.equal(unsupervisedtime , refpag9["Unsupervised Time"]);
       })
       .getOutputText("If Yes: Length of time")
       .then(function (yeslength) {
         assert.equal(yeslength , refpag9["If Yes: Length of time"]);
       })
+      .getCheckboxOutput(Maintain Sibling Group)
+      .then(function (maintainsiblinggroup) {
+        assert.equal(maintainsiblinggroup , refpag9["Maintain Sibling Group"]);
+      })
       .getOutputText("If Yes: How Many?")
       .then(function (yeshow) {
         assert.equal(yeshow , refpag9["If Yes: How Many?"]);
+      })
+      .getCheckboxOutputs(No Same Sex Peers, Can Live with Opposite Sex, No Cross Cultural Placement, Can Be Placed With Other Children)
+      .then(function (accessmost2) {
+        assert.equal(accessmost2 , refpag9["No Same Sex Peers", "Can Live with Opposite Sex", "No Cross Cultural Placement", "Can Be Placed With Other Children"]);
       })
       .getOutputText("If Yes: Age Requirements?")
       .then(function (yesage) {
         assert.equal(yesage , refpag9["If Yes: Age Requirements?"]);
       })
+      .getCheckboxOutput(Family Involvement Restrictions)
+      .then(function (faminvres) {
+        assert.equal(faminvres , refpag9["Family Involvement Restrictions"]);
+      })
       .getOutputText("If Yes: Level?")
       .then(function (ifyeslevel) {
         assert.equal(ifyeslevel , refpag9["If Yes: Level?"]);
       })
+      .getCheckboxOutput(Has Pets)
+      .then(function (haspets) {
+        assert.equal(haspets , refpag9["Has Pets"]);
+      })
       .getOutputText("If Yes: Type")
       .then(function (ifyestype) {
         assert.equal(ifyestype , refpag9["If Yes: Type"]);
+      })
+      .getCheckboxOutputs(Animal Cruelty, Choking Risk, Eating Disorders, History of Bowel Obstructions, Ingesting Non-Consumables, Takes Injectible Medications, Psychiatric/Mental Hospitalization, Ventilator Dependent, Hospitalization Within the Past Year)
+      .then(function (accessmost3) {
+        assert.equal(accessmost3 , refpag9["Animal Cruelty", "Choking Risk", "Eating Disorders", "History of Bowel Obstructions", "Ingesting Non-Consumables", "Takes Injectible Medications", "Psychiatric/Mental Hospitalization", "Ventilator Dependent", "Hospitalization Within the Past Year"]);
       })
       .getOutputText("Restricted Health Conditions")
       .then(function (restrictedhealthconditions) {
@@ -843,5 +879,6 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (progconscomments) {
         assert.equal(progconscomments , refpag9["Programming Considerations Comments"]);
       })
+      .click("input[value='Convert']")
   }
 });

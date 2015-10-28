@@ -89,6 +89,10 @@ public with sharing class IdentityHomeController {
             if(ApexPages.currentPage().getParameters().get('cancel')!=null){
             onloadDialog = false;
             }    
+            if(ApexPages.currentPage().getParameters().get('TAU')!=null){
+            aliasName = ApexPages.currentPage().getParameters().get('TAU');
+            aliasNameValue = ApexPages.currentPage().getParameters().get('TAU');
+            }  
                                                                                                                                                                                                          
     }
 
@@ -109,7 +113,7 @@ public with sharing class IdentityHomeController {
        return null; 
     }
     // Method used to set aliasName value on page load.
-   public String aliasNameValue; 
+    public String aliasNameValue {set;get;}
    public String getAliasNameValue(){
         if(mySubordinates.isEmpty()){
             if(myDelegation.isEmpty()){
@@ -153,7 +157,7 @@ public with sharing class IdentityHomeController {
     // Get list of direct reports who are employees for user.
     List<TMN_User__c> myEmployees;
     public List<TMN_User__c> getMyEmployees() {
-        myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,Salesforce_User_Account__c 
+        myEmployees = [SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,Salesforce_User_Account__r.isActive,Salesforce_User_Account__c 
                        FROM TMN_User__c 
                        WHERE Manager_Email__c=:aliasName 
                        AND Current_Person_Type__c IN ('Employee')

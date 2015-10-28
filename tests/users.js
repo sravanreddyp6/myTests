@@ -42,6 +42,7 @@ var usersToCreate = [];
 _.forEach(Object.keys(usernameMap), function (username) {
   usersToCreate.push(username);
 });
+var usersToUpdate = [];
 
 var manageUsers = function (cb, forced) {
   var usersCreated = false;
@@ -49,6 +50,7 @@ var manageUsers = function (cb, forced) {
     loginUrl: "https://test.salesforce.com/",
     maxRequest: 1000  // otherwise we'll run into max concurrent request error very soon (it defaults to 10)
   });
+  conn.bulk.pollTimeout = 5 * 60 * 1000;  // set poll timeout for bulk operations to 5 minutes
   conn
     .login(auth.username, auth.password)
     .then(function () {
@@ -60,13 +62,9 @@ var manageUsers = function (cb, forced) {
         _.forEach(existingUsers, function (user) {
           user["Username"] = user["Username"] + "." + _.random(100000);
           user["IsActive"] = false;
+          usersToUpdate.push(user);
         })
-        return conn.sobject("User").update(existingUsers);
-      }
-      return existingUsers;
-    })
-    .then(function (existingUsers) {
-      if (!forced) {
+      } else {
         _.forEach(existingUsers, function (user) {
           _.pull(usersToCreate, user["Username"].toLowerCase());
         });
@@ -116,6 +114,19 @@ var manageUsers = function (cb, forced) {
       });
     })
     .then(function () {
+      if (usersToUpdate.length > 0) {
+        console.log("Deactivating old users...");
+        return conn.sobject("User").updateBulk(usersToUpdate);
+      }
+      return;
+    })
+    .then(function (usersUpdated) {
+      usersUpdated && _.map(usersUpdated, function (user) {
+        if (!user.success) {
+          throw new Error("Error updating old user: " + user.errors);
+        }
+      });
+      console.log("...Old users deactivated");
       var userSObjects = _.map(usersToCreate, function (username) {
         var user = usernameMap[username];
         var permissionSets = _.map(user.permission_sets, function (permissionSet) {
@@ -150,7 +161,7 @@ var manageUsers = function (cb, forced) {
             UserRoleId: roleMap[user.role]
         };
       });
-      return conn.sobject("User").create(userSObjects);
+      return conn.sobject("User").insertBulk(userSObjects);
     })
     .then(function (users) {
       var newUserIds = _.map(users, function (user) {
@@ -189,9 +200,14 @@ var manageUsers = function (cb, forced) {
           });
         });
       });
-      return conn.sobject("PermissionSetAssignment").create(permissionSetAssignments);
+      return conn.sobject("PermissionSetAssignment").createBulk(permissionSetAssignments);
     })
     .then(function (results) {
+      results && _.forEach(results, function (result) {
+        if (!result.success) {
+          throw new Error("Error creating new Permission Set Assignment: " + result.errors);
+        }
+      });
       var groupMembers = [];
       _.forEach(userIdMap, function (userObj, userId) {
         _.forEach(userObj.public_groups, function (publicGroup) {
@@ -201,9 +217,14 @@ var manageUsers = function (cb, forced) {
           });
         });
       });
-      return conn.sobject("GroupMember").create(groupMembers);
+      return conn.sobject("GroupMember").createBulk(groupMembers);
     })
-    .then(function () {
+    .then(function (results) {
+      results && _.forEach(results, function (result) {
+        if (!result.success) {
+          throw new Error("Error creating new Group Member: " + result.errors);
+        }
+      });
       var tmnUsers = _.map(userIdMap, function (userObj, userId) {
         return {
           Salesforce_User_Account__c: userId,
@@ -213,7 +234,14 @@ var manageUsers = function (cb, forced) {
           Operating_Group__c: userObj.operating_group
         };
       });
-      return conn.sobject("TMN_User__c").create(tmnUsers);
+      return conn.sobject("TMN_User__c").createBulk(tmnUsers);
+    })
+    .then(function (results) {
+      results && _.forEach(results, function (result) {
+        if (!result.success) {
+          throw new Error("Error creating new TMN User: " + result.errors);
+        }
+      });
     })
     .fail(function (err) {
       if (err.name === "NoNewUserException") {

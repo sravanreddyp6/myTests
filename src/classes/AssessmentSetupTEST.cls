@@ -19,11 +19,11 @@
  *
  * See the Apex Language Reference for more information about Testing and Code Coverage.
  */
-@isTest(SeeAllData=true)
+@isTest
 private class AssessmentSetupTEST {
 
     static testMethod void myUnitTest() {
-        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData(); 
+        TMN_Generic_Core_TestData myData = new TMN_Generic_Core_TestData();
 
         /*String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
 
@@ -54,8 +54,8 @@ private class AssessmentSetupTEST {
         );
         insert Adm;
          */
-        
-            
+
+
         Assessment_Type__c[] testAssmtTypes = new Assessment_Type__c[] {
             new Assessment_Type__c(Name = 'CANS'),
             new Assessment_Type__c(Name = 'Risk')

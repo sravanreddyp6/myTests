@@ -45,10 +45,10 @@ var j$ = jQuery.noConflict();
         
         <apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
         
-        	<apex:outputText label="Bed Hold Type" value="{!authorization.Bed_Hold_Type__c + if ( authorization.Bed_Hold_Type__c = 'Other', ': ' + authorization.bed_hold_type_other__c, '')} " /> 
+        	<apex:outputText label="Bed Hold Type" value="{!authorization.Bed_Hold_Type__c + if ( authorization.Bed_Hold_Type__c = 'Other', ': ' + authorization.Bed_Hold_Type_Other__c, '')} " /> 
         	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" />
 
-	        <apex:outputText label="Type Detail" value="{!authorization.Bed_Hold_Type_Detail__c + if ( authorization.Bed_Hold_Type_Detail__c = 'Other', ': ' + authorization.bed_hold_type_detail_other__c, '')}" />
+	        <apex:outputText label="Type Detail" value="{!authorization.Bed_Hold_Type_Detail__c + if ( authorization.Bed_Hold_Type_Detail__c = 'Other', ': ' + authorization.Bed_Hold_Type_Detail_Other__c, '')}" />
     	    <apex:pageBlockSectionItem >
         		<apex:outputLabel value="Received Date/Time" />
     	    	<c:MilitaryDatetime datetimeval="{!authorization.Received_Date_Time__c}" />
@@ -60,12 +60,12 @@ var j$ = jQuery.noConflict();
 		    <apex:outputField value="{!authorization.Bed_Hold_Classification__c}"  />
 		    <apex:outputField value="{!authorization.Payer_End_Date__c}" label="Return Date" />
 	
-	        <apex:outputText label="Funding Source"  value="{!authorization.funding_source__r.type_of_coverage__c + ' - ' + authorization.Contract_Used__c}" />
+	        <apex:outputText label="Contract Accessed"  value="{!authorization.funding_source__r.Type_of_Coverage__c + ' - ' + authorization.Contract_Used__c}" />
 
           	<apex:outputField value="{!authorization.Received_From__c}" label="Given By"/>
           	
             <apex:outputText value="" />
-	        <apex:outputField value="{!authorization.Representing_Received__c}" />
+	        <apex:outputField value="{!authorization.Representing_Received__c}" label="Representing (given)"/>
 	        
 	        <apex:outputText value="" />
 	        <apex:outputField value="{!authorization.Taken_By__c}" />
@@ -98,7 +98,7 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!authorization.Payer_Effective_Date__c}" label="Effective Date" rendered="{!authorization.Type__c != 'Single Charge'}"/>
 	    <apex:outputText value="" rendered="{! authorization.type__c = 'Single Charge'}" />
 	    
-	    <apex:outputText label="Funding Source"  value="{!authorization.funding_source__r.type_of_coverage__c + ' - ' + authorization.Contract_Used__c}" />
+	    <apex:outputText label="Contract Accessed"  value="{!authorization.funding_source__r.Type_of_Coverage__c + ' - ' + authorization.Contract_Used__c}" />
 
         
         <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Single Charge' }" >
@@ -112,7 +112,7 @@ var j$ = jQuery.noConflict();
         <apex:outputField value="{!authorization.Received_From__c}" rendered="{! authorization.type__c != 'Single Charge' }"/>
         <apex:outputField value="{!authorization.Justification__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
         <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
-        <apex:outputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}"/>
+        <apex:outputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}" label="Representing (given)"/>
         <apex:outputText value="" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' }"/>
         <apex:outputField value="{!authorization.Taken_By__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
         <apex:outputText value="" />

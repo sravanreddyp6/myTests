@@ -295,7 +295,7 @@ function autoCompleteRender(ul, item) {
              <apex:pageBlock title="TMN User" mode="edit" id="createBlock" >
                <div class="pbHeaderButton">  
                     <apex:commandButton value="Save" action="{!Save}" />
-                    <apex:commandButton value="Cancel" action="{!goCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
+                    <apex:commandButton value="Cancel" action="{!createCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
                 </div>      
                 <apex:pageBlockSection columns="2" title="Person Information" id="perInfo">
                     <apex:inputField label="First Name" value="{!TMNUser.First_Name__c}" required="true" taborderhint="1"/>
@@ -532,7 +532,7 @@ function autoCompleteRender(ul, item) {
             </apex:outputPanel>
                     <div class="pbHeaderButton1">  
                     <apex:commandButton value="Save" action="{!Save}" />
-                    <apex:commandButton value="Cancel" action="{!goCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
+                    <apex:commandButton value="Cancel" action="{!createCancel}" immediate="true" html-formnovalidate="formnovalidate"/>
                 </div>      
             
             </apex:pageBlock>
