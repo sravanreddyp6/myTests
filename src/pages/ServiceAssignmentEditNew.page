@@ -3500,7 +3500,15 @@ END: Uncomment to have the element collapsed by default -->
                         j$('select[id$=pbsdiagSelectList]').val(result.Diagnosis__c);
                        	j$('input[id$=sadiagJoEntry_sadiagJoBillable]').prop('checked', result.Billable__c);
                        	j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', result.ABI_Diagnosis__c);
-                       // j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val();
+                       	
+                   	    /*	if(result.Date_of_Injury__c != null){
+                       		var d = new Date(result.Date_of_Injury__c);
+                       		var strdate = d.toString();
+                       		strdate = strdate.substring(4,strdate.lastIndexOf(':'));
+                       		strdate = DateUtil.getDateTimeStringFromUserLocale(strdate);
+                       		j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val(strdate);
+                       	} */
+                       	
                         j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val(result.Glasgow_Coma_Score_at_Injury__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val(result.Glasgow_Coma_Scale_Severity__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val(result.Injury_Type__c);
