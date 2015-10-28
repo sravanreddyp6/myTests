@@ -1684,7 +1684,7 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:pageblockTable value="{!sadiagJOList}" var="jo" rendered="{!sadiagJOList != null && (sadiagJOList.size>0)}"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action"><a href="#Diag" onclick="loadsadiagJo('{!jo.id}');return false;">Edit</a>
                     </apex:column>
-                    <apex:column value="{!jo.Diagnosis__c}" />
+                    <apex:column value="{!jo.Diagnosis__r.ICD__r.Icd_Description__c}" headerValue="Diagnosis"/>
                     <apex:column value="{!jo.Ranking__c}" />
                     <apex:column value="{!jo.Injury_Type__c}" />
                     <apex:column value="{!jo.Date_of_Injury__c}" />
@@ -3472,12 +3472,9 @@ END: Uncomment to have the element collapsed by default -->
                 var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
                 var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
-                
               
-                
-                
                  if(diagId != ''){
-                    ServiceAssignmentExt.savesadiagJORemote(diagSAJOId, diagId, saID, ABI, Billable,injuryDate,
+                    ServiceAssignmentExt.savesadiagJORemote(diagSAJOId, diagId, saID, ABI, Billable, injuryDate,
                         glasgowInjury,glasgowSeverity,injType,rank,
                         function(result, event) {
                             savesadiagJo();
@@ -3498,10 +3495,11 @@ END: Uncomment to have the element collapsed by default -->
             ServiceAssignmentExt.loadsadiagJORemote(joId,
                 function(result, event) {
                     if (event.status) {
+                    	console.log(result.ABI_Diagnosis__c);
                         j$('input[id$=sadiagJoEntry_sadiagJOId]').val(result.Id);
                         j$('select[id$=pbsdiagSelectList]').val(result.Diagnosis__c);
-                        j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').val(result.ABI_Diagnosis__c);
-                        j$('input[id$=sadiagJoEntry_sadiagJoBillable]').val(result.Billable__c);
+                       	j$('input[id$=sadiagJoEntry_sadiagJoBillable]').prop('checked', result.Billable__c);
+                       	j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', result.ABI_Diagnosis__c);
                        // j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val();
                         j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val(result.Glasgow_Coma_Score_at_Injury__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val(result.Glasgow_Coma_Scale_Severity__c);

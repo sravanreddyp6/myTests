@@ -361,7 +361,7 @@ public without sharing class ServiceAssignmentExt {
     
     private void populatesadiagJO(){
     try {
-        this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
+        this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, Diagnosis__r.ICD__r.Icd_Description__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c 
                  where Service_Assignment__c = : this.theServAssign.Id];
       }
@@ -2230,7 +2230,7 @@ public without sharing class ServiceAssignmentExt {
 
     public class MyException extends Exception {}
 
-    @RemoteAction
+  /*  @RemoteAction
     public static Diagnosis__c loadDiagnosis(string diagnosisId) {
         Diagnosis__c dg =
                 [select Id, Effective_Date__c, Axis_I__c, Axis_II__c, Axis_III__c, Axis_IV__c, Axis_V__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Level_of_Disability__c, Comments__c, Service_Assignment__c
@@ -2269,7 +2269,7 @@ public without sharing class ServiceAssignmentExt {
 
         upsert dg;
         return true;
-    }
+    } */
 
 
     @RemoteAction
@@ -2359,6 +2359,10 @@ public without sharing class ServiceAssignmentExt {
     //Sravan - Diagnosis-SA Junction
     @RemoteAction
     public static boolean savesadiagJORemote (string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, String rank) {
+        system.debug('ABI+++'+ABI);
+        system.debug('Billable++++'+Billable);
+        system.debug('injuryDate+++'+injuryDate);
+        
         ServiceAssignment_Diagnosis_JO__c dg;
         ID newID;
         if (diagSAJOId == '') {
@@ -2369,8 +2373,6 @@ public without sharing class ServiceAssignmentExt {
 
             dg = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
-
-           // dg.Date_of_Injury__c = Date.parse(injuryDate);
            // dg.Service_Assignment__c = saID; - not needed as we are not allowing the reparenting option
             dg.Diagnosis__c = diagId;
             dg.ABI_Diagnosis__c = ABI;
@@ -2381,6 +2383,8 @@ public without sharing class ServiceAssignmentExt {
             dg.Ranking__c = rank;
             system.debug('updating ' + dg.Id + ', ' + dg);
         }
+        
+        dg.Date_of_Injury__c = (!String.isEmpty(injuryDate)) ? Date.parse(injuryDate) : (Date) null;
 
         upsert dg;
         return true;
