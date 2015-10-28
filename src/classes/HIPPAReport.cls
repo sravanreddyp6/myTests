@@ -1,4 +1,4 @@
-global class HIPPAReport implements Database.Batchable<sObject> {
+global class HIPPAReport implements Database.Batchable<sObject>, Schedulable {
 
 	 global List<String> managerIds  ;
 	global List<TMN_User__c> tmnUsers;
