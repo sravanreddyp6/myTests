@@ -77,6 +77,11 @@ global class HIPPAReport implements Database.Batchable<sObject>, Schedulable {
 		System.debug('Total Number of Emails and Tasks ' + mails.size());
 	}
 
+	//Scheduling the batch
+    global void execute(SchedulableContext sc) {
+    	Database.executeBatch(new HIPPAReport(), 30);
+  }
+
 	global void finish(Database.BatchableContext BC) {
 
 	}
