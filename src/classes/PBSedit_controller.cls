@@ -5,7 +5,7 @@ public boolean UnderAgePageMsg{get;set;}
 public boolean pbsEditModeOn{get;set;}
 public ApexPages.StandardController PBSController{get;set;}
 public String PageMessage{get;set;}
-public Contact currentContact{ get { return [ select id, accountid, ownerid ,Age_year__c,Age_month__c,Age_days__c from contact where id = :pbsId]; }
+public Contact currentContact{ get { return [ select id, Birthdate, accountid, ownerid ,Age_year__c,Age_month__c,Age_days__c from contact where id = :pbsId]; }
                                     set; }
 public ID PBSId{get;set;}
 public String age {set;get{	return Utility.getAge(this.currentContact.Age_year__c,this.currentContact.Age_month__c,this.currentContact.Age_days__c);	}}
@@ -391,5 +391,15 @@ public void showAddRelParty() {
 //      return null;
 
   }
+    public String getBDayDateValue() {
+    	if (currentContact.id != null){
+	    	DateTime dateTimeValue = currentContact.Birthdate;
+	        if( dateTimeValue != null ) {
+	            String localeFormatDT = dateTimeValue.format('MM/dd/yyyy', UserInfo.getTimeZone().toString() );
+	            return localeFormatDT;
+	        }
+    	}
+        return null;
+    }  
 
 }
