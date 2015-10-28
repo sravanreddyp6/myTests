@@ -165,7 +165,7 @@ public with sharing class referral_Controller2 {
         system.debug(' is cambridge:' + iscambridge);
         system.debug(' operatinggroup:' + operatinggroup);
         return ((operatinggroup == 'Cambridge' && isCambridge )|| 
-                (operatinggroup == 'Redwood' && RWStates.contains( referralrecordtype ) ) || 
+                (operatinggroup == 'Redwood'  ) || 
                 (operatinggroup == 'CareMeridian' && isCareMeridian && OS.Referral_ConvertCMEnabled__c ) ||
                 (operatinggroup == 'Redwood' && referralrecordtype == 'Wisconsin' && showCANS ) ||
                 //Sravan - Removing the Illinois filter condition for Neuro as every state wants to use convert now. 10/27/2015 PRI-316
