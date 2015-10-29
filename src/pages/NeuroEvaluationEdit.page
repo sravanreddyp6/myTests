@@ -7,6 +7,8 @@
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
     <style>
         [id$=skinBodyFooter] {
             clear: both;
@@ -182,6 +184,11 @@
                     applyRulesToField(target);
                 });
             }
+            j$('.datepicker').datetimepicker({
+				timepicker: false,
+				format: 'm/d/Y',
+				closeOnDateSelect: true
+			});
             beforeEvaluationSave = function () {
                 // Temporarily enable all the disabled fields before saving the
                 // record, so that they are included in the POST to the server.
@@ -338,9 +345,9 @@
                 <apex:pageBlock >
                     <apex:pageBlockSection columns="2">
                         <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
-                        <apex:inputField value="{!pbr.Date_of_Birth__c}" />
+                        <apex:inputField value="{!pbr.Date_of_Birth__c}" showDatePicker="false" styleClass="datepicker" />
                         <apex:pageBlockSectionItem />
-                        <apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Age__c}" />
+                        <apex:outputText label="Age">{!age}</apex:outputText>
                         <apex:inputField value="{!Evaluation__c.Occupation__c}" />
                         <apex:outputText value="Employment Status" styleClass="labelCol" style="margin-left: 3cm;"/>
                         <apex:pageBlockSectionItem />

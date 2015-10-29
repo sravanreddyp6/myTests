@@ -245,11 +245,6 @@
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
-        <displayedFields>
-            <field>Gender__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
         <label>PBS Basic</label>
     </fieldSets>
     <fieldSets>
@@ -451,6 +446,39 @@ TEXT(IF(DAY(Today())&gt;=DAY(Birthdate),DAY(Today())-DAY(Birthdate),31-(DAY(Birt
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Age_days__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(IF(DAY(Today())&gt;=DAY(Birthdate),DAY(Today())-DAY(Birthdate),30-(DAY(Birthdate)-DAY(Today()))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Age_days</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Age_month__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(IF(YEAR(Today())=YEAR(Birthdate),IF(MONTH(Today())=MONTH(Birthdate),0,IF(MONTH(Today())&gt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),MONTH(Today())-MONTH(Birthdate)-1,MONTH(Today())-MONTH(Birthdate)),0)),IF(MONTH(Today())=MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),11,0),IF(MONTH(Today())&gt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),MONTH(Today())-MONTH(Birthdate)-1,MONTH(Today())-MONTH(Birthdate)),IF(MONTH(Today())&lt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),11-(MONTH(Birthdate)-MONTH(Today())),12-(MONTH(Birthdate)-MONTH(Today()))),12-(MONTH(Birthdate)-MONTH(Today())))))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Age_month</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Age_year__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(IF(YEAR(Today())=YEAR(Birthdate),0,IF(YEAR(Today())-YEAR(Birthdate)=1,IF(MONTH(Today())=MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),0,1),IF(MONTH(Today())&lt;MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),1,0),1)),IF(MONTH(Today())-MONTH(Birthdate)&lt;0,YEAR(Today())-YEAR(Birthdate)-1,IF(MONTH(Today())=MONTH(Birthdate),IF(DAY(Today())&lt;DAY(Birthdate),YEAR(Today())-YEAR(Birthdate)-1,YEAR(Today())-YEAR(Birthdate)),YEAR(Today())-YEAR(Birthdate))))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Age_year</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>AssistantName</fullName>
         <trackHistory>false</trackHistory>
     </fields>
@@ -579,6 +607,24 @@ TEXT(IF(DAY(Today())&gt;=DAY(Birthdate),DAY(Today())-DAY(Birthdate),31-(DAY(Birt
     <fields>
         <fullName>DoNotCall</fullName>
         <trackHistory>false</trackHistory>
+    </fields>
+    <fields>
+        <fullName>Does_the_person_Identify__c</fullName>
+        <externalId>false</externalId>
+        <label>Person Gender Other than legal</label>
+        <picklist>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Email</fullName>
@@ -899,8 +945,19 @@ TEXT(IF(DAY(Today())&gt;=DAY(Birthdate),DAY(Today())-DAY(Birthdate),31-(DAY(Birt
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Gender_Identity__c</fullName>
+        <externalId>false</externalId>
+        <label>Gender Identity</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Gender__c</fullName>
         <externalId>false</externalId>
+        <inlineHelpText>Select the person&apos;s legal gender</inlineHelpText>
         <label>Gender</label>
         <picklist>
             <picklistValues>
@@ -987,6 +1044,28 @@ TEXT(IF(DAY(Today())&gt;=DAY(Birthdate),DAY(Today())-DAY(Birthdate),31-(DAY(Birt
         <required>false</required>
         <trackHistory>true</trackHistory>
         <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Guardianship_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Guardianship Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Full Guardianship/Conservatorship</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Partial Guardianship/Conservatorship</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Self</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>HasOptedOutOfEmail</fullName>
@@ -1437,6 +1516,29 @@ TEXT(IF(DAY(Today())&gt;=DAY(Birthdate),DAY(Today())-DAY(Birthdate),31-(DAY(Birt
         <label>Person #</label>
         <trackHistory>false</trackHistory>
         <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <fullName>Partial_Guardianship_Conservatorship__c</fullName>
+        <externalId>false</externalId>
+        <label>Partial Guardianship/Conservatorship</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Financial</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medical</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Placement Decisions</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
     </fields>
     <fields>
         <fullName>Person_Being_Referred__c</fullName>

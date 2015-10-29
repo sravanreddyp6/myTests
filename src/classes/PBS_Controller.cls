@@ -130,7 +130,11 @@ public pageReference savePBS() {
   			} else if (e.getMessage().Contains('The Other ID and Other ID Description fields')) {
   			     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 	        	    'The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.'));  			 
-  			}	 
+  			} else if (e.getMessage().Contains('Gender Identity')) {
+  			     ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+	        	    'Gender Identity is required when the person identifies with a gender other than the legal gender'));  			 
+  			}
+  				 
   			else {
   				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
         	'An error occurred saving this record. ' + e.getMessage()));
