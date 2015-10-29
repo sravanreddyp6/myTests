@@ -6,6 +6,9 @@
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
      <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
     <style type="text/css">
         .nowrap {
             white-space: nowrap;
@@ -29,19 +32,28 @@
             setUpFields = function() {
                 $('body input').on("change", function(event) {
                     applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
                 });
                 $('body select').on("change", function(event) {
                     applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
                 });
                 $('body input').each(function(_, target) {
                     applyRulesToField(target);
+                    applyShowHideRulesToField(target);
                 });
                 $('body select').each(function(_, target) {
                     applyRulesToField(target);
+                    applyShowHideRulesToField(target);
                 });
             }
             setUpFields();
             setUpTabOrder();
+            j$('.datepicker').datetimepicker({
+				timepicker: false,
+				format: 'm/d/Y',
+				closeOnDateSelect: true
+			});
 
             // this is to remove the disabled property from
             $('form').bind('submit', function() {
@@ -59,7 +71,7 @@
 
         //PRI-PRI-162
         function setUpTabOrder(){
-            console.log('start tab order');
+        	console.log('start tab order');
               j$('.setMailStateTab').focus(
                   function(){
                       j$('select[id$=MailingStateCode ]').attr("tabindex", 100);
@@ -86,8 +98,8 @@
                    if( $input.attr("tabindex") == ''){
                        $input.attr("tabindex", tabindex);
                        //console.log($input);
+                      }
                    }
-                 }
               });    
               tabindex = 1000;    
               j$('#theWholeForm :input').each(function() {
@@ -147,7 +159,6 @@
         function openDialog(dialogId, tagType, titleString) {
             console.log('trying to open modal');
             selector = tagType + '[id$=' + dialogId + ']';
-
             j$(selector).dialog({
                 dialogClass: 'fixed-dialog',
                 title: titleString,
@@ -252,6 +263,87 @@
             }
             return false;
         }
+    
+    	// Diagnosis changes
+    
+		function validateDiagnosis() {
+            var errors = '';
+            j$('#diagnosisErrors').html(errors);
+
+            if (j$('input[id$=diagnosisEntry_icd]').val() == '') {
+                errors += '<li>ICD Code is a required field.</li>';
+            }
+            if (j$('input[id$=diagnosisEntry_EffTime]').val() == '') {
+                errors += '<li>Date and Time of Diagnosis is a required field.</li>';
+            }
+            if (j$('select[id$=diagnosisEntry_status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }
+			 if (j$('select[id$=diagnosisEntry_type]').val() == '') {
+                errors += '<li>Type is a required field.</li>';
+            }
+			
+            j$('#diagnosisErrors').html(errors);
+            return (errors == '');
+        }
+    
+    	function diagnosisSave(isDialogClose) {
+            if (validateDiagnosis()) {
+                var diagnosisId = j$('input[id$=diagnosisEntry_Id]').val();
+                var diagnosisType = j$('select[id$=diagnosisEntry_type]').val();
+                var status = j$('select[id$=diagnosisEntry_status]').val();
+                var effectiveTime = j$('input[id$=diagnosisEntry_EffTime]').val();
+                var ICD = j$('input[id$=diagnosisEntry_icd_lkid]').val();
+                var PBSId = '{!Contact.Id}';
+                
+                 if(PBSId != ''){
+                    PBS_controller_helper.saveDiagnosis(diagnosisId, diagnosisType, status, effectiveTime, ICD,
+                        PBSId,
+                        function(result, event) {
+                            saveDiagnosis();
+                            if (isDialogClose) {
+                                closeDialog('diagnosisModal', 'span');
+                            }
+                        }, {
+                            escape: true
+                        }
+                    );                
+                
+                }
+            }
+            return false;
+        }
+        
+        function loadDiagnosis(diagnosisId) {
+            PBS_controller_helper.loadDiagnosis(diagnosisId,
+                function(result, event) {
+                    if (event.status) {
+                    	var d;
+                        var dateString;
+                        if (result.Effective_Date__c != null) {
+                            d = new Date(result.Effective_Date__c);
+                            dateString = d.toString();
+                            dateString = dateString.substring(4,dateString.lastIndexOf(':'));
+                            dateString = DateUtil.getDateTimeStringFromUserLocale(d);
+                        }
+                    
+                        j$('input[id$=diagnosisEntry_Id]').val(result.Id);
+                        j$('input[id$=diagnosisEntry_icd]').val(result.ICD__r.Name);
+                        j$('input[id$=diagnosisEntry_icd_lkid ]').val(result.ICD__c);
+                        j$('input[id$=diagnosisEntry_EffTime]').val(dateString);
+                        j$('select[id$=diagnosisEntry_type]').val(result.Type__c);
+                        j$('select[id$=diagnosisEntry_status]').val(result.Status__c);
+                        
+          
+                        openDialog('diagnosisModal', 'span', 'Add Diagnosis');
+                    }
+                }, {
+                    escape: true
+                }
+            );
+        }
+    
+    //End
 
         function loadRelatedParty(partyId) {
             PBS_controller_helper.loadRelatedParty(partyId,
@@ -282,68 +374,132 @@
     <br />
     <div id="theWholeForm">
     <apex:form id="FormId">
-        <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
-        <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties,relatedPartyEntry,relatedPartyEntry2,msgs" />
+    	<c:FormCompletionControl viewMode="{! !pbsEditModeOn}"/>
+        <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,msgs" />
+        <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,msgs" />
         <!-- START: CTEAE-39; siblings -->
         <apex:actionFunction name="showAddSibling" action="{!showAddSibling}" rerender="siblings,msgs" />
         <!-- END: CTEAE-39; siblings -->
+        
+         <!-- Diagnosis changes-->
+        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diag_Alt1_Header,diagnosisEntry,msgs"  />
+        <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" rerender="diag_Alt1_Header,diagnosisEntry,msgs" />
+        <!-- end -->
+        
         <apex:pageMessages />
 
         <!--Person Being Served Section-->
-        <apex:pageBlock id="PBSDetailID" title="Person Being Served">
-            <div class="pbHeaderButton">
-                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" />
-                <apex:commandButton value="Save" id="SavePBSId" action="{!save}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
-                <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
-            </div>
-
-            <apex:pageBlockSection title="Person Being Served" showHeader="false" columns="2" collapsible="false" id="pbsOutPutsectionId">
-                <apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput"/>
-                <apex:inputField value="{!Contact.Race__c }" taborderhint="2" rendered="{! pbsEditModeOn }"/>
+        <apex:pageBlock id="PBSDetailID" mode="maindetail" >
+        <div class="tmn-h1">Person Being Served</div>
+        	<apex:pageBlockButtons >
+	            <div class="blockbtns">
+	                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" />
+	                <apex:commandButton value="Save" id="SavePBSId" action="{!save}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
+	                <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
+	            </div>
+        	</apex:pageBlockButtons>    
+            <apex:pageBlockSection title="Demographics" showHeader="true" columns="2" collapsible="true" id="pbsOutPutsectionId">
+                
+                <apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" >
+                	<apex:outputLabel value="First Name" for="FirstNameInput" />
+                	<apex:outputPanel >
+                		<apex:inputField value="{!Contact.FirstName}" taborderhint="1" rendered="{! pbsEditModeOn }" id="FirstNameInput" required="true"  html-data-countInFormProgress="1" />
+                		<label for="pLastName2" style="display: none;" >Last Name</label>
+                		<input id="pLastName2" value="{!Contact.LastName}" style="display: none;"  data-countInFormProgress="1" /> 
+                	</apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!Contact.Race__c }" taborderhint="2" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
                 <apex:inputField value="{!Contact.Middle_Name__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
-                <apex:inputField value="{!Contact.Ethnicity_Picklist__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
-                <apex:inputField value="{!Contact.LastName}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
-                <apex:inputField value="{!Contact.Marital_Status__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
+                <apex:inputField value="{!Contact.Ethnicity_Picklist__c}" taborderhint="2" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
+                <apex:inputField value="{!Contact.LastName}" taborderhint="1" rendered="{! pbsEditModeOn }"  />
+                <apex:inputField value="{!Contact.Marital_Status__c}" taborderhint="2" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
                 <apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" >
                     <apex:outputLabel value="Date of Birth" for="txtDOB" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                            <apex:inputfield id="txtDOB" taborderhint="1" value="{!Contact.Birthdate}" label="Date of Birth" required="true" />
+                            <apex:inputfield id="txtDOB" taborderhint="1" showDatePicker="false" styleClass="datepicker" value="{!Contact.Birthdate}" label="Date of Birth" required="true"  html-data-countInFormProgress="1" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }">
-                    <apex:outputText value="Primary Language" />
+                    <apex:outputLabel for="primaryLangInput" value="Primary Language" />
                     <apex:outputPanel styleClass="nowrap">
-                        <apex:inputField taborderhint="2" value="{!Contact.Primary_Language__c}" /> &nbsp;&nbsp;
+                        <apex:inputField id="primaryLangInput" taborderhint="2" value="{!Contact.Primary_Language__c}"  html-data-countInFormProgress="1" /> &nbsp;&nbsp;
                         <apex:outputLabel value="Non-Verbal" />&nbsp;
                         <apex:inputField taborderhint="2" value="{!Contact.Non_Verbal__c}"  />&nbsp;
                         <apex:outputLabel value="Sign Language" />&nbsp;
                         <apex:inputField taborderhint="2" value="{!Contact.Sign_Language__c}"  />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:inputField value="{!Contact.Age__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
-                <apex:inputField value="{!Contact.Level_of_Education__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/>
-                <apex:inputField value="{!Contact.Gender__c}" taborderhint="1" rendered="{! pbsEditModeOn }"/>
+                 <apex:outputText label="Age" value="{!Age}" rendered="{! pbsEditModeOn }"/>
+<!--                  Sravan - Aug 20, 2015 - PRI-224 -->
+<!--                 <apex:inputField value="{!Contact.Level_of_Education__c}" taborderhint="2" rendered="{! pbsEditModeOn }"/> -->
+				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" />
+				<apex:inputField value="{!Contact.Gender__c}" taborderhint="1" required="true" rendered="{! pbsEditModeOn }"  html-data-countInFormProgress="1" />
+				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }" />
+				<apex:inputField value="{!Contact.Does_the_person_Identify__c}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" rendered="{! pbsEditModeOn }" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}"
+					html-data-visibility-row-rules="true" html-data-countInFormProgress="1" />
+				<apex:pageBlockSectionItem rendered="{! pbsEditModeOn }"/>
+				<apex:inputField value="{!Contact.Gender_Identity__c}" id="genderIdentity"  rendered="{! pbsEditModeOn }"/>
+
                 
-                <!--  view -->
-                <apex:outputField value="{!Contact.FirstName}"  rendered="{! !pbsEditModeOn }"/>
-                <apex:outputField value="{!Contact.Race__c }" rendered="{! !pbsEditModeOn }"/>
+                <!--  view -->                
+				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }">
+					<label for="pFirstName" >First Name</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!Contact.FirstName}"  />
+						<!-- used in Progress score -->
+						<input id="pFirstName" value="{!Contact.FirstName}" style="display: none;"  data-countInFormProgress="1" tabindex="10"/> 
+						<input id="pLastName" value="{!Contact.LastName}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }">
+					<label for="pRace" >Race</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!Contact.Race__c }" />
+						<!-- used in Progress score -->
+						<input id="pRace" value="{!Contact.Race__c }" style="display: none;"  data-countInFormProgress="1" tabindex="20" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>
                 <apex:outputField value="{!Contact.Middle_Name__c}" rendered="{! !pbsEditModeOn }"/>
-                <apex:outputField value="{!Contact.Ethnicity_Picklist__c}" rendered="{! !pbsEditModeOn }"/>
-                <apex:outputField value="{!Contact.LastName}" rendered="{! !pbsEditModeOn }"/>
-                <apex:outputField value="{!Contact.Marital_Status__c}" rendered="{! !pbsEditModeOn }"/>
+				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }">
+					<label for="pEthnicity" >Ethnicity</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!Contact.Ethnicity_Picklist__c}"  />
+						<!-- used in Progress score -->
+						<input id="pEthnicity" value="{!Contact.Ethnicity_Picklist__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>                
+				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }">
+					<label for="pLastName" >Last Name</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!Contact.LastName}" />
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>                
+
+				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }">
+					<label for="pMarital" >Marital Status</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!Contact.Marital_Status__c}" />
+						<!-- used in Progress score -->
+						<input id="pMarital" value="{!Contact.Marital_Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem> 
                 <apex:pageBlockSectionItem rendered="{! NOT(pbsEditModeOn)}" >
-                        <apex:outputLabel value="Date of Birth" for="txtDOB" />
+                        <label for="pDoB" >Date of Birth</label>
                           <apex:outputPanel layout="block" >
                            <apex:outputPanel layout="block" />
-                             <apex:outputField id="txtDOB"  value="{!Contact.Birthdate}"/>
+                             <apex:outputField id="txtDOB"  value="{!Contact.Birthdate}"  html-data-countInFormProgress="1" />
+                                <!-- used in Progress score -->
+                                <input id="pDoB" value="{!BDayDateValue}" showDatePicker="false" style="display: none;"  data-countInFormProgress="1" />                              
                              </apex:outputPanel>
-                    </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!  NOT(pbsEditModeOn) }">
-                
-                    <apex:outputText value="Primary Language" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!NOT(pbsEditModeOn) }">
+
+                    <label for="PriLang" >Primary Language</label>
                     <apex:outputPanel styleClass="nowrap">
                         <apex:outputField value="{!Contact.Primary_Language__c}" /> &nbsp;&nbsp;
+                        <!-- used in Progress score -->
+							<input id="PriLang" value="{!Contact.Primary_Language__c}" style="display: none;"  data-countInFormProgress="1" />
                         <apex:outputLabel value="Non-Verbal" />&nbsp;
                         <apex:outputField value="{!Contact.Non_Verbal__c}"  />&nbsp;
                         <apex:outputLabel value="Sign Language" />&nbsp;
@@ -351,126 +507,149 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>    
                 
-                <apex:outputField value="{!Contact.Age__c}" rendered="{! !pbsEditModeOn }"/>
-                <apex:outputField value="{!Contact.Level_of_Education__c}" rendered="{! !pbsEditModeOn }"/>
-                <apex:outputField value="{!Contact.Gender__c}" rendered="{! !pbsEditModeOn }"/>
+                <apex:outputText label="Age" value="{!Age}" rendered="{! !pbsEditModeOn }"/>
+<!--                 <apex:outputField value="{!Contact.Level_of_Education__c}" rendered="{! !pbsEditModeOn }"/> -->
+				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }" />				
+				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }">
+					<label for="pGender" >Gender</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!Contact.Gender__c}" rendered="{! !pbsEditModeOn }"/>
+						<!-- used in Progress score -->
+						<input id="pGender" value="{!Contact.Gender__c}" style="display: none;" tabindex="200" data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>				
+                <apex:pageBlockSectionItem />
+				<apex:pageBlockSectionItem rendered="{! !pbsEditModeOn }">
+					<label for="pGenderType" >Does the person Identify with a gender other than legal gender selected?</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!Contact.Does_the_person_Identify__c}" />
+						<!-- used in Progress score -->
+						<input id="pGenderType" value="{!Contact.Does_the_person_Identify__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>		   		
+		   		<apex:pageBlockSectionItem />
+		   		<apex:pageBlockSectionItem rendered="{!!pbsEditModeOn && Contact.Does_the_person_Identify__c == 'Yes'}" >
+		   			<apex:outputLabel value="Describe Gender Identity"  />			   		
+		   			<apex:outputField value="{!Contact.Gender_Identity__c}" />
+		   		</apex:pageBlockSectionItem>
+		   		
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection" rendered="{! pbsEditModeOn}">
-                <apex:inputField taborderhint="5" value="{!contact.Medicaid_ID__c }" rendered="{! !vfVarIsCM}"/>
-                <apex:outputText Value="" rendered="{! vfVarIsCM}"/>
-                <apex:inputField taborderhint="6" value="{!contact.Other_ID__c }" />
-                <apex:inputField taborderhint="5" value="{!contact.Avatar_ID__c }" />
-                <apex:inputField taborderhint="6" value="{!contact.Other_ID_Description__c }" />
-                <apex:inputField taborderhint="5" value="{!contact.Avatar_Source_System__c }" />
-                <apex:inputField taborderhint="6" value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA' && !isCAFSS}"/>
+				<apex:inputField taborderhint="5" value="{!contact.Medicaid_ID__c }" rendered="{! !vfVarIsCM}" />
+				<apex:outputText Value="" rendered="{! vfVarIsCM}"/>
+				<apex:inputField taborderhint="6" value="{!contact.Other_ID__c }" />
+				<apex:inputField taborderhint="5" value="{!contact.Avatar_ID__c }" />
+				<apex:inputField taborderhint="6" value="{!contact.Other_ID_Description__c }" />
+				<apex:inputField taborderhint="5" value="{!contact.Avatar_Source_System__c }" />
+				<apex:inputField taborderhint="6" value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA' && !isCAFSS}"/>
             </apex:pageBlockSection>
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection_view" rendered="{! !pbsEditModeOn}">
-                <apex:outputField value="{!contact.Medicaid_ID__c }" rendered="{! !vfVarIsCM}"/>
-                <apex:outputText Value="" rendered="{! vfVarIsCM}"/>
-                <apex:outputField value="{!contact.Other_ID__c }" />
-                <apex:outputField value="{!contact.Avatar_ID__c }" />
-                <apex:outputField value="{!contact.Other_ID_Description__c }" />
-                <apex:outputField value="{!contact.Avatar_Source_System__c }" />
-                <apex:outputField value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA' && !isCAFSS}"/>
+				<apex:outputField value="{!contact.Medicaid_ID__c }"  rendered="{! !vfVarIsCM}"/>
+				<apex:outputText Value="" rendered="{! vfVarIsCM}"/>
+				<apex:outputField value="{!contact.Other_ID__c }" />
+				<apex:outputField value="{!contact.Avatar_ID__c }" />
+				<apex:outputField value="{!contact.Other_ID_Description__c }" />
+				<apex:outputField value="{!contact.Avatar_Source_System__c }" />
+				<apex:outputField value="{!contact.UCI_ID__c }" rendered="{! Contact.MailingStateCode == 'CA' && !isCAFSS}"/>
             </apex:pageBlockSection>            
 
             <!--Contact Information Section-->
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputContactInfo">
 
 
-                <apex:pageBlockSectionItem rendered="{! pbsEditModeOn}" >
-                    <apex:outputLabel value="Mailing Street 1" for="Ma" />
-                    <apex:inputText tabindex="100" id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{! pbsEditModeOn}" >
-                    <apex:outputLabel value="Other Street 1" for="os" />
-                    <apex:inputText tabindex="120" id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
-                </apex:pageBlockSectionItem>
-                <apex:inputField taborderhint="10" value="{!contact.Mailing_Street_2__c}" rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="12" value="{!contact.Other_Street_2__c}" rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="10" value="{!contact.MailingCity}" rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="12" value="{!contact.OtherCity}" rendered="{!  pbsEditModeOn}"/>
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Mailing Country" for="os" />
-                    <apex:inputField taborderhint="10" styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Other Country" for="os" />
-                    <apex:inputField taborderhint="12" styleclass="setOtherStateTab"  value="{!contact.OtherCountryCode}" label="Other Country" />
-                </apex:pageBlockSectionItem>
-                
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Mailing State/Province" for="os" />
-                    <apex:outputPanel >
-                        <apex:inputField id="MailingStateCode" taborderhint="10" html-class="testingTabs"  value="{!contact.MailingStateCode}" label="Mailing State/Province" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                
-                    
-                
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
-                    <apex:outputLabel value="Other State/Province" for="os" />
-                    <apex:inputField taborderhint="12"  id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
-                </apex:pageBlockSectionItem>
-                <apex:inputField taborderhint="10" value="{!contact.MailingPostalCode}"  styleClass="setMailStateTab"  rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="12" styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   rendered="{!  pbsEditModeOn}"/>
-                <apex:inputField taborderhint="10" value="{!contact.Mailing_County__c}"  rendered="{!  pbsEditModeOn}" />
-                <apex:inputField taborderhint="12" value="{!contact.Other_County__c}"  rendered="{!  pbsEditModeOn}" />
-                <apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn }" >
+				    <apex:outputLabel value="Mailing Street 1" for="Ma" />
+				    <apex:inputText tabindex="100" id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Other Street 1" for="os" />
+				    <apex:inputText tabindex="120" id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:inputField taborderhint="10" value="{!contact.Mailing_Street_2__c}" rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="12" value="{!contact.Other_Street_2__c}" rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="10" value="{!contact.MailingCity}" rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="12" value="{!contact.OtherCity}" rendered="{!  pbsEditModeOn}"/>
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Mailing Country" for="os" />
+				    <apex:inputField taborderhint="10" styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Other Country" for="os" />
+				    <apex:inputField taborderhint="12" styleclass="setOtherStateTab"  value="{!contact.OtherCountryCode}" label="Other Country" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Mailing State/Province" for="os" />
+				    <apex:outputPanel >
+				        <apex:inputField id="MailingStateCode" taborderhint="10" html-class="testingTabs"  value="{!contact.MailingStateCode}" label="Mailing State/Province" />
+				    </apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				    
+				
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
+				    <apex:outputLabel value="Other State/Province" for="os" />
+				    <apex:inputField taborderhint="12"  id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
+				</apex:pageBlockSectionItem>
+				<apex:inputField taborderhint="10" value="{!contact.MailingPostalCode}"  styleClass="setMailStateTab"  rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="12" styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   rendered="{!  pbsEditModeOn}"/>
+				<apex:inputField taborderhint="10" value="{!contact.Mailing_County__c}"  rendered="{!  pbsEditModeOn}" />
+				<apex:inputField taborderhint="12" value="{!contact.Other_County__c}"  rendered="{!  pbsEditModeOn}" />
+				<apex:pageBlockSectionItem rendered="{!  pbsEditModeOn}" >
                     <apex:outputLabel value="Home Phone" for="phone"/>
                     <apex:inputField taborderhint="10" value="{!contact.Phone}" id="phone"/>
-                </apex:pageBlockSectionItem>
-                <apex:inputField taborderhint="12" value="{!contact.OtherPhone}"  rendered="{!  pbsEditModeOn}" />
-                <apex:inputField taborderhint="10" value="{!contact.Email}"  rendered="{!  pbsEditModeOn}" />
-                <apex:inputField taborderhint="12" value="{!contact.Other_Contact_Information__c}"  rendered="{!  pbsEditModeOn}"  />
-                
-                <!-- view -->
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn }" >
-                    <apex:outputLabel value="Mailing Street 1" for="Ma" />
-                    <apex:outputField id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Other Street 1" for="os" />
-                    <apex:outputField id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
-                </apex:pageBlockSectionItem>
-                <apex:outputField value="{!contact.Mailing_Street_2__c}" rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField value="{!contact.Other_Street_2__c}" rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField value="{!contact.MailingCity}" rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField value="{!contact.OtherCity}" rendered="{!  !pbsEditModeOn}"/>
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Mailing Country" for="os" />
-                    <apex:outputField styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
-                </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Other Country" for="os" />
-                    <apex:outputField styleclass="setOtherStateTab"  value="{!contact.OtherCountryCode}" label="Other Country" />
-                </apex:pageBlockSectionItem>
-                
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Mailing State/Province" for="os" />
-                    <apex:outputPanel >
-                        <apex:outputField id="MailingStateCode"  html-class="testingTabs"  value="{!contact.MailingStateCode}" label="Mailing State/Province" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-                
-                    
-                
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
-                    <apex:outputLabel value="Other State/Province" for="os" />
-                    <apex:outputField id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
-                </apex:pageBlockSectionItem>
-                <apex:outputField value="{!contact.MailingPostalCode}"  styleClass="setMailStateTab"  rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   rendered="{!  !pbsEditModeOn}"/>
-                <apex:outputField value="{!contact.Mailing_County__c}"  rendered="{!  !pbsEditModeOn}" />
-                <apex:outputField value="{!contact.Other_County__c}"  rendered="{!  !pbsEditModeOn}" />
-                <apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				</apex:pageBlockSectionItem>
+				<apex:inputField taborderhint="12" value="{!contact.OtherPhone}"  rendered="{!  pbsEditModeOn}" />
+				<apex:inputField taborderhint="10" value="{!contact.Email}"  rendered="{!  pbsEditModeOn}" />
+				<apex:inputField taborderhint="12" value="{!contact.Other_Contact_Information__c}"  rendered="{!  pbsEditModeOn}"  />
+				
+				<!-- view -->
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn }" >
+				    <apex:outputLabel value="Mailing Street 1" for="Ma" />
+				    <apex:outputField id="ma"  value="{!contact.MailingStreet}" label="Mailing Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Other Street 1" for="os" />
+				    <apex:outputField id="os"  value="{!contact.OtherStreet}" label="Other Street 1" />
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!contact.Mailing_Street_2__c}" rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField value="{!contact.Other_Street_2__c}" rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField value="{!contact.MailingCity}" rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField value="{!contact.OtherCity}" rendered="{!  !pbsEditModeOn}"/>
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Mailing Country" for="os" />
+				    <apex:outputField styleClass="setMailStateTab" value="{!contact.MailingCountryCode}" label="Mailing Country" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Other Country" for="os" />
+				    <apex:outputField styleclass="setOtherStateTab"  value="{!contact.OtherCountryCode}" label="Other Country" />
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Mailing State/Province" for="os" />
+				    <apex:outputPanel >
+				        <apex:outputField id="MailingStateCode"  html-class="testingTabs"  value="{!contact.MailingStateCode}" label="Mailing State/Province" />
+				    </apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				
+				    
+				
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
+				    <apex:outputLabel value="Other State/Province" for="os" />
+				    <apex:outputField id="OtherStateCode"  value="{!contact.OtherStateCode}" label="Other State/Province" />
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!contact.MailingPostalCode}"  styleClass="setMailStateTab"  rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField styleclass="setOtherStateTab"     value="{!contact.OtherPostalCode}"   rendered="{!  !pbsEditModeOn}"/>
+				<apex:outputField value="{!contact.Mailing_County__c}"  rendered="{!  !pbsEditModeOn}" />
+				<apex:outputField value="{!contact.Other_County__c}"  rendered="{!  !pbsEditModeOn}" />
+				<apex:pageBlockSectionItem rendered="{!  !pbsEditModeOn}" >
                     <apex:outputLabel value="Home Phone" for="phone"/>
                     <apex:outputField value="{!contact.Phone}" id="phone"/>
-                </apex:pageBlockSectionItem>
-                <apex:outputField value="{!contact.OtherPhone}"  rendered="{!  !pbsEditModeOn}" />
-                <apex:outputField value="{!contact.Email}"  rendered="{!  !pbsEditModeOn}" />
-                <apex:outputField value="{!contact.Other_Contact_Information__c}"  rendered="{!  !pbsEditModeOn}"  />
+				</apex:pageBlockSectionItem>
+				<apex:outputField value="{!contact.OtherPhone}"  rendered="{!  !pbsEditModeOn}" />
+				<apex:outputField value="{!contact.Email}"  rendered="{!  !pbsEditModeOn}" />
+				<apex:outputField value="{!contact.Other_Contact_Information__c}"  rendered="{!  !pbsEditModeOn}"  />
             </apex:pageBlockSection>
 
             <apex:pageBlockSection title="Financial Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFinancialInfo"  rendered="{!showDiagnosis && !isUserLevel1or2 && !canViewFamilyInfo && pbsEditModeOn && !isNR}">
@@ -502,13 +681,34 @@
             <a name="AI" id="AI" />
             <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo" rendered="{! pbsEditModeOn}">
 
-                <apex:inputField taborderhint="20" value="{!Contact.Family_Member_Other__c}" />
-                <apex:inputField taborderhint="21" value="{!Contact.Legal_Guardianship_Status__c}" />
-                
-                <apex:inputField taborderhint="20" value="{!Contact.VIP_Indicator__c}" />
-                <apex:inputField taborderhint="21" value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
-                <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
-                
+				<apex:inputField taborderhint="20" value="{!Contact.Family_Member_Other__c}" />
+<!-- 				<apex:inputField taborderhint="21" value="{!Contact.Legal_Guardianship_Status__c}" /> -->
+<!-- 				Added by Sravan for PRI-164 05/13/2015 -->
+				<apex:pageBlocksectionitem >
+					<apex:outputPanel >
+                		<apex:outputLabel value="Guardianship Type" for="guardianShipType" id="guardianshipTypeLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                	<apex:outputPanel >
+                		<apex:inputField value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"  html-data-countInFormProgress="1" />
+                		<br/>
+                		<br/>
+                		<apex:inputField value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                </apex:pageBlocksectionitem>
+			
+				<apex:inputField taborderhint="20" value="{!Contact.VIP_Indicator__c}" />
+				<apex:inputField taborderhint="21" value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
+				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
+				
                 <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" />                
                 <apex:inputField taborderhint="20" value="{!Contact.Advanced_Directives__c}" rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}" />                
                 <apex:inputField taborderhint="21" value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />                
@@ -516,28 +716,46 @@
                 <apex:inputField taborderhint="20" value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />                
                 <apex:inputField taborderhint="21" value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
 
-            </apex:pageBlockSection>
-            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
-                <apex:outputField value="{!Contact.Family_Member_Other__c}" />
-                <apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" />
-                
+			</apex:pageBlockSection>
+            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="true" id="pbsOutputAdditionalInfo_view" rendered="{! !pbsEditModeOn}">
+				<apex:outputField value="{!Contact.Family_Member_Other__c}" />
+				<apex:pageBlocksectionitem >
+					<apex:outputPanel >
+                		<label for="pGuardianship_Type" id="guardianshipTypeLabel">Guardianship Type</label>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+                		<br/>
+                		<br/>
+                		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                	<apex:outputPanel >
+                		<apex:outputField value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
+							<!-- used in Progress score -->
+							<input id="pGuardianship_Type" value="{!Contact.Guardianship_Type__c}" style="display: none;"  data-countInFormProgress="1" />                 		
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                		<br/>
+                		<br/>
+                		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
+                	</apex:outputPanel>
+                </apex:pageBlocksectionitem>
                 <apex:outputField value="{!Contact.VIP_Indicator__c}" />
-                <apex:outputField value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
-                <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
-                
+				<apex:outputField value="{!Contact.Current_Medications__c}" rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" />
+				<apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Current_Medications__c')}" /> 
+				
                 <apex:pageBlockSectionItem rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" />                
                 <apex:outputField value="{!Contact.Advanced_Directives__c}" rendered="{! !Contains(dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}" />                
-                <apex:outputField value="{!Contact.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />                
+                <apex:outputField value="{!Contact.Code_Status__c}" rendered="{! !Contains(dontShowFields, 'Code_Status__c')}" />                
                 
                 <apex:outputField value="{!Contact.Advanced_Directives_Attached__c}" rendered="{!  !Contains(dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />                
                 <apex:outputField value="{!Contact.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(dontShowFields, 'Code_Status_Other__c')}" />
-
-
-
-            </apex:pageBlockSection>            
+			</apex:pageBlockSection>	
+					
             <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
-                <apex:pageBlockSectionItem />    
-                <apex:pageBlockSectionItem />    
+				<apex:pageBlockSectionItem />    
+				<apex:pageBlockSectionItem />    
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Created By" />
                     <apex:outputPanel layout="none">
@@ -565,7 +783,7 @@
 
             </apex:pageBlockSection>
             <!-- rearranged this section information for  EPRIQM-107  -->
-            <!--Family Information Section-->
+                       <!--Family Information Section-->
             <apex:pageBlockSection columns="2"  title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo" rendered="{!canViewFamilyInfo}">
                  <apex:inputfield taborderhint="30" value="{!Contact.Family_Annual_Income__c}" rendered="{!pbsEditModeOn}" />
                  <apex:outputfield value="{!Contact.Family_Annual_Income__c}" rendered="{!!pbsEditModeOn}" />
@@ -605,24 +823,28 @@
             </apex:pageBlockSection>
 
         </apex:pageBlock>
+        <hr/>
         <!--Related Parties Section-->
         <a name="RP" id="RP"></a>
 
-        <apex:pageBlock id="relatedPartiesListId">
-            <div class="pbSubHeadButton">
-                <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
-                <apex:commandButton value="Add Related Party" onClick="showAddRelParty();openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}" />
-            </div>
-            <apex:pageBlockSection columns="1" title="Related Parties" id="relatedParties" collapsible="false">
-                <apex:pageBlockSectionItem >
+        <apex:pageBlock mode="maindetail" id="relatedPartiesListId">
+            <apex:pageBlockButtons location="top">
+	            <div class="blockbtns">
+	                <apex:commandButton onclick="window.open('/{!RelatedPartyReport}?pv0={!Contact.Name}', '_self'); return false;" value="Related Parties Report" />
+	                <apex:commandButton value="Add Related Party" onClick="showAddRelParty(); openDialog('relatedPartyModal', 'span', 'Add Related Party'); return false;" rendered="{!AND(isEditor, canEdit)}" />
+	            </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Related Parties" columns="1" id="relatedParties_Alt1_Header" collapsible="true">
+                <div style="display: none;">
+                	<label for="pRelParty">At least one Related Party</label>
+					<input id="pRelParty" value="{! if(relParties.size > 0,'True','') }"  data-countInFormProgress="1" />
+                </div>
 
-                </apex:pageBlockSectionItem>
-
-                <apex:pageBlockTable value="{!relParties}" var="relParty">
+                <apex:pageBlockTable value="{!relParties}" var="relParty" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action">
                         <apex:outputPanel rendered="{!$ObjectType.Related_Party__c.updateable}"> <a href="#" onclick="loadRelatedParty('{!relParty.Id}');return false; ">Edit</a>
                         </apex:outputPanel>
-                    </apex:column>  
+                    </apex:column>	
                     <apex:column value="{!relParty.Type__c}" />
                     <apex:column value="{!relParty.Name}" />
                     <apex:column value="{!relParty.Address__c}" />
@@ -633,6 +855,7 @@
                     <apex:column value="{!relParty.Phone_2_Type__c}" />
                     <apex:column value="{!relParty.Status__c}" />
                     <apex:column value="{!relParty.Comments__c}" />
+                    <apex:column value="{!relParty.CreatedDate}" />
                 </apex:pageBlockTable>
                 <script type="text/javascript">
                     relPartyData = '{!relPartiesJSON}';
@@ -643,7 +866,7 @@
         <!-- Add Related Party modal. -->
         <apex:outputPanel id="relatedPartyModal" style="display:none; dispaly: block; height: 500px;">
 
-            <apex:pageBlock title="Add Related Party">
+            <apex:pageBlock title="Add Related Party" >
                 <apex:pageblockButtons location="bottom">
                     <input type="button" value="Save" onClick="relatedPartySave(true); " class="btn" />
                     <input type="button" value="Save & New" onClick="relatedPartySave(false);" class="btn" />
@@ -679,18 +902,20 @@
 
         <!--Agencies Related to Person Section-->
         <a name="Agency" id="Agency"></a>
-        <apex:pageBlock id="relatedAgenciesId" rendered="{!showDiagnosis}">
-                <div style="float: right;">
-                    <apex:actionRegion >
-                        <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
-                    </apex:actionRegion>        
-                    <apex:commandButton rendered="{!AND(isEditor, canEdit)}" value="Add Agency Involved With Individual" id="addAgency" onclick="showAddAgency(); openDialog('agencyModal', 'span', 'Add Agency','none'); return false;" />
-  
-                </div>                 
-            <apex:pageBlockSection columns="1" title="Agencies Involved With Individual" id="relatedAgencies" collapsible="false">
+        <apex:pageBlock id="relatedAgenciesId" rendered="{!showDiagnosis}" mode="maindetail" >
+                <apex:pageBlockButtons location="top">
+	                <div class="blockbtns">
+	                    <apex:actionRegion >
+	                        <apex:actionFunction name="showAddAgency" action="{!showAddAgency}" rerender="agencies,agencyEntry,msgs" />
+	                    </apex:actionRegion>        
+	                    <apex:commandButton rendered="{!AND(isEditor, canEdit)}" value="Add Agency Involved With Individual" id="addAgency" onclick="showAddAgency(); openDialog('agencyModal', 'span', 'Add Agency','none'); return false;" />
+	  
+	                </div> 
+                </apex:pageBlockButtons>             
+            <apex:pageBlockSection title="Agencies Involved With Individual" columns="1" id="relatedAgencies_Alt1_Header" collapsible="true">
                 <apex:pageBlockSectionItem >
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockTable value="{!relAgencies}" var="relAgency">
+                <apex:pageBlockTable value="{!relAgencies}" var="relAgency" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action">
                         <apex:commandLink action="{!loadAgency}" reRender="agencyModal" oncomplete="openDialog('agencyModal', 'span', 'Add Agency','none'); return false;">
                         Edit
@@ -702,6 +927,7 @@
                     <apex:column value="{!relAgency.Address__c}" />
                     <apex:column value="{!relAgency.Phone__c}" />
                     <apex:column value="{!relAgency.Reason_for_Involvement__c}" />
+                    <apex:column value="{!relAgency.CreatedDate}" />
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
         </apex:pageBlock>
@@ -756,57 +982,146 @@
             <apex:inputHidden value="{!agency.Address__c}" id="agencyAddress" />
             <apex:inputHidden value="{!agency.Phone__c}" id="agencyPhone" />
             <apex:inputHidden value="{!agency.Reason_for_Involvement__c}" id="agencyReason" />
-        </apex:outputpanel>         
+        </apex:outputpanel>       
+        
+        <!-- New Diagnosis Section -->
+        
+         <a name="Diag" id="Diag1" />
+        <apex:pageBlock mode="maindetail" id="Diagnosis1">    
+			<apex:pageBlockButtons location="top">
+	                <div class="blockbtns">
+	                    <apex:commandButton value="Add Diagnosis" id="addDiagnosis" onclick="showAddDiagnosis(); openDialog('diagnosisModal', 'span', 'Add Diagnosis','none'); return false;" />
+	  					<apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_PBS_PDF?id={!PBSId}');return false;" />						
+	                </div> 
+            </apex:pageBlockButtons> 
+            <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true">
+                <apex:pageblockTable value="{!diagnoses}" var="diag" rendered="{!(diagnoses.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column headerValue="Action"><a href="#Diag" onclick="loadDiagnosis('{!diag.id}');return false;">Edit</a>
+                    </apex:column>
+                    <apex:column headerValue="Date and Time of Diagnosis" value="{!diag.Effective_Date__c}" />
+                    <apex:column value="{!diag.Status__c}" headerValue="Status" />
+                    <apex:column value="{!diag.ICD__c}" headerValue="ICD" />
+                    <apex:column value="{!diag.Type__c}" headerValue="Type" />
+                    
+                </apex:pageblockTable>
+                <apex:outputText value="No diagnoses to display" rendered="{!(diagnoses.size=0)}" />
+            </apex:pageBlockSection>
+            
+            <apex:outputpanel style="display:none">
+                    <apex:inputHidden value="{!diag.ID}" id="diagId" />
+                    <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagEffectiveTime" />
+                    <apex:inputHidden value="{!diag.Status__c}" id="diagnosisStatus" />
+					<apex:inputHidden value="{!diag.ICD__c}" id="diagICD" />
+		            <apex:inputHidden value="{!diag.Type__c}" id="diagType" />
+            </apex:outputpanel>
+        </apex:pageBlock>
+        
+        <!--- end -->
+
+
+
+ <!-- Add diagnosis modal -->
+      	<apex:actionRegion >
+            <apex:outputPanel id="diagnosisModal" style="display:none" >
+                               
+                <apex:pageBlock title="Add/Edit Diagnosis">
+                    <apex:pageblockButtons location="bottom">
+                        <apex:commandButton value="Save" onClick="diagnosisSave(true); return false;" />
+                        <apex:commandButton value="Save & New" onClick="diagnosisSave(false);return false;" />
+                        <apex:commandButton value="Cancel" onClick="closeDialog('diagnosisModal', 'span'); j$('#diagnosisErrors').html('');return false;" />
+                    </apex:pageblockButtons>
+                    
+                    <apex:facet name="header">
+                        <p>
+                            <strong>Add a diagnosis below:</strong>
+                        </p>
+                    </apex:facet>
+
+                    <div id='diagnosisErrors' style='color:red'></div>
+
+                    <apex:pageBlockSection columns="2" id="diagnosisEntry">
+                        <apex:inputField value="{!diag.ICD__c}"  id="diagnosisEntry_icd" label="ICD Code"/>
+                        <apex:inputField value="{!diag.Effective_Date__c}" label="Date and Time of Diagnosis" id="diagnosisEntry_EffTime" />
+                        <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
+                        <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" />
+                        <apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
+                     </apex:pageBlockSection>
+                     
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:actionRegion>
+           
+            <!-- End -->	
+        
+        
+        
         <!--Diagnosis Section -->
         <a name="Diag" id="Diag" />
-        <apex:pageBlock id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">
-            <apex:pageBlockSection title="Diagnosis" showHeader="true" columns="1" collapsible="false">
-                <apex:pageblockTable value="{!diagnosis}" var="diag" rendered="{!(diagnosis.size>0)}">
-                    <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}" />
-                    <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a>
-                    </apex:column>
-                    <apex:column value="{!diag.Primary_Diagnosis__c}" headerValue="Primary" />
-                    <apex:column value="{!diag.Secondary_Diagnosis__c}" headerValue="Secondary" />
-                    <apex:column value="{!diag.Axis_I__c}" headerValue="Axis I" />
-                    <apex:column value="{!diag.Axis_II__c}" headerValue="Axis II" />
-                    <apex:column value="{!diag.Axis_III__c}" headerValue="Axis III" />
-                    <apex:column value="{!diag.Axis_IV__c}" headerValue="Axis IV" />
-                    <apex:column value="{!diag.Axis_V__c}" headerValue="Axis V" />
-                    <apex:column value="{!diag.Comments__c}" headerValue="Comments" />
-                </apex:pageblockTable>
-                <apex:outputText value="No diagnoses to display" rendered="{!(diagnosis.size=0)}" />
-            </apex:pageBlockSection>
-        </apex:pageBlock>
+<!--         <apex:pageBlock mode="maindetail" id="Diagnosis" rendered="{!showDiagnosis && contact.MailingState != 'Arizona'}">    	 -->
+<!--             <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true"> -->
+<!--                 <apex:pageblockTable value="{!diagnosis}" var="diag" rendered="{!(diagnosis.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" > -->
+<!--                     <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}" /> -->
+<!--                     <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a> -->
+<!--                     </apex:column> -->
+<!--                     <apex:column value="{!diag.Primary_Diagnosis__c}" headerValue="Primary" /> -->
+<!--                     <apex:column value="{!diag.Secondary_Diagnosis__c}" headerValue="Secondary" /> -->
+<!--                     <apex:column value="{!diag.Axis_I__c}" headerValue="Axis I" /> -->
+<!--                     <apex:column value="{!diag.Axis_II__c}" headerValue="Axis II" /> -->
+<!--                     <apex:column value="{!diag.Axis_III__c}" headerValue="Axis III" /> -->
+<!--                     <apex:column value="{!diag.Axis_IV__c}" headerValue="Axis IV" /> -->
+<!--                     <apex:column value="{!diag.Axis_V__c}" headerValue="Axis V" /> -->
+<!--                     <apex:column value="{!diag.Comments__c}" headerValue="Comments" /> -->
+<!--                 </apex:pageblockTable> -->
+<!--                 <apex:outputText value="No diagnoses to display" rendered="{!(diagnosis.size=0)}" /> -->
+<!--             </apex:pageBlockSection> -->
+<!--         </apex:pageBlock> -->
 
         <!--Admissions Section-->
         <a name="Adm" id="Adm"></a>
-        <apex:pageBlock id="AdmissionListId">
-            <div class="pbSubHeadButton">
-                <apex:commandButton Value="Add New Admission" onclick="window.open('/apex/AdmissionEdit?pbsId={!Contact.Id}&retURL={!URLENCODE(currentUrl)}', '_self'); return false;" rendered="{!AND(canCreateAdm,disableAddAdm, isEditor)}" />
-            </div>
-            <apex:pageBlockSection title="Admissions" showHeader="true" columns="1" collapsible="false">
-                <apex:pageblockTable value="{!admissions}" var="admsns" id="adminsId" rendered="{!(admissions.size>0)}">
+        <apex:pageBlock id="AdmissionListId" mode="maindetail" >
+            <apex:pageBlockButtons location="top">
+	            <div class="blockbtns">
+	                <apex:commandButton Value="Add New Admission" onclick="window.open('/apex/AdmissionEdit?pbsId={!Contact.Id}&retURL={!URLENCODE(currentUrl)}', '_self'); return false;" rendered="{!AND(canCreateAdm,disableAddAdm, isEditor)}" />
+	            </div>           
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="admit__Alt1_Header" title="Admissions" columns="1" collapsible="true">
+                <apex:pageblockTable value="{!admissions}" var="admsns" id="adminsId" rendered="{!(admissions.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action">
                         <a href="/apex/AdmissionEdit?id={!admsns.ID}">Edit</a>
                     </apex:column>
                     <apex:column headerValue="Admission Name"><a href="/apex/AdmissionView?id={!admsns.ID}">{!admsns.Name}</a>
                     </apex:column>
-                    <apex:column headerValue="Effective Date">
+                    <apex:column headerValue="Admission Date">
                         <c:MilitaryDatetime dateTimeVal="{!admsns.Admission_Effective_DateTime__c}" />           
                     </apex:column>
                     <apex:column value="{!admsns.Discharged_Date__c}" headerValue="Discharge Date" />
-                    <apex:column value="{!admsns.Status__c}" headerValue="Status" />
+                    <apex:column value="{!admsns.Status__c}" headerValue="Admission Status" />
                 </apex:pageblockTable>
                 <apex:outputText value="No admissions to display" rendered="{!(admissions.size=0)}" />
             </apex:pageBlockSection>
         </apex:pageBlock>
+        <!-- Incidents Section Start {!$ObjectType.Incident__c.accessible}-->
+       	<apex:pageBlock id="incidentsBlock" rendered="false"  mode="maindetail" >
+            <apex:pageBlockSection title="Incidents" columns="1" id="incidentsSection_Alt1_Header" collapsible="true"  >
+            <apex:outputText value="No Incident Records to Display" rendered="{!incidents.size= 0}" />
+                <apex:pageBlockTable value="{!incidents}" var="i" rendered="{!incidents.size != 0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                	<apex:column headerValue="Incident Number" >
+                		<a href="/{!i.id}" >{!i.Name}</a>
+                	</apex:column>
+                	<apex:column value="{!i.Service_Assignment__c}" />
+                    <apex:column value="{!i.Recordtype.Name}" headerValue="Type"/>
+                    <apex:column value="{!i.createdDate}" />
+                </apex:pageBlockTable> 
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <!-- End Incidents Section -->
         <a id="allergy">
-            <apex:pageBlock >
+            <apex:pageBlock mode="maindetail"  >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}" type="Allergy" formId="{!$Component.FormID}" uniqueId="allergy" />
             </apex:pageBlock>
         </a>
             <a id="immunization"></a>
-            <apex:pageBlock rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || contact.Age__c < 18) && vfVarIsCM}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || contact.Age__c < 18) && vfVarIsCM}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Child"
                                            formId="{!$Component.FormID}"
@@ -818,11 +1133,12 @@
                                            eSign="true"
                                            addEnabled="{!contact.Age__c < 18}"
                                            editEnabled="{!contact.Age__c < 18}"
-                                           enableReportButton="true"/>
+                                           enableReportButton="true"
+                                           formProgressLabel="At Least one Child Immunization record"/>
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             
-            <apex:pageBlock rendered="{! (contact.age__c != null && contact.Age__c > 17) && vfVarIsCM}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && vfVarIsCM}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Adult"
                                            formId="{!$Component.FormID}"
@@ -832,13 +1148,14 @@
                                            rows="5"
                                            showDisregard="true"
                                            eSign="true" 
-                                           enableReportButton="true" />
+                                           enableReportButton="true"
+                                           formProgressLabel="At Least one Adult Immunization record" />
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Adult" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
 
 
             </apex:pageBlock>
             
-            <apex:pageBlock rendered="{! vfVarIsCM}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsCM}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="PPD Skin Test"
                                            formId="{!$Component.FormID}"
@@ -852,7 +1169,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             <!-- added isNR for EB-430 by Amruth -->
-            <apex:pageBlock rendered="{!vfVarIsCM}">
+            <apex:pageBlock mode="maindetail"  rendered="{!vfVarIsCM}">
             <a id="assistiveDevices" />            
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device"
@@ -875,14 +1192,17 @@
                                            rows="5" />
                 <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>  
             </apex:pageBlock>
-        <apex:pageBlock >
+        <apex:pageBlock mode="maindetail" >
+      
             <!--Task History Section-->
             <!--Open Tasks Section -->
-            <apex:outputPanel style="display: block; width: 100%;">
-                <apex:commandButton style="float: right;" onclick="window.open('/apex/PBS_AddTask_Page?PBS={!Contact.Id}&accID={!currentContact.AccountID}', '_self'); return false;" value="Add Task"/>
-            </apex:outputPanel>
-            <apex:pageBlockSection title="Open Tasks" showHeader="true" columns="1" collapsible="true">
-                <apex:pageBlockTable value="{!taskOnCurrentPBSAccount}" var="OpenActivity" rendered="{!(taskOnCurrentPBSAccount.size>0)}">
+            <apex:pageBlockButtons location="top">
+	            <div class="blockbtns">
+	                <apex:commandButton style="float: right;" onclick="window.open('/apex/PBS_AddTask_Page?PBS={!Contact.Id}&accID={!currentContact.AccountID}', '_self'); return false;" value="Add Task"/>
+	            </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1" id="task_Alt1_Header" title="Open Tasks" collapsible="true">
+                <apex:pageBlockTable value="{!taskOnCurrentPBSAccount}" var="OpenActivity" rendered="{!(taskOnCurrentPBSAccount.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column >
                         <apex:outputlink value="/{!OpenActivity.Id}">{!OpenActivity.Subject}</apex:outputLink>
                         <apex:facet name="header"> Subject </apex:facet>
@@ -905,10 +1225,9 @@
                 <apex:outputPanel rendered="{!taskOnCurrentPBSAccount.size!=0}">Showing the 10 most recent tasks click&nbsp;
                     <apex:outputLink value="/00T?id={!currentContact.AccountID}&rlid=RelatedActivityList">here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" id="taskHist_Alt1_Header" title="Task History" collapsible="true">
 
-            <apex:pageBlockSection title="Task History" showHeader="true" columns="1" collapsible="true">
-
-                <apex:pageBlockTable value="{!eventOnCurrentPBSAccount}" var="ActiveHis" rendered="{!(eventOnCurrentPBSAccount.size>0)}">
+                <apex:pageBlockTable value="{!eventOnCurrentPBSAccount}" var="ActiveHis" rendered="{!(eventOnCurrentPBSAccount.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 
                     <apex:column >
                         <apex:outputlink value="/{!ActiveHis.Id}">{!ActiveHis.Subject}</apex:outputLink>
@@ -957,11 +1276,12 @@
                 <apex:outputText value="No Attachments to display" rendered="{!(attachments.size=0)}" />
             </apex:pageBlockSection>
         </apex:pageBlock> -->
-        <apex:pageBlock >
+        <apex:pageBlock mode="maindetail">
             <!--PersonBeing Served History Section-->
-            <apex:pageBlockSection title="Person Being Served History" showHeader="true" columns="1" collapsible="false">
+
+            <apex:pageBlockSection title="Person Being Served History" id="history_Alt1_Header"  columns="1" collapsible="true"  >
                 <apex:outputText />
-                <apex:pageBlockTable value="{!personHistory}" var="PBSHistory" rendered="{!(personHistory.size>0)}">
+                <apex:pageBlockTable value="{!personHistory}" var="PBSHistory" rendered="{!(personHistory.size>0)}"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Date" value=" {!PBSHistory.createddate}" />
                     <apex:column headerValue="User" value="{!PBSHistory.CreatedBy.Name}" />
                     <apex:column headerValue="Action">

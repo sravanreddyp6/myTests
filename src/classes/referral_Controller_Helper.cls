@@ -9,6 +9,7 @@ public with sharing class referral_Controller_Helper{
                  from Related_Party__c where id = :relPartyId];
             return party;
      }
+     
     
     @RemoteAction
     public static Related_Party__c saveRelatedParty(string partyID, string Name, string PartyType, string Phone1, string Email, 
@@ -27,7 +28,23 @@ public with sharing class referral_Controller_Helper{
       upsert party;                                  
       return party;
    }
-    
+    @RemoteAction
+    public static Related_Party__c saveRelatedPartyFromPbsID(string partyID, string Name, string PartyType, string Phone1, string Email, 
+                                              string Address, string Phone2, string Phone1Type, string Phone2Type, string comments,
+                                              string PbsId, string pStatus) {
+      Related_Party__c party;                                        
+      if (String.isEmpty(partyID)) {
+         party = new Related_Party__c(Name=Name, Type__c=PartyType, Phone__c = Phone1, Email__c = Email, Address__c = Address, Status__c = pStatus,
+                                                    Phone_2__c = Phone2, Phone_1_Type__c = Phone1Type, Phone_2_Type__c = Phone2Type, Comments__c=Comments,
+                                                    Person_Being_Served__c = PbsId);
+      } else {
+         party = new Related_Party__c(Name=Name, Type__c=PartyType, Phone__c = Phone1, Email__c = Email, Address__c = Address, Status__c = pStatus,
+                                                    Phone_2__c = Phone2, Phone_1_Type__c = Phone1Type, Phone_2_Type__c = Phone2Type, Comments__c=Comments,
+                                                    Person_Being_Served__c = PbsId, ID = partyID);
+      }
+      upsert party;                                  
+      return party;
+   }    
     @RemoteAction
     public static Referral_Location__c loadReferralLocation(string locationId) {
         Referral_Location__c loc = [select Id, Name, Referral__c, service_location__c, service_location__r.Name, service_location__r.city__c, service_location__r.state__c, service_location__r.zip__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c,
@@ -40,10 +57,10 @@ public with sharing class referral_Controller_Helper{
     public static Referral_Location__c saveReferralLocation(string locID, string locUser, string locServiceLocation, string locStatus, string locRank, string referralId) {
       Referral_Location__c loc;     
       if ( String.isEmpty(locUser)) {
-      	locUser  = null;
+        locUser  = null;
       }
       if ( String.isEmpty(locRank)) {
-      	locRank  = null;
+        locRank  = null;
       }                                   
       if (String.isEmpty(locID)) {
          loc = new Referral_Location__c(User_Assigned__c = locUser, Service_Location__c= locServiceLocation, Status__c=locStatus, Referral__c=referralId, Rank__c = locRank);
@@ -134,5 +151,40 @@ public with sharing class referral_Controller_Helper{
                                     
       upsert t;                                  
       return t;
+   }
+   
+   @RemoteAction
+    public static Diagnosis__c loadDiagnosis(string diagnosisId) {
+            Diagnosis__c diagnosis = 
+                [select Id, Name, Type__c, Status__c, PBR__c, Effective_Date__c, ICD__c, ICD__r.Name
+                 from Diagnosis__c where id = :diagnosisId];
+            return diagnosis;
+     }
+     
+    
+    @RemoteAction
+    public static Diagnosis__c saveDiagnosis(string diagnosisId, string status, string effectiveTime, string ICD, string PBRId) {
+      Diagnosis__c diagnosis;   
+      if (String.isEmpty(diagnosisId)) {
+         diagnosis = new Diagnosis__c(Status__c = status, ICD__c = ICD, PBR__c = PBRId );
+      } else {
+         diagnosis = new Diagnosis__c(ID = diagnosisId, Status__c = status, ICD__c = ICD, PBR__c = PBRId);
+      }
+      diagnosis.Effective_Date__c = (!String.isEmpty(effectiveTime)) ? Datetime.parse(effectiveTime) : (Datetime) null;
+      upsert diagnosis;
+      return diagnosis;
+   }
+   
+    @RemoteAction
+    public static Diagnosis__c saveDiagnosisFromPbsID(string diagnosisId, string status, string effectiveTime, string ICD, string PBSId) {
+      Diagnosis__c diagnosis;                                        
+      if (String.isEmpty(diagnosisId)) {
+        diagnosis = new Diagnosis__c(Status__c = status, ICD__c = ICD, PBS__c = PBSId );
+      } else {
+         diagnosis = new Diagnosis__c(ID = diagnosisId, Status__c = status,ICD__c = ICD, PBS__c = PBSId);
+      }
+      diagnosis.Effective_Date__c = (!String.isEmpty(effectiveTime)) ? Datetime.parse(effectiveTime) : (Datetime) null;
+      upsert diagnosis;                                  
+      return diagnosis;
    }
 }

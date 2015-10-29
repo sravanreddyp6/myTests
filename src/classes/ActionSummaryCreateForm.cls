@@ -2,9 +2,12 @@ public with sharing class ActionSummaryCreateForm extends ActionSummaryBase {
 
     public ActionSummaryCreateForm (ApexPages.StandardController controller) {
         super(controller);
+        id sa = apexpages.currentpage().getparameters().get('saID');
+        if(sa !=null){ActionSummary.service_assignment__c = sa;}
         //ActionSummary.Name = DefaultName(ActionSummary);
         ActionSummary.Start_Date__c = DefaultStart(ActionSummary);
         ActionSummary.End_Date__c = DefaultEnd(ActionSummary);
+        
     }
 
     public PageReference formNew(){

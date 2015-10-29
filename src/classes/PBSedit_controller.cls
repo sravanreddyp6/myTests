@@ -5,9 +5,10 @@ public boolean UnderAgePageMsg{get;set;}
 public boolean pbsEditModeOn{get;set;}
 public ApexPages.StandardController PBSController{get;set;}
 public String PageMessage{get;set;}
-public Contact currentContact{ get { return [ select id, accountid, ownerid from contact where id = :pbsId]; }
+public Contact currentContact{ get { return [ select id, Birthdate, accountid, ownerid ,Age_year__c,Age_month__c,Age_days__c from contact where id = :pbsId]; }
                                     set; }
 public ID PBSId{get;set;}
+public String age {set;get{	return Utility.getAge(this.currentContact.Age_year__c,this.currentContact.Age_month__c,this.currentContact.Age_days__c);	}}
 public boolean isEditor{get; set;}
 public boolean canEdit{get; set;}
 public boolean canCreateAdm { get; set; }
@@ -51,6 +52,44 @@ public boolean isCAFSS{get; set;}
     }
     set;
   }
+    
+    //Diagnosis changes
+    
+    public list<Diagnosis__c> diagnoses {get; set;}
+    public Diagnosis__c diag {
+        get {
+            if (diag == null)
+                diag = new Diagnosis__c();
+            return diag;
+        }
+        set;
+    }
+    
+    public void showAddDiagnosis(){
+        diag = new Diagnosis__c();
+        diag.Status__c = 'Active';
+        diag.Effective_Date__c = null;
+    }
+          
+    public void saveDiagnosis(){
+    	populateDiagnoses();
+		this.diag = new Diagnosis__c();
+		diag.Status__c = 'Active';
+        diag.Effective_Date__c = null;
+    }  
+    
+    /*public string loadThisDiag {get; set;}
+    
+    public PageReference loadDiagnosis(){
+        for(Diagnosis__c dg : diagnosis){
+            if(dg.id == loadThisDiag){
+                diag = dg;
+            }
+        }
+        return null;
+    }*/
+    
+    //end
   
   public List<Related_Party__c> relParties { get; set; }
   
@@ -105,6 +144,7 @@ public Map<String, String> fieldMap { get; set; }
     public void showEditMode(){
         system.debug('-----');
         pbsEditModeOn=true;
+        
     }    
 
 
@@ -146,7 +186,9 @@ public Map<String, String> fieldMap { get; set; }
         pbsEditModeOn=false;
         PBSId=Apexpages.currentPage().getParameters().get('Id');
         this.relParties = new List<Related_Party__c>();
+        this.diagnoses = new List<Diagnosis__c>();
         populateRelParties();
+        populateDiagnoses();
 
         this.relAgencies = new List<Agency_Involved_With_Individual__c>();
         populateAgencies();
@@ -192,9 +234,11 @@ public Map<String, String> fieldMap { get; set; }
             || TMNUser.Operating_Group__c=='NeuroRestorative'
             || isCAFSS;
     }}
-    public list<Diagnosis__c> diagnosis{get{
-        return [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
-    } set;}
+    /*public list<Diagnosis__c> diagnosis{get{
+        return [select id, Status__c, ICD__c, Type__c, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
+    } set;}*/
+    
+   
     public List<Evaluation_Response__c> getAssessments_ChildImmune (){
 
         return [select id, Name  from Evaluation_Response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType('Immunization - Child') AND Person_Being_Served__c = :currentContact.id ];
@@ -234,10 +278,21 @@ public Map<String, String> fieldMap { get; set; }
         set;
     }
     
+    
+    public List<Incident__c> incidents{ 	
+    	get{
+    		if(incidents == null){
+    			incidents = [SELECT ID, NAME, Recordtype.Name, Service_Assignment__c, CreatedDate FROM Incident__c WHERE Service_Assignment__r.Person_being_served__c = :pbsId];	
+    		}
+    		return incidents;
+    	}
+    	set;
+    }
+    
     private void populateRelParties() {
     try {
         this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c,
-                                Person_Being_Served__c, Status__c
+                                Person_Being_Served__c, Status__c, CreatedDate
                          from Related_Party__c
                          where Person_Being_Served__c = :pbsId order by Type__c, Name
                          ];
@@ -247,9 +302,23 @@ public Map<String, String> fieldMap { get; set; }
         'An error occurred retrieving Related Parties. ' + e.getMessage()));
     }
   }
+  
+  private void populateDiagnoses() {
+    try {
+        this.Diagnoses = [select Id, Name, ICD__c, PBS__c, Type__c, Status__c, Effective_Date__c 
+                         from Diagnosis__c
+                         where PBS__c = :pbsId order by Status__c, Type__c
+                         ];
+      }
+    catch (Exception e) {
+      ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
+        'An error occurred retrieving Diagnosis. ' + e.getMessage()));
+    }
+  }
+  
    private void populateAgencies() {
     try {
-      this.relAgencies = [select Name, Address__c, Person_Being_Served__c, Phone__c, Reason_for_Involvement__c, Referral__c
+      this.relAgencies = [select Name, Address__c, Person_Being_Served__c, Phone__c, Reason_for_Involvement__c, Referral__c, CreatedDate
                          from Agency_Involved_with_Individual__c
                          where Person_Being_Served__c = :pbsId
                          ];      }
@@ -315,10 +384,22 @@ public void showAddRelParty() {
     // END: CTEAE-39
 
   public pageReference cancelPBSController(){
-      
-      pbsEditModeOn=false;
-      return null;
+      PageReference pageRef =  new PageReference('/apex/PersonBeingServedEditNew?id=' + PBSid);
+      pageRef.setRedirect(true);
+      return pageRef;
+//      pbsEditModeOn=false;
+//      return null;
 
   }
+    public String getBDayDateValue() {
+    	if (currentContact.id != null){
+	    	DateTime dateTimeValue = currentContact.Birthdate;
+	        if( dateTimeValue != null ) {
+	            String localeFormatDT = dateTimeValue.format('MM/dd/yyyy', UserInfo.getTimeZone().toString() );
+	            return localeFormatDT;
+	        }
+    	}
+        return null;
+    }  
 
 }
