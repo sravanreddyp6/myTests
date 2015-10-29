@@ -1078,4 +1078,84 @@ public class personRecord {
 	
 class referralConversionException extends Exception {
     }
+ 	
+ 	private List<integer> getNumAuthPopulatedFields ( Funding_Source__c fs ) {
+		integer numFields = 0;
+		integer canbefinal = 0;
+		
+		if (! String.IsBlank( fs.authorization_type__c ) && !string.isblank(fs.Authorization_Number__c) && fs.received_date_time__c != null) {
+				canbefinal = 1;
+	
+				// check for required fields by type
+				if ( fs.authorization_type__c == 'Open Ended Stay' || fs.authorization_type__c == 'Defined Stay') {
+	            		if (string.isblank(fs.rate__c)  || string.isblank(fs.rate_unit__c) || 
+							string.isblank(fs.level__c) || string.isblank(fs.justification__c)) {
+	            			canbefinal=0;
+	            		}
+				} else if (fs.authorization_type__c == 'Open Ended Charge' || fs.authorization_type__c  == 'Other' || fs.authorization_type__c  == 'Single Charge') {
+	            		if (string.isblank(fs.service_Being_Funded_string__c) || string.isblank(fs.rate__c) || string.isblank(fs.rate_unit__c)) {
+	            			canbefinal = 0;
+	            		}
+	            } else if ( fs.authorization_type__c  == 'Bed Hold') {
+	            			canbefinal = 0;
+	           	} else if (fs.authorization_type__c  == 'Single Charge' ) {
+		        		if (String.IsBlank(fs.authorization_comments__c)) {
+		        			canbefinal=0;
+		        		}
+		        }
+	           	
+	           	
+	           	// more field checks
+	           	if ( fs.authorization_type__c != 'Single Charge') {
+		        		if (fs.days_authorized_from__c == null || fs.days_authorized_to__c == null || String.IsBlank(fs.auth_given_method__c)) {
+		        			canbefinal=0;
+		        		}
+		        		if ( fs.authorization_type__c  != 'Bed Hold') {
+		        			if (String.IsBlank(fs.given_by__c)) {
+		        				canbefinal = 0;
+		        			}
+		        		}
+		        		
+		        		if (String.IsBlank(fs.representing_received__c)) {
+		        			canbefinal=0;
+		        		}
+		        		if ( fs.authorization_type__c  != 'Open Ended Charge' && fs.authorization_type__c  != 'Other')
+			        		if (String.IsBlank(fs.taken_by__c)) {
+			        			canbefinal=0;
+		        		}
+	        	}
+			}	
+	        		
+			// this just counts how many fields are filled in - any field constitutes an attempt to create an auth so we know to save in draft	
+			numFields += (String.IsBlank( fs.authorization_type__c )) ? 0 : 1;
+			numFields += ( fs.received_date_time__c  == null ) ? 0 : 1;
+			numFields += ( fs.days_authorized_from__c  == null ) ? 0 : 1;
+			numFields += ( fs.days_authorized_to__c == null ) ? 0 : 1;
+			numFields += (String.IsBlank( fs.requested_by__c )) ? 0 : 1;
+			numFields += ( fs.request_date__c == null ) ? 0 : 1;
+			numFields += (String.IsBlank( fs.request_contact_name__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.representing_request__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.reference_number__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.review_nurse__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.request_phone__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.request_fax__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.given_by__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.representing_received__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.auth_given_method__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.authorization_comments__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.level__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.rate__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.justification__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.service_being_funded_string__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.rate_unit__c )) ? 0 : 1;
+			numFields += (String.IsBlank( fs.authorization_number__c )) ? 0 : 1;
+			numFields += ( fs.received_date_time__c == null) ? 0 : 1;
+			numFields += (String.IsBlank( fs.taken_by__c )) ? 0 : 1;
+		
+			
+			List<integer> numflds = new List<integer>{ numfields, canbeFinal };
+			return numflds;
+	}
+    
+ 
 }

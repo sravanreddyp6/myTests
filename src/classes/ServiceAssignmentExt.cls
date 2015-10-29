@@ -493,6 +493,11 @@ public without sharing class ServiceAssignmentExt {
         if (val != null && val != '')
             theServAssign.SA_Start_DateTime__c = getDateTimeFromString(val +':00');
     }
+    
+    public list<Therapy_Hour__c> getTherapyList(){
+    	return [select Id,Appointment_Type__c,End_Time__c,Narrative_Note__c,Number_of_Hours__c,Start_Time__c, Owner.Name
+    	          from Therapy_Hour__c where Service_Assignment__c = :theServAssign.Id and status__c = 'Approved' order by Start_Time__c desc limit 6];
+ 	}
 
     // START: CONSTRUCTOR
     public ServiceAssignmentExt(ApexPages.StandardController controller) {
