@@ -273,6 +273,14 @@ public without sharing class Utility {
 	public static Id getEValuationRecordType(String recordTypeName){
 		return Schema.SObjectType.Evaluation__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
 	}
+	
+	public static Id getIncidentRecordType(String recordTypeName){
+		return Schema.SObjectType.Incident__c.getRecordTypeInfosByName().get(recordTypeName).recordTypeId;
+	}
+	
+	public static string getIncidentRecordTypeName(Id recordTypeId){
+		return Schema.SObjectType.Incident__c.getRecordTypeInfosById().get(recordTypeId).Name;
+	}
 
 	public static string getStateCodeFromName ( String statename ) {
 		System.Debug(' getting state code for: ' + statename );
@@ -368,4 +376,33 @@ public without sharing class Utility {
 		}
 		return currentUserPermissionSets.contains(permissionSetName);
 	}
+ 	public static String  getAge(String numOfyears,String numOfmonths,String numOfdays){
+		Integer year = 0;
+		Integer month = 0;
+		Integer days = 0;
+		if(numOfyears!=null)
+		 year = Integer.valueOf(numOfyears);
+		if(numOfmonths!=null)
+		 month = Integer.valueOf(numOfmonths);
+		 if(numOfdays!=null)
+		 days = Integer.valueOf(numOfdays);
+		if(year >0){
+			if (year == 1){
+			return year +' Year';
+			}	
+		return  year +' Years';
+		} else if( year == 0  &&  month > 0 ) {
+			if (month == 1) {
+			return   month +' Month';
+			}
+		return   month +' Months';
+		}else if( year == 0 &&   month == 0 ) {
+			if (days == 1){
+			return  days +' Day';
+			}
+		return  days +' Days';
+		}
+		return '';
+	}
+ 
 }

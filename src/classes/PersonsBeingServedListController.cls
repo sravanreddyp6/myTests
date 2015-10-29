@@ -311,11 +311,15 @@ public with sharing class PersonsBeingServedListController {
     
     @RemoteAction
     public static Contact getPersonBeingServed(String ID) {
-        return [
-            SELECT Name, Birthdate, Age__c, Ethnicity_Picklist__c, Phone,
+        Contact con = [
+            SELECT Name, Birthdate, Age__c, Ethnicity_Picklist__c, Phone,Age_month__c,Age_year__c,Age_days__c,First_Name_SoundEx_Key__c,
                    Guardian1_Name__c, Guardian_Phone_Number__c, Family_Member_Other__c, ID 
             FROM Contact WHERE AccountID=:ID
         ];
+        // I am using First_Name_SoundEx_Key__c to display age because I can't use age,year,month or days. These are  formula fileds. So I can't set value, these are ready only fields.
+		con.First_Name_SoundEx_Key__c = Utility.getAge(con.Age_year__c,con.Age_month__c,con.Age_days__c);
+        
+        return con;
     }
 
     @RemoteAction

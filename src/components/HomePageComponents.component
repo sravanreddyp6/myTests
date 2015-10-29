@@ -73,7 +73,7 @@
 	</style>
 	<apex:attribute name="objectName" type="string" description="this is the object name" required="true" />
 
-	<apex:outputPanel rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Person Being Served',PBSView,if(objectName=='TMN Contacts',TMNView,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,false))))))}">
+	<apex:outputPanel rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Person Being Served',PBSView,if(objectName=='TMN Contacts',TMNView,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,if(objectName=='Incidents',IncView,false)))))))}">
 
 	<div class="panel panel-success" style="display:inline-block; vertical-align:top">
 	<div class="panel-heading">{!objectName}</div>
@@ -86,9 +86,7 @@
 			</apex:outputPanel>
 
 			<apex:outputPanel layout="none" rendered="{!objectName=='Person Being Served'}">
-				<apex:outputText rendered="{!(PBSCreate==true) && ($User.Operating_Group__c == 'Cambridge' || (
-																   $User.Operating_Group__c == 'Redwood' && !BEGINS($UserRole.DeveloperName, 'IA')
-																   )) && !isCAFSS}">
+				<apex:outputText rendered="{! (PBSCreate==true) && ($User.Operating_Group__c == 'Cambridge' ) && !isCAFSS}">
 					<a href="{!URLFOR($Action.Account.New)}">Add New Person Being Served</a><br />
 				</apex:outputText>
 				<apex:outputText rendered="{!$User.Operating_Group__c != 'Care Meridian' &&
@@ -112,6 +110,14 @@
 			<apex:outputPanel layout="none" rendered="{!objectName=='Documents'}">
 				<apex:outputText rendered="{!(DocCreate==true)}"><a href="/apex/Document_Edit?save_new=1">Create New Document</a><br /></apex:outputText>
 				<a href="/apex/DocumentListView">View All Documents</a><br />
+			</apex:outputPanel>
+			
+			<apex:outputPanel layout="none" rendered="{!objectName=='Incidents'}">
+				<apex:outputPanel rendered="{!IncCreate}" >
+					<apex:commandLink value="Create New Incident" onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" /><br/>
+				</apex:outputPanel>
+				<a href="/apex/incidentsListView?flag=MY" >View Incidents Created by Me</a><br/>
+				<a href="/apex/incidentsListView?flag=ALL">View All Incidents</a><br />
 			</apex:outputPanel>
 
 			<a href="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</a>

@@ -1,12 +1,13 @@
 <apex:page title="Admission: {!admission.Name}" standardController="Admission__c" extensions="AdmissionViewExtension,AdmissionDocumentController" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
-
+	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
 	<style type="text/css">
 		.dialogLoadingSpinner {
 			margin-left: 5px;
@@ -303,7 +304,7 @@
 	<c:PersonalRecord pbsId="{!admission.Person_Being_Served__c}" parentPage="Admission" admId="{!admission.Id}" />
 	<br />
 	<apex:form id="admissionForm">
-
+		<c:FormCompletionControl viewMode="True" />
 		<apex:actionFunction name="saveAdmissionDocAF" action="{!saveAdmissionDoc}" rerender="associatedDocuments" oncomplete="closeModalDialog('addAdmissionDocumentModal', 'span');initializeDocTable();" status="SaveStatus" />
 		<apex:actionFunction name="showAddEditAdmissionDocAF" action="{!showAddEditAdmissionDoc}" rerender="admissionDocumentyEntry,msgs" oncomplete="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents');" status="AddEditDocStatus" />
 
@@ -317,37 +318,84 @@
 
 
 		<!--  -->
-		<apex:pageBlock title="Admission Detail">
-			<div class="pbHeaderButton">
-				<apex:commandButton onclick="window.open('/apex/AdmissionEdit?pbsId={!admission.Person_Being_Served__c}', '_self'); return false;" value="Add New Admission" rendered="{!canCreateAdm}" />&nbsp;&nbsp;
-				<apex:commandButton onclick="window.open('/apex/AdmissionEdit?id={!admission.ID}', '_self'); return false;" value="Edit Admission" rendered="{!isEditor}" />&nbsp;&nbsp;
-			</div>
-
-			<apex:pageBlockSection title="Information" columns="2" collapsible="false">
+		<apex:pageBlock mode="maindetail" >
+        	<apex:pageBlockSection id="_Alt1_Header" title="Admission Detail" collapsible="false">
+        	</apex:pageBlockSection> 
+        	<apex:pageBlockButtons >		
+				<div class="blockbtns">
+					<apex:commandButton onclick="window.open('/apex/AdmissionEdit?pbsId={!admission.Person_Being_Served__c}', '_self'); return false;" value="Add New Admission" rendered="{!canCreateAdm}" />&nbsp;&nbsp;
+					<apex:commandButton onclick="window.open('/apex/AdmissionEdit?id={!admission.ID}', '_self'); return false;" value="Edit Admission" rendered="{!isEditor}" />&nbsp;&nbsp;
+				</div>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection title="Information" columns="2" collapsible="true">
 				<apex:outputField value="{!admission.name}" />
-				<apex:outputField value="{!admission.Status__c}" />
-				<apex:outputField value="{!admission.Network_Offering__c}" />
+				<apex:pageBlockSectionItem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided.">
+					<label for="pStatus" >Admission Status</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!admission.Status__c}" />
+						<!-- used in Progress score -->
+						<input id="pStatus" value="{!admission.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<label for="pNetOffer" >Network Offering</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!admission.Network_Offering__c}" />
+						<!-- used in Progress score -->
+						<input id="pNetOffer" value="{!admission.Network_Offering__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>			
+				
                 <apex:pageBlockSectionItem >
-                    <apex:outputLabel value="Effective Date" />
-                    <c:MilitaryDatetime dateTimeVal="{!admission.Admission_Effective_DateTime__c}" />
+                    <label for="pStartDate" >Admission Date</label>
+                    <apex:outputPanel >
+                        <c:MilitaryDatetime dateTimeVal="{!admission.Admission_Effective_DateTime__c}" />
+                        <!-- used in Progress score -->
+                        <input id="pStartDate" value="{!StartDateValue}" style="display: none;"  data-countInFormProgress="1" ></input>                     
+                    </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                
-				<apex:outputField value="{!admission.State__c}" />
+
+				<apex:pageBlockSectionItem >
+					<label for="pState" >State</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!admission.State__c}" />
+						<!-- used in Progress score -->
+						<input id="pState" value="{!admission.State__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>
 
 				<apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}" rendered="{! !useDischargeSection}">
 					<apex:param value="{!admission.Discharged_Date__c}" />
 				</apex:outputText>
 				<apex:pageBlockSectionItem rendered="{! !useDischargeSection}"/>
+				
 				<!--  empty field -->
+				
+				<!-- Removed for PRI-272
 				<apex:outputField value="{!admission.Discharged_Status__c}" rendered="{! !useDischargeSection}"/>
-				<apex:pageBlockSectionItem rendered="{! !useDischargeSection}" />
+				<apex:pageBlockSectionItem rendered="{! !useDischargeSection}" /> -->
 				<!--  empty field -->
-				<apex:outputField value="{!admission.Reason_for_Discharge__c}" rendered="{! !useDischargeSection}"/>
+				<!-- Removed for PRI-272
+				<apex:outputField value="{!admission.Reason_for_Discharge__c}" rendered="{! !useDischargeSection}"/> -->
 
 			</apex:pageBlockSection>
 
-			<br />
-			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="false" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
+            <!-- PRI-218/19 -->
+			<apex:pageBlockSection id="admissionDetails" title="Admission Details" collapsible="true"  rendered="{!reqAdmittedFrom}">
+				<apex:pageBlockSectionItem >
+					<label for="pAdmitFrom" >Admitted From (ROLES Scale at Admission)</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!Admission__c.Admitted_From__c}"  />
+						<!-- used in Progress score -->
+						<input id="pAdmitFrom" value="{!Admission__c.Admitted_From__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>    
+   			<apex:pageBlockSection id="dischargeinfo2" title="Discharge Details" collapsible="true" rendered="{!shwDcTo && admission.Status__c == 'Discharged'}">
+				<apex:outputField value="{!Admission__c.Discharged_To__c}"  />
+			</apex:pageBlockSection>   
+			<!-- end pri 218 --> 
+			<apex:pageBlockSection id="dischargeinfo" title="Discharge Details" collapsible="true" rendered="{! useDischargeSection && admission.status__c = 'Discharged'}" >
 			<apex:pageBlockSectionItem >
 			<apex:outputLabel value="Discharged Date/Time" />
 			<c:MilitaryDatetime datetimeval="{!admission.Discharged_Date_Time__c}" />
@@ -370,14 +418,14 @@
             <apex:outputField value="{!admission.Discharged_Reason_Subcategory__c}" />
             <apex:pageBlockSectionItem >
             <apex:outputLabel value="Reason Other" />
-            <apex:outputField value="{!admission.Reason_for_Discharge__c}" />
+            <apex:outputField value="{!admission.Reason_Other__c}" />
             </apex:pageBlockSectionItem>
             <apex:outputField value="{!admission.Discharged_Reason_Additional__c}" />
             <apex:outputText value="" />
 			
 			</apex:pageBlockSection>
 			
-			<apex:pageBlockSection title="Referred-Out Details" collapsible="false" rendered="{! !useDischargeSection}">
+			<apex:pageBlockSection title="Referred-Out Details" collapsible="true" rendered="{! !useDischargeSection}">
 				<apex:outputText label="Referred-Out Date" value="{0, date, MM/dd/yyyy}">
 					<apex:param value="{!admission.Referred_Out_Date__c}" />
 				</apex:outputText>
@@ -387,7 +435,7 @@
 				<apex:outputField value="{!admission.Referred_Out_Reason__c}" />
 			</apex:pageBlockSection>
 
-			<apex:pageBlockSection title="System Information" collapsible="false">
+			<apex:pageBlockSection title="System Information" collapsible="true">
 
 				<apex:outputField label="Created By" value="{!admission.CreatedById}" />
 				<apex:outputField label="Last Modified By" value="{!admission.LastModifiedById}" />
@@ -398,85 +446,92 @@
 		</apex:pageBlock>
 
 		<br />
-		<apex:pageBlock title="Authorizations" rendered="{!!(isCM||isNR)}">
-			<apex:pageBlockTable styleclass="pbBody-list" value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
-				<apex:column >
-					<apex:facet name="header">Authorization ID</apex:facet>
-					<apex:outputlink value="/{!item.id}">{!item.name}</apex:outputlink>
-				</apex:column>
-				<apex:column value="{!item.Authorization_Status__c}" />
-				<apex:column value="{!item.Payer_Authorization_Date__c}" />
-				<apex:column value="{!item.Payer_Effective_Date__c}" />
-				<apex:column value="{!item.Payer_End_Date__c}" />
-				<apex:column value="{!item.Payer_Name__c}" />
-				<apex:column value="{!item.Number_Of_Authorized_Units__c}" />
-				<apex:column value="{!item.Remaining_Units__c}" />
-			</apex:pageBlockTable>
-			<apex:outputText value="No records to display" rendered="{!(admission.Authorized_Services__r==null || admission.Authorized_Services__r.size=0)}" />
+		<apex:pageBlock mode="maindetail" rendered="{!!(isCM||isNR)}">
+			<apex:pageBlockSection id="auth_Alt1_Header" title="Authorizations" collapsible="true">
+				<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Authorized_Services__r}" var="item" rendered="{!(admission.Authorized_Services__r!=null && admission.Authorized_Services__r.size>0)}">
+					<apex:column >
+						<apex:facet name="header">Authorization ID</apex:facet>
+						<apex:outputlink value="/{!item.id}">{!item.name}</apex:outputlink>
+					</apex:column>
+					<apex:column value="{!item.Authorization_Status__c}" />
+					<apex:column value="{!item.Payer_Authorization_Date__c}" />
+					<apex:column value="{!item.Payer_Effective_Date__c}" />
+					<apex:column value="{!item.Payer_End_Date__c}" />
+					<apex:column value="{!item.Payer_Name__c}" />
+					<apex:column value="{!item.Number_Of_Authorized_Units__c}" />
+					<apex:column value="{!item.Remaining_Units__c}" />
+				</apex:pageBlockTable>
+				<apex:outputText value="No records to display" rendered="{!(admission.Authorized_Services__r==null || admission.Authorized_Services__r.size=0)}" />
+			</apex:pageBlockSection>
 		</apex:pageBlock>
-
+<hr/>
 		<a id="admissionDocuments">
-			<apex:pageBlock title="Admission Documents" rendered="{!(isCM || isCAFSS)&& $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
-				<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
-					<apex:facet name="start">
-						<span class="pbHeaderButton">
-							<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
-						</span>
-					</apex:facet>
-					<apex:facet name="stop">
-						<div class="pbHeaderButton">
-							<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditAdmissionDoc(); return false;" />
-							<!--    <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/>           -->
+			<apex:pageBlock mode="maindetail"  rendered="{!(isCM || isCAFSS) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
+				<apex:pageBlockButtons location="top">
+					<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
+						<apex:facet name="start">
+							<span class="pbHeaderButton">
+								<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> <span class="waitingDescription"></span>
+							</span>
+						</apex:facet>
+						<apex:facet name="stop">
+							<div class="blockbtns">
+								<input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="showAddEditAdmissionDoc(); return false;" />
+								<!--    <input type="button" class="btn" value="Add/Edit Documents" id="addDocPacket" onClick="openModalDialog('addAdmissionDocumentModal', 'span', 'Add/Edit Documents'); return false;"/>           -->
+							</div>
+						</apex:facet>
+					</apex:actionStatus>					
+				</apex:pageBlockButtons>				
+				<apex:pageBlockSection id="_Alt1_Header" columns="1" title="Admission Documents" collapsible="true">	
+					<apex:outputPanel >
+						<div id="collapseDiv">
+							<table id="docPacketTable" cellspacing="0" class="hover" width="100%">
+								<thead>
+									<tr>
+										<th></th>
+										<th></th>
+										<th>Packet Name</th>
+										<th>Document Name</th>
+										<th>Version</th>
+										<th>Type</th>
+										<th>Recurrence</th>
+										<th>Due Date</th>
+										<th>Status</th>
+										<th>Received Date</th>
+										<th width="15%">Comments</th>
+									</tr>
+								</thead>
+								<tbody>
+									<apex:repeat value="{!associatedDocs}" var="doc">
+										<tr>
+											<td></td>
+											<td>{!doc.id}</td>
+											<td>{!doc.DocPacket__r.Packet_Name__c}</td>
+											<td>{!doc.Document__r.Document_Name__c}</td>
+											<td>{!doc.Document__r.Version__c}</td>
+											<td>{!doc.Document__r.Type__c}</td>
+											<td style="text-align:center;">{!doc.Document__r.Recurring_Interval__c}</td>
+											<td style="text-align:center;">
+												<apex:outputField value="{!doc.Due_Date__c}" />
+											</td>
+											<td style="text-align:center;">{!doc.Status__c}</td>
+											<td style="text-align:center;">
+												<apex:outputField value="{!doc.Status_Date__c}" />
+											</td>
+											<td>{!doc.Comments__c}</td>
+										</tr>
+									</apex:repeat>
+								</tbody>
+							</table>
 						</div>
-					</apex:facet>
-				</apex:actionStatus>
-
-				<div id="collapseDiv">
-					<table id="docPacketTable" cellspacing="0" class="hover" width="100%">
-						<thead>
-							<tr>
-								<th></th>
-								<th></th>
-								<th>Packet Name</th>
-								<th>Document Name</th>
-								<th>Version</th>
-								<th>Type</th>
-								<th>Recurrence</th>
-								<th>Due Date</th>
-								<th>Status</th>
-								<th>Received Date</th>
-								<th width="15%">Comments</th>
-							</tr>
-						</thead>
-						<tbody>
-							<apex:repeat value="{!associatedDocs}" var="doc">
-								<tr>
-									<td></td>
-									<td>{!doc.id}</td>
-									<td>{!doc.DocPacket__r.Packet_Name__c}</td>
-									<td>{!doc.Document__r.Document_Name__c}</td>
-									<td>{!doc.Document__r.Version__c}</td>
-									<td>{!doc.Document__r.Type__c}</td>
-									<td style="text-align:center;">{!doc.Document__r.Recurring_Interval__c}</td>
-									<td style="text-align:center;">
-										<apex:outputField value="{!doc.Due_Date__c}" />
-									</td>
-									<td style="text-align:center;">{!doc.Status__c}</td>
-									<td style="text-align:center;">
-										<apex:outputField value="{!doc.Status_Date__c}" />
-									</td>
-									<td>{!doc.Comments__c}</td>
-								</tr>
-							</apex:repeat>
-						</tbody>
-					</table>
-				</div>
+					</apex:outputPanel>
+				</apex:pageBlockSection>
 			</apex:pageBlock>
 		</a>
 
 		<!-- Add/edit Admission Documents. -->
 		<apex:outputPanel id="addAdmissionDocumentModal" style="display:none">
-			<apex:pageBlock title="Add/Edit Documents">
+			<apex:pageBlock mode="maindetail"  title="Add/Edit Documents">
 
 				<apex:pageblockButtons location="bottom">
 					<apex:actionStatus id="SaveStatus">
@@ -592,82 +647,88 @@
 		</apex:outputPanel>
 
 		<a name="Asmt" id="Asmt"></a>
-		<apex:pageBlock title="Assessments" rendered="{!!(isCM||isNR)}">   
-			<apex:actionFunction name="makeNewISSA" action="{!createIssaAssess}" rerender="" status="issastatus" />
-			<apex:actionFunction name="makeNewRisk" action="{!createRiskAssess}" rerender="" status="riskstatus" />
-
-			<div class="pbHeaderButton">
-				<apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" /> &nbsp;&nbsp;
-				<apex:actionStatus id="riskstatus">
-					<apex:facet name="stop">
-						<apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans}" immediate="true" onclick="this.disabled='disabled'; makeNewRisk();" value="New Risk Assessment" />
-					</apex:facet>
-					<apex:facet name="start">
-						<apex:commandButton value="Loading..." disabled="true" />
-					</apex:facet>
-				</apex:actionStatus>
-
-				<apex:actionStatus id="issastatus">
-					<apex:facet name="stop">
-						<apex:commandButton rendered="{!(admission.State__c = 'MN' && issaAssessments.size=0 && canCreateAsmt ) && !showCans}" immediate="true" onclick="this.disabled='disabled'; makeNewISSA();" value="New ISSA Assessment" />
-					</apex:facet>
-					<apex:facet name="start">
-						<apex:commandButton value="Loading..." disabled="true" />
-					</apex:facet>
-				</apex:actionStatus>
-
-				<apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
-			</div>
-			<apex:outputPanel rendered="{!(cansAssessments.size>0)}">
-				<h1 style="display: block; margin-bottom: 30px;">CANS Assessments</h1>
-				<apex:pageBlockTable styleclass="pbBody-list" value="{!cansAssessments}" var="item">
-					<apex:column headerValue="Name">
-						<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
-					</apex:column>
-					<apex:column value="{!item.Status__c}" />
-					<apex:column value="{!item.Assessment_Date__c}" />
-					<apex:column value="{!item.Score__c}" />
-					<apex:column value="{!item.Disregard__c}" />
-					<apex:column headerValue="Owner">
-						<apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
-					</apex:column>
-				</apex:pageBlockTable>
-			</apex:outputPanel>
-			<apex:outputPanel rendered="{!(riskAssessments.size>0)}">
-				<h1 style="display: block; margin-bottom: 30px;">Risk Assessments</h1>
-				<apex:pageBlockTable styleclass="pbBody-list" value="{!riskAssessments}" var="item" rendered="{!(riskAssessments.size>0)}">
-					<apex:column headerValue="Name">
-						<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
-					</apex:column>
-					<apex:column value="{!item.Status__c}" />
-					<apex:column value="{!item.Finalized_Date__c}" />
-					<apex:column headerValue="Owner">
-						<apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
-					</apex:column>
-				</apex:pageBlockTable>
-			</apex:outputPanel>
-			<apex:outputPanel rendered="{!(issaAssessments.size>0)}">
-				<h1 style="display: block; margin-bottom: 30px;">ISSA Assessments</h1>
-				<apex:pageBlockTable styleclass="pbBody-list" value="{!issaAssessments}" var="item" rendered="{!(issaAssessments.size>0)}">
-					<apex:column headerValue="Name">
-						<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
-					</apex:column>
-					<apex:column value="{!item.Status__c}" />
-					<apex:column value="{!item.Finalized_Date__c}" />
-					<apex:column headerValue="Owner">
-						<apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
-					</apex:column>
-				</apex:pageBlockTable>
-			</apex:outputPanel>
-			<apex:outputText value="No records to display" rendered="{!(admission.Assessments__r == null || admission.Assessments__r.size=0)}" />
+		<apex:pageBlock mode="maindetail" rendered="{!!(isCM||isNR)}" >
+			<apex:pageBlockButtons location="top">
+				<div class="blockbtns">
+					<apex:commandButton rendered="{!(assessmentTypes['CANS'] &&  canCreateAsmt )&& showCans }" onclick="window.open('/apex/assessment_CANSdetail?admission={!admission.ID}&type={!CANsID}', '_self'); return false;" value="New CANS Assessment" /> &nbsp;&nbsp;
+					<apex:actionStatus id="riskstatus">
+						<apex:facet name="stop">
+							<apex:commandButton rendered="{!(assessmentTypes['Risk'] && riskAssessments.size=0 && canCreateAsmt ) && !showCans}" immediate="true" onclick="this.disabled='disabled'; makeNewRisk();" value="New Risk Assessment" />
+						</apex:facet>
+						<apex:facet name="start">
+							<apex:commandButton value="Loading..." disabled="true" />
+						</apex:facet>
+					</apex:actionStatus>
+	
+					<apex:actionStatus id="issastatus">
+						<apex:facet name="stop">
+							<apex:commandButton rendered="{!(admission.State__c = 'MN' && issaAssessments.size=0 && canCreateAsmt ) && !showCans}" immediate="true" onclick="this.disabled='disabled'; makeNewISSA();" value="New ISSA Assessment" />
+						</apex:facet>
+						<apex:facet name="start">
+							<apex:commandButton value="Loading..." disabled="true" />
+						</apex:facet>
+					</apex:actionStatus>
+	
+					<apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
+				</div>	
+			</apex:pageBlockButtons>	  
+			<apex:pageBlockSection id="assess_Alt1_Header" title="Assessments" collapsible="true" columns="1"> 
+				<apex:actionFunction name="makeNewISSA" action="{!createIssaAssess}" rerender="" status="issastatus" />
+				<apex:actionFunction name="makeNewRisk" action="{!createRiskAssess}" rerender="" status="riskstatus" />
+					
+				<apex:outputPanel rendered="{!(cansAssessments.size>0)}">
+					<h1 style="display: block; margin-bottom: 30px;">CANS Assessments</h1>
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!cansAssessments}" var="item">
+						<apex:column headerValue="Name">
+							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
+						</apex:column>
+						<apex:column value="{!item.Status__c}" />
+						<apex:column value="{!item.Assessment_Date__c}" />
+						<apex:column value="{!item.Score__c}" />
+						<apex:column value="{!item.Disregard__c}" />
+						<apex:column headerValue="Owner">
+							<apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
+						</apex:column>
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!(riskAssessments.size>0)}">
+					<h1 style="display: block; margin-bottom: 30px;">Risk Assessments</h1>
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!riskAssessments}" var="item" rendered="{!(riskAssessments.size>0)}">
+						<apex:column headerValue="Name">
+							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
+						</apex:column>
+						<apex:column value="{!item.Status__c}" />
+						<apex:column value="{!item.Finalized_Date__c}" />
+						<apex:column headerValue="Owner">
+							<apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
+						</apex:column>
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!(issaAssessments.size>0)}">
+					<h1 style="display: block; margin-bottom: 30px;">ISSA Assessments</h1>
+					<apex:pageBlockTable styleclass="pbBody-list" value="{!issaAssessments}" var="item" rendered="{!(issaAssessments.size>0)}">
+						<apex:column headerValue="Name">
+							<apex:outputLink value="/{!item.ID}">{!item.Name}</apex:outputLink>
+						</apex:column>
+						<apex:column value="{!item.Status__c}" />
+						<apex:column value="{!item.Finalized_Date__c}" />
+						<apex:column headerValue="Owner">
+							<apex:outputLink value="/{!item.Owner.ID}">{!item.Owner.Name}</apex:outputLink>
+						</apex:column>
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+				<apex:outputText value="No records to display" rendered="{!(admission.Assessments__r == null || admission.Assessments__r.size=0)}" />
+			</apex:pageBlockSection>
 		</apex:pageBlock>
-		<apex:pageBlock title="Service Assignments">
-			<div class="pbHeaderButton">
-				<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc && !isNR}" />&nbsp;&nbsp;
-				<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !isCM}" />
-			</div>
-
-			<apex:pageBlockTable styleclass="pbBody-list" value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
+		<apex:pageBlock mode="maindetail" >
+			<apex:pageBlockButtons location="top">
+				<div class="blockbtns">
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Standard Service Assignment', '_self'); return false;" value="New Standard Service" rendered="{!canCreateSvc && !isNR}" />&nbsp;&nbsp;
+					<apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?save_new=1&admissionID={!admission.ID}&RecordType=Assessment Only', '_self'); return false;" value="New Assessment Only" rendered="{!canCreateSvc && !isCM}" />
+				</div>			
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection id="_Alt1_Header" title="Service Assignments" collapsible="true"/>
+			<apex:pageBlockTable headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  value="{!admission.Service_Agreements__r}" var="item" rendered="{!(admission.Service_Agreements__r!= null && admission.Service_Agreements__r.size>0)}">
 				<apex:column headerValue="Action">
 					<apex:outputLink value="/apex/ServiceAssignmentEditNew?id={!item.ID}&edit_link=1">Edit</apex:outputLink>
 				</apex:column>

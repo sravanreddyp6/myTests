@@ -14,7 +14,7 @@ public with sharing class PersonalRecordController {
 		this.contactId = value;
 		System.debug('Contact ID: ' + value);
 		this.con = [
-			SELECT Id, FirstName, LastName, Phone, Ethnicity_Picklist__c,
+			SELECT Id, FirstName, LastName, Phone, Ethnicity_Picklist__c,Age_year__c,Age_month__c,Age_days__c,
 			       Birthdate, Guardian1_Name__c, Guardian_Phone_Number__c,
 			       Gender__c, Age__c, Family_Member_Other__c, PBS_Identifier__c, Primary_Language__c, Advanced_Directives__c, Code_Status__c, Flavor__c
 			  FROM Contact WHERE id=:value
@@ -42,6 +42,7 @@ public with sharing class PersonalRecordController {
 		servAssigns = [Select Id, Name from Service_Assignment__c where Person_Being_Served__c = : value and Status__c = 'Active'];
 	}
 	}
+	public String age {set;get{	return Utility.getAge(this.con.Age_year__c,this.con.Age_month__c,this.con.Age_days__c);	}}
 
 	public String parentPageName {get; set { System.Debug('parentPage: ' + value); }
 	}
