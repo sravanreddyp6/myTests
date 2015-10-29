@@ -10,6 +10,7 @@ public with sharing class HomePageController{
 	public String FrstName{get;set;}
 	public String LstName{get;set;}
 	public String objectName{get;set;}
+	
 
 	// List of permission sets that the user is assigned to
 	public String permissionSetString { get; set; }
@@ -54,7 +55,7 @@ public with sharing class HomePageController{
 	public Boolean canSeeCNAWorkbook { get; set; }
 	public Boolean canSeeShiftDoc { get; set; }
 	public Boolean canCreateProgressNotes { get; set; }
-
+	
 	// EC-196 - Shift notes
 	public Boolean canCreateNote { get; private set; }
 	//PBS object
@@ -64,16 +65,26 @@ public with sharing class HomePageController{
 	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
 	public Map<Id, Boolean> hasShiftDocMap { get; set; }
 	public Map<Id, Boolean> hasCnaWorkbookMap { get; set; }
-
+	
+	
 	// IADAY-10 - support creation of Time Log entry from home page
 	public String responseType { get; set; }
 	public Boolean hasError { get; set; }
 	public Evaluation_Response__c currResponse { get; set; }
-
+	
+	//Incidents 
+	//public List<Incident__c> myIncidents {get; set;}
+	//public string selectedIncident {get; set;}
+	public boolean canCreateIncidents {get; set;}
+	public string userChosenIncident {get; set;}
+	public string SAfirstName {get; set;}
+	public string SAlastName {get; set;}
+	public List<Service_Assignment__c> ServAssigns {get; private set;}
+	
 	public Map<Id, Boolean> saactionMap {get;set;}
     public Map<Id, Id> saActiveactionMap {get;set;}
-
-    private boolean isIARole { get; set; }
+    
+    private boolean isIARole { get; set; }	
 
 	//Constructor
 	public HomePageController(){
@@ -168,19 +179,25 @@ public with sharing class HomePageController{
         }
         else
           canCreateProgressNotes =false;
-
+          
         if (rolemap.get(UserInfo.getUserRoleID()).DeveloperName == 'IA')
         	isIARole = true;
         else
-        	isIARole = false;
-
+        	isIARole = false;  
+        	
 
 		oSchema = Progress_Note__c.sObjectType.getDescribe();
 		canCreateNote = oSchema.isCreateable();
-
+		
+		Schema.DescribeSObjectResult sc = Incident__c.sObjectType.getDescribe();
+		canCreateIncidents = sc.isCreateable();
+		
+		ServAssigns = new list<Service_Assignment__c>();
+		
 		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();
+		//displayIncidents();
 	}
 
 	private String parseProgram(String program) {
@@ -219,9 +236,9 @@ public with sharing class HomePageController{
                 if(ap.Status__c == 'Active Final'){
                     saactionMap.put(serviceAssignment.id,True);
                     saActiveactionMap.put(serviceAssignment.id,ap.Id);
-                }
+                } 
             }
-
+            
         }
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
 			// Get the latest shift doc/CNA Workbook
@@ -243,6 +260,8 @@ public with sharing class HomePageController{
 			}
 
 			SelectOption[] optionList = new SelectOption[]{};
+			//adding a wrapping clause here PRI-237, this may be requested for removal 
+			if(operatingGroup.StartsWith( 'Care') ){
 			if (canSeeShiftDoc) {
 				optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
 				if (hasShiftDocMap.get(serviceAssignment.Id) && shiftDocMap.get(serviceAssignment.Id).OwnerId != UserInfo.getUserId()) {
@@ -278,19 +297,25 @@ public with sharing class HomePageController{
 					}
 				}
 			}
-
+			}
+			// For incident Creation - Add Security if condition later since We don't have requirements now - Sravan 07/21/2015
+			//removing this option for the moment 10/21/2015 pperisic
+			if(canCreateIncidents){
+				//optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
+			}
+				
 			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
 			if ( operatingGroup == 'Redwood' && isIARole ) {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					optionList.add(new SelectOption(
-										Page.Notes_ProgressNote_Create.getUrl() +
-										'?service_assignment=' + serviceAssignment.ID +
-										'&plan=' + serviceAssignment.Action_Plans__r[0].Id +
-										'&admission=' + serviceAssignment.Admission__r.Id +
-										'&person=' + serviceAssignment.Person_Being_Served__r.Id +
+										Page.Notes_ProgressNote_Create.getUrl() + 
+										'?service_assignment=' + serviceAssignment.ID + 
+										'&plan=' + serviceAssignment.Action_Plans__r[0].Id + 
+										'&admission=' + serviceAssignment.Admission__r.Id + 
+										'&person=' + serviceAssignment.Person_Being_Served__r.Id + 
 										'&state=' + serviceAssignment.Admission__r.State__c +
 										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));
-
+					
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Behavior Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Skill Data'));
 				} else {
@@ -298,7 +323,7 @@ public with sharing class HomePageController{
 				}
 				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
                 optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
-
+				
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
@@ -398,7 +423,70 @@ public with sharing class HomePageController{
 			this.TType = Type;
 		}
 	}
+	
+/*	public List<selectOption> getIncidentTypes() {
+		List<SelectOption> Options = new List<SelectOption>();
+		Options.add(new SelectOption('All Incidents','All Incidents'));
+		Options.add(new SelectOption('PBS','PBS'));
+		Options.add(new SelectOption('Employee','Employee'));
+		Options.add(new SelectOption('Location','Location'));
+		Options.add(new SelectOption('Mentor','Mentor'));
+		
+		return options;
+	}
 
+	public void displayIncidents() {
+		Id userId = UserInfo.getUserId();
+		string SOQL = 'SELECT Id, NAME, Status__c, Recordtype.Name FROM Incident__c WHERE OwnerId=: userId';
+		if(selectedIncident != null && selectedIncident != 'All Incidents'){
+			//rectype = Utility.getIncidentRecordType(selectedIncident);
+			SOQL = SOQL + ' AND Recordtype.Name= :selectedIncident';
+		
+		
+		}
+		//String orderStatement = '';
+		myIncidents = Database.query(SOQL);
+	}*/
+	
+	public pageReference createIncident(){
+		PageReference pr = new pagereference('/apex/Incident_Form_CreateEdit');
+		pr.getParameters().put('RecordTypeId', Utility.getIncidentRecordType(userChosenIncident));
+		return pr;
+		
+	}
+	
+	public pageReference createPBStypeIncident(){
+		PageReference pr = new pagereference('/apex/Incident_Form_CreateEdit');
+		pr.getParameters().put('RecordTypeId', Utility.getIncidentRecordType('PBS'));
+		pr.getParameters().put('SAid', serviceAssignmentIdForAction);
+		return pr;
+	}
+	
+	public pageReference cancelIncident(){
+		PageReference pg = page.Home;
+		pg.SetRedirect(true);
+		return pg;
+		
+	}
+	
+	public string getpbsincidentRecType(){
+		return  Utility.getIncidentRecordType('PBS');
+	}
+	
+	public pagereference servAssigns(){
+		ServAssigns = new List<Service_Assignment__c>();
+		string criteria = HomePageSearchController.buildCriteria(SAlastName, SAfirstName, 'lastname', 'firstname');
+		String conQuery = 'select Id from Contact where ';
+		conQuery = conQuery+criteria;
+		system.debug('Query+++++++++++++'+conQuery);
+		List<Contact> pbsList = Database.Query(conQuery);
+		if(pbsList.size() > 0){
+			ServAssigns =  [SELECT Id, Name, Person_being_served__r.Name,Person_being_served__r.Age_year__c, Person_being_served__r.Age_month__c, Person_being_served__r.Age_days__c, Program_Detail__c FROM Service_Assignment__c WHERE Person_being_Served__c IN: pbslist AND Status__c = 'Active'];
+		}
+		
+		return null;
+	}
+	
 
 	public List<SelectOption> getviewvalues() {
 		List<SelectOption> Options = new List<SelectOption>();
@@ -567,44 +655,44 @@ public with sharing class HomePageController{
 		}
 	}
 	// END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
-
+	
 	// IADAY-9 - to support creation of new plan from home page
 	public String currsaID { get; set; }
 	public pagereference NewPlan( ){
-
+		
 		// we only come into this function if there is no active final plan
 		// find out if there's an inactive draft we can view
 		List<Action_Plan__c> aplist = [ select id, status__c from Action_Plan__c where status__c = 'Inactive Draft' and service_assignment__c = :currsaID order by status__c, lastmodifieddate desc  LIMIT 1];
-
-
-		Action_plan__c AP;
-
+		
+		
+		Action_plan__c AP; 
+		
 		// if an inactive plan exists, take them to that page to view
 		if ( aplist.size() == 1 ) {
 			AP = aplist[0];
 		} else {
-
+		 
 			AP = new Action_plan__c();
 			AP.Service_Assignment__c = currsaID;
 			insert AP;
 		}
-
+		
 		PageReference ref =  new ApexPages.StandardController(AP).view() ;
 		ref.getparameters().put('retURL', Apexpages.CurrentPage().getURL());
 		return ref;
 
 	}
-
+	
 	public void newResponse() {
 		responseType = 'Time Log';
 		currResponse = new Evaluation_Response__c( recordtypeID = Utility.getEvaluationResponseRecordType(responseType), service_assignment__c = serviceAssignmentIDforAction);
 	}
-
+	
 	public pageReference saveResponse() {
-
-
+		
+		
 		hasError = false;
-
+		
 		// check for required fields
 		Map<string, string> columnsToHeadersMap = new Map<String, String>();
 		columnsToHeadersMap.put('start_date_time__c','Start Date/Time');
@@ -612,18 +700,18 @@ public with sharing class HomePageController{
 		columnsToHeadersMap.put('tmn_user__c','Accompanied By');
 		columnsToHeadersMap.put('location__c','Location');
 		columnsToHeadersMap.put('service_type__c','Service Type');
-
+		
 		for(string rCol : new List<String>{'start_date_time__c', 'tmn_user__c', 'location__c', 'service_type__c'}){
 			if(currResponse.get(rCol) == null){
 				currResponse.addError( columnsToHeadersMap.get(rcol) + ' is required' );
 				hasError = true;
 			}
 		}
-
-
+		
+		
 		//system.debug('CURR:' + currResponse);
-
-
+		
+		
 		// IADAY-10 - date rules
 		if ( responseType == 'Time Log') {
 			// compare start and end dates
@@ -649,10 +737,10 @@ public with sharing class HomePageController{
 					currResponse.addError( 'Date and time cannot be in future.' );
 					hasError = true;
 			}
-
+		
 			if (! hasError ) {
 				// check for date overlap with another event
-				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currResponse.Id and service_assignment__c = :currResponse.service_assignment__c and disregard__c = false];
+				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currResponse.Id and service_assignment__c = :currResponse.service_assignment__c and disregard__c = false]; 
 				for ( Evaluation_Response__c tl : otherTimeLogs ) {
 					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currResponse.start_date_time__c, currResponse.end_date_time__c) ) {
 						currResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
@@ -661,7 +749,7 @@ public with sharing class HomePageController{
 					}
 				}
 			}
-
+		
 		} // end IADAY-10
 		try {
 			if(!hasError){
@@ -677,14 +765,14 @@ public with sharing class HomePageController{
 		}
 		return null;
 	}
-
+		
 	@TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
-
+		
 		Boolean overlaps = false;
 		system.debug( 'Times:' + s1 + e1 + s2 + e2);
 		if ( e1 == null ) // first set is not a range - can't compare
 			return overlaps;
-
+			
 		if ( s2 >= s1 && s2 <= e1 ) // starts within first timeframe
 			overlaps = true;
 		else {
@@ -695,7 +783,7 @@ public with sharing class HomePageController{
 					overlaps = true;
 			}
 		}
-
+		
 		return overlaps;
 	}
 }

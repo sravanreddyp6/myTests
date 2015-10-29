@@ -9,6 +9,8 @@ public with sharing class HomePageTileController {
 	public boolean ContractView{get;set;}
 	public boolean DocCreate{get;set;}
 	public boolean DocView{get;set;}
+	public boolean IncCreate{get;set;}
+	public boolean IncView{get;set;}
 	
 	public boolean isCAFSS{get; set;} //flag to handle CA FSS implementation
 	
@@ -66,6 +68,11 @@ public with sharing class HomePageTileController {
 		Schema.DescribeSObjectResult oSchema5 = Document__c.sObjectType.getDescribe();
 		DocCreate = oSchema5.IsCreateable();
 		DocView = oSchema5.isAccessible();
+		
+		//Incidents Object
+		Schema.DescribeSObjectResult oSchema6 = Incident__c.sObjectType.getDescribe();
+		IncCreate = oSchema6.IsCreateable();
+		IncView = oSchema6.isAccessible();
 	}
 
 
