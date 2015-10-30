@@ -104,7 +104,7 @@
                           <apex:outputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" /> 
                       <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         </apex:PageBlockSection> 
-                     <!--   <apex:pageBlock title="Existing Attachments" rendered="{!TMNUser.Vendor_list__c='OTHER'}">
+                     <apex:PageBlockSection title="Existing Attachments" rendered="{!TMNUser.Vendor_list__c='OTHER'}" columns="1" >
                        <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
                     <apex:column style="padding-right: 9px;" headerValue="Title">
                     <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
@@ -117,7 +117,7 @@
                     <apex:outputLink value="/{!attachment.OwnerId}">{!attachment.Owner.Name}</apex:outputLink>
                 </apex:column>
                 </apex:pageBlockTable>
-            </apex:pageBlock>      -->  
+            </apex:PageBlockSection>      
                     <div class="pbHeaderButton1">   
                     <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
                    <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/>      

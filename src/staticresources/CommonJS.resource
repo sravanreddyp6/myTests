@@ -212,7 +212,7 @@
 			} else if ($target.is("input")) {
 				if ($target.attr("type") == "checkbox") {
 					$target.prop("checked", false).trigger("change");
-				} else {
+				} else if ($target.attr("type") != "submit"){
 					$target.val("").trigger("change");
 				}
 			} else if ($target.is("select, textarea")) {
