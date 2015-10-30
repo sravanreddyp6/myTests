@@ -1,5 +1,5 @@
 public with sharing class TxnQueueResponseController {
-
+    public Transaction_Queue__c thisTxn;
 	public String TxnResponse { get; private set; }
 	public ActionPlan_FormWithoutSharing  response { get; private set; }
     public DSPPersonBeingServed_WithoutSharing pbsViewResponse { get; private set; }
@@ -25,7 +25,7 @@ public with sharing class TxnQueueResponseController {
 		
 		try {
 			// get the txn result
-			Transaction_Queue__c thisTxn =[ select id, result_code__c, fulfilled__c, date_time_fulfilled__c, return_value__c, request_type__c
+			thisTxn =[ select id, result_code__c, fulfilled__c, date_time_fulfilled__c, return_value__c, request_type__c, input_params__c
 									from transaction_queue__c
 									where id = :txnID];
 									//and requesting_user__c = :thisUser];
