@@ -1,3 +1,4 @@
+var fs = require("fs");
 var url = require("url");
 var _ = require("lodash");
 
@@ -5,6 +6,7 @@ var _ = require("lodash");
 // Don't include comments in here because apparently WebdriverIO do not like it.
 var injectJS = function () {
   window.rtSetUp = function ($) {
+    eval(window.rtScriptVendorMap["table-to-json"]);
     $.fn.pureText = function () {
       var str = '';
       this.contents().each(function() {
@@ -15,28 +17,14 @@ var injectJS = function () {
       return str;
     };
   };
+
   window.rtInjectJQuery = function(callback) {
-    var jqueryUrl = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
     if (typeof jQuery == 'undefined') {
-      var script = document.createElement('script');
-      var head = document.getElementsByTagName('head')[0];
-      var done = false;
-      script.onload = script.onreadystatechange = (function() {
-        if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
-          done = true;
-          script.onload = script.onreadystatechange = null;
-          head.removeChild(script);
-          jQuery.noConflict();
-          rtSetUp(jQuery);
-          callback(jQuery);
-        }
-      });
-      script.src = jqueryUrl;
-      head.appendChild(script);
-    } else {
-        rtSetUp(jQuery);
-        callback(jQuery);
+      eval(window.rtScriptVendorMap["jQuery"]);
+      jQuery.noConflict();
     }
+    rtSetUp(jQuery);
+    callback(jQuery);
   };
 
   window.rtGetLabel = function (label, cb) {
@@ -148,7 +136,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("fillInputText", function (label, value) {
     return client
-      .execute(injectJS)
+      .injectVendorScripts()
       .executeAsync(function (label, value, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
@@ -167,7 +155,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("getOutputText", function (label) {
     return client
-      .execute(injectJS)
+      .injectVendorScripts()
       .executeAsync(function (label, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
@@ -180,7 +168,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("getCheckboxInput", function (label) {
     return client
-      .execute(injectJS)
+      .injectVendorScripts()
       .executeAsync(function (label, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
@@ -200,7 +188,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("getCheckboxOutput", function (label) {
     return client
-      .execute(injectJS)
+      .injectVendorScripts()
       .executeAsync(function (label, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
@@ -220,7 +208,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("getSelectOptions", function (label) {
     return client
-      .execute(injectJS)
+      .injectVendorScripts()
       .executeAsync(function (label, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
@@ -237,7 +225,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("getSelectOptionsBySelector", function (selector) {
     return client
-      .execute(injectJS)
+      .injectVendorScripts()
       .executeAsync(function (selector, doneAsync) {
         rtInjectJQuery(function ($) {
           if ($(selector).length === 0) {
@@ -255,7 +243,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("getMultiSelectOptions", function (label) {
       return client
-        .execute(injectJS)
+        .injectVendorScripts()
         .executeAsync(function (label, doneAsync) {
           rtGetLabel(label, function ($labelEl) {
             rtFollowLabel($labelEl, label, function ($el) {
@@ -272,7 +260,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("chooseSelectOption", function (label, optionValue) {
     return client
-      .execute(injectJS)
+      .injectVendorScripts()
       .executeAsync(function (label, optionValue, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
@@ -295,7 +283,7 @@ module.exports = function (client, done) {
   client.addCommand("_selectCheckbox", function (label, selected) {
     selected = selected !== false;
     return client
-    .execute(injectJS)
+    .injectVendorScripts()
     .executeAsync(function (label, selected, doneAsync) {
       rtGetLabel(label, function ($labelEl) {
         rtFollowLabel($labelEl, label, function ($el) {
@@ -328,7 +316,7 @@ module.exports = function (client, done) {
   });
   client.addCommand("selectLookup", function (label, optionValue) {
     return client
-      .execute(injectJS)
+      .injectVendorScripts()
       .executeAsync(function (label, optionValue, doneAsync) {
         rtGetLabel(label, function ($labelEl) {
           rtFollowLabel($labelEl, label, function ($el) {
@@ -363,5 +351,36 @@ module.exports = function (client, done) {
   });
   client.addCommand("waitForActionStatusDisappearance", function (actionStatusId, timeout) {
     return client.waitForVisible("span[id$=" + actionStatusId + "\\.start]", timeout, true);
+  });
+  client.addCommand("tableToJSON", function (tableSelector) {
+    return client
+      .injectVendorScripts()
+      .executeAsync(function (selector, doneAsync) {
+        rtInjectJQuery(function ($) {
+          if ($(selector).length === 0) {
+            throw new Error("Cannot find table with selector " + selector);
+          }
+          doneAsync($(selector).tableToJSON());
+        });
+      }, selector)
+      .then(function (result) { return result.value; });
+  });
+  client.addCommand("injectVendorScripts", function () {
+    // This method injects a variable (named rtScriptVendorMap) into the browser context, which
+    // maps the name of the script to *content* of the script. This is used to make it more
+    // flexible for us to pick and choose which script to load in the browser context.
+    var scriptMap = {
+        "jQuery": "libs/jquery-1.7.2.js",
+        "table-to-json": "node_modules/table-to-json/lib/jquery.tabletojson.js"
+    };
+    scriptMap = Object.keys(scriptMap).reduce(function (previous, current) {
+      previous[current] = fs.readFileSync(scriptMap[current], "utf8");
+      return previous;
+    }, {});
+    return client
+      .execute(function (scriptMap) {
+        window.rtScriptVendorMap = scriptMap;
+      }, scriptMap)
+      .execute(injectJS);
   });
 };
