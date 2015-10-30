@@ -12,7 +12,8 @@ global class pbsbatchforPersonRegistry implements Database.Batchable<sObject>{
 		for(Contact pbs: scope){
 			if(pbs.Gender__c == 'Transgender' || pbs.Gender__c == 'Other'){
 				pbs.Does_the_person_Identify__c = 'Yes';
-				//Sravan - Should add pbs.Gender_Identity__c = pbs.Gender__c - Confirm with Kristen - PRI-110 
+				//Sravan - Confirmed with Kristen and added below line- PRI-110
+				pbs.Gender_Identity__c = pbs.Gender__c;
 				pbs.Gender__c = null;
 				if(pbs.Legal_Guardianship_Status__c == 'Self'){
 					pbs.Guardianship_Type__c = 'Self';
@@ -42,6 +43,19 @@ global class pbsbatchforPersonRegistry implements Database.Batchable<sObject>{
 	}
 	
 	global void finish(Database.BatchableContext BC){
+		
+		List<String> toAddresses = new List<String>{'adam.vernatter@thementornetwork.com', 'dylan.melnik@thementornetwork.com'};
+		//toAddresses.add('adam.vernatter@thementornetwork.com', 'dylan.melnik@thementornetwork.com');
+		Messaging.singleEmailMessage mail = new Messaging.singleEmailMessage();
+		mail.setToAddresses(toAddresses);
+		mail.setSenderDisplayName('pbsbatchforPersonRegistry');
+		mail.setSubject('pbsbatchforPersonRegistry batch execution is completed.');
+		mail.setUseSignature(false);
+		string body = 'Batch processing is completed. In production, delete me after you see this message.';
+		mail.setplainTextBody(body);
+		mail.setSaveAsActivity(false);
+		
+		Messaging.sendEmail(new Messaging.SingleEmailMessage[]{mail});
 		
 	}
 

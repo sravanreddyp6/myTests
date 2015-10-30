@@ -28,6 +28,18 @@ global class pbrbatchforPersonRegistry implements Database.Batchable<sObject>{
 	}
 	
 	global void finish(Database.BatchableContext BC){
+		List<String> toAddresses = new List<String>{'adam.vernatter@thementornetwork.com', 'dylan.melnik@thementornetwork.com'};
+		//toAddresses.add('adam.vernatter@thementornetwork.com');
+		Messaging.singleEmailMessage mail = new Messaging.singleEmailMessage();
+		mail.setToAddresses(toAddresses);
+		mail.setSenderDisplayName('pbrbatchforPersonRegistry');
+		mail.setSubject('pbrbatchforPersonRegistry execution is completed.');
+		mail.setUseSignature(false);
+		string body = 'Batch processing is completed. In production, delete me after you get this message.';
+		mail.setplainTextBody(body);
+		mail.setSaveAsActivity(false);
+		
+		Messaging.sendEmail(new Messaging.SingleEmailMessage[]{mail});
 		
 	}
  
