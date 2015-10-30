@@ -21,14 +21,14 @@ global class referralbatchforPersonRegistry implements Database.Batchable<sObjec
 	}
 	
 	global void finish(Database.BatchableContext BC){
-		List<String> toAddresses = new List<String>();
-		toAddresses.add('adam.vernatter@thementornetwork.com');
+		List<String> toAddresses = new List<String>{'adam.vernatter@thementornetwork.com', 'dylan.melnik@thementornetwork.com'};
+		//toAddresses.add('adam.vernatter@thementornetwork.com');
 		Messaging.singleEmailMessage mail = new Messaging.singleEmailMessage();
 		mail.setToAddresses(toAddresses);
-		mail.setSenderDisplayName('Referral Batch');
-		mail.setSubject('Referral Batch to update Guardianship type is completed');
+		mail.setSenderDisplayName('referralbatchforPersonRegistry');
+		mail.setSubject('referralbatchforPersonRegistry is completed.');
 		mail.setUseSignature(false);
-		string body = 'Batch processing is completed. I do not know what to do next';
+		string body = 'Batch processing is completed. In production, delete me after you get this message.';
 		mail.setplainTextBody(body);
 		mail.setSaveAsActivity(false);
 		
