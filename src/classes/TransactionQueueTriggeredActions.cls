@@ -22,15 +22,15 @@ public without sharing class TransactionQueueTriggeredActions {
 					
 					try {
 						// get the pbs id from the request pararms
-						ID PBSid = t.input_params__c;
+						ID APId = t.input_params__c;
 						
 						// execute the transaction as requested
-						Action_plan__c ap = [ select id, name, status__c, service_assignment__c from action_plan__c where service_assignment__r.admission__r.person_being_served__c = :PBSid and status__c='Active Final' LIMIT 1];
+						Action_plan__c ap = [ select id, name, status__c, service_assignment__c from action_plan__c where id= :APId and status__c='Active Final' LIMIT 1];
 	                    ActionPlan_FormWithoutSharing apWithoutSharing = new ActionPlan_FormWithoutSharing(ap.id); 
 	
 						// serialize the result
 						String jsonstring = json.serialize( apWithoutSharing );
-						system.debug( 'GOT RESULT: '  + jsonstring);
+						//system.debug( 'GOT RESULT: '  + jsonstring);
 
 						// update the request as having been fulfilled
 						newreq.return_value__c = jsonstring;
