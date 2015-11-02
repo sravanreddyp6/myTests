@@ -2039,7 +2039,7 @@
                <apex:pageBlockTable value="{!diagnoses}" var="dg">
                    <apex:column headerValue="Action"><a href="#Diag" onclick="loadDiagnosis('{!dg.id}');return false;">Edit</a>
                     </apex:column>
-                    <apex:column value="{!dg.ICD__c}" />
+                    <apex:column value="{!dg.ICD__r.name}" />
                     <apex:column value="{!dg.ICD__r.Code_Type__c}" />
                     <apex:column value="{!dg.ICD__r.Icd_Description__c}" />
 					<apex:column value="{!dg.Effective_Date__c}" headerValue="Date and Time of Diagnosis"/>

@@ -217,11 +217,6 @@
 				<apex:commandButton value="Go" onclick="debugger; var action = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (action != '') { eval(action); } return false;" />
 				
 				</apex:column>
-				<apex:column headerValue="saId">
-					{!person.saID}
-				</apex:column>
-				<apex:column>
-				</apex:column>
 		</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>

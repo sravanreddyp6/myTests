@@ -305,7 +305,7 @@ public Map<String, String> fieldMap { get; set; }
   
   private void populateDiagnoses() {
     try {
-        this.Diagnoses = [select Id, Name, ICD__c, PBS__c, Type__c, Status__c, Effective_Date__c 
+        this.Diagnoses = [select Id, Name, ICD__c, ICD__r.name, PBS__c, Type__c, Status__c, Effective_Date__c 
                          from Diagnosis__c
                          where PBS__c = :pbsId order by Status__c, Type__c
                          ];

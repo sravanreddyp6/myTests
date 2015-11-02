@@ -403,14 +403,14 @@ public with sharing class referral_Controller2 {
 		try {
 			if(this.personBeingRefRecord != null && this.personBeingRefRecord.Id != null){
 				this.diagnoses = [
-					select Name, Type__c,Status__c, PBR__c, ICD__c,ICD__r.Code_Type__c,ICD__r.Icd_Description__c, Effective_Date__c, CreatedDate
+					select Name, Type__c,Status__c, PBR__c, ICD__c,ICD__r.name,ICD__r.Code_Type__c,ICD__r.Icd_Description__c, Effective_Date__c, CreatedDate
 					from Diagnosis__c
 					where PBR__c = :this.personBeingRefRecord.Id ORDER BY Effective_Date__c DESC
 					limit 150
 				];
 			} else if (this.personBeingServedRecord != null && this.personBeingServedRecord.Id != null){
 				this.diagnoses = [
-					select Name, Type__c,Status__c, PBR__c, ICD__c, ICD__r.Code_Type__c,ICD__r.Icd_Description__c, Effective_Date__c, CreatedDate
+					select Name, Type__c,Status__c, PBR__c, ICD__c, ICD__r.name,ICD__r.Code_Type__c,ICD__r.Icd_Description__c, Effective_Date__c, CreatedDate
 					from Diagnosis__c
 					where PBS__c = :this.personBeingServedRecord.Id ORDER BY Effective_Date__c DESC
 					limit 150
