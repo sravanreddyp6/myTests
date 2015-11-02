@@ -1,0 +1,10 @@
+<apex:page standardController="Progress_Note__c" extensions="Notes_ProgressNote_InfoExtras" >
+	<apex:pageBlock mode="mainDetail">
+		<apex:pageBlockSection title="Additional Information" collapsible="false" columns="2" showHeader="false">
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel for="AliasField" value="Alias" />
+				<apex:outputField id="AliasField" value="{!thePN.Service_Assignment__r.Alias__c}" />
+			</apex:pageBlockSectionItem>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+</apex:page>
