@@ -176,6 +176,8 @@ public with sharing class HomePageController{
           canCreateProgressNotes = true;
           canSeeShiftDoc = false;
           canSeeCNAWorkbook = false;
+          system.debug('role:' +rolemap.get(UserInfo.getUserRoleId()).DeveloperName);
+          system.debug('Operatinggroup:' +OperatingGroup);
         }
         else
           canCreateProgressNotes =false;
@@ -279,6 +281,7 @@ public with sharing class HomePageController{
 				optionList.add(new SelectOption('', '-------------'));
 			}
 			if (canCreateProgressNotes) {
+				System.debug('Can value:'+canCreateProgressNotes);
                 optionList.add(new SelectOption('createProgressNotes', 'Create New Progress Note'));
                 optionList.add(new SelectOption('', '-------------'));
             }
