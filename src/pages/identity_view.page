@@ -1,6 +1,10 @@
 <apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 <style>
-
 .pbHeaderButton1 {
     float: right;
     position: relative;
@@ -8,6 +12,28 @@
     right: 10px;
 }
 </style>
+       <script type="text/javascript" > 
+      var j$ = jQuery.noConflict();
+    function showDialog (){
+    j$('[id*=attachmentDeatils]').dialog("open");
+    }
+    
+    function closeDialog (){
+      j$('[id*=attachmentDeatils]').dialog("close");
+    } 
+    
+ j$(function() {
+    j$('[id*=attachmentDeatils]').dialog({
+      resizable: false,
+      draggable: false,
+      height:180,
+      width : 750,
+      modal: true,
+      autoOpen: false
+    }).parent().appendTo(j$('form[id$=identity_edittmnu]'));
+});
+    </script>
+    
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />   
         <apex:form >
             <apex:pageBlock title="{!TMNUser.Name}" mode="view" >
@@ -104,8 +130,13 @@
                           <apex:outputField label="BAA Signed?" value="{!TMNUser.BAA_Signed__c}" /> 
                       <apex:pageBlockSectionItem >  </apex:pageBlockSectionItem>
                         </apex:PageBlockSection> 
-                     <apex:PageBlockSection title="Existing Attachments" rendered="{!TMNUser.Vendor_list__c='OTHER'}" columns="1" >
+                     <apex:PageBlockSection title="Existing Attachments" rendered="{!IF(TMNUser.Vendor_list__c=='OTHER', attachments.size>0,False)}" columns="1" >
                        <apex:pageBlockTable value="{!attachments}" var="attachment" id="attachmentsTable">
+                           <apex:column style="padding-right: 9px;" headerValue="Action" >
+                      <apex:commandLink value="View"  action="{!attachmentDeatils}" reRender="attachmenDeatilsBlock" onComplete="showDialog();return false;"> 
+                       <apex:param name="attchmentId" value="{!attachment.id}" assignTo="{!attchmentId}" />
+                        </apex:commandLink> 
+                    </apex:column>
                     <apex:column style="padding-right: 9px;" headerValue="Title">
                     <apex:outputLink value="/servlet/servlet.FileDownload?file={!attachment.Id}" target="_blank">View file</apex:outputLink>
                 </apex:column>
@@ -127,6 +158,22 @@
                 </div>   
                
             </apex:pageBlock>
+            
+                           <apex:outputPanel id="attachmentDeatils"  style="display:none" title="Attachment Information">
+                     <apex:pageBlock id="attachmenDeatilsBlock">
+                        <apex:pageBlockSection columns="2">   
+                            <apex:outputText label="Attachment Owner">{!attachmentView.OwnerName}</apex:outputText>
+                            <apex:outputText label="File Name" value="{!attachmentView.Name}"/>
+                            <apex:outputText label="Description">{!attachmentView.Description}</apex:outputText>
+                            <apex:outputText label="Size">{!attachmentView.BodyLength}</apex:outputText>
+                            <apex:outputText label="Created By">{!attachmentView.CreatedBy} ,&nbsp;&nbsp;{!attachmentView.CreatedDate}</apex:outputText>
+                            <apex:outputText label="Modified By">{!attachmentView.LastModifiedBy},&nbsp; &nbsp;{!attachmentView.LastModifiedDate}</apex:outputText>
+                    </apex:pageBlockSection> 
+                         <apex:pageblockButtons location="Bottom" >    
+                    <apex:commandButton value="Close"  onComplete="closeDialog(); return false;"/>
+                </apex:pageblockButtons>  
+            </apex:pageBlock>
+        </apex:outputPanel>
         </apex:form>
         
 </apex:page>
