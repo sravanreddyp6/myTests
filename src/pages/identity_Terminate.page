@@ -47,7 +47,8 @@
                     <apex:pageBlockSection columns="2" title="Management Hierarchy">
                         <apex:outputField label="Alias" value="{!TMNUser.Alias__c}" />                    
                         <apex:outputField label="Service Line" value="{!TMNUser.Service_Line__c}"/>
-                        <apex:outputField label="Operating Group" value="{!TMNUser.Operating_Group__c}" />
+                        <apex:outputField value="{!TMNUser.Operating_Group__c}" rendered="{!TMNUser.Operating_Group__c!='Cambridge'}"/>
+                        <apex:outputText label="Operating Group" rendered="{!TMNUser.Operating_Group__c=='Cambridge'}">Hastings</apex:outputText>
                         <apex:outputField label="Business Unit" value="{!TMNUser.Business_Unit__c}"/>                     
                         <apex:outputField label="Service Region" value="{!TMNUser.Service_Region__c}"/>
                         <!--  <apex:outputField label="Program String" value="{!TMNUser.Program_String__c}"/> -->                    
