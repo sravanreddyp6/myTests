@@ -91,6 +91,27 @@ public without sharing class TransactionQueueTriggeredActions {
 	                            newreq.return_value__c = json.serialize( e.getMessage() );
 	                }
                 }
+                else if ( t.request_type__c == 'Seizures' ) {
+                    try {
+                        // get the pbs id from the request pararms
+                        //ID PBSid = t.input_params__c;
+                        // execute the transaction as requested
+                        //DSPPersonBeingServed_WithoutSharing pbsWithoutSharing = new DSPPersonBeingServed_WithoutSharing(PBSid); 
+    
+                        // serialize the result
+                        //String jsonstring = json.serialize( pbsWithoutSharing );
+                        //system.debug( 'GOT RESULT: '  + jsonstring);
+                        // update the request as having been fulfilled
+                        //newreq.return_value__c = jsonstring;
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+    //                          newreq.return_code__c = 'ERROR';
+                                system.debug( e );
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                    }
+                }
 				else if ( t.request_type__c == 'Acknowledge Plan') {
 					try {
 							// get the action plan id and initials from the request pararms

@@ -128,7 +128,8 @@
                 <apex:column headerValue="Email" value="{!dr.Email__c}"/>
                 <apex:column headerValue="Title" value="{!dr.Professional_Title__c}"/>                        
                 <apex:column headerValue="Manager" value="{!dr.Manager_Name__c}"/>
-                <apex:column headerValue="Operating Group" value="{!dr.Operating_Group__c}"/>                         
+                <apex:column headerValue="Operating Group" value="{!dr.Operating_Group__c}" rendered="{!dr.Operating_Group__c!='Cambridge'}"/>
+                <apex:column headerValue="Operating Group"  rendered="{!dr.Operating_Group__c=='Cambridge'}">Hastings </apex:column>                         
             </apex:pageBlockTable>
                 <apex:commandButton value="First Page" rerender="details" action="{!first}" disabled="{!!hasPrevious}" status="loadingBusy"/>
                 <apex:commandButton value="Previous" rerender="details" action="{!previous}" disabled="{!!hasPrevious}" status="loadingBusy"/>
@@ -168,7 +169,8 @@
                 <apex:column headerValue="Email" value="{!e.Email__c}"/>
                 <apex:column headerValue="Title" value="{!e.Professional_Title__c}"/>                        
                 <apex:column headerValue="Manager" value="{!e.Manager_Name__c}"/>
-                <apex:column headerValue="Operating Group" value="{!e.Operating_Group__c}"/>          
+                 <apex:column headerValue="Operating Group" value="{!e.Operating_Group__c}" rendered="{!e.Operating_Group__c!='Cambridge'}"/>
+                <apex:column headerValue="Operating Group"  rendered="{!e.Operating_Group__c=='Cambridge'}">Hastings </apex:column>             
             </apex:pageBlockTable>
         </apex:form>
     </apex:pageBlockSection>

@@ -446,7 +446,8 @@ j$('input[id$=searchEmployee]').val('');
                     <apex:outputText value="Operating Group {!IF(SortField=='Operating_Group__c',IF(SortDirection='asc','▲','▼'),'')}" />
                     </apex:commandLink>
                     </apex:facet>
-                   <apex:outputText value="{!user.Operating_Group__c}" />
+                   <apex:outputText value="{!user.Operating_Group__c}" rendered="{!user.Operating_Group__c!='Cambridge'}"/>
+                   <apex:outputText rendered="{!user.Operating_Group__c=='Cambridge'}">Hastings</apex:outputText>
                     </apex:column>
                <apex:column headerValue="Office">
                       <apex:facet name="header">

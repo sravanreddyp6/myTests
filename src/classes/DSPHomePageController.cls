@@ -396,8 +396,10 @@ public with sharing class DSPHomePageController {
 	
 	
 	// Suppport for OneApp - any action off the home page is fulfilled through TransactionQueue table
+	// When adding new request, add to the map below, and make sure there is a supporting action in TransactionQueueTriggeredActions.cls
 	private Map<String,String> requestToPage = new Map<String, String> { 'Action Plan' => '/apex/DSPActionPlan', 
-																	'Person Being Served' => '/apex/DSPPersonBeingServedView'
+																		 'Person Being Served' => '/apex/DSPPersonBeingServedView',
+                                                                         'Seizures' => '/apex/DSP_PbsSeizureListing'
 																	};
 	public pageReference submitTxnRequest() {
 		// submit a transaction queue request 
@@ -428,28 +430,5 @@ public with sharing class DSPHomePageController {
 		
 	}
 	
-    public pageReference viewPersonBeingServed() {
-        // get the current PBS ID
-        // submit a transaction queue request to get the Person being served
-        // redirect to the PBS page with the transaction queue id
-        Transaction_Queue__c txn  = new Transaction_Queue__c( requesting_user__c = UserInfo.getUserId());
-        txn.request_type__c = 'Person Being Served';
-        txn.requested_date_time__c = DateTime.Now();
-        txn.input_params__c = pbsID;
-        
-        try { 
-            insert txn;
-            PageReference pr =  Page.DSPPersonBeingServedView;
-            pr.getParameters().put('txnID', txn.ID);
-            pr.setRedirect(true);
-            return pr;
-        }
-        catch (Exception e) {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
-            return null;
-        }
    
-    }
-	
-	
 }

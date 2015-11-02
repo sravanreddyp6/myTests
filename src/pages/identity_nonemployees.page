@@ -324,7 +324,8 @@
                         </apex:column>
                         <apex:column headerValue="Title" value="{!ner.Professional_Title__c}"/>                                               
                         <apex:column headerValue="Manager Name" value="{!ner.Manager_Name__c}"/>
-                        <apex:column headerValue="Operating Group" value="{!ner.Operating_Group__c}"/>
+                        <apex:column headerValue="Operating Group" value="{!ner.Operating_Group__c}" rendered="{!ner.Operating_Group__c!='Cambridge'}"/>
+               		    <apex:column headerValue="Operating Group"  rendered="{!ner.Operating_Group__c=='Cambridge'}">Hastings </apex:column>   
                         <apex:column headerValue="Person Type" value="{!ner.Current_Person_Type__c}"/> 
                         <apex:column headerValue="Job Status" value="{!ner.Job_Status__c}"/>           
                     </apex:pageBlockTable>    
@@ -375,7 +376,8 @@
                     <apex:pageBlockSection columns="2" title="Management Hierarchy">
                         <apex:outputField label="Alias" value="{!theTMNUser.Alias__c}" />                    
                         <apex:outputField label="Service Line" value="{!theTMNUser.Service_Line__c}"/>
-                        <apex:outputField label="Operating Group" value="{!theTMNUser.Operating_Group__c}" />
+                        <apex:outputField value="{!theTMNUser.Operating_Group__c}" rendered="{!theTMNUser.Operating_Group__c!='Cambridge'}"/>
+                        <apex:outputText label="Operating Group" rendered="{!theTMNUser.Operating_Group__c=='Cambridge'}">Hastings</apex:outputText>
                         <apex:outputField label="Business Unit" value="{!theTMNUser.Business_Unit__c}"/>                     
                         <apex:outputField label="Service Region" value="{!theTMNUser.Service_Region__c}"/>
                         <!--  <apex:outputField label="Program String" value="{!theTMNUser.Program_String__c}"/> -->                    
