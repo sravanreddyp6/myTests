@@ -1,0 +1,42 @@
+<apex:page controller="Report_CANS_ActionableItems" contentType="application/vnd.ms-excel#cans-actionable-{!today()}.xls">
+	<table id="responses" class="list">
+		<thead>
+			<tr class="headerRow">
+				<th>Person Being Served</th>
+				<th>Assessment Name</th>
+				<th>Assessment Date</th>
+				<th>Owner</th>
+				<th>Question Title</th>
+				<th>Score</th>
+			</tr>
+		</thead>
+		<tbody>
+			<apex:repeat value="{!listWrapper}" var="partial_list" id="listWrapper">
+				<apex:repeat value="{!partial_list}" var="response">
+					<tr class="dataRow">
+						<td class="dataCell">
+							<a href="{!baseUrl}/{!response.Assessment__r.Admission__r.Person_Being_Served__r.Id}">{!response.Assessment__r.Admission__r.Person_Being_Served__r.Name}</a>
+						</td>
+						<td class="dataCell">
+							<a href="{!baseUrl}/{!response.Assessment__r.Id}">{!response.Assessment__r.Name}</a>
+						</td>
+						<td class="dataCell">
+							<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+								<apex:param value="{!response.Assessment__r.Assessment_Date__c}" />
+							</apex:outputText>
+						</td>
+						<td class="dataCell">
+							<a href="{!baseUrl}/{!response.Assessment__r.Owner.Id}">{!response.Assessment__r.Owner.Name}</a>
+						</td>
+						<td class="dataCell">
+							{!response.Question__r.Question_Title__c}
+						</td>
+						<td class="dataCell">
+							{!response.Rating__c}
+						</td>
+					</tr>
+				</apex:repeat>
+			</apex:repeat>
+		</tbody>
+	</table>
+</apex:page>

@@ -1,0 +1,93 @@
+<apex:component >
+<apex:attribute name="viewMode" description="when in view mode labels get updated css" type="boolean" default="false" />
+<style>
+.has-value-true, .has-value-false, .lbl-progress{padding: 5px; width:200px !important}
+.has-value-true{ width: 11px;}
+.has-value-false{ width: 11px;}
+.lbl-progress{text-align:right;}
+.prg-lbl{color: black !important; font-size: 9pt; font-weight:bold;}
+.prg-wrapper{z-index: 1000;}
+</style>
+<script>
+        jQuery.noConflict();
+        var countedItems = [];
+        jQuery(document).ready(function($) {
+            setUpCompletionMonitor = function () {
+                countedItems = [];
+                $('[data-countinformprogress]').each(function (_, target) {
+                    monitorItems(target);
+                });                             
+            };
+            setUpCompletionMonitor ();
+        });
+        
+        function monitorItems(element){
+            var e = jQuery(element).data('countinformprogress');
+            if (e == 1){ 
+                countedItems.push( jQuery(element) );
+                jQuery(element).on("change", function (event) {
+                  //     calcCompletionScore(event.target);
+                    }); 
+                if ( !jQuery(element).val()  ){}
+                    //jQuery(element).css('border-left','3px solid #017dc3');
+                    //jQuery(element).css('padding-left','2px');
+                    if( {!viewMode} ){ }
+                    
+                        //jQuery("label[for='"+jQuery(element).attr('id')+"']").css({'border-right':'2px solid #017dc3','padding-right':'1px'});
+                                        
+                   
+
+                
+            }
+            calcCompletionScore();
+        }
+        function calcCompletionScore(e){
+            //console.log('test 2 '+e);
+            var score = 0;
+            var total = countedItems.length;
+            var myhtml = '<br/><table style="border-collapse: collapse; width:100%;">';
+            for (i = 0; i < countedItems.length; i++) { 
+                myhtml += '<tr style="border-bottom:1px solid #BBBBBB;">';               
+                myhtml += '<td class="lbl-progress" ><b>';
+                myhtml += jQuery("label[for='"+countedItems[i].attr('id')+"']").text();
+                myhtml += '</b></td>';
+                if ( countedItems[i].val()  ){
+                    score += 1
+                    myhtml += '<td class="has-value-true">'+ countedItems[i].val() +'</td>';
+                }
+                else{
+                    myhtml += '<td class="has-value-false">-</td>';
+                }                 
+                myhtml += '</tr>';
+            }
+            myhtml += '</table><br/>';
+            var perc = Math.round((score/total)*100);
+            jQuery('#compScore').html(score + '/' + total + "(" + perc + "%)" );
+            jQuery('#progressTable').html( myhtml );
+            jQuery('#frmProgress').css( "width",  + (perc*1.5) );
+            
+        jQuery('#prg-wrapper').hover(
+          function (e) {
+            jQuery('#progressWrapper').show();
+            jQuery('#progressWrapper').css({'top':e.pageY-130,'left':e.pageX-50, 'position':'absolute', 'padding':'5px','z-index':'2000'});           
+          }, 
+          function () {
+            jQuery('#progressWrapper').hide();
+          }
+        );             
+            
+        }
+</script>
+<span id="prg-wrapper">
+<span class="prg-lbl">Person Registration Progress</span>
+<span style="width:150px; background-color: #B1B1B1; display: inline-block"><span id="frmProgress" style="background-color:#781d7d; display: inline-block">&nbsp;</span></span>
+<span id="compScore"></span>
+<div id="progressWrapper" style="display: none; width: 425px;">
+    <apex:pageBlock >
+        <span class="prg-lbl">Person Registration Progress</span>
+        <div id="progressTable"></div>
+    </apex:pageBlock>
+</div>
+
+</span>
+</apex:component>

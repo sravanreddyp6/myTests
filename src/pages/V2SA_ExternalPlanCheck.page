@@ -1,0 +1,64 @@
+<!--
+	10/11/2012 Maros Sitko udates on confirm external button
+-->
+<apex:page controller="V2SA_ConstructSTG">
+<apex:outputPanel id="opMessages">
+        <apex:pageMessages id="messages" escape="false"/>
+    </apex:outputPanel> 
+<apex:form >
+
+<!-- <apex:actionFunction name="doCheckExternalPlan" action="{!CheckExternalPlan}" status="Performing" /> -->
+<apex:actionStatus id="Performing">
+           <apex:facet name="start">
+               <div class="waitingSearchDiv" id="el_loading"
+                   style="background-color: #fbfbfb; height: 100%; opacity: 0.6; width: 100%;">
+                   <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /><br/>
+                   <span class="waitingDescription">Performing action, please Wait...</span>
+               </div>
+           </apex:facet>
+           <apex:facet name="stop">
+           <!-- Done. -->
+           <!-- <apex:commandButton onclick="window.history.go(-2);return false;" value="Back" id="theButton" /> --> 
+           </apex:facet>
+       </apex:actionStatus> 
+
+<apex:outputPanel >
+	<br /><br />
+	<apex:outputPanel rendered="{!not(ExternalPlanDone)}">
+		
+		<apex:outputPanel rendered="{!not(error)}">
+			<apex:outputPanel rendered="{!and(plan.External_Plan__c,not(plan.Read_Only__c))}">
+				If you make this an External Plan you will not longer be able to make modifications to this record.
+				<br /><br />
+				<apex:commandButton action="{!CheckExternalPlan}" status="Performing" value="Ok" />
+				&nbsp;&nbsp;
+			</apex:outputPanel>
+			<apex:outputPanel rendered="{!and(not(plan.External_Plan__c),plan.Read_Only__c)}">
+				Cancel External Plan and allow to make modifications to this record?
+				<br /><br />
+				<apex:commandButton action="{!CheckExternalPlan}" status="Performing" value="Ok" />
+				&nbsp;&nbsp;
+			</apex:outputPanel>
+			<apex:outputPanel rendered="{!and(plan.External_Plan__c,plan.Read_Only__c)}">
+				This plan has already been confirmed as an external plan.
+				<br /><br />
+			</apex:outputPanel>
+			<apex:commandButton action="{!backExternal}" status="Performing" value="Cancel"/>
+		</apex:outputPanel>
+		<apex:outputPanel rendered="{!error}">
+			{!errorMessage}
+			<br /><br />
+			<apex:commandButton action="{!backExternal}" status="Performing" value="Back"/>
+		</apex:outputPanel>
+		
+	 </apex:outputPanel>
+	 <apex:outputPanel rendered="{!ExternalPlanDone}">
+	 		Processing ...
+			<script>
+				window.history.go(-2);
+				//window.location.href = document.referrer;
+			</script>
+		</apex:outputPanel>
+</apex:outputPanel>
+</apex:form>
+</apex:page>
