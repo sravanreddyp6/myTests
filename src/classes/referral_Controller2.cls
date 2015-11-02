@@ -948,6 +948,21 @@ public with sharing class referral_Controller2 {
 			messages.Add( 'Anticipated Service Location' );
 			hasReq = false;
 		}
+        
+        //PRI-22 Start
+        boolean diagStatus = false;
+        for(Diagnosis__c d :diagnoses){
+            if(d.status__C == 'Active'){
+                diagStatus = true;  
+                break;
+            }
+            
+        }
+        if(!diagStatus){
+            messages.Add('Atleast one active diagnosis is required for convertion');
+            hasReq = false;
+        } 
+        //PRI-22 end
 
 		if ( messages.size() > 0 && !hasReq ) {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
