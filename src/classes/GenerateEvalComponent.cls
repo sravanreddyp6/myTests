@@ -227,10 +227,7 @@ public with sharing class GenerateEvalComponent {
               from eval_value__c
              where eval__c in :listEvalItems
                and what_id__c = :evaluationID
-               and what_id_object__c = 'Evaluation__c'
                and eval_Section_Id__c = :evalSectionId
-               and Eval__r.Category__c = :cat
-               and Eval__r.Sub_Category__c = :subcat
         ];
 
 
