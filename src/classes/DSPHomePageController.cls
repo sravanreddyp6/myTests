@@ -22,7 +22,9 @@ public with sharing class DSPHomePageController {
 	private Set<PBSWrapper> peopleToServe { get; set; }
 	public List<PBSWrapper> mypbsList { get { return new List<PBSWrapper>(peopleToServe);} set; }	// because VF won't iterate over set of custom class
 
-	//public boolean Refresh=false;
+
+	public string requestType { get; set; }
+	public string inputArgs { get; set; }
 
 	// NEVAL-56
 	public String sortColumn { get; set; }
@@ -31,22 +33,30 @@ public with sharing class DSPHomePageController {
 	public class PBSWrapper {
 		public ID pbsID { get; set; }
 		public ID saID { get; set; }
+		public ID admID { get; set; }
 		public ID apID { get; set; }
 		public string pbsname { get; set; }
 		public string program { get; set; }
 		public string alias { get; set; }
 		public date apEffDate { get; set; }
 		public boolean isFavorite { get; set; }
+		public boolean hasRisk { get; set; }
+		public boolean hasISSA { get; set; }
+			
 		
-		public PBSWrapper ( ID pID, ID sID, ID aID, string n, string p, string al, date ed, boolean f) {
+		public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i) {
 			pbsID = pID;
 			saID = sID;
+			admID = adID;
 			apID = aID;
 			pbsname = n;
 			program = p;
 			alias = al;
 			apEffDate = ed;
 			isFavorite = f;
+			hasRisk = r;
+			hasISSA = i;
+			
 		}
 		
 		// for set equality checking
@@ -156,8 +166,8 @@ public with sharing class DSPHomePageController {
 			// pbsid, pbsname, said, apid, progstring,
 		Action_Plan__c[] listPBS = [
 			SELECT Id, service_assignment__r.Person_Being_Served__c, service_assignment__r.person_Being_served__r.name, 
-					service_assignment__c, service_assignment__r.Service_Location__r.program__c, 
-			       service_assignment__r.Service_Location__r.Alias__c,
+					service_assignment__r.admission__c, service_assignment__c, service_assignment__r.Service_Location__r.program__c, 
+			       service_assignment__r.Service_Location__r.Alias__c, service_assignment__r.admission__r.state__c,
 			       effective_date__c,
 			       Status__c
 			  FROM Action_Plan__c
@@ -169,14 +179,17 @@ public with sharing class DSPHomePageController {
 			
 		for ( Action_Plan__c focusPBS : listPBS  ) {
 			//ID pID, ID sID, ID aID, string n, string p, string al, date ed	
-			PBSWrapper thisPBS = new PBSWrapper( focusPBS.service_assignment__r.person_being_served__c, 
+			PBSWrapper thisPBS = new PBSWrapper( focusPBS.service_assignment__r.person_being_served__c,
+											 focusPBS.service_assignment__r.admission__c,  
 											 focusPBS.service_assignment__c,
 											 focusPBS.id, 
 											 focusPBS.service_assignment__r.person_being_served__r.name, 
 											 focusPBS.service_assignment__r.service_location__r.program__c,
 											 focusPBS.service_assignment__r.service_location__r.alias__c,
 											 focusPBS.effective_date__c,
-											 true);
+											 true,
+											 true,
+											 ( focusPBS.service_assignment__r.admission__r.state__c == 'MN'));
 			peopletoServe.add( thisPBS );
 		}
 	}
@@ -288,8 +301,8 @@ public with sharing class DSPHomePageController {
 		// pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
 		Action_Plan__c focusPBS = [
 			SELECT Id, service_assignment__r.Person_Being_Served__c, service_assignment__r.person_Being_served__r.name, 
-					service_assignment__c, service_assignment__r.Service_Location__r.program__c, 
-			       service_assignment__r.Service_Location__r.Alias__c,
+					service_assignment__r.admission__c, service_assignment__c, service_assignment__r.Service_Location__r.program__c, 
+			       service_assignment__r.Service_Location__r.Alias__c, service_assignment__r.admission__r.state__c,
 			       effective_date__c,
 			       Status__c
 			  FROM Action_Plan__c
@@ -304,13 +317,17 @@ public with sharing class DSPHomePageController {
 		if ( focusPBS != null ) {
 			//ID pID, ID sID, ID aID, string n, string p, string al, date ed	
 			PBSWrapper thisPBS = new PBSWrapper( focusPBS.service_assignment__r.person_being_served__c, 
+											 focusPBS.service_assignment__r.admission__c,
 											 focusPBS.service_assignment__c,
 											 focusPBS.id, 
 											 focusPBS.service_assignment__r.person_being_served__r.name, 
 											 focusPBS.service_assignment__r.service_location__r.program__c,
 											 focusPBS.service_assignment__r.service_location__r.alias__c,
 											 focusPBS.effective_date__c,
-											 searchResultIsFav);
+											 searchResultIsFav,
+											 true,
+											 (focusPBS.service_assignment__r.admission__r.state__c == 'MN')
+											 );
 
 
 			// if already there, remove it to make sure the favorite setting is correct
@@ -377,19 +394,29 @@ public with sharing class DSPHomePageController {
 	}
 	// END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
 	
-	public pageReference viewActionPlan() {
+	
+	// Suppport for OneApp - any action off the home page is fulfilled through TransactionQueue table
+	private Map<String,String> requestToPage = new Map<String, String> { 'Action Plan' => '/apex/DSPActionPlan', 
+																	'Person Being Served' => '/apex/DSPPersonBeingServedView'
+																	};
+	public pageReference submitTxnRequest() {
+		// submit a transaction queue request 
+		// redirect to the correct page with the transaction queue id
+		system.debug('inside submitrequest:' + requestType + ', ' + inputArgs);
 		
-		// get the current PBS ID
-		// submit a transaction queue request to get the action plan
-		// redirect to the action plan page with the transaction queue id
+		// get out if the action type is not understood
+		if ( !requestToPage.keyset().contains( requestType )) {
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unknown action type.'));
+			return null;
+		}
 		Transaction_Queue__c txn  = new Transaction_Queue__c( requesting_user__c = UserInfo.getUserId());
-		txn.request_type__c = 'Action Plan';
+		txn.request_type__c = requestType;
 		txn.requested_date_time__c = DateTime.Now();
-		txn.input_params__c = pbsID;
+		txn.input_params__c = inputArgs;
 		
 		try { 
 			insert txn;
-			PageReference pr =  Page.DSPActionPlan;
+			PageReference pr =  new PageReference( requestToPage.get( requestType ));
 			pr.getParameters().put('txnID', txn.ID);
 			pr.setRedirect(true);
 			return pr;
