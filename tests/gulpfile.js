@@ -15,7 +15,7 @@ var spawn = require('child_process').spawn;
 var manageUsers = require('./users.js').manageUsers;
 
 gulp.task('selenium', ["install-dependencies"], function (done) {
-  selenium.install({
+  var opts = {
     version: '2.48.2',
     baseURL: 'http://selenium-release.storage.googleapis.com',
     drivers: {
@@ -35,10 +35,11 @@ gulp.task('selenium', ["install-dependencies"], function (done) {
         console.log(message);
       }
     }
-  }, function (err) {
+  };
+  selenium.install(opts, function (err) {
     if (err) return done(err);
 
-    selenium.start(function (err, child) {
+    selenium.start(opts, function (err, child) {
       if (err) return done(err);
       selenium.child = child;
       done();
