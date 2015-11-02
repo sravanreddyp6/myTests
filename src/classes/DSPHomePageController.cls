@@ -398,7 +398,8 @@ public with sharing class DSPHomePageController {
 	// Suppport for OneApp - any action off the home page is fulfilled through TransactionQueue table
 	// When adding new request, add to the map below, and make sure there is a supporting action in TransactionQueueTriggeredActions.cls
 	private Map<String,String> requestToPage = new Map<String, String> { 'Action Plan' => '/apex/DSPActionPlan', 
-																		 'Person Being Served' => '/apex/DSPPersonBeingServedView'
+																		 'Person Being Served' => '/apex/DSPPersonBeingServedView',
+                                                                         'Seizures' => '/apex/DSP_PbsSeizureListing'
 																	};
 	public pageReference submitTxnRequest() {
 		// submit a transaction queue request 
