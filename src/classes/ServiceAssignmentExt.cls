@@ -2446,12 +2446,31 @@ public without sharing class ServiceAssignmentExt {
     }
 
     @RemoteAction
-    public static ServiceAssignment_Diagnosis_JO__c loadsadiagJORemote(string diagSAJOId) {
+    public static sadigJuncWrap loadsadiagJORemote(string diagSAJOId) {
         ServiceAssignment_Diagnosis_JO__c dg =
                 [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
+            system.debug('Date of Injury++++++++'+dg.Date_of_Injury__c);
+            
+            
+        return new sadigJuncWrap(dg);
         
-        return dg;
+    }
+    
+    public class sadigJuncWrap {
+    	public ServiceAssignment_Diagnosis_JO__c junction {get; set;}
+    	public string injuryDate {get; set;}
+    	
+    	public sadigJuncWrap(ServiceAssignment_Diagnosis_JO__c junction){
+    		this.junction = junction;
+    		if(junction.Date_of_Injury__c != null){
+    			injuryDate = junction.Date_of_Injury__c.format();
+    		}else{
+    			injuryDate = null;
+    		}
+    	}
+    	
+    	
     }
 
 }
