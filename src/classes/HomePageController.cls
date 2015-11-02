@@ -176,8 +176,6 @@ public with sharing class HomePageController{
           canCreateProgressNotes = true;
           canSeeShiftDoc = false;
           canSeeCNAWorkbook = false;
-          system.debug('role:' +rolemap.get(UserInfo.getUserRoleId()).DeveloperName);
-          system.debug('Operatinggroup:' +OperatingGroup);
         }
         else
           canCreateProgressNotes =false;
@@ -263,7 +261,7 @@ public with sharing class HomePageController{
 
 			SelectOption[] optionList = new SelectOption[]{};
 			//adding a wrapping clause here PRI-237, this may be requested for removal 
-			if(operatingGroup.StartsWith( 'Care') ){
+			//if(operatingGroup.StartsWith( 'Care') ){
 			if (canSeeShiftDoc) {
 				optionList.add(new SelectOption('createShiftDoc', 'Create New Shift Doc'));
 				if (hasShiftDocMap.get(serviceAssignment.Id) && shiftDocMap.get(serviceAssignment.Id).OwnerId != UserInfo.getUserId()) {
@@ -281,7 +279,6 @@ public with sharing class HomePageController{
 				optionList.add(new SelectOption('', '-------------'));
 			}
 			if (canCreateProgressNotes) {
-				System.debug('Can value:'+canCreateProgressNotes);
                 optionList.add(new SelectOption('createProgressNotes', 'Create New Progress Note'));
                 optionList.add(new SelectOption('', '-------------'));
             }
@@ -300,7 +297,7 @@ public with sharing class HomePageController{
 					}
 				}
 			}
-			}
+			//}
 			// For incident Creation - Add Security if condition later since We don't have requirements now - Sravan 07/21/2015
 			//removing this option for the moment 10/21/2015 pperisic
 			if(canCreateIncidents){
