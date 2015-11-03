@@ -950,7 +950,7 @@ public with sharing class referral_Controller2 {
 		}
         
         //PRI-22 Start
-        if(OperatingGroup == 'NeuroRestorative'){
+        if(referralRecordType == 'NeuroRestorative'){
             boolean diagStatus = false;
             for(Diagnosis__c d :diagnoses){
                 if(d.status__C == 'Active'){
