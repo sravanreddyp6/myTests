@@ -234,8 +234,9 @@
             <apex:pageBlock mode="maindetail">
                 <apex:pageBlockSection columns="1" id="seizureEntry">
                     <apex:pageBlockSectionItem ><apex:outputLabel Value="Service Assignment"/>
-                        <apex:selectList value="{!seizure['serviceAssignmentId']}" id="seizureEntry_serviceAssignmentId" > 
-                            <apex:selectOptions value="{!activeServAssign}"/>
+                        <apex:selectList value="{!seizure['serviceAssignmentId']}" id="seizureEntry_serviceAssignmentId" size="1">
+                            <apex:selectOption itemValue="" itemLabel="--Select--" rendered="{! activeServAssign.size != 1 }"/>
+                            <apex:selectOptions value="{!saOptions}" />
                         </apex:selectList>
                     </apex:pageBlockSectionItem>
 

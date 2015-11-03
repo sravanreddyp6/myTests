@@ -94,15 +94,15 @@ public without sharing class TransactionQueueTriggeredActions {
                 else if ( t.request_type__c == 'Seizures' ) {
                     try {
                         // get the pbs id from the request pararms
-                        //ID PBSid = t.input_params__c;
+                        ID PBSid = t.input_params__c;
                         // execute the transaction as requested
-                        //DSPPersonBeingServed_WithoutSharing pbsWithoutSharing = new DSPPersonBeingServed_WithoutSharing(PBSid); 
+                        DSP_PbsSeizureListing dsp_PbsSeizureListing = new DSP_PbsSeizureListing(PBSid); 
     
                         // serialize the result
-                        //String jsonstring = json.serialize( pbsWithoutSharing );
+                        String jsonstring = json.serialize( dsp_PbsSeizureListing );
                         //system.debug( 'GOT RESULT: '  + jsonstring);
                         // update the request as having been fulfilled
-                        //newreq.return_value__c = jsonstring;
+                        newreq.return_value__c = jsonstring;
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
                     } catch ( Exception e ) {
@@ -110,6 +110,26 @@ public without sharing class TransactionQueueTriggeredActions {
                                 system.debug( e );
                                 newreq.fulfilled__c = false;
                                 newreq.return_value__c = json.serialize( e.getMessage() );
+                    }
+                }
+                else if ( t.request_type__c == 'Upsert Seizure' ) {
+                    try {
+                            Seizure__c inputs = (Seizure__c) json.deserialize(t.input_params__c, Seizure__c.class);
+                            upsert inputs;
+                            Id PBSid = [select Admission__r.Person_Being_Served__c from Service_Assignment__c where id = : inputs.Service_Assignment__c limit 1].Admission__r.Person_Being_Served__c;
+                            
+                            DSP_PbsSeizureListing dsp_PbsSeizureListing = new DSP_PbsSeizureListing(PBSid);
+                            // serialize the result
+                            String jsonstring = json.serialize( dsp_PbsSeizureListing );
+                            // update the request as having been fulfilled
+                            newreq.return_value__c = jsonstring;
+                            newreq.fulfilled__c = true;
+                            newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+//                          newreq.return_code__c = 'ERROR';
+                            system.debug( e );
+                            newreq.fulfilled__c = false;
+                            newreq.return_value__c = json.serialize( e.getMessage() );
                     }
                 }
 				else if ( t.request_type__c == 'Acknowledge Plan') {
