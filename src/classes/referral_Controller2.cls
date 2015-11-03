@@ -170,6 +170,7 @@ public with sharing class referral_Controller2 {
                 (operatinggroup == 'Redwood' && referralrecordtype == 'Wisconsin' && showCANS ) ||
                 //Sravan - Removing the Illinois filter condition for Neuro as every state wants to use convert now. 10/27/2015 PRI-316
                 (operatinggroup == 'NeuroRestorative') ||
+                (referralrecordtype == 'Generic')||
                 (referralrecordtype == 'CA FSS' && isCAFSS)
             );
             
