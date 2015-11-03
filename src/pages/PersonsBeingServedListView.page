@@ -7,6 +7,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
 	<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
+	<apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsRW" />
     <style>
 #table_filter h1 {
     font-size: 14px;
@@ -147,7 +148,7 @@ table#persons_table.dataTable {
         </div>
         <apex:form id="table_commands">
             <apex:commandButton value="Add New Person"
-                onclick="window.open('{!URLFOR($Action.Account.New)}', '_self'); return false;" rendered="{!canCreateNew && !vfVarIsRW}"/>
+                onclick="window.open('{!URLFOR($Action.Account.New)}', '_self'); return false;" rendered="{!canCreateNew && !vfVarIsRW && !vfVarIsCB}"/>
             <!-- This is a workaround - We can't just rerender the table, because all the map variables are transient and
             thus are not stored in the View state. -->
             <apex:commandButton value="Refresh" onclick="showLoadingModal()" oncomplete="refreshDataTable()" action="{!updateCon}"
