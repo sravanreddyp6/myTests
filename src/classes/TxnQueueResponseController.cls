@@ -27,8 +27,14 @@ public with sharing class TxnQueueResponseController {
 			// get the txn result
 			thisTxn =[ select id, result_code__c, fulfilled__c, date_time_fulfilled__c, return_value__c, request_type__c, input_params__c
 									from transaction_queue__c
-									where id = :txnID];
-									//and requesting_user__c = :thisUser];
+									where id = :txnID
+									and requesting_user__c = :thisUser LIMIT 1];
+			
+			// if there is no response, then this isn't the user who requested the data - return an error message
+			if ( thisTxn == null ) {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, 'Unable to retrieve result.'));
+				return;
+			}
 			
 			TxnResponse = thisTxn.return_value__c;
 			
