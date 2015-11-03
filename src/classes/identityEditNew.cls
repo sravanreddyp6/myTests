@@ -37,7 +37,7 @@ public class identityEditNew {
     	return JSON.Serialize(keyVal); 
     }
     
-    public identityEditNew() {
+    public identityEditNew(ApexPages.StandardController controller) {
                                     
         Id id = ApexPages.currentPage().getParameters().get('ID');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
@@ -278,6 +278,8 @@ public class identityEditNew {
         try {
             
             upsert(TMNUser);
+            
+            sendEmail(TMNUser);
              saveAttachment();
         } catch(System.DMLException e) {
             ApexPages.addMessages(e);
@@ -289,6 +291,30 @@ public class identityEditNew {
         PageReference viewPage = new PageReference('/apex/identity_view?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
         viewPage.setRedirect(true);
         return viewPage;
+    }
+    
+    public void sendEmail (TMN_User__c TMNUser) {
+    	if(TMNUser.Current_Person_Type__c == 'Employee' && TMNUser.Last_Day__c!=null) {
+    		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
+   			List<TMN_User__c> tmnManagerInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: TMNUser.Manager_Email__c];
+    		if(tmnManagerInfo!=null && tmnManagerInfo.size()>0) {
+    		Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
+    		mail.setTargetObjectId(tmnManagerInfo[0].Salesforce_User_Account__c);
+    	   String Template = '<H4> Hello '+TMNUser.Manager_First_Name__c+' '+ TMNUser.Manager_Last_Name__c + ', </H4>';
+    	    	Template  += '<P> You are receiving this message because you are listed as the manager for <B>'+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c +'</B> in TMNAccess. The End Date on employee record has been ';
+    	    	Template  += 'modified and the account has been set to terminate on '+TMNUser.Last_Day__c +' </P> ';
+    	    	Template  += 'If you are not the manager for the employee mentioned in this email or have other questions in regards, please either log into TMNAccess ('+URL.getSalesforceBaseUrl().toExternalForm()+'/'+TMNUser.id;
+    	    	Template	+=') or contact IT Service Center at 888-774-4872 for assistance.' ;	
+    	    	Template += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the below information please contact the IT Service Center.</P>';
+				Template += '<BR/> Thank you,<BR/> MENTOR IT'; 
+			mail.setHtmlBody(Template);
+			mail.setSubject('End Date entered  for '+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c );
+			mail.SaveAsActivity = false;
+			mails.add(mail);
+    		Messaging.sendEmail(mails);
+    	}
+      }	
+    
     }
     
     public List<Attachment> attachments {set;get;}
@@ -348,7 +374,13 @@ public class identityEditNew {
     public PageReference goEdit(){
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        	if(retURL== null){
+        			 retURL = '/apex/identity_nonemployees';
+        	}
         String TAU = ApexPages.currentPage().getParameters().get('TAU');
+        		if(TAU == null) {
+        			TAU = UserInfo.getUserEmail();
+        		}
         PageReference editPage = new PageReference('/apex/identity_edittmnu?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
         editPage.setRedirect(true);
         return editPage;
@@ -376,6 +408,13 @@ public class identityEditNew {
     public PageReference goTerminate() {
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        if(retURL== null){
+        			 retURL = '/apex/identity_nonemployees';
+        	}
+        String TAU = ApexPages.currentPage().getParameters().get('TAU');
+        		if(TAU == null) {
+        			TAU = UserInfo.getUserEmail();
+        		}
         PageReference terminatePage =  new PageReference('/apex/identity_Terminate?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU );
         terminatePage.setRedirect(true);   
         return terminatePage;
