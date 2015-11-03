@@ -51,7 +51,7 @@ public with sharing class PBS_controller_helper {
       return diagnosis;
     }
     
-    //Check whether there is an cative 
+    //Check whether there is an Active Service Assignment with an Active Diagnosis linked that the user trying to Inactivate
     @RemoteAction
     public static boolean preventDiagInactivation(string diagnosisId, string PBSId){
     	List<ServiceAssignment_Diagnosis_JO__c> dg = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Diagnosis__c = :diagnosisId AND Service_Assignment__r.Status__c = 'Active' AND Service_Assignment__r.Person_being_served__c = :PBSId AND Status__c = 'Active' LIMIT 1];
