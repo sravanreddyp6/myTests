@@ -1697,6 +1697,8 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!jo.Glasgow_Coma_Score_at_Injury__c}" />
                     <apex:column value="{!jo.Glasgow_Coma_Scale_Severity__c}" />
                 </apex:pageblockTable>
+<!--                 <apex:inputHidden value="{!hasPrimaryDiagJo}" /> -->
+<!--                 <apex:inputHidden value="{!primaryDiagJoId}" /> -->
                 <apex:outputText value="No diagnoses to display" rendered="{!(sadiagJOList.size=0)}" />
              </apex:pageBlockSection>
         </apex:pageBlock>
@@ -3102,7 +3104,7 @@ END: Uncomment to have the element collapsed by default -->
     <!--               </apex:facet> -->
                    <div id='sadiagJoErrors' style='color:red'></div>
                 
-                    <apex:pageBlockSection Columns="2" id="sadiagJoEntry" >
+                    <apex:pageBlockSection Columns="1" id="sadiagJoEntry" >
                         <apex:pageBlockSectionItem >
                             <apex:outputLabel value="Diagnosis" for="pbsdiagSelectList" />
                             <apex:selectList size="1" value="{!selectedDiagnosis}" id="pbsdiagSelectList">
@@ -3117,6 +3119,8 @@ END: Uncomment to have the element collapsed by default -->
                         <apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore"/>
                         <apex:inputField value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoEntry_sadiagJoInjurySeverity"/>
                         <apex:inputHidden value="{!sadiagJO.Id}" id="sadiagJoEntry_sadiagJOId" />
+<!--                         <apex:inputHidden value="{!hasPrimaryDiagJo}" /> -->
+<!--                 		<apex:inputHidden value="{!primaryDiagJoId}" /> -->
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:outputPanel>
@@ -3539,21 +3543,62 @@ END: Uncomment to have the element collapsed by default -->
         }
         
         function validatesadiagJo() {
+        	console.log('in validate method');
             var errors = '';
             j$('#sadiagJoErrors').html(errors);
-
+            
+            var ranking = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
+            var diagSAJOId = j$('input[id$=sadiagJoEntry_sadiagJOId]').val();
+            var saID = '{!Service_Assignment__c.Id}';
+            
             if (j$('select[id$=pbsdiagSelectList]').val() == '--None--') {
-                errors += '<li>Please choose a diagnosis</li>';
+               errors += '<li>Diagnosis is a required field.</li>';
             }
-             if (j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val() == '') {
+            if (ranking == '') {
                 errors += '<li>Ranking is a required field.</li>';
             }
-            
-            j$('#sadiagJoErrors').html(errors);
-            return (errors == '');
+      
+           	if(errors !=  '' ){
+           		 j$('#sadiagJoErrors').html(errors);
+           		 return (errors == '');
+           	} 
+           	
+           if(errors == '' &&  ranking == 'Primary'){
+           			Visualforce.remoting.Manager.invokeAction(
+	                '{!$RemoteAction.ServiceAssignmentExt.findPrimarysaDiagJo}',
+	                saID,
+	                diagSAJOId,
+	                function(result, event){
+	                    if (event.status) {
+	                            if(result){
+	                            	console.log('in here in here');
+	                                errors += '<li>Primary active already exist.</li>';
+	                                j$('#sadiagJoErrors').html(errors);
+	                                console.log(errors);
+	                                return (errors == '');
+	                            }else{
+	                            	return (errors == '');
+	                            }
+	                    } else if (event.type === 'exception') {
+	                        document.getElementById("sadiagJoErrors").innerHTML = event.message;
+	                    } else {
+	                        document.getElementById("sadiagJoErrors").innerHTML = event.message;
+	                    }
+	                },
+	                {escape: true}
+                );
+                
+                
+           	}
+           	
+          if(errors == '' &&  ranking != 'Primary'){
+          		return (errors == '');
+          }
+          
         }
     
         function sadiagJoSave(isDialogClose) {
+        	console.log('in save method');
             if (validatesadiagJo()) {
                 var diagSAJOId = j$('input[id$=sadiagJoEntry_sadiagJOId]').val();
                 var diagId = j$('select[id$=pbsdiagSelectList]').val();
@@ -3593,12 +3638,10 @@ END: Uncomment to have the element collapsed by default -->
                         j$('select[id$=pbsdiagSelectList]').val(result.junction.Diagnosis__c);
                        	j$('input[id$=sadiagJoEntry_sadiagJoBillable]').prop('checked', result.junction.Billable__c);
                        	j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', result.junction.ABI_Diagnosis__c);
-                       	
-                       	
+                       	//using wrapper string as the formatting is natural - Sravan
                         if (result.junction.Date_of_Injury__c != null) {
                             j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val(result.injuryDate);
                         }
-                       	
                         j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val(result.junction.Glasgow_Coma_Score_at_Injury__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val(result.junction.Glasgow_Coma_Scale_Severity__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val(result.junction.Injury_Type__c);

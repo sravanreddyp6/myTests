@@ -368,12 +368,25 @@ public without sharing class ServiceAssignmentExt {
 	set;}
     	
     public string selectedDiagnosis {get; set;}
+   // public boolean hasPrimaryDiagJo {get; set;}
+   // public string primaryDiagJoId {get; set;}
     
     private void populatesadiagJO(){
     try {
         this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, Diagnosis__r.ICD__r.Icd_Description__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c 
                  where Service_Assignment__c = : this.theServAssign.Id];
+       /* for(ServiceAssignment_Diagnosis_JO__c jo: this.sadiagJOList){
+        	if(jo.Ranking__c == 'Primary'){
+        		hasPrimaryDiagJo = true;
+        		primaryDiagJoId = jo.Id;
+        		break;
+        	}
+        }
+        
+        if(!hasPrimaryDiagJo){
+    		primaryDiagJoId = null;
+    	}*/
       }
     catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
@@ -382,15 +395,17 @@ public without sharing class ServiceAssignmentExt {
   }
   
   public void showAddsadiagJo() {
+  		populatesadiagJO();
   		this.sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
+  		this.selectedDiagnosis = '--None--';
   		
   	
   }
   
   public void savesadiagJo() {
-  	
   		populatesadiagJO();
   		this.sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
+  		this.selectedDiagnosis = '--None--';
   }
 
  /*   public Boolean newDiagnosis{ get; set;}
@@ -740,6 +755,8 @@ public without sharing class ServiceAssignmentExt {
         setShiftDocPermissions();
         canAddDiagnosis = Diagnosis__c.sObjectType.getDescribe().isCreateable();
         sadiagJOList = new List<ServiceAssignment_Diagnosis_JO__c>();
+       // hasPrimaryDiagJo = false;
+       // primaryDiagJoId = null;
         if(!newSA){
         	populatesadiagJO();
         }
@@ -2470,6 +2487,24 @@ public without sharing class ServiceAssignmentExt {
     		}
     	}
     	
+    	
+    }
+    
+    @RemoteAction
+    public static boolean findPrimarysaDiagJo(string SAId, string diagSAJOId){
+    	List<ServiceAssignment_Diagnosis_JO__c> dg;
+    	
+    	if(diagSAJOId != null){
+    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID != :diagSAJOId AND Service_Assignment__c = :SAId AND Ranking__c = 'Primary' AND Status__c = 'Active' LIMIT 1];
+    	}else{
+    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Ranking__c = 'Primary' AND Status__c = 'Active' LIMIT 1];
+    	}
+    	 
+    	if(dg.size() > 0){
+    		return true;
+    	}else{
+    		return false;
+    	}
     	
     }
 
