@@ -22,7 +22,7 @@ global class TMNEmployeeLastDayBatch implements Database.Batchable<sObject>, Sch
 					emailTemplate += '<P> If you are not the manager for the employee mentioned in this email or have other questions in regards, please either log into TMNAccess ('+URL.getSalesforceBaseUrl().toExternalForm()+'/'+TMNUser.id;
 					emailTemplate += ') or contact IT Service Center at 888-774-4872 for assistance. </P> <BR/><BR/>';
 					emailTemplate += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the below information please contact the IT Service Center.</P> ';
-					emailTemplate += 'Thank you,<BR/> MENTOR IT';
+					emailTemplate += 'Thank you,<BR/> MENTOR IT.';
 					mail.setTargetObjectId(tmnManagerInfo[0].Salesforce_User_Account__c);
 					mail.setHtmlBody(emailTemplate);
 					mail.setSubject('Today last day for '+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c );
