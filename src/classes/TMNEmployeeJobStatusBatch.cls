@@ -19,17 +19,22 @@ private final static date todayminusOneDay = system.today().addDays(-1);
     				Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
     				String	emailTemplate = '<H4> Hello '+tmn.Manager_First_Name__c+' '+ tmn.Manager_Last_Name__c + ', </H4>';
 					emailTemplate += '<P> You are receiving this message because you are listed as the manager for <B>'+tmn.First_Name__c+' '+ tmn.Last_Name__c +'</B>  in TMNAccess.';
-					emailTemplate += 'The employee job status change to inactive today.</P>';	
+					emailTemplate += 'The employee job status changed to inactive today.</P>';	
 					emailTemplate += '<P> If you are not the manager for the employee mentioned in this email or have other questions in regards, please either log into TMNAccess ('+URL.getSalesforceBaseUrl().toExternalForm()+'/'+tmn.id;
 					emailTemplate += ') or contact IT Service Center at 888-774-4872 for assistance. </P> <BR/><BR/>';
 					emailTemplate += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the below information please contact the IT Service Center.</P> ';
-					emailTemplate += 'Thank you,<BR/> MENTOR IT';
+					emailTemplate += 'Thank you,<BR/> MENTOR IT.';
             		mail.setTargetObjectId(tmnManagerInfo[0].Salesforce_User_Account__c);
          			mail.setSubject('Job Status changed for '+tmn.Last_Name__c+' '+tmn.First_Name__c);
          			mail.setHtmlBody(emailTemplate);
                     mail.SaveAsActivity = false; 
          			mails.add(mail);
          		    tmn.Job_Status__c = 'Inactive';
+         		    List<TMN_User_Delegate__c>	delegateList  = [SELECT id,Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c,Delegation_Complete__c,TMN_Delegate_Name__c FROM TMN_User_Delegate__c where TMN_Delegate_Name__c = : tmn.id];
+				if(delegateList.size()>0) {
+					delete delegateList;
+				}
+				
                     }	
 		}								
 		update scope;
