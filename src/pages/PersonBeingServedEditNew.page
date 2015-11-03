@@ -269,6 +269,9 @@
 		function validateDiagnosis() {
             var errors = '';
             j$('#diagnosisErrors').html(errors);
+            
+            var diagnosisId = j$('input[id$=diagnosisEntry_Id]').val();
+            var status = j$('select[id$=diagnosisEntry_status]').val();
 
             if (j$('input[id$=diagnosisEntry_icd]').val() == '') {
                 errors += '<li>ICD Code is a required field.</li>';
@@ -276,15 +279,45 @@
             if (j$('input[id$=diagnosisEntry_EffTime]').val() == '') {
                 errors += '<li>Date and Time of Diagnosis is a required field.</li>';
             }
-            if (j$('select[id$=diagnosisEntry_status]').val() == '') {
+            if ( status == '') {
                 errors += '<li>Status is a required field.</li>';
             }
 			 if (j$('select[id$=diagnosisEntry_type]').val() == '') {
                 errors += '<li>Type is a required field.</li>';
             }
+            
+            if(errors !=  ''){
+            	j$('#diagnosisErrors').html(errors);
+            	return (errors == '');
+            }
+            if(errors == '' && status != 'Active'  && diagnosisId != '' ){ //editing an existing one
+            	Visualforce.remoting.Manager.invokeAction(
+	                '{!$RemoteAction.PBS_controller_helper.preventDiagInactivation}',
+	                diagnosisId,
+	               	'{!Contact.Id}',
+	                function(result, event){
+	                    if (event.status) {
+	                            if(result){
+	                                errors += '<li>You cannot inactivate this Diagnosis as it is associated with an Active Service Assignment.</li>';
+	                                j$('#diagnosisErrors').html(errors);
+	                                return (errors == '');
+	                            }else{
+	                            	return (errors == '');
+	                            }
+	                    } else if (event.type === 'exception') {
+	                        document.getElementById("sadiagJoErrors").innerHTML = event.message;
+	                    } else {
+	                        document.getElementById("sadiagJoErrors").innerHTML = event.message;
+	                    }
+	                },
+	                {escape: true}
+                );
+            }
 			
-            j$('#diagnosisErrors').html(errors);
-            return (errors == '');
+			if(errors == '' && status == 'Active'){
+				return (errors == '');
+			}
+            
         }
     
     	function diagnosisSave(isDialogClose) {

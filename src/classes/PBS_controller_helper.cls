@@ -50,6 +50,13 @@ public with sharing class PBS_controller_helper {
       upsert diagnosis;                                  
       return diagnosis;
     }
+    
+    //Check whether there is an cative 
+    @RemoteAction
+    public static boolean preventDiagInactivation(string diagnosisId, string PBSId){
+    	List<ServiceAssignment_Diagnosis_JO__c> dg = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Diagnosis__c = :diagnosisId AND Service_Assignment__r.Status__c = 'Active' AND Service_Assignment__r.Person_being_served__c = :PBSId AND Status__c = 'Active' LIMIT 1];
+    	return dg.size() > 0;
+    }
      // calculation of whether user is allowed to make this change
         public static Boolean isUserLevel1or2() {
                 
