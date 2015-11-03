@@ -3116,7 +3116,7 @@ END: Uncomment to have the element collapsed by default -->
                         <apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
                         <apex:inputField value="{!sadiagJO.Billable__c}" id="sadiagJoEntry_sadiagJoBillable"/>
                         <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis"/>
-                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore"/>
+                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore" onchange="setGlasgowSeverity(); return false;"/>
                         <apex:inputField value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoEntry_sadiagJoInjurySeverity"/>
                         <apex:inputHidden value="{!sadiagJO.Id}" id="sadiagJoEntry_sadiagJOId" />
 <!--                         <apex:inputHidden value="{!hasPrimaryDiagJo}" /> -->
@@ -3654,6 +3654,19 @@ END: Uncomment to have the element collapsed by default -->
                     escape: true
                 }
             );
+        }
+        
+        setGlasgowSeverity = function(){
+        	  var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
+        	  if(glasgowInjury == '3-8'){
+        	  	j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val('Severe');
+        	  }else if(glasgowInjury == '9-12'){
+        	  	j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val('Moderate');
+        	  }else if(glasgowInjury == '13-15'){
+        	  	j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val('Mild');
+        	  }else if(glasgowInjury == ''){
+        	  	j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val('');
+        	  }
         }
 
 
