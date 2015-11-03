@@ -438,7 +438,7 @@
         
         <!-- Sa Diag Junction -->
         <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs"  />
-        <apex:actionFunction name="showAddsadiagJo" action="{!showAddsadiagJo}" rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Link Diagnosis','none', '700'); return false;"/>
+        <apex:actionFunction name="showAddsadiagJo" action="{!showAddsadiagJo}" rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); return false;"/>
          <!-- end seizure actions-->
         
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" immediate="true" rerender="serviceLocationEntry,locationDisplay, msgs" oncomplete="openDialog('serviceLocationModal', 'span', 'Add/Edit Location'); " />
@@ -1681,7 +1681,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageBlock id="pbsadiagBlock" mode="maindetail" rendered="{! !newSA && !editSA}" >
              <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
-                    <apex:commandButton value="Add Diagnosis" id="addsadiagJo" onClick="showAddsadiagJo(); return false;" />
+                    <apex:commandButton value="Associate Diagnosis" id="addsadiagJo" onClick="showAddsadiagJo(); return false;" />
                 </div>
             </apex:pageBlockButtons>
              <apex:pageBlockSection title="Diagnosis" columns="1" collapsible="true" id="_sadiagJoSection_Alt1_Header">
@@ -3092,7 +3092,7 @@ END: Uncomment to have the element collapsed by default -->
         <!-- Link Diagnosis to SA Modal -->
         <apex:actionRegion >
             <apex:outputPanel id="saDiagModal" style="display:none" >
-                <apex:pageBlock title="Add/Edit Diagnosis" mode="maindetail">
+                <apex:pageBlock mode="maindetail">
                      <apex:pageblockButtons location="bottom">
                          <apex:commandButton value="Save" onClick="sadiagJoSave(true); return false;" />
                          <apex:commandButton value="Save & New" onClick="sadiagJoSave(false);return false;" />
@@ -3647,8 +3647,8 @@ END: Uncomment to have the element collapsed by default -->
                         j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val(result.junction.Injury_Type__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val(result.junction.Ranking__c);
                         
-   
-                        openModalDialogSA('saDiagModal', 'span', 'Link Diagnosis','none', '700');
+          
+                        openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700');
                     }
                 }, {
                     escape: true
