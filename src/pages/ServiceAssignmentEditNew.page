@@ -3094,8 +3094,8 @@ END: Uncomment to have the element collapsed by default -->
             <apex:outputPanel id="saDiagModal" style="display:none" >
                 <apex:pageBlock mode="maindetail">
                      <apex:pageblockButtons location="bottom">
-                         <apex:commandButton value="Save" onClick="sadiagJoSave(true); return false;" />
-                         <apex:commandButton value="Save & New" onClick="sadiagJoSave(false);return false;" />
+                         <apex:commandButton value="Save" onClick="validatesadiagJo(true); return false;" />
+                         <apex:commandButton value="Save & New" onClick="validatesadiagJo(false);return false;" />
                          <apex:commandButton value="Cancel" onClick="closeModalDialogSA('saDiagModal', 'span'); j$('#sadiagJoErrors').html('');return false;" />
                      </apex:pageblockButtons>
     <!--                 <apex:facet name="header"> -->
@@ -3116,8 +3116,8 @@ END: Uncomment to have the element collapsed by default -->
                         <apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
                         <apex:inputField value="{!sadiagJO.Billable__c}" id="sadiagJoEntry_sadiagJoBillable"/>
                         <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis"/>
-                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore" onchange="setGlasgowSeverity(); return false;"/>
-                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoEntry_sadiagJoInjurySeverity"/>
+                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore" onchange="setGlasgowSeverity(); return false;"  />
+                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoEntry_sadiagJoInjurySeverity" />
                         <apex:inputHidden value="{!sadiagJO.Id}" id="sadiagJoEntry_sadiagJOId" />
 <!--                         <apex:inputHidden value="{!hasPrimaryDiagJo}" /> -->
 <!--                 		<apex:inputHidden value="{!primaryDiagJoId}" /> -->
@@ -3542,7 +3542,7 @@ END: Uncomment to have the element collapsed by default -->
             }
         }
         
-        function validatesadiagJo() {
+        function validatesadiagJo(isDialogClose) {
         	console.log('in validate method');
             var errors = '';
             j$('#sadiagJoErrors').html(errors);
@@ -3557,7 +3557,9 @@ END: Uncomment to have the element collapsed by default -->
             if (ranking == '') {
                 errors += '<li>Ranking is a required field.</li>';
             }
-      
+            if(errors == '' &&  ranking != 'Primary'){
+          		return (errors == '');
+          	}
            	if(errors !=  '' ){
            		 j$('#sadiagJoErrors').html(errors);
            		 return (errors == '');
@@ -3577,7 +3579,7 @@ END: Uncomment to have the element collapsed by default -->
 	                                console.log(errors);
 	                                return (errors == '');
 	                            }else{
-	                            	return (errors == '');
+	                            	sadiagJoSave(isDialogClose);
 	                            }
 	                    } else if (event.type === 'exception') {
 	                        document.getElementById("sadiagJoErrors").innerHTML = event.message;
@@ -3591,15 +3593,15 @@ END: Uncomment to have the element collapsed by default -->
                 
            	}
            	
-          if(errors == '' &&  ranking != 'Primary'){
-          		return (errors == '');
-          }
           
+          
+          console.log('Why I am here');
         }
     
-        function sadiagJoSave(isDialogClose) {
+      /*  function sadiagJoSave(isDialogClose) {
         	console.log('in save method');
             if (validatesadiagJo()) {
+            	console.log('validated');
                 var diagSAJOId = j$('input[id$=sadiagJoEntry_sadiagJOId]').val();
                 var diagId = j$('select[id$=pbsdiagSelectList]').val();
                 var saID = '{!Service_Assignment__c.Id}';
@@ -3626,6 +3628,36 @@ END: Uncomment to have the element collapsed by default -->
                 
                 }
             }
+            return false;
+        }*/
+        
+         function sadiagJoSave(isDialogClose) {
+                var diagSAJOId = j$('input[id$=sadiagJoEntry_sadiagJOId]').val();
+                var diagId = j$('select[id$=pbsdiagSelectList]').val();
+                var saID = '{!Service_Assignment__c.Id}';
+                var ABI = j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').is(':checked');
+                var Billable = j$('input[id$=sadiagJoEntry_sadiagJoBillable]').is(':checked');
+                var injuryDate = j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val();
+                var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
+                var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
+                var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
+                var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
+              
+                 if(diagId != ''){
+                    ServiceAssignmentExt.savesadiagJORemote(diagSAJOId, diagId, saID, ABI, Billable, injuryDate,
+                        glasgowInjury,glasgowSeverity,injType,rank,
+                        function(result, event) {
+                            savesadiagJo();
+                            if (isDialogClose) {
+                                closeModalDialogSA('saDiagModal', 'span');
+                            }
+                        }, {
+                            escape: true
+                        }
+                    );                
+                
+                }
+           
             return false;
         }
         

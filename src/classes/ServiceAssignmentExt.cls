@@ -2492,12 +2492,12 @@ public without sharing class ServiceAssignmentExt {
     
     @RemoteAction
     public static boolean findPrimarysaDiagJo(string SAId, string diagSAJOId){
-    	List<ServiceAssignment_Diagnosis_JO__c> dg;
     	
+    	List<ServiceAssignment_Diagnosis_JO__c> dg = new List<ServiceAssignment_Diagnosis_JO__c>();
     	if(diagSAJOId != null){
-    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID != :diagSAJOId AND Service_Assignment__c = :SAId AND Ranking__c = 'Primary' AND Status__c = 'Active' LIMIT 1];
+    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID != :diagSAJOId AND Service_Assignment__c = :SAId AND Ranking__c = 'Primary' AND Status__c ='Active' LIMIT 1];
     	}else{
-    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Ranking__c = 'Primary' AND Status__c = 'Active' LIMIT 1];
+    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Ranking__c = 'Primary' AND Status__c ='Active' LIMIT 1];
     	}
     	 
     	if(dg.size() > 0){
