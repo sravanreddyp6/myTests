@@ -1,61 +1,295 @@
 <apex:page title="Seizures" controller="TxnQueueResponseController" extensions="DSP_PbsSeizureListing" sidebar="false" standardStylesheets="true">
-<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
-<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
-<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
-<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
-<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-<apex:variable value="{!pbsViewResponse.contact}" var="contactObj" />
-	
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
+    	
 <!--     <c:PersonalRecord pbsId="{!PBSId}" parentPage="PBS" /> -->
 <br />
-<apex:form id="FormId">
-<apex:pageMessages />
+    <style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 38%;
+            padding:10px;
+            position: absolute;
+            width: 800px;
+            margin-left: -250px;
+            top:100px;
+            position:fixed !important;
+        }
+        .popupBackground{
+            background: #eeeeee url(images/ui-bg_diagonals-thick_90_eeeeee_40x40.png) 50% 50% repeat;
+            opacity: .80;
+            position: absolute;
+            top: 0;
+            left: 0;            
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .thinking{
+            opacity:0.8;
+            background-color:#ccc;
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0px;
+            left:0px;
+            z-index:1000;
+        }    
+        .thinkingwheel{
+            position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+        }
+        .dialogLoadingSpinner {
+            margin-left: 5px;
+        }
+        .modalDialog {
+            max-height: 500px;
+            overflow: auto;
+        }
+        .modalDialog .modalSubheader {
+            font-weight: bold;
+        }
+        .modalDialog .pbHeader {
+            font-size: 0.9em;
+        }
+        .pbButton {
+            float: right;
+        }
+        #seizureMessages .success {
+            color: green;
+        }
+        #seizureMessages .error {
+            color: red;
+        }
+    </style>
+    
+    <script>
+        j$ = jQuery.noConflict();
+        function SetHiddenPhase(thePhase) {
+            j$('input[id$=phaseToSave]').val(thePhase);
+        }
 
+        openModalDialogSA = function (dialogId, tagType, titleString, dClass, width) {
+            if (!width) {
+                width = 800;
+            }
+            if (!dClass) {
+                dClass = 'fixed-dialog';
+            }
+            selector = tagType + '[id$=' + dialogId + ']';
+            if (j$(selector).dialog("isOpen") !== true) {
+                j$(selector).dialog({
+                    dialogClass: dClass,
+                    title: titleString,
+                    modal: true,
+                    width: width,
+                    resizable: false,
+                    minHeight: 0,
+                    dialogClass: 'modalDialog',
+                    zIndex: 9, // so that datepickers appear on top of the dialogs
+                    closeOnEscape: false,
+                    position: {
+                        my: "center top",
+                        at: "center top"
+                    },
+                    open: function () {
+                        // Don't allow "background" to be scrollable when dialogs
+                        // are open.
+                        j$("body").css("overflow", "hidden");
+                    }
+                }).parent().appendTo(j$('form[id$=myFRM]'));
+                j$(selector).parent().find('a.ui-dialog-titlebar-close').remove();
+            }
+        };
+        closeModalDialogSA = function (dialogId, tagType) {
+            selector = tagType + '[id$=' + dialogId + ']';
+            j$(selector).dialog('destroy');
+            // Allow "background" to be scrollable when dialogs are closed.
+            j$("body").css("overflow", "auto");
+        };
+        
+        function getToday() {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            today = mm + '/' + dd + '/' + yyyy;
+            return today;
+        }
+
+        seizureSave = function (isClose) {
+            closeSeizure = isClose;
+            seizureClearMessages();
+            validateSeizure();
+        }
+
+        function loadSeizure(seizureId) {
+            showEditSeizure(seizureId);
+        }
+
+        validateSeizure = function () {
+            var seizureErrors = [];
+            var startValue = j$('[id$=seizureEntry_startDateTime]').val();
+            var formatStart = new Date(moment(new Date(startValue)).format());
+            var endValue = j$('[id$=seizureEntry_endDateTime]').val();
+            var formatEnd = new Date(moment(new Date(endValue)).format());
+
+            j$('#seizureMessages').html('');
+            if (startValue == '' && endValue == '') {
+                seizureErrors.push('The Date must contain a valid value. Please enter the date of the Seizure event.');
+            }
+            else if (startValue == '') {
+                seizureErrors.push('The Start Time must contain a valid value. Please enter a Start Time of the Seizure event.');
+            }
+            else if (endValue == '') {
+                seizureErrors.push('The End Time must contain a valid value. Please enter an End Time of the Seizure event.');
+            }
+            else if (formatStart >= formatEnd) {
+                seizureErrors.push('The End Time must come AFTER your Start Time. Please adjust the Start and End times.');
+            }
+            if (startValue.substring(0,10) > getToday()) {
+                seizureErrors.push('The Start Time cannot be in the future. Please adjust the Start Time of the Seizure event.');
+            }
+            if (seizureErrors.length > 0) {
+                seizureScrollToTop();
+                j$.each(seizureErrors, function (index, error) {
+                    j$('#seizureMessages').append('<li class="error">' + error + '</li>');
+                });
+            } else {
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.DSP_PbsSeizureListing.findDuplicateSeizure}',
+                    startValue,
+                    endValue,
+                    j$('[id$=seizureEntry_serviceAssignmentId]').val(),
+                    j$('[id$=seizureEntry_Id]').val(),
+                    function(result, event){
+                        if (event.status) {
+                                if(result && ! j$('[id$=seizureEntry_duplicateEntry]').is(":checked") ){
+                                    j$('[id$=seizure-dialog-confirm]').dialog( "open" );
+                                } else {
+                                    saveSeizure();
+                                }
+                        } else if (event.type === 'exception') {
+                            document.getElementById("seizureMessages").innerHTML = event.message;
+                        } else {
+                            document.getElementById("seizureMessages").innerHTML = event.message;
+                        }
+                    },
+                    {escape: true}
+                );
+            }
+        }
+        seizureScrollToTop = function (isSuccess) {
+            if (isSuccess && jQuery('.errorMsg').length == 0 ) {
+                j$('#seizureMessages').append('<li class="success">Save successful!</li>');
+            }
+            j$('[id$=seizureTrackingModal].ui-dialog-content').parent().animate({
+                scrollTop: 0
+            }, 200);
+        }
+        seizureClearMessages = function () {
+            j$('#seizureMessages').html('');
+        }
+        j$(function() {
+            j$('[id$=seizure-dialog-confirm]').dialog({
+                resizable:false,
+                height:180,
+                modal:true,
+                autoOpen:false,
+                buttons: { Yes: function() { j$(this).dialog( "close" ); saveSeizure(); },
+                            No : function() { j$(this).dialog( "close" ); }
+                         }
+            });
+        });
+    </script>
+<apex:form id="myFRM">
+    <apex:actionFunction name="saveSeizure" action="{!saveSeizure}" status="saveSeizureStatus" oncomplete="seizureScrollToTop(true); if (closeSeizure && jQuery('.errorMsg').length == 0) closeModalDialogSA('seizureTrackingModal', 'div');" rerender="SeizureTrackingList,seizureEntry,seizureMessages" />
+    <apex:actionFunction name="showEditSeizure" action="{!showEditSeizure}" status="AddEditSeizureStatus" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600);seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry, seizureMessages">
+            <apex:param name="seizureId" value="" />
+    </apex:actionFunction>
+    
 <!--  Seizure section -->
 <!-- Add Seizure Tracking modal. -->
-<!--     <apex:outputPanel id="seizureTrackingModal" layout="block" style="display:none" rendered="{!!newSA}"> -->
-<!--             <span class="ui-helper-hidden-accessible"><input type="text"/></span> -->
-<!--             <div id='seizureMessages'></div> -->
-<!--             <apex:pageBlock mode="maindetail"> -->
-<!--                 <apex:pageBlockSection columns="1" id="seizureEntry"> -->
-<!--                     <apex:pageBlockSectionItem ><apex:outputLabel Value="Start Time"/> -->
-<!--                         <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/> -->
-<!--                     </apex:pageBlockSectionItem> -->
-<!--                     <apex:pageBlockSectionItem > <apex:outputLabel Value="End Time"/> -->
-<!--                         <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/> -->
-<!--                     </apex:pageBlockSectionItem> -->
-<!--                     <apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy"/> -->
-<!--                     <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" /> -->
-<!--                     <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" /> -->
-<!--                     <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" /> -->
-<!--                 </apex:pageBlockSection> -->
-<!--                     <apex:inputHidden value="{!seizureStart_DateTime}" id="seizureEntry_startDateTime" /> -->
-<!--                     <apex:inputHidden value="{!seizureEnd_DateTime}" id="seizureEntry_endDateTime" /> -->
-<!--                 <apex:pageblockButtons location="bottom"> -->
-<!--                     <apex:actionStatus id="saveSeizureStatus"> -->
-<!--                         <apex:facet name="start"> -->
-<!--                             <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /> -->
-<!--                         </apex:facet> -->
-<!--                         <apex:facet name="stop"> -->
-<!--                             <apex:outputPanel > -->
-<!--                                 <apex:commandButton id="saveSeizure" value="Save" onclick="seizureSave(true);return false;" /> -->
-<!--                                 <apex:commandButton id="saveAndNewSeizure" value="Save & New" onclick="seizureSave(false); return false;" /> -->
-<!--                                 <apex:commandButton value="Cancel" onclick="closeModalDialogSA('seizureTrackingModal', 'div');j$('#seizureMessages').html('');return false;" /> -->
-<!--                             </apex:outputPanel> -->
-<!--                         </apex:facet> -->
-<!--                     </apex:actionStatus> -->
-<!--                 </apex:pageblockButtons> -->
-<!--             </apex:pageBlock> -->
-<!--     </apex:outputPanel> -->
-<!--         <apex:outputPanel id="seizure-dialog-confirm" title="Confirm save" layout="block" style="display:none"> -->
-<!--             <apex:outputPanel layout="inline"> -->
-<!--             <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" /> -->
-<!--                 There is already an existing Seizure for the overlapping time, this could be a duplicate entry. Do you still want to Save? -->
-<!--             </apex:outputPanel> -->
-<!--         </apex:outputPanel> -->
+    <apex:outputPanel id="seizureTrackingModal" layout="block" style="display:none" >
+            <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+            <div id='seizureMessages'></div>
+            <apex:pageBlock mode="maindetail">
+                <apex:pageBlockSection columns="1" id="seizureEntry">
+                    <apex:pageBlockSectionItem ><apex:outputLabel Value="Service Assignment"/>
+                        <apex:selectList value="{!seizure['serviceAssignmentId']}" id="seizureEntry_serviceAssignmentId" > 
+                            <apex:selectOptions value="{!activeServAssign}"/>
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem ><apex:outputLabel Value="Start Time"/>
+                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.startDateTime==null, NOW(), seizure.startDateTime) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem > <apex:outputLabel Value="End Time"/>
+                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.endDateTime==null, NOW(), seizure.endDateTime) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem > <apex:outputLabel Value="Observed By"/>
+	                    <apex:outputText value="{!seizure['observedByNameC']}" id="seizureEntry_observedBy"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem > <apex:outputLabel Value="Comments"/>
+                        <apex:inputTextarea value="{!seizure['comments']}" id="seizureEntry_comments" />
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem > <apex:outputLabel Value="Duplicate"/>
+                        <apex:inputCheckbox value="{!seizure['duplicateEntry']}" id="seizureEntry_duplicateEntry" />
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
+                </apex:pageBlockSection>
+                    <apex:inputHidden value="{!seizure.seizureStart_DateTime}" id="seizureEntry_startDateTime" />
+                    <apex:inputHidden value="{!seizure.seizureEnd_DateTime}" id="seizureEntry_endDateTime" />
+                <apex:pageblockButtons location="bottom">
+                    <apex:actionStatus id="saveSeizureStatus">
+                        <apex:facet name="start">
+                            <apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" />
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:outputPanel >
+                                <apex:commandButton id="saveSeizure" value="Save" onclick="seizureSave(true);return false;" />
+                                <apex:commandButton id="saveAndNewSeizure" value="Save & New" onclick="seizureSave(false); return false;" />
+                                <apex:commandButton value="Cancel" onclick="closeModalDialogSA('seizureTrackingModal', 'div');j$('#seizureMessages').html('');return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+            </apex:pageBlock>
+    </apex:outputPanel>
+    
+        <apex:outputPanel id="seizure-dialog-confirm" title="Confirm save" layout="block" style="display:none">
+            <apex:outputPanel layout="inline">
+            <apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />
+                There is already an existing Seizure for the overlapping time, this could be a duplicate entry. Do you still want to Save?
+            </apex:outputPanel>
+        </apex:outputPanel>
 
     <a id="Seizure_Tracking"></a>
     <apex:pageBlock id="SeizureTrackingList" mode="maindetail" >
+    <apex:pageMessages />
+    
         <apex:pageBlockButtons location="top">
             <div class="blockbtns">
                 <input type="button" class="btn" value="Add Seizure" onclick="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600); seizureScrollToTop(); seizureClearMessages();" />
@@ -65,13 +299,14 @@
                 <apex:outputText value="No seizures to display" rendered="{!SeizuresWrapper.size==0}" />
 
                 <apex:pageBlockTable value="{!SeizuresWrapper}" var="sWrapper" rendered="{!SeizuresWrapper.size>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-                    <apex:column headerValue="Action" width="12%">
+                    <apex:column headerValue="Action" width="5%">
                          <a href="#" onclick="loadSeizure('{!sWrapper.Id}');return false; ">Edit</a>
                     </apex:column>
-                    <apex:column headerValue="Seizure Start Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!sWrapper.startDateTime}"/></apex:column>
-                    <apex:column headerValue="Seizure End Time" width="16%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!sWrapper.endDateTime}"/></apex:column>
-                    <apex:column headerValue="Observed By" value="{!sWrapper.observedByName}" width="16%"/>
-                    <apex:column headerValue="Comments" value="{!sWrapper.comments}" width="40%"/>
+                    <apex:column headerValue="Service Assignment" width="15%" value="{!sWrapper.serviceAssignmentName}" />
+                    <apex:column headerValue="Seizure Start Time" width="15%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!sWrapper.startDateTime}"/></apex:column>
+                    <apex:column headerValue="Seizure End Time" width="15%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!sWrapper.endDateTime}"/></apex:column>
+                    <apex:column headerValue="Observed By" value="{!sWrapper.observedByNameC}" width="15%"/>
+                    <apex:column headerValue="Comments" value="{!sWrapper.comments}" width="30%"/>
                     <apex:column headerValue="Duplicate Entry" width="5%"> 
                         <apex:image value="/img/checkbox_checked.gif" rendered="{!sWrapper.duplicateEntry}" /> 
                         <apex:image value="/img/checkbox_unchecked.gif" rendered="{!!sWrapper.duplicateEntry}" />
@@ -83,28 +318,12 @@
 
         <apex:actionStatus id="AddEditSeizureStatus" >
             <apex:facet name="start">
-                    <style>
-                    .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
-                .foggy{
-                    opacity:0.8;
-                    background-color:#ccc;
-                    position:fixed;
-                    width:100%;
-                    height:100%;
-                    top:0px;
-                    left:0px;
-                    z-index:1000;
-                }
-                </style>
-
-                <div class="foggy" />
+                <div class="thinking"></div>
                 <div class="thinkingwheel" >
                     <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
                 </div>
             </apex:facet>
             <apex:facet name="stop"> </apex:facet>
         </apex:actionStatus>
-        <!-- end Seizures section-->
-
 </apex:form>
 </apex:page>
