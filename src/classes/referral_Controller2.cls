@@ -950,18 +950,20 @@ public with sharing class referral_Controller2 {
 		}
         
         //PRI-22 Start
-        boolean diagStatus = false;
-        for(Diagnosis__c d :diagnoses){
-            if(d.status__C == 'Active'){
-                diagStatus = true;  
-                break;
+        if(OperatingGroup == 'NeuroRestorative'){
+            boolean diagStatus = false;
+            for(Diagnosis__c d :diagnoses){
+                if(d.status__C == 'Active'){
+                    diagStatus = true;  
+                    break;
+                }
             }
             
+            if(!diagStatus){
+                messages.Add('Atleast one active diagnosis is required for convertion');
+                hasReq = false;
+            } 
         }
-        if(!diagStatus){
-            messages.Add('Atleast one active diagnosis is required for convertion');
-            hasReq = false;
-        } 
         //PRI-22 end
 
 		if ( messages.size() > 0 && !hasReq ) {
