@@ -373,7 +373,7 @@ public without sharing class ServiceAssignmentExt {
     
     private void populatesadiagJO(){
     try {
-        this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, Diagnosis__r.ICD__r.Icd_Description__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c, Status__C
+        this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, Diagnosis__r.ICD__r.Icd_Description__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Injury_Type_Other__c, Ranking__c, Status__C
                  from ServiceAssignment_Diagnosis_JO__c 
                  where Service_Assignment__c = : this.theServAssign.Id];
        /* for(ServiceAssignment_Diagnosis_JO__c jo: this.sadiagJOList){
@@ -2430,7 +2430,7 @@ public without sharing class ServiceAssignmentExt {
     
     //Sravan - Diagnosis-SA Junction
     @RemoteAction
-    public static boolean savesadiagJORemote (string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, String rank, String status) {
+    public static boolean savesadiagJORemote (string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, string injTypeOther, String rank, String status) {
         system.debug('ABI+++'+ABI);
         system.debug('Billable++++'+Billable);
         system.debug('injuryDate+++'+injuryDate);
@@ -2439,11 +2439,11 @@ public without sharing class ServiceAssignmentExt {
         ID newID;
         if (diagSAJOId == '') {
 
-            dg = new ServiceAssignment_Diagnosis_JO__c ( Service_Assignment__c = saID, Diagnosis__c = diagId, ABI_Diagnosis__c = ABI, Billable__c = Billable, Glasgow_Coma_Score_at_Injury__c = glasgowInjury, Glasgow_Coma_Scale_Severity__c = glasgowSeverity, Injury_Type__c = injType, Ranking__c = rank, Status__c = status);
+            dg = new ServiceAssignment_Diagnosis_JO__c ( Service_Assignment__c = saID, Diagnosis__c = diagId, ABI_Diagnosis__c = ABI, Billable__c = Billable, Glasgow_Coma_Score_at_Injury__c = glasgowInjury, Glasgow_Coma_Scale_Severity__c = glasgowSeverity, Injury_Type__c = injType, Injury_Type_Other__c = injTypeOther, Ranking__c = rank, Status__c = status);
         }
         else {
 
-            dg = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c, Status__c
+            dg = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Injury_Type_Other__c, Ranking__c, Status__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
            // dg.Service_Assignment__c = saID; - not needed as we are not allowing the reparenting option
             dg.Diagnosis__c = diagId;
@@ -2452,6 +2452,7 @@ public without sharing class ServiceAssignmentExt {
             dg.Glasgow_Coma_Score_at_Injury__c = glasgowInjury;
             dg.Glasgow_Coma_Scale_Severity__c = glasgowSeverity;
             dg.Injury_Type__c = injType;
+            dg.Injury_Type_Other__c = injTypeOther;
             dg.Ranking__c = rank;
             dg.Status__c = status;
             system.debug('updating ' + dg.Id + ', ' + dg);
@@ -2466,7 +2467,7 @@ public without sharing class ServiceAssignmentExt {
     @RemoteAction
     public static sadigJuncWrap loadsadiagJORemote(string diagSAJOId) {
         ServiceAssignment_Diagnosis_JO__c dg =
-                [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c, Status__c
+                [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Injury_Type_Other__c, Ranking__c, Status__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
             system.debug('Date of Injury++++++++'+dg.Date_of_Injury__c);
             
