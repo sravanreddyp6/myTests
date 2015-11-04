@@ -266,7 +266,7 @@
     
     	// Diagnosis changes
     
-		function validateDiagnosis() {
+		function validateDiagnosis(isDialogClose) {
             var errors = '';
             j$('#diagnosisErrors').html(errors);
             
@@ -302,7 +302,7 @@
 	                                j$('#diagnosisErrors').html(errors);
 	                                return (errors == '');
 	                            }else{
-	                            	return (errors == '');
+	                            	diagnosisSave(isDialogClose);
 	                            }
 	                    } else if (event.type === 'exception') {
 	                        document.getElementById("sadiagJoErrors").innerHTML = event.message;
@@ -315,13 +315,12 @@
             }
 			
 			if(errors == '' && status == 'Active'){
-				return (errors == '');
+				diagnosisSave(isDialogClose);
 			}
             
         }
-    
+        
     	function diagnosisSave(isDialogClose) {
-            if (validateDiagnosis()) {
                 var diagnosisId = j$('input[id$=diagnosisEntry_Id]').val();
                 var diagnosisType = j$('select[id$=diagnosisEntry_type]').val();
                 var status = j$('select[id$=diagnosisEntry_status]').val();
@@ -343,7 +342,7 @@
                     );                
                 
                 }
-            }
+            
             return false;
         }
         
@@ -1059,8 +1058,8 @@
                                
                 <apex:pageBlock title="Add/Edit Diagnosis">
                     <apex:pageblockButtons location="bottom">
-                        <apex:commandButton value="Save" onClick="diagnosisSave(true); return false;" />
-                        <apex:commandButton value="Save & New" onClick="diagnosisSave(false);return false;" />
+                        <apex:commandButton value="Save" onClick="validateDiagnosis(true); return false;" />
+                        <apex:commandButton value="Save & New" onClick="validateDiagnosis(false);return false;" />
                         <apex:commandButton value="Cancel" onClick="closeDialog('diagnosisModal', 'span'); j$('#diagnosisErrors').html('');return false;" />
                     </apex:pageblockButtons>
                     
