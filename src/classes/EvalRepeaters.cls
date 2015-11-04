@@ -5,9 +5,9 @@ public with sharing class EvalRepeaters {
 	public string operatingGroup{get; set;}
 
     transient public boolean anyErrors;
-    public boolean getAnyErrors() {return (numErrors > 0);}    
+    public boolean getAnyErrors() {return (numErrors > 0);}
     transient public boolean anyEmpty;
-    public boolean getAnyEmpty() { 
+    public boolean getAnyEmpty() {
         // for restraint assessment we need a special case to reduce the # of empties by 1 since you can't fill out the 2nd subcat
         //&& condition addded by Sravan as Restraint Event Should behave normally when the first section is filled out especially disabling the Complete button when Second section is empty
         if ( evalname == 'Restraint Event' && parentEvalStatus == 'Not Restrained')
@@ -24,18 +24,20 @@ public with sharing class EvalRepeaters {
 	transient public Map<String, List<EvalValueWrapper>> evalDataList { get; set;}
 	// this is the list of all possible cat/subcat for this eval type
 	transient public list<EvalRepeaterWrapper> evals;
+	transient public Map<String, Boolean> categoryErrors;
+
 	public list<EvalRepeaterWrapper> getEvals(){
 		if (this.evals == null ) {
 			evals = new list<EvalRepeaterWrapper>();
 			evalDataList = new Map<String, List<EvalValueWrapper>>() ;
-	
+
 			// get list of all sections
 			List<AggregateResult> evalTypes = [select	category__c, sub_category__c, sub_sub_category__c
 												 from 	eval__c
 												where	eval_type__c = :evalTypeId
 											group  by 	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c, category__c, sub_category__c, sub_sub_category__c
 											order by	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c];
-	
+
 			// get list of repeatables
 			List<AggregateResult> evalRepeats = [select	category__c, sub_category__c, sub_sub_category__c
 												 from 	eval__c
@@ -44,7 +46,7 @@ public with sharing class EvalRepeaters {
 												  and	eval__c.visible__c = false
 											group  by 	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c, category__c, sub_category__c, sub_sub_category__c
 											order by	cat_seq_text__c, subcat_seq_text__c, subsubcat_seq_text__c];
-	
+
 			// first throw the repeats into a map by composite key
 			string compositeKey = '';
 			Set<string> setRepeaters = new set<String>();
@@ -52,18 +54,18 @@ public with sharing class EvalRepeaters {
 				compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));
 				setRepeaters.add( compositeKey );
 			}
-	
-	
+
+
 			// now combine the results with the complete set of eval fields
 			compositeKey = '';
 			boolean rep = false;
 			for (AggregateResult ag : evalTypes){
 				compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));
-	
+
 				rep = setRepeaters.contains( compositeKey);
 				evals.add(new EvalRepeaterWrapper(String.valueOf(ag.get('category__c')), String.valueOf(ag.get('sub_category__c')),
 													String.valueOf(ag.get('sub_sub_category__c')), compositeKey, rep ));
-	
+
 			}
 			// all sections are empty to start
 			numEmpty = evals.size();
@@ -77,7 +79,7 @@ public with sharing class EvalRepeaters {
 		refreshParentEval();
 		numErrors = 0;
 		evalDataKeys = '';
-                
+
 		List<AggregateResult> evalValues = [ select eval_section_type__c, eval_section_id__c, eval__r.category__c, eval__r.sub_category__c, eval__r.sub_sub_category__c, min(createddate) created, owner.name, ownerid
 												from eval_value__c
 												where what_id__c = :evaluationID
@@ -137,7 +139,17 @@ public with sharing class EvalRepeaters {
 					break;
 			}
 		}
-		
+
+		String currentCategory = '';
+		for (EvalValueWrapper eval: evals) {
+			if (currentCategory != eval.cat) {
+				currentCategory = eval.cat;
+			}
+			if (eval.numErrors > 0) {
+				categoryErrors.put(currentCategory, true);
+			}
+		}
+
 	}
 
 
@@ -147,13 +159,14 @@ public with sharing class EvalRepeaters {
         operatingGroup = ApexPages.CurrentPage().getParameters().get('opGrp');
 		numEmpty = 0;
 		numErrors = 0;
+		categoryErrors = new Map<String, Boolean>();
 
         evalTypeId = [Select id from Eval_Type__c where name = :evalname and Category__c = :operatingGroup limit 1].id;
-        
+
         refreshParentEval();
         initcanEditEvalType();
 	}
-	
+
 	private void refreshParentEval(){
         Evaluation__c[] parentEval = [ select id, ownerid, status__c, Has_Open_Assessment__c, head_to_toe_status__c from evaluation__c where id = :evaluationID ];
         if ( parentEval.size() == 1) {
@@ -166,7 +179,7 @@ public with sharing class EvalRepeaters {
             parentEvalOwnerID = null;
             parentEvalStatus = 'Completed'; // don't allow entry on anything
             parentHasOpenAsmt = false;
-        }		
+        }
 	}
 
 	public Boolean canEditEvalType {get;set;}
@@ -189,7 +202,7 @@ public with sharing class EvalRepeaters {
 				canEditEvalType = true;
 			}
 		}	else if ( permissionSets.contains('iServe_Tier_III') ||  permissionSets.contains('iServe_Tier_I') || permissionSets.contains('iServe_Tier_II')) {
-				// anyone can edit CNA 
+				// anyone can edit CNA
 				// but only if owner EC-173
 				canEditEvalType = ( parentevalOwnerID == UserInfo.getUserId());
 		}
@@ -240,6 +253,32 @@ public with sharing class EvalRepeaters {
 			this.compositeKey = compKey;
 			this.numErrors = 0;
 			this.repeatable= repeats;
+		}
+	}
+
+	public class EvalWrappers {
+		public Map<String, List<EvalRepeaterWrapper>> repeaters { get; set; }
+		public List<String> categories { get; set; }
+		private String currentCategory;
+
+		public EvalWrappers() {
+			this.repeaters = new Map<String, List<EvalRepeaterWrapper>>();
+			this.categories = new List<String>();
+		}
+
+		/**
+		 * This method assumes that the repeaters are added after they're already grouped by
+		 * category.
+		 */
+		public addEvalSection(String category, EvalRepeaterWrapper repeater) {
+			if (currentCategory != category) {
+				this.categories.add(category);
+				currentCategory = category;
+			}
+			if (!this.repeaters.containsKey(category)) {
+				this.repeaters.put(category, new List<EvalRepeaterWrapper>());
+			}
+			this.repeaters.get(category).add(repeater);
 		}
 	}
 
