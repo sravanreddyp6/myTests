@@ -2174,7 +2174,7 @@
             <apex:pageBlockSection showHeader="false" columns="1" collapsible="false" id="ReferralServices">
                 <apex:inputField value="{!Referral__c.Program_Category__c}" rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <br />
-                <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{!isCambridge || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
+                <apex:inputField value="{!Referral__c.Service_Line__c}" rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType == 'CA FSS'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <br />
                 <apex:inputField id="servicesRequested" value="{!Referral__c.Services_Requested__c}" Rendered="{!referralRecordType!='CareMeridian'}" required="{!isCambridge || ReferralRecordType == 'CA FSS'}" />
                 <apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Family_History__c}" rendered="{! (isCambridge && referralRecordType!='Generic') || ReferralRecordType == 'CA FSS'}" />
