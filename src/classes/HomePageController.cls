@@ -30,7 +30,7 @@ public with sharing class HomePageController{
 
 	public String selectedAlias { get; set; }
 	public List<SelectOption> programslist { get; set; }
-	public Service_Assignment__c[] serviceAssignments { get; set; }
+	public transient Service_Assignment__c[] serviceAssignments { get; set; }
 
 	// We use this variable to keep track of which service assignment we want
 	// to run an action on
