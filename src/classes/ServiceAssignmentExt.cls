@@ -354,10 +354,10 @@ public without sharing class ServiceAssignmentExt {
    			pbsDiagnosisList.add(new selectoption('--None--', '--None--'));
    			set<string> dedupe = new set<string>();
    			for(Diagnosis__c d: [SELECT Id, ICD__c, ICD__r.Icd_Description__c, Effective_Date__c FROM Diagnosis__c WHERE PBS__c = :theServAssign.Person_Being_Served__c AND Status__c = 'Active' order by Effective_Date__c desc]){
-   				if(dedupe.size() > 0 && dedupe.contains(d.ICD__r.Icd_Description__c)){
+   				if(dedupe.size() > 0 && dedupe.contains(d.ICD__c)){
    					continue;
    				}
-   				dedupe.add(d.ICD__r.Icd_Description__c);
+   				dedupe.add(d.ICD__c);
 	   			pbsDiagnosisList.add(new selectoption(d.Id,d.ICD__r.Icd_Description__c));
    			}
    			
@@ -2430,20 +2430,16 @@ public without sharing class ServiceAssignmentExt {
     
     //Sravan - Diagnosis-SA Junction
     @RemoteAction
-    public static boolean savesadiagJORemote (string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, String rank, String status) {
-        system.debug('ABI+++'+ABI);
-        system.debug('Billable++++'+Billable);
-        system.debug('injuryDate+++'+injuryDate);
-        
+    public static boolean savesadiagJORemote (string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, String rank) {
         ServiceAssignment_Diagnosis_JO__c dg;
         ID newID;
         if (diagSAJOId == '') {
 
-            dg = new ServiceAssignment_Diagnosis_JO__c ( Service_Assignment__c = saID, Diagnosis__c = diagId, ABI_Diagnosis__c = ABI, Billable__c = Billable, Glasgow_Coma_Score_at_Injury__c = glasgowInjury, Glasgow_Coma_Scale_Severity__c = glasgowSeverity, Injury_Type__c = injType, Ranking__c = rank, Status__c = status);
+            dg = new ServiceAssignment_Diagnosis_JO__c ( Service_Assignment__c = saID, Diagnosis__c = diagId, ABI_Diagnosis__c = ABI, Billable__c = Billable, Glasgow_Coma_Score_at_Injury__c = glasgowInjury, Glasgow_Coma_Scale_Severity__c = glasgowSeverity, Injury_Type__c = injType, Ranking__c = rank);
         }
         else {
 
-            dg = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c, Status__c
+            dg = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
            // dg.Service_Assignment__c = saID; - not needed as we are not allowing the reparenting option
             dg.Diagnosis__c = diagId;
@@ -2453,7 +2449,7 @@ public without sharing class ServiceAssignmentExt {
             dg.Glasgow_Coma_Scale_Severity__c = glasgowSeverity;
             dg.Injury_Type__c = injType;
             dg.Ranking__c = rank;
-            dg.Status__c = status;
+           // dg.Status__c = status;
             system.debug('updating ' + dg.Id + ', ' + dg);
         }
         
@@ -2466,7 +2462,7 @@ public without sharing class ServiceAssignmentExt {
     @RemoteAction
     public static sadigJuncWrap loadsadiagJORemote(string diagSAJOId) {
         ServiceAssignment_Diagnosis_JO__c dg =
-                [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c, Status__c
+                [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
             system.debug('Date of Injury++++++++'+dg.Date_of_Injury__c);
             
@@ -2496,9 +2492,9 @@ public without sharing class ServiceAssignmentExt {
     	
     	List<ServiceAssignment_Diagnosis_JO__c> dg = new List<ServiceAssignment_Diagnosis_JO__c>();
     	if(diagSAJOId != null){
-    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID != :diagSAJOId AND Service_Assignment__c = :SAId AND Ranking__c = 'Primary' AND Status__c ='Active' LIMIT 1];
+    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID != :diagSAJOId AND Service_Assignment__c = :SAId AND Ranking__c = 'Primary' LIMIT 1];
     	}else{
-    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Ranking__c = 'Primary' AND Status__c ='Active' LIMIT 1];
+    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Ranking__c = 'Primary' LIMIT 1];
     	}
     	 
     	if(dg.size() > 0){
