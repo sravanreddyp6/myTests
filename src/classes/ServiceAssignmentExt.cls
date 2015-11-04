@@ -2453,7 +2453,7 @@ public without sharing class ServiceAssignmentExt {
             dg.Glasgow_Coma_Scale_Severity__c = glasgowSeverity;
             dg.Injury_Type__c = injType;
             dg.Ranking__c = rank;
-            dg.Status__C = status;
+            dg.Status__c = status;
             system.debug('updating ' + dg.Id + ', ' + dg);
         }
         
@@ -2466,7 +2466,7 @@ public without sharing class ServiceAssignmentExt {
     @RemoteAction
     public static sadigJuncWrap loadsadiagJORemote(string diagSAJOId) {
         ServiceAssignment_Diagnosis_JO__c dg =
-                [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c, Status__C
+                [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Ranking__c, Status__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
             system.debug('Date of Injury++++++++'+dg.Date_of_Injury__c);
             

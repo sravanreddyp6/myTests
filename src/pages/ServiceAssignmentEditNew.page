@@ -3562,15 +3562,15 @@ END: Uncomment to have the element collapsed by default -->
             if (ranking == '') {
                 errors += '<li>Ranking is a required field.</li>';
             }
-            if(errors == '' &&  ranking != 'Primary'){
-          		return (errors == '');
+            if(errors == '' &&  (ranking != 'Primary' || status != 'Active') ){
+          		sadiagJoSave(isDialogClose);
           	}
            	if(errors !=  '' ){
            		 j$('#sadiagJoErrors').html(errors);
            		 return (errors == '');
            	} 
            	
-           if(errors == '' &&  ranking == 'Primary'){
+           if(errors == '' &&  ranking == 'Primary' && status == 'Active' ){
            			Visualforce.remoting.Manager.invokeAction(
 	                '{!$RemoteAction.ServiceAssignmentExt.findPrimarysaDiagJo}',
 	                saID,
@@ -3593,10 +3593,6 @@ END: Uncomment to have the element collapsed by default -->
 	                {escape: true}
                 );   
           }
-          
-         if(errors == '' &&  ranking != 'Primary'){
-         	sadiagJoSave(isDialogClose);
-         }
            
         }
     
