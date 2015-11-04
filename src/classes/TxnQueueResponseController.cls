@@ -43,7 +43,7 @@ public with sharing class TxnQueueResponseController {
 				response = (ActionPlan_FormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, ActionPlan_FormWithoutSharing.class);
             else if ( thisTxn.request_type__c == 'Person Being Served')
                 pbsViewResponse = (DSPPersonBeingServed_WithoutSharing) JSON.deserialize(thisTxn.return_value__c, DSPPersonBeingServed_WithoutSharing.class);
-            else if ( thisTxn.request_type__c == 'Seizures' || 'Upsert Seizure')
+            else if ( thisTxn.request_type__c == 'Seizures' || thisTxn.request_type__c == 'Upsert Seizure')
                 pbsSeizureListing = (DSP_PbsSeizureListing) JSON.deserialize(thisTxn.return_value__c, DSP_PbsSeizureListing.class);
 
 			system.debug(response);
