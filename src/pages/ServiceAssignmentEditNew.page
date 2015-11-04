@@ -1689,6 +1689,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column headerValue="Action"><a href="#Diag" onclick="loadsadiagJo('{!jo.id}');return false;">Edit</a>
                     </apex:column>
                     <apex:column value="{!jo.Diagnosis__r.ICD__r.Icd_Description__c}" headerValue="Diagnosis"/>
+                    <apex:column value="{!jo.Status__c}" />
                     <apex:column value="{!jo.Ranking__c}" />
                     <apex:column value="{!jo.Injury_Type__c}" />
                     <apex:column value="{!jo.Date_of_Injury__c}" />
@@ -3111,6 +3112,7 @@ END: Uncomment to have the element collapsed by default -->
                                 <apex:selectoptions value="{!pbsDiagnosisList}" />
                             </apex:selectList>
                         </apex:pageBlockSectionItem>
+                        <apex:inputField value="{!sadiagJO.Status__c}" id="sadiagJoEntry_sadiagJoStatus"/>                   
                         <apex:inputField value="{!sadiagJO.Ranking__c}" id="sadiagJoEntry_sadiagJoRanking"/>
                         <apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoEntry_sadiagJoInjuryType"/>
                         <apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
@@ -3547,11 +3549,15 @@ END: Uncomment to have the element collapsed by default -->
             j$('#sadiagJoErrors').html(errors);
             
             var ranking = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
+            var status = j$('select[id$=sadiagJoEntry_sadiagJoStatus]').val();
             var diagSAJOId = j$('input[id$=sadiagJoEntry_sadiagJOId]').val();
             var saID = '{!Service_Assignment__c.Id}';
             
             if (j$('select[id$=pbsdiagSelectList]').val() == '--None--') {
                errors += '<li>Diagnosis is a required field.</li>';
+            }
+            if (status == '') {
+               errors += '<li>Status is a required field.</li>';
             }
             if (ranking == '') {
                 errors += '<li>Ranking is a required field.</li>';
@@ -3605,10 +3611,11 @@ END: Uncomment to have the element collapsed by default -->
                 var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
                 var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
+                var status = j$('select[id$=sadiagJoEntry_sadiagJoStatus]').val();
               
                  if(diagId != ''){
                     ServiceAssignmentExt.savesadiagJORemote(diagSAJOId, diagId, saID, ABI, Billable, injuryDate,
-                        glasgowInjury,glasgowSeverity,injType,rank,
+                        glasgowInjury,glasgowSeverity,injType,rank,status,
                         function(result, event) {
                             savesadiagJo();
                             if (isDialogClose) {
@@ -3642,6 +3649,7 @@ END: Uncomment to have the element collapsed by default -->
                         j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val(result.junction.Glasgow_Coma_Scale_Severity__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val(result.junction.Injury_Type__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val(result.junction.Ranking__c);
+                        j$('select[id$=sadiagJoEntry_sadiagJoStatus]').val(result.junction.Status__c);
                         
           
                         openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700');
