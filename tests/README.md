@@ -21,7 +21,7 @@ If possible, please use these functions because it matches better with our users
 - `logInAs(user)`: Log in as a particular user, afterwards you can expect to end up at the
 ESD Home Page. This method will take into account multiple scenarios, including initial password
 change bypass and wrong passwords.
-Please see [User Management](#user-management) for more information.
+Please see [User Management](#markdown-header-user-management) for more information.
 - `fillInputText(label, value)`: Fill a Visualforce `inputText` or `inputField`
 that has label `label` with `value`.
 - `getOutputText(label)`: Get the value from a Visualforce `outputText` or
@@ -53,6 +53,8 @@ unselects the checkboxes instead.
 elements (e.g. when we need to look up a user).
 - `switchToNextWindow()`: Sometimes VF will create a new window (e.g. when we look up a
 user). You can use this function to switch between windows in that case.
+- `tableToJSON(selector)`: Turns a table with selector `selector` to a JSON object. Please
+read more about [handing table](#markdown-header-handling-table).
 - `waitForActionStatusDisappearance(actionStatusId, timeout)`: Wait for an
 `apex:actionStatus` to disappear.
 
@@ -206,6 +208,33 @@ in the `users.json` file. In order to user this, simple pass in a user object li
 ```
 client.logInAs(users['CM_Referral_Intaker']).then(...);
 ```
+
+### Handling Table
+
+Table handling is tricky in Visualforce pages, since the rows and columns are given unique (but not
+easily predictable across sandboxes) Ids - making it harder to write correct selectors for them.
+Because of this issue, I've written the `tableToJSON` custom command to handle simple tables.
+Call this method with a selector to the `table` element, and it will return a JSON string
+representation of that table, with the keys being the column names and the values being the content
+of the cells in the table. For example, this table (with id `sample-table`):
+
+Name       | Value
+---------- | -------
+Record 1   | Value 1
+Record 2   | Value 2
+
+will be transformed into the JSON object
+`[{"Name": "Record 1", "Value": "Value 1"}, {"Name": "Record 2", "Value": "Value 2"}]`.
+
+Of course, this method only returns the content of the table. In case you want to interact with a
+certain cell in the table, please use the `nth-child` selector in the CSS specification. For
+example, to click on a link in the table at row 5 (excluding the header row) and column 3, you can
+do:
+
+`return client.click("table#id tbody tr:nth-child(5) td:nth-child(3) a");`
+
+Please note that the `nth-child` selector uses a 1-based indexing system - so the first row has
+index 1, second row has index 2, and so on.
 
 ## FAQ
 

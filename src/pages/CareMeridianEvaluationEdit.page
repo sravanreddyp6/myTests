@@ -8,6 +8,9 @@
 	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
 	<apex:stylesheet value="{!URLFOR($Resource.EvaluationCSS)}"/>
 	<apex:stylesheet value="{!URLFOR($Resource.Annotorious, 'css/annotorious.css')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
+	
 	<style>
 		[id$=skinBodyFooter] {
 			clear: both;
@@ -136,6 +139,11 @@
 				});
 			}
 			setUpFields();
+			j$('.datepicker').datetimepicker({
+				timepicker: false,
+				format: 'm/d/Y',
+				closeOnDateSelect: true
+			});
 		});
 
 		function getNextTab( currTab ) {
@@ -293,9 +301,9 @@
 				<apex:pageBlock >
 					<apex:pageBlockSection columns="2">
 						<apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Full_Name__c}" />
-						<apex:inputField value="{!pbr.Date_of_Birth__c}" />
+						<apex:inputField value="{!pbr.Date_of_Birth__c}" showDatePicker="false" styleClass="datepicker" />
 						<apex:pageBlockSectionItem />
-						<apex:outputField value="{!Evaluation__c.Referral__r.Person_Being_Referred__r.Age__c}" />
+						<apex:outputText label="Age">{!age}</apex:outputText>
 						<apex:inputField value="{!Evaluation__c.Number_of_Children__c}" />
 						<apex:inputField value="{!Evaluation__c.Occupation__c}" />
 						<apex:inputField value="{!Evaluation__c.Number_of_Children_at_Home__c}" />
@@ -320,11 +328,11 @@
 						<apex:inputField value="{!Evaluation__c.Advanced_Directives__c}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advancedDirectivesAttached}&quot;}" />
 						<apex:inputField value="{!Evaluation__c.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" />
 						<apex:inputField value="{!Evaluation__c.Advanced_Directives_Attached__c}" id="advancedDirectivesAttached" />
-						<apex:inputField value="{!Evaluation__c.Power_of_Attorney__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.poaName}&quot;, &quot;{!$Component.poaType}&quot;]}" />
+					<!--	<apex:inputField value="{!Evaluation__c.Power_of_Attorney__c}" html-data-rules="{&quot;1&quot;: [&quot;{!$Component.poaName}&quot;, &quot;{!$Component.poaType}&quot;]}" />-->
 						<apex:outputField value="{!Evaluation__c.Referral__r.Agency_Name__c}" label="Referral Source" />
-						<apex:inputField value="{!Evaluation__c.PoA_Name__c}" id="poaName" />
+					<!--	<apex:inputField value="{!Evaluation__c.PoA_Name__c}" id="poaName" />
 						<apex:outputField value="{!Evaluation__c.Referral__r.Case_Manager_Name__c}" />
-						<apex:inputField value="{!Evaluation__c.PoA_Type__c}" id="poaType" />
+						<apex:inputField value="{!Evaluation__c.PoA_Type__c}" id="poaType" /> -->
 					</apex:pageBlockSection>
 					<apex:pageBlockSection columns="1" title="Related Party">
 						<apex:actionFunction name="showAddRelatedParty" action="{!showAddRelatedParty}" status="loadingRelatedPartyStatus" rerender="relatedPartyDialogMainBlock" oncomplete="openModalDialog('{!$Component.relatedPartyDialog}', 'Add Related Party', '{!$Component.wholePage}');" />
@@ -359,9 +367,10 @@
 					</apex:pageBlockSection>
 					<hr />
 					<apex:pageBlockSection columns="2">
+                        <!-- Diagnosis Changes, PRI-22
 						<apex:inputField value="{!Evaluation__c.Primary_Diagnosis__c}" />
-						<apex:inputField value="{!Evaluation__c.Date_of_Injury_Onset__c}" />
-						<apex:inputField value="{!Evaluation__c.Secondary_Diagnosis__c}" />
+						<apex:inputField value="{!Evaluation__c.Secondary_Diagnosis__c}" /> -->
+                        <apex:inputField value="{!Evaluation__c.Date_of_Injury_Onset__c}" />
 						<apex:inputField value="{!Evaluation__c.Bariatric_Equipment__c}" />
 						<apex:inputField value="{!Evaluation__c.PMH__c}" />
 						<apex:outputPanel >

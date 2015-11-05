@@ -92,7 +92,7 @@ var validateInput = function( ) {
         <apex:inputText label="Last Name" id="lname" value="{!personLastName}" />
         
         <apex:inputText label="Date of Birth" id="dob" value="{!personDOB}" size="10" onfocus="DatePicker.pickDate(false, this, false);" onBlur="return formatDate();" />
-       	<apex:inputText label="Age" id="age" value="{!personAge}" />
+       	<apex:inputText label="Age: Years" id="age" value="{!personAge}" />
        	<apex:selectlist label="Gender" value="{!personGender}" id="gender" size="1">
        		<apex:selectOptions value="{!genderList}" />
      	</apex:selectlist>
@@ -116,11 +116,7 @@ var validateInput = function( ) {
                </apex:repeat>     
             </apex:column>
             <apex:column headerValue="Name">{!r.LastName}, {!r.FirstName}</apex:column>
-            <apex:column headerValue="Age">
-              <apex:outputText value="{0, number, 0}">
-                <apex:param value="{!r.Age}"/>
-              </apex:outputText>
-            </apex:column>
+            <apex:column headerValue="Age">     {!r.ageDetails}       </apex:column>
             <apex:column headerValue="Gender">{!r.gender}</apex:column>
             <apex:column headerValue="Address">
               <c:AddressDisplay Street1="{!r.Street1}"

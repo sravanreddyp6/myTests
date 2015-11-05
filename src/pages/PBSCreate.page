@@ -3,8 +3,9 @@
   <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
   <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-
- <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
 
 
   <style type="text/css">
@@ -23,31 +24,46 @@
   <script language="javascript">
 
    j$ = jQuery.noConflict();
+   
      //disable enter key
-function stopRKey(evt) {
-   var evt = (evt) ? evt : ((event) ? event : null);
-   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
-}
+	function stopRKey(evt) {
+	   var evt = (evt) ? evt : ((event) ? event : null);
+	   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+	   if ((evt.keyCode == 13) && (node.type=="text")) {return false;}
+	}
 
     jQuery(document).ready(function ($) {
-        setUpFields = function () {
-            $('body input').on("change", function (event) {
-                applyRulesToField(event.target);
-            });
-            $('body select').on("change", function (event) {
-                applyRulesToField(event.target);
-            });
-            $('body input').each(function (_, target) {
-                applyRulesToField(target);
-            });
-            $('body select').each(function (_, target) {
-                applyRulesToField(target);
-            });
-        }
-        setUpFields();
-        setUpTabOrder();
-    });   //end "ready" function
+       setUpFields = function () {
+				// Apply rules to input fields
+				$('body input').on("change", function (event) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(event.target);
+				});
+				$('body select').on("change", function (event) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(event.target);
+				});
+				$('body input').each(function (_, target) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(target);
+				});
+				$('body select').each(function (_, target) {
+					applyRulesToField(event.target);
+					applyShowHideRulesToField(target);
+				});
+			};
+	setUpFields();
+    setUpTabOrder();
+    
+    j$('.datepicker').datetimepicker({
+	timepicker: false,
+	format: 'm/d/Y',
+	closeOnDateSelect: true
+	});
+	
+  });   //end "ready" function
+  
+  
 
 
   //opens the dialog
@@ -113,6 +129,8 @@ function stopRKey(evt) {
       }
       return false;
   }
+
+
         //PRI-PRI-162
         function setUpTabOrder(){
         	console.log('start tab order');
@@ -188,7 +206,6 @@ function stopRKey(evt) {
               j$('select[id$=FamMilInvBranch ]').attr("tabindex", 310);
                    console.log('end tab order');    
         }
-
   </script>
 
   <apex:form id="pbsForm">
@@ -203,20 +220,32 @@ function stopRKey(evt) {
 
  <apex:pageBlockSection showHeader="true"
                              columns="2"
-                             collapsible="false"
-                             id="pbsOutPutsectionId" >
-
-                <apex:inputText value="{!Account.FirstName}" tabindex="10"  id="FirstNameInput"/>
+                             collapsible="true"
+                             id="pbsOutPutsectionId" title="Demographics">
+ 				<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="First Name" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                            <apex:inputText id="FirstNameInput" tabindex="10" value="{!Account.FirstName}"  required="true" />
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Account.Race__pc }" taborderhint="2" />
                 <apex:inputField value="{!Account.Middle_Name__pc}" taborderhint="1" />
                 <apex:inputField value="{!Account.Ethnicity_Picklist__pc}" taborderhint="2" />
-                <apex:inputText value="{!Account.LastName}" tabindex="10" />
+                 <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Name" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                            <apex:inputText id="LastNameInput" tabindex="10" value="{!Account.LastName}"  required="true" />
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Account.Marital_Status__pc}" taborderhint="2" />
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Date of Birth" for="txtDOB" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                            <apex:inputField id="txtDOB" taborderhint="1" value="{!Account.PersonBirthdate}" label="Date of Birth" required="true" />
+                           
+                            <apex:inputField id="txtDOB" showDatePicker="false" taborderhint="1" styleClass="datepicker" value="{!Account.PersonBirthdate}" label="Date of Birth" required="true" />
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem >
@@ -230,9 +259,16 @@ function stopRKey(evt) {
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!Account.Age__pc}" taborderhint="1" />
-                <apex:inputField value="{!Account.Level_of_Education__pc}" taborderhint="2" />
-                <apex:inputField value="{!Account.Gender__pc}" taborderhint="1" />
-    </apex:pageBlockSection>
+<!--                 <apex:inputField value="{!Account.Level_of_Education__pc}" taborderhint="2" /> -->
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!Account.Gender__pc}" taborderhint="1" required="true" />
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Account.Does_the_person_Identify__pc}" id="identifyOtherGender" label="Does the person Identify with a gender other than legal gender selected?" html-data-visibility-rules="{&quot;Yes&quot;: [&quot;{!$Component.genderIdentity}&quot;, &quot;{!$Component.genderIdentityLabel}&quot;]}"
+					html-data-visibility-row-rules="true"/>
+				<apex:pageBlockSectionItem />
+				<apex:inputField value="{!Account.Gender_Identity__pc}" id="genderIdentity" />
+  	
+</apex:pageBlockSection>
 
  <apex:pageBlockSection title="Funding Information"
                              showHeader="true"
@@ -338,7 +374,21 @@ function stopRKey(evt) {
                              collapsible="False"
                              id="pbsOutputAdditionalInfo">
 				<apex:inputField taborderhint="20" value="{!Account.Family_Member_Other__pc}" />
-				<apex:inputField taborderhint="21" value="{!Account.Legal_Guardianship_Status__pc}" />
+<!-- 				<apex:inputField taborderhint="21" value="{!Account.Legal_Guardianship_Status__pc}" /> -->
+ 				<apex:pageBlockSectionItem >
+		        	<apex:outputPanel >
+		          		<apex:outputLabel value="Guardianship Type" id="guardianshipTypeLabel"/>
+		          		<br/>
+		          		<br/>
+		          		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+		          	</apex:outputPanel>
+		           	<apex:outputPanel >
+		           		<apex:inputField value="{!Account.Guardianship_Type__pc}" id="guardianShipType" taborderhint="21" html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
+		           		<br/>
+		           		<br/>
+		           		<apex:inputField value="{!Account.Partial_Guardianship_Conservatorship__pc}" id="partialGuardianShip" />
+		           	</apex:outputPanel>
+	        </apex:pageBlockSectionItem>
 				
 				<apex:inputField taborderhint="20" value="{!Account.VIP_Indicator__pc}" />
 				<apex:inputField taborderhint="21" value="{!Account.Current_Medications__pc}" rendered="{! !Contains(dontShowFields, 'Current_Medications__pc')}" />
