@@ -173,7 +173,7 @@
 	</style>
 	<apex:outputPanel layout="none" rendered="{!OperatingGroup == 'Redwood' && BEGINS($UserRole.DeveloperName, 'IA')}">
 	<style>
-		[id$=serviceAssignmentTable] tr td:nth-child(2), [id$=serviceAssignmentTable] tr th:nth-child(2) {
+		[id$=serviceAssignmentTable] tr td:nth-last-child(1), [id$=serviceAssignmentTable] tr th:nth-last-child(1) {
 			/* This column is not displayed for RW */
 			display: none;
 		}
@@ -281,13 +281,13 @@
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
 				</apex:column>
-				<apex:column headerValue="saId" rendered="{!vfIsNotDefaultUser}">
+				<apex:column headerValue="saId">
 					{!serviceAssignment.Id}
 				</apex:column>
-				<!--  dummy for datatables extention -->
+				<!--  dummy for datatables extention 
 				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>				
-				<!--  dummy for datatables extention -->
-				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>				
+				<!--  dummy for datatables extention
+				<apex:column style="border: 0;" rendered="{! !vfIsNotDefaultUser}"/>-->				
 		</apex:pageBlockTable>
 			<div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
 		</apex:pageBlock>
