@@ -3117,8 +3117,8 @@ END: Uncomment to have the element collapsed by default -->
                         		&quot;{!$Component.sadiagJoEntry_sadiagJoInjuryType}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoAbiDiagnosis}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoAbiDiagnosis}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoInjuryDate}&quot;]}"
 								html-data-visibility-row-rules="true" />
 						<apex:inputField value="{!sadiagJO.Billable__c}" id="sadiagJoEntry_sadiagJoBillable"/>
-                        <apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoEntry_sadiagJoInjuryType"/>
-                        <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjuryTypeOther" label="Specify Other"/>
+                        <apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoEntry_sadiagJoInjuryType" onchange="setABIDiagnosis(); return false;"/>
+<!--                         <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" label="Specify Other"/> -->
                         <apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
                         <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis"/>
                         <apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore" onchange="setGlasgowSeverity(); return false;" rendered="{!isNR}" />
@@ -3565,7 +3565,7 @@ END: Uncomment to have the element collapsed by default -->
                 errors += '<li>Ranking is a required field.</li>';
             }
             if(ranking == 'Primary' && j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val() == ''){
-            	errors += '<li>Glasgow Coma Score is a required field.</li>';
+            	errors += '<li>Glasgow Coma Score at Injury is a required field.</li>';
             }
             if(errors == '' &&  ranking != 'Primary'){
           		sadiagJoSave(isDialogClose);
@@ -3611,13 +3611,14 @@ END: Uncomment to have the element collapsed by default -->
                 var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
                 var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
-                  var injTypeOther = j$('select[id$=sadiagJoEntry_sadiagJoInjuryTypeOther]').val();
+               // var injTypeOther = j$('select[id$=sadiagJoEntry_sadiagJoInjOther]').val();
                 var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
               //  var status = j$('select[id$=sadiagJoEntry_sadiagJoStatus]').val();
               
                  if(diagId != ''){
-                    ServiceAssignmentExt.savesadiagJORemote(diagSAJOId, diagId, saID, ABI, Billable, injuryDate,
-                        glasgowInjury,glasgowSeverity,injType,injTypeOther,rank,
+                    Visualforce.remoting.Manager.invokeAction(
+	                '{!$RemoteAction.ServiceAssignmentExt.savesadiagJORemote}',
+	                	diagSAJOId, diagId, saID, ABI, Billable, injuryDate,glasgowInjury,glasgowSeverity,injType,rank,
                         function(result, event) {
                             savesadiagJo();
                             if (isDialogClose) {
@@ -3650,7 +3651,7 @@ END: Uncomment to have the element collapsed by default -->
                         j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val(result.junction.Glasgow_Coma_Score_at_Injury__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val(result.junction.Glasgow_Coma_Scale_Severity__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val(result.junction.Injury_Type__c);
-                        j$('select[id$=sadiagJoEntry_sadiagJoInjuryTypeOther]').val(result.junction.Injury_Type_Other__c);
+                       // j$('select[id$=sadiagJoEntry_sadiagJoInjOther]').val(result.junction.Injury_Type_Other__c);
                         j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val(result.junction.Ranking__c);
                        // j$('select[id$=sadiagJoEntry_sadiagJoStatus]').val(result.junction.Status__c);
                         
@@ -3674,6 +3675,15 @@ END: Uncomment to have the element collapsed by default -->
         	  }else if(glasgowInjury == ''){
         	  	j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val('');
         	  }
+        }
+        
+        setABIDiagnosis = function(){
+        	var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
+        	if(injType.indexOf('Acquired Brain Injury') > -1){
+        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', true);
+        	}else{
+        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', false);
+        	}
         }
 
 
