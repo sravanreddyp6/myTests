@@ -160,7 +160,7 @@
 			height: 0px;
 			visibility: hidden;
 		}
-		[id$=serviceAssignmentTable] tr td:nth-child(5), [id$=serviceAssignmentTable] tr th:nth-child(5) {
+		[id$=serviceAssignmentTable] tr td:nth-last-child(1), [id$=serviceAssignmentTable] tr th:nth-last-child(1) {
 			/* This column is only used programmatically, so we don't need to
 			display it */
 			display: none;
@@ -171,14 +171,6 @@
 		}
 
 	</style>
-	<apex:outputPanel layout="none" rendered="{!OperatingGroup == 'Redwood' && BEGINS($UserRole.DeveloperName, 'IA')}">
-	<style>
-		[id$=serviceAssignmentTable] tr td:nth-last-child(1), [id$=serviceAssignmentTable] tr th:nth-last-child(1) {
-			/* This column is not displayed for RW */
-			display: none;
-		}
-	</style>
-	</apex:outputPanel>
 
 	<apex:form id="mainForm">
 		<apex:pageMessages id="pageMessages" />
