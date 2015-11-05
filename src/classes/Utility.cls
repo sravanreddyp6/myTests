@@ -404,5 +404,26 @@ public without sharing class Utility {
 		}
 		return '';
 	}
+	
+	 /**
+    This method gives business date  after given numOfDays from given start date.
+    I am putting loop count to 15 because i need max 8th business day, If any body want different days, they can increase loop count.
+    */
+    public static Date nextBusinessDay(Date startDate,Integer numOfDays) {
+    	 Date saturday = Date.newInstance(2015, 10, 31);
+		 Date sunday = Date.newInstance(2015, 11, 1);
+    		Integer count = 0;
+    		for (integer i=1;i<15;i++) {
+    				startDate = startDate.addDays(1);
+    				 if( !(Math.mod(startDate.daysBetween(saturday), 7) ==0 || Math.mod(startDate.daysBetween(sunday), 7) ==0) ){
+    				 		count++;
+    				 		if(numOfDays == count){
+	    				 	return startDate;
+    				 		}
+    				}
+    		
+    		}
+    	return null;
+    }
  
 }
