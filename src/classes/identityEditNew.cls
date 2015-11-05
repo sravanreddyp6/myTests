@@ -371,6 +371,32 @@ public class identityEditNew {
     }
     
     
+    public static void sendPreHireEmail (TMN_User__c[] preHireList){
+    		 		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
+    		 for (TMN_User__c preHire :preHireList){     
+    			if(preHire.Current_Person_Type__c == 'Pre-hire'){
+    		List<TMN_User__c> recruiterInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: preHire.Recruiter_Email_Address__c];
+    			if(recruiterInfo!=null && recruiterInfo.size()>0) {
+    			Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
+		  String	emailTemplate = '<H4> Hello '+preHire.Recruiter_Name__c + ', </H4>';
+					emailTemplate += '<P> You are receiving this message because you are listed as the recruiter for a pre-hire record created recently in TMNAccess. ';
+					emailTemplate += '<BR>Please log into TMNAccess('+URL.getSalesforceBaseUrl().toExternalForm()+'/'+preHire.id+')  to take any required actions on the Pre-hire record.';
+					emailTemplate += '<P>If you are not the recruiter for pre-hire mentioned in this email or have other questions in regards to Pre-hire termination, please contact IT Service Center at 888-774-4872 for assistance.</P> <BR/><BR/>';
+					emailTemplate += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the above information please contact the IT Service Center.</P> ';
+					emailTemplate += 'Thank you,<BR/> MENTOR IT.';
+					mail.setTargetObjectId(recruiterInfo[0].Salesforce_User_Account__c);
+					mail.setHtmlBody(emailTemplate);
+					mail.setSubject('***TAKE ACTION*** TMNAccess – New Pre-Hire Record');	
+					mail.SaveAsActivity = false;
+					mails.add(mail);
+					}	
+			}
+				if(mails.size()>0){
+				Messaging.sendEmail(mails);			 
+				}
+    		 }		
+	    }
+    
     public PageReference goEdit(){
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
