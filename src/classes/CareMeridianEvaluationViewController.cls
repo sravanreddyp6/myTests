@@ -63,8 +63,15 @@ public with sharing class CareMeridianEvaluationViewController {
         if(Apexpages.currentpage().getparameters().get('SA_Id') != null ){
             SA =[SELECT ID, Name, Admission__r.Name,Admission__c, Admission__r.Person_being_served__c, Admission__r.Person_being_served__r.Name FROM Service_Assignment__c WHERE Id =:ApexPages.currentPage().getParameters().get('SA_Id') ];
         }
+         Person_Being_Referred__c pbr = [
+            SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c FROM Person_Being_Referred__c
+            WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
+        ];
+          this.age = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);
     }
-
+    
+  public string age{set;get;}
+	
     public void showAddRelatedParty() {
         this.currentRelatedParty = new Related_Party__c();
         this.currentRelatedParty.Person_Being_Referred__c = this.evaluation.Referral__r.Person_Being_Referred__c;

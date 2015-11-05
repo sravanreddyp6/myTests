@@ -14,21 +14,32 @@ var mocha = require('gulp-spawn-mocha');
 var spawn = require('child_process').spawn;
 var manageUsers = require('./users.js').manageUsers;
 
-gulp.task('selenium', function (done) {
-  selenium.install({
-    // version: '2.45.0',
-    // drivers: {
-    //   version: '2.15'
-    // },
+gulp.task('selenium', ["install-dependencies"], function (done) {
+  var opts = {
+    version: '2.48.2',
+    baseURL: 'http://selenium-release.storage.googleapis.com',
+    drivers: {
+      chrome: {
+        version: '2.20',
+        arch: process.arch,
+        baseURL: 'http://chromedriver.storage.googleapis.com'
+      },
+      ie: {
+        version: '2.48.0',
+        arch: process.arch,
+        baseURL: 'http://selenium-release.storage.googleapis.com'
+     }
+    },
     logger: function (message) {
       if (argv.seleniumdebug) {
         console.log(message);
       }
     }
-  }, function (err) {
+  };
+  selenium.install(opts, function (err) {
     if (err) return done(err);
 
-    selenium.start(function (err, child) {
+    selenium.start(opts, function (err, child) {
       if (err) return done(err);
       selenium.child = child;
       done();

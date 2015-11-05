@@ -5,7 +5,7 @@ public with sharing class PBS_controller_helper {
     @RemoteAction
     public static Related_Party__c loadRelatedParty(string relPartyId) {
             Related_Party__c party = 
-                [select Id,Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c,Status__c, Person_Being_Served__c
+                [select Id,Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, comments__c,Status__c, Person_Being_Served__c, createddate
                  from Related_Party__c where id = :relPartyId];
             return party;
      }
@@ -29,7 +29,34 @@ public with sharing class PBS_controller_helper {
       upsert party;                                  
       return party;
    }
+   
+   @RemoteAction
+    public static Diagnosis__c loadDiagnosis(string diagnosisId) {
+            Diagnosis__c diagnosis = 
+                [select Id, Name, Type__c,Status__c,PBS__c,Effective_Date__c, createddate, ICD__c, ICD__r.Name
+                 from Diagnosis__c where id = :diagnosisId];
+            return diagnosis;
+     }
     
+    @RemoteAction
+    public static Diagnosis__c saveDiagnosis(string diagnosisId, string diagnosisType, string status, string effectiveTime, string ICD, string PBSId) {
+      Diagnosis__c diagnosis;                                        
+      if (String.isEmpty(diagnosisId)) {
+        diagnosis = new Diagnosis__c(Type__c = diagnosisType, Status__c = status, ICD__c = ICD, PBS__c = PBSId );
+      } else {
+         diagnosis = new Diagnosis__c(ID = diagnosisId, Type__c = diagnosisType, Status__c = status,ICD__c = ICD, PBS__c = PBSId);
+      }
+      diagnosis.Effective_Date__c = (!String.isEmpty(effectiveTime)) ? Datetime.parse(effectiveTime) : (Datetime) null;
+      upsert diagnosis;                                  
+      return diagnosis;
+    }
+    
+    //Check whether there is an Active Service Assignment with an Active Diagnosis linked that the user trying to Inactivate
+    @RemoteAction
+    public static boolean preventDiagInactivation(string diagnosisId, string PBSId){
+    	List<ServiceAssignment_Diagnosis_JO__c> dg = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Diagnosis__c = :diagnosisId AND Service_Assignment__r.Status__c = 'Active' AND Service_Assignment__r.Person_being_served__c = :PBSId AND Status__c = 'Active' LIMIT 1];
+    	return dg.size() > 0;
+    }
      // calculation of whether user is allowed to make this change
         public static Boolean isUserLevel1or2() {
                 

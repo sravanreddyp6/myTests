@@ -4,7 +4,9 @@
     <apex:attribute name="hiddenFieldId" description="The field id to which the value of dateTime field to return to" type="String" />
     <apex:attribute name="datetimepickerid" type="string" description="The id of the input field used in the component. This is required to differentiate the fields when we use the component multiple times on a single page." default="datetimepicker" />
 	<apex:attribute name="shiftTop" type="integer" description="if the component shows on top of the input text box instead of below.... pass in this param to move it below text entry box " default="0" />
-	
+	<apex:attribute name="styleSheet" type="String" description="This is for style sheet for Referral page" default="false" />
+	<apex:attribute name="countInFormProgress" type="integer" description="sets the html-data-countInCompletedScore val" default="0" />
+
     <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
@@ -33,7 +35,10 @@
         {!timeZoneValue}
     </apex:outputPanel>
     
-    <apex:outputPanel rendered="{!edit}">   
-        <input id="{!datetimepickerid}" type="text" value="{!timeZoneValue}" />
+    <apex:outputPanel rendered="{!edit && styleSheet == 'true'}">   
+        <input id="{!datetimepickerid}" type="text" value="{!timeZoneValue}" class="refRequiedFields" data-countInFormProgress="{!countInFormProgress}"/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!edit && styleSheet == 'false'}">   
+        <input id="{!datetimepickerid}" type="text" value="{!timeZoneValue}"  data-countInFormProgress="{!countInFormProgress}" />
     </apex:outputPanel>
 </apex:component>

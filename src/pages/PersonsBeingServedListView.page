@@ -6,7 +6,8 @@
     <apex:includeScript value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.qtip, '/jquery.qtip.min.css')}" />
-
+	<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
+	<apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <style>
 #table_filter h1 {
     font-size: 14px;
@@ -147,7 +148,7 @@ table#persons_table.dataTable {
         </div>
         <apex:form id="table_commands">
             <apex:commandButton value="Add New Person"
-                onclick="window.open('{!URLFOR($Action.Account.New)}', '_self'); return false;" rendered="{!canCreateNew}"/>
+                onclick="window.open('{!URLFOR($Action.Account.New)}', '_self'); return false;" rendered="{!canCreateNew && !vfVarIsRW && !vfVarIsCB}"/>
             <!-- This is a workaround - We can't just rerender the table, because all the map variables are transient and
             thus are not stored in the View state. -->
             <apex:commandButton value="Refresh" onclick="showLoadingModal()" oncomplete="refreshDataTable()" action="{!updateCon}"
@@ -458,7 +459,7 @@ table#persons_table.dataTable {
                             '<div class="pbBody"><table class="detailList">' +
                             '<tr><td class="labelCol">Name:</td><td class="dataCol">' + checkUndefined(result.Name) + '</td></tr>' +
                             '<tr><td class="labelCol">Birthdate:</td><td class="dataCol">' + epoch_to_time(result.Birthdate) + '</td></tr>' +
-                            '<tr><td class="labelCol">Age:</td><td class="dataCol">' + checkUndefined(result.Age__c) + '</td></tr>' +
+                            '<tr><td class="labelCol">Age:</td><td class="dataCol">' + checkUndefined(result.First_Name_SoundEx_Key__c)+'</td></tr>' +
                             '<tr><td class="labelCol">Ethnicity:</td><td class="dataCol">' + checkUndefined(result.Ethnicity_Picklist__c) + '</td></tr>' +
                             '<tr><td class="labelCol">Phone:</td><td class="dataCol">' + checkUndefined(result.Phone) + '</td></tr>' +
                             '<tr><td class="labelCol">Guardian:</td><td class="dataCol">' + checkUndefined(result.Guardian1_Name__c) + '</td></tr>' +

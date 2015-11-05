@@ -1,9 +1,10 @@
-<apex:page controller="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
+<apex:page standardController="TMN_User__c" extensions="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
   <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <style type="text/css">
         .custPopup{
             background-color: white;
@@ -71,14 +72,42 @@
     top: 10px;
     right: 10px;
 }
+	.requiredBlock1 {
+    background-color: #c00;
+    position: absolute;
+    left: -4px;
+    width: 3px;
+    top: 1px;
+    bottom: 1px;
+}
     </style>
      <script type="text/javascript" >
     
         var j$ = jQuery.noConflict();
         var glCode = {!glCodesForTherapist};
         jQuery(document).ready(function($) {
+            setUpFields = function() {
+                $('body input').on("change", function(event) {
+                    applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
+                });
+                $('body select').on("change", function(event) {
+                    applyRulesToField(event.target);
+                    applyShowHideRulesToField(event.target);
+                });
+                $('body input').each(function(_, target) {
+                    applyRulesToField(target);
+                    applyShowHideRulesToField(target);
+                });
+                $('body select').each(function(_, target) {
+                    applyRulesToField(target);
+                    applyShowHideRulesToField(target);
+                });
+            }
+            setUpFields();
+            
             j$('[id$=BAASigned]').prop('disabled', true);
-            j$('input[id$="AddAttachments"]').prop('disabled', true);
+            //j$('input[id$="AddAttachments"]').prop('disabled', true);
             j$('input[id$="Alias"]').prop("readonly", true);
             j$('[Id$=operatingGrp]').on('change', function(){document.toggleTherapyInfo();});
  			document.toggleTherapyInfo();
@@ -215,7 +244,6 @@ function autoCompleteRender(ul, item) {
 });
     
     function showAttchment() {
-       
      j$('[id*=AttachmentsModel]').dialog("open");
     }
     
@@ -285,6 +313,16 @@ function autoCompleteRender(ul, item) {
         j$('[id$=managerLastName]').val('');
     }
     
+    function changeVendor() {
+			if(j$('[id$=vendorList]').val()==='OTHER'){
+    		j$('[id$=vendorName]').show;
+            j$('[id$=AddAttachments]').show; 
+    		} else {
+    		j$('[id$=vendorName]').hide;
+            j$('[id$=AddAttachments]').hide; 
+    		}
+    	
+    }
     </script>  
         <apex:form id="createForm" >
             <apex:actionFunction name="getManagerList" action="{!getManagerList}"   reRender="SearchResults" oncomplete="dataTable();" status="lookupstatus">
@@ -442,23 +480,24 @@ function autoCompleteRender(ul, item) {
                       </apex:pageBlockSectionItem>  
 					</apex:pageBlockSection>
 					 <apex:inputhidden value="{!TMNUser.Manager_Lookup__c}" id="managerId"/> 
-                    <apex:pageBlockSection columns="2" title="Vendor Information" > 
+                    <apex:pageBlockSection columns="2" title="Vendor Information" id="create_pageBlockSection"> 
 				<apex:pageBlockSectionItem >
                     <apex:outputLabel value="Vendor" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                     <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}"  id="vendorList" />	
+                     <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}"  id="vendorList"  html-data-visibility-rules="{&quot;OTHER&quot;: [&quot;{!$Component.createForm:createBlock:create_pageBlockSection:vendorSectionItem:VendorName}&quot;, &quot;{!$Component.createForm:createBlock:create_pageBlockSection:vendorSectionItem:VendorNameLable}&quot;, &quot;{!$Component.createForm:createBlock:create_pageBlockSection:vendorSectionItem:AddAttachments}&quot;, &quot;{!$Component.createForm:createBlock:create_pageBlockSection:BAASignedItem:BAASigned}&quot; , &quot;{!$Component.createForm:createBlock:create_pageBlockSection:BAASignedItem:BAASignedText}&quot;]}" ></apex:inputField>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                       <apex:pageBlockSectionItem >
-                      <apex:outputText value="BAA Signed " />
+                   <apex:pageBlockSectionItem id="BAASignedItem" rendered="{!TMNUser.Operating_Group__c!='Care Meridian'}">
+                        <apex:outputText value="BAA Signed " id="BAASignedText"/>
                     <apex:inputField value="{!TMNUser.BAA_Signed__c}" id="BAASigned" />   
                     </apex:pageBlockSectionItem>
-                   <!-- <apex:pageBlockSectionItem >
-                      <apex:outputText value="Vendor Name" />
-                        <apex:outputPanel styleClass="nowrap">
-                       <apex:inputField value="{!TMNUser.Vendor_Name__c}" id="VendorName"  ></apex:inputField>  
-                       <apex:commandButton value="Add Attachments"  onclick="showAttchment();return false;" id="AddAttachments" />
+
+                    <apex:pageBlockSectionItem id="vendorSectionItem" rendered="{!TMNUser.Operating_Group__c!='Care Meridian'}">
+                      <apex:outputText value="Vendor Name" id="VendorNameLable"/>
+                        <apex:outputPanel styleClass="nowrap requiredInput">
+                       <apex:inputField value="{!TMNUser.other_Vendor__c}" id="VendorName"  ></apex:inputField>  
+                       <apex:outputPanel id="AttachmentsPanel"> <apex:commandButton value="Add Attachments"  onclick="showAttchment();return false;" id="AddAttachments" disabled="{!newAttachments.size = 0}" style="width: 125px;!important;"/></apex:outputPanel>
                     </apex:outputPanel>
                     </apex:pageBlockSectionItem>
                                     <apex:outputPanel id="AttachmentsModel" style="display:none">
@@ -478,7 +517,7 @@ function autoCompleteRender(ul, item) {
             <apex:commandButton value="Cancel" />                 
             </apex:pageBlock>                  
 
-                    </apex:outputPanel> -->
+                    </apex:outputPanel> 
                 </apex:pageBlockSection>
                         
                 <apex:pageBlockSection id="TherapistInformation" columns="2" title="Care Meridian Therapist Information" rendered="{!TMNUser.Operating_Group__c=='Care Meridian'}"> 

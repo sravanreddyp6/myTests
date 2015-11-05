@@ -22,7 +22,7 @@
            
             
             <apex:outputText label="Middle Name" value="{!person.MiddleInitial}" /> 
-             <apex:outputText label="Age"  value="{!person.Age}" />
+              <apex:outputText label="Age" >{!person.age}</apex:outputText>
             
             <apex:outputText label="Last Name" value="{!person.LastName}" />
              <apex:outputText label="Gender" value="{!person.Gender}" />   
@@ -45,8 +45,8 @@
  		 <apex:outputText label="Mailing Zip/Postal Code" value="{!person.ZipCode}" />         
  		 <apex:outputText label="Highest Level of Education" value="{!person.Education}" />
  		     <apex:outputText label="Mailing County"  value="{!person.County}" />
- 		     <apex:outputText label="Legal/Guardianship Status" value="{!person.LegalGuardianship}" />    
- 		
+<!--  		     <apex:outputText label="Legal/Guardianship Status" value="{!person.LegalGuardianship}" />     -->
+ 		<apex:outputText label="Guardianship Type" value="{!Referral__c.Guardianship_Type__c}" /> 
  		 <!--  Fax is removed for   EPRIQM-115        
  		<apex:outputText label="Fax" value="{!person.Fax}" />    
  		     -->  
@@ -87,7 +87,8 @@
  		<apex:outputText label="Program" value="{!Program}" />         
 		<apex:outputText label="Location" value="{!Location}" />
 		<apex:outputText label="Service Line" value="{!ServiceLine}" />
-		<apex:outputText label="Status" value="Active" />      
+		<apex:outputText label="Status" value="Active" />
+		  
 				
 </apex:pageBlockSection>
 

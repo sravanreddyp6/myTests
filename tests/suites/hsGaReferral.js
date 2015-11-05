@@ -519,46 +519,11 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (email) {
         assert.equal(email , refpag2["Email"]);
       })
-      .getOutputText("Email")
-      .then(function (email2) {
-        assert.equal(email2 , refpag3["Email"]);
+      .tableToJSON("Type")
+      .then(function (relatedtype) {
+        assert.equal(relatedtype , GaRefPa["Related"]);
       })
-	  .getOutputText("Party Name")
-      .then(function (partname) {
-        assert.equal(partname , refpag3["Party Name"]);
-      })
-	  .getOutputText("Type")
-      .then(function (type) {
-        assert.equal(type , refpag3["Type"]);
-      })
-	  .getOutputText("Phone 1")
-      .then(function (phone11) {
-        assert.equal(phone11 , refpag3["Phone 1"]);
-      })
-	  .getOutputText("Phone 1 Type")
-      .then(function (phone1type) {
-        assert.equal(phone1type , refpag3["Phone 1 Type"]);
-      })
-	  .getOutputText("Phone 2")
-      .then(function (phone21) {
-        assert.equal(phone21 , refpag3["Phone 2"]);
-      })
-	  .getOutputText("Phone 2 Type")
-      .then(function (phone2type) {
-        assert.equal(phone2type , refpag3["Phone 2 Type"]);
-      })
-	  .getOutputText("Address")
-      .then(function (address1) {
-        assert.equal(address1 , refpag3["Address"]);
-      })
-	  .getOutputText("Comments")
-      .then(function (comments1) {
-        assert.equal(comments1 , refpag3["Comments"]);
-      })
-	  .getOutputText("Status")
-      .then(function (status1) {
-        assert.equal(status1 , refpag3["Status"]);
-      })
+      
       .getOutputText("Referral Status")
       .then(function (referralstatus) {
         assert.equal(referralstatus , refpag4["Referral Status"]);
@@ -803,7 +768,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (mobility) {
         assert.equal(mobility , refpag8["Mobility"]);
       })
-      .getCheckboxOutputs(Accessible Housing Needed, Accessible Vehicle Needed, Geographic Restrictions)
+      .getCheckboxOutputs("Accessible Housing Needed", "Accessible Vehicle Needed", "Geographic Restrictions")
       .then(function (accesshousevehigeo) {
         assert.equal(accesshousevehigeo , refpag8["Accessible Housing Needed", "Accessible Vehicle Needed", "Geographic Restrictions"]);
       })
@@ -811,7 +776,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (areainterest) {
         assert.equal(areainterest , refpag9["Area of State Interested In"]);
       })
-      .getCheckboxOutputs(Access to Public Transportation, Physically Aggressive to Staff, Physically Aggressive to Self, Physically Aggressive to Peers, Verbally Aggressive, Suicide Threats, Suicide Attempts, Self Harm or Self-Injurious Behaviors, Fire Setting, Legal History, Law Enforcement Involvement, Property Destruction, Tobacco Use (Current), Chemical Use (Recovery), Chemical Use (Current), Chemical Dependency Treatment, Elopement, Unwanted Sexual Behavior)
+      .getCheckboxOutputs("Access to Public Transportation", "Physically Aggressive to Staff", "Physically Aggressive to Self", "Physically Aggressive to Peers", "Verbally Aggressive", "Suicide Threats", "Suicide Attempts", "Self Harm or Self-Injurious Behaviors", "Fire Setting", "Legal History", "Law Enforcement Involvement", "Property Destruction", "Tobacco Use (Current)", "Chemical Use (Recovery)", "Chemical Use (Current)", "Chemical Dependency Treatment", "Elopement", "Unwanted Sexual Behavior")
       .then(function (accessmost1) {
         assert.equal(accessmost1 , refpag9["Access to Public Transportation", "Physically Aggressive to Staff", "Physically Aggressive to Self", "Physically Aggressive to Peers", "Verbally Aggressive", "Suicide Threats", "Suicide Attempts", "Self Harm or Self-Injurious Behaviors", "Fire Setting", "Legal History", "Law Enforcement Involvement", "Property Destruction", "Tobacco Use (Current)", "Chemical Use (Recovery)", "Chemical Use (Current)", "Chemical Dependency Treatment", "Elopement", "Unwanted Sexual Behavior"]);
       })
@@ -819,7 +784,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (yestype) {
         assert.equal(yestype , refpag9["if Yes: Type"]);
       })
-      .getCheckboxOutput(Nursing Oversight Required)
+      .getCheckboxOutput("Nursing Oversight Required")
       .then(function (nurseoverreq) {
         assert.equal(nurseoverreq , refpag9["Nursing Oversight Required"]);
       })
@@ -827,7 +792,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (yeslevel) {
         assert.equal(yeslevel , refpag9["If Yes: Level of Support Required"]);
       })
-      .getCheckboxOutput(Unsupervised Time)
+      .getCheckboxOutput("Unsupervised Time")
       .then(function (unsupervisedtime) {
         assert.equal(unsupervisedtime , refpag9["Unsupervised Time"]);
       })
@@ -835,7 +800,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (yeslength) {
         assert.equal(yeslength , refpag9["If Yes: Length of time"]);
       })
-      .getCheckboxOutput(Maintain Sibling Group)
+      .getCheckboxOutput("Maintain Sibling Group")
       .then(function (maintainsiblinggroup) {
         assert.equal(maintainsiblinggroup , refpag9["Maintain Sibling Group"]);
       })
@@ -843,7 +808,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (yeshow) {
         assert.equal(yeshow , refpag9["If Yes: How Many?"]);
       })
-      .getCheckboxOutputs(No Same Sex Peers, Can Live with Opposite Sex, No Cross Cultural Placement, Can Be Placed With Other Children)
+      .getCheckboxOutputs("No Same Sex Peers", "Can Live with Opposite Sex", "No Cross Cultural Placement", "Can Be Placed With Other Children")
       .then(function (accessmost2) {
         assert.equal(accessmost2 , refpag9["No Same Sex Peers", "Can Live with Opposite Sex", "No Cross Cultural Placement", "Can Be Placed With Other Children"]);
       })
@@ -851,7 +816,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (yesage) {
         assert.equal(yesage , refpag9["If Yes: Age Requirements?"]);
       })
-      .getCheckboxOutput(Family Involvement Restrictions)
+      .getCheckboxOutput("Family Involvement Restrictions")
       .then(function (faminvres) {
         assert.equal(faminvres , refpag9["Family Involvement Restrictions"]);
       })
@@ -859,7 +824,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (ifyeslevel) {
         assert.equal(ifyeslevel , refpag9["If Yes: Level?"]);
       })
-      .getCheckboxOutput(Has Pets)
+      .getCheckboxOutput("Has Pets")
       .then(function (haspets) {
         assert.equal(haspets , refpag9["Has Pets"]);
       })
@@ -867,7 +832,7 @@ testSuite("hsGaReferral", suiteTimeout, {
       .then(function (ifyestype) {
         assert.equal(ifyestype , refpag9["If Yes: Type"]);
       })
-      .getCheckboxOutputs(Animal Cruelty, Choking Risk, Eating Disorders, History of Bowel Obstructions, Ingesting Non-Consumables, Takes Injectible Medications, Psychiatric/Mental Hospitalization, Ventilator Dependent, Hospitalization Within the Past Year)
+      .getCheckboxOutputs("Animal Cruelty", "Choking Risk", "Eating Disorders", "History of Bowel Obstructions", "Ingesting Non-Consumables", "Takes Injectible Medications", "Psychiatric/Mental Hospitalization", "Ventilator Dependent", "Hospitalization Within the Past Year")
       .then(function (accessmost3) {
         assert.equal(accessmost3 , refpag9["Animal Cruelty", "Choking Risk", "Eating Disorders", "History of Bowel Obstructions", "Ingesting Non-Consumables", "Takes Injectible Medications", "Psychiatric/Mental Hospitalization", "Ventilator Dependent", "Hospitalization Within the Past Year"]);
       })

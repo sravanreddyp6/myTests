@@ -19,8 +19,7 @@ public class identityEditNew {
     public String LN = System.currentPageReference().getParameters().get('LN');
     public String retURL = ApexPages.currentPage().getParameters().get('retURL');
     public String TAU = ApexPages.currentPage().getParameters().get('TAU'); 
-    public String attchmentId {set;get;}
-    public String aliasName = TAU;
+    public String aliasName {set;get { return TAU;}}
     public Boolean isNewUser {set;get;}
   private static final String EMAIL_PATTERN = '([a-zA-Z0-9_\\-\\.]+)@((\\[a-z]{1,3}\\.[a-z]{1,3}\\.[a-z]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})';
   public static boolean validate(String email) {
@@ -38,7 +37,7 @@ public class identityEditNew {
     	return JSON.Serialize(keyVal); 
     }
     
-    public identityEditNew() {
+    public identityEditNew(ApexPages.StandardController controller) {
                                     
         Id id = ApexPages.currentPage().getParameters().get('ID');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
@@ -57,12 +56,12 @@ public class identityEditNew {
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c,Office_Flag__c,
             Account_Number__c, CPR_Expires__c, Discipline__c, GL_Code__c, IC_Agreement_Executed_Date__c, Insurance_Expires__c, License_Expires__c, Notes__c, Personal_City__c,
-            Personal_Location__c, Personal_Zip__c, Rate__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c 
+            Personal_Location__c, Personal_Zip__c, Rate__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor__c 
             FROM TMN_User__c 
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
         if(TMNUser.id!=null) {
-                attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
+                attachments=[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name from Attachment where parentId=:TMNUser.id order by createddate ];
              for(integer i = attachments.size(); i<3;i++){
                         newAttachments.add(new  ProxyAttachment(new Attachment())); 
             }           
@@ -98,6 +97,7 @@ public class identityEditNew {
         TMNUser.Zip_Code__c = aliasUser.Zip_Code__c;
         TMNUser.BAA_Signed__c = aliasUser.BAA_Signed__c;
         TMNUser.Location_Name__c = aliasUser.Location_Name__c;
+        TMNUser.other_Vendor__c = aliasUser.other_Vendor__c;
         TMNUser.Last_Day__c = defaultLastDay;
     }else {
     isNewUser = false;
@@ -136,11 +136,28 @@ public class identityEditNew {
     }
     
     public  Attachment attDeatils {set;get;}
- 
-    public  PageReference attachmentDeatils() {
-       attDeatils =   [select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID,CreatedBy.name,LastModifiedBy.name from Attachment where id=:attchmentId order by createddate limit 1];
-      return null;
-    }
+ 	public Boolean enableDelete {set;get;}
+ 	public ProxyAttachment attachmentView {set;get {
+ 		  attchmentId =  System.currentPageReference().getParameters().get('attchmentId');
+       if(attchmentId!=null) {
+       attDeatils =   [select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name  from Attachment where id=:attchmentId order by createddate limit 1];
+      system.debug(' attDeatils :' + attDeatils);
+      ProxyAttachment  view = (new ProxyAttachment(attDeatils));
+       if(attDeatils.OwnerID.equals(UserInfo.getUserId())){
+        enableDelete = true;
+        }else {
+        enableDelete = false;
+        }
+      return view;
+    } return null;}   }
+
+		public  PageReference attachmentDeatils() {
+			 if(attchmentId!=null){
+			attDeatils =   [select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name  from Attachment where id=:attchmentId order by createddate limit 1];
+			 attachmentView = (new ProxyAttachment(attDeatils));
+			 }
+			 return null;
+		}
 
     public  PageReference deleteattachment() {
             try {
@@ -153,13 +170,13 @@ public class identityEditNew {
         } catch(System.DMLException e) {
             return null;
         }
-        return  null; 
+        return  goEdit(); 
     }
 
         public PageReference updateAttachment () {
                 update attDeatils;
                 attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:TMNUser.id order by createddate ];
-                    return null;
+                    return goEdit();
         }
     
     TMN_User__c t = [SELECT Id, Name, Operating_Group__c,Manager_Name__c FROM TMN_User__c WHERE Salesforce_User_Account__c=:userId LIMIT 1];
@@ -174,14 +191,15 @@ public class identityEditNew {
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c,Program_String__c,
-            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c,phone_ext__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c  
+            Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c,phone_ext__c,Custodians__c,
+            Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
             
  @testVisible   Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
                         FROM Alias__c 
                         WHERE Alias_unique__c =: aliasUser.Alias__c];        
-     
+    
     public PageReference save() {
 		Boolean error = false;
     	 List<TMN_User__c> location =  [select location_name__c, office_location__c, office_location_2__c, work_city__c , work_state__c, office_location_picklist__c, zip_code__c,Manager_Name__c from tmn_user__c where location_name__c  =:TMNUser.Location_Name__c limit 1];
@@ -214,8 +232,12 @@ public class identityEditNew {
                 error = true;
     	 	}
         }
+        system.debug('TMNUser.other_Vendor__c: ' +TMNUser.other_Vendor__c);
+        if(!(TMNUser.Operating_Group__c =='Care Meridian') && TMNUser.Vendor_list__c =='OTHER' && ( TMNUser.other_Vendor__c == null || TMNUser.other_Vendor__c.length()== 0 ) ){
+    	 	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Vendor Name: Vendor Name is required in order to save this record'));
+                error = true;
+        }
         
-		
 		if(error){
 		return null;
 		}
@@ -256,6 +278,8 @@ public class identityEditNew {
         try {
             
             upsert(TMNUser);
+            
+            sendEmail(TMNUser);
              saveAttachment();
         } catch(System.DMLException e) {
             ApexPages.addMessages(e);
@@ -269,8 +293,34 @@ public class identityEditNew {
         return viewPage;
     }
     
+    public void sendEmail (TMN_User__c TMNUser) {
+    	if(TMNUser.Current_Person_Type__c == 'Employee' && TMNUser.Last_Day__c!=null) {
+    		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
+   			List<TMN_User__c> tmnManagerInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: TMNUser.Manager_Email__c];
+    		if(tmnManagerInfo!=null && tmnManagerInfo.size()>0) {
+    		Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
+    		mail.setTargetObjectId(tmnManagerInfo[0].Salesforce_User_Account__c);
+    	   String Template = '<H4> Hello '+TMNUser.Manager_First_Name__c+' '+ TMNUser.Manager_Last_Name__c + ', </H4>';
+    	    	Template  += '<P> You are receiving this message because you are listed as the manager for <B>'+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c +'</B> in TMNAccess. The End Date on employee record has been ';
+    	    	Template  += 'modified and the account has been set to terminate on '+TMNUser.Last_Day__c +' </P> ';
+    	    	Template  += 'If you are not the manager for the employee mentioned in this email or have other questions in regards, please either log into TMNAccess ('+URL.getSalesforceBaseUrl().toExternalForm()+'/'+TMNUser.id;
+    	    	Template	+=') or contact IT Service Center at 888-774-4872 for assistance.' ;	
+    	    	Template += '<P>This is an automated message sent by the TMNAccess application. If you have any questions or see any discrepancies in the below information please contact the IT Service Center.</P>';
+				Template += '<BR/> Thank you,<BR/> MENTOR IT'; 
+			mail.setHtmlBody(Template);
+			mail.setSubject('End Date entered  for '+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c );
+			mail.SaveAsActivity = false;
+			mails.add(mail);
+    		Messaging.sendEmail(mails);
+    	}
+      }	
+    
+    }
+    
     public List<Attachment> attachments {set;get;}
-
+    
+    public String attchmentId{set;get;}
+     
     public void saveAttachment()       {
                 List<Attachment> toInsert=new List<Attachment>();
                 Integer index = 0;
@@ -320,13 +370,26 @@ public class identityEditNew {
         }
     }
     
+    
     public PageReference goEdit(){
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        	if(retURL== null){
+        			 retURL = '/apex/identity_nonemployees';
+        	}
         String TAU = ApexPages.currentPage().getParameters().get('TAU');
+        		if(TAU == null) {
+        			TAU = UserInfo.getUserEmail();
+        		}
         PageReference editPage = new PageReference('/apex/identity_edittmnu?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
         editPage.setRedirect(true);
         return editPage;
+    }
+    
+    public PageReference goAttachmentEdit(){
+        PageReference AttachmentEdit = new PageReference('/apex/identity_attachmentView?id=' + tmnuser.id + '&retURL=' + retURL + '&TAU=' + TAU +'&attchmentId='+attchmentId);
+        AttachmentEdit.setRedirect(true);
+        return AttachmentEdit;
     }
     
     public PageReference goCancel() {
@@ -345,6 +408,13 @@ public class identityEditNew {
     public PageReference goTerminate() {
         Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
+        if(retURL== null){
+        			 retURL = '/apex/identity_nonemployees';
+        	}
+        String TAU = ApexPages.currentPage().getParameters().get('TAU');
+        		if(TAU == null) {
+        			TAU = UserInfo.getUserEmail();
+        		}
         PageReference terminatePage =  new PageReference('/apex/identity_Terminate?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU );
         terminatePage.setRedirect(true);   
         return terminatePage;
@@ -387,6 +457,13 @@ public class identityEditNew {
                 public String Name { get { return attachment.Name; } set { attachment.Name = value; } }
                 public Blob Body { get { return attachment.Body; } set { attachment.Body = value; } }
                 public String Description { get { return attachment.Description; } set { attachment.Description = value; } }
+                public String OwnerName { set;get {  return this.attachment.Owner.Name; }}
+                public String OwnerId {set; get { return this.attachment.OwnerId; }}
+                public String LastModifiedDate {set; get { return attachment.LastModifiedDate.format('MM/dd/yyyy hh:mm a'); }}
+         		public String CreatedDate { set;get {return attachment.CreatedDate.format('MM/dd/yyyy hh:mm a'); }}
+         		public String LastModifiedBy { get { return attachment.LastModifiedBy.name; }}
+         		public String CreatedBy { get { return attachment.CreatedBy.Name;}}
+         		public String BodyLength { get { return attachment.BodyLength/1024+' KB';}}
                 public ProxyAttachment(Attachment attachment) {
                         this.attachment = attachment;
                 }
@@ -394,6 +471,7 @@ public class identityEditNew {
                         return attachment;
                 }
         }
+        
  
     
 }

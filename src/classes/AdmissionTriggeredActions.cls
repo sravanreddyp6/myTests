@@ -84,6 +84,8 @@ public with sharing class AdmissionTriggeredActions {
         for(Admission__c adm: admissions){
             if ( adm.Admission_Effective_DateTime__c != null )
                adm.Effective_Date__c = adm.Admission_Effective_DateTime__c.date();
+            if ( adm.Discharged_Date_Time__c != null )
+               adm.Discharged_Date__c = adm.Discharged_Date_Time__c.date();               
         }
     }
     
