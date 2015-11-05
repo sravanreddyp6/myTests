@@ -114,7 +114,7 @@ public with sharing class NeuroEvaluationEditController {
         serializedAnnotations = JSON.serialize(annotations);
         currentRelatedParty = new Related_Party__c();
         pbr = [
-            SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c FROM Person_Being_Referred__c
+            SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c,Age_text__c FROM Person_Being_Referred__c
             WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
         ];
         ref = [
@@ -136,7 +136,7 @@ public with sharing class NeuroEvaluationEditController {
         if(!String.isBlank(this.evaluation.Neuro_Pain_Alleviating_Factors__c)) {
             selectedPainAlleviators = this.evaluation.Neuro_Pain_Alleviating_Factors__c.split(';');
         }
-        this.age = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);
+        this.age = pbr.Age_text__c;
     }
     
     public string age{set;get;}

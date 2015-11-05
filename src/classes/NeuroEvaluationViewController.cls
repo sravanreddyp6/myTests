@@ -136,10 +136,10 @@ public with sharing class NeuroEvaluationViewController {
         // Assigns the person being referred Name to the PDF dynamically
         Apexpages.currentPage().getHeaders().put('content-disposition', 'inline; filename="'+file+'"');
        Person_Being_Referred__c pbr = [
-            SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c FROM Person_Being_Referred__c
+            SELECT ID, Date_of_Birth__c,Age_year__c,Age_month__c,Age_days__c,Age__c,Age_text__c FROM Person_Being_Referred__c
             WHERE Id=:evaluation.Referral__r.Person_Being_Referred__c
         ];
-          this.age = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);
+          this.age = pbr.Age_text__c;
     }
      public string age{set;get;}
 
