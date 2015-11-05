@@ -7,7 +7,7 @@ public with sharing class Notes_ProgressNote_Create {
     public string RTid;
     public string myState = ApexPages.currentPage().getParameters().get('state');
     public String dispMode = ApexPages.currentPage().getParameters().get('Mode');
-    public Id AZ_OPT_ID, SHIFT_NOTE_ID, CAFSS_ID;
+    public Id AZ_OPT_ID, SHIFT_NOTE_ID, CAFSS_ID, THERAPY_ID;
     public String pbsName { get; set; }
     Public Boolean AsmntOnly{get;set;}
     private string usrOpGrp;
@@ -34,6 +34,9 @@ public with sharing class Notes_ProgressNote_Create {
             }
             if (rt.Name == 'CA FSS') {
                 CAFSS_ID = rt.Id;
+            }
+            if(rt.Name == 'Therapy'){
+            	THERAPY_ID = rt.Id;
             }
         }
         
@@ -68,7 +71,8 @@ public with sharing class Notes_ProgressNote_Create {
             pn.RecordTypeId = SHIFT_NOTE_ID;
         
         //Added By Amruth for EB-436
-        if(sa.recordtype.name == 'Assessment Only' && currUser != null && currUser.Operating_Group__c == 'NeuroRestorative'){
+        if(sa.recordtype.name == 'Assessment Only' && usrOpGrp == 'NeuroRestorative'){
+        	pn.RecordTypeId = THERAPY_ID;
             AsmntOnly = true;
         }   
         
@@ -126,18 +130,22 @@ public with sharing class Notes_ProgressNote_Create {
                 rtOptions.Add(SO);
                 break;
             }
-            else {
-                if(myName.StartsWith(myState)){
+            else if(AsmntOnly && myname == 'therapy' && pn.RecordTypeId == THERAPY_ID ){
+            	SO = new SelectOption(thisRt.Id, thisRt.Name);
+                rtOptions.Add(SO);
+                break;	
+            }
+           	else{ 
+           		if(myName.StartsWith(myState) && !AsmntOnly){ // This is to prevent the else condition execution for Neuro Operating group.
                     SO = new SelectOption(thisRt.Id, thisRt.Name);
                     rtOptions.Add(SO);
                 }
-            }
-            
-            //Added by Amruth
-            if( AsmntOnly && myname == 'therapy'){
+           	}
+            //Added by Amruth - Sravan commented this out and moved the code up into else if
+          /*  if( AsmntOnly && myname == 'therapy'){
                     SO = new SelectOption(thisRt.Id, thisRt.Name);
                     rtOptions.Add(SO);
-            }
+            }*/
             
         }
         
