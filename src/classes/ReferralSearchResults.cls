@@ -38,7 +38,7 @@ public class ReferralSearchResults implements Comparable {
       this.Type = 'Person Being Referred';
       this.matchedItems = matchedNum;
       this.age = pbr.Age__c;
-      this.ageDetails = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);
+      this.ageDetails = pbr.Age_text__c;
       this.pbsonPBR = pbr.Person_Being_Served__c;
   }
   

@@ -535,7 +535,7 @@ public with sharing class referral_Controller2 {
 		Person_Being_Referred__c pBRRec;
 		try {
 			pBRRec = [
-				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,Age_month__c,Age_year__c,Age_days__c,
+				select Age__c, City__c, Date_of_Birth__c, Email_Address__c,Age_month__c,Age_year__c,Age_days__c,Age_text__c,
 				       Race__c, Ethnicity__c, Fax__c, First_Name__c, Gender__c,
 				       Home_County__c, Last_Name__c, Marital_Status__c,
 				       Middle_Initial__c, Phone__c, Primary_Language__c, //SSN__c,
@@ -556,8 +556,8 @@ public with sharing class referral_Controller2 {
 		if(pBRRec.Age_days__c!=null && integer.valueof(pBRRec.Age_days__c) > 14){
 			monthAlias = string.valueof(integer.valueof(monthAlias) + 1);
 		}
-		system.debug('age ' + String.valueOf(pBRRec.Age_year__c) + ' - ' + pBRRec.Age_month__c + ' - ' + pBRRec.Age_days__c);
-			this.age = 	Utility.getAge(String.valueOf(pBRRec.Age_year__c),monthAlias,pBRRec.Age_days__c);
+		//system.debug('age ' + String.valueOf(pBRRec.Age_year__c) + ' - ' + pBRRec.Age_month__c + ' - ' + pBRRec.Age_days__c);
+			this.age = 	pBRRec.Age_text__c;
 		return pBRRec;
 	}
 	private void getPBSId() {
@@ -577,7 +577,7 @@ public with sharing class referral_Controller2 {
 		Contact pBSRec;
 		try {
 			pBSRec = [
-				select Age__c, MailingCity, BirthDate, Email,  Race__c, Marital_Status__c,  Sign_Language__c, Non_Verbal__c,Mailing_Street_2__c,Mailing_County__c,
+				select Age__c, MailingCity, BirthDate, Email,  Race__c, Marital_Status__c,  Sign_Language__c, Non_Verbal__c,Mailing_Street_2__c,Mailing_County__c,Age_text__c,
 				       Fax, FirstName, Gender__c,Age_month__c,Age_year__c,Age_days__c,
 				       LastName, Ethnicity_Picklist__c,
 				       Middle_Name__c, Phone, Primary_Language__c, //SSN__c,
@@ -592,7 +592,7 @@ public with sharing class referral_Controller2 {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 				'The Person Being Served record id specified is invalid. ' + e.getMessage()));
 		}
-	this.age = 	Utility.getAge(pBSRec.Age_year__c,pBSRec.Age_month__c,pBSRec.Age_days__c);
+	this.age = 	pBSRec.Age_text__c;
 		return pBSRec;
 	}
 	

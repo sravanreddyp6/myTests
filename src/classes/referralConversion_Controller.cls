@@ -206,7 +206,7 @@ public with sharing class referralConversion_Controller {
    private Person_Being_Referred__c getPBRRec() {
     Person_Being_Referred__c pBRRec;
     try {
-      pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c, Age_year__c,Age_month__c,Age_days__c,
+      pBRRec = [select Age__c, City__c, Date_of_Birth__c, Email_Address__c, Age_year__c,Age_month__c,Age_days__c,Age_text__c
                        Ethnicity__c, Fax__c, First_Name__c, Gender__c,
                        Home_County__c, Last_Name__c, Marital_Status__c,
                        Middle_Initial__c, Phone__c, Primary_Language__c, Race__c, //SSN__c,
@@ -1038,7 +1038,7 @@ public class personRecord {
 		year =  String.valueOf(pbr.Age_year__c);
         month =  String.valueOf(pbr.Age_month__c);
         days =  String.valueOf(pbr.Age_days__c);
-        age = Utility.getAge(year,month,days);
+        age = pbr.Age_text__c;
     }
 
 
