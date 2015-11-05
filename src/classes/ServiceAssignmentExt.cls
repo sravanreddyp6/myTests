@@ -495,7 +495,7 @@ public without sharing class ServiceAssignmentExt {
     // END:  Parent level properties with get/set methods.
 
 
-    public String age {set;get{ return theServAssign.Person_Being_Served__r.Age_text__c; }}
+        public String age {set;get{ return Utility.getAge(theServAssign.Person_Being_Served__r.Age_year__c,theServAssign.Person_Being_Served__r.Age_month__c,theServAssign.Person_Being_Served__r.Age_days__c); }}
     
     public String getSaStrStartDateTime(){
         String strstartDt = '';

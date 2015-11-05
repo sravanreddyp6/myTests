@@ -592,7 +592,7 @@ public with sharing class referral_Controller2 {
 			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
 				'The Person Being Served record id specified is invalid. ' + e.getMessage()));
 		}
-	this.age = 	pBSRec.Age_text__c;
+		this.age = 	Utility.getAge(pBSRec.Age_year__c,pBSRec.Age_month__c,pBSRec.Age_days__c);
 		return pBSRec;
 	}
 	
