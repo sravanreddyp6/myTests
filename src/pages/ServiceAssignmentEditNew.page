@@ -3521,7 +3521,7 @@ END: Uncomment to have the element collapsed by default -->
                         j$('input[id$=currentProgramID]').val(result.ProgramID__c);
                         j$('input[id$=currentProgramID]').change();
                         var setting = result.Setting__c;
-                        if(setting == 'Non-Residential'){
+                        if(setting.toUpperCase() == 'NON-RESIDENTIAL'){
                             j$('[id$=lblchildperm]').hide();
                             j$('[id$=childPermGoalStart]').hide();
                             j$('[id$=permanencyGoalPanel]').hide(); 
