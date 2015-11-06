@@ -65,6 +65,27 @@
         <visibleLines>4</visibleLines>
     </fields>
     <fields>
+        <fullName>Age_In_Days__c</fullName>
+        <externalId>false</externalId>
+        <formula>CASE( 1,
+    IF( (YEAR(TODAY())- Year(Date_of_Birth__c)) ==1,1,100),&quot;1 Year&quot;,
+    IF( (YEAR(TODAY())- Year(Date_of_Birth__c)) &gt; 1,1,200), TEXT(YEAR(TODAY()) - Year(Date_of_Birth__c)) + &quot; Years&quot; ,
+IF(YEAR(TODAY()) -Year(Date_of_Birth__c)==0 &amp;&amp; DAY(Date_of_Birth__c) - DAY(TODAY())&lt;=0 &amp;&amp; MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1 ,1,300 ) , &quot;1 Month&quot;,
+
+IF(YEAR(TODAY()) -Year(Date_of_Birth__c)==0 &amp;&amp; MONTH(TODAY()) - MONTH(Date_of_Birth__c)&gt;1,1,400), TEXT(MONTH(TODAY()) - MONTH(Date_of_Birth__c)) +&quot; Months&quot;,
+IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Date_of_Birth__c)==0 || MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1) &amp;&amp; (DAY(TODAY() -DAY(Date_of_Birth__c) )==1),1,500), &quot;1 Day&quot;,
+
+IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Date_of_Birth__c)==0 || MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1) &amp;&amp; (DAY(TODAY() -DAY(Date_of_Birth__c) )&gt;1),1,600), TEXT( DAY(TODAY() -DAY(Date_of_Birth__c) ))+&quot; Days&quot;,
+&quot;0&quot;
+  )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Age_In_Days</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Age__c</fullName>
         <description>Age (will be overwritten by a trigger if Date of Birth is filled in)</description>
         <externalId>false</externalId>
@@ -76,6 +97,194 @@
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Age_days__c</fullName>
+        <externalId>false</externalId>
+        <label>Age_days</label>
+        <picklist>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>5</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>6</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>7</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>8</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>9</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>10</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>11</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>12</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>13</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>14</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>15</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>16</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>17</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>18</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>19</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>20</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>21</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>22</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>23</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>24</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>25</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>26</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>27</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>28</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>29</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>30</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>31</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Age_month__c</fullName>
+        <externalId>false</externalId>
+        <label>Age_month</label>
+        <picklist>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>5</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>6</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>7</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>8</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>9</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>10</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>11</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Age_text__c</fullName>
@@ -96,6 +305,18 @@ IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONT
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Age_year__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>If Date of Birth is filled in, then Age is overwritten with the calculated value.</inlineHelpText>
+        <label>Age_year</label>
+        <precision>2</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -1097,6 +1318,17 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <externalId>false</externalId>
         <label>Zip Code</label>
         <length>10</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>age123__c</fullName>
+        <externalId>false</externalId>
+        <formula>TEXT(DAY(TODAY() -DAY(Date_of_Birth__c) ) )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>age123</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
