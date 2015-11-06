@@ -2579,16 +2579,12 @@
                <apex:pageBlockTable value="{!diagnoses}" var="dg"  >
                    	<apex:column value="{!dg.ICD__c}" headerValue="ICD Code"/>
 					<apex:column value="{!dg.Effective_Date__c}" headerValue="Date and Time of Diagnosis"/>
-                    <!--<apex:column value="{!dg.ICD__r.Code_Type__c}" headerValue="Code Type"/>
-                    <apex:column value="{!dg.ICD__r.Icd_Description__c}" headerValue="Icd Description"/> -->
+            		<apex:column value="{!dg.ICD__r.Code_Type__c}" headerValue="Code Type"/>
+                    <apex:column value="{!dg.ICD__r.Icd_Description__c}" headerValue="Icd Description"/>
                     <apex:column value="{!dg.Status__c}" headerValue="Status" />
                     <!--<apex:column value="{!dg.Type__c}" headerValue="Type" />-->
                 </apex:pageBlockTable>
                 <apex:outputText value="No diagnoses to display" rendered="{!diagnoses.size == 0}" />
-<!--                <apex:outputpanel style="display:none" /> -->
-<!--                     <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagEffDate" /> -->
-<!--                     <apex:inputHidden value="{!diag.Status__c}" id="diagStatus" /> -->
-<!--                 </apex:outputpanel> -->
             </apex:pageBlockSection>
 
             <!--- end -->
