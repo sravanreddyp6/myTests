@@ -21,7 +21,7 @@
         .breadcrumb, .breadcrumb a, .breadcrumb a.visited { color: #781d7d; text-decoration: none; font-size: 9pt; }
         .breadcrumb a:hover { text-decoration: underline }
         .stickBlueCard { position:fixed !important; top:0px; width:100%; z-index:100; left:0;}
-#pbsCard-serviceLinks a, #pbsCard-serviceLinks a.visited { font-size: 10pt;
+#pbsCard-serviceLinks a, #pbsCard-serviceLinks a.visited { font-size: 9pt;
 text-decoration: underline;
     color: #7bc145 !important;
     white-space: nowrap;
@@ -29,4 +29,4 @@ text-decoration: underline;
 .lta-row label{font-size: 11pt !important;}
 .lta-row {font-size: 11pt !important;}
 #pbsCard-serviceLinks label{color: #017dc3;}
-#breadcrumb{padding: 2px 2px 10px; font-weight: bold;}
+#breadcrumb{padding: 3px 2px 10px; font-weight: bold;}
