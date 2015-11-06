@@ -1,18 +1,20 @@
 public with sharing class IowaDailyDataSummary {
-    transient public date serviceDate {get; set;}
-    transient public Id sAId {get; set;}
+    public date serviceDate {get; set;}
+    public Id sAId {get; set;}
 
-    transient public Service_Assignment__c pbsObj {get; set;}  
+    public Service_Assignment__c pbsObj {get; set;}  
 
-    transient public list<TimeLog> timelogs {get;set;}
+    public list<TimeLog> timelogs {get;set;}
     
-    transient public list<Action_Plan_Objective__c> skillObjectiveList {get;set;}
-    transient public list<Action_Plan_Objective__c> behaviorObjectiveList {get;set;}
-    transient public map<Id, list<Action_Skill_Result__c>> objectiveToSkillResultMap {get;set;}
-    transient public map<Id, list<Action_Behavior_Result__c>> objectiveToBehaviorResultMap {get;set;}
-    transient public map<id, list<BehaviorResultWrapper>> objectiveToBehaviorResultWrapperMap {get;set;}
+    public list<Action_Plan_Objective__c> skillObjectiveList {get;set;}
+    public list<Action_Plan_Objective__c> behaviorObjectiveList {get;set;}
+    public map<Id, list<Action_Skill_Result__c>> objectiveToSkillResultMap {get;set;}
+    public map<Id, list<Action_Behavior_Result__c>> objectiveToBehaviorResultMap {get;set;}
+    public map<id, list<BehaviorResultWrapper>> objectiveToBehaviorResultWrapperMap {get;set;}
 
-    transient public list<Progress_Note__c> notes {get;set;}
+    public list<Progress_Note__c> notes {get;set;}
+    public Boolean eSignComplete {get; set;}
+    
     
     public without sharing class NoSharingRecord {
         public NoSharingRecord(){}
@@ -22,9 +24,11 @@ public with sharing class IowaDailyDataSummary {
     }
     public String title {get {return (new NoSharingRecord()).getTmnAccess().Professional_Title__c ;} }
     
-    transient public list<TimeStamp> timeStamps {get;set;}
+    public list<TimeStamp> timeStamps {get;set;}
     
     public IowaDailyDataSummary(){
+    	eSignComplete = false;
+    	
         timelogs = new list<Timelog>();
         timeStamps = new list<TimeStamp>();
         timeStamps.add(new TimeStamp(Time.newInstance(8, 0, 0, 0)));
@@ -118,6 +122,17 @@ public with sharing class IowaDailyDataSummary {
                    AND Disregard_Note__c = false order by Start_Time__c, End_time__c];
     }
     
+    public PageReference prepareForPDF(){
+    	return null;
+    }
+    
+    public PageReference exportToPDF(){
+        PageReference pdf = Page.IowaDailyDataSummaryPDF;
+        String file = pbsObj.Person_Being_Served__r.FirstName + ' ' + pbsObj.Person_Being_Served__r.LastName + ' - ' + String.valueOf(serviceDate).replace('-','') +  '.pdf';
+        file = file.replaceAll('[|,||\\,||"||:|~|!|@|#|$|%|^|&|*|_|+|=|<|>|?|\\(|\\)|\\{|\\}|\\;|\\\'"]', ' ');
+        pdf.getHeaders().put('content-disposition', 'attachment; filename="'+file+'"');
+        return pdf;
+    }
     
     public class BehaviorResultWrapper {
         public Action_Behavior_Result__c result {get;set;}
