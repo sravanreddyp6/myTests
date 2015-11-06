@@ -1697,7 +1697,7 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!jo.Billable__c}" />
                     <apex:column value="{!jo.ABI_Diagnosis__c}" />
                     <apex:column value="{!jo.Injury_Type__c}" rendered="{!isNR || vfVarIsCM}"/>
-                    <apex:column value="{!jo.Injury_type_Other__c}" rendered="{!isNR || vfVarIsCM}" />
+                    <apex:column value="{!jo.Injury_Type_Other__c}" rendered="{!isNR || vfVarIsCM}" />
                     <apex:column value="{!jo.Date_of_Injury__c}" />
                     <apex:column value="{!jo.Glasgow_Coma_Score_at_Injury__c}" rendered="{!isNR}" />
                     <apex:column value="{!jo.Glasgow_Coma_Scale_Severity__c}" rendered="{!isNR}" />
@@ -3580,7 +3580,7 @@ END: Uncomment to have the element collapsed by default -->
             var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
             var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
             var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
-            var injTypeOther = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
+            var injTypeOther = j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').val();
             var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
             
             if (diagId == '--None--') {
@@ -3653,18 +3653,25 @@ END: Uncomment to have the element collapsed by default -->
                 var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
                 var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
-                var injTypeOther = j$('select[id$=sadiagJoEntry_sadiagJoInjOther]').val();
+                var injTypeOther = j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').val();
                 var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
-              
+                
                  if(diagId != ''){
                     Visualforce.remoting.Manager.invokeAction(
 	                '{!$RemoteAction.ServiceAssignmentExt.savesadiagJORemote}',
 	                	diagSAJOId, diagId, saID, ABI, Billable, injuryDate,glasgowInjury,glasgowSeverity,injType,injTypeOther,rank,
                         function(result, event) {
-                            savesadiagJo();
-                            if (isDialogClose) {
-                                closeModalDialogSA('saDiagModal', 'span');
-                            }
+                        	if(event.status){
+                        		savesadiagJo();
+                        		if(isDialogClose) {
+                                	closeModalDialogSA('saDiagModal', 'span');
+                            	}
+                        	}else if (event.type === 'exception') {
+	                        	document.getElementById("sadiagJoErrors").innerHTML = event.message;
+	                        }else {
+	                        	document.getElementById("sadiagJoErrors").innerHTML = event.message;
+	                    	}
+                            
                         }, {
                             escape: true
                         }
