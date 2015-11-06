@@ -439,7 +439,7 @@
         <!-- Sa Diag Junction -->
         <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" onComplete="setUpFields(); return false;" />
         <apex:actionFunction name="showAddsadiagJo" action="{!showAddsadiagJo}" rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); return false;"/>
-        <apex:actionFunction name="showEditsadiagJo" action="{!showEditsadiagJo}"  rerender="sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); return false;" > 
+        <apex:actionFunction name="showEditsadiagJo" action="{!showEditsadiagJo}"  rerender="sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); setInjuryDate(); return false;" > 
         	<apex:param name="sadiagJoId" value="" />
         </apex:actionFunction>
          <!-- Sa Diag Junction End-->
@@ -3115,7 +3115,8 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:pageBlockSectionItem>
 <!--                         <apex:inputField value="{!sadiagJO.Status__c}" id="sadiagJoEntry_sadiagJoStatus"/>                    -->
                         <apex:inputField value="{!sadiagJO.Ranking__c}" id="sadiagJoEntry_sadiagJoRanking" html-data-visibility-rules="{&quot;Primary&quot;: [&quot;{!$Component.sadiagJoEntry_sadiagJoInjuryScore}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoInjurySeverity}&quot;,
-                        		&quot;{!$Component.injurytypeItem.sadiagJoEntry_sadiagJoInjuryType}&quot;, &quot;{!$Component.injtypeOtherItem.sadiagJoEntry_sadiagJoInjOther}&quot;, &quot;{!$Component.injurytypeItem.sadiagJoEntry_sadiagJoInjuryTypeLabel}&quot;, &quot;{!$Component.injtypeOtherItem.sadiagJoEntry_sadiagJoInjOtherLabel}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoAbiDiagnosis}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoAbiDiagnosis}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoInjuryDate}&quot;]}"
+                        		&quot;{!$Component.injurytypeItem.sadiagJoEntry_sadiagJoInjuryType}&quot;, &quot;{!$Component.injtypeOtherItem.sadiagJoEntry_sadiagJoInjOther}&quot;, &quot;{!$Component.injurytypeItem.sadiagJoEntry_sadiagJoInjuryTypeLabel}&quot;, &quot;{!$Component.injtypeOtherItem.sadiagJoEntry_sadiagJoInjOtherLabel}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoAbiDiagnosis}&quot;, 
+                        			&quot;{!$Component.injDateItem.sadiagJoEntry_sadiagJoInjuryDate}&quot;, &quot;{!$Component.injDateItem.sadiagJoEntry_sadiagJoInjuryDateLabel}&quot;]}"
 								html-data-visibility-row-rules="true" />
 						<apex:inputField value="{!sadiagJO.Billable__c}" id="sadiagJoEntry_sadiagJoBillable"/>
 						<apex:pageBlockSectionItem id="injurytypeItem">
@@ -3127,9 +3128,12 @@ END: Uncomment to have the element collapsed by default -->
                         	<apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}"/>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis"/>
-                        <apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
+                        <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis" onchange="setInjuryDate(); return false;"/>
                         
+                        <apex:pageBlockSectionItem id="injDateItem" >
+                        	<apex:outputLabel value="Injury Date" id="sadiagJoEntry_sadiagJoInjuryDateLabel"/>
+                        	<apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                         	<apex:outputLabel value="Glasgow Coma Score at Injury" Style="{!IF(isNR,'','display:none;')}"/>
                         	<apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore" onchange="setGlasgowSeverity(); return false;" Style="{!IF(isNR,'','display:none;')}"/>
@@ -3728,6 +3732,18 @@ END: Uncomment to have the element collapsed by default -->
         		j$('[id$=sadiagJoEntry_sadiagJoInjOtherLabel]').hide();
         		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').hide();
         		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').val('');
+        	}
+        }
+        
+        setInjuryDate = function(){
+        	var ABI = j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').is(':checked');
+        	if(!ABI && {!vfVarIsCB || vfVarIsRW}){
+        		j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').hide();
+        		j$('[id$=sadiagJoEntry_sadiagJoInjuryDateLabel]').hide();
+        		j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val('');
+        	}else{
+        		j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').show();
+        		j$('[id$=sadiagJoEntry_sadiagJoInjuryDateLabel]').show();
         	}
         }
 
