@@ -1,0 +1,52 @@
+<!-- used to create a print friendly view of the contract -->
+<apex:page standardController="TMN_Contract__c" renderAs="pdf">
+<head>
+<apex:stylesheet value="{!$Resource.ContractCss}"/>
+<style>
+    .detC1{
+        border: none;
+        font-size: 10pt;
+        
+    }
+    .detC3{
+        border: none;
+        
+    } 
+    .detC2{
+        color: #335f33;
+        font-size: 12pt;
+    } 
+    .labelCol{
+        color: #4c4c4c;
+        font-weight: bold;
+        width: 200px;
+        padding-right: 5px;
+        text-align: right;
+        font-size: 11pt;
+        border-bottom: 1px solid #e7e8e7;
+    }   
+    .data2Col{
+        border-bottom: 1px solid #e7e8e7;
+        width: 500px;
+    } 
+    .head{
+        font-size: 12pt;
+    } 
+    .r2{
+        background-color: #f1f1f1;
+    }  
+</style>
+</head>
+
+<!--Details -->
+<apex:include pageName="incContractDetails"/>
+
+        
+<!--Critical Indicators-->         
+<apex:include pageName="incContractCritInd"/>
+
+            
+           
+     
+     
+</apex:page>

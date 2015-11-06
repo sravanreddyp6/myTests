@@ -1,0 +1,118 @@
+<apex:page controller="AuthorizationListViewController" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true" readOnly="True" >
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    
+    <c:PersonalRecord pbsId="{!SA.admission__r.Person_Being_Served__c}" servAssignId="{!SA.Id}" admId="{!SA.Admission__c}" parentPage="AuthorizationListView" />
+
+    <apex:form >
+        <apex:pageMessages id="errors" />
+        
+        <apex:pageBlock id="theBlock">
+            <apex:pageBlockSection columns="1" id="theSection">
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!auths}" var="auth"  id="authsT" styleClass="dataTable">
+                
+                	<apex:column headervalue="Action">
+                   	<a href="/apex/AuthorizationView?id={!auth.ID}&saID={!SA.ID}&retURL={!URLENCODE($CurrentPage.URL)}">View</a>
+					<apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Final' && auth.Authorization_Status__c != 'Disregard'}" >
+						&nbsp;|&nbsp;<a href="/apex/AuthorizationEdit?id={!auth.Id}&saID={!SA.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+					</apex:outputPanel>
+					</apex:column>
+					<apex:column>
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Contract Used" action="{!toggleSort}"  reRender="authsT,errors" status="authsortStatus" >
+                                <apex:param name="sortField" value="contract_used__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!auth.contract_used__c}" />
+                    </apex:column>
+					
+					<apex:column>
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Authorization Number" action="{!toggleSort}"  reRender="authsT,errors" status="authsortStatus" >
+                                <apex:param name="sortField" value="Payer_Authorization_ID__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!auth.Payer_Authorization_ID__c}" />
+                    </apex:column>
+					<apex:column>
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Status" action="{!toggleSort}"  reRender="authsT,errors" status="authsortStatus" >
+                                <apex:param name="sortField" value="authorization_status__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!auth.authorization_status__c}" />
+                    </apex:column>
+					<apex:column>
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Type" action="{!toggleSort}"  reRender="authsT,errors" status="authsortStatus" >
+                                <apex:param name="sortField" value="type__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!auth.type__c}" />
+                    </apex:column>
+					<apex:column>
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Item/Service" action="{!toggleSort}"  reRender="authsT,errors" status="authsortStatus" >
+                                <apex:param name="sortField" value="service_being_funded_string__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!auth.service_being_funded_string__c}" />
+                    </apex:column>
+					<apex:column>
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Received" action="{!toggleSort}"  reRender="authsT,errors" status="authsortStatus" >
+                                <apex:param name="sortField" value="received_date_time__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+						<c:MilitaryDatetime datetimeval="{!auth.Received_Date_Time__c}" />
+                    </apex:column>
+					
+                    <apex:column>
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Start Date" action="{!toggleSort}"  reRender="authsT,errors" status="authsortStatus" >
+                                <apex:param name="sortField" value="Payer_Effective_Date__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!auth.Payer_effective_Date__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="End Date" action="{!toggleSort}"  reRender="authsT,errors" status="authsortStatus" >
+                                <apex:param name="sortField" value="Payer_End_Date__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!auth.payer_end_date__c}" />
+                    </apex:column>
+   
+                    
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+        <apex:actionStatus id="authsortStatus" >
+            <apex:facet name="start">  
+                    <style>
+                    .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+                .foggy{
+                    opacity:0.8;
+                    background-color:#ccc;
+                    position:fixed;
+                    width:100%;
+                    height:100%;
+                    top:0px;
+                    left:0px;
+                    z-index:1000;
+                }  
+                </style>
+        
+                <div class="foggy" />        
+                <div class="thinkingwheel" >    
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                </div> 
+            </apex:facet>  
+            <apex:facet name="stop"> </apex:facet>         
+        </apex:actionStatus>    
+</apex:page>
