@@ -1696,10 +1696,11 @@ END: Uncomment to have the element collapsed by default -->
                     <apex:column value="{!jo.Ranking__c}" />
                     <apex:column value="{!jo.Billable__c}" />
                     <apex:column value="{!jo.ABI_Diagnosis__c}" />
-                    <apex:column value="{!jo.Injury_Type__c}" />
+                    <apex:column value="{!jo.Injury_Type__c}" rendered="{!isNR || vfVarIsCM}"/>
+                    <apex:column value="{!jo.Injury_type_Other__c}" rendered="{!isNR || vfVarIsCM}" />
                     <apex:column value="{!jo.Date_of_Injury__c}" />
-                    <apex:column value="{!jo.Glasgow_Coma_Score_at_Injury__c}" />
-                    <apex:column value="{!jo.Glasgow_Coma_Scale_Severity__c}" />
+                    <apex:column value="{!jo.Glasgow_Coma_Score_at_Injury__c}" rendered="{!isNR}" />
+                    <apex:column value="{!jo.Glasgow_Coma_Scale_Severity__c}" rendered="{!isNR}" />
                 </apex:pageblockTable>
 <!--                 <apex:inputHidden value="{!hasPrimaryDiagJo}" /> -->
 <!--                 <apex:inputHidden value="{!primaryDiagJoId}" /> -->
@@ -3102,10 +3103,7 @@ END: Uncomment to have the element collapsed by default -->
                          <apex:commandButton value="Save & New" onClick="validatesadiagJo(false);return false;" />
                          <apex:commandButton value="Cancel" onClick="closeModalDialogSA('saDiagModal', 'span'); j$('#sadiagJoErrors').html('');return false;" />
                      </apex:pageblockButtons>
-    <!--                 <apex:facet name="header"> -->
-    <!--                   <p><strong>Link diagnosis to Service Assigmnment below:</strong> -->
-    <!--                   </p> -->
-    <!--               </apex:facet> -->
+                     
                    <div id='sadiagJoErrors' style='color:red'></div>
                 
                     <apex:pageBlockSection Columns="1" id="sadiagJoEntry" >
@@ -3117,15 +3115,30 @@ END: Uncomment to have the element collapsed by default -->
                         </apex:pageBlockSectionItem>
 <!--                         <apex:inputField value="{!sadiagJO.Status__c}" id="sadiagJoEntry_sadiagJoStatus"/>                    -->
                         <apex:inputField value="{!sadiagJO.Ranking__c}" id="sadiagJoEntry_sadiagJoRanking" html-data-visibility-rules="{&quot;Primary&quot;: [&quot;{!$Component.sadiagJoEntry_sadiagJoInjuryScore}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoInjurySeverity}&quot;,
-                        		&quot;{!$Component.sadiagJoEntry_sadiagJoInjuryType}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoAbiDiagnosis}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoAbiDiagnosis}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoInjuryDate}&quot;]}"
+                        		&quot;{!$Component.injurytypeItem.sadiagJoEntry_sadiagJoInjuryType}&quot;, &quot;{!$Component.injtypeOtherItem.sadiagJoEntry_sadiagJoInjOther}&quot;, &quot;{!$Component.injurytypeItem.sadiagJoEntry_sadiagJoInjuryTypeLabel}&quot;, &quot;{!$Component.injtypeOtherItem.sadiagJoEntry_sadiagJoInjOtherLabel}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoAbiDiagnosis}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoAbiDiagnosis}&quot;, &quot;{!$Component.sadiagJoEntry_sadiagJoInjuryDate}&quot;]}"
 								html-data-visibility-row-rules="true" />
 						<apex:inputField value="{!sadiagJO.Billable__c}" id="sadiagJoEntry_sadiagJoBillable"/>
-                        <apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoEntry_sadiagJoInjuryType" onchange="setABIDiagnosis(); return false;"/>
-<!--                         <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" label="Specify Other"/> -->
-                        <apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
+						<apex:pageBlockSectionItem id="injurytypeItem">
+							<apex:outputLabel Value="Injury Type"  Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjuryTypeLabel"/>
+                        	<apex:inputField value="{!sadiagJO.Injury_Type__c}" id="sadiagJoEntry_sadiagJoInjuryType" onchange="setABIDiagnosis(); return false;" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem id="injtypeOtherItem">
+                        	<apex:outputLabel value="Specify Other" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}" id="sadiagJoEntry_sadiagJoInjOtherLabel"/>
+                        	<apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" Style="{!IF((isNR || vfVarIsCM),'','display:none;')}"/>
+                        </apex:pageBlockSectionItem>
+                        
                         <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis"/>
-                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore" onchange="setGlasgowSeverity(); return false;" Style="{!IF(isNR,'','display:none;')}" />
-                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoEntry_sadiagJoInjurySeverity"  Style="{!IF(isNR,'','display:none;')}" />
+                        <apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
+                        
+                        <apex:pageBlockSectionItem >
+                        	<apex:outputLabel value="Glasgow Coma Score at Injury" Style="{!IF(isNR,'','display:none;')}"/>
+                        	<apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore" onchange="setGlasgowSeverity(); return false;" Style="{!IF(isNR,'','display:none;')}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                        	<apex:outputLabel value="Glasgow Coma Scale Severity" Style="{!IF(isNR,'','display:none;')}"/>
+                        	<apex:inputField value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoEntry_sadiagJoInjurySeverity" Style="{!IF(isNR,'','display:none;')}" />
+                        </apex:pageBlockSectionItem>
+                        
                         <apex:inputHidden value="{!sadiagJO.Id}" id="sadiagJoEntry_sadiagJOId" />
 <!--                         <apex:inputHidden value="{!hasPrimaryDiagJo}" /> -->
 <!--                 		<apex:inputHidden value="{!primaryDiagJoId}" /> -->
@@ -3554,23 +3567,37 @@ END: Uncomment to have the element collapsed by default -->
             var errors = '';
             j$('#sadiagJoErrors').html(errors);
             
-            var ranking = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
             var diagSAJOId = j$('input[id$=sadiagJoEntry_sadiagJOId]').val();
+            var diagId = j$('select[id$=pbsdiagSelectList]').val();
             var saID = '{!Service_Assignment__c.Id}';
-            var diagnosisId = j$('select[id$=pbsdiagSelectList]').val();
+            var ABI = j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').is(':checked');
+            var Billable = j$('input[id$=sadiagJoEntry_sadiagJoBillable]').is(':checked');
+            var injuryDate = j$('input[id$=sadiagJoEntry_sadiagJoInjuryDate]').val();
+            var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
+            var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
+            var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
+            var injTypeOther = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
+            var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
             
-            if (j$('select[id$=pbsdiagSelectList]').val() == '--None--') {
+            if (diagId == '--None--') {
                errors += '<li>Diagnosis is a required field.</li>';
             }
-            if (ranking == '') {
+            if (rank == '') {
                 errors += '<li>Ranking is a required field.</li>';
             }
-            if(ranking == 'Primary' && j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val() == '' && {!isNR}){
+            if(rank == 'Primary' && glasgowInjury == '' && {!isNR}){
             	errors += '<li>Glasgow Coma Score at Injury is a required field.</li>';
             }
-            /*if(errors == '' &&  ranking != 'Primary'){
-          		sadiagJoSave(isDialogClose);
-          	}*/
+            if(rank == 'Primary' && glasgowSeverity == '' && {!isNR}){
+            	errors += '<li>Glasgow Coma Scale Severity is a required field.</li>';
+            }
+            if(injType.indexOf('Other') > -1 && injTypeOther == ''){
+            	errors += '<li>Please specify other.</li>';
+            }
+            if(rank == 'Primary' && injuryDate == '' && {!isNR || vfVarIsCM}){
+            	errors += '<li>Injury Date is a required field.</li>';
+            }
+            
            	if(errors !=  '' ){
            		 j$('#sadiagJoErrors').html(errors);
            		 return (errors == '');
@@ -3581,7 +3608,7 @@ END: Uncomment to have the element collapsed by default -->
 	                '{!$RemoteAction.ServiceAssignmentExt.checkErrors}',
 	                saID,
 	                diagSAJOId,
-	                diagnosisId,
+	                diagId,
 	                function(result, event){
 	                    if (event.status) {
 	                            if(result == 'dupe diagnosis'){
@@ -3589,12 +3616,12 @@ END: Uncomment to have the element collapsed by default -->
 	                                j$('#sadiagJoErrors').html(errors);
 	                                return (errors == '');
 	                            }
-	                            else if(result == 'primary error' && ranking == 'Primary'){
+	                            else if(result == 'primary error' && rank == 'Primary'){
 	                            	errors += '<li>Primary Diagnosis already exist for this Service Assignment</li>';
 	                                j$('#sadiagJoErrors').html(errors);
 	                                return (errors == '');
 	                            }
-	                            else if(result == 'no error'){
+	                            else{
 	                            	sadiagJoSave(isDialogClose);
 	                            }
 	                    } else if (event.type === 'exception') {
@@ -3619,13 +3646,13 @@ END: Uncomment to have the element collapsed by default -->
                 var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
                 var glasgowSeverity = j$('select[id$=sadiagJoEntry_sadiagJoInjurySeverity]').val();
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
-               // var injTypeOther = j$('select[id$=sadiagJoEntry_sadiagJoInjOther]').val();
+                var injTypeOther = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
                 var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
               
                  if(diagId != ''){
                     Visualforce.remoting.Manager.invokeAction(
 	                '{!$RemoteAction.ServiceAssignmentExt.savesadiagJORemote}',
-	                	diagSAJOId, diagId, saID, ABI, Billable, injuryDate,glasgowInjury,glasgowSeverity,injType,rank,
+	                	diagSAJOId, diagId, saID, ABI, Billable, injuryDate,glasgowInjury,glasgowSeverity,injType,injTypeOther,rank,
                         function(result, event) {
                             savesadiagJo();
                             if (isDialogClose) {
@@ -3692,6 +3719,15 @@ END: Uncomment to have the element collapsed by default -->
         	}else{
         		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', false);
         		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('disabled', false);
+        	}
+        	
+        	if(injType.indexOf('Other') > -1){
+        		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').show();
+        		j$('[id$=sadiagJoEntry_sadiagJoInjOtherLabel]').show();
+        	}else{
+        		j$('[id$=sadiagJoEntry_sadiagJoInjOtherLabel]').hide();
+        		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').hide();
+        		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').val('');
         	}
         }
 
