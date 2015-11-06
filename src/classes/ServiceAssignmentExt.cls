@@ -376,17 +376,6 @@ public without sharing class ServiceAssignmentExt {
         this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, Diagnosis__r.ICD__r.Icd_Description__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Injury_type_other__c, Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c 
                  where Service_Assignment__c = : this.theServAssign.Id];
-       /* for(ServiceAssignment_Diagnosis_JO__c jo: this.sadiagJOList){
-        	if(jo.Ranking__c == 'Primary'){
-        		hasPrimaryDiagJo = true;
-        		primaryDiagJoId = jo.Id;
-        		break;
-        	}
-        }
-        
-        if(!hasPrimaryDiagJo){
-    		primaryDiagJoId = null;
-    	}*/
       }
     catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
@@ -398,8 +387,12 @@ public without sharing class ServiceAssignmentExt {
   		populatesadiagJO();
   		this.sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
   		this.selectedDiagnosis = '--None--';
-  		
-  	
+  }
+  public void showEditsadiagJo() {
+  		string sadiagJOId = ApexPages.CurrentPage().getParameters().get('sadiagJOId');
+  		this.sadiagJO = [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c,Ranking__c
+                 from ServiceAssignment_Diagnosis_JO__c where id = :sadiagJOId];
+  		this.selectedDiagnosis = sadiagJO.Diagnosis__c;
   }
   
   public void savesadiagJo() {
@@ -2489,21 +2482,35 @@ public without sharing class ServiceAssignmentExt {
     }
     
     @RemoteAction
-    public static boolean findPrimarysaDiagJo(string SAId, string diagSAJOId){
+    public static string checkErrors(string SAId, string diagSAJOId, string diagnosisId){
+    	List<ServiceAssignment_Diagnosis_JO__c> primary;
+    	List<ServiceAssignment_Diagnosis_JO__c> dupeDiagnosis;
     	
-    	List<ServiceAssignment_Diagnosis_JO__c> dg = new List<ServiceAssignment_Diagnosis_JO__c>();
     	if(diagSAJOId != null){
-    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID != :diagSAJOId AND Service_Assignment__c = :SAId AND Ranking__c = 'Primary' LIMIT 1];
+    		dupeDiagnosis = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Diagnosis__c = :diagnosisId LIMIT 1];
     	}else{
-    		dg  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Ranking__c = 'Primary' LIMIT 1];
+    		dupeDiagnosis = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID!= :diagSAJOId AND Service_Assignment__c = :SAId AND Diagnosis__c = :diagnosisId LIMIT 1];
     	}
-    	 
-    	if(dg.size() > 0){
-    		return true;
-    	}else{
-    		return false;
+    	
+    	if(dupeDiagnosis.size() > 0){
+    		return 'dupe diagnosis';	
     	}
+    	
+    	else{
+    		if(diagSAJOId != null){
+    			primary  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID != :diagSAJOId AND Service_Assignment__c = :SAId AND Ranking__c = 'Primary' LIMIT 1];
+	    	}else{
+	    		primary  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Ranking__c = 'Primary' LIMIT 1];
+	    	}
+	    	
+	    	if(primary.size() > 0){
+	    		return 'primary error';
+	    	}
+    	}
+    	
+    	return 'no error';
     	
     }
+    
 
 }
