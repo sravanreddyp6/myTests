@@ -437,10 +437,13 @@
 <!--         <apex:actionFunction name="refreshDiagnoses" action="{!refreshDiagnoses}" rerender="pbDiagnosis" /> -->
         
         <!-- Sa Diag Junction -->
-        <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs"  />
+        <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" onComplete="setUpFields(); return false;" />
         <apex:actionFunction name="showAddsadiagJo" action="{!showAddsadiagJo}" rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); return false;"/>
-         <!-- end seizure actions-->
-        
+        <apex:actionFunction name="showEditsadiagJo" action="{!showEditsadiagJo}"  rerender="sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); return false;" > 
+        	<apex:param name="sadiagJoId" value="" />
+        </apex:actionFunction>
+         <!-- Sa Diag Junction End-->
+         
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" immediate="true" rerender="serviceLocationEntry,locationDisplay, msgs" oncomplete="openDialog('serviceLocationModal', 'span', 'Add/Edit Location'); " />
         <apex:actionFunction name="setEffectiveDate" action="{!setEffectiveDate}" rerender="ProgAssocViewNEW, ProgAssoc,ProgramSelect,ServCodeSelect" immediate="true">
             <apex:param name="effstart" value="" assignTo="{!effDate}" />
@@ -1686,7 +1689,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
              <apex:pageBlockSection title="Diagnosis" columns="1" collapsible="true" id="_sadiagJoSection_Alt1_Header">
                 <apex:pageblockTable value="{!sadiagJOList}" var="jo" rendered="{!sadiagJOList != null && (sadiagJOList.size>0)}"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-                    <apex:column headerValue="Action"><a href="#Diag" onclick="loadsadiagJo('{!jo.id}'); return false;">Edit</a>
+                    <apex:column headerValue="Action"><a href="#Diag" onclick="showEditsadiagJo('{!jo.id}'); return false;">Edit</a>
                     </apex:column>
                     <apex:column value="{!jo.Diagnosis__r.ICD__r.Icd_Description__c}" headerValue="Diagnosis"/>
 <!--                     <apex:column value="{!jo.Status__c}" /> -->
@@ -3121,8 +3124,8 @@ END: Uncomment to have the element collapsed by default -->
 <!--                         <apex:inputField value="{!sadiagJO.Injury_Type_Other__c}" id="sadiagJoEntry_sadiagJoInjOther" label="Specify Other"/> -->
                         <apex:inputField value="{!sadiagJO.Date_of_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryDate"/>
                         <apex:inputField value="{!sadiagJO.ABI_Diagnosis__c}" id="sadiagJoEntry_sadiagJoAbiDiagnosis"/>
-                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore" onchange="setGlasgowSeverity(); return false;" rendered="{!isNR}" />
-                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoEntry_sadiagJoInjurySeverity" rendered="{!isNR}" />
+                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Score_at_Injury__c}" id="sadiagJoEntry_sadiagJoInjuryScore" onchange="setGlasgowSeverity(); return false;" Style="{!IF(isNR,'','display:none;')}" />
+                        <apex:inputField value="{!sadiagJO.Glasgow_Coma_Scale_Severity__c}" id="sadiagJoEntry_sadiagJoInjurySeverity"  Style="{!IF(isNR,'','display:none;')}" />
                         <apex:inputHidden value="{!sadiagJO.Id}" id="sadiagJoEntry_sadiagJOId" />
 <!--                         <apex:inputHidden value="{!hasPrimaryDiagJo}" /> -->
 <!--                 		<apex:inputHidden value="{!primaryDiagJoId}" /> -->
@@ -3551,12 +3554,10 @@ END: Uncomment to have the element collapsed by default -->
             var errors = '';
             j$('#sadiagJoErrors').html(errors);
             
-           
-          
             var ranking = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
-        //    var status = j$('select[id$=sadiagJoEntry_sadiagJoStatus]').val();
             var diagSAJOId = j$('input[id$=sadiagJoEntry_sadiagJOId]').val();
             var saID = '{!Service_Assignment__c.Id}';
+            var diagnosisId = j$('select[id$=pbsdiagSelectList]').val();
             
             if (j$('select[id$=pbsdiagSelectList]').val() == '--None--') {
                errors += '<li>Diagnosis is a required field.</li>';
@@ -3564,29 +3565,36 @@ END: Uncomment to have the element collapsed by default -->
             if (ranking == '') {
                 errors += '<li>Ranking is a required field.</li>';
             }
-            if(ranking == 'Primary' && j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val() == ''){
+            if(ranking == 'Primary' && j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val() == '' && {!isNR}){
             	errors += '<li>Glasgow Coma Score at Injury is a required field.</li>';
             }
-            if(errors == '' &&  ranking != 'Primary'){
+            /*if(errors == '' &&  ranking != 'Primary'){
           		sadiagJoSave(isDialogClose);
-          	}
+          	}*/
            	if(errors !=  '' ){
            		 j$('#sadiagJoErrors').html(errors);
            		 return (errors == '');
            	} 
            	
-           if(errors == '' &&  ranking == 'Primary' ){
+           if(errors == ''){
            			Visualforce.remoting.Manager.invokeAction(
-	                '{!$RemoteAction.ServiceAssignmentExt.findPrimarysaDiagJo}',
+	                '{!$RemoteAction.ServiceAssignmentExt.checkErrors}',
 	                saID,
 	                diagSAJOId,
+	                diagnosisId,
 	                function(result, event){
 	                    if (event.status) {
-	                            if(result){
-	                                errors += '<li>Primary active already exist.</li>';
+	                            if(result == 'dupe diagnosis'){
+	                                errors += '<li>This diagnosis is already associated to this Service Assignment</li>';
 	                                j$('#sadiagJoErrors').html(errors);
 	                                return (errors == '');
-	                            }else{
+	                            }
+	                            else if(result == 'primary error' && ranking == 'Primary'){
+	                            	errors += '<li>Primary Diagnosis already exist for this Service Assignment</li>';
+	                                j$('#sadiagJoErrors').html(errors);
+	                                return (errors == '');
+	                            }
+	                            else if(result == 'no error'){
 	                            	sadiagJoSave(isDialogClose);
 	                            }
 	                    } else if (event.type === 'exception') {
@@ -3600,7 +3608,7 @@ END: Uncomment to have the element collapsed by default -->
           }
            
         }
-    
+        
          function sadiagJoSave(isDialogClose) {
                 var diagSAJOId = j$('input[id$=sadiagJoEntry_sadiagJOId]').val();
                 var diagId = j$('select[id$=pbsdiagSelectList]').val();
@@ -3613,7 +3621,6 @@ END: Uncomment to have the element collapsed by default -->
                 var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
                // var injTypeOther = j$('select[id$=sadiagJoEntry_sadiagJoInjOther]').val();
                 var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
-              //  var status = j$('select[id$=sadiagJoEntry_sadiagJoStatus]').val();
               
                  if(diagId != ''){
                     Visualforce.remoting.Manager.invokeAction(
@@ -3635,7 +3642,7 @@ END: Uncomment to have the element collapsed by default -->
         }
         
 
-        function loadsadiagJo(joId) {
+       /* function loadsadiagJo(joId) {
             ServiceAssignmentExt.loadsadiagJORemote(joId,
                 function(result, event) {
                     if (event.status) {
@@ -3662,7 +3669,7 @@ END: Uncomment to have the element collapsed by default -->
                     escape: true
                 }
             );
-        }
+        }*/
         
         setGlasgowSeverity = function(){
         	  var glasgowInjury = j$('select[id$=sadiagJoEntry_sadiagJoInjuryScore]').val();
@@ -3681,8 +3688,10 @@ END: Uncomment to have the element collapsed by default -->
         	var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
         	if(injType.indexOf('Acquired Brain Injury') > -1){
         		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', true);
+        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('disabled', true);
         	}else{
         		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', false);
+        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('disabled', false);
         	}
         }
 
