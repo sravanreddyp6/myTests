@@ -232,7 +232,7 @@
 					</apex:column>
                 	<apex:column headerValue="Current Documentation" rendered="{!canCreateProgressNotes}">
                     <!--  <apex:outputPanel rendered="{! canCreateProgressNotes}">
-                        <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View Note Log</a><br />
+                        <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View all Notes Log</a><br />
 					</apex:outputPanel>-->
 					<apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
@@ -252,7 +252,7 @@
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-						 <!-- <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}&admission={!serviceAssignment.Admission__c}&pbsID={!serviceAssignment.Person_Being_Served__c}" itemLabel="View SA Note Log" rendered="{!canCreateProgressNotes}" />  -->
+						<apex:selectOption itemValue="/apex/Progress_Notes_Log?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}" itemLabel="View All Notes Log" rendered="{!canCreateProgressNotes}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
