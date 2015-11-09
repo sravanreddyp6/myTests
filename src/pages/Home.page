@@ -5,6 +5,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
+	<apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="vfVarIsNR" />
 	<style type="text/css">
 		.thinking {
 			opacity: 0.8;
@@ -219,7 +220,7 @@
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
-				<apex:column headerValue="View Current Shift"  rendered="{! NOT(canCreateProgressNotes) && vfVarIsCM}">
+				<apex:column headerValue="View Current Shift"  rendered="{! NOT(canCreateProgressNotes) && !vfVarIsCM && !vfVarIsNR}">
 					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
 						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
@@ -229,14 +230,26 @@
 					<apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes)) }">
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
-					</apex:column>
-                	<apex:column headerValue="Current Documentation" rendered="{!canCreateProgressNotes}">
+				</apex:column>
+                <apex:column headerValue="Current Documentation" rendered="{!canCreateProgressNotes || vfVarIsCM || vfVarIsNR}">
                     <!--  <apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View all Notes Log</a><br />
 					</apex:outputPanel>-->
 					<apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
+                    <apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
+						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
+						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
+					</apex:outputPanel>
+                    <apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR)) }">
+						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
+					</apex:outputPanel>
+                    <apex:outputPanel rendered="{!vfVarIsNR}">
+						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Therapy Note</a><br />			
+                    </apex:outputPanel>
 				</apex:column>
 
 				<apex:column headerValue="Daily Actions">
@@ -253,15 +266,15 @@
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
 						<apex:selectOption itemValue="/apex/Progress_Notes_Log?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}" itemLabel="View All Notes Log" rendered="{!canCreateProgressNotes}" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" rendered="{!!vfVarIsNR}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#auths" itemLabel="Authorizations" rendered="{! OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#caseManagementNotes" itemLabel="Case Management Notes" rendered="{! OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Diag" itemLabel="Diagnosis"  rendered="{!NOT(canCreateProgressNotes)}" />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'))}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Associate_Diagnosis" itemLabel="Diagnosis"  rendered="{!NOT(canCreateProgressNotes)}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'), CONTAINS(permissionSetString, 'ESD - Notes - Case Handler - NR-Carbondale'))}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" rendered="{!OperatingGroup = 'Care Meridian'}"/>
@@ -271,7 +284,7 @@
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<!--<apex:selectOption itemValue="/{!serviceAssignment.Id}#incidents" itemLabel="Incidents"  rendered="{!vfIsNotDefaultUser && $ObjectType.Incident__c.createable}" />-->
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment"  />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" rendered="{!NOT(canCreateProgressNotes)}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" rendered="{!NOT(canCreateProgressNotes) && NOT(vfVarIsNR)}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#therapyDetails" itemLabel="Therapy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
