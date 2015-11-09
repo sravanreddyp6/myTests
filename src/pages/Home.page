@@ -6,6 +6,7 @@
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
 	<apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="vfVarIsNR" />
+	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRW" />
 	<style type="text/css">
 		.thinking {
 			opacity: 0.8;
@@ -220,7 +221,7 @@
 				<apex:column headerValue="Person Being Served Name">
 					<a href="/{!serviceAssignment.Person_Being_Served__r.Id}">{!serviceAssignment.Person_Being_Served__r.Name}</a>
 				</apex:column>
-				<apex:column headerValue="View Current Shift"  rendered="{! NOT(canCreateProgressNotes) && !vfVarIsCM && !vfVarIsNR}">
+				<!--Removing for PRI-328 <apex:column headerValue="View Current Shift"  rendered="{! NOT(canCreateProgressNotes) && !vfVarIsCM && !vfVarIsNR && !isIARole}">
 					<apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
 						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
@@ -230,13 +231,22 @@
 					<apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes)) }">
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
-				</apex:column>
-                <apex:column headerValue="Current Documentation" rendered="{!canCreateProgressNotes || vfVarIsCM || vfVarIsNR}">
+				</apex:column> --> 
+                <apex:column headerValue="Current Documentation" rendered="{!canCreateProgressNotes || vfVarIsCM || vfVarIsNR || (isIARole &&vfVarIsRW)}">
                     <!--  <apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View all Notes Log</a><br />
 					</apex:outputPanel>-->
 					<apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{! (isIARole && vfVarIsRW)}">
+                        <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW)}">
+                        <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Behavior Data</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW)}">
+                        <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Skill Data</a><br />
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
 						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
