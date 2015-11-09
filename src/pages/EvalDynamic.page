@@ -14,7 +14,6 @@
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}" />
 	<apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
-	<apex:includeScript value="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js" />
 
 	<apex:pageMessages id="msgs" />
 	<script>
@@ -431,12 +430,7 @@
 						<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
 					</apex:outputPanel>
 				</div>
-				<hr style="height:3px; border:none; color:#333; background-color:#333; " />
-				<div class="sidebar-module sidebar-module-inset">
-					<apex:outputPanel id="newRepeaters" layout="none">
-						<c:NewRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
-					</apex:outputPanel>
-				</div>
+				<hr />
 				<!-- sidebar-module -->
 			</div>
 			<!-- /.blog-sidebar -->
