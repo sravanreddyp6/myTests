@@ -279,7 +279,7 @@ public with sharing class HomePageController{
 				optionList.add(new SelectOption('', '-------------'));
 			}
 			if (canCreateProgressNotes) {
-                optionList.add(new SelectOption('createProgressNotes', 'Create New Progress Note'));
+                optionList.add(new SelectOption('ViewSANoteLog', 'View SA Note Log'));
                 optionList.add(new SelectOption('', '-------------'));
             }
 			if (canSeeCNAWorkbook) {

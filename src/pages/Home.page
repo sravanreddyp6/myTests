@@ -230,14 +230,17 @@
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
 					</apex:column>
-                	<apex:column headerValue="View Note Log" rendered="{!canCreateProgressNotes}">
-                    <apex:outputPanel rendered="{! canCreateProgressNotes}">
+                	<apex:column headerValue="Current Documentation" rendered="{!canCreateProgressNotes}">
+                    <!--  <apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View Note Log</a><br />
+					</apex:outputPanel>-->
+					<apex:outputPanel rendered="{! canCreateProgressNotes}">
+                        <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
 				</apex:column>
 
 				<apex:column headerValue="Daily Actions">
-					<apex:selectList styleClass="actionList" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"  size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
+					<apex:selectList styleClass="actionList" rendered="{!And(saactionMap[serviceAssignment.Id],canCreateProgressNotes)}"  size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-service-assignment-name="{!serviceAssignment.Name}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
                     <apex:selectOptions value="{!serviceAssignmentToSelectOptionMap[serviceAssignment.Id]}" /> 
 					</apex:selectList>
                     <apex:selectList styleClass="actionList" rendered="{!!canCreateProgressNotes}" id="actionList" size="1" style="width: 300px; " html-data-service-assignment-id="{!serviceAssignment.Id}" html-data-service-state-id="{!serviceAssignment.Admission__r.State__c}" html-data-service-action-id="{!saActiveactionMap[serviceAssignment.Id]}" html-data-service-person-id="{!serviceAssignment.Person_Being_Served__c}" html-data-service-admission-id="{!serviceAssignment.Admission__c}" html-data-latest-shift-doc-id="{!IF(AND(hasShiftDocMap[serviceAssignment.Id]), shiftDocMap[serviceAssignment.Id].Id, '')}" html-data-latest-cna-workbook-id="{!IF(AND(hasCNAWorkbookMap[serviceAssignment.Id]), cnaWorkbookMap[serviceAssignment.Id].Id, '')}">
@@ -249,7 +252,7 @@
 				<apex:column headerValue="Navigation">
 					<apex:selectList id="navigationList" size="1">
 						<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-						 <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}&admission={!serviceAssignment.Admission__c}&pbsID={!serviceAssignment.Person_Being_Served__c}" itemLabel="View Note Log" rendered="{!canCreateProgressNotes}" />
+						 <!-- <apex:selectOption itemValue="/apex/Progress_Notes_Log?saID={!serviceAssignment}&saname={!serviceAssignment.Name}&admission={!serviceAssignment.Admission__c}&pbsID={!serviceAssignment.Person_Being_Served__c}" itemLabel="View SA Note Log" rendered="{!canCreateProgressNotes}" />  -->
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Plan" itemLabel="Action Plan" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}" itemLabel="Admission" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
@@ -773,6 +776,7 @@
                 var action = $selectElement.data('service-action-id');
 				var latestShiftDocId = $selectElement.data('latest-shift-doc-id');
 				var latestCNAWorkbookId = $selectElement.data('latest-cna-workbook-id');
+				var serviceAssignmentName = $selectElement.data('service-assignment-name');
 				var selectedValue = $selected.val();
 				var selectedText = $selected.text();
 				if (selectedValue == 'createShiftDoc') {
@@ -783,8 +787,8 @@
 					createPanel('Head to Toe', category, subcategory, null, 'Activity Log', true, latestShiftDocId);
 				} else if (selectedValue == 'createCNAWorkbook') {
 					showAddCNAWorkbookModal(serviceAssignmentId);
-				} else if(selectedValue=='createProgressNotes'){
- 					var url ='{!$Page.Notes_ProgressNote_Create}?plan='+action+'&service_assignment='+serviceAssignmentId+'&admission='+admissionId+'&person='+personId+'&State='+state+'&retURL={!HTMLENCODE('/apex/home')}';
+				} else if(selectedValue=='ViewSANoteLog'){
+ 					var url ='{!$Page.Progress_Notes_Log}?&saID='+serviceAssignmentId+'&pbsID='+personId+'&admission='+admissionId+'&pbsname='+serviceAssignmentName+'&retURL={!HTMLENCODE('/apex/home')}';
 					$(location).attr('href',url);
                 }else if (selectedValue.indexOf('cnaWorkbookAction-') == 0) {
 					var category = selectedValue.replace('cnaWorkbookAction-', '').split('~')[0];
