@@ -23,7 +23,8 @@ public with sharing class identityEditNewTest {
    				Alias__c alias =	PDMControllerTest.getNewAlias('111111'); 
 				system.runas(testUser){
    					
-   						identityEditNew identity = new identityEditNew();
+   						ApexPages.StandardController sc = new ApexPages.StandardController( newTMNUser[0]);
+   						identityEditNew identity = new identityEditNew(sc);
    								//identity.id = newTmnUser[0].id;
    							identity.attchmentId = attach.id;
    						identity.aliasUser = newTmnUser[0];
@@ -54,8 +55,10 @@ public with sharing class identityEditNewTest {
    					User testUser = [SELECT Id FROM User WHERE Id =:newTmnUser[0].Salesforce_User_Account__c];
    				Alias__c alias =	PDMControllerTest.getNewAlias('222222'); 
 				system.runas(testUser){
+
    					
-   						identityEditNew identity = new identityEditNew();
+   						ApexPages.StandardController sc = new ApexPages.StandardController( newTMNUser[0]);
+   						identityEditNew identity = new identityEditNew(sc);
    						identity.attDeatils = attach;
    						identity.attchmentId = attach.id;
    								//identity.id = newTmnUser[0].id;
