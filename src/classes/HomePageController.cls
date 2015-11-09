@@ -84,7 +84,7 @@ public with sharing class HomePageController{
 	public Map<Id, Boolean> saactionMap {get;set;}
     public Map<Id, Id> saActiveactionMap {get;set;}
     
-    private boolean isIARole { get; set; }	
+    public boolean isIARole { get; set; }	
 
 	//Constructor
 	public HomePageController(){
@@ -307,17 +307,17 @@ public with sharing class HomePageController{
 			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
 			if ( operatingGroup == 'Redwood' && isIARole ) {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
-					optionList.add(new SelectOption(
+					/*optionList.add(new SelectOption(
 										Page.Notes_ProgressNote_Create.getUrl() + 
 										'?service_assignment=' + serviceAssignment.ID + 
 										'&plan=' + serviceAssignment.Action_Plans__r[0].Id + 
 										'&admission=' + serviceAssignment.Admission__r.Id + 
 										'&person=' + serviceAssignment.Person_Being_Served__r.Id + 
 										'&state=' + serviceAssignment.Admission__r.State__c +
-										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));
+										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));*/
 					
-					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Behavior Data'));
-					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'Add Skill Data'));
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
 				} else {
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
 				}
