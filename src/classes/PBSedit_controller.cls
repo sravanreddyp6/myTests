@@ -70,6 +70,13 @@ public boolean isCAFSS{get; set;}
         diag.Status__c = 'Active';
         diag.Effective_Date__c = null;
     }
+    
+    public void showEditDiagnosis(){
+    	string diagnosisId = ApexPages.CurrentPage().getParameters().get('diagnosisId');
+  		this.diag = [select Name, Type__c,Status__c, PBR__c, ICD__c,ICD__r.name,ICD__r.Code_Type__c,ICD__r.Icd_Description__c, Effective_Date__c, CreatedDate
+					from Diagnosis__c where id = :diagnosisId]; 
+    	
+    }
           
     public void saveDiagnosis(){
     	populateDiagnoses();

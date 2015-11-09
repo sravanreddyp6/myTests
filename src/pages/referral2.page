@@ -273,6 +273,34 @@
             return false;
         }
         
+         // Diagnosis changes
+    
+		function validateDiagnosis() {
+            var errors = '';
+            j$('#diagnosisErrors').html(errors);
+
+            if (j$('input[id$=diagnosisEntry_icd]').val() == '') {
+                errors += '<li>ICD Code is a required field.</li>';
+            }
+            
+            if (j$('input[id$=diagnosisEntry_EffTime]').val() == '') {
+                errors += '<li>Date and Time of Diagnosis is a required field.</li>';
+            }
+            
+            if (j$('input[id$=diagnosisEntry_EffTime]').val() != '' && j$('input[id$=diagnosisEntry_EffTime]').val().substring(0,10) > getToday()) {
+                errors += '<li>Effective Date cannot be in future.</li>';
+            }
+            
+            if (j$('select[id$=diagnosisEntry_status]').val() == '') {
+                errors += '<li>Status is a required field.</li>';
+            }
+            
+            j$('#diagnosisErrors').html(errors);
+            return (errors == '');
+        }
+    
+    //End
+        
          function diagnosisSave(isDialogClose) {
             if (validateDiagnosis()) {
                 var diagnosisId = j$('input[id$=diagnosisEntry_Id]').val();
@@ -288,10 +316,16 @@
                     referral_Controller_Helper.saveDiagnosis(diagnosisId, status, effectiveTime, ICD,
                         PBRId,
                         function(result, event) {
-                            saveDiagnosis();
-                            if (isDialogClose) {
+                        	if(event.status){
+                        		saveDiagnosis();
+                        		if (isDialogClose) {
                                 closeModalDialog('diagnosisModal', 'span');
-                            }
+                            	}
+                        	}else if (event.type === 'exception') {
+								document.getElementById("diagnosisErrors").innerHTML = event.message;
+							}else {
+							document.getElementById("diagnosisErrors").innerHTML = event.message;
+							}	  
                         }, {
                             escape: true
                         }
@@ -301,10 +335,16 @@
                     referral_Controller_Helper.saveDiagnosisFromPbsID(diagnosisId, status, effectiveTime, ICD,
                         PBSId,
                         function(result, event) {
-                            saveDiagnosis();
-                            if (isDialogClose) {
-                                closeModalDialog('diagnosisModal', 'span');
-                            }
+                        	if(event.status){
+                        		saveDiagnosis();
+                            	if (isDialogClose) {
+                                	closeModalDialog('diagnosisModal', 'span');
+                            	}
+                        	}else if (event.type === 'exception') {
+								document.getElementById("diagnosisErrors").innerHTML = event.message;
+							} else {
+								document.getElementById("diagnosisErrors").innerHTML = event.message;
+							}  
                         }, {
                             escape: true
                         }
@@ -434,7 +474,7 @@
             );
         }
         
-        function loadDiagnosis(diagnosisId) {
+     /*   function loadDiagnosis(diagnosisId) {
             referral_Controller_Helper.loadDiagnosis(diagnosisId,
                 function(result, event) {
                     if (event.status) {
@@ -461,7 +501,7 @@
                     escape: true
                 }
             );
-        }
+        } */
 
         function loadLocation(locationId) {
             var lookupId = '{!$Component.referralForm.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}';
@@ -567,34 +607,6 @@
                 return null;
             }
         }
-      // Diagnosis changes
-    
-		function validateDiagnosis() {
-            var errors = '';
-            j$('#diagnosisErrors').html(errors);
-
-            if (j$('input[id$=diagnosisEntry_icd]').val() == '') {
-                errors += '<li>ICD Code is a required field.</li>';
-            }
-            
-            if (j$('input[id$=diagnosisEntry_EffTime]').val() == '') {
-                errors += '<li>Date and Time of Diagnosis is a required field.</li>';
-            }
-            
-            //if (j$('select[id$=diagnosisEntry_type]').val() == '') {
-            //    errors += '<li>Type is a required field.</li>';
-            //}
-            
-            if (j$('select[id$=diagnosisEntry_status]').val() == '') {
-                errors += '<li>Status is a required field.</li>';
-            }
-            
-            
-            j$('#diagnosisErrors').html(errors);
-            return (errors == '');
-        }
-    
-    //End
 
         function validateadmissionLocation(){
             var errors=[];
@@ -627,8 +639,21 @@
 
 
         }
-
-
+        
+        function getToday() {
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth() + 1; //January is 0!
+			var yyyy = today.getFullYear();
+			if (dd < 10) {
+				dd = '0' + dd
+			}
+			if (mm < 10) {
+				mm = '0' + mm
+			}
+			today = mm + '/' + dd + '/' + yyyy;
+			return today;
+		}
     </script>
 
     <apex:form id="referralForm">
@@ -648,8 +673,11 @@
         <apex:actionFunction name="showAddLocation" action="{!showAddLocation}" rerender="locations,referralLocationEntry,msgs" oncomplete="openModalDialog('ReferralLocationModal', 'span', 'Add Location'); " status="AddLocationStatus" />
         <apex:actionFunction name="openlocationPopup" action="{!redirectToConversion}" rerender="popupDiv,msgs" oncomplete="cmPopup();" status="convertStatus" />
         <apex:actionFunction name="saveAdmissionLocation" action="{!saveAdmissionLocation}" reRender="msgs" status="convertStatus2"/>
-        <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openModalDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="diagsec,diagnosisEntry,msgs" status="AdddiagStatus"/>
-     	<apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" status="myStatus" rerender="diagsec,diagnosisEntry,msgs"  />
+        <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" oncomplete="openModalDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="diagsec,diagTable,diagnosisEntry,msgs" status="convertStatus"/>
+        <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" oncomplete="openModalDialog('diagnosisModal', 'span', 'Add Diagnosis');" rerender="diagsec,diagTable,diagnosisEntry,msgs" status="convertStatus" >
+        	<apex:param name="diagnosisId" value="" />
+        </apex:actionFunction>
+     	<apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" status="convertStatus" rerender="diagsec,diagTable,diagnosisEntry,msgs"  />
         
         <!-- end -->
         
@@ -1334,16 +1362,18 @@
                     <div id='diagnosisErrors' style='color:red'></div>
                     <apex:pageBlockSection columns="2" id="diagnosisEntry">
                     	<apex:inputField value="{!diag.ICD__c}"  id="diagnosisEntry_icd" />
-                        <apex:inputField value="{!diag.Effective_Date__c}" label="Date and Time of Diagnosis" id="diagnosisEntry_EffTime" />
+                        <apex:pageBlockSectionItem ><apex:outputLabel Value="Date and Time of Diagnosis"/>
+                        	<c:MilitaryDateTime edit="true" hiddenFieldId="diagnosisEntry_EffTime" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
+                    	</apex:pageBlockSectionItem>
                         <!--<apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" />-->
                         <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
+                        <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagnosisEntry_EffTime" />
                     	<apex:inputHidden value="{!diag.Id}" id="diagnosisEntry_Id" />
                     </apex:pageBlockSection>
                 </apex:pageBlock>
             </apex:outputPanel>
         </apex:actionRegion>
       <!-- End -->
-      
         <!-- Add Admission Location Modal for CareMeridian -->
             <apex:outputPanel id="ReferralAdmissionLocationModal" style="display:none" >
                 <span class="ui-helper-hidden-accessible"><input type="text"/></span>
@@ -1597,7 +1627,10 @@
             <apex:pageBlockSection showHeader="false" title="Diagnosis Information" columns="2" collapsible="false" id="ReferralDetail">
                 <!--<apex:outputText label="Diagnosis" rendered="{!OR(ReferralRecordType == 'Wisconsin',ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />-->
                 <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota',ReferralRecordType == 'NeuroRestorative')}" />
-                <apex:outputText label="Brain Injury Detail" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" />
+                <apex:pageBlockSectionItem >
+                	<apex:outputText rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'NeuroRestorative',ReferralRecordType == 'North Dakota')}" ><i><h4>Brain Injury Detail</h4></i> </apex:outputText>
+                	<apex:outputText value="" />
+                </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType = 'Wisconsin'}" />
                 <!--apex:pageBlockSectionItem rendered="{!ReferralRecordType != 'Minnesota'}"/-->
                 
@@ -2022,7 +2055,7 @@
 
 			<!-- Diagnosis Section -->
 			<a name="Diag" id="Diag"></a> 
-           <apex:pageBlockSection showHeader="true" columns="1" title="Diagnosis Information"  collapsible="false" id="diagsec">
+           <apex:pageBlockSection showHeader="true" columns="1" title="Diagnosis Information"  collapsible="false" >
                <apex:pageBlockSectionItem >
 					<apex:actionRegion >
            				<apex:commandButton value="Add Diagnosis" id="addDiagnosis"  onClick="showAddDiagnosis();return false;" />
@@ -2036,17 +2069,17 @@
                   </apex:actionRegion>
                </apex:pageBlockSectionItem>
 			   
-               <apex:pageBlockTable value="{!diagnoses}" var="dg">
-                   <apex:column headerValue="Action"><a href="#Diag" onclick="loadDiagnosis('{!dg.id}');return false;">Edit</a>
+               <apex:pageBlockTable value="{!diagnoses}" var="dg" id="diagTable">
+                   <apex:column headerValue="Action"><a href="#Diag" onclick="showEditDiagnosis('{!dg.id}');return false;">Edit</a>
                     </apex:column>
                     <apex:column value="{!dg.ICD__r.name}" />
                     <apex:column value="{!dg.ICD__r.Code_Type__c}" />
                     <apex:column value="{!dg.ICD__r.Icd_Description__c}" />
-					<apex:column value="{!dg.Effective_Date__c}" headerValue="Date and Time of Diagnosis"/>
-					<!--<apex:column value="{!dg.Type__c}" />-->
+					<apex:column headerValue="Date and Time of Diagnosis" >
+                   		<c:MilitaryDatetime datetimeval="{!dg.Effective_Date__c}" />
+                   	</apex:column>
                     <apex:column value="{!dg.Status__c}" headerValue="Status" />
                 </apex:pageBlockTable>
-                <apex:outputText value="No diagnoses to display"  rendered="{!diagnoses.size == 0}" />
                <apex:outputpanel style="display:none">
                     <apex:inputHidden value="{!diag.ID}" id="diagId" />
                     <apex:inputHidden value="{!diag.ICD__c}" id="diagICD" />

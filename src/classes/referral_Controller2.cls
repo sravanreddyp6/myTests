@@ -58,6 +58,13 @@ public with sharing class referral_Controller2 {
         diag.Effective_Date__c = null;
         
     }
+    
+    public void showEditDiagnosis(){
+    	string diagnosisId = ApexPages.CurrentPage().getParameters().get('diagnosisId');
+  		this.diag = [select Name, Type__c,Status__c, PBR__c, ICD__c,ICD__r.name,ICD__r.Code_Type__c,ICD__r.Icd_Description__c, Effective_Date__c, CreatedDate
+					from Diagnosis__c where id = :diagnosisId];
+  		
+    }
           
     public void saveDiagnosis() {
     	populateDiagnoses();
@@ -406,14 +413,14 @@ public with sharing class referral_Controller2 {
 				this.diagnoses = [
 					select Name, Type__c,Status__c, PBR__c, ICD__c,ICD__r.name,ICD__r.Code_Type__c,ICD__r.Icd_Description__c, Effective_Date__c, CreatedDate
 					from Diagnosis__c
-					where PBR__c = :this.personBeingRefRecord.Id ORDER BY Effective_Date__c DESC
+					where PBR__c = :this.personBeingRefRecord.Id ORDER BY Effective_Date__c, Status__c DESC
 					limit 150
 				];
 			} else if (this.personBeingServedRecord != null && this.personBeingServedRecord.Id != null){
 				this.diagnoses = [
 					select Name, Type__c,Status__c, PBR__c, ICD__c, ICD__r.name,ICD__r.Code_Type__c,ICD__r.Icd_Description__c, Effective_Date__c, CreatedDate
 					from Diagnosis__c
-					where PBS__c = :this.personBeingServedRecord.Id ORDER BY Effective_Date__c DESC
+					where PBS__c = :this.personBeingServedRecord.Id ORDER BY Effective_Date__c, Status__c DESC
 					limit 150
 				];
 			}
@@ -780,7 +787,24 @@ public with sharing class referral_Controller2 {
             if(referralRecord.Current_Location_Type__c == null){
                 messages.Add('Current Location Type');
                 hasReq = false;             
-            }                               
+            }
+            if(referralRecord.Services_Requested__c == null){
+            	messages.Add('Services Requested');
+                hasReq = false;
+            }
+            
+            boolean diagStatus = false;
+            for(Diagnosis__c d :diagnoses){
+                if(d.status__C == 'Active'){
+                    diagStatus = true;  
+                    break;
+                }
+            }
+            
+            if(!diagStatus){
+                messages.Add('Atleast one active diagnosis is required for convertion');
+                hasReq = false;
+            }                                
         }
         
 
@@ -950,8 +974,8 @@ public with sharing class referral_Controller2 {
 			hasReq = false;
 		}
         
-        //PRI-22 Start
-        if(referralRecordType == 'NeuroRestorative'){
+        //PRI-22 Start - sravan moved this code into the existing neuroRestorative if condition
+       /* if(referralRecordType == 'NeuroRestorative'){
             boolean diagStatus = false;
             for(Diagnosis__c d :diagnoses){
                 if(d.status__C == 'Active'){
@@ -964,7 +988,7 @@ public with sharing class referral_Controller2 {
                 messages.Add('Atleast one active diagnosis is required for convertion');
                 hasReq = false;
             } 
-        }
+        }*/
         //PRI-22 end
 
 		if ( messages.size() > 0 && !hasReq ) {
