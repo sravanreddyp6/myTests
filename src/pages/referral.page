@@ -642,10 +642,10 @@
         if (j$('input[id$=diagnosisEntry_EffDate]').val() == '') {
             errors += '<li>Date and Time of Diagnosis is a required field.</li>';
         }
-
-        // if (j$('select[id$=diagnosisEntry_type]').val() == '') {
-        //    errors += '<li>Type is a required field.</li>';
-        // }
+        
+        if (j$('input[id$=diagnosisEntry_EffDate]').val() != '' && j$('input[id$=diagnosisEntry_EffDate]').val().substring(0,10) > getToday()) {
+            errors += '<li>Date and Time of Diagnosis cannot be in future.</li>';
+        }
 
         if (j$('select[id$=diagnosisEntry_status]').val() == '') {
             errors += '<li>Status is a required field.</li>';
@@ -673,6 +673,21 @@
     }
 
     //End
+    
+    function getToday() {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            today = mm + '/' + dd + '/' + yyyy;
+            return today;
+        }
 
 
     </script>
