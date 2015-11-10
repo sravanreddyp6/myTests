@@ -634,6 +634,11 @@
     function validateDiagnosis() {
         var errors = '';
         j$('#diagnosisErrors').html(errors);
+        
+        var effDate = j$('input[id$=diagnosisEntry_EffDate]').val();
+        
+        var effDateFormat  = new Date(moment(new Date(effDate)).format());
+        var today = new Date(moment(new Date()).format());
 
         if (j$('input[id$=diagnosisEntry_icd10]').val() == '') {
             errors += '<li>ICD Code is a required field.</li>';
@@ -643,7 +648,7 @@
             errors += '<li>Date and Time of Diagnosis is a required field.</li>';
         }
         
-        if (j$('input[id$=diagnosisEntry_EffDate]').val() != '' && j$('input[id$=diagnosisEntry_EffDate]').val().substring(0,10) > getToday()) {
+        if (effDate != '' && effDateFormat > today) {
             errors += '<li>Date and Time of Diagnosis cannot be in future.</li>';
         }
 
@@ -1970,6 +1975,7 @@
                                 <apex:actionSupport rerender="othercause" event="onchange" />
                             </apex:inputField>
                         </apex:actionRegion>
+                        <br/>
                         <apex:outputPanel id="othercause">
                             <apex:outputLabel value="Specify Other" rendered="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" for="txtothercause" />
                             <apex:inputField id="txtothercause" value="{!Referral__c.Cause_of_Injury_Other__c}" rendered="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" required="{!Referral__c.Cause_of_Injury_pick__c == 'Other'}" label="Specify Other" />

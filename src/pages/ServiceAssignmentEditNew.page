@@ -268,10 +268,6 @@
             return today;
         }
 
-
-
-
-
         seizureSave = function (isClose) {
             closeSeizure = isClose;
             seizureClearMessages();
@@ -439,8 +435,9 @@
         <!-- Sa Diag Junction -->
         <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" onComplete="setUpFields(); return false;" />
         <apex:actionFunction name="showAddsadiagJo" action="{!showAddsadiagJo}" rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); return false;" status="pageProcessing"/>
-        <apex:actionFunction name="showEditsadiagJo" action="{!showEditsadiagJo}"  rerender="sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); setABIDiagnosis(); setInjuryDate(); return false;"  status="pageProcessing" > 
+        <apex:actionFunction name="showEditsadiagJo" action="{!showEditsadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); setABIDiagnosis(); setInjuryDate(); return false;"  status="pageProcessing" > 
         	<apex:param name="sadiagJoId" value="" />
+        	<apex:param name="diag" value="" />
         </apex:actionFunction>
          <!-- Sa Diag Junction End-->
          
@@ -1690,7 +1687,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
              <apex:pageBlockSection title="Diagnosis" columns="1" collapsible="true" id="_sadiagJoSection_Alt1_Header">
                 <apex:pageblockTable value="{!sadiagJOList}" var="jo" rendered="{!sadiagJOList != null && (sadiagJOList.size>0)}"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-                    <apex:column headerValue="Action"><a href="#Diag" onclick="showEditsadiagJo('{!jo.id}'); return false;">Edit</a>
+                    <apex:column headerValue="Action"><a href="#Diag" onclick="showEditsadiagJo('{!jo.id}','{!jo.Diagnosis__c}'); return false;">Edit</a>
                     </apex:column>
                     <apex:column value="{!jo.Diagnosis__r.ICD__r.Icd_Description__c}" headerValue="Diagnosis"/>
 <!--                     <apex:column value="{!jo.Status__c}" /> -->
@@ -3584,6 +3581,9 @@ END: Uncomment to have the element collapsed by default -->
             var injTypeOther = j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').val();
             var rank = j$('select[id$=sadiagJoEntry_sadiagJoRanking]').val();
             
+            var injuryDateFormat  = new Date(moment(new Date(injuryDate)).format());
+            var today = new Date(moment(new Date()).format());
+            
             if (diagId == '--None--') {
                errors += '<li>Diagnosis is a required field.</li>';
             }
@@ -3597,7 +3597,7 @@ END: Uncomment to have the element collapsed by default -->
             	errors += '<li>Glasgow Coma Scale Severity is a required field when ranking is primary.</li>';
             }
             if(rank == 'Primary' && injType == '' &&{!isNR || vfVarIsCM}){
-            	errors += '<li>Injusry type is a required field when ranking is primary.</li>';
+            	errors += '<li>Injury type is a required field when ranking is primary.</li>';
             }
             if(injType.indexOf('Other') > -1 && injTypeOther == ''){
             	errors += '<li>Please specify other.</li>';
@@ -3605,7 +3605,7 @@ END: Uncomment to have the element collapsed by default -->
             if(rank == 'Primary' && injuryDate == '' && {!isNR || vfVarIsCM}){
             	errors += '<li>Injury Date is a required field when ranking is primary.</li>';
             }
-            if(injuryDate != '' && injuryDate.substring(0,10) > getToday()){
+            if(injuryDate != '' && injuryDateFormat > today){
             	errors += '<li>Injury Date cannot be in future.</li>';
             }
             

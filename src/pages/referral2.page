@@ -5,6 +5,7 @@
 
     <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
 
     <!--<p>{!$Component.referralForm.ReferralLocationModalBlock.referralLocationEntry.sectionItem.sl.comp.lookupElement_lkid}</p>-->
     <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning"></apex:pageMessage>
@@ -278,6 +279,11 @@
 		function validateDiagnosis() {
             var errors = '';
             j$('#diagnosisErrors').html(errors);
+            
+             var effDate = j$('input[id$=diagnosisEntry_EffTime]').val();
+        
+        	var effDateFormat  = new Date(moment(new Date(effDate)).format());
+        	var today = new Date(moment(new Date()).format());
 
             if (j$('input[id$=diagnosisEntry_icd]').val() == '') {
                 errors += '<li>ICD Code is a required field.</li>';
@@ -287,7 +293,7 @@
                 errors += '<li>Date and Time of Diagnosis is a required field.</li>';
             }
             
-            if (j$('input[id$=diagnosisEntry_EffTime]').val() != '' && j$('input[id$=diagnosisEntry_EffTime]').val().substring(0,10) > getToday()) {
+            if (effDate != '' && effDateFormat > today) {
                 errors += '<li>Effective Date cannot be in future.</li>';
             }
             
