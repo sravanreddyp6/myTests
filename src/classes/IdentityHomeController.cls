@@ -475,6 +475,18 @@ public with sharing class IdentityHomeController {
         return pageRef;
     }
 
+	public String requestAccessUrl {set;get{String url = '';
+			List<Site_URL__c> siteList =	[select id,name,Prefix__c from Site_URL__c where name = 'EasyVistaUrl'];        
+				if(siteList.size()>0){
+					url = siteList[0].Prefix__c;
+				} return url; } }
+				
+		public PageReference goRequestAccess() {
+		        PageReference requestAccessPage =  new PageReference(requestAccessUrl);
+		        requestAccessPage.setRedirect(true);   
+		        return requestAccessPage;
+		    }
+
     //Add 30 days to end date for employee attestation Removed from Page     
 //    public void add30Days() {
 //        TMN_User__c userToExt;

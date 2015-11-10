@@ -447,9 +447,17 @@ public class identityEditNew {
     }
 
     public PageReference goRequestAccess() {
-        Id id = ApexPages.currentPage().getParameters().get('id');
+		String url = '';
+	List<Site_URL__c> siteList =	[select id,name,Prefix__c from Site_URL__c where name = 'EasyVistaUrl'];        
+		if(siteList.size()>0){
+			url = siteList[0].Prefix__c;
+		}else {
+		
+		 Id id = ApexPages.currentPage().getParameters().get('id');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
-        PageReference requestAccessPage =  new PageReference('/apex/RequestAccess?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU);
+        url = '/apex/RequestAccess?id=' + id + '&retURL=' + retURL + '&TAU=' + TAU;
+		} 
+        PageReference requestAccessPage =  new PageReference(url);
         requestAccessPage.setRedirect(true);   
         return requestAccessPage;
     }
