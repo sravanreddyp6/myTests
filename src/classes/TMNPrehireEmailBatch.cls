@@ -14,6 +14,7 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 			
 			
 	global void execute(Database.BatchableContext BC, List<TMN_user__c> scope) {
+		List<OrgWideEmailAddress> owa = [Select id, Address, DisplayName from OrgWideEmailAddress WHERE DisplayName = 'TMN Access' LIMIT 1];
  		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
 					for(TMN_user__c TMNUser:scope){
 				List<TMN_User__c> recruiterInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: TMNUser.Recruiter_Email_Address__c];
@@ -47,6 +48,7 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 					mail.setSubject('***TAKE ACTION*** TMNAccess - Pre-Hire termination reminder');
 					}
 					mail.SaveAsActivity = false;
+					mail.setOrgWideEmailAddressId(owa[0].Id);
 					mails.add(mail);
 					}	
 			}
