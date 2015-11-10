@@ -318,8 +318,14 @@ public with sharing class HomePageController{
 					
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
-				} else {
-					optionList.add( new SelectOption(serviceAssignment.Id, 'Create/Revise Action Plan'));
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
+					
+				}
+				if ( serviceAssignment.Admission__r.Assessments__r.size() > 0 ) {
+					optionList.add( new SelectOption('/' + serviceAssignment.Admission__r.Assessments__r[0].Id, 'Acknowledge Risk Assessment'));
+				}
+				if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
+					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
 				}
 				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
                 optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
