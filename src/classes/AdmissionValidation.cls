@@ -65,13 +65,13 @@ public with sharing class AdmissionValidation {
             
             // SELECT ALL ADMISSIONS FOR THE PERSONS BEING SERVED
             List<Admission__c> allAdmissionsForPersons = new List<Admission__c>();
-            allAdmissionsForPersons = [SELECT Id, name, Status__c, Admission_Effective_DateTime__c, Discharged_Date_Time__c, Effective_Date__c, Discharged_Date__c, Person_Being_Served__c, State__c FROM Admission__c WHERE Person_Being_Served__c = :pbsInScope ORDER BY Admission_Effective_DateTime__c];
+            allAdmissionsForPersons = [SELECT Id, name, Status__c, Admission_Effective_DateTime__c, Discharged_Date_Time__c, Effective_Date__c, Discharged_Date__c, Person_Being_Served__c, State__c FROM Admission__c WHERE Person_Being_Served__c = :pbsInScope AND Status__c != 'Created in Error' ORDER BY Admission_Effective_DateTime__c];
             System.Debug('What is in allAdmissionsForPersons: ' + allAdmissionsForPersons);
             
             
             // SELECT ALL SERVICE ASSIGNMENTS FOR THE ADMISSIONS
             List<Service_Assignment__c> allSAs = new List<Service_Assignment__c>();
-            allSAs = [SELECT Id, name, Start_Date__c, SA_Start_DateTime__c,  End_Date__c, Admission__c, Status__c FROM Service_Assignment__c WHERE Admission__c IN :admits];
+            allSAs = [SELECT Id, name, Start_Date__c, SA_Start_DateTime__c,  End_Date__c, Admission__c, Status__c FROM Service_Assignment__c WHERE Admission__c IN :admits AND Status__c != 'Created in Error'];
             System.Debug('What is in allServAssigns?: ' + allSAs);
                         
             
