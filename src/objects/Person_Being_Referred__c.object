@@ -65,27 +65,6 @@
         <visibleLines>4</visibleLines>
     </fields>
     <fields>
-        <fullName>Age_In_Days__c</fullName>
-        <externalId>false</externalId>
-        <formula>CASE( 1,
-    IF( (YEAR(TODAY())- Year(Date_of_Birth__c)) ==1,1,100),&quot;1 Year&quot;,
-    IF( (YEAR(TODAY())- Year(Date_of_Birth__c)) &gt; 1,1,200), TEXT(YEAR(TODAY()) - Year(Date_of_Birth__c)) + &quot; Years&quot; ,
-IF(YEAR(TODAY()) -Year(Date_of_Birth__c)==0 &amp;&amp; DAY(Date_of_Birth__c) - DAY(TODAY())&lt;=0 &amp;&amp; MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1 ,1,300 ) , &quot;1 Month&quot;,
-
-IF(YEAR(TODAY()) -Year(Date_of_Birth__c)==0 &amp;&amp; MONTH(TODAY()) - MONTH(Date_of_Birth__c)&gt;1,1,400), TEXT(MONTH(TODAY()) - MONTH(Date_of_Birth__c)) +&quot; Months&quot;,
-IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Date_of_Birth__c)==0 || MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1) &amp;&amp; (DAY(TODAY() -DAY(Date_of_Birth__c) )==1),1,500), &quot;1 Day&quot;,
-
-IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Date_of_Birth__c)==0 || MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1) &amp;&amp; (DAY(TODAY() -DAY(Date_of_Birth__c) )&gt;1),1,600), TEXT( DAY(TODAY() -DAY(Date_of_Birth__c) ))+&quot; Days&quot;,
-&quot;0&quot;
-  )</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label>Age_In_Days</label>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
         <fullName>Age__c</fullName>
         <description>Age (will be overwritten by a trigger if Date of Birth is filled in)</description>
         <externalId>false</externalId>
@@ -295,10 +274,12 @@ IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONT
 IF(YEAR(TODAY()) -Year(Date_of_Birth__c)==0 &amp;&amp; DAY(Date_of_Birth__c) - DAY(TODAY())&lt;=0 &amp;&amp; MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1 ,1,300 ) , &quot;1 Month&quot;,
 
 IF(YEAR(TODAY()) -Year(Date_of_Birth__c)==0 &amp;&amp; MONTH(TODAY()) - MONTH(Date_of_Birth__c)&gt;1,1,400), TEXT(MONTH(TODAY()) - MONTH(Date_of_Birth__c)) +&quot; Months&quot;,
-IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Date_of_Birth__c)==0 || MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1) &amp;&amp; (DAY(TODAY() -DAY(Date_of_Birth__c) )==1),1,500), &quot;1 Day&quot;,
+IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1 ) &amp;&amp; (DAY(Date_of_Birth__c)  - DAY(TODAY())==1),1,500),&quot;1 Day&quot;,
+IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; ( MONTH(TODAY()) - MONTH(Date_of_Birth__c)==0) &amp;&amp;  (DAY(TODAY()) - DAY(Date_of_Birth__c))   ==1,1,600), &quot;1 Day&quot;,
 
-IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Date_of_Birth__c)==0 || MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1) &amp;&amp; (DAY(TODAY() -DAY(Date_of_Birth__c) )&gt;1),1,600), TEXT( DAY(TODAY() -DAY(Date_of_Birth__c) ))+&quot; Days&quot;,
-&quot;0&quot;
+IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1 ) &amp;&amp; (DAY(Date_of_Birth__c)  - DAY(TODAY())&gt;1),1,700), TEXT( DAY(TODAY() -DAY(Date_of_Birth__c) ))+&quot; Days&quot;,
+IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; ( MONTH(TODAY()) - MONTH(Date_of_Birth__c)==0) &amp;&amp;  (DAY(TODAY()) - DAY(Date_of_Birth__c))&gt;1,1,800), TEXT( DAY(TODAY() -DAY(Date_of_Birth__c) ))+&quot; Days&quot;,
+&quot;0 Days&quot;
   )</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Age_text</label>
@@ -1310,17 +1291,6 @@ First_Name__c &amp; &quot; &quot; &amp;   Middle_Initial__c &amp; &quot; &quot; 
         <externalId>false</externalId>
         <label>Zip Code</label>
         <length>10</length>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>age123__c</fullName>
-        <externalId>false</externalId>
-        <formula>TEXT(DAY(TODAY() -DAY(Date_of_Birth__c) ) )</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label>age123</label>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
