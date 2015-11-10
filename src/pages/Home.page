@@ -239,14 +239,14 @@
 					<apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
+					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW)}">
+                        <a href="">Add Behavior Data</a><br />
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW)}">
+                        <a href="">Add Skill Data</a><br />
+					</apex:outputPanel>
 					<apex:outputPanel rendered="{! (isIARole && vfVarIsRW)}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW)}">
-                        <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Behavior Data</a><br />
-					</apex:outputPanel>
-					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW)}">
-                        <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Skill Data</a><br />
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
 						<a href="/{!shiftDocMap[serviceAssignment.Id].Id}">{!shiftDocMap[serviceAssignment.Id].Name}</a><br />
