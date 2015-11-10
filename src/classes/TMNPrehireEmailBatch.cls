@@ -40,11 +40,11 @@ global class TMNPrehireEmailBatch implements Database.Batchable<sObject>, Schedu
 					
 					if(Utility.nextBusinessDay(TMNUser.Hire_Date__c,8) <= currentDate){
 					mail.setHtmlBody(emailTemplate2);
-					mail.setSubject('***ATTENTION*** TMNAccess – Pre-Hire record terminated');	
+					mail.setSubject('***ATTENTION*** TMNAccess - Pre-Hire record terminated');	
 					TMNUser.Job_Status__c = 'Inactive';
 					} else if((Utility.nextBusinessDay(TMNUser.Hire_Date__c,1) == currentDate) || (Utility.nextBusinessDay(TMNUser.Hire_Date__c,5) == currentDate) || (Utility.nextBusinessDay(TMNUser.Hire_Date__c,7) == currentDate) ){
 					mail.setHtmlBody(emailTemplate1);
-					mail.setSubject('***TAKE ACTION*** TMNAccess – Pre-Hire termination reminder');
+					mail.setSubject('***TAKE ACTION*** TMNAccess - Pre-Hire termination reminder');
 					}
 					mail.SaveAsActivity = false;
 					mails.add(mail);
