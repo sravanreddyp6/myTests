@@ -11,6 +11,7 @@ private final static date todayminusOneDay = system.today().addDays(-1);
 	}
 
 			global void execute(Database.BatchableContext BC, List<TMN_user__c> scope){
+				List<OrgWideEmailAddress> owa = [Select id, Address, DisplayName from OrgWideEmailAddress WHERE DisplayName = 'TMN Access' LIMIT 1];
 			       List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
 								
 					for(TMN_User__c tmn:scope) {
@@ -28,6 +29,7 @@ private final static date todayminusOneDay = system.today().addDays(-1);
          			mail.setSubject('Job Status changed for '+tmn.Last_Name__c+' '+tmn.First_Name__c);
          			mail.setHtmlBody(emailTemplate);
                     mail.SaveAsActivity = false; 
+                    mail.setOrgWideEmailAddressId(owa[0].Id);
          			mails.add(mail);
          		    tmn.Job_Status__c = 'Inactive';
          		    List<TMN_User_Delegate__c>	delegateList  = [SELECT id,Delegate_for_Name__c,TMN_Delegate_For__c,Delegate_for_Email__c,Delegation_Complete__c,TMN_Delegate_Name__c FROM TMN_User_Delegate__c where TMN_Delegate_Name__c = : tmn.id];
