@@ -3603,7 +3603,10 @@ END: Uncomment to have the element collapsed by default -->
             	errors += '<li>Please specify other.</li>';
             }
             if(rank == 'Primary' && injuryDate == '' && {!isNR || vfVarIsCM}){
-            	errors += '<li>Injury Date is a required field when ranking is prmary.</li>';
+            	errors += '<li>Injury Date is a required field when ranking is primary.</li>';
+            }
+            if(injuryDate != '' && injuryDate.substring(0,10) > getToday()){
+            	errors += '<li>Injury Date cannot be in future.</li>';
             }
             
            	if(errors !=  '' ){
