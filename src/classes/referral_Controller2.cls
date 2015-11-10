@@ -802,7 +802,7 @@ public with sharing class referral_Controller2 {
             }
             
             if(!diagStatus){
-                messages.Add('Atleast one active diagnosis is required for convertion');
+                messages.Add('At least one active diagnosis is required for conversion');
                 hasReq = false;
             }                                
         }
