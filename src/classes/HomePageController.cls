@@ -84,7 +84,7 @@ public with sharing class HomePageController{
 	public Map<Id, Boolean> saactionMap {get;set;}
     public Map<Id, Id> saActiveactionMap {get;set;}
     
-    public boolean isIARole { get; set; }	
+    public boolean isIARole { get; set; }
 
 	//Constructor
 	public HomePageController(){
@@ -193,7 +193,6 @@ public with sharing class HomePageController{
 		canCreateIncidents = sc.isCreateable();
 		
 		ServAssigns = new list<Service_Assignment__c>();
-		
 		updateProgramSelection();
 		checkTmnUserRecord();
 		mineTasks();
@@ -330,6 +329,23 @@ public with sharing class HomePageController{
 				optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
                 optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
 				
+			}
+			//PRI-326 Redwood MN, IN, CA homepage values.
+			if ( operatingGroup == 'Redwood' && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) {
+				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
+					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
+				}
+				if ((serviceAssignment.Admission__r.Assessments__r.size() > 0 ) && (serviceAssignment.Admission__r.State__c != 'MN')) {
+					optionList.add( new SelectOption('/' + serviceAssignment.Admission__r.Assessments__r[0].Id, 'Acknowledge Risk Assessment'));
+				}
+				if ((serviceAssignment.Admission__r.Assessments__r.size() > 0 ) && (serviceAssignment.Admission__r.State__c == 'MN')) {
+					optionList.add( new SelectOption('/' + serviceAssignment.Admission__r.Assessments__r[0].Id, 'Acknowledge ISSA Assessment'));
+				}
+				if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
+					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
+				}
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
