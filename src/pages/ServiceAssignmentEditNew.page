@@ -435,9 +435,8 @@
         <!-- Sa Diag Junction -->
         <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" onComplete="setUpFields(); return false;" />
         <apex:actionFunction name="showAddsadiagJo" action="{!showAddsadiagJo}" rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); return false;" status="pageProcessing"/>
-        <apex:actionFunction name="showEditsadiagJo" action="{!showEditsadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); setABIDiagnosis(); setInjuryDate(); return false;"  status="pageProcessing" > 
+        <apex:actionFunction name="showEditsadiagJo" action="{!showEditsadiagJo}"  rerender="sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); setABIDiagnosis(); setInjuryDate(); return false;"  status="pageProcessing" > 
         	<apex:param name="sadiagJoId" value="" />
-        	<apex:param name="diag" value="" />
         </apex:actionFunction>
          <!-- Sa Diag Junction End-->
          
@@ -1687,7 +1686,7 @@ END: Uncomment to have the element collapsed by default -->
             </apex:pageBlockButtons>
              <apex:pageBlockSection title="Diagnosis" columns="1" collapsible="true" id="_sadiagJoSection_Alt1_Header">
                 <apex:pageblockTable value="{!sadiagJOList}" var="jo" rendered="{!sadiagJOList != null && (sadiagJOList.size>0)}"  headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
-                    <apex:column headerValue="Action"><a href="#Diag" onclick="showEditsadiagJo('{!jo.id}','{!jo.Diagnosis__c}'); return false;">Edit</a>
+                    <apex:column headerValue="Action"><a href="#Diag" onclick="showEditsadiagJo('{!jo.id}'); return false;">Edit</a>
                     </apex:column>
                     <apex:column value="{!jo.Diagnosis__r.ICD__r.Icd_Description__c}" headerValue="Diagnosis"/>
 <!--                     <apex:column value="{!jo.Status__c}" /> -->
