@@ -11,6 +11,7 @@ global class TMNEmployeeLastDayBatch implements Database.Batchable<sObject>, Sch
 			
 			
 	global void execute(Database.BatchableContext BC, List<TMN_user__c> scope) {
+		List<OrgWideEmailAddress> owa = [Select id, Address, DisplayName from OrgWideEmailAddress WHERE DisplayName = 'TMN Access' LIMIT 1];
  		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
 					for(TMN_user__c TMNUser:scope){
 				List<TMN_User__c> tmnManagerInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: TMNUser.Manager_Email__c];
@@ -27,7 +28,9 @@ global class TMNEmployeeLastDayBatch implements Database.Batchable<sObject>, Sch
 					mail.setHtmlBody(emailTemplate);
 					mail.setSubject('Today last day for '+TMNUser.First_Name__c+' '+ TMNUser.Last_Name__c );
 					mail.SaveAsActivity = false;
+					mail.setOrgWideEmailAddressId(owa[0].Id);
 					mails.add(mail);
+					
 					}	
 			}
 				if(mails.size()>0){
