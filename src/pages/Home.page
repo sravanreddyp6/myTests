@@ -232,20 +232,20 @@
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
 				</apex:column> --> 
-                <apex:column headerValue="Current Documentation" rendered="{!canCreateProgressNotes || vfVarIsCM || vfVarIsNR || (isIARole &&vfVarIsRW)}">
+                <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW)}">
                     <!--  <apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View all Notes Log</a><br />
 					</apex:outputPanel>-->
 					<apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW && serviceAssignment.Action_Plans__r.size != 0)}">
+					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW && serviceAssignment.Action_Plans__r.size != 0)}">
                         <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Behavior Data</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW && serviceAssignment.Action_Plans__r.size != 0)}">
+					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW && serviceAssignment.Action_Plans__r.size != 0)}">
                         <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Skill Data</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{! (isIARole && vfVarIsRW)}">
+					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW)}" >
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
@@ -254,7 +254,7 @@
 					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
 						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
-                    <apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR)) }">
+                    <apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW)) }">
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{!vfVarIsNR}">
