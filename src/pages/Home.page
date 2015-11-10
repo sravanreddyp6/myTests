@@ -239,11 +239,11 @@
 					<apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW)}">
-                        <a href="">Add Behavior Data</a><br />
+					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW && serviceAssignment.Action_Plans__r.size != 0)}">
+                        <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Behavior Data</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW)}">
-                        <a href="">Add Skill Data</a><br />
+					<apex:outputPanel rendered="{!(isIARole && vfVarIsRW && serviceAssignment.Action_Plans__r.size != 0)}">
+                        <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Skill Data</a><br />
 					</apex:outputPanel>
 					<apex:outputPanel rendered="{! (isIARole && vfVarIsRW)}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
@@ -821,10 +821,10 @@
 					createPBStypeIncident(serviceAssignmentId);
 				} 
 				// IADAY-9 - RW actions are navigations to new pages
-				else if ( selectedText == 'Create/Revise Action Plan') {
+				else if ( selectedText == 'Create New Action Plan') {
 					makeNewPlan(selectedValue);
 				}
-				else if ( selectedText == 'Create Shift Note' || selectedText == 'Add Behavior Data' || selectedText == 'Add Skill Data') {
+				else if ( selectedText == 'Acknowledge Action Plan' ||  selectedText == 'Acknowledge Risk Assessment' || selectedText == 'View Behavior Data' || selectedText == 'View Skill Data') {
 					window.location.href= selectedValue;
 				}
 					
