@@ -27,7 +27,6 @@ public with sharing class GenerateEvalComponent {
             }
         }
     }
-    public ID pbsID { get; set;}
     public Id serviceAssignmentId { get; set; }
     public string evalSectionId { get; set;}
     public string evalSecType { get; set;}

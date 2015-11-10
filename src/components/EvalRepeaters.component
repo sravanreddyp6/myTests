@@ -48,7 +48,7 @@
 				<a class="pull-right sidebar-interactable sidebar-expand" style="display: block; margin: 5px; " data-category="{!category}">
 					<span class="glyphicon glyphicon-chevron-down" />
 				</a>
-				<div class="panel-title"><a class="sidebar-interactable">{!category}</a></div>
+				<div class="panel-title"><a class="sidebar-interactable" onclick="createPanel('{!evaltype}', '{!category}', '', null, '', true); return false;">{!category}</a></div>
 			</div>
 			<div class="panel-body" style="display: none; ">
 				<apex:repeat value="{!categoryMap[category].panels}" var="eval">
