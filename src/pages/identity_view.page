@@ -1,4 +1,4 @@
-<apex:page standardController="TMN_User__c" extensions="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c">
+<apex:page standardController="TMN_User__c" extensions="identityEditNew" sidebar="false" id="identityEditNew" tabStyle="TMN_User__c" docType="html-5.0">
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.JqUI, '/jquery-ui.css')}"/>
@@ -42,7 +42,8 @@
                     <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
                    <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/>      
                    <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
-                   <apex:commandButton value="Request Access" action="{!goRequestAccess}" />
+                   <apex:commandButton value="Request Access" action="{!goRequestAccess}" html-formtarget="_blank" />
+                  
                    <apex:commandButton value="Terminate" action="{!goTerminate}" /> 
                 </div>   
                     <apex:pageBlockSection columns="2" title="Person Information">                   
@@ -154,7 +155,7 @@
                     <!--<apex:commandButton value="Edit" action="{!URLFOR($Page.identity_editnew, '', [id=TMNUser.id])}"/>-->
                    <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/>      
                    <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
-                   <apex:commandButton value="Request Access" action="{!goRequestAccess}" />
+                   <apex:commandButton value="Request Access" action="{!goRequestAccess}" html-formtarget="_blank" />
                    <apex:commandButton value="Terminate" action="{!goTerminate}" /> 
                 </div>   
                
