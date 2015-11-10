@@ -1,0 +1,78 @@
+<apex:page standardController="Referral__c" renderAs="pdf" sidebar="false">
+    <apex:pageBlock >
+        <h1>PRE 10/1/2015 Diagnosis</h1> 
+        <apex:pageBlockSection >
+            <apex:outputText value="{!Referral__c.Axis_I__c}" rendered="{!Referral__c.Axis_I__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Axis_II__c}" rendered="{!Referral__c.Axis_II__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Axis_III__c}" rendered="{!Referral__c.Axis_III__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Axis_IV__c}" rendered="{!Referral__c.Axis_IV__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Axis_V__c}" rendered="{!Referral__c.Axis_V__c!=null}"/>  
+            <apex:outputField value="{!Referral__c.Diagnosis_I__c }" label="Primary Diagnosis" rendered="{!Referral__c.Diagnosis_I__c!=null}"/>   
+            <apex:outputText value="{!Referral__c.Date_of_Injury__c }" rendered="{!Referral__c.Date_of_Injury__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Diagnosis_Effective_Date__c}" rendered="{!Referral__c.Diagnosis_Effective_Date__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Cause_of_Injury__c}" rendered="{!Referral__c.Cause_of_Injury__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Cause_of_Injury_pick__c}" label="Cause of Injury" rendered="{!Referral__c.Cause_of_Injury_pick__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Type_of_Encephalopathy__c}" rendered="{!Referral__c.Type_of_Encephalopathy__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Diagnosis_II__c}" label="Secondary Diagnosis" rendered="{!Referral__c.Diagnosis_II__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Ranchos_Los_Amigos_Scale__c}" rendered="{!Referral__c.Ranchos_Los_Amigos_Scale__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.New_Address_Location__c}" rendered="{!Referral__c.New_Address_Location__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Current_Location_Type__c}" rendered="{!Referral__c.Current_Location_Type__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Current_Location_Name__c}" rendered="{!Referral__c.Current_Location_Name__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Street_1__c}" rendered="{!Referral__c.Street_1__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Street_2__c}" rendered="{!Referral__c.Street_2__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Diagnosis_Date__c}" rendered="{!Referral__c.Diagnosis_Date__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Diagnosis_III__c}" rendered="{!Referral__c.Diagnosis_III__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Vision__c}" rendered="{!Referral__c.Vision__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Hearing__c}" rendered="{!Referral__c.Hearing__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Seizures__c}" rendered="{!Referral__c.Seizures__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Other__c}" rendered="{!Referral__c.Other__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Communication_Summary__c}" rendered="{!Referral__c.Communication_Summary__c!=null}"/> 
+            <apex:outputText value="{!Referral__c.ADL_Summary__c}" rendered="{!Referral__c.ADL_Summary__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Behavior_Summary__c}" rendered="{!Referral__c.Behavior_Summary__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Current_Medications__c}" rendered="{!Referral__c.Current_Medications__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.City__c}" rendered="{!Referral__c.City__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.State__c}" rendered="{!Referral__c.State__c!=null}"/> 
+            <apex:outputText value="{!Referral__c.Zip_Code__c}" rendered="{!Referral__c.Zip_Code__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Phone__c}" rendered="{!Referral__c.Phone__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Email_Address__c}" rendered="{!Referral__c.Email_Address__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Fax__c}" rendered="{!Referral__c.Fax__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Estimated_Discharge_Date__c}" rendered="{!Referral__c.Estimated_Discharge_Date__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Referring_Physician__c}" rendered="{!Referral__c.Referring_Physician__c!=null}"/> 
+            <apex:outputText value="{!Referral__c.Previous_Brain_Injury__c}" rendered="{!Referral__c.Previous_Brain_Injury__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Type_of_Injury_Previous__c}" rendered="{!Referral__c.Type_of_Injury_Previous__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Cause_Of_Injury_Previous__c}" rendered="{!Referral__c.Cause_Of_Injury_Previous__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Did_Alcohol_Contribute_to_Injury__c}" rendered="{!Referral__c.Did_Alcohol_Contribute_to_Injury__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Level_At_Time_of_Injury__c}" rendered="{!Referral__c.Level_At_Time_of_Injury__c!=null}"/> 
+            <apex:outputText value="{!Referral__c.Current_Alcohol_Use__c}" rendered="{!Referral__c.Current_Alcohol_Use__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Did_Drug_Use_Contribute_to_Injury__c}" rendered="{!Referral__c.Did_Drug_Use_Contribute_to_Injury__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Current_Drug_Use__c}" rendered="{!Referral__c.Current_Drug_Use__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Litigation__c}" rendered="{!Referral__c.Litigation__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Military_Service_Related_Injury__c}" rendered="{!Referral__c.Military_Service_Related_Injury__c!=null}"/> 
+            <apex:outputText value="{!Referral__c.Military_Status__c}" rendered="{!Referral__c.Military_Status__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Branch_of_Service__c}" rendered="{!Referral__c.Branch_of_Service__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Years_of_Service__c}" rendered="{!Referral__c.Years_of_Service__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Primary_Requested_Location__c}" rendered="{!Referral__c.Primary_Requested_Location__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Secondary_Location__c}" rendered="{!Referral__c.Secondary_Location__c!=null}"/> 
+            <apex:outputText value="{!Referral__c.Glasgow_Coma_Scale__c}" rendered="{!Referral__c.Glasgow_Coma_Scale__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Duration_of_Unconsciousness__c}" rendered="{!Referral__c.Duration_of_Unconsciousness__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Reported_By__c}" rendered="{!Referral__c.Reported_By__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Primary_Diagnosis__c}" rendered="{!Referral__c.Primary_Diagnosis__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Secondary_Diagnosis__c}" rendered="{!Referral__c.Secondary_Diagnosis__c!=null}"/> 
+            <apex:outputText value="{!Referral__c.Level_of_Disability__c}" rendered="{!Referral__c.Level_of_Disability__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Health_and_Safety_Needs__c}" rendered="{!Referral__c.Health_and_Safety_Needs__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Anticipated_Job_Accomodations__c}" rendered="{!Referral__c.Anticipated_Job_Accomodations__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Residential_Support_Rate_Established__c}" rendered="{!Referral__c.Residential_Support_Rate_Established__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Residential_Support_Rate__c}" rendered="{!Referral__c.Residential_Support_Rate__c!=null}"/> 
+            <apex:outputText value="{!Referral__c.Current_Location__c}" label="Patient's Current Location (if other than Home)" rendered="{!Referral__c.Current_Location__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Program_Category__c}" rendered="{!Referral__c.Program_Category__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Service_Line__c}" rendered="{!Referral__c.Service_Line__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Services_Requested__c}" rendered="{!Referral__c.Services_Requested__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Family_History__c}" rendered="{!Referral__c.Family_History__c!=null}"/> 
+            <apex:outputText value="{!Referral__c.Medical_History__c}" rendered="{!Referral__c.Medical_History__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Behavior_Summary__c}" rendered="{!Referral__c.Behavior_Summary__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Current_Medications__c}" rendered="{!Referral__c.Current_Medications__c!=null}"/>    
+            <apex:outputText value="{!Referral__c.Prior_Program_Information__c}" rendered="{!Referral__c.Prior_Program_Information__c!=null}"/>  
+            <apex:outputText value="{!Referral__c.Comments__c}" rendered="{!Referral__c.Comments__c!=null}"/> 
+        </apex:pageBlockSection>
+    </apex:pageBlock> 
+</apex:page>

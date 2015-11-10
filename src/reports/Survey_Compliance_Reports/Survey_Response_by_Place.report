@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>TMN_User__c$Name</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Responses__r$Name</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c.Responses__r.Replies__r$Name</field>
+    </columns>
+    <columns>
+        <field>TMN_User__c$Operating_Group__c</field>
+    </columns>
+    <description>Responses along with the exact location</description>
+    <filter>
+        <criteriaItems>
+            <column>TMN_User__c.Responses__r$Survey__c</column>
+            <operator>equals</operator>
+            <value>Compliance Survey</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>TMN_User__c.Responses__r.Replies__r$Question__c.Content__c</column>
+            <operator>contains</operator>
+            <value>2014</value>
+        </criteriaItems>
+    </filter>
+    <format>Matrix</format>
+    <groupingsAcross>
+        <dateGranularity>Day</dateGranularity>
+        <field>TMN_User__c.Responses__r.Replies__r$Reply__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsAcross>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>TMN_User__c$Work_State__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Survey Response by Location</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Compliance_answers_by_users__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <timeFrameFilter>
+        <dateColumn>TMN_User__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
