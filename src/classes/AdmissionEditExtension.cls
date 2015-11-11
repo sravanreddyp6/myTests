@@ -21,7 +21,7 @@ public with sharing class AdmissionEditExtension {
                 'Network_Offering__c', 'Reason_for_Discharge__c','Reason_Other__c', 'State__c','Admitted_From__c','Discharged_To__c',
                 'Referred_Out_Date__c', 'Referred_Out_Agency_Name__c', 'Referred_Out_Reason__c',
                 'Person_Being_Served__c', 'Discharged_Status__c', 'Planned_Discharge__c','Discharged_to_category__c','Discharged_to_subcategory__c','Discharged_to_additional__c', 'Discharged_to_other__c', 'Discharged_to_desc__c',
-                'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c'});
+                'Discharged_Reason__c','Discharged_Reason_subcategory__c', 'Discharged_Reason_Additional__c', 'Additional_Discharge_info__c','Specify_Error__c'});
         }
         this.admission = (Admission__c) stdController.getRecord();
         if ( this.admission.Id == null ) {
@@ -167,7 +167,9 @@ public with sharing class AdmissionEditExtension {
 		catch (Exception e){
 			messages.add( 'Please enter a valid effective date and time.');
 		}
-
+		if (admission.Status__c == 'Created in Error' && String.isBlank(admission.Specify_Error__c)){
+			messages.add('Please Specify Error for Admission Status.');
+		}
 	    if (! String.isBlank(admDischargeDateTime)) {
 	    	try {
 				system.debug('discharge datetime' + admDischargeDateTime);
