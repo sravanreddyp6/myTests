@@ -510,6 +510,9 @@ public with sharing class GenerateEvalComponent {
 
 	@RemoteAction
 	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String cat, String subcat, String jsonForm) {
+		if (evalSectionId == '' || evalSectionId == null) {
+			evalSectionId = UserInfo.getUserId() + '-' + DateTime.now().formatLong();
+		}
 		mapEvalItems = new Map<ID, Eval__c>([
 			SELECT Id, htmlid__c, field_name__c, category__c, category_sequence__c, sub_category__c,
 			       sub_category_sequence__c, eval_type__r.name, Field_Type__c, Field_Sub_Type__c,
