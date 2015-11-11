@@ -85,12 +85,24 @@ function setupDates() {
 	                    -->
                         <apex:selectList id="admStatus" value="{!admission.Status__c}" size="1" html-data-countInFormProgress="1" >
                             <apex:selectOptions value="{!StatusValues}"/>
-                            <apex:actionSupport event="onchange" rerender="detail, Discharge2" action="{!setDischargeFields}" onComplete=" setUpCompletionMonitor(); " />
+                            <apex:actionSupport event="onchange" rerender="detail, Discharge2, createdInError" action="{!setDischargeFields}" onComplete=" setUpCompletionMonitor(); " />
                         </apex:selectList>	                
-	                </apex:actionRegion>    
+	                </apex:actionRegion>   
+
                 </apex:outputPanel>
                 </apex:pageblocksectionitem>
                 <apex:outputField value="{!admission.Person_Being_Served__c}" />
+                <apex:pageBlockSectionItem id="createdInError">
+                			<apex:outputLabel for="createdInErrorLbl" value="Specify Error" rendered="{!admission.Status__c == 'Created in Error'}"/>
+			                <apex:outputPanel >
+								<div class="requiredInput">
+                                	<div class="requiredBlock"></div>
+									<apex:inputField id="createdInErrorInput" value="{!admission.Specify_Error__c}" rendered="{!admission.Status__c == 'Created in Error'}"/>
+								</div>
+							</apex:outputPanel> 	
+                </apex:pageBlockSectionItem>
+                                
+                <apex:inputField value="{!admission.Network_Offering__c}" required="true" html-data-countInFormProgress="1"/>
                 <apex:pageBlockSectionItem >
                     <label for="effdate" >Admission Date</label>
             		<apex:outputPanel layout="none">
@@ -100,7 +112,7 @@ function setupDates() {
                 <apex:inputHidden id="effdate"  value="{!admEffDateTime}" />
                 </apex:outputPanel>
                </apex:pageblocksectionitem>
-                <apex:inputField value="{!admission.Network_Offering__c}" required="true" html-data-countInFormProgress="1"/>
+                
                 
                 
                 
@@ -113,8 +125,12 @@ function setupDates() {
 			                </apex:inputField>
 		                </apex:actionRegion>
 	                </apex:outputPanel>
-                </apex:pageBlockSectionItem>-->
+                </apex:pageBlockSectionItem>
                 
+                <apex:outputText value="" rendered="{! useDischargeSection }" />
+                -->
+                
+                <apex:inputField value="{!admission.State__c}" required="true" html-data-countInFormProgress="1"/>
                 
                 <!-- PRI-277  -->
                     <apex:pageBlockSectionItem rendered="{!(admission.Status__c == 'Discharged' && !vfVarIsCM )}" id="dischargeD1" >
@@ -138,8 +154,7 @@ function setupDates() {
                     </apex:pageBlockSectionItem>
                        
                   
-                <apex:outputText value="" rendered="{! useDischargeSection }" />
-                <apex:inputField value="{!admission.State__c}" required="true" html-data-countInFormProgress="1"/>
+
                 
                 <!-- Removed for PRI-272
                 <apex:inputField value="{!admission.Discharged_Status__c}" rendered="{! !useDischargeSection }"/> -->

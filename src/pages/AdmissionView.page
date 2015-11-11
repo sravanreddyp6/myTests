@@ -333,6 +333,7 @@
 					<label for="pStatus" >Admission Status</label>					
 					<apex:outputPanel >					
 						<apex:outputField value="{!admission.Status__c}" />
+						
 						<!-- used in Progress score -->
 						<input id="pStatus" value="{!admission.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
 					</apex:outputPanel>             
@@ -345,7 +346,22 @@
 						<input id="pNetOffer" value="{!admission.Network_Offering__c}" style="display: none;"  data-countInFormProgress="1" /> 
 					</apex:outputPanel>             
 				</apex:pageBlockSectionItem>			
-				
+                <apex:pageBlockSectionItem id="createdInError">
+                			<apex:outputLabel for="createdInErrorLbl" value="Specify Error" rendered="{!admission.Status__c == 'Created in Error'}"/>
+			                <apex:outputPanel >
+								<apex:outputField id="createdInErrorInput" value="{!admission.Specify_Error__c}" rendered="{!admission.Status__c == 'Created in Error'}"/>
+							</apex:outputPanel> 	
+                </apex:pageBlockSectionItem>
+                
+				<apex:pageBlockSectionItem >
+					<label for="pState" >State</label>					
+					<apex:outputPanel >					
+						<apex:outputField value="{!admission.State__c}" />
+						<!-- used in Progress score -->
+						<input id="pState" value="{!admission.State__c}" style="display: none;"  data-countInFormProgress="1" /> 
+					</apex:outputPanel>             
+				</apex:pageBlockSectionItem>                
+                				
                 <apex:pageBlockSectionItem >
                     <label for="pStartDate" >Admission Date</label>
                     <apex:outputPanel >
@@ -355,19 +371,12 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
 
-				<apex:pageBlockSectionItem >
-					<label for="pState" >State</label>					
-					<apex:outputPanel >					
-						<apex:outputField value="{!admission.State__c}" />
-						<!-- used in Progress score -->
-						<input id="pState" value="{!admission.State__c}" style="display: none;"  data-countInFormProgress="1" /> 
-					</apex:outputPanel>             
-				</apex:pageBlockSectionItem>
 
+		<apex:pageBlockSectionItem rendered="{! !useDischargeSection}"/>
 				<apex:outputText label="Discharged Date" value="{0, date, MM/dd/yyyy}" rendered="{! !useDischargeSection}">
 					<apex:param value="{!admission.Discharged_Date__c}" />
 				</apex:outputText>
-				<apex:pageBlockSectionItem rendered="{! !useDischargeSection}"/>
+				
 				
 				<!--  empty field -->
 				
