@@ -1,12 +1,38 @@
-<apex:page controller="manageservicelocationsController" sidebar="false" >
+<apex:page standardController="Service_Location__c" extensions="manageservicelocationsController" sidebar="false" >
 	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
      <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
      
+     <apex:sectionheader subtitle="Manage Service Locations" />
      <apex:form >
+     <apex:pagemessages id="msgs" />
      <apex:pageBlock >
-     	<apex:PageblockSection columns="2" >
-     	
-     	</apex:PageblockSection>
+     	<apex:pageBlockButtons location="top">
+     		<apex:commandbutton value="Update Existing Service Location" action="{!manageExisting}" reRender="manageBlock"/>
+     		<apex:commandbutton value="Create New Service Location" action="{!createNew}"/>
+     	</apex:pageBlockButtons>
      </apex:pageBlock>
+     <apex:pageBlock id="manageBlock">
+     	<apex:pageBlockbuttons location="bottom"  rendered="{!manage}" >
+     		<apex:commandbutton value="Run" action="{!run}" reRender="results"/>
+     	</apex:pageBlockbuttons>
+     	<apex:pageBlockSection title="Search Locations by Alias" columns="1" rendered="{!manage}" >
+     	<apex:inputField value="{!Service_Location__c.Alias_lookup__c}" required="true"/>
+     	</apex:pageBlockSection>
+     </apex:pageBlock>
+     <apex:pageBlock id="ResultsBlock" >
+     	<apex:pageBlockSection Columns="1" rendered="{!locations.size != 0}" >
+     		<apex:pageBlockTable value="{!locations}" var="loc" id="results" rendered="{!locations.size != 0}" >
+     			<apex:column headerValue="Action" >
+     				<a href="/apex/ServiceLocationEdit?id={!loc.Id}" >Edit</a> |
+     				<a href="/apex/ServiceLocationView?id={!loc.Id}" >View</a>
+     			</apex:column>
+     			<apex:column value="{!loc.Alias_lookup__c}" />
+     			<apex:column value="{!loc.Name}" />
+     		</apex:pageBlockTable>
+     		<apex:outputText value="No Results found for the Criteria" rendered="{!locations.size == 0}" />
+     	</apex:pageBlockSection>
+     
+     </apex:pageBlock> 
+     
 	</apex:form>
 </apex:page>
