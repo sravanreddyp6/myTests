@@ -42,9 +42,13 @@ public with sharing class DSPHomePageController {
 		public boolean isFavorite { get; set; }
 		public boolean hasRisk { get; set; }
 		public boolean hasISSA { get; set; }
+		public boolean hasActionPlan { get; set; }
+		public boolean needsAPAck { get; set; }
+		public boolean needsRiskAck { get; set; }
+		public boolean needsISSAAck { get; set; }
 			
 		
-		public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i) {
+		public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h) {
 			pbsID = pID;
 			saID = sID;
 			admID = adID;
@@ -56,6 +60,10 @@ public with sharing class DSPHomePageController {
 			isFavorite = f;
 			hasRisk = r;
 			hasISSA = i;
+			hasActionPlan = h;
+			needsAPAck = false;
+			needsRiskAck = false;
+			needsISSAAck = false;
 			
 		}
 		
@@ -163,6 +171,16 @@ public with sharing class DSPHomePageController {
 	// this is the initial list of "favorite" PBS that user has requested to save in cookie
 	public void getPBSList( List<String> PIds, List<String> saIDs) {
 
+		Service_Assignment__c[] listPBSbySA = [
+			SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+					admission__c, Service_Location__r.program__c, 
+			       Service_Location__r.Alias__c, admission__r.state__c, 
+			       (select id, effective_date__c, Status__c from action_plans__r where status__c = 'Active Final')
+			 FROM Service_Assignment__c
+			 WHERE Person_Being_Served__c in :pIDs
+			 AND	status__c = 'Active'
+		
+										];
 			// pbsid, pbsname, said, apid, progstring,
 		Action_Plan__c[] listPBS = [
 			SELECT Id, service_assignment__r.Person_Being_Served__c, service_assignment__r.person_Being_served__r.name, 
@@ -177,19 +195,22 @@ public with sharing class DSPHomePageController {
 			 and	status__c = 'Active Final'
 			];
 			
-		for ( Action_Plan__c focusPBS : listPBS  ) {
+		for ( Service_Assignment__c focusPBS : listPBSbySA  ) {
+			
+			boolean hasAP = ( focusPBS.action_plans__r.size() > 0);
 			//ID pID, ID sID, ID aID, string n, string p, string al, date ed	
-			PBSWrapper thisPBS = new PBSWrapper( focusPBS.service_assignment__r.person_being_served__c,
-											 focusPBS.service_assignment__r.admission__c,  
-											 focusPBS.service_assignment__c,
-											 focusPBS.id, 
-											 focusPBS.service_assignment__r.person_being_served__r.name, 
-											 focusPBS.service_assignment__r.service_location__r.program__c,
-											 focusPBS.service_assignment__r.service_location__r.alias__c,
-											 focusPBS.effective_date__c,
+			PBSWrapper thisPBS = new PBSWrapper( focusPBS.person_being_served__c,
+											 focusPBS.admission__c,  
+											 focusPBS.id,
+											 hasAP ? focusPBS.action_plans__r[0].id : null, 
+											 focusPBS.person_being_served__r.name, 
+											 focusPBS.service_location__r.program__c,
+											 focusPBS.service_location__r.alias__c,
+											 hasAP ? focusPBS.action_plans__r[0].effective_date__c : null,
 											 true,
 											 true,
-											 ( focusPBS.service_assignment__r.admission__r.state__c == 'MN'));
+											 ( focusPBS.admission__r.state__c == 'MN'),
+											 hasAP);
 			peopletoServe.add( thisPBS );
 		}
 	}
@@ -299,34 +320,34 @@ public with sharing class DSPHomePageController {
 	public void setfocusPBS() {
 		
 		// pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
-		Action_Plan__c focusPBS = [
-			SELECT Id, service_assignment__r.Person_Being_Served__c, service_assignment__r.person_Being_served__r.name, 
-					service_assignment__r.admission__c, service_assignment__c, service_assignment__r.Service_Location__r.program__c, 
-			       service_assignment__r.Service_Location__r.Alias__c, service_assignment__r.admission__r.state__c,
-			       effective_date__c,
-			       Status__c
-			  FROM Action_Plan__c
-			 WHERE Service_Assignment__r.Person_Being_Served__c = :searchResultPBS
-			 and 	service_assignment__c = :searchResultSA
-			 and	service_assignment__r.status__c = 'Active'
-			 and	status__c = 'Active Final'
-			LIMIT 1];
-			
+		Service_Assignment__c focusPBS = [
+			SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
+					admission__c, Service_Location__r.program__c, 
+			       Service_Location__r.Alias__c, admission__r.state__c, 
+			       (select id, effective_date__c, Status__c from action_plans__r where status__c = 'Active Final')
+			 FROM Service_Assignment__c
+			 WHERE Person_Being_Served__c = :searchResultPBS
+			 AND ID = :searchResultSA
+			 AND	status__c = 'Active'
+			 LIMIT 1];
+			 	
 		string newcookie = '';
 			
 		if ( focusPBS != null ) {
+			Boolean hasAP = ( focusPBS.Action_Plans__r.size() > 0 );
 			//ID pID, ID sID, ID aID, string n, string p, string al, date ed	
-			PBSWrapper thisPBS = new PBSWrapper( focusPBS.service_assignment__r.person_being_served__c, 
-											 focusPBS.service_assignment__r.admission__c,
-											 focusPBS.service_assignment__c,
-											 focusPBS.id, 
-											 focusPBS.service_assignment__r.person_being_served__r.name, 
-											 focusPBS.service_assignment__r.service_location__r.program__c,
-											 focusPBS.service_assignment__r.service_location__r.alias__c,
-											 focusPBS.effective_date__c,
+			PBSWrapper thisPBS = new PBSWrapper( focusPBS.person_being_served__c, 
+											 focusPBS.admission__c,
+											 focusPBS.id,
+											 hasAP ? focusPBS.Action_Plans__r[0].id : null, 
+											 focusPBS.person_being_served__r.name, 
+											 focusPBS.service_location__r.program__c,
+											 focusPBS.service_location__r.alias__c,
+											 hasAP? focusPBS.Action_Plans__r[0].effective_date__c : null,
 											 searchResultIsFav,
 											 true,
-											 (focusPBS.service_assignment__r.admission__r.state__c == 'MN')
+											 (focusPBS.admission__r.state__c == 'MN'),
+											 hasAP
 											 );
 
 
