@@ -5,6 +5,7 @@
 	<apex:attribute name="cols" description="Number of columns on the page block" type="Integer" assignTo="{!numCols}" />
 	<apex:attribute name="rows" description="Number of rows on the page block" type="Integer" default="1000" assignTo="{!numRows}" />
 	<apex:attribute name="type" description="The type of this table" type="String" required="true" assignTo="{!responseType}" />
+	<apex:attribute name="title" description="The title of this table" type="String" required="false" assignTo="{!frmTitle}" />
 
 	<apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
 	<apex:attribute name="addEnabled" description="Whether Add functionality is enabled" type="Boolean" default="true" />
@@ -68,9 +69,9 @@
 				<apex:outputPanel layout="block" styleClass="blockbtns"  >
 					<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Adult')}" onclick="window.open('/{!AdultimmunizationReport}?pv0={!PBSName}'); return false;"/>
 					<apex:commandbutton value="Print Report" rendered="{!enableReportButton && contains(type,'Immunization - Child')}" onclick="window.open('/{!ChildimmunizationReport}?pv0={!PBSName}'); return false;"/>
-					<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign && (addEnabled && canCreate)}" />
+					<apex:commandButton value="Add {!frmTitle}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!addBtnRightAlign && (addEnabled && canCreate)}" />
 				</apex:outputPanel>
-				<apex:commandButton value="Add {!type}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign && (addEnabled && canCreate)}" />
+				<apex:commandButton value="Add {!frmTitle}" onclick="showAddResponse{!uniqueId}(); return false;" rendered="{!!addBtnRightAlign && (addEnabled && canCreate)}" />
 			</apex:outputPanel>	
 		</apex:pageBlockButtons>
 		
@@ -85,11 +86,11 @@
 	</style>
 	</apex:outputPanel>
 
-	<apex:pageBlockSection id="evalResponseBlock_Alt1_Header" columns="1" title="{!IF(showTitle,type,'')}" collapsible="{!collapsible}">
+	<apex:pageBlockSection id="evalResponseBlock_Alt1_Header" columns="1" title="{!IF(showTitle,frmTitle,'')}" collapsible="{!collapsible}">
         <apex:pageBlockSectionItem dataStyle="display:none;" labelStyle="display:none;">
 		<apex:outputPanel style="display: none; ">
-			<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!type}', '{!formId}'); attachRules{!uniqueId}();" immediate="true"/>
-			<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!type}', '{!formId}'); attachRules{!uniqueId}();" immediate="true">
+			<apex:actionFunction rendered="{!addEnabled}" name="showAddResponse{!uniqueId}" action="{!showAddResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Add {!frmTitle}', '{!formId}'); attachRules{!uniqueId}();" immediate="true"/>
+			<apex:actionFunction rendered="{!editEnabled}" name="showEditResponse{!uniqueId}" action="{!showEditResponse}" status="pageProcessingStatus" rerender="responseDialogMainBlock" oncomplete="openModalDialog('{!$Component.responseDialog}', 'Edit {!frmTitle}', '{!formId}'); attachRules{!uniqueId}();" immediate="true">
 				<apex:param name="currentResponseId" assignTo="{!currentResponseId}" value="" />
 			</apex:actionFunction>
 			<!-- We need to use this actionFunction rather than calling authenticateWithId straight up because of a bug in SF, see the comment in the controller's getAuthentication() -->
@@ -239,7 +240,7 @@
 			</script>
 			<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 			<!-- Just so Jquery UI doesn't auto focus on the 1st field -->
-			<apex:pageBlock title="{!type}" id="responseDialogMainBlock">
+			<apex:pageBlock title="{!frmTitle}" id="responseDialogMainBlock">
 				<apex:pageblockButtons location="bottom">
 					<apex:actionFunction name="saveResponse{!uniqueId}" action="{!saveResponse}" rerender="responseTableWrapper,responseDialogErrors" status="saveResponseStatus" oncomplete="afterSave('{!$Component.responseDialog}', request.options.parameters.keepDialogOpen, showAddResponse{!uniqueId});attachRules{!uniqueId}();">
 						<apex:param name="keepDialogOpen" value="" />
