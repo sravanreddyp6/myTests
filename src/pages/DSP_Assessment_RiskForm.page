@@ -68,34 +68,48 @@ table[id*=dayServiceWithoutCaregiverRadio] {
 
 <apex:form id="myfrm" >
     <apex:pageMessages />
-<!--     <apex:pageBlock id="main_detail" title="{!if ($CurrentPage.parameters.pdf ='1', !assessmentResponse.assessmentWrapper['Admission__r.Person_Being_Served__r.Name'] + ' - ', '') }Risk Assessment Summary"> -->
-    <apex:pageBlock id="main_detail" title="Risk Assessment Summary">    
+    <apex:pageBlock id="main_detail" title="{!assessmentResponse.assessmentWrapper['Person_Being_Served__r.Name'] + ' - Risk Assessment Summary'}">
         <apex:pageBlockSection columns="2" collapsible="false" title="Information">
-            <!--  row1 -->
-            <apex:outputText value="{!assessmentResponse.assessmentWrapper['Name']}" />
-            <apex:outputText value="{!assessmentResponse.assessmentWrapper['Admission__r.Name']}" />
-<!--             <apex:outputField value="{!assessmentResponse.assessmentWrapper['Approval_Date__c']}" /> -->
-                
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Assessment Name</apex:outputPanel>
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Name']}" />
+            </apex:pageBlockSectionItem>	
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Admission</apex:outputPanel>
+            	<apex:outputText value="{!assessmentResponse.assessmentWrapper['Admission__r.Name']}" />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Approval Date</apex:outputPanel>
+            	<apex:outputText value="{!assessmentResponse.assessmentWrapper['Approval_Date__c']}" />
+            </apex:pageBlockSectionItem>
             <apex:pageBlockSectionItem >
                 <apex:outputPanel >Created By</apex:outputPanel>
                 <apex:outputPanel >
-<!--                     <apex:outputText value="{!assessmentResponse.assessmentWrapper['CreatedBy.Name']}"/>&nbsp; -->
+                    <apex:outputText value="{!assessmentResponse.assessmentWrapper['CreatedBy.Name']}"/>&nbsp;
                     <apex:outputText value=" {!assessmentResponse.assessmentWrapper['CreatedDate']}"/>&nbsp;
                 </apex:outputPanel> 
             </apex:pageBlockSectionItem>
-
-<!--             <apex:outputField value="{!assessmentResponse.assessmentWrapper['Status__c']}"/>   -->
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Status</apex:outputPanel>
+            	<apex:outputText value="{!assessmentResponse.assessmentWrapper['Status__c']}" />
+            </apex:pageBlockSectionItem>
+            
 
             <apex:pageBlockSectionItem labelStyle="width: 13%; dataStyle: 20%;">
                     <apex:outputPanel >Last Modified By</apex:outputPanel>
-                    <apex:outputPanel ><apex:outputText value="{!assessmentResponse.assessmentWrapper['LastModifiedBy.Name']}"/>&nbsp;<apex:outputText value=" {!assessmentResponse.assessmentWrapper['LastModifiedDate']}"/></apex:outputPanel>  
+                    <apex:outputPanel ><apex:outputText value="{!assessmentResponse.assessmentWrapper['LastModifiedBy.Name']}"/>&nbsp;<c:MilitaryDatetime dateTimeVal="{!assessmentResponse.assessmentWrapper['LastModifiedDate']}" />
+<!--                     <apex:outputText value=" {! DATETIMEVALUE(assessmentResponse.assessmentWrapper['LastModifiedDate'])}"/> -->
+</apex:outputPanel>
             </apex:pageBlockSectionItem> 
 
             <apex:pageBlockSectionItem />
                 
             <apex:pageBlockSectionItem >
                     <apex:outputPanel >Finalized By</apex:outputPanel>
-<!--                     <apex:outputPanel ><apex:outputText value="{!assessmentResponse.assessmentWrapper['Approved_By__r.Name']}" />&nbsp;<apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!assessmentResponse.assessmentWrapper['Finalized_Date__c']}"/></apex:outputText></apex:outputPanel>   -->
+                    <apex:outputPanel >
+                    	<apex:outputText value="{!assessmentResponse.assessmentWrapper['Approved_By__r.Name']}" />&nbsp;
+	                    <apex:outputText value=" {!DATEVALUE(assessmentResponse.assessmentWrapper['Finalized_Date__c'])}"/>
+                    </apex:outputPanel>  
             </apex:pageBlockSectionItem>
                       
             <apex:pageBlockSectionItem >
