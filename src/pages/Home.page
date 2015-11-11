@@ -177,7 +177,7 @@
 	<apex:form id="mainForm">
 		<apex:pageMessages id="pageMessages" />
 		<br />
-		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' || 
+		<!--  <apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Cambridge' || 
 													OperatingGroup = 'NeuroRestorative' ||
 													(AND(OperatingGroup = 'Redwood', !BEGINS($UserRole.DeveloperName, 'IA')))}">
 			<apex:outputLabel for="{!$Component.FName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
@@ -185,8 +185,8 @@
 			<apex:outputLabel for="{!$Component.LName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
 			<apex:inputText title="Last Name" value="{!LstName}" id="LName" />
 			<apex:commandButton style="margin-left: 10px; " id="search_values" value="Find" onclick="search_Names();" action="{!getSearchNames}"> </apex:commandButton>
-		</apex:outputPanel>
-		<apex:outputPanel layout="none" rendered="{!OperatingGroup = 'Care Meridian' || (AND(OperatingGroup = 'Redwood', BEGINS($UserRole.DeveloperName, 'IA')))}">
+		</apex:outputPanel> -->
+		<apex:outputPanel layout="none">
 			<apex:outputLabel for="{!$Component.PbsSearchFirstName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
 			<apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
 			<apex:outputLabel for="{!$Component.PbsSearchLastName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
@@ -639,6 +639,7 @@
 		</apex:form>
 	</apex:outputPanel>
 
+	<!-- PRI-237
 	<script>
 		function search_Names() {
 			var fname = document.getElementById("{!$Component.thePage.mainForm.FName}").value;
@@ -649,7 +650,7 @@
 			return false;
 		}
 		
-	</script>
+	</script> -->
 
 	<script type="text/javascript">
 	
