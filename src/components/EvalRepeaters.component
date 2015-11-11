@@ -43,7 +43,7 @@
 	</style>
 
 	<apex:repeat value="{!categories}" var="category">
-		<div class="panel {!IF(categoryMap[category].completed, IF(categoryMap[category].hasError, 'panel-danger', 'panel-success'), 'panel-warning')}">
+		<div class="panel {!IF(categoryMap[category].hasError, 'panel-danger', IF(categoryMap[category].completed, 'panel-success', 'panel-warning'))}">
 			<div class="panel-heading clearfix">
 				<a class="pull-right sidebar-interactable sidebar-expand" style="display: block; margin: 5px; " data-category="{!category}">
 					<span class="glyphicon glyphicon-chevron-down" />
