@@ -184,7 +184,7 @@ public class identityEditNew {
     public String tmnId = t.Id;
     public String tmnOG = t.Operating_Group__c;
     
-   @testVisible TMN_User__c aliasUser = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
+   public TMN_User__c aliasUser {set;get{ List<TMN_User__c> aliasUserList = [SELECT Accountable_Approval_Manager__c,Accountable_Manager_Mentor_Email__c,Alias__c,Approval_Level__c,
             Business_Unit_Region__c,Business_Unit__c,Current_Person_Type__c,Email__c,Employee_Number__c,Alias_Lookup__c,
             Employee_Type__c,First_Name__c,Hire_Date__c,Id,Job_Level__c,Job_Status__c,Job_Title__c,
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
@@ -195,10 +195,16 @@ public class identityEditNew {
             Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
+                               if(aliasUserList.size()>0){
+                                              return aliasUserList[0];
+                                          }                           
+                                        return null; }} // This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]. If you see  different behavior please revert back to previous code 
             
- @testVisible   Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
+ public   Alias__c auAlias {set;get{ if (aliasUser!=null) {  return [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name 
                         FROM Alias__c 
-                        WHERE Alias_unique__c =: aliasUser.Alias__c];        
+                        WHERE Alias_unique__c =: aliasUser.Alias__c];
+                        }
+                               return null;       }}// This change to prevent error when the user tring to access tmn user record with ID only[without TAU OR retUrl]        
     
     public PageReference save() {
 		Boolean error = false;
@@ -375,6 +381,7 @@ public class identityEditNew {
     		 		List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
     		 for (TMN_User__c preHire :preHireList){     
     			if(preHire.Current_Person_Type__c == 'Pre-hire'){
+    				List<OrgWideEmailAddress> owa = [Select id, Address, DisplayName from OrgWideEmailAddress WHERE DisplayName = 'TMN Access' LIMIT 1];
     		List<TMN_User__c> recruiterInfo = [select id,name,email__c,Salesforce_User_Account__c from TMN_User__c where Salesforce_User_Account__r.isActive = true and email__c =: preHire.Recruiter_Email_Address__c];
     			if(recruiterInfo!=null && recruiterInfo.size()>0) {
     			Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
@@ -388,6 +395,7 @@ public class identityEditNew {
 					mail.setHtmlBody(emailTemplate);
 					mail.setSubject('***TAKE ACTION*** TMNAccess – New Pre-Hire Record');	
 					mail.SaveAsActivity = false;
+					mail.setOrgWideEmailAddressId(owa[0].Id);
 					mails.add(mail);
 					}	
 			}
