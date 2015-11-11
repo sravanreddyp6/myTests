@@ -53,6 +53,16 @@ public with sharing class EvaluationResponseTableController {
 			}
 		}
 	}
+	public String frmTitle {
+        get {
+        system.debug('title - '+frmTitle);
+            if(frmTitle == null)
+                frmTitle = responseType;
+                return frmTitle;
+
+        }
+        set;
+	}	
 	public String responseType {
 		get;
 		set {
@@ -261,8 +271,10 @@ public with sharing class EvaluationResponseTableController {
 		} catch (DMLException ex) {
 		 	hasError = true;
 			system.debug(ex);
-			// SF will automatically create a PageMessage Error here, so we don't
-			// have to do anything
+            for (Integer i = 0; i < ex.getNumDml(); i++) {
+                // Process exception here
+                currentResponse.addError( ex.getDmlMessage(i) );
+            }
 		}
 	}
 	public PageReference eSignRecord(){
