@@ -1,0 +1,49 @@
+<apex:page title="Service Location: {!Service_Location__c.Program__c}" standardController="Service_Location__c" standardStylesheets="false" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<script src="../../soap/ajax/32.0/connection.js" type="text/javascript"></script>
+
+	<script>
+	function getPrefix() {
+		sforce.connection.sessionId = '{!$Api.Session_ID}';
+		var result = sforce.connection.describeSObjects(["Service_Location__c"]);
+		var clientPrefix = result[0].keyPrefix;
+		return clientPrefix;
+	}
+	</script>
+    <apex:form >
+    <apex:pageMessages id="msgs"/>
+        <apex:pageBlock title="Service Location" id="detail" mode="detail">
+        <div class="pbHeaderButton" id="buttons">
+					<apex:commandButton value="Edit" action="{!edit}" rendered="{! NOT(AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR'))}" />
+            </div>
+            <a onclick="window.location.href='/' + getPrefix();" href="#">Return to List</a>
+            <apex:pageBlockSection columns="2">
+                <apex:outputField value="{!Service_Location__c.Alias__c}" />
+                <apex:outputField label="Facility" value="{!Service_Location__c.FacilityID__c}" />
+                <apex:outputField label="Program Code" value="{!Service_Location__c.ProgramID__c}" />
+                <apex:outputField value="{!Service_Location__c.Service_Value__c}" />
+                <apex:outputField value="{!Service_Location__c.Program__c}" />
+                <apex:outputField value="{!Service_Location__c.Setting__c}" />
+                <apex:outputField value="{!Service_Location__c.Program_Rollup__c}" />
+                <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Address" />
+                <apex:outputPanel >
+                <c:AddressDisplay Street1="{!Service_Location__c.Street__c}" city="{!Service_Location__c.City__c}"
+  					state="{!Service_Location__c.State__c}" zip="{!Service_Location__c.Zip__c}" /><br />
+  				<apex:outputText value="{!Service_Location__c.Phone__c}" />	
+  				</apex:outputPanel>
+  				</apex:pageBlockSectionItem>
+  				<apex:outputField value="{!Service_Location__c.TIN__c}" />
+                <apex:outputField value="{!Service_Location__c.NPI__c}" />
+                <apex:outputField value="{!Service_Location__c.Status__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" rendered="{!Service_Location__c.FacilityID__c == 20}" >
+            	<apex:outputField value="{!Service_Location__c.Room_and_Board_Rate__c}" label="Room and Board Cost" />
+            	<apex:outputField value="{!Service_Location__c.PRN_DS_Per_Hour__c}" />
+            	<apex:outputField value="{!Service_Location__c.Per_Productive_Unit__c}" />             
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <c:SObjectHistories object="{!Service_Location__c}" title="Field History for Service Location" rendered="{!Service_Location__c.FacilityID__c == 20}" />
+    </apex:form>
+    
+</apex:page>
