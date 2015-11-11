@@ -681,6 +681,7 @@
 					<apex:commandButton onclick="window.open('/{!Risk_Overview}?pv0={!Admission__c.Name}','_self'); return false;" rendered="{!(assessmentTypes['Risk'] && riskAssessments.size!=0 )}" value="Acknowledgment Overview" />
 				</div>	
 			</apex:pageBlockButtons>	  
+            <a  id="CANS_Assesssments"></a>
 			<apex:pageBlockSection id="assess_Alt1_Header" title="Assessments" collapsible="true" columns="1"> 
 				<apex:actionFunction name="makeNewISSA" action="{!createIssaAssess}" rerender="" status="issastatus" />
 				<apex:actionFunction name="makeNewRisk" action="{!createRiskAssess}" rerender="" status="riskstatus" />
