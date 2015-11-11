@@ -51,17 +51,20 @@
 			font-size: 13px;
 			line-height: 18px;
 		}
+
+		#main-section .pbTitle h2.mainTitle {
+			font-size: 1.5em;
+			font-weight: bold;
+			padding: 5px;
+		}
 	</style>
 
 	<form id="evalForm" method="post">
-		<apex:pageBlock rendered="{!cat != ''}">
-			<label class="labelCol">Created By:</label>{!evalSectionOwner}
- 			<br /><label class="labelCol">Last Modified By:</label>{!evalSectionLastMod}
-
-			<span id="evalSecValMsgs" style="color: red;"></span>
-			<apex:outputText value="{!htmlTable}" escape="false" />
-
-		</apex:pageBlock>
+		<apex:dynamicComponent componentValue="{!sectionContent}" invokeAfterAction="true" />
+		<!-- This hidden button is here, so that when we submit the form programmatically by
+		clicking the button, the HTML5 checkValidity() function is called. If we simply call
+		form.submit(), the browser will bypass that check. -->
+		<input style="display: none;" type="submit" value="Save" id="btnHiddenSave" />
 	</form>
 	<script>
         jQuery.noConflict();
@@ -212,7 +215,7 @@
                 refreshQtips();
             };
 
-            window.handleFormErros = function() {
+            window.handleFormErrors = function() {
                 var errorMsg = '';
                 // select all the required input fields and set the hidden boolean and the error message fields.
                 $(".requiredInput :input").filter(":visible").each(function(_, target) {
@@ -247,7 +250,7 @@
             window.bindSubmitEvent = function () {
                 $('#evalForm').on("submit", function(event) {
                     beforeEvaluationSave();
-                    handleFormErros();
+                    handleFormErrors();
                     event.preventDefault();
                     var formData = $(this).serializeArray();
                     var jsonData = JSON.stringify(formData);
@@ -257,7 +260,7 @@
                     // vf remote to save data
                     GenerateEvalComponent.saveFields('{!parentID}', (('{!evalSectionUuid}' != '') ? '{!evalSectionUuid}' : '{!$User.Id}' + '-' + uuid), '{!evalSectionType}', '{!evaltype}', '{!category}', '{!subcategory}', jsonData, function(result, event) {
                         if (!event.status) {
-                            $('#evalSecValMsgs').html(event.message);
+                            $('#evalSecValMsgs').html('<li>' + event.message + '</li>');
                         } else {
                             {!onEntrySaveSuccess}
                         }

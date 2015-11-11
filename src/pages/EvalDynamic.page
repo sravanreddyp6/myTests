@@ -441,9 +441,9 @@
 				<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
 					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 						<div class="panel-heading clearfix">
-							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category}/{!$CurrentPage.parameters.SubCategory} -- {! evaltype}</h3>
+							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}</h3>
 							<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" rendered="{!$CurrentPage.parameters.canEdit}">
-								<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery('#evalForm').submit(); return false;" />
+								<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery('#btnHiddenSave').click(); return false;" />
 								<input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />
 							</apex:outputPanel>
 						</div>

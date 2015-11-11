@@ -3,12 +3,8 @@ Fields type - sub types that are not yet handelled:
     Boolean - Radio
 */
 public with sharing class GenerateEvalComponent {
-
-	public String htmlTable {
-		get {
-			return CreateFieldControls();
-		}
-		set;
+	public Component.Apex.OutputPanel getSectionContent() {
+		return CreateFieldControls();
 	}
 
 	public string cat { get; set; }
@@ -68,8 +64,7 @@ public with sharing class GenerateEvalComponent {
 		}
 	};
 
-	public transient string evalSectionOwner;
-	public string getEvalSectionOwner(){
+	private string getEvalSectionOwner(){
 		String str = '';
 		if (evalSectionId == null || evalSectionId == ''){
 			str = UserInfo.getName();
@@ -85,8 +80,7 @@ public with sharing class GenerateEvalComponent {
 		return str;
 	}
 
-	public transient string evalSectionLastMod;
-	public string getevalSectionLastMod() {
+	private string getevalSectionLastMod() {
 		String str = '';
 		if (String.IsBlank(evalSectionId))
 			return str;
@@ -132,15 +126,15 @@ public with sharing class GenerateEvalComponent {
 		mapEvalValues = new Map<ID, Eval_Value__c>();
 	}
 
-	public String CreateFieldControls () {
+	public Component.Apex.OutputPanel CreateFieldControls () {
 		List<Eval__c> listEvalItems;
 		String additionalCondition = '';
 		//EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
 		if (evalSecType == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV'){
-			additionalCondition = 'and (NOT htmlid__c like \'HeadtoToeDiagnosticsIVQuestion%\') ';
+			additionalCondition = 'AND (NOT htmlid__c LIKE \'HeadtoToeDiagnosticsIVQuestion%\') ';
 		}
-		if (subcat == null || subcat == '') {  // We're looking at the general category here
-
+		if (subcat != null && subcat != '') {  // We're looking at the general category here
+			additionalCondition += 'AND Sub_Category__c = :subcat ';
 		}
 		listEvalItems = Database.query(
 			'SELECT id, htmlid__c, field_name__c, category__c, category_sequence__c, ' +
@@ -150,14 +144,18 @@ public with sharing class GenerateEvalComponent {
 			'  FROM eval__c ' +
 			' WHERE eval_type__r.name = :evalname ' +
 			'   AND category__c =:cat ' +
-			'   AND sub_category__c = :subcat ' +
 			'   AND visible__c = true ' +
 			additionalCondition +
 			'ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c'
 		);
 		List<String> evalIds = new List<String>();
+		Map<String, List<Eval__c>> subCategoryMap = new Map<String, List<Eval__c>>();
 		for (Eval__c eval: listEvalItems) {
 			evalIds.add(eval.Id);
+			if (!subCategoryMap.containsKey(eval.Sub_Category__c)) {
+				subCategoryMap.put(eval.Sub_Category__c, new List<Eval__c>());
+			}
+			subCategoryMap.get(eval.Sub_Category__c).add(eval);
 		}
 		List<Eval_Drop_Down__c> dd = [
 			SELECT whatid__c, option_name__c, option_value__c, Dependent_Fields__c,
@@ -176,10 +174,14 @@ public with sharing class GenerateEvalComponent {
 			   AND what_id__c = :evaluationID
 			   AND eval_Section_Id__c = :evalSectionId
 		];
-		return generateHtml(listEvalItems, dd, listEvalValues);
+		Component.Apex.OutputPanel fullPanel = new Component.Apex.OutputPanel(layout='none');
+		for (String subCategory: subCategoryMap.keySet()) {
+			fullPanel.childComponents.add(generateSubsectionHtml(subCategoryMap.get(subCategory), dd, listEvalValues));
+		}
+		return fullPanel;
 	}
 
-	private String generateHtml(List<Eval__c> listEvalItems, List<Eval_Drop_Down__c> dd, List<Eval_Value__c> listEvalValues) {
+	private Component.Apex.PageBlock generateSubsectionHtml(List<Eval__c> listEvalItems, List<Eval_Drop_Down__c> dd, List<Eval_Value__c> listEvalValues) {
 		// get the list of controls for this type, category, and subcategory
 		List<String> htmlcontrols = new List<String>();
 
@@ -210,12 +212,14 @@ public with sharing class GenerateEvalComponent {
 		String newHTMLfld = '';
 		String strval = '';
 		String reqfldHTML = '';
+		String subcategory = '';  // Assumption: this is all part of the same subcategory
 		Set<String> fieldsWithPreviousEntries = new Set<String>();
 		for (Set<String> association: previousEntryAssociation) {
 			fieldsWithPreviousEntries.addAll(association);
 		}
 		for(Eval__c e : listEvalItems){
 			try {
+				subcategory = e.Sub_Category__c;
 				newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
 				newHTMLfld = '';
 				strval = '';
@@ -470,9 +474,17 @@ public with sharing class GenerateEvalComponent {
 			}
 		}
 
-		String htmlTable2 = '<table style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
-		if (evalSecType == 'Head To Toe' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV') {
-			htmlTable2 = '<table style="width:100%;"><tr><th></th><th></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
+		Component.Apex.PageBlock pageBlock = new Component.Apex.PageBlock(title=subcategory, rendered=(cat != ''));
+		Component.Apex.OutputText outputText = new Component.Apex.OutputText(escape=false);
+
+		String htmlTable2 = '<label class="labelCol">Created By:</label>' + getEvalSectionOwner() + '<br />' +
+			'<label class="labelCol">Last Modified By:</label>' + getEvalSectionLastMod() +
+			'<span id="evalSecValMsgs" style="color: red;"></span>';
+
+		if (evalSecType == 'Head To Toe' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcategory == 'IV') {
+			htmlTable2 += '<table style="width:100%;"><tr><th></th><th></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
+		} else {
+			htmlTable2 += '<table style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
 		}
 		integer i=0;
 		for (String s : htmlControls){
@@ -484,7 +496,11 @@ public with sharing class GenerateEvalComponent {
 		}
 		htmlTable2 += '</tr></table>';
 
-		return htmlTable2;
+		outputText.value = htmlTable2;
+		pageBlock.childComponents.add(outputText);
+
+		return pageBlock;
+		//return htmlTable2;
 	}
 
 	public class FormKeyVal{
