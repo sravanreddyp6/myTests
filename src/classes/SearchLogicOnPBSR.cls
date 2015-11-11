@@ -150,7 +150,7 @@ public with sharing class SearchLogicOnPBSR {
             pbsonpbr='Person_Being_Served__c';
             sobjecttype='person_being_referred__c';
             referralSearch = '(SELECT ID,Person_Being_Served__c FROM Referrals__r WHERE Person_Being_Served__c = null LIMIT 1)';
-            criteria='Select Age_month__c,Age_year__c,Age_days__c, '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+','+referralSearch+','+pbsonpbr+' From '+ sobjecttype+' where (';
+            criteria='Select Age_month__c,Age_year__c,Age_days__c,Age_text__c, '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+','+referralSearch+','+pbsonpbr+' From '+ sobjecttype+' where (';
         }
        // String criteria='Select '+namefield+','+firstnamefield+','+lastnamefield+','+genderfield+','+dobfield+','+cityfield+','+statefield+','+zipfield+','+street1field+','+street2field+','+agefield+' From '+ sobjecttype+' where (';
         string lNameSearch = '';
