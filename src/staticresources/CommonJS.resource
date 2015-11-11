@@ -55,6 +55,16 @@
 		}
 		var enabledFields = [];
 		var rules = $element.data("rules");
+		if (rules && typeof a === 'string') {
+			// If we attach a data- attribute to a selectList, VF automatically escapes it, and
+			// there's no way to change that behavior, so here we attempt to convert that escaped
+			// string back to a JS object
+			try {
+				rules = JSON.parse($('<div/>').html(rules).text());
+			} catch (e) {
+				console.error(e);
+			}
+		}
 		rules && $.each(rules, function(key, value) {
 			var $targets = [];
 			if (value instanceof Array) {
@@ -148,6 +158,16 @@
 
 		var $allTargets = [];
 
+		if (rules && typeof a === 'string') {
+			// If we attach a data- attribute to a selectList, VF automatically escapes it, and
+			// there's no way to change that behavior, so here we attempt to convert that escaped
+			// string back to a JS object
+			try {
+				rules = JSON.parse($('<div/>').html(rules).text());
+			} catch (e) {
+				console.error(e);
+			}
+		}
 		rules && $.each(rules, function(key, value) {
 			if (value instanceof Array) {
 				$.each(value, function(_, selector) {
