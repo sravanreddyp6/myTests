@@ -55,7 +55,7 @@
 		}
 		var enabledFields = [];
 		var rules = $element.data("rules");
-		if (rules && typeof a === 'string') {
+		if (rules && typeof rules === 'string') {
 			// If we attach a data- attribute to a selectList, VF automatically escapes it, and
 			// there's no way to change that behavior, so here we attempt to convert that escaped
 			// string back to a JS object
@@ -158,7 +158,7 @@
 
 		var $allTargets = [];
 
-		if (rules && typeof a === 'string') {
+		if (rules && typeof rules === 'string') {
 			// If we attach a data- attribute to a selectList, VF automatically escapes it, and
 			// there's no way to change that behavior, so here we attempt to convert that escaped
 			// string back to a JS object
