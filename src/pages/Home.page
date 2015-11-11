@@ -7,6 +7,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
 	<apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="vfVarIsNR" />
 	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRW" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Cambridge' }" var="vfVarIsHt" />
 	<style type="text/css">
 		.thinking {
 			opacity: 0.8;
@@ -232,20 +233,24 @@
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
 				</apex:column> --> 
-                <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW)}">
+                <apex:column headerValue="Current Documentation" rendered="{!(canCreateProgressNotes || vfVarIsCM || vfVarIsNR ||  vfVarIsRW || vfVarIsHt || isCAFSS)}">
                     <!--  <apex:outputPanel rendered="{! canCreateProgressNotes}">
                         <a href="{!$Page.Progress_Notes_Log}?PBSID={!serviceAssignment.Person_Being_Served__c}&pbsname={!serviceAssignment.Person_Being_Served__r.Name}&saID={!serviceAssignment}&admission={!serviceAssignment.Admission__c}">View all Notes Log</a><br />
 					</apex:outputPanel>-->
-					<apex:outputPanel rendered="{! canCreateProgressNotes}">
+					<apex:outputPanel rendered="{! canCreateProgressNotes || vfVarIsHt || isCAFSS}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW && serviceAssignment.Action_Plans__r.size != 0)}">
+                    <apex:outputPanel rendered="{!admcansMap[serviceAssignment.Admission__r.Id] && (vfVarIsHt || isCAFSS)}" >
+                       <a href="/{!admissionCANSMap[serviceAssignment.Admission__r.Id].Id}">{!admissionCANSMap[serviceAssignment.Admission__c].Name}</a><br />                        
+                       <!--<a href='/apex/AssessmentView?id={!admissionCANSMap[serviceAssignment.Admission__r.Id]}'>In-Progress CANS Assessment</a> -->
+                     </apex:outputPanel>
+					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW && !vfVarIsHt && !isCAFSS && serviceAssignment.Action_Plans__r.size != 0)}">
                         <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Behavior Data</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW && serviceAssignment.Action_Plans__r.size != 0)}">
+					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW && !vfVarIsHt && !isCAFSS && serviceAssignment.Action_Plans__r.size != 0)}">
                         <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Skill Data</a><br />
 					</apex:outputPanel>
-					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW)}" >
+					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW && !vfVarIsHt && !isCAFSS)}" >
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Shift Note</a><br />
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{!AND(hasShiftDocMap[serviceAssignment.Id], canSeeShiftDoc)}">
@@ -254,7 +259,7 @@
 					<apex:outputPanel rendered="{!AND(hasCnaWorkbookMap[serviceAssignment.Id], canSeeCNAWorkbook)}">
 						<a href="/{!cnaWorkbookMap[serviceAssignment.Id].Id}">{!cnaWorkbookMap[serviceAssignment.Id].Name}</a><br />
 					</apex:outputPanel>
-                    <apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW)) }">
+                    <apex:outputPanel rendered="{!AND(canCreateNote,NOT(canCreateProgressNotes),NOT(vfVarIsNR), Not(vfVarIsRW), NOT(vfVarIsHt), NOT(isCAFSS)) }">
 						<a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&retURL={!HTMLENCODE('/apex/home')}">Add Narrative Shift Note</a><br />
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{!vfVarIsNR}">
@@ -281,20 +286,24 @@
 						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#admissionDocuments" itemLabel="Admission Documents" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#allergy" itemLabel="Allergy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#assistiveDevices" itemLabel="Assistive Devices" rendered="{!OperatingGroup = 'Care Meridian'}"/>
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#auths" itemLabel="Authorizations" rendered="{! OperatingGroup = 'Care Meridian'}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#auths" itemLabel="Authorizations" rendered="{! OperatingGroup = 'Care Meridian' || vfVarIsHt || isCAFSS}"/>
+                        <apex:selectOption itemValue="/apex/ServAssignExpectedDocs?id={!serviceAssignment}" itemLabel="Case Documents" rendered="{!vfVarIsHt || isCAFSS}"/>
+						<apex:selectOption itemValue="/{!serviceAssignment.Admission__r.Id}#CANS_Assesssments" itemLabel="CANS Assessments" rendered="{!vfVarIsHt || isCAFSS}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#caseManagementNotes" itemLabel="Case Management Notes" rendered="{! OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Associate_Diagnosis" itemLabel="Diagnosis"  rendered="{!NOT(canCreateProgressNotes)}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Funding_Sources" itemLabel="Funding Sources" rendered="{!OR(CONTAINS(permissionSetString, 'iServe - Tier III'), CONTAINS(permissionSetString, 'iServe - Tier IV'), CONTAINS(permissionSetString, 'ESD - Notes - Case Handler - NR-Carbondale'))}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Person_Being_Served__r.Id}#immunization" itemLabel="Immunization Information" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#isolation" itemLabel="Isolation Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Narrative Shift Notes" rendered="{!OperatingGroup = 'Care Meridian'}"/>
+                        <apex:selectOption itemValue="/apex/ServAssignFidelityChecklist?id={!serviceAssignment}" itemLabel="Fidelity Checklist"  rendered="{!vfVarIsHt || isCAFSS}" />
+                        <apex:selectOption itemValue="/{!serviceAssignment.Id}#Notes" itemLabel="Progress Notes" rendered="{!vfVarIsHt || isCAFSS}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#ShiftAssessments" itemLabel="Nurses Shift Documentation" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#residentAssessment" itemLabel="Resident Assessment" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Assessment_res" itemLabel="Restraint Events" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#Seizure_Tracking" itemLabel="Seizures" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 						<!--<apex:selectOption itemValue="/{!serviceAssignment.Id}#incidents" itemLabel="Incidents"  rendered="{!vfIsNotDefaultUser && $ObjectType.Incident__c.createable}" />-->
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}" itemLabel="Service Assignment"  />
-						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" rendered="{!NOT(canCreateProgressNotes) && NOT(vfVarIsNR)}" />
+						<apex:selectOption itemValue="/{!serviceAssignment.Id}#shiftSummaries" itemLabel="Summaries" rendered="{!NOT(canCreateProgressNotes) && NOT(vfVarIsNR) && NOT(vfVarIsHt) && NOT(isCAFSS)}" />
 						<apex:selectOption itemValue="/{!serviceAssignment.Id}#therapyDetails" itemLabel="Therapy" rendered="{!OperatingGroup = 'Care Meridian'}"/>
 					</apex:selectList>
 					<apex:commandButton value="Go" onclick="var url = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (url != '') { window.location = url; } return false;" />
@@ -820,7 +829,12 @@
 					createPanel('CNA Workbook', category, subcategory, null, 'Activity Log', true, latestCNAWorkbookId);
 				} else if (selectedValue == 'createPBSIncident') {
 					createPBStypeIncident(serviceAssignmentId);
-				} 
+                } 
+                //CAFSS or Hastings PRI-327
+                else if(selectedValue=='createNewCansAssesment'){
+                    var url ='{!$Page.assessment_CANSdetail}?&admission='+admissionId+'&type={!CANsID}&retURL={!HTMLENCODE('/apex/home')}';
+                    $(location).attr('href',url); 
+                }
 				// IADAY-9 - RW actions are navigations to new pages
 				else if ( selectedText == 'Create New Action Plan') {
 					makeNewPlan(selectedValue);
