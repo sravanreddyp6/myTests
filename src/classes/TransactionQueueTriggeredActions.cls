@@ -7,6 +7,7 @@ public without sharing class TransactionQueueTriggeredActions {
 	public void afterUpdate(List<Transaction_Queue__c> txns) {
 		
 			system.debug('Running as: ' + UserInfo.getUserName() );
+			system.debug('Number of Transactions to process : ' + txns.size() );
 			Transaction_Queue__c newreq;
 		
 			// need to bulkify?
@@ -91,6 +92,33 @@ public without sharing class TransactionQueueTriggeredActions {
 	                            newreq.return_value__c = json.serialize( e.getMessage() );
 	                }
                 }
+                
+                else if ( t.request_type__c == 'Risk' ) {
+                    try {
+                        // get the pbs id from the request pararms
+                        ID admId = t.input_params__c;
+                        
+                        // execute the transaction as requested
+                        Assessment__c assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Assessment_Type__r.name = 'Risk' limit 1];
+                        Assessment_RiskFormWithoutSharing riskAssessment = new Assessment_RiskFormWithoutSharing(assessment.id); 
+    
+                        // serialize the result
+                        String jsonstring = json.serialize(riskAssessment);
+                        //system.debug( 'GOT RESULT: '  + jsonstring);
+
+                        // update the request as having been fulfilled
+                        newreq.return_value__c = jsonstring;
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                        
+                    } catch (Exception e) {   
+                        // flag the error
+                        newreq.fulfilled__c = false;
+                        newreq.return_value__c = json.serialize( e.getMessage() );
+                    }
+                    
+                }
+                
                 else if ( t.request_type__c == 'Seizures' ) {
                     try {
                         // get the pbs id from the request pararms

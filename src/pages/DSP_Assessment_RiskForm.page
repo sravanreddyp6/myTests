@@ -1,0 +1,151 @@
+<apex:page title="Asesssment: {!assessmentResponse.assessmentWrapper['Name']}" controller="TxnQueueResponseController" extensions="DSPSubmitTxn" standardStylesheets="true" sidebar="false" >
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:variable var="vfManagedQuestions" value="IADAY17a,IADAY17b,IADAY17c,IADAY17d"/>
+
+<style>
+.noDisplay{display: none;}
+    body .bPageBlock[id*=main_detail] {
+        margin-bottom: 5px;
+    }
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}    
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+.myradiotable td {
+    width: 175px;
+    text-align: center;        
+}
+.myradiotableheader{
+    margin-left:290px;
+    margin-top:-15px;
+}       
+.myrow{
+    height: 100%;
+}
+.dateFormat{
+    visibility:hidden;
+} 
+div.removeFromFlow {
+    position: absolute;
+}
+[id*=staffingRatioOther] {
+    position: relative;
+    top: -20px;
+    left: 70px;
+}
+table[id*=dayServiceSupportIntervalRadio] {
+    position: relative;
+    top: -95px;
+    left: 370px;
+}
+table[id*=dayServiceWithoutCaregiverRadio] {
+    position: relative;
+    top: -71px;
+    left: 220px;
+}
+.hbbg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}        
+</style>
+<script>function setFocusOnLoad() {}</script>
+
+<apex:form id="myfrm" >
+    <apex:pageMessages />
+<!--     <apex:pageBlock id="main_detail" title="{!if ($CurrentPage.parameters.pdf ='1', !assessmentResponse.assessmentWrapper['Admission__r.Person_Being_Served__r.Name'] + ' - ', '') }Risk Assessment Summary"> -->
+    <apex:pageBlock id="main_detail" title="Risk Assessment Summary">    
+        <apex:pageBlockSection columns="2" collapsible="false" title="Information">
+            <!--  row1 -->
+            <apex:outputText value="{!assessmentResponse.assessmentWrapper['Name']}" />
+            <apex:outputText value="{!assessmentResponse.assessmentWrapper['Admission__r.Name']}" />
+<!--             <apex:outputField value="{!assessmentResponse.assessmentWrapper['Approval_Date__c']}" /> -->
+                
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >Created By</apex:outputPanel>
+                <apex:outputPanel >
+<!--                     <apex:outputText value="{!assessmentResponse.assessmentWrapper['CreatedBy.Name']}"/>&nbsp; -->
+                    <apex:outputText value=" {!assessmentResponse.assessmentWrapper['CreatedDate']}"/>&nbsp;
+                </apex:outputPanel> 
+            </apex:pageBlockSectionItem>
+
+<!--             <apex:outputField value="{!assessmentResponse.assessmentWrapper['Status__c']}"/>   -->
+
+            <apex:pageBlockSectionItem labelStyle="width: 13%; dataStyle: 20%;">
+                    <apex:outputPanel >Last Modified By</apex:outputPanel>
+                    <apex:outputPanel ><apex:outputText value="{!assessmentResponse.assessmentWrapper['LastModifiedBy.Name']}"/>&nbsp;<apex:outputText value=" {!assessmentResponse.assessmentWrapper['LastModifiedDate']}"/></apex:outputPanel>  
+            </apex:pageBlockSectionItem> 
+
+            <apex:pageBlockSectionItem />
+                
+            <apex:pageBlockSectionItem >
+                    <apex:outputPanel >Finalized By</apex:outputPanel>
+<!--                     <apex:outputPanel ><apex:outputText value="{!assessmentResponse.assessmentWrapper['Approved_By__r.Name']}" />&nbsp;<apex:outputText value="{0, date, MM/dd/yyyy}"><apex:param value="{!assessmentResponse.assessmentWrapper['Finalized_Date__c']}"/></apex:outputText></apex:outputPanel>   -->
+            </apex:pageBlockSectionItem>
+                      
+            <apex:pageBlockSectionItem >
+                    <apex:outputPanel >Verbal Approval Obtained From</apex:outputPanel>
+<!--                     <apex:outputField value="{!assessmentResponse.assessmentWrapper['Verbal_Approval_Obtained_From__c']}"  /> -->
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem >
+                    <apex:outputPanel >Verbal Approval Obtained On</apex:outputPanel>
+<!--                     <apex:outputField value="{!assessmentResponse.assessmentWrapper['Verbal_Approval_Obtained_On__c']}"  /> -->
+            </apex:pageBlockSectionItem>
+                              
+        </apex:pageBlockSection>   
+        <br/>
+        
+
+    </apex:pageBlock>
+    
+    
+<div id="ackfrom" class="hbbg" style="display: none;">
+	<div id="p" class="popupform" >
+	    <apex:pageBlock >
+	        <apex:pageBlockSection columns="1">
+	            <apex:pageBlockSectionItem >
+	                <apex:outputLabel >
+	                    Staff Name
+	                </apex:outputLabel>
+	                {! $User.myFullName__c} 
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem >
+	                <apex:outputLabel >Date</apex:outputLabel>
+	                 <apex:outputText value="{0, date, E - MM/dd/yyyy}">
+	                    <apex:param value="{!TODAY()}" />
+	                </apex:outputText>               
+	            </apex:pageBlockSectionItem>
+	            
+	            <apex:pageBlockSectionItem >
+	                I have received training on this Risk Assessment, and I know whom to contact if I have questions regarding it.
+	            </apex:pageBlockSectionItem>
+	
+	            <apex:outputPanel layout="block" style="width: 100%; text-align: center;" >
+	                            <apex:commandButton action="{!ackActionPlan}" accesskey="" value="Acknowledge" status="myStatus" />
+	                &nbsp;
+	                <apex:commandButton onclick="toggleById('ackfrom', '500'); return false;"  value="Cancel" />
+	            </apex:outputPanel>
+	            
+	        </apex:pageBlockSection>
+	        
+	    </apex:pageBlock>
+	</div>    
+</div>
+</apex:form>
+</apex:page>
