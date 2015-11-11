@@ -119,7 +119,7 @@ public with sharing class AdmissionViewExtension {
         canCreateAdm = oSchema.IsCreateable();
         	if(canCreateAdm ){
            List<Admission__c>  admissionList=[select id,Name,Discharged_Date__c, Admission_Effective_DateTime__c, Effective_Date__c, Status__c 
-        		        from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: admission.Person_Being_Served__c];
+        		        from Admission__c where  Discharged_Date__c  = null and Person_Being_Served__c =: admission.Person_Being_Served__c AND Status__c != 'Created in Error'];
         		if(admissionList.size()>0) {
         			canCreateAdm = false;
         		}
