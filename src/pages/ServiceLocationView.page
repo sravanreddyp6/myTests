@@ -25,6 +25,15 @@
                 <apex:outputField value="{!Service_Location__c.Program__c}" />
                 <apex:outputField value="{!Service_Location__c.Setting__c}" />
                 <apex:outputField value="{!Service_Location__c.Program_Rollup__c}" />
+                
+                
+                <apex:outputField value="{!Service_Location__c.Location_Nickname__c}" />
+    			<apex:outputField value="{!Service_Location__c.Network_Offering__c}" />
+    			<apex:outputField value="{!Service_Location__c.Service_Type__c}" />
+    			<apex:outputField value="{!Service_Location__c.Setting_picklist__c}" Label="Setting (New)" />
+    			<apex:outputField value="{!Service_Location__c.Source_System__c}" />
+                
+                
                 <apex:pageBlockSectionItem >
                 <apex:outputLabel value="Address" />
                 <apex:outputPanel >
@@ -37,13 +46,13 @@
                 <apex:outputField value="{!Service_Location__c.NPI__c}" />
                 <apex:outputField value="{!Service_Location__c.Status__c}" />
             </apex:pageBlockSection>
-            <apex:pageBlockSection columns="1" rendered="{!Service_Location__c.FacilityID__c == 20}" >
+            <apex:pageBlockSection columns="1"  >
             	<apex:outputField value="{!Service_Location__c.Room_and_Board_Rate__c}" label="Room and Board Cost" />
             	<apex:outputField value="{!Service_Location__c.PRN_DS_Per_Hour__c}" />
             	<apex:outputField value="{!Service_Location__c.Per_Productive_Unit__c}" />             
             </apex:pageBlockSection>
         </apex:pageBlock>
-        <c:SObjectHistories object="{!Service_Location__c}" title="Field History for Service Location" rendered="{!Service_Location__c.FacilityID__c == 20}" />
+        <c:SObjectHistories object="{!Service_Location__c}" title="Field History for Service Location" />
     </apex:form>
     
 </apex:page>
