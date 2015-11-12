@@ -1,4 +1,6 @@
 public without sharing class Assessment_RiskFormWithoutSharing {
+   public list<string> selectFields = new list<string>();
+
    public string glbListSeperator {get{return ';';} set;}
    public string glbItemSeperator {get{return '__';} set;}
    public boolean hasErrorOnFinalize {get; set;}
@@ -30,15 +32,15 @@ public without sharing class Assessment_RiskFormWithoutSharing {
                                 Order By Question_Number__c) 
                 From Assessment_Domain__c Where id in :DomainsInScopeIDs Order By Sort_Order__c]; }
 
-
     public Assessment__c assessment { get; set; }
-
     public transient Map<String, Object> assessmentWrapper;
     public Map<String, Object> getAssessmentWrapper() {
     	if (this.assessmentWrapper == null){
 	    	Map<String, Object> m = new Map<String, Object>();
+	    	for(String s : selectFields){
+	    		m.put(s,'');
+	    	}
 	    	updateMapWithRelationshipKeys(m, JSON.serialize(this.assessment), '');
-	    	system.debug('assessment wrapper values: ' + m );
             return m;
     	} else return this.assessmentWrapper;
     }
@@ -209,26 +211,16 @@ public without sharing class Assessment_RiskFormWithoutSharing {
     }
     
     public Assessment_RiskFormWithoutSharing(Id assessmentId) {
-        String selects = '';
         // Get a map of field name and field token
         Map<String, Schema.SObjectField> fMap = Schema.getGlobalDescribe().get('Assessment__c').getDescribe().Fields.getMap();
-        list<string> selectFields = new list<string>();
         if (fMap != null) {
             for (Schema.SObjectField ft : fMap.values()){ // loop through all field tokens (ft)
                 Schema.DescribeFieldResult fd = ft.getDescribe(); // describe each field (fd)
                     selectFields.add(fd.getName());
             }
         }
-        if (!selectFields.isEmpty()) {
-            for (string s:selectFields){
-                selects += s + ',';
-            }
-            if (selects.endsWith(',')) {
-                selects = selects.substring(0,selects.lastIndexOf(','));
-            }
-        }
-        String strSQL =  'SELECT ' + selects + ' FROM Assessment__c WHERE Id = \'' + assessmentId + '\'';
-        strSQL = strSQL.Replace('SELECT ', 'SELECT Admission__r.Name,Admission__r.State__c, LastModifiedBy.Name, CreatedBy.Name, Approved_By__r.Name, Admission__r.Person_Being_Served__r.Name, ');
+        selectFields.addAll(new List<String>{ 'Admission__r.Name', 'Admission__r.State__c', 'LastModifiedBy.Name', 'CreatedBy.Name', 'Approved_By__r.Name', 'Admission__r.Person_Being_Served__r.Name'});
+        String strSQL =  'SELECT ' + String.join(selectFields, ',') + ' FROM Assessment__c WHERE Id = \'' + assessmentId + '\'';
         this.assessment = (Assessment__c) Database.query(strSQL)[0];
         
         mode = 'view';
