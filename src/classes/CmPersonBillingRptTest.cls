@@ -4,18 +4,18 @@ private class CmPersonBillingRptTest {
 
     static testMethod void myTestWithNoEval() {
         TMN_Generic_Core_TestData testData = new TMN_Generic_Core_TestData();
-        
+
         PageReference pageRef = Page.CmPersonBillingRpt;
         Test.setCurrentPage(pageRef);
         ApexPages.currentPage().getParameters().put('Id', testData.contactID);
         ApexPages.currentPage().getParameters().put('StartDate','01/01/2015');
         ApexPages.CurrentPage().getParameters().put('EndDate','01/08/2015');
-                
+
         CmPersonBillingRpt controller = new CmPersonBillingRpt();
         system.assert(controller.nsdEvalIds.size() == 0);
     }
-    
-    
+
+
     static testMethod void myTestWithEval() {
         Action_Plan__c actionPlan = createData();
         Action_Summary__c summary = new Action_Summary__c(
@@ -26,23 +26,23 @@ private class CmPersonBillingRptTest {
                 Status__c = 'Final'
                 );
         insert summary;
-        
+
         PageReference pageRef = Page.CmPersonBillingRpt;
         Test.setCurrentPage(pageRef);
         ApexPages.currentPage().getParameters().put('Id', myData.contactID);
         ApexPages.currentPage().getParameters().put('StartDate','01/01/2015');
         ApexPages.CurrentPage().getParameters().put('EndDate','01/08/2015');
-        
+
         list<Evaluation__c> evaluations = new list<Evaluation__c>();
         evaluations.add(new Evaluation__c ( Status__c = 'Draft', RecordtypeId = Utility.getEvaluationRecordType('CMShiftAssessment'),
-											Shift_Start_Time__c = datetime.newInstance(2015, 1, 2, 0, 2, 2), Shift_End_Time__c = datetime.newInstance(2015, 1, 3, 0, 2, 2), 
+											Shift_Start_Time__c = datetime.newInstance(2015, 1, 2, 0, 2, 2), Shift_End_Time__c = datetime.newInstance(2015, 1, 3, 0, 2, 2),
 											Head_to_Toe_Status__c = 'Final', ServiceAssignment__c = myData.theSA.Id ));
-											
+
         evaluations.add(new Evaluation__c ( Status__c = 'Final', RecordtypeId = Utility.getEvaluationRecordType('CNA Workbook'),
-                                            Shift_Start_Time__c = datetime.newInstance(2015, 1, 2, 0, 2, 2), Shift_End_Time__c = datetime.newInstance(2015, 1, 3, 0, 2, 2), 
+                                            Shift_Start_Time__c = datetime.newInstance(2015, 1, 2, 0, 2, 2), Shift_End_Time__c = datetime.newInstance(2015, 1, 3, 0, 2, 2),
                                             ServiceAssignment__c = myData.theSA.Id ));
         insert evaluations;
-        
+
         list<eval__c> evals = TMN_Generic_Core_TestData.getEvalTestRecords();
         list<GenerateEvalComponent.FormKeyVal> evalVals = new list<GenerateEvalComponent.FormKeyVal>();
         for (Eval__c e : [select id, Field_Type__c, Field_Sub_Type__c
@@ -68,30 +68,30 @@ private class CmPersonBillingRptTest {
             }
             evalVals.add(val);
         }
-        
+
         Eval_Type__c evlTyp = [Select Name, id from Eval_Type__c where Name = 'Head to Toe'];
-        GenerateEvalComponent.saveFields(evaluations[0].id, UserInfo.getUserId() + '-' + DateTime.now().formatLong(), 
-                                        'Shift', evlTyp.Name, 'TEST', 'TEST_TEST', JSON.serialize(evalVals));        
-        
+        GenerateEvalComponent.saveFields(evaluations[0].id, UserInfo.getUserId() + '-' + DateTime.now().formatLong(),
+                                        'Shift', evlTyp.Name, JSON.serialize(evalVals));
+
         insert (new Evaluation_Response__c( RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note'),
                                             Late_Entry_Note__c = 'Test late note', Evaluation__c = evaluations[0].id ));
-        
+
         CmPersonBillingRpt controller = new CmPersonBillingRpt();
-        
+
         system.assert(controller.nsdEvalIds.size() == 1);
         system.assert(controller.cnaEvalIds.size() == 1);
 
         system.assert(!controller.getMapEvalResposes().isEmpty());
         system.assert(!controller.getmapEvalResposeFlds().isEmpty());
         system.assert(!controller.getmapEvalResposeFldLbls().isEmpty());
-        
+
         system.assert(!controller.evalSectionsMap.isEmpty());
         system.assert(controller.mapEvalResposes.get(controller.nsdEvalIds[0]).get('Late Entry Note').size() > 0);
         system.assert(!controller.evalValues.get(controller.nsdEvalIds[0]).isEmpty());
     }
-    
-    
-    
+
+
+
     private static Action_Plan__c createData(){
         myData = new TMN_Generic_Core_TestData();
 
@@ -284,5 +284,5 @@ private class CmPersonBillingRptTest {
         upsert ap;
 
         return ap;
-    }    
+    }
 }

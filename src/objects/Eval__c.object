@@ -101,6 +101,18 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Composite__c</fullName>
+        <description>The composite key, containing the category, sub- and sub-sub-category for this Eval.</description>
+        <externalId>false</externalId>
+        <formula>Category__c + &apos;~&apos; +  Sub_Category__c + IF(ISBLANK(Sub_Sub_Category__c), &apos;&apos;, &apos;~&apos; + Sub_Sub_Category__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Composite</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Controlling_Field__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <description>eval field that controls this field</description>
