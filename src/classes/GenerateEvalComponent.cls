@@ -510,11 +510,8 @@ public with sharing class GenerateEvalComponent {
 
 	@RemoteAction
 	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm) {
-		if (evalSectionId == '' || evalSectionId == null) {
-			evalSectionId = UserInfo.getUserId() + '-' + DateTime.now().formatLong();
-		}
 		// Deserialize the form
-		list<FormKeyVal> objs = (list<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
+		List<FormKeyVal> objs = (List<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
 		Map<String,String> formData = new map<String, String>();
 		// This is used to handle multi-select picklist
 		String oldMapVal;
@@ -524,42 +521,62 @@ public with sharing class GenerateEvalComponent {
 				formData.put(d.name, oldMapVal +';'+ formData.get(d.name));
 			}
 		}
+		// If evalSectionType is not passed in from the form, that means it cannot be
+		// determined from the client side - it means that we have to infer it here. Generally,
+		// we check to see if there exists an Eval_Value__c whose Eval_Section_Type__c is not
+		// Activity Log - signalling that it belongs to a main entry.
+		Boolean batchInsert = (evalSectionType == null || evalSectionType == '');
+
+		if (evalSectionId == '' || evalSectionId == null) {
+			evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
+		}
 
 		Set<String> composites = new Set<String>();
 		for (Eval__c eval: [ SELECT Id, Composite__c FROM Eval__c WHERE Id IN :formData.keySet() ]) {
 			composites.add(eval.Composite__c);
+
 		}
 
 		mapEvalItems = new Map<ID, Eval__c>([
 			SELECT Id, htmlid__c, field_name__c, category__c, category_sequence__c, sub_category__c,
 			       sub_category_sequence__c, eval_type__r.name, Field_Type__c, Field_Sub_Type__c,
-			       field_sequence__c, required__c, length__c
+			       field_sequence__c, required__c, length__c, composite__c
 			  FROM eval__c
 			 WHERE eval_type__r.name = :EvalType
 			   AND Composite__c IN :composites
 			   AND visible__c = true
 			ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c
 		]);
-
+		Map<String, String> sectionTypeMap = new Map<String, String>();
+		for (Eval__c eval: mapEvalItems.values()) {
+			sectionTypeMap.put(eval.Composite__c, eval.Eval_Type__r.Name);
+		}
 		// get any populated values for this eval and section
-		List<Eval_Value__c> listEvalValues = [
-			SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c,
-			       text_over_250__c, text_under_250__c, eval__c from eval_value__c
-			 WHERE eval_Section_Id__c = :evalSectionId
-			   AND what_id__c = :evalId
-			   AND what_id_object__c = 'Evaluation__c'
-			   AND Eval__r.Composite__c IN :composites
-		];
+		List<Eval_Value__c> listEvalValues = Database.query('' +
+			'SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c, ' +
+			'       text_over_250__c, text_under_250__c, eval__c, eval_section_type__c, ' +
+			'       eval__r.eval_type__r.name, eval__r.composite__c ' +
+			'  FROM eval_value__c ' +
+			' WHERE what_id__c = :evalId ' +
+			'   AND what_id_object__c = \'Evaluation__c\' ' +
+			'   AND Eval__r.Composite__c IN :composites ' +
+			(batchInsert ? '' : '   AND eval_Section_Id__c = :evalSectionId')
+		);
 
 		// create a map by eval id
 		mapEvalValues = new Map<ID, Eval_Value__c>();
 		for (Eval_Value__c ev: listEvalValues) {
 			mapEvalValues.put(ev.eval__c, ev);
+
+			if (ev.Eval_Section_Type__c == ev.Eval__r.Eval_Type__r.Name) {
+				sectionTypeMap.put(ev.Eval__r.Composite__c, 'Activity Log');
+			}
 		}
 
 		List<Eval_Value__c> newValues = new List<Eval_Value__c>();
 		List<Eval_Value__c> delValues = new List<Eval_Value__c>();
 		Datetime evalShiftStartTime = [select Shift_Start_Time__c from Evaluation__c where ID = :evalId limit 1].Shift_Start_Time__c;
+
 		// use the values already on the eval
 		// check if data has changed
 		Eval_Value__c ev;
@@ -568,14 +585,14 @@ public with sharing class GenerateEvalComponent {
 			Eval__c ei = mapEvalItems.get((ID)f);
 
 			// construct new eval_value object
-			if (mapEvalValues.containsKey((ID)f))  {
+			if (mapEvalValues.containsKey((ID)f) && !batchInsert)  {
 				// value exists - need to update value
 				ev = (Eval_Value__c) mapEvalValues.remove((ID)f);
 			}   else {
 				ev = new Eval_Value__c();
 				ev.eval__c = (ID)f;
 				ev.eval_Section_Id__c = evalSectionId;
-				ev.Eval_Section_Type__c = evalSectionType;
+				ev.Eval_Section_Type__c = batchInsert? sectionTypeMap.get(ei.Composite__c) : evalSectionType;
 				ev.what_id__c = evalID;
 				ev.what_id_object__c = 'Evaluation__c';
 			}
@@ -629,7 +646,10 @@ public with sharing class GenerateEvalComponent {
 			delValues.add((Eval_Value__c) mapEvalValues.get(evID));
 		}
 
-		delete delValues;
+		if (!batchInsert) {
+			// We never delete values when doing a batch insert
+			delete delValues;
+		}
 		upsert newValues;
 	}
 
