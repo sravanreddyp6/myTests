@@ -1,0 +1,42 @@
+<apex:page standardController="Service_Location__c" extensions="manageservicelocationsController" sidebar="false" >
+	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+     
+     <apex:sectionheader subtitle="Manage Service Locations" />
+     <apex:form >
+     <apex:pageBlock >
+     	<apex:pageBlockButtons location="top">
+     		<apex:commandbutton value="Update Existing Service Location" action="{!manageExisting}" reRender="manageBlock"/>
+     		<apex:commandbutton value="Create New Service Location" onclick="window.open('/apex/ServiceLocationNew');"/>
+     	</apex:pageBlockButtons>
+     </apex:pageBlock>
+     <apex:pageBlock id="manageBlock">
+     	<apex:pageBlockbuttons location="bottom"  rendered="{!manage}" >
+     		<apex:commandbutton value="Run" action="{!run}" reRender="ResultsBlock,msgs"/>
+     	</apex:pageBlockbuttons>
+     	<apex:pageBlockSection title="Search Locations by Alias" columns="1" rendered="{!manage}" >
+     	<apex:inputField value="{!Service_Location__c.Alias_lookup__c}" />
+     	</apex:pageBlockSection>
+     </apex:pageBlock>
+     <apex:pageBlock id="ResultsBlock" >
+     	<apex:pagemessages id="msgs" />
+     	<apex:pageBlockSection Columns="1" >
+     		<apex:pageBlockTable value="{!locations}" var="loc" id="results" rendered="{!locations.size != 0}" >
+     			<apex:column >
+     				<a href="/apex/ServiceLocationEdit?id={!loc.Id}" target="_blank">Edit</a> |
+     				<a href="/apex/ServiceLocationView?id={!loc.Id}" target="_blank">View</a>
+     			</apex:column>
+     			<apex:column value="{!loc.Alias_lookup__c}" />
+     			<apex:column value="{!loc.Status__c}" />
+     			<apex:column value="{!loc.Location_Nickname__c}" />
+     			<apex:column value="{!loc.Network_Offering__c}" />
+     			<apex:column value="{!loc.Service_Type__c}" />
+     			<apex:column value="{!loc.FacilityID__c}" />
+     			<apex:column value="{!loc.Service_Value__c}" />
+     			<apex:column value="{!loc.Setting_picklist__c}" />
+     		</apex:pageBlockTable>
+     	</apex:pageBlockSection>
+     </apex:pageBlock> 
+     
+	</apex:form>
+</apex:page>
