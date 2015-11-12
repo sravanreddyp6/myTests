@@ -255,9 +255,8 @@
                     var formData = $(this).serializeArray();
                     var jsonData = JSON.stringify(formData);
 
-                   //console.log(jsonData);
                     // vf remote to save data
-                    GenerateEvalComponent.saveFields('{!parentID}', '{!evalSectionUuid}', '{!evalSectionType}', '{!evaltype}', '{!category}', '{!subcategory}', jsonData, function(result, event) {
+                    GenerateEvalComponent.saveFields('{!parentID}', '{!evalSectionUuid}', '{!evalSectionType}', '{!evaltype}', jsonData, function(result, event) {
                         if (!event.status) {
                             $('#evalSecValMsgs').html('<li>' + event.message + '</li>');
                         } else {

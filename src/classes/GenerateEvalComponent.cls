@@ -64,7 +64,7 @@ public with sharing class GenerateEvalComponent {
 		}
 	};
 
-	private string getEvalSectionOwner(){
+	@TestVisible private string getEvalSectionOwner(){
 		String str = '';
 		if (evalSectionId == null || evalSectionId == ''){
 			str = UserInfo.getName();
@@ -80,7 +80,7 @@ public with sharing class GenerateEvalComponent {
 		return str;
 	}
 
-	private string getevalSectionLastMod() {
+	private string getEvalSectionLastMod() {
 		String str = '';
 		if (String.IsBlank(evalSectionId))
 			return str;
@@ -509,18 +509,34 @@ public with sharing class GenerateEvalComponent {
 	}
 
 	@RemoteAction
-	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String cat, String subcat, String jsonForm) {
+	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm) {
 		if (evalSectionId == '' || evalSectionId == null) {
 			evalSectionId = UserInfo.getUserId() + '-' + DateTime.now().formatLong();
 		}
+		// Deserialize the form
+		list<FormKeyVal> objs = (list<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
+		Map<String,String> formData = new map<String, String>();
+		// This is used to handle multi-select picklist
+		String oldMapVal;
+		for(FormKeyVal d : objs){
+			oldMapVal = formData.put(d.name, d.value);
+			if (oldMapVal != null && oldMapVal != '') {
+				formData.put(d.name, oldMapVal +';'+ formData.get(d.name));
+			}
+		}
+
+		Set<String> composites = new Set<String>();
+		for (Eval__c eval: [ SELECT Id, Composite__c FROM Eval__c WHERE Id IN :formData.keySet() ]) {
+			composites.add(eval.Composite__c);
+		}
+
 		mapEvalItems = new Map<ID, Eval__c>([
 			SELECT Id, htmlid__c, field_name__c, category__c, category_sequence__c, sub_category__c,
 			       sub_category_sequence__c, eval_type__r.name, Field_Type__c, Field_Sub_Type__c,
 			       field_sequence__c, required__c, length__c
 			  FROM eval__c
 			 WHERE eval_type__r.name = :EvalType
-			   AND category__c =:cat
-			   AND sub_category__c = :subcat
+			   AND Composite__c IN :composites
 			   AND visible__c = true
 			ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c
 		]);
@@ -532,8 +548,7 @@ public with sharing class GenerateEvalComponent {
 			 WHERE eval_Section_Id__c = :evalSectionId
 			   AND what_id__c = :evalId
 			   AND what_id_object__c = 'Evaluation__c'
-			   AND Eval__r.Category__c = :cat
-			   AND Eval__r.Sub_Category__c = :subcat
+			   AND Eval__r.Composite__c IN :composites
 		];
 
 		// create a map by eval id
@@ -542,18 +557,9 @@ public with sharing class GenerateEvalComponent {
 			mapEvalValues.put(ev.eval__c, ev);
 		}
 
-		list<FormKeyVal> objs = (list<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
-		Map<String,String> formData = new map<String, String>();
-		String oldMapVal;
-		for(FormKeyVal d : objs){
-			oldMapVal = formData.put(d.name, d.value);
-			if (oldMapVal != null && oldMapVal != '') {
-				formData.put(d.name, oldMapVal +';'+ formData.get(d.name));
-			}
-		}
-
 		List<Eval_Value__c> newValues = new List<Eval_Value__c>();
 		List<Eval_Value__c> delValues = new List<Eval_Value__c>();
+		Datetime evalShiftStartTime = [select Shift_Start_Time__c from Evaluation__c where ID = :evalId limit 1].Shift_Start_Time__c;
 		// use the values already on the eval
 		// check if data has changed
 		Eval_Value__c ev;
@@ -593,7 +599,6 @@ public with sharing class GenerateEvalComponent {
 				} else if (ei.Field_Type__c == 'Datetime') {
 					ev.Date_Time__c = Utility.getDateTimeFromString(formData.get(f) +':00');
 					if (EvalType == 'Head to Toe' || EvalType == 'CNA Workbook'){
-						Datetime evalShiftStartTime = [select Shift_Start_Time__c from Evaluation__c where ID = :evalId limit 1].Shift_Start_Time__c;
 						system.debug('ShiftStartTime: ' + evalShiftStartTime.format() + '  Entered time: ' + ev.Date_Time__c.format());
 						if (evalShiftStartTime > ev.Date_Time__c || ev.Date_Time__c > Datetime.now()) {
 							throw new InvalidDateTimeValException('<li>Save failed!!! The date and time value for ' + ei.field_name__c + ' must be within the current shift start time and the current time.</li>');
