@@ -86,24 +86,20 @@ table[id*=dayServiceWithoutCaregiverRadio] {
                 <apex:outputPanel >Created By</apex:outputPanel>
                 <apex:outputPanel >
                     <apex:outputText value="{!assessmentResponse.assessmentWrapper['CreatedBy.Name']}"/>&nbsp;
-                    <apex:outputText value=" {!assessmentResponse.assessmentWrapper['CreatedDate']}"/>&nbsp;
+                    <c:StringDateFormatter GmtStringDateTimeVal="{!assessmentResponse.assessmentWrapper['CreatedDate']}" />
                 </apex:outputPanel> 
             </apex:pageBlockSectionItem>
             <apex:pageBlockSectionItem >
                 <apex:outputPanel >Status</apex:outputPanel>
             	<apex:outputText value="{!assessmentResponse.assessmentWrapper['Status__c']}" />
             </apex:pageBlockSectionItem>
-            
-
             <apex:pageBlockSectionItem labelStyle="width: 13%; dataStyle: 20%;">
                     <apex:outputPanel >Last Modified By</apex:outputPanel>
-                    <apex:outputPanel ><apex:outputText value="{!assessmentResponse.assessmentWrapper['LastModifiedBy.Name']}"/>&nbsp;<c:MilitaryDatetime dateTimeVal="{!assessmentResponse.assessmentWrapper['LastModifiedDate']}" />
-<!--                     <apex:outputText value=" {! DATETIMEVALUE(assessmentResponse.assessmentWrapper['LastModifiedDate'])}"/> -->
-</apex:outputPanel>
+                    <apex:outputPanel ><apex:outputText value="{!assessmentResponse.assessmentWrapper['LastModifiedBy.Name']}"/>&nbsp;
+                        <c:StringDateFormatter GmtStringDateTimeVal="{!assessmentResponse.assessmentWrapper['LastModifiedDate']}" />
+                    </apex:outputPanel>
             </apex:pageBlockSectionItem> 
-
             <apex:pageBlockSectionItem />
-                
             <apex:pageBlockSectionItem >
                     <apex:outputPanel >Finalized By</apex:outputPanel>
                     <apex:outputPanel >
@@ -111,15 +107,14 @@ table[id*=dayServiceWithoutCaregiverRadio] {
 	                    <apex:outputText value=" {!DATEVALUE(assessmentResponse.assessmentWrapper['Finalized_Date__c'])}"/>
                     </apex:outputPanel>  
             </apex:pageBlockSectionItem>
-                      
             <apex:pageBlockSectionItem >
                     <apex:outputPanel >Verbal Approval Obtained From</apex:outputPanel>
-<!--                     <apex:outputField value="{!assessmentResponse.assessmentWrapper['Verbal_Approval_Obtained_From__c']}"  /> -->
+                    <apex:outputText value="{!assessmentResponse.assessmentWrapper['Verbal_Approval_Obtained_From__c']}"  />
             </apex:pageBlockSectionItem>
 
             <apex:pageBlockSectionItem >
                     <apex:outputPanel >Verbal Approval Obtained On</apex:outputPanel>
-<!--                     <apex:outputField value="{!assessmentResponse.assessmentWrapper['Verbal_Approval_Obtained_On__c']}"  /> -->
+                    <apex:outputText value=" {!DATEVALUE(assessmentResponse.assessmentWrapper['Verbal_Approval_Obtained_On__c'])}" />
             </apex:pageBlockSectionItem>
                               
         </apex:pageBlockSection>   
