@@ -156,7 +156,7 @@ public with sharing class AdmissionViewExtension {
                            Referred_Out_Date__c, Referred_Out_Agency_Name__c, Reason_Other__c,Referred_Out_Reason__c, Discharged_Reason__c,
                            Planned_Discharge__c, Discharged_to_category__c, Discharged_to_subcategory__c, Discharged_to_additional__c, Discharged_to_other__c,
                            Discharged_Reason_subcategory__c, Discharged_reason_additional__c, Additional_Discharge_Info__c,
-                           Discharged_to_desc__c,
+                           Discharged_to_desc__c, Specify_Error__c,
                            (SELECT Name, Authorization_Status__c, Payer_Authorization_Date__c, Payer_Effective_Date__c, Payer_End_Date__c, Payer_Authorization_ID__c, Payer_Name__c, Number_Of_Authorized_Units__c, Remaining_Units__c FROM Authorized_Services__r),
                            (SELECT Name, Assessment_Date__c, Score__c, Owner.FirstName, Owner.LastName, Status__c FROM Assessments__r),
                            (SELECT Name, Person_Being_Served__r.Name, Status__c, Start_Date__c, SA_Start_DateTime__c, End_Date__c FROM Service_Agreements__r ORDER BY Status__c, Start_Date__c),
