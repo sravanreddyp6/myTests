@@ -20,7 +20,16 @@ public with sharing class manageservicelocationsController {
 	}
 	
 	public void run(){
-		this.locations = [SELECT Id, Name, Alias__c, Alias_lookup__c FROM Service_location__c WHERE Alias_lookup__c =: this.servicelocation.Alias_lookup__c ];
+		if(string.isBlank(this.servicelocation.Alias_lookup__c)){
+			apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, 'Please Choose an alias'));
+			return;
+		}
+		this.locations = [SELECT Id, Name, Alias__c, Alias_lookup__c, FacilityID__c, Location_Nickname__c, Network_Offering__c, Service_Type__c, Setting_picklist__c, Service_Value__c FROM Service_location__c WHERE Alias_lookup__c =: this.servicelocation.Alias_lookup__c ];
+		
+		if(this.locations.size() == 0){
+			apexpages.addmessage(new apexpages.message(ApexPages.Severity.INFO, 'Service locations does not exist for the Alias chosen'));
+			return;
+		}
 	}
 
 }
