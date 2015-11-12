@@ -51,6 +51,7 @@ j$(document).ready(function(){
             	<apex:inputField value="{!Service_Location__c.Service_type__c}" />
                 <apex:inputField id="locStatus" value="{!Service_Location__c.Status__c}" rendered="{! NOT(AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR'))}"/>
                 <apex:outputText label="Status" value="This location has been inactivated in {!Service_Location__c.Source_System__c} and cannot be edited." rendered="{! AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR')}"/>
+            	<apex:outputField value="{!Service_location__c.Source_System__c}" />
             </apex:pageBlockSection>
             <hr/>
             <apex:pageBlockSection columns="2"  >

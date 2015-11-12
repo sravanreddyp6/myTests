@@ -447,7 +447,7 @@
         <!-- END: CTEAE-39; siblings -->
         
          <!-- Diagnosis changes-->
-        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diagTable,diagnosisEntry,msgs"  status="pageProcessing"/>
+        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing"/>
         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" />
         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" >
         	<apex:param name="diagnosisId" value="" />
@@ -1063,7 +1063,7 @@
 	                </div> 
             </apex:pageBlockButtons> 
             <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true">
-                <apex:pageblockTable value="{!diagnoses}" var="diag" rendered="{!(diagnoses.size>0)}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" id="diagTable">
+                <apex:pageblockTable value="{!diagnoses}" var="diag" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" id="diagTable">
                     <apex:column headerValue="Action"><a href="#Diag" onclick="showEditDiagnosis('{!diag.id}');return false;">Edit</a>
                     </apex:column>
                     <apex:column value="{!diag.ICD__r.name}" headerValue="ICD Code" />
