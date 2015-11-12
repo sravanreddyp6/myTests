@@ -89,7 +89,7 @@ public with sharing class HomePageController{
     public string businessUnit {get; set;}
     
     public Map<Id, Assessment__c> admissionCANSMap {get; set;} //key-Admission : Value-Open Cans Assessment Id
-    public Map<Id, Boolean> admcansMap {get;set;}
+    public Map<Id, Boolean> hasadmissionCANSMap {get;set;}
 
 
 	//Constructor
@@ -244,13 +244,13 @@ public with sharing class HomePageController{
         saActiveactionMap = new Map<Id,Id>();
         set<id> admissions = new set<id>();
         admissionCANSMap = new Map<id, assessment__C>();
-        admcansMap = new Map<Id, Boolean>();
+        hasadmissionCANSMap = new Map<Id, Boolean>();
             
         for (Service_Assignment__c serviceAssignment: serviceAssignments) {
             saactionMap.put(serviceAssignment.id,false);
             saActiveactionMap.put(serviceAssignment.id,serviceAssignment.id);
             admissions.add(serviceAssignment.Admission__r.Id);
-            admcansMap.put(serviceAssignment.Admission__r.Id, false);
+            hasadmissionCANSMap.put(serviceAssignment.Admission__r.Id, false);
             for(Action_Plan__c ap:serviceAssignment.Action_Plans__r){
                 if(ap.Status__c == 'Active Final'){
                     saactionMap.put(serviceAssignment.id,True);
@@ -260,15 +260,11 @@ public with sharing class HomePageController{
             
         }
         
-       // for(Assessment__c asmt: [SELECT Id, Admission__c FROM Assessment__c WHERE Status__c = 'Open' AND Assessment_type__c = :getCANsID() AND Admission__c IN:admissions]){
         for(Assessment__c asmt: [SELECT Id, Name,status__c, Admission__c FROM Assessment__c WHERE Assessment_type__c = :getCANsID() AND Admission__c IN:admissions]){ 
-           // admcansMap.put(asmt.Admission__c, false);
             if(asmt.Status__c == 'Open'){
-                admcansMap.put(asmt.Admission__c, true);
+                hasadmissionCANSMap.put(asmt.Admission__c, true);
                 admissionCANSMap.put(asmt.Admission__c, asmt);
             }
-            
-            // admissionCANSMap.put(asmt.Admission__c, asmt.Id);
         } 
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
 			// Get the latest shift doc/CNA Workbook
@@ -345,7 +341,7 @@ public with sharing class HomePageController{
             }
 				
 			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
-			if ( operatingGroup == 'Redwood' && isIARole ) {
+			if ( operatingGroup == 'Redwood' && isIARole && !isCAFSS) {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					/*optionList.add(new SelectOption(
 										Page.Notes_ProgressNote_Create.getUrl() + 
@@ -372,7 +368,7 @@ public with sharing class HomePageController{
 				
 			}
 			//PRI-326 Redwood MN, IN, CA homepage values.
-			if ( operatingGroup == 'Redwood' && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) {
+			if ( operatingGroup == 'Redwood' && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA') && !isCAFSS) {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));

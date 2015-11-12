@@ -240,7 +240,7 @@
 					<apex:outputPanel rendered="{! canCreateProgressNotes || vfVarIsHt || isCAFSS}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
-                    <apex:outputPanel rendered="{!admcansMap[serviceAssignment.Admission__r.Id] && (vfVarIsHt || isCAFSS)}" >
+                    <apex:outputPanel rendered="{!hasadmissionCANSMap[serviceAssignment.Admission__r.Id] && (vfVarIsHt || isCAFSS)}" >
                        <a href="/{!admissionCANSMap[serviceAssignment.Admission__r.Id].Id}">{!admissionCANSMap[serviceAssignment.Admission__c].Name}</a><br />                        
                        <!--<a href='/apex/AssessmentView?id={!admissionCANSMap[serviceAssignment.Admission__r.Id]}'>In-Progress CANS Assessment</a> -->
                      </apex:outputPanel>
