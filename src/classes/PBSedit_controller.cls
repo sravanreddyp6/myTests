@@ -85,16 +85,17 @@ public boolean isCAFSS{get; set;}
         diag.Effective_Date__c = null;
     }  
     
-    /*public string loadThisDiag {get; set;}
+    public string loadThisDiag {get; set;} // comment after dec23 release- sravan
     
+    //Remove this method after Dec-23 release
     public PageReference loadDiagnosis(){
-        for(Diagnosis__c dg : diagnosis){
+       /* for(Diagnosis__c dg : diagnosis){
             if(dg.id == loadThisDiag){
                 diag = dg;
             }
-        }
+        }*/
         return null;
-    }*/
+    }
     
     //end
   
@@ -241,9 +242,11 @@ public Map<String, String> fieldMap { get; set; }
             || TMNUser.Operating_Group__c=='NeuroRestorative'
             || isCAFSS;
     }}
-    /*public list<Diagnosis__c> diagnosis{get{
-        return [select id, Status__c, ICD__c, Type__c, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
-    } set;}*/
+    public list<Diagnosis__c> diagnosis{get{
+    	//Sravan - Commented this code for ease of deployment. Shoould remove the property after Dec 23, 2015 release
+        /*return [select id, Status__c, ICD__c, Type__c, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];*/
+        return null;
+    } set;}
     
    
     public List<Evaluation_Response__c> getAssessments_ChildImmune (){
