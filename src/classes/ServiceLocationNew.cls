@@ -18,7 +18,7 @@ public with sharing class ServiceLocationNew {
 		this.location.UniqueID__c = location.FacilityID__c+'||'+location.ProgramID__c;
 		try{
 			insert location;
-			PageReference pg = new PageReference('/apex/ServiceLocationView?id='+location.Id);
+			PageReference pg = new PageReference('/apex/ServiceLocationEdit?id='+location.Id);
 			pg.setRedirect(true);
 			return pg;
 		}catch(exception e){
