@@ -1,13 +1,12 @@
 <apex:page controller="DSPHomePageController" sidebar="false" id="thePage" tabStyle="ESD_Home__tab">
 
-
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
 	
     <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
-    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 	<style type="text/css">
 		.thinking {
 			opacity: 0.8;
@@ -191,36 +190,50 @@
 					</a>
 				</apex:column>
 				<apex:column headerValue="Person Being Served Name">
-					<a onclick="submitTxnRequest('Person Being Served','{!person.PBSID}'); return false;">{!person.PBSName}</a>
+					<a href="#" onclick="submitTxnRequest('Person Being Served','{!person.PBSID}'); return false;">{!person.PBSName}</a>
 				</apex:column>
 				<apex:column headerValue="Alias - Nickname" value="{!person.program}" />
 				<apex:column headerValue="Current Documentation">
-				<apex:selectList id="currdoclist" size="1">
-				<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-				<apex:selectOption itemvalue="" itemlabel="Add Behavior Data" rendered="{!person.hasActionPlan}"/>
-				<apex:selectOption itemvalue="" itemlabel="Add Skill Data" rendered="{!person.hasActionPlan}"/>
-				<apex:selectOption itemvalue="" itemlabel="Add Shift Note" rendered="{!person.hasActionPlan}"/>
-				</apex:selectList>
-				</apex:column>
+				<apex:outputPanel rendered="{!person.hasActionPlan && person.hasBW && person.bwID != null}">
+					<a href="#" onclick="submitTxnRequest('Edit Behavior','{!person.bwID}')">Add Behavior Data</a><br />
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!person.hasActionPlan && person.hasBW && person.bwID = null}">
+					<a href="#" onclick="submitTxnRequest('New Behavior','{!person.apID}')">Add Behavior Data</a><br />
+				</apex:outputPanel>
 				
+				<apex:outputPanel rendered="{!person.hasActionPlan && person.hasSW && person.swID != null}">
+					<a href="#" onclick="submitTxnRequest('Edit Skills','{!person.swID}')">Add Skill Data</a><br />
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!person.hasActionPlan && person.hasSW && person.swID = null}">
+					<a href="#" onclick="submitTxnRequest('New Skills','{!person.apID}')">Add Skill Data</a><br />
+				</apex:outputPanel>
+				<apex:outputPanel >
+					<a href="#" onclick="">Add Shift Note</a>
+				</apex:outputPanel>
+				</apex:column>
+				 
 				<apex:column headerValue="Daily Actions">
 				<apex:selectList id="actionlist" size="1">
+				
 				<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-				<apex:selectOption itemvalue="" itemlabel="Record Seizure" />
+				<apex:selectOption itemvalue="submitTxnRequest('Action Plan','{!person.apID}');" itemlabel="Acknowledge Action Plan" rendered="{!person.hasActionPlan && person.needsAPAck}"/>
+				<apex:selectOption itemvalue="submitTxnRequest('ISSA','{!person.admID}');" itemlabel="Acknowledge ISSA" rendered="{!person.hasISSA && person.needsISSAAck}"/>
+				<apex:selectOption itemvalue="submitTxnRequest('Risk','{!person.admID}');" itemlabel="Acknowledge Risk Assessment" rendered="{!person.hasRisk && person.needsRiskAck}"/>
+				<apex:selectOption itemvalue="submitTxnRequest('Seizures','{!person.admID}');" itemlabel="Record Seizure" />
 				<apex:selectOption itemvalue="" itemlabel="View Behavior Data" rendered="{!person.hasActionPlan}"/>
 				<apex:selectOption itemvalue="" itemlabel="View Skill Data" rendered="{!person.hasActionPlan}"/>
-				<apex:selectOption itemvalue="submitTxnRequest('Action Plan', '{!person.apID}');" itemlabel="Acknowledge Action Plan" rendered="{!person.hasActionPlan && person.needsAPAck}"/>
-				<apex:selectOption itemvalue="submitTxnRequest('Risk', '{!person.admID}');" itemlabel="Acknowledge Risk Assessment" rendered="{!person.hasActionPlan && person.hasRisk && person.needsRiskAck}"/>
-				<apex:selectOption itemvalue="submitTxnRequest('ISSA','{!person.admID}');" itemlabel="Acknowledge ISSA" rendered="{!person.hasActionPlan && person.hasISSA && person.needsISSAAck}"/>
 				</apex:selectList>
+				<a class="btn" href="#" onClick="var action = jQuery(document.getElementById('{!$Component.actionlist}')).val(); alert(action); if (action != '') { eval(action); } return false;">Go</a>
 				</apex:column>
+				
+				 
 				<apex:column headerValue="Navigation">
 				<apex:selectList id="navigationList" size="1">
 				<apex:selectOption itemValue="" itemLabel="--- Select ---" />
-				<apex:selectOption itemvalue="/apex/DSPShiftNoteSummary)" itemlabel="Shift Note Summary" />
-				<apex:selectOption itemValue="submitTxnRequest('Action Plan', '{!person.apID}');" itemLabel="Action Plan" rendered="{!person.apID != null && person.hasActionPlan}"/>
-				<apex:selectOption itemValue="submitTxnRequest('Risk', '{!person.admID}');" itemLabel="Risk Assessment" rendered="{!person.hasRisk}"/>
+				<apex:selectOption itemvalue="/apex/DSPShiftNoteSummary" itemlabel="Shift Note Summary" />
+				<apex:selectOption itemValue="submitTxnRequest('ActionPlan','{!person.apID}');" itemLabel="Action Plan" rendered="{!person.apID != null && person.hasActionPlan}"/>
 				<apex:selectOption itemValue="submitTxnRequest('ISSA','{!person.admID}');" itemLabel="ISSA Assessment" rendered="{!person.hasISSA}"/>
+				<apex:selectOption itemValue="submitTxnRequest('Risk','{!person.admID}');" itemLabel="Risk Assessment" rendered="{!person.hasRisk}"/>
 				<apex:selectOption itemValue="submitTxnRequest('Seizures','{!person.pbsID}');" itemLabel="Seizures" />
 				</apex:selectList>
 				<apex:commandButton value="Go" onclick="var action = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (action != '') { eval(action); } return false;" />
@@ -287,7 +300,7 @@
 
 		<apex:outputPanel id="searchResultPanel" style="display: none; ">
 		<apex:form id="searchPanelForm">
-			<apex:actionFunction name="setfocusPBS" action="{!setfocusPBS}" status="pageProcessing" rerender="pbsBlock" oncomplete="reloadPBSTable(); ">
+			<apex:actionFunction name="setfocusPBS" action="{!setfocusPBS}" status="pageProcessing" rerender="pbsBlock" oncomplete="reloadPBSTable(); closeModalDialog('searchResultDialog', 'div'); ">
 				<apex:param name="pbsId" value="" assignTo="{!searchResultPBS}" />
 				<apex:param name="saId" value="" assignTo="{!searchResultSA}" />
 				<apex:param name="isFavorite" value="" assignTo="{!searchResultIsFav}" />
