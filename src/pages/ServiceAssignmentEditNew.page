@@ -517,7 +517,8 @@
                         <input id="pStatus" value="{!theServAssign.Status__c}" style="display: none;"  data-countInFormProgress="1" /> 
                     </apex:outputPanel>             
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided." rendered="{!editSA}">
+                <apex:pageBlockSectionItem id="statusItem" helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided." rendered="{!editSA}">
+
                     <apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
                     <apex:outputPanel >
                         <apex:actionRegion >
@@ -525,17 +526,35 @@
                             <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
                             </apex:actionSupport>
                         </apex:inputField>-->
-                        <apex:selectList id="saStatus" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
+                        <apex:selectList id="saStatus" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM.SAblock.ServAssignDetail.statusItem1.SE_label}&quot;,&quot;{!$Component.myFRM.SAblock.ServAssignDetail.statusItem1.Specify}&quot;],
+																																									&quot;Inactive&quot;: [&quot;{!$Component.myFRM.SAblock.ServAssignDetail.end1.end1Lab}&quot;,&quot;{!$Component.myFRM.SAblock.ServAssignDetail.end1.enddate}&quot;],
+																																									&quot;Active&quot;: [&quot;{!$Component.myFRM.SAblock.ServAssignDetail.end2.end2Lab}&quot;,&quot;{!$Component.myFRM.SAblock.ServAssignDetail.end2.enddate}&quot;] }"	>
                             <apex:selectOptions value="{!StatusValues}"/>
-                            <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
+                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
                             </apex:actionSupport>
                         </apex:selectList>
-                        </apex:actionRegion>                    
+                        </apex:actionRegion>
+                        <br/> 
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
+                
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
+                
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
+                <apex:pageBlockSectionItem id="statusItem1" rendered="{!editSA}" >
+                    <apex:outputLabel id="SE_label" for="Specify">Specify Error</apex:outputLabel>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Specify_Error__c}" id="Specify" />
+                        </div> 
+                        <br/> 
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                 <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }" />
+                <apex:pageBlockSectionItem rendered="{!editSA}" >
+                </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!!editSA}">
                     <label for="pStartDate">Start Date</label>
                     <apex:outputPanel >
@@ -610,27 +629,24 @@
                 
                 <!-- <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />  -->
                 
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && editSA)}" id="end1" >
-                    <apex:outputLabel value="End Date" />
+                <apex:pageBlockSectionItem rendered="{!(editSA)}" id="end1" >
+                    <apex:outputLabel id="end1Lab" value="End Date" />
                     <apex:outputPanel >
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
                             <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" onblur="changeEffectiveDates();" />
                         </div>
-                        </apex:outputPanel>
-                        </apex:pageBlockSectionItem>
-                        
-                        <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Active' && editSA)}"  id="end2" >
-                        <apex:outputLabel value="End Date" />
+                     </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+
+                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
+                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
+                <apex:pageBlockSectionItem rendered="{!(editSA)}"  id="end2" >
+                        <apex:outputLabel id="end2Lab" value="End Date" />
                         <apex:outputPanel >
                             <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" onblur="changeEffectiveDates();" />
                     </apex:outputPanel>           
                 </apex:pageBlockSectionItem>
-                
-                
-                
-                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
-                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
                 <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !(vfVarIsCM || isNR) }" />
                 <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !(vfVarIsCM || isNR)}" required="{!episodeReq}" />
                 <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{!editSA && (vfVarIsCB || isCAFSS)}" />
@@ -652,17 +668,7 @@
                 <apex:selectOptions value="{!modelValues}" />
             </apex:selectList>
                 </apex:pageblocksectionitem>
-                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }" />
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
-                    <apex:outputLabel id="SE_label" value="Specify Error" />
-                    <apex:outputPanel >
-                        <div class="requiredInput">
-                            <div class="requiredBlock"></div>
-                            <apex:inputField value="{!theServAssign.Specify_Error__c}" id="Specify" />
-                        </div>
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
-            
+
             </apex:pageBlockSection>
             
             
@@ -683,22 +689,36 @@
                     <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" onComplete="setStatusDefaults(); setUpFields();">
                     </apex:actionSupport>
                 </apex:inputField>-->
-                <apex:pageBlockSectionItem helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided." rendered="{!editSA}">
+                <apex:pageBlockSectionItem id="statusItem" helpText="Status 'Created in Error' is only to be used if the wrong program was selected or if the person never received services. This option is only available if services have not been provided." rendered="{!editSA}">
                     <apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
                     <apex:outputPanel >
                         <apex:actionRegion >
-                        <apex:selectList rendered="{!editSA}" id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
+                        <apex:selectList rendered="{!editSA}" id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM.SAblock.AOServAssignDetail.statusItem1.SE_label}&quot;,&quot;{!$Component.myFRM.SAblock.AOServAssignDetail.statusItem1.Specify}&quot;],
+																																														&quot;Inactive&quot;: [&quot;{!$Component.myFRM.SAblock.AOServAssignDetail.end1.end1Lab}&quot;,&quot;{!$Component.myFRM.SAblock.AOServAssignDetail.end1.enddate}&quot;],
+																																														&quot;Active&quot;: [&quot;{!$Component.myFRM.SAblock.AOServAssignDetail.end2.end2Lab}&quot;,&quot;{!$Component.myFRM.SAblock.AOServAssignDetail.end2.enddate}&quot;] }" >
                             <apex:selectOptions value="{!StatusValues}"/>
-                            <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
+                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
                             </apex:actionSupport>
                         </apex:selectList>
-                        </apex:actionRegion>                    
+                        </apex:actionRegion>                   
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Name}" rendered="{!editSA}" />
-
+                <apex:pageBlockSectionItem id="statusItem1" rendered="{!editSA}" >
+                    <apex:outputLabel id="SE_label" for="Specify">Specify Error</apex:outputLabel>
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!theServAssign.Specify_Error__c}" id="Specify" />
+                        </div> 
+                        <br/> 
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }" />
+                <apex:pageBlockSectionItem rendered="{!editSA}" >
+                </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!!editSA}">
                     <label for="pStartDate" >Start Date</label>                 
                     <apex:outputPanel >                 
@@ -775,8 +795,8 @@
                 <apex:outputField value="{!theServAssign.End_Date__c}" rendered="{!!editSA}" />
                 <!--  <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" /> -->
                 
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && editSA)}" id="end1" >
-                    <apex:outputLabel value="End Date" />
+                <apex:pageBlockSectionItem rendered="{!(editSA)}" id="end1" >
+                    <apex:outputLabel id="end1lab" value="End Date" />
                     <apex:outputPanel >
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
@@ -785,15 +805,16 @@
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         
-                        <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Active' && editSA)}"  id="end2" >
-                        <apex:outputLabel value="End Date" />
+                        
+
+                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
+                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
+                <apex:pageBlockSectionItem rendered="{!(editSA)}"  id="end2" >
+                        <apex:outputLabel id="end2lab" value="End Date" />
                         <apex:outputPanel >
                             <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
                     </apex:outputPanel>           
                 </apex:pageBlockSectionItem>
-
-                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!!editSA}" />
-                <apex:outputField value="{!theServAssign.Program_Detail__c}" rendered="{!editSA}" />
                 <!-- Added by Amruth for EB-434 -->
                 <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!editSA && !isNR}" />
                 <apex:outputField value="{!theServAssign.Episode__c}" rendered="{!!editSA && !isNR}" />
@@ -815,16 +836,6 @@
                         <apex:selectOptions value="{!modelValues}" />
                     </apex:selectList>                   
                 </apex:pageblocksectionitem>
-                <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }" />
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Created in Error' && editSA)}" id="Specify_Error" >
-                    <apex:outputLabel id="SE_label" value="Specify Error" />
-                    <apex:outputPanel >
-                        <div class="requiredInput">
-                            <div class="requiredBlock"></div>
-                            <apex:inputField value="{!theServAssign.Specify_Error__c}" id="Specify" />
-                        </div>
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
              
 
                 <!--  EB-526 -->
