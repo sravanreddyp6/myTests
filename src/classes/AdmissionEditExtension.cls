@@ -56,7 +56,7 @@ public with sharing class AdmissionEditExtension {
             datetime dttimeEnddate = datetime.now();
              System.debug('dttimeEnddate-->'+ dtEnddate);
             Datetime l = dtEnddate;
-            l = l.addHours((system.Now().hour())+ 4);
+            l = l.addHours((system.Now().hour())+ 5);
             l = l.addMinutes(Datetime.Now().minute());
             l = l.addSeconds(Datetime.Now().second());
             dttimeEnddate = dtEnddate;
