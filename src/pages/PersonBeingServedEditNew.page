@@ -439,7 +439,8 @@
     <br />
     <div id="theWholeForm">
     <apex:form id="FormId">
-    	<c:FormCompletionControl viewMode="{! !pbsEditModeOn}"/>
+       
+            <c:FormCompletionControl viewMode="{!!pbsEditModeOn}" />
         <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,msgs" />
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,msgs" />
         <!-- START: CTEAE-39; siblings -->
@@ -447,7 +448,7 @@
         <!-- END: CTEAE-39; siblings -->
         
          <!-- Diagnosis changes-->
-        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diagTable,diagnosisEntry,msgs"  status="pageProcessing" />
+        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diagTable,diagnosisEntry,msgs,completeCheck" oncomplete=" setUpCompletionMonitor(); " status="pageProcessing" />
         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" />
         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" >
         	<apex:param name="diagnosisId" value="" />
@@ -1057,15 +1058,17 @@
          <a name="Diag" id="Diag1" />
          
         <apex:pageBlock mode="maindetail" id="Diagnosis1">
-        <div style="display: none;">
-         <label for="DiagPerc">At least one Diagnosis</label>
-		 <input id="DiagPerc" value="{! if (activeDiagExist,'True','') }"  data-countInFormProgress="1" />
-		 </div>    
-			<apex:pageBlockButtons location="top">
-	                <div class="blockbtns">
-	                    <apex:commandButton value="Add Diagnosis" id="addDiagnosis" onclick="showAddDiagnosis(); return false;" />
-	  					<apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_PBS_PDF?id={!PBSId}');return false;" />						
-	                </div> 
+            <apex:outputPanel id="completeCheck" >
+                <div style="display: none;">
+                    <label for="DiagPerc">At least one Diagnosis</label>
+                    <input id="DiagPerc" value="{! if (activeDiagExist,'True','') }"  data-countInFormProgress="1" />
+                </div>  
+            </apex:outputPanel>  
+            <apex:pageBlockButtons location="top">
+                    <div class="blockbtns">
+                        <apex:commandButton value="Add Diagnosis" id="addDiagnosis" onclick="showAddDiagnosis(); return false;" />
+                        <apex:commandButton value="PRE 10/1/2015" id="prevDiagnosis"  onClick="window.open('/apex/PreICD_Diagnosis_PBS_PDF?id={!PBSId}');return false;" />                      
+                    </div> 
             </apex:pageBlockButtons> 
             <apex:pageBlockSection id="diag_Alt1_Header" title="Diagnosis" columns="1" collapsible="true">
                 <apex:pageblockTable value="{!diagnoses}" var="diag" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" id="diagTable">

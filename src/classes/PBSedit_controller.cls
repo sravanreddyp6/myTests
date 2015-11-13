@@ -325,6 +325,8 @@ public Map<String, String> fieldMap { get; set; }
        			activediagExist = true;
        			break;
        		}
+       		else
+       		activediagExist = false;
        	
        }
       }

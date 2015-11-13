@@ -433,7 +433,7 @@
 <!--         <apex:actionFunction name="refreshDiagnoses" action="{!refreshDiagnoses}" rerender="pbDiagnosis" /> -->
         
         <!-- Sa Diag Junction -->
-        <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" onComplete="setUpFields(); return false;" />
+        <apex:actionFunction name="savesadiagJo" action="{!savesadiagJo}"  rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs, completeCheck" onComplete="setUpFields(); setUpCompletionMonitor(); return false; " />
         <apex:actionFunction name="showAddsadiagJo" action="{!showAddsadiagJo}" rerender="_sadiagJoSection_Alt1_Header,sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); return false;" status="pageProcessing"/>
         <apex:actionFunction name="showEditsadiagJo" action="{!showEditsadiagJo}"  rerender="sadiagJoEntry,msgs" oncomplete="openModalDialogSA('saDiagModal', 'span', 'Associate Diagnosis','none', '700'); setUpFields(); setABIDiagnosis(); setInjuryDate(); return false;"  status="pageProcessing" > 
         	<apex:param name="sadiagJoId" value="" />
@@ -506,6 +506,7 @@
                     </apex:actionStatus>
                 </div>
             </apex:pageBlockButtons>
+            
             <apex:pageBlockSection id="ServAssignDetail" collapsible="true" title="Service Assignment Detail" rendered="{!!AssessmentOnly}">
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!editSA}" />
@@ -521,14 +522,15 @@
 
                     <apex:outputLabel for="saStatus">Service Assignment Status</apex:outputLabel>
                     <apex:outputPanel >
-                        <apex:actionRegion >
+                        
                         <!--<apex:inputField id="saStatus" value="{!theServAssign.Status__c}"  html-data-countInFormProgress="1"  >
                             <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
                             </apex:actionSupport>
                         </apex:inputField>-->
+                        <apex:actionRegion >
                         <apex:selectList id="saStatus" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
                             <apex:selectOptions value="{!StatusValues}"/>
-                            <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
+                            <apex:actionSupport event="onchange" reRender="ServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
                             </apex:actionSupport>
                         </apex:selectList>
                         </apex:actionRegion>
@@ -670,6 +672,7 @@
             </apex:pageBlockSection>
             
             
+            
 
             <apex:pageBlockSection id="AOServAssignDetail" collapsible="true" title="Service Assignment Detail" rendered="{!AssessmentOnly}">
                 <apex:outputField value="{!theServAssign.Admission__c}" rendered="{!!editSA}" />
@@ -693,7 +696,7 @@
                         <apex:actionRegion >
                         <apex:selectList rendered="{!editSA}" id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" >
                             <apex:selectOptions value="{!StatusValues}"/>
-                            <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();">
+                            <apex:actionSupport event="onchange" reRender="AOServAssignDetail,saEndSectionEdit,end1,end2" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
                             </apex:actionSupport>
                         </apex:selectList>
                         </apex:actionRegion>                   
@@ -1685,10 +1688,12 @@ END: Uncomment to have the element collapsed by default -->
         
         <!-- Sa Diagnosis Junction Section -->
         <a id="Associate_Diagnosis"></a>
-        <div style="display: none;">
+         <apex:outputPanel id="completeCheck" >
+         <div style="display: none;">
          <label for="DiagPerc">At least one Diagnosis</label>
 		 <input id="DiagPerc" value="{! if (sadiagJOList.size >0,'True','') }"  data-countInFormProgress="1" />
 		 </div>  
+		 </apex:outputPanel>
         <apex:pageBlock id="pbsadiagBlock" mode="maindetail" rendered="{! !newSA && !editSA}" >
              <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
