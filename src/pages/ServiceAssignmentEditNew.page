@@ -3740,22 +3740,25 @@ END: Uncomment to have the element collapsed by default -->
         }
         
         setABIDiagnosis = function(){
-        	var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
-        	if(injType.indexOf('Acquired Brain Injury') > -1){
-        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', true);
-        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('disabled', true);
-        	}else{
-        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', false);
-        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('disabled', false);
-        	}
-        	
-        	if(injType.indexOf('Other') > -1){
-        		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').show();
-        		j$('[id$=sadiagJoEntry_sadiagJoInjOtherLabel]').show();
-        	}else{
-        		j$('[id$=sadiagJoEntry_sadiagJoInjOtherLabel]').hide();
-        		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').hide();
-        		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').val('');
+        	if({!isNR || vfVarIsCM}){
+	        	var injType = j$('select[id$=sadiagJoEntry_sadiagJoInjuryType]').val();
+	        	if(injType.indexOf('Acquired Brain Injury') > -1 ){
+	        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', true);
+	        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('disabled', true);
+	        	}
+	        	else{
+	        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('checked', false);
+	        		j$('input[id$=sadiagJoEntry_sadiagJoAbiDiagnosis]').prop('disabled', false);
+	        	}
+	        	
+	        	if(injType.indexOf('Other') > -1){
+	        		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').show();
+	        		j$('[id$=sadiagJoEntry_sadiagJoInjOtherLabel]').show();
+	        	}else{
+	        		j$('[id$=sadiagJoEntry_sadiagJoInjOtherLabel]').hide();
+	        		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').hide();
+	        		j$('input[id$=sadiagJoEntry_sadiagJoInjOther]').val('');
+	        	}
         	}
         }
         
