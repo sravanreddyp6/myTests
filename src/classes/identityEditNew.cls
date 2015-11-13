@@ -56,7 +56,7 @@ public class identityEditNew {
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c,Office_Flag__c,
             Account_Number__c, CPR_Expires__c, Discipline__c, GL_Code__c, IC_Agreement_Executed_Date__c, Insurance_Expires__c, License_Expires__c, Notes__c, Personal_City__c,
-            Personal_Location__c, Personal_Zip__c, Rate__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor__c 
+            Personal_Location__c, Personal_Zip__c, Rate__c,Custodians__c,Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor_name__c 
             FROM TMN_User__c 
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
@@ -97,12 +97,25 @@ public class identityEditNew {
         TMNUser.Zip_Code__c = aliasUser.Zip_Code__c;
         TMNUser.BAA_Signed__c = aliasUser.BAA_Signed__c;
         TMNUser.Location_Name__c = aliasUser.Location_Name__c;
-        TMNUser.other_Vendor__c = aliasUser.other_Vendor__c;
+        TMNUser.other_Vendor_name__c = aliasUser.other_Vendor_name__c;
         TMNUser.Last_Day__c = defaultLastDay;
     }else {
     isNewUser = false;
     }
  }
+ 
+ 	public List<SelectOption> getVendorvalues() {
+		List<SelectOption> Options = new List<SelectOption>();
+		Options.add(new SelectOption('NONE','NONE') );
+		List<TMN_Corp_Contract__c> tmnContract = [select id,name,Supplier__r.name,Type_of_Contract__c,Description__c,BAA_HIPAA_in_Contract__c from TMN_Corp_Contract__c  where (Type_of_Contract__c = 'BAA' OR BAA_HIPAA_in_Contract__c = 'Yes') AND Status__c in ('NEW','ACTIVE','RENEW') order by Supplier__r.name];		
+				for(TMN_Corp_Contract__c contract:tmnContract){
+					Options.add(new SelectOption(contract.Supplier__r.name,contract.Supplier__r.name));
+				}
+				
+		Options.add(new SelectOption('OTHER','OTHER'));
+		return Options;
+	}
+	
  
  	public List<TMN_User__c> tmnManagerList {set;get;}
  	public String managerFirstName  {set;get;}
@@ -192,7 +205,7 @@ public class identityEditNew {
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Manager_Lookup__c,Program_String__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Work_City__c,Zip_Code__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Location_Name__c,phone_ext__c,Custodians__c,
-            Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor__c  
+            Pre_Hire_ID__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,other_Vendor_name__c  
             FROM TMN_User__c 
             WHERE Email__c = :aliasName];
                                if(aliasUserList.size()>0){
@@ -238,8 +251,7 @@ public class identityEditNew {
                 error = true;
     	 	}
         }
-        system.debug('TMNUser.other_Vendor__c: ' +TMNUser.other_Vendor__c);
-        if(!(TMNUser.Operating_Group__c =='Care Meridian') && TMNUser.Vendor_list__c =='OTHER' && ( TMNUser.other_Vendor__c == null || TMNUser.other_Vendor__c.length()== 0 ) ){
+        if(!(TMNUser.Operating_Group__c =='Care Meridian') && TMNUser.Vendor_list__c =='OTHER' && ( TMNUser.other_Vendor_name__c == null || TMNUser.other_Vendor_name__c.length()== 0 ) ){
     	 	 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Vendor Name: Vendor Name is required in order to save this record'));
                 error = true;
         }

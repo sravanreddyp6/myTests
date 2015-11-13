@@ -485,7 +485,9 @@ function autoCompleteRender(ul, item) {
                     <apex:outputLabel value="Vendor" />
                          <apex:outputPanel styleClass="requiredInput" layout="block" >
                             <apex:outputPanel styleClass="requiredBlock" layout="block" />
-                     <apex:inputField label="Vendor" value="{!TMNUser.Vendor_list__c}"  id="vendorList"  html-data-visibility-rules="{&quot;OTHER&quot;: [&quot;{!$Component.createForm:createBlock:create_pageBlockSection:vendorSectionItem:VendorName}&quot;, &quot;{!$Component.createForm:createBlock:create_pageBlockSection:vendorSectionItem:VendorNameLable}&quot;, &quot;{!$Component.createForm:createBlock:create_pageBlockSection:vendorSectionItem:AddAttachments}&quot;, &quot;{!$Component.createForm:createBlock:create_pageBlockSection:BAASignedItem:BAASigned}&quot; , &quot;{!$Component.createForm:createBlock:create_pageBlockSection:BAASignedItem:BAASignedText}&quot;]}" ></apex:inputField>
+                            <apex:selectList value="{!TMNUser.Vendor_list__c}"  size="1" id="vendorList" html-data-visibility-rules="{&quot;OTHER&quot;: [&quot;{!$Component.createForm:createBlock:create_pageBlockSection:vendorSectionItem:VendorName}&quot;, &quot;{!$Component.createForm:createBlock:create_pageBlockSection:vendorSectionItem:VendorNameLable}&quot;, &quot;{!$Component.createForm:createBlock:create_pageBlockSection:vendorSectionItem:AddAttachments}&quot;, &quot;{!$Component.createForm:createBlock:create_pageBlockSection:BAASignedItem:BAASigned}&quot; , &quot;{!$Component.createForm:createBlock:create_pageBlockSection:BAASignedItem:BAASignedText}&quot;]}" >
+                            <apex:selectOptions value="{!Vendorvalues}" />
+                            </apex:selectList>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                    <apex:pageBlockSectionItem id="BAASignedItem" rendered="{!TMNUser.Operating_Group__c!='Care Meridian'}">
@@ -496,7 +498,7 @@ function autoCompleteRender(ul, item) {
                     <apex:pageBlockSectionItem id="vendorSectionItem" rendered="{!TMNUser.Operating_Group__c!='Care Meridian'}">
                       <apex:outputText value="Vendor Name" id="VendorNameLable"/>
                         <apex:outputPanel styleClass="nowrap requiredInput">
-                       <apex:inputField value="{!TMNUser.other_Vendor__c}" id="VendorName"  ></apex:inputField>  
+                       <apex:inputField value="{!TMNUser.other_Vendor_name__c}" id="VendorName"  ></apex:inputField>  
                        <apex:outputPanel id="AttachmentsPanel"> <apex:commandButton value="Add Attachments"  onclick="showAttchment();return false;" id="AddAttachments" disabled="{!newAttachments.size = 0}" style="width: 125px;!important;"/></apex:outputPanel>
                     </apex:outputPanel>
                     </apex:pageBlockSectionItem>
