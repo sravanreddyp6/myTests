@@ -40,15 +40,22 @@
 			background-color: #cfd9db;
 			border-color: #cfd9db;
 		}
+
+		.panel-heading.sidebar-expand {
+			cursor: pointer;
+		}
 	</style>
 
 	<apex:repeat value="{!categories}" var="category">
 		<div class="panel {!IF(categoryMap[category].hasError, 'panel-danger', IF(categoryMap[category].completed, 'panel-success', 'panel-warning'))}">
-			<div class="panel-heading clearfix">
-				<a class="pull-right sidebar-interactable sidebar-expand" style="display: block; margin: 5px; " data-category="{!category}">
-					<span class="glyphicon glyphicon-chevron-down" />
+			<div class="panel-heading sidebar-expand clearfix">
+				<a class="pull-right sidebar-interactable" style="display: block; margin: 5px; " data-category="{!category}">
+					<span class="glyphicon glyphicon-chevron-down expand-arrow" />
 				</a>
-				<div class="panel-title"><a class="sidebar-interactable" onclick="createPanel('{!evaltype}', '{!category}', '', null, '', true); return false;">{!category}</a></div>
+				<a class="pull-right sidebar-interactable batch-entry-insert" style="display: block; margin: 5px; " data-category="{!category}">
+					<span class="glyphicon glyphicon-plus" />
+				</a>
+				<div class="panel-title">{!category}</div>
 			</div>
 			<div class="panel-body" style="display: none; ">
 				<apex:repeat value="{!categoryMap[category].panels}" var="eval">
@@ -118,7 +125,7 @@
 				var $body = $(this).closest(".panel").children(".panel-body");
 				var index = window.openedCategories.indexOf($this.data("category"));
 				$body.toggle();
-				$glyphicon = $this.find("span.glyphicon");
+				$glyphicon = $this.find("span.expand-arrow");
 				if ($body.is(":visible")) {
 					$glyphicon.removeClass("glyphicon-chevron-down");
 					$glyphicon.addClass("glyphicon-chevron-up");
@@ -133,6 +140,12 @@
 					}
 				}
 				event.stopPropagation();
+			});
+
+			$(".batch-entry-insert").on("click", function (event) {
+				var $this = $(this);
+				createPanel('{!evaltype}', $this.data("category"), '', null, '', true);
+				return false;
 			});
 
 			window.openedCategories.forEach(function (category) {
