@@ -15,7 +15,7 @@ public boolean canCreateAdm { get; set; }
 public boolean disableAddAdm { get; set; }
 public Agency_Involved_With_Individual__c agency { get; set; }
 public string loadThisAgency {get; set;}
-
+public boolean activeDiagExist{get;set;}
 public boolean canViewFamilyInfo { 
     get {
         return TMNUser == null ? false : (TMNUser.Operating_Group__c == 'Cambridge' || isCAFSS);
@@ -195,6 +195,7 @@ public Map<String, String> fieldMap { get; set; }
         PBSId=Apexpages.currentPage().getParameters().get('Id');
         this.relParties = new List<Related_Party__c>();
         this.diagnoses = new List<Diagnosis__c>();
+        activeDiagExist = false;
         populateRelParties();
         populateDiagnoses();
 
@@ -319,6 +320,13 @@ public Map<String, String> fieldMap { get; set; }
                          from Diagnosis__c
                          where PBS__c = :pbsId order by Status__c, Type__c
                          ];
+       for(Diagnosis__c dg: Diagnoses){
+       		if(dg.Status__c == 'Active'){
+       			activediagExist = true;
+       			break;
+       		}
+       	
+       }
       }
     catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,

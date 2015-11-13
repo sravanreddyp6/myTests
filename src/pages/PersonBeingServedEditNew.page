@@ -447,7 +447,7 @@
         <!-- END: CTEAE-39; siblings -->
         
          <!-- Diagnosis changes-->
-        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing"/>
+        <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}"  rerender="diagTable,diagnosisEntry,msgs"  status="pageProcessing" />
         <apex:actionFunction name="showAddDiagnosis" action="{!showAddDiagnosis}" rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" />
         <apex:actionFunction name="showEditDiagnosis" action="{!showEditDiagnosis}" rerender="diagTable,diagnosisEntry,msgs" status="pageProcessing" oncomplete="openDialog('diagnosisModal', 'span', 'Add Diagnosis');" >
         	<apex:param name="diagnosisId" value="" />
@@ -1055,7 +1055,12 @@
         <!-- New Diagnosis Section -->
         
          <a name="Diag" id="Diag1" />
-        <apex:pageBlock mode="maindetail" id="Diagnosis1">    
+         
+        <apex:pageBlock mode="maindetail" id="Diagnosis1">
+        <div style="display: none;">
+         <label for="DiagPerc">At least one Diagnosis</label>
+		 <input id="DiagPerc" value="{! if (activeDiagExist,'True','') }"  data-countInFormProgress="1" />
+		 </div>    
 			<apex:pageBlockButtons location="top">
 	                <div class="blockbtns">
 	                    <apex:commandButton value="Add Diagnosis" id="addDiagnosis" onclick="showAddDiagnosis(); return false;" />
@@ -1096,7 +1101,7 @@
                                
                 <apex:pageBlock title="Add/Edit Diagnosis">
                     <apex:pageblockButtons location="bottom">
-                        <apex:commandButton value="Save" onClick="validateDiagnosis(true); return false;" />
+                        <apex:commandButton value="Save" onClick="validateDiagnosis(true); return false;"/>
                         <apex:commandButton value="Save & New" onClick="validateDiagnosis(false);return false;" />
                         <apex:commandButton value="Cancel" onClick="closeDialog('diagnosisModal', 'span'); j$('#diagnosisErrors').html('');return false;" />
                     </apex:pageblockButtons>    
