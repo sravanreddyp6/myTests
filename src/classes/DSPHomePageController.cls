@@ -1,3 +1,4 @@
+// RPII-5 and RPII-6 - home page for OneApp users
 public with sharing class DSPHomePageController {
 
 	Public Transient List<Contact> PBSList {get; private set;}
@@ -19,9 +20,14 @@ public with sharing class DSPHomePageController {
 	public List<Task> populateTasks{get;set;}
 	public Map<Id, String> taskToNameMap { get; set; }
 	
-	private Set<PBSWrapper> peopleToServe { get; set; }
+	private Set<PBSWrapper> peopleToServe { get; set; } // list of PBS on this page (includes favorites and single-transaction PBS)
+	private Set<ID> admissions = new Set<ID>();	// list of admissions in focus
+	private Set<ID> setAcks = new Set<ID>();	// list of things this user has acknowledged for the focus admissions
+	private Set<ID> plans = new Set<ID>(); 		// list of plans in focus
+	private Map<String, ID> admAssess = new Map<String, ID>();	// map of admissionid+assessmenttype to assessment id
+	private Map<String, ID> apWksht = new Map<String, ID>();	// map of planid+worksheettype to worksheet id
+	
 	public List<PBSWrapper> mypbsList { get { return new List<PBSWrapper>(peopleToServe);} set; }	// because VF won't iterate over set of custom class
-
 
 	public string requestType { get; set; }
 	public string inputArgs { get; set; }
@@ -31,24 +37,29 @@ public with sharing class DSPHomePageController {
 	public String sortOrder { get; set; }
 	
 	public class PBSWrapper {
-		public ID pbsID { get; set; }
+		public ID pbsID { get; set; }	
 		public ID saID { get; set; }
 		public ID admID { get; set; }
-		public ID apID { get; set; }
+		public ID apID { get; set; }	// plan
 		public string pbsname { get; set; }
 		public string program { get; set; }
 		public string alias { get; set; }
-		public date apEffDate { get; set; }
-		public boolean isFavorite { get; set; }
+		public date apEffDate { get; set; }	// plan eff date
+		public boolean isFavorite { get; set; }	
 		public boolean hasRisk { get; set; }
 		public boolean hasISSA { get; set; }
+		public Date APTargetDate { get; set; }
 		public boolean hasActionPlan { get; set; }
 		public boolean needsAPAck { get; set; }
 		public boolean needsRiskAck { get; set; }
 		public boolean needsISSAAck { get; set; }
+		public ID bwID { get; set; }	// current behavior worksheet id 
+		public ID swID { get; set; }	// current skills worksheet id
+		public boolean hasBW { get; set; } 	// if behavior worksheet is applicable (plan end date after today)
+		public boolean hasSW { get; set; } 	// if skills worksheet is applicable (plan end date after today)
 			
-		
-		public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h) {
+		// wrap the details for the PBS table listing
+		public PBSWrapper ( ID pID, ID adID, ID sID, ID aID, string n, string p, string al, date ed, boolean f, boolean r, boolean i, boolean h, date apd) {
 			pbsID = pID;
 			saID = sID;
 			admID = adID;
@@ -61,13 +72,17 @@ public with sharing class DSPHomePageController {
 			hasRisk = r;
 			hasISSA = i;
 			hasActionPlan = h;
+			apTargetDate = apd;
 			needsAPAck = false;
 			needsRiskAck = false;
 			needsISSAAck = false;
-			
+			bwID = null;
+			swID = null;
+			hasBW = false;
+			hasSW = false;
 		}
 		
-		// for set equality checking
+		// for equality checking within a set
 	    public Boolean equals(Object obj) {
         	if (obj instanceof PBSWrapper) {
         		system.debug('inside equals');
@@ -92,21 +107,22 @@ public with sharing class DSPHomePageController {
     	
 	}
 	
-//Constructor
+	//Constructor
 	public DSPHomePageController(){
 
 		// make sure user is completely configured for system use
 		checkTmnUserRecord();
 
-		//PBS object
+		// PBS object
 		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
 		canSeePBS = oSchema.isAccessible();
 
 		peopletoServe = new Set<PBSWrapper>();
 		
-		//retrieve list of PBS given favorites string from front end
+		//retrieve list of PBS given favorites string from browser cookie
 		Cookie favoritePBSlist = ApexPages.currentPage().getCookies().get('favoritePBS-' + UserInfo.getUserId());
-		system.debug( favoritePBSList);
+		//system.debug( favoritePBSList);
+		
 		if (favoritePBSList != null ){
 			List<String> favePBS = new List<String>();
 			List<String> faveSA = new List<String>();
@@ -132,21 +148,23 @@ public with sharing class DSPHomePageController {
 			buildSearchExclusionList( faveSA, favePBS );
 		}
 		
-		
+		// retrieve list of user's tasks
 		mineTasks();
 		
+		// renew the favorite PBS list cookie
 		updatePBSListCookie('', true);
 		
 		
 	}
 
-
+	// exclude currently displayed PBSs and SAs from search
 	private void buildSearchExclusionList( List<String> sa, List<String> pbs) {
 		currentSAList = new List<String>( sa );
 		currentPBSList = new List<String>( pbs );
 	}
 	
-		
+	
+	// update/renew the list of favorites	
 	private void updatePBSListCookie( string newval, boolean resetexp ) {
 		// update the cookie
 		Cookie favoritePBSlist = ApexPages.currentPage().getCookies().get('favoritePBS-' + UserInfo.getUserId());
@@ -171,33 +189,21 @@ public with sharing class DSPHomePageController {
 	// this is the initial list of "favorite" PBS that user has requested to save in cookie
 	public void getPBSList( List<String> PIds, List<String> saIDs) {
 
+		// get people with active SA only since all actions require an active SA
 		Service_Assignment__c[] listPBSbySA = [
 			SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
 					admission__c, Service_Location__r.program__c, 
 			       Service_Location__r.Alias__c, admission__r.state__c, 
-			       (select id, effective_date__c, Status__c from action_plans__r where status__c = 'Active Final')
+			       (select id, effective_date__c, Status__c, target_date__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1)
 			 FROM Service_Assignment__c
 			 WHERE Person_Being_Served__c in :pIDs
-			 AND	status__c = 'Active'
+			 and id in :saIDs
+			 AND	status__c = 'Active'];
 		
-										];
-			// pbsid, pbsname, said, apid, progstring,
-		Action_Plan__c[] listPBS = [
-			SELECT Id, service_assignment__r.Person_Being_Served__c, service_assignment__r.person_Being_served__r.name, 
-					service_assignment__r.admission__c, service_assignment__c, service_assignment__r.Service_Location__r.program__c, 
-			       service_assignment__r.Service_Location__r.Alias__c, service_assignment__r.admission__r.state__c,
-			       effective_date__c,
-			       Status__c
-			  FROM Action_Plan__c
-			 WHERE Service_Assignment__r.Person_Being_Served__c in :pIDs
-			 and 	service_assignment__c in :saIDs
-			 and	service_assignment__r.status__c = 'Active'
-			 and	status__c = 'Active Final'
-			];
-			
 		for ( Service_Assignment__c focusPBS : listPBSbySA  ) {
 			
 			boolean hasAP = ( focusPBS.action_plans__r.size() > 0);
+			
 			//ID pID, ID sID, ID aID, string n, string p, string al, date ed	
 			PBSWrapper thisPBS = new PBSWrapper( focusPBS.person_being_served__c,
 											 focusPBS.admission__c,  
@@ -207,14 +213,138 @@ public with sharing class DSPHomePageController {
 											 focusPBS.service_location__r.program__c,
 											 focusPBS.service_location__r.alias__c,
 											 hasAP ? focusPBS.action_plans__r[0].effective_date__c : null,
-											 true,
-											 true,
-											 ( focusPBS.admission__r.state__c == 'MN'),
-											 hasAP);
+											 true,	// is favorite
+											 false,	//has risk
+											 false, // has issa
+											 hasAP, // has action
+											 hasAP ? focusPBS.action_plans__r[0].target_date__c : null // ap end date
+											 );  
 			peopletoServe.add( thisPBS );
+			admissions.add( focusPBS.admission__c);
+			if ( hasAP )
+				plans.add( thisPBS.apID);
+			
 		}
+		
+		// get the list of assessments for these people's admissions and acknowledgments
+		setAdmissionAssessments();
+		
+		// get list of current worksheets for these people's plans
+		setPlanWorksheets();
+		
 	}
 	
+
+	// sets lists of assessments and acknowledgments based on admissions in scope on the page	
+	private void setAdmissionAssessments() {
+		
+		// get the list of assessments (Risk, ISSA) for the admissions
+		Assessment__c[] assmts = [select id, type__c, admission__c from assessment__c where admission__c in :admissions
+		and type__c in ('Risk','ISSA') and status__c = 'Active Final'];
+	
+		// put into map - key is admission + assessment type
+		for ( assessment__c a : assmts ) {
+			String idtype = a.admission__c + a.type__c; 
+			admAssess.put ( idtype, a.id );
+		}	
+		
+
+		// get list of any acknowledgments by this user on things on this admission
+		// action plans are on SA level, and assessments are on the admission level
+		Acknowledgment__c[] acks = [ select id, action_plan__c, assessment__c from acknowledgment__c 
+									where (action_plan__r.service_assignment__r.admission__c in :admissions or assessment__r.admission__c in :admissions)	 
+									and user__c = :userInfo.getUserId()];
+									
+		// acknowledgment has either the action plan or assessment field filled in - check based on the type 							
+		for ( Acknowledgment__c a : acks ) {
+			if ( a.action_plan__c != null )
+				setAcks.add( a.action_plan__c );
+			else if ( a.assessment__c != null)
+				setAcks.add( a.assessment__c );
+				
+		}
+		
+		// go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
+		for ( PBSWrapper p : peopletoServe ) {
+			
+			p.needsAPAck = !setAcks.contains( p.APId );
+			if ( admAssess.keyset().contains( p.admID + 'Risk')) { 
+				p.hasRisk = true;
+				p.needsRiskAck = !setAcks.contains( admAssess.get(p.admID + 'Risk'));
+			}
+			
+			if ( admAssess.keyset().contains( p.admID + 'ISSA')) {
+				p.hasISSA = true;
+				p.needsISSAAck = !setAcks.contains( admAssess.get(p.admID + 'ISSA'));
+			}
+			
+		}
+		
+	}
+	
+	// sets lists of skills and behavior worksheets based on plans in scope on the page	
+	private void setPlanWorksheets() {
+		
+		// get the list of worksheets behavior/skills for this calendar month and year if behavior
+		Map<ID, Action_Plan_Worksheet__c> wmap = new Map<ID, Action_Plan_Worksheet__c>([select id, recordtype.developername, start_date__c, action_plan__c from action_plan_worksheet__c 
+												where action_plan__c in :plans 
+												and (( start_date__c = THIS_MONTH and recordtype.developername = 'Monthly_Behavior_Result')
+												or ( start_date__c = THIS_WEEK and recordtype.developername = 'Weekly_Skill_Result' ))]);
+												
+		// put into map - key is actionplanid + worksheet type
+		String wtype = '';
+		for ( Action_Plan_Worksheet__c w : wmap.values() ) {
+			if ( w.recordtype.developername.contains('Skill') )
+				wtype = 'Skill';
+			else if ( w.recordtype.developername.contains('Behavior'))
+				wtype = 'Behavior';			
+			
+			String idtype = w.action_plan__c + wtype; 
+			apWksht.put ( idtype, w.id );
+		}	
+		system.debug('worksheets' + apWksht);
+		// go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
+		Date wksheetEnd;
+		Action_Plan_Worksheet__c aw; 
+		ID wID;
+		for ( PBSWrapper p : peopletoServe ) {
+			
+			// only if current action plan on this PBS row
+			if ( !p.hasActionPlan) 
+				continue;
+				
+			// BEHAVIOR - monthly			
+			// if there is a behavior worksheet for the current month, grab ID 
+			if ( apWksht.keyset().contains( p.apId + 'Behavior')) {
+				wID = apWksht.get( p.apID + 'Behavior'); 
+				aw = wmap.get( wID);
+				p.hasBW = true;
+				p.bwID = aw.Id;
+			}
+
+			// SKILLS - weekly
+			// if there is a skills worksheet for this play, check what week			
+			if ( apWksht.keyset().contains( p.apID + 'Skill')) {
+				wID = apWksht.get(p.apId + 'Skill');
+				aw = wmap.get( wID );
+				p.hasSW = true;
+				p.swID = aw.Id;
+				
+			} 
+
+			system.debug( p );
+			// allow creation of worksheets if there is not one and today is before the Action Plan target date
+			if ( Date.today() <= p.apTargetDate ) {  
+				if ( !p.hasSW ) p.hasSW = true;
+				if ( !p.hasBW ) p.hasBW = true;
+				
+			}			
+		}
+		
+	}
+	
+	
+	// task list views
 	public List<SelectOption> getviewvalues() {
 		List<SelectOption> Options = new List<SelectOption>();
 		Options.add(new SelectOption('All Open','All Open'));
@@ -228,6 +358,9 @@ public with sharing class DSPHomePageController {
 
 		return Options;
 	}
+	
+	
+	// get list of tasks for this user
 	public void mineTasks(){
 		Id userId = UserInfo.getUserId();
 		String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
@@ -302,6 +435,8 @@ public with sharing class DSPHomePageController {
 		}
 	}
 	
+	
+	// search results for PBS lookup
 	public void getSearchResults() {
 		if ((FrstName == null || FrstName == '') && (LstName ==null || LstName == '')) {
 			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,
@@ -317,6 +452,7 @@ public with sharing class DSPHomePageController {
 		searchResultList = searchController.getSearchResults(true, false, false, true);
 	}
 
+	// this sets the list of favorites on the home page
 	public void setfocusPBS() {
 		
 		// pbsid, pbsname, said, apid, progstring, alias, plan eff, pln status
@@ -324,7 +460,7 @@ public with sharing class DSPHomePageController {
 			SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
 					admission__c, Service_Location__r.program__c, 
 			       Service_Location__r.Alias__c, admission__r.state__c, 
-			       (select id, effective_date__c, Status__c from action_plans__r where status__c = 'Active Final')
+			       (select id, effective_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1)
 			 FROM Service_Assignment__c
 			 WHERE Person_Being_Served__c = :searchResultPBS
 			 AND ID = :searchResultSA
@@ -332,7 +468,8 @@ public with sharing class DSPHomePageController {
 			 LIMIT 1];
 			 	
 		string newcookie = '';
-			
+		
+		// make sure the PBS/SA still is active	
 		if ( focusPBS != null ) {
 			Boolean hasAP = ( focusPBS.Action_Plans__r.size() > 0 );
 			//ID pID, ID sID, ID aID, string n, string p, string al, date ed	
@@ -344,12 +481,12 @@ public with sharing class DSPHomePageController {
 											 focusPBS.service_location__r.program__c,
 											 focusPBS.service_location__r.alias__c,
 											 hasAP? focusPBS.Action_Plans__r[0].effective_date__c : null,
-											 searchResultIsFav,
-											 true,
-											 (focusPBS.admission__r.state__c == 'MN'),
-											 hasAP
+											 searchResultIsFav, // is fav
+											 false,	// has risk
+											 false, // has ISSA
+											 hasAP,
+											 hasAP ? focusPBS.Action_Plans__r[0].target_date__c : null
 											 );
-
 
 			// if already there, remove it to make sure the favorite setting is correct
 			// while looping, construct the cookie string of favorites and search exclusions
@@ -358,6 +495,10 @@ public with sharing class DSPHomePageController {
 			for ( PBSWrapper p : peopleToServe ) {
 				if ( p.Equals( thisPBS ) ) {
 					peopleToServe.Remove(p);
+					
+					// remove from list of admissions too
+					admissions.remove(p.admId);
+					
 				} else {
 					if ( p.isFavorite )  
 						newcookie += p.pbsID + '-' + p.saID + ';';
@@ -366,7 +507,14 @@ public with sharing class DSPHomePageController {
 					excludePBS.add( p.pbsID);
 				}
 			}
+			
+			// add the PBS to the list
 			peopletoServe.add( thisPBS );
+			admissions.add( thisPBS.admId);
+			
+			// get the list of assessments for these people's admissions and acknowledgments
+			setAdmissionAssessments();
+			
 			if ( thisPBS.isfavorite )
 				newcookie += thisPBS.pbsID + '-' + thisPBS.saID + ';';
 				
@@ -379,24 +527,24 @@ public with sharing class DSPHomePageController {
 			
 			// rebuild cookie - this will handle removal of favorites too
 			updatePBSListCookie( newcookie, false );
-		
-			
 		}
 
 	}
 	
+	// turns favorite status on/off for selected row
 	public void toggleFavorite ( ) {
 		
 		boolean newFavVal = searchResultIsFav;
 		ID saToToggle = searchResultPBS;
 		ID pbsToToggle = searchResultSA;
 		
+		
+		system.debug('FAV: ' + newFavVal + 'SA:' + satotoggle + ', PBS:' + pbsToToggle);
 		// for things that aren't current favorite this will work
 		setfocusPBS();
-		
-		
 	}
 	
+
 	// START: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
 	public class TMN_User_Exception extends Exception {}
 
@@ -420,17 +568,16 @@ public with sharing class DSPHomePageController {
 	// When adding new request, add to the map below, and make sure there is a supporting action in TransactionQueueTriggeredActions.cls
 	private Map<String,String> requestToPage = new Map<String, String> { 'Action Plan' => '/apex/DSPActionPlan', 
 																		 'Person Being Served' => '/apex/DSPPersonBeingServedView',
-                                                                         'Seizures' => '/apex/DSP_PbsSeizureListing',
-                                                                         'Risk' => '/apex/DSP_Assessment_RiskForm'
+                                                                         'Seizures' => '/apex/DSP_PbsSeizureListing'
 																	};
 	public pageReference submitTxnRequest() {
 		// submit a transaction queue request 
 		// redirect to the correct page with the transaction queue id
-		system.debug('inside submitrequest:' + requestType + ', ' + inputArgs);
+		//system.debug('inside submitrequest:' + requestType + ', ' + inputArgs);
 		
 		// get out if the action type is not understood
 		if ( !requestToPage.keyset().contains( requestType )) {
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unknown action type.'));
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unknown action type: ' + requestType));
 			return null;
 		}
 		Transaction_Queue__c txn  = new Transaction_Queue__c( requesting_user__c = UserInfo.getUserId());
