@@ -88,20 +88,21 @@ public with sharing class HomePageController{
     public boolean isCAFSS{get; set;}
     public string businessUnit {get; set;}
     
-    public Map<Id, Assessment__c> admissionCANSMap {get; set;} //key-Admission : Value-Open Cans Assessment Id
+    //key-Admission : Value-Open CANS Assessment Id
+    public Map<Id, Assessment__c> admissionCANSMap {get; set;} 
     public Map<Id, Boolean> hasadmissionCANSMap {get;set;}
 
 
 	//Constructor
 	public HomePageController(){
-        //for CAFSS 
+        
+        //PRI-327, for CAFSS
         list<Tmn_User__c> tmnUser = [SELECT Id,operating_group__c,Business_Unit__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1]; //Using list to prevent system.query exception 
-		this.isCAFSS = false;
-		if(tmnUser.size() > 0){
-			//this.operatinggroup = tmnUser[0].operating_group__c;
-			this.businessUnit =  tmnUser[0].Business_Unit__c;
-			this.isCAFSS = (tmnUser[0].Business_Unit__c != null && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
-		}
+        this.isCAFSS = false;
+        if(tmnUser.size() > 0){
+            this.businessUnit =  tmnUser[0].Business_Unit__c;
+            this.isCAFSS = (tmnUser[0].Business_Unit__c != null && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
+        }
 
 		//PBS object
 		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
@@ -260,7 +261,7 @@ public with sharing class HomePageController{
             
         }
         
-        for(Assessment__c asmt: [SELECT Id, Name,status__c, Admission__c FROM Assessment__c WHERE Assessment_type__c = :getCANsID() AND Admission__c IN:admissions]){ 
+        for(Assessment__c asmt: [SELECT Id, Name,status__c, Admission__c FROM Assessment__c WHERE Assessment_type__c = :getCANsID() AND Admission__c IN:admissions ORDER BY CreatedDate,Admission__c ASC]){ 
             if(asmt.Status__c == 'Open'){
                 hasadmissionCANSMap.put(asmt.Admission__c, true);
                 admissionCANSMap.put(asmt.Admission__c, asmt);
@@ -329,6 +330,7 @@ public with sharing class HomePageController{
 			if(canCreateIncidents){
 				//optionList.add(new selectOption('createPBSIncident', 'Create Incident'));
 			}
+            //PRI-327 Hastings and CAFSS homepage dialy actions.
             if (isCAFSS || operatingGroup == 'Cambridge') {
                 optionList.add( new SelectOption('createNewCansAssesment', 'Create new CANS Assessment'));
                 if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
