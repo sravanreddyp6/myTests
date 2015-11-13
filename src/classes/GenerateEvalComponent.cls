@@ -248,9 +248,8 @@ public with sharing class GenerateEvalComponent {
 						newHTMLfld += 'value="' ;
 						if (e.Field_Sub_Type__c == 'Boolean') {
 							newHTMLfld += mapEvalValues.get(e.id).boolean__c;
-						}
-						else if (e.Field_Sub_Type__c == 'String') {
-							newHTMLfld += mapEvalValues.get(e.id).Text_Over_250__c;
+						} else if (e.Field_Sub_Type__c == 'String') {
+							newHTMLfld += mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 						}
 					}
 					newHTMLfld += '"/></td>';
@@ -272,7 +271,7 @@ public with sharing class GenerateEvalComponent {
 						newHTMLfld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
 						newHTMLfld += '<option value="">-- None --</option>';
 						if (mapEvalValues.ContainsKey(e.id)) {
-							strval = mapEvalValues.get(e.id).Text_Under_250__c;
+							strval = mapEvalValues.get(e.id).Text_Under_250__c.escapeHtml4();
 						}
 						newHTMLfld += '<option value="1"';
 						if (strval == '1')
@@ -290,7 +289,7 @@ public with sharing class GenerateEvalComponent {
 						newHTMLfld += reqfldHTML;
 						newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" >';
 						if (mapEvalValues.ContainsKey(e.id)) {
-							strVal = mapEvalValues.get(e.id).text_over_250__c;
+							strVal = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 							if (strVal != null && strVal != '')
 								newHTMLfld += strVal;
 						}
@@ -303,9 +302,9 @@ public with sharing class GenerateEvalComponent {
 						if (mapEvalValues.ContainsKey(e.id)) {
 							newHTMLfld += 'value="' ;
 							if (e.length__c > 250)
-								strVal = mapEvalValues.get(e.id).text_over_250__c;
+								strVal = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 							else
-								strVal = mapEvalValues.get(e.id).text_under_250__c;
+								strVal = mapEvalValues.get(e.id).Text_Under_250__c.escapeHtml4();
 
 							if (strVal != null && strVal != '')
 								newHTMLfld += strVal;
@@ -321,9 +320,9 @@ public with sharing class GenerateEvalComponent {
 					if (mapEvalValues.ContainsKey(e.id)) {
 						newHTMLfld += 'value="' ;
 						if (mapEvalValues.get(e.id).eval__r.length__c == null || mapEvalValues.get(e.id).eval__r.length__c < 250) {
-							strVal = mapEvalValues.get(e.id).text_under_250__c;
+							strVal = mapEvalValues.get(e.id).Text_Under_250__c.escapeHtml4();
 						} else {
-							strVal = mapEvalValues.get(e.id).text_over_250__c;
+							strVal = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 						}
 
 						if (strVal != null && strVal != '')
@@ -368,9 +367,9 @@ public with sharing class GenerateEvalComponent {
 					// get the value
 					if (mapEvalValues.ContainsKey(e.id)) {
 						if (mapEvalValues.get(e.id).eval__r.length__c == null || mapEvalValues.get(e.id).eval__r.length__c < 250) {
-							strVal = mapEvalValues.get(e.id).text_under_250__c;
+							strVal = mapEvalValues.get(e.id).Text_Under_250__c.escapeHtml4();
 						} else {
-							strVal = mapEvalValues.get(e.id).text_over_250__c;
+							strVal = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 						}
 					}
 
@@ -414,9 +413,9 @@ public with sharing class GenerateEvalComponent {
 					String selectedVals;
 					if (mapEvalValues.ContainsKey(e.id)){
 						if (e.length__c > 250)
-							selectedVals = mapEvalValues.get(e.id).Text_Over_250__c;
+							selectedVals = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 						else
-							selectedVals = mapEvalValues.get(e.id).Text_Under_250__c;
+							selectedVals = mapEvalValues.get(e.id).Text_Under_250__c.escapeHtml4();
 					}
 
 					// get the options
@@ -752,6 +751,11 @@ public with sharing class GenerateEvalComponent {
 		public Eval_Value__c evalValueSObject { get; set; }
 
 		public EvalValue(Eval_Value__c evalValue) {
+			// This class is used as a wrapper for an Eval_Value__c, mainly for easier transport
+			// as JSON serialization. BEWARE: the class does NOT escape the output by the user,
+			// so you *HAVE TO* escape the output before displaying the value, otherwise you'll be
+			// vulnerable to XSS attacks. Right now the JSON is used in conjunction with qtip2,
+			// which automatically escapes outputs.
 			evaluationId = evalValue.What_Id__c;
 			value = evalValue.Text_Under_250__c;
 			lastModifiedDate = evalValue.LastModifiedDate.format('MM/dd/yyyy HH:mm');
