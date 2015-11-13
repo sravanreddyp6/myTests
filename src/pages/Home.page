@@ -242,7 +242,6 @@
 					</apex:outputPanel>
                     <apex:outputPanel rendered="{!hasadmissionCANSMap[serviceAssignment.Admission__r.Id] && (vfVarIsHt || isCAFSS)}" >
                        <a href="/{!admissionCANSMap[serviceAssignment.Admission__r.Id].Id}">{!admissionCANSMap[serviceAssignment.Admission__c].Name}</a><br />                        
-                       <!--<a href='/apex/AssessmentView?id={!admissionCANSMap[serviceAssignment.Admission__r.Id]}'>In-Progress CANS Assessment</a> -->
                      </apex:outputPanel>
 					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW && !vfVarIsHt && !isCAFSS && serviceAssignment.Action_Plans__r.size != 0)}">
                         <a href="{!$Page.ActionPlanForm}?id={!serviceAssignment.Action_Plans__r[0].Id}#worksheets">Add Behavior Data</a><br />
@@ -830,7 +829,7 @@
 				} else if (selectedValue == 'createPBSIncident') {
 					createPBStypeIncident(serviceAssignmentId);
                 } 
-                //CAFSS or Hastings PRI-327
+                //PRI-327, CAFSS or Hastings 
                 else if(selectedValue=='createNewCansAssesment'){
                     var url ='{!$Page.assessment_CANSdetail}?&admission='+admissionId+'&type={!CANsID}&retURL={!HTMLENCODE('/apex/home')}';
                     $(location).attr('href',url); 
