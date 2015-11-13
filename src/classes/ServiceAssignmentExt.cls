@@ -252,12 +252,14 @@ public without sharing class ServiceAssignmentExt {
     private Boolean pshowDiag, pshowLocation, pshowCodes, pshowServAssignClose, pshowNurseAssessment;
     private string popGroup;
     private static Boolean psetFlags = false;
-   /* public Boolean showDiagnosis { get {
-        if (! psetFlags ) {
+    public Boolean showDiagnosis { get {
+    	//Returning a dummy value. Commented for easy deployment - Will delete after the release - Sravan - 11/13/2015
+       /* if (! psetFlags ) {
             psetFlags = setShowFlags();
         }
-        return pshowDiag;
-    }}*/
+        return pshowDiag;*/
+        return false; 
+    }}
     public Boolean showCodes { get {
         if (! psetFlags ) {
             psetFlags = setShowFlags();
@@ -368,9 +370,7 @@ public without sharing class ServiceAssignmentExt {
 	set;}
     	
     public string selectedDiagnosis {get; set;}
-   // public boolean hasPrimaryDiagJo {get; set;}
-   // public string primaryDiagJoId {get; set;}
-    
+   
     private void populatesadiagJO(){
     try {
         this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, Diagnosis__r.ICD__r.Icd_Description__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Injury_type_other__c, Ranking__c
@@ -401,21 +401,21 @@ public without sharing class ServiceAssignmentExt {
   		this.selectedDiagnosis = '--None--';
   }
 
- /*   public Boolean newDiagnosis{ get; set;}
+    public Boolean newDiagnosis{ get; set;} // comment after release
     public void showAddDiagnosis() {
-        newDiagnosis = true;
+       /* newDiagnosis = true;
         showdiagModal = true;
         diag = new Diagnosis__c();
-        System.Debug('showdiagModal='+ showdiagModal);
+        System.Debug('showdiagModal='+ showdiagModal);*/
     }
 
     public void showEditDiagnosis() {
-        showdiagModal = true;
-        System.Debug('showdiagModal=' + showdiagModal);
+       /* showdiagModal = true;
+        System.Debug('showdiagModal=' + showdiagModal);*/
     }
 
     public void saveDiagnosis() {
-        Boolean foundDiag = false;
+       /* Boolean foundDiag = false;
         Diagnosis__c dgnew = this.diag;
         System.debug('dgnew: ' + dgnew);
         // if this diagnosis contains an ID, look for it to update
@@ -443,26 +443,26 @@ public without sharing class ServiceAssignmentExt {
             this.diagnoses.add(dgnew);
 
         this.diag= new Diagnosis__c();
-        //newDiagnosis = false;
+        //newDiagnosis = false;*/
     }
 
     public void refreshDiagnoses() {
         // requery the diagnosis list
-        diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
-        newDiagnosis = false;
+     /*   diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
+        newDiagnosis = false;*/
 
     }
 
     public void createDiagnoses() {
-        if (diagnoses != null && this.theServAssign.Id != null) {
+       /* if (diagnoses != null && this.theServAssign.Id != null) {
             for (Diagnosis__c dg : diagnoses ) {
                 dg.Service_Assignment__c = this.theServAssign.Id;
             }
             System.Debug('DIAG LIST = ' + diagnoses);
             upsert diagnoses;
-        }
+        }*/
 
-    } */
+    } 
 
     public list<Funding_Source__c> referralFundingsources {get { return [select id, CreatedDate, name, funding_source__c,Type_of_Coverage__c, Payer_Name__c, recordtype.name, service_being_funded__c, Effective_Date__c,Termination_Date__c,Status__c,Comment__c from funding_source__C where service_Assignment__C = null and Referral__c = :referral.id];} set;}
     
