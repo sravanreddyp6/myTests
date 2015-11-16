@@ -151,17 +151,14 @@ public without sharing class TransactionQueueTriggeredActions {
                         ID admId = t.input_params__c;
                         Assessment__c assessment;
                         DSP_AssessmentResponseType assessmentDetails;
-                        String assessmentType = ApexPages.currentPage().getUrl().contains('DSP_Assessment_RiskForm') ? 'Risk' : 'ISSA';
-                        if (assessmentType == 'Risk'){
-                            assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Assessment_Type__r.name = 'Risk' limit 1];
-                            assessmentDetails = new Assessment_RiskFormWithoutSharing(assessment.id);                            
-                        }
-                        else { //ISSA
-                            assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Type__c = 'ISSA' limit 1];
-                            assessmentDetails = new Assessment_IssaFormWithoutSharing(assessment.id);
-                        }
+                        String assessmentType = ApexPages.currentPage().getUrl().containsIgnoreCase('DSP_Assessment_RiskForm') ? 'Risk' : 'ISSA';
+                        if (assessmentType == 'Risk') assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Assessment_Type__r.name = 'Risk' limit 1];
+                        else  assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Type__c = 'ISSA' limit 1];
                         Acknowledgment__c confirmRec = new Acknowledgment__c(Assessment__c = assessment.id, User__c = UserInfo.getUserId());
                         insert confirmRec;
+                        
+                        if (assessmentType == 'Risk') assessmentDetails = new Assessment_RiskFormWithoutSharing(assessment.id);
+                        else assessmentDetails = new Assessment_IssaFormWithoutSharing(assessment.id);
  
                         // serialize the result
                         String jsonstring = json.serialize( assessmentDetails );
