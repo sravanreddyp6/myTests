@@ -63,7 +63,7 @@ public with sharing class TxnQueueResponseController {
             	system.debug(apWorksheets);
             }
 
-			system.debug(response);
+			
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to retrieve result'));
 			return;

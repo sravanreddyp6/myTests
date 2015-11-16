@@ -1,15 +1,18 @@
 <apex:page controller="TxnQueueResponseController" extensions="DSP_Worksheets" sidebar="false" standardStylesheets="true">
 
-
 <apex:pageBlock title="Worksheets">
-<apex:repeat value="{! mapSheets }" var="stype">
+<apex:repeat value="{! apworksheets.mapSheets }" var="stype">
 
-<apex:pageBlockSection title="{! stype}">
+<a name="#{!stype}" /><apex:pageBlockSection title="{! stype}">
 
-<apex:repeat value="{! mapSheets[stype]}" var="w">
-<apex:outputText value=" {!w.startdate}" /><br />
-
-</apex:repeat>
+<apex:datatable value="{! apWorksheets.mapSheets[stype]}" var="w">
+<apex:column headervalue="Action">
+</apex:column>
+<apex:column headerValue="Start Date">
+<apex:outputText value="Week of {!w.startdate}"  rendered="{!stype == 'Skill'}"/><br />
+<apex:outputText value=" {!w.startdate}"  rendered="{!stype == 'Behavior'}"/><br />
+</apex:column>
+</apex:datatable>
 </apex:pageBlockSection>
 
 </apex:repeat>
