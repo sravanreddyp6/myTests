@@ -613,7 +613,7 @@
 	
 	<c:NursesShiftDocAddModal uniqueId="1" parentId="{!serviceAssignmentIdForAction}" status="" id="shiftDocAddModal" />
 	<c:NursesShiftDocAddModal uniqueId="2" parentId="{!serviceAssignmentIdForAction}" status="" shiftType="CNA Workbook" id="cnaWorkbookAddModal" />
-	<c:EvalSection id="evalSection" category="{!$CurrentPage.parameters.Category}"
+	<c:EvalSection id="evalSection" category="{!$CurrentPage.parameters.Category}" showActions="true"
 		subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}"
 		evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}"
 		onEntrySaveSuccess="closeShiftDocActionDialog(); " />
@@ -745,7 +745,7 @@
 				$("#shiftDocActionDialog").empty().append($("#evalForm"));
 				bindSubmitEvent();
 				setUpFields();
-				$('#evalSecValMsgs').html($('#ErrorMsg').val());
+				$('#evalSecValMsgs .error-messages').html($('#ErrorMsg').val());
 				openModalDialog('shiftDocActionDialog', 'div', 'Add Activity Log Entry', null, 1000, 'mainForm', false);
 				$('#evalForm').css('width', 'auto');
 				$('#evalForm').css('height', 'auto');

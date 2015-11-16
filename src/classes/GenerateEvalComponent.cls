@@ -11,6 +11,9 @@ public with sharing class GenerateEvalComponent {
 	public string subcat{ get; set; }
 	public string subsubcat{ get; set; }
 	public string evalname{ get; set; }
+	public Boolean showActionButtons { get; set; }
+	public Boolean editable { get; set; }
+
 	public ID evaluationID {
 		get;
 		set {
@@ -474,6 +477,11 @@ public with sharing class GenerateEvalComponent {
 		}
 
 		Component.Apex.PageBlock pageBlock = new Component.Apex.PageBlock(title=subcategory, rendered=(cat != ''));
+		Component.Apex.OutputPanel actionPanel = new Component.Apex.OutputPanel(
+			layout='block',
+			rendered=(showActionButtons && editable),
+			style='right: 10px;float: right;position: relative;'
+		);
 		Component.Apex.OutputText outputText = new Component.Apex.OutputText(escape=false);
 
 		String htmlTable2 = '<label class="labelCol">Created By:</label>' + getEvalSectionOwner() + '<br />' +
@@ -496,6 +504,11 @@ public with sharing class GenerateEvalComponent {
 		htmlTable2 += '</tr></table>';
 
 		outputText.value = htmlTable2;
+		actionPanel.childComponents.add(new Component.Apex.OutputText(
+			escape = false,
+			value = '<input class="btn" type="submit" value="Save" id="btnActionSave" onclick="isModified=false;" />'
+		));
+		pageBlock.childComponents.add(actionPanel);
 		pageBlock.childComponents.add(outputText);
 
 		return pageBlock;
