@@ -105,7 +105,14 @@
 				jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
 				bindSubmitEvent();
 				setUpFields();
-				jQuery('#evalSecValMsgs').html(jQuery('#ErrorMsg').val());
+				var errors = '';
+				jQuery('[id=ErrorMsg]').each(function(_, target) {
+					errors += jQuery(target).val();
+				});
+				jQuery('#evalSecValMsgs .error-messages').html(errors);
+				if (errors) {
+					jQuery('#evalSecValMsgs').show();
+				}
 			}
 			setUpMainSectionPosition();
 		}

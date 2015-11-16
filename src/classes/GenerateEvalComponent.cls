@@ -140,7 +140,7 @@ public with sharing class GenerateEvalComponent {
 			'SELECT id, htmlid__c, field_name__c, category__c, category_sequence__c, ' +
 			'       sub_category__c, sub_category_sequence__c, eval_type__r.name, Field_Type__c, ' +
 			'       Field_Sub_Type__c, field_sequence__c, required__c, Length__c, ' +
-			'       visibility_rules__c, visibility_row_rules__c, Dependent_Fields__c ' +
+			'       visibility_rules__c, visibility_row_rules__c, Dependent_Fields__c, Composite__c ' +
 			'  FROM eval__c ' +
 			' WHERE eval_type__r.name = :evalname ' +
 			'   AND category__c =:cat ' +
@@ -243,7 +243,7 @@ public with sharing class GenerateEvalComponent {
 
 				if (e.Field_Type__c == 'Hidden')  {
 					newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
-					newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" ';
+					newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
 						newHTMLfld += 'value="' ;
 						if (e.Field_Sub_Type__c == 'Boolean') {
@@ -256,7 +256,7 @@ public with sharing class GenerateEvalComponent {
 
 				} else if (e.Field_Type__c == 'Boolean')  { // Boolean can be Checkbox, Radio, or Dropdown
 					if (e.Field_Sub_Type__c == 'Checkbox') {
-						newHTMLfld = '<td class="dataCol"><div style="display: table-row;"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '"';
+						newHTMLfld = '<td class="dataCol"><div style="display: table-row;"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '" ';
 
 						// insert value
 						if (mapEvalValues.ContainsKey(e.id))
@@ -268,7 +268,7 @@ public with sharing class GenerateEvalComponent {
 						// Boolean dropdown values = --None--, Yes, No
 						newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
 						newHTMLfld += reqfldHTML;
-						newHTMLfld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
+						newHTMLfld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '">';
 						newHTMLfld += '<option value="">-- None --</option>';
 						if (mapEvalValues.ContainsKey(e.id)) {
 							strval = mapEvalValues.get(e.id).Text_Under_250__c.escapeHtml4();
@@ -287,7 +287,7 @@ public with sharing class GenerateEvalComponent {
 					if (e.length__c >= 3000) {
 						newHTMLfld = '<td class="dataCol" style="vertical-align: top" ><div style="display: table-row;">';
 						newHTMLfld += reqfldHTML;
-						newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" >';
+						newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" data-composite="' + e.Composite__c + '">';
 						if (mapEvalValues.ContainsKey(e.id)) {
 							strVal = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 							if (strVal != null && strVal != '')
@@ -298,7 +298,7 @@ public with sharing class GenerateEvalComponent {
 					} else {
 						newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 						newHTMLfld += reqfldHTML;
-						newHTMLfld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+						newHTMLfld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 						if (mapEvalValues.ContainsKey(e.id)) {
 							newHTMLfld += 'value="' ;
 							if (e.length__c > 250)
@@ -316,7 +316,7 @@ public with sharing class GenerateEvalComponent {
 				} else if (e.Field_Type__c == 'Double'){
 					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+					newHTMLfld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
 						newHTMLfld += 'value="' ;
 						if (mapEvalValues.get(e.id).eval__r.length__c == null || mapEvalValues.get(e.id).eval__r.length__c < 250) {
@@ -333,15 +333,15 @@ public with sharing class GenerateEvalComponent {
 					if (e.htmlid__c == 'weightAtAdmission') {
 						newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="weightAtAdmission">(kg) OR</label>';
 						newHTMLfld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightAtAdmissionlb">(lb)</label>';
-						newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" /> <label for="weightAtAdmissionoz">(oz)</label></span>';
+						newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" data-composite="' + e.Composite__c + '" /> <label for="weightAtAdmissionoz">(oz)</label></span>';
 					}  else if (e.htmlid__c == 'kg') {
 						newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="kg" id="kgLabel2">(kg) OR</label>';
 						newHTMLfld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightlb" id="weightlbLabel">(lb)</label>';
-						newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" /> <label for="weightoz" id="weightozLabel">(oz)</label></span>';
+						newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" data-composite="' + e.Composite__c + '" /> <label for="weightoz" id="weightozLabel">(oz)</label></span>';
 					} else if (e.htmlid__c == 'heightAtAdmission') {
 						newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'cm\');" /> <label for="heightAtAdmission">(cm) OR</label>';
 						newHTMLfld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionft"  size="6" name="" type="text" onkeyUp="return calculate(this, \'ft\');" /> <label for="heightAtAdmissionft">(ft)</label>';
-						newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionin"  size="6" name="" type="text" onkeyUp="return calculate(this, \'inc\');" /> <label for="heightAtAdmissionin">(in)</label></span>';
+						newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionin"  size="6" name="" type="text" onkeyUp="return calculate(this, \'inc\');" data-composite="' + e.Composite__c + '" /> <label for="heightAtAdmissionin">(in)</label></span>';
 					} else {
 						newHTMLfld +=  '/>';
 					}
@@ -350,7 +350,7 @@ public with sharing class GenerateEvalComponent {
 				} else if (e.Field_Type__c == 'Int'){
 					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<input  pattern="[0-9]+" title="Please enter a valid number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+					newHTMLfld += '<input  pattern="[0-9]+" title="Please enter a valid number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
 						newHTMLfld += 'value="' ;
 						strVal = String.valueOf(mapEvalValues.get(e.id).Number_No_Decimal__c);
@@ -377,7 +377,7 @@ public with sharing class GenerateEvalComponent {
 					List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
 					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
+					newHTMLfld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '">';
 					newHTMLfld += '<option value="">-- None --</option>';
 					for (Eval_Drop_Down__c thisdd : dropdownopts) {
 						newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
@@ -390,7 +390,7 @@ public with sharing class GenerateEvalComponent {
 				}  else if (e.Field_Type__c == 'Date') {
 					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<input class="datepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+					newHTMLfld += '<input class="datepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
 						newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.date().format();
 						newHTMLfld  += '"';
@@ -399,7 +399,7 @@ public with sharing class GenerateEvalComponent {
 				} else if (e.Field_Type__c == 'Datetime') {
 					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" ';
+					newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
 						system.debug(mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm'));
 						newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm');
@@ -428,7 +428,7 @@ public with sharing class GenerateEvalComponent {
 							newHtmlLbl +=  '</div></td>';
 						}
 						for (Eval_Drop_Down__c thisdd : dropdownopts) {
-							newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '"';
+							newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '" ';
 							if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
 								newHTMLFld += ' checked ';
 
@@ -438,7 +438,7 @@ public with sharing class GenerateEvalComponent {
 					} else {
 						newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
 						newHTMLfld += reqfldHTML;
-						newHTMLfld += '<select style="vertical-align: text-top" multiple="multiple" id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '">';
+						newHTMLfld += '<select style="vertical-align: text-top" multiple="multiple" id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '">';
 						for (Eval_Drop_Down__c thisdd : dropdownopts) {
 							newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
 							if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
@@ -477,15 +477,15 @@ public with sharing class GenerateEvalComponent {
 		Component.Apex.OutputText outputText = new Component.Apex.OutputText(escape=false);
 
 		String htmlTable2 = '<label class="labelCol">Created By:</label>' + getEvalSectionOwner() + '<br />' +
-			'<label class="labelCol">Last Modified By:</label>' + getEvalSectionLastMod() +
-			'<span id="evalSecValMsgs" style="color: red;"></span>';
+			'<label class="labelCol">Last Modified By:</label>' + getEvalSectionLastMod();
 
+		String composite = cat + '~' + subCategory;
 		if (evalSecType == 'Head To Toe' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcategory == 'IV') {
-			htmlTable2 += '<table style="width:100%;"><tr><th></th><th></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
+			htmlTable2 += '<table data-composite="' + composite  + '" style="width:100%;"><tr><th></th><th></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
 		} else {
-			htmlTable2 += '<table style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
+			htmlTable2 += '<table data-composite="' + composite  + '" style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
 		}
-		integer i=0;
+		Integer i = 0;
 		for (String s : htmlControls){
 			if (Math.mod(i, 4) == 0) {
 				htmlTable2 += '</tr><tr class="border_bottom">';
@@ -499,7 +499,6 @@ public with sharing class GenerateEvalComponent {
 		pageBlock.childComponents.add(outputText);
 
 		return pageBlock;
-		//return htmlTable2;
 	}
 
 	public class FormKeyVal{
