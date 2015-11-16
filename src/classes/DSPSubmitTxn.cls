@@ -40,7 +40,7 @@ public pageReference ackAssessment() {
         
         try { 
             insert txn;
-            pr =  ApexPages.currentPage().getUrl().contains('DSP_Assessment_RiskForm') ? Page.DSP_Assessment_RiskForm : Page.DSP_Assessment_IssaForm;
+            pr =  ApexPages.currentPage().getUrl().containsIgnoreCase('DSP_Assessment_RiskForm') ? Page.DSP_Assessment_RiskForm : Page.DSP_Assessment_IssaForm;
             pr.getParameters().put('txnID', txn.ID);
             pr.setRedirect(true);
             return pr;

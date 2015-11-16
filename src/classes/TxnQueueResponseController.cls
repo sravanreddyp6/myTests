@@ -53,7 +53,7 @@ public with sharing class TxnQueueResponseController {
             else if ( thisTxn.request_type__c == 'ISSA')
                 assessmentIssaResponse= (Assessment_IssaFormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, Assessment_IssaFormWithoutSharing.class);
             else if ( thisTxn.request_type__c == 'Acknowledge Assessment'){
-                String assessmentType = ApexPages.currentPage().getUrl().contains('DSP_Assessment_RiskForm') ? 'Risk' : 'ISSA';
+                String assessmentType = ApexPages.currentPage().getUrl().containsIgnoreCase('DSP_Assessment_RiskForm') ? 'Risk' : 'ISSA';
                 if (assessmentType == 'Risk') assessmentResponse = (Assessment_RiskFormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, Assessment_RiskFormWithoutSharing.class);
                 else assessmentIssaResponse = (Assessment_IssaFormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, Assessment_IssaFormWithoutSharing.class);
             }
