@@ -131,34 +131,39 @@ public with sharing class GenerateEvalComponent {
 
 	public Component.Apex.OutputPanel CreateFieldControls () {
 		List<Eval__c> listEvalItems;
+		Boolean batchInsert = (subcat == null || subcat == '');
 		String additionalCondition = '';
 		//EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
 		if (evalSecType == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV'){
 			additionalCondition = 'AND (NOT htmlid__c LIKE \'HeadtoToeDiagnosticsIVQuestion%\') ';
 		}
-		if (subcat != null && subcat != '') {  // We're looking at the general category here
+		if (!batchInsert) {
 			additionalCondition += 'AND Sub_Category__c = :subcat ';
 		}
 		listEvalItems = Database.query(
 			'SELECT id, htmlid__c, field_name__c, category__c, category_sequence__c, ' +
 			'       sub_category__c, sub_category_sequence__c, eval_type__r.name, Field_Type__c, ' +
-			'       Field_Sub_Type__c, field_sequence__c, required__c, Length__c, ' +
+			'       Field_Sub_Type__c, field_sequence__c, required__c, Length__c, Visible__c, ' +
 			'       visibility_rules__c, visibility_row_rules__c, Dependent_Fields__c, Composite__c ' +
 			'  FROM eval__c ' +
 			' WHERE eval_type__r.name = :evalname ' +
 			'   AND category__c =:cat ' +
-			'   AND visible__c = true ' +
 			additionalCondition +
 			'ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c'
 		);
 		List<String> evalIds = new List<String>();
-		Map<String, List<Eval__c>> subCategoryMap = new Map<String, List<Eval__c>>();
+		Map<String, List<Eval__c>> sectionMap = new Map<String, List<Eval__c>>();
+		Set<String> repeatables = new Set<String>();
 		for (Eval__c eval: listEvalItems) {
-			evalIds.add(eval.Id);
-			if (!subCategoryMap.containsKey(eval.Sub_Category__c)) {
-				subCategoryMap.put(eval.Sub_Category__c, new List<Eval__c>());
+			if (eval.Visible__c) {
+				evalIds.add(eval.Id);
+				if (!sectionMap.containsKey(eval.Composite__c)) {
+					sectionMap.put(eval.Composite__c, new List<Eval__c>());
+				}
+				sectionMap.get(eval.Composite__c).add(eval);
+			} else if (eval.Field_Name__c == 'isRepeatable') {
+				repeatables.add(eval.Composite__c);
 			}
-			subCategoryMap.get(eval.Sub_Category__c).add(eval);
 		}
 		List<Eval_Drop_Down__c> dd = [
 			SELECT whatid__c, option_name__c, option_value__c, Dependent_Fields__c,
@@ -169,17 +174,27 @@ public with sharing class GenerateEvalComponent {
 			ORDER BY whatid__c, Sequence__c
 		];
 		// get any populated values for this eval and section
-		List<Eval_Value__c> listEvalValues = [
-			SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c,
-			       text_over_250__c, text_under_250__c, eval__c, eval__r.length__c
-			  FROM eval_value__c
-			 WHERE eval__c in :listEvalItems
-			   AND what_id__c = :evaluationID
-			   AND eval_Section_Id__c = :evalSectionId
-		];
+		List<Eval_Value__c> listEvalValues = Database.query(
+			'SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c, ' +
+			'       text_over_250__c, text_under_250__c, eval__c, eval__r.length__c, ' +
+			'       eval__r.composite__c ' +
+			'  FROM eval_value__c '+
+			' WHERE eval__c in :listEvalItems ' +
+			'   AND eval__r.Visible__c = true ' +
+			'   AND what_id__c = :evaluationID ' +
+			((evalSectionId == '' && batchInsert) ? '' : '   AND eval_Section_Id__c = :evalSectionId')
+		);
+		Set<String> sectionsToBypass = new Set<String>();
+		for (Eval_Value__c value: listEvalValues) {
+			if (!repeatables.contains(value.Eval__r.Composite__c)) {
+				sectionsToBypass.add(value.Eval__r.Composite__c);
+			}
+		}
 		Component.Apex.OutputPanel fullPanel = new Component.Apex.OutputPanel(layout='none');
-		for (String subCategory: subCategoryMap.keySet()) {
-			fullPanel.childComponents.add(generateSubsectionHtml(subCategoryMap.get(subCategory), dd, listEvalValues));
+		for (String composite: sectionMap.keySet()) {
+			if (!batchInsert || !sectionsToBypass.contains(composite)) {
+				fullPanel.childComponents.add(generateSubsectionHtml(sectionMap.get(composite), dd, listEvalValues));
+			}
 		}
 		return fullPanel;
 	}
