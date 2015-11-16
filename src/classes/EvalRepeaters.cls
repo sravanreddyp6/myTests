@@ -82,6 +82,7 @@ public with sharing class EvalRepeaters {
 				compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));
 				setRepeaters.add( compositeKey );
 			}
+			System.debug('setRepeaters: ' + setRepeaters);
 
 
 			// now combine the results with the complete set of eval fields
@@ -89,8 +90,9 @@ public with sharing class EvalRepeaters {
 			boolean rep = false;
 			for (AggregateResult ag : evalTypes){
 				compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));
-
-				rep = setRepeaters.contains( compositeKey);
+				System.debug('compositeKey: ' + compositeKey);
+				rep = setRepeaters.contains(compositeKey);
+				System.debug('rep: ' + rep);
 				evals.add(new EvalRepeaterWrapper(String.valueOf(ag.get('category__c')), String.valueOf(ag.get('sub_category__c')),
 					String.valueOf(ag.get('sub_sub_category__c')), compositeKey, rep ));
 
