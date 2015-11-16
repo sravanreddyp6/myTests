@@ -1,7 +1,13 @@
 public with sharing class ServiceLocationNew {
 	private Apexpages.StandardController controller;
 	public Service_Location__c location {get; set;}
-	public Alias__c alias{get; set;}
+	
+	public Alias__c alias{get {
+		if(string.isNotBlank(this.location.Alias_lookup__c)){
+			return [SELECT Id, Name, Alias_Operating_Group__c,Alias_Business_Unit__c,Alias_Description__c, Alias_Level__c,  Alias_Region__c, Alias_State__c, Alias_Service_Line__c FROM Alias__c WHERE Id= :this.location.Alias_lookup__c];
+			}
+			return null;
+		} set;}
 	
 	public ServiceLocationNew(Apexpages.StandardController controller){
 		this.controller = controller;
@@ -12,7 +18,10 @@ public with sharing class ServiceLocationNew {
 	}
 	
 	public pageReference save(){
-		this.alias = [SELECT Id, Name, Alias_Operating_Group__c,Alias_Business_Unit__c,Alias_Description__c, Alias_Level__c,  Alias_Region__c, Alias_State__c, Alias_Service_Line__c FROM Alias__c WHERE Id= :this.location.Alias_lookup__c];
+		if(string.isBlank(this.location.Alias_lookup__c) ){
+			Apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, 'Alias is mandatory for a service location'));
+			return null;
+		}
 		this.location.Name = alias.Name;
 		this.location.Alias__c = alias.Name;
 		this.location.UniqueID__c = location.FacilityID__c+'||'+location.ProgramID__c;
@@ -25,7 +34,7 @@ public with sharing class ServiceLocationNew {
 			apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, e.getMessage()));
 			return null;
 		}
-		
+	
 	}
-
+	
 }
