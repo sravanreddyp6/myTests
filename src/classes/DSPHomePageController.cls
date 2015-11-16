@@ -460,7 +460,7 @@ public with sharing class DSPHomePageController {
 			SELECT Id, Person_Being_Served__c, person_Being_served__r.name, 
 					admission__c, Service_Location__r.program__c, 
 			       Service_Location__r.Alias__c, admission__r.state__c, 
-			       (select id, effective_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1)
+			       (select id, effective_date__c, target_date__c, Status__c from action_plans__r where status__c = 'Active Final' order by finalized_date__c LIMIT 1)
 			 FROM Service_Assignment__c
 			 WHERE Person_Being_Served__c = :searchResultPBS
 			 AND ID = :searchResultSA
@@ -570,8 +570,12 @@ public with sharing class DSPHomePageController {
 																		 'Person Being Served' => '/apex/DSPPersonBeingServedView',
                                                                          'Seizures' => '/apex/DSP_PbsSeizureListing',
                                                                          'Risk' => '/apex/DSP_Assessment_RiskForm',
-                                                                         'ISSA' => '/apex/DSP_Assessment_IssaForm'
-																	};
+                                                                         'ISSA' => '/apex/DSP_Assessment_ISSAForm',
+                                                                         'BehaviorList' => '/apex/DSPWorksheets#Behavior',	// list of worksheets
+                                                                         'SkillList' => '/apex/DSPWorksheets#Skill',	// list of worksheets
+                                                                         'Behavior' => '/apex/DSPBehaviorTracking',
+                                                                         'Skill' => '/apex/DSPWeeklySkillTracking'
+                                                                         };
 	public pageReference submitTxnRequest() {
 		// submit a transaction queue request 
 		// redirect to the correct page with the transaction queue id

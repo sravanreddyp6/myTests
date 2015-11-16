@@ -192,6 +192,30 @@ public without sharing class TransactionQueueTriggeredActions {
 							newreq.return_value__c = json.serialize( e.getMessage() );
 					}
 				}
+				else if ( t.request_type__c == 'BehaviorList' || t.request_type__c == 'SkillList' ) {
+                    try {
+                    	system.debug('TXN TYPE:' + t.request_type__c);
+                        // get the Action plan id from the request pararms
+                        ID APId = t.input_params__c;
+                        
+                        // execute the transaction as requested
+                        DSP_Worksheets worksheets  = new DSP_Worksheets(APId); 
+    
+                        // serialize the result
+                        String jsonstring = json.serialize( worksheets );
+                        system.debug( 'GOT RESULT: '  + jsonstring);
+                        // update the request as having been fulfilled
+                        newreq.return_value__c = jsonstring;
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+    //                          newreq.return_code__c = 'ERROR';
+                                system.debug( e );
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                    }
+                }
+                
 			
 			// update the request back to the user
 			update newreq;

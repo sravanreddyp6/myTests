@@ -5,6 +5,7 @@ public with sharing class TxnQueueResponseController {
     public DSPPersonBeingServed_WithoutSharing pbsViewResponse { get; private set; }
     public DSP_PbsSeizureListing pbsSeizureListing { get; private set; }
     public Assessment_RiskFormWithoutSharing assessmentResponse { get; private set; }
+    public DSP_Worksheets apWorksheets { get; private set; }
 	
 //Constructor
 	public TxnQueueResponseController(){
@@ -49,8 +50,12 @@ public with sharing class TxnQueueResponseController {
             else if ( thisTxn.request_type__c == 'Risk' || thisTxn.request_type__c == 'Acknowledge Risk'){
                 assessmentResponse= (Assessment_RiskFormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, Assessment_RiskFormWithoutSharing.class);
                 system.debug(assessmentResponse);
+            } 
+            else if ( thisTxn.request_type__c == 'SkillList' || thisTxn.request_type__c == 'BehaviorList') {
+            	system.debug( thisTxn.return_value__c);
+            	apWorksheets = (DSP_Worksheets) JSON.deserialize( thisTxn.return_value__c, DSP_Worksheets.class);
+            	system.debug(apWorksheets);
             }
-
 
 			system.debug(response);
 		} catch (Exception e2) {
