@@ -239,12 +239,13 @@ public with sharing class DSPHomePageController {
 	private void setAdmissionAssessments() {
 		
 		// get the list of assessments (Risk, ISSA) for the admissions
-		Assessment__c[] assmts = [select id, type__c, admission__c from assessment__c where admission__c in :admissions
-		and type__c in ('Risk','ISSA') and status__c = 'Active Final'];
+		Assessment__c[] assmts = [select id, type__c, assessment_type__r.name, admission__c from assessment__c where admission__c in :admissions
+		and ( type__c = 'ISSA' or assessment_type__r.name = 'Risk') and status__c = 'Active Final'];
 	
 		// put into map - key is admission + assessment type
 		for ( assessment__c a : assmts ) {
-			String idtype = a.admission__c + a.type__c; 
+			string typestr = (a.type__c == '' ? a.assessment_type__r.name  : a.type__c );
+			String idtype = a.admission__c + typestr; 
 			admAssess.put ( idtype, a.id );
 		}	
 		

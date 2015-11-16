@@ -1,7 +1,7 @@
 public without sharing class DSP_Worksheets {
 
 	public ID ActionPlanId { get; set; }
-	public map<String, List<WorksheetWrapper>> mapSheets { get; set; }
+	public map<String, List<WorksheetWrapper>> mapSheets { get;  set; }
 	
 	public DSP_Worksheets ( ID APId) {
 		this.ActionPlanID = APId;
