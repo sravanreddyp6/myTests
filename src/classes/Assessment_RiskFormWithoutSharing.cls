@@ -1,38 +1,93 @@
-public without sharing class Assessment_RiskFormWithoutSharing {
-   public list<string> selectFields = new list<string>();
-
-   public string glbListSeperator {get{return ';';} set;}
-   public string glbItemSeperator {get{return '__';} set;}
-   public boolean hasErrorOnFinalize {get; set;}
-   public list<string> displayLevel_Required_ResidentialServices = new list<string>();
-   public list<string> getdisplayLevel_Required_ResidentialServices(){return displayLevel_Required_ResidentialServices ;}
-   public list<string> displayLevel_Required_DayServices = new list<string>();
-   public list<string> getdisplayLevel_Required_DayServices (){return displayLevel_Required_DayServices  ;}   
+public without sharing class Assessment_RiskFormWithoutSharing extends Assessment_AbstractForm implements DSP_AssessmentResponseType{
+    public string glbListSeperator {get{return ';';} set;}
+    public string glbItemSeperator {get{return '__';} set;}
+    public boolean hasErrorOnFinalize {get; set;}
+    public list<string> displayLevel_Required_ResidentialServices = new list<string>();
+    public list<string> getdisplayLevel_Required_ResidentialServices(){return displayLevel_Required_ResidentialServices ;}
+    public list<string> displayLevel_Required_DayServices = new list<string>();
+    public list<string> getdisplayLevel_Required_DayServices (){return displayLevel_Required_DayServices  ;}   
 
     public List<id> DomainsInScopeIDs = new List<id>();
     public List<id> QuestionsInScopeIDs = new List<id>();
     public List<id> OptionsInScope = new List<id>();
-    public List<Assessment_Response__c> CurrentResps = new List<Assessment_Response__c>();
-    public List<Assessment_Response__c> getCurrentResps(){ return CurrentResps;}
-    
-    public Map<id, Assessment_Response__c> mapCurrentResps {get;set;}         
-     
+
     public map<string, List<string>> mapQuestions = new map<string, List<string>>();
     public map<string, List<string>> getMapQuestions(){ return mapQuestions ;}
-    
-    public map<id, boolean> mapDomainHasRisk = new map<id, boolean>();
-    public map<id, boolean> getmapDomainHasRisk  (){ return mapDomainHasRisk ;}    
-    
-    public List<Assessment_Domain__c> DomainsInScope = new List<Assessment_Domain__c>();
-    public List<Assessment_Domain__c> getDomainsInScope() {
-    	return [Select ID,  Name, Description__c, Assessment_Type__c, Header__c,  External_Id__c,
-                        (Select Name, ID, Question_Description__c, Question_Title__c, Question_Number__c , External_Id__c
-                                From Question__r 
-                                Where ID in :QuestionsInScopeIDs
-                                Order By Question_Number__c) 
-                From Assessment_Domain__c Where id in :DomainsInScopeIDs Order By Sort_Order__c]; }
 
-    public Assessment__c assessment { get; set; }
+
+    transient public Map<id, Map<string,Object>> mapCurrentResps;
+    public Map<id, Map<string,Object>> getMapCurrentResps(){
+        if (this.mapCurrentResps == null) {
+			this.mapCurrentResps = new Map<id, Map<String,Object>>();
+			String strSQLResp =  'SELECT ' + String.join(selectFieldsAssessResp, ',') + ' FROM Assessment_Response__c WHERE assessment__c = \'' + assessment.id + '\' and rating__c = \'Presents a Risk\'';
+            List<Assessment_Response__c> CurrentResps = (List<Assessment_Response__c>) Database.query(strSQLResp);
+			for (Assessment_Response__c response : CurrentResps){
+	            Map<String, Object> m = new Map<String, Object>();
+	            for(String s : selectFieldsAssessResp){
+	                m.put(s,'');
+	            }
+	            updateMapWithRelationshipKeys(m, JSON.serialize(response), '');
+                mapCurrentResps.put(response.Question__c, m);
+            }
+        } 
+        return this.mapCurrentResps;
+    }
+
+    transient public List<AssessmentDomainWrapper> DomainsInScope;
+    public List<AssessmentDomainWrapper> getDomainsInScope(){
+    	if (this.DomainsInScope == null) return DomainsInScope = buildDomainsInScopeWrapper();
+    	 else return this.DomainsInScope;
+    }
+    private List<AssessmentDomainWrapper> buildDomainsInScopeWrapper(){
+        List<AssessmentDomainWrapper> DomainsInScopeWrapperTemp = new List<AssessmentDomainWrapper>();
+        for(Assessment_Domain__c domain : [Select ID,  Name, Description__c, Assessment_Type__c, Header__c,  External_Id__c,
+					                             (Select Name, ID, Question_Description__c, Question_Title__c, Question_Number__c , External_Id__c
+					                                From Question__r 
+					                                Where ID in :QuestionsInScopeIDs
+					                                Order By Question_Number__c) 
+					                       From Assessment_Domain__c Where id in :DomainsInScopeIDs Order By Sort_Order__c] ){
+                	DomainsInScopeWrapperTemp.add(new AssessmentDomainWrapper(domain));
+        }
+        return DomainsInScopeWrapperTemp;
+    }
+    public class AssessmentDomainWrapper {
+    	public String id {get;set;}
+    	public String name {get;set;}
+    	public String description {get;set;}
+    	public String assessmentType {get;set;}
+    	public String header {get;set;}
+    	public String externalId {get;set;}
+    	public list<QuestionWrapper> QuestionWrappers {get;set;}
+    	public AssessmentDomainWrapper(Assessment_Domain__c domain){
+    		this.QuestionWrappers = new list<QuestionWrapper>();
+            for (Assessment_Question__c q : domain.Question__r) {
+            	this.QuestionWrappers.add(new QuestionWrapper(q));
+            }
+            this.id = domain.ID;
+            this.name = domain.Name;
+            this.description = domain.Description__c;
+            this.assessmentType = domain.Assessment_Type__c;
+            this.header = domain.Header__c;
+            this.externalId = domain.External_Id__c;
+    	}
+    }
+    public class QuestionWrapper {
+        public String name {get;set;}
+        public String id {get;set;}
+        public String questionDescription {get;set;} 
+        public String questionTitle {get;set;}
+        public decimal questionNumber {get;set;}
+        public String externalId {get;set;}
+        public QuestionWrapper(Assessment_Question__c q){
+                this.Name = q.name;
+                this.id = q.ID;
+                this.questionDescription = q.Question_Description__c;
+                this.questionTitle = q.Question_Title__c;
+                this.questionNumber = q.Question_Number__c;
+                this.externalId = q.External_Id__c;
+        }
+    }  
+
     public transient Map<String, Object> assessmentWrapper;
     public Map<String, Object> getAssessmentWrapper() {
     	if (this.assessmentWrapper == null){
@@ -44,20 +99,6 @@ public without sharing class Assessment_RiskFormWithoutSharing {
             return m;
     	} else return this.assessmentWrapper;
     }
-
-	private void updateMapWithRelationshipKeys(Map<String, Object> m, String jsonString, String relationshipKey){
-	    	Map<String, Object> temp = (Map<String, Object>) JSON.deserializeUntyped(jsonString);
-	    	Map<String, Object> newMap = new Map<String, Object>(); 
-	    	for(String k : temp.keySet()){
-	    		if(k.endsWithIgnoreCase('__r') || k == 'LastModifiedBy' || k == 'CreatedBy') updateMapWithRelationshipKeys(m, JSON.serialize(temp.get(k)), k);
-	    		else {
-	    			if (String.IsBlank(relationshipKey) ) newMap.put(k, temp.get(k));
-	    			else newMap.put(relationshipKey + '.' + k, 	temp.get(k));
-	    		}
-	    	}
-	    	m.putAll(newMap);
-	    	m.remove(String.IsBlank(relationshipKey) ? 'attributes' : relationshipKey + '.attributes'); // this is to remove this key, SF adds this when serializing the sObject.
-	}	
     
     public String recommendedDayServicesStaffingRatio { get; set; }
     public String recommendedDayServicesStaffingRatioOther { get; set; }
@@ -108,13 +149,9 @@ public without sharing class Assessment_RiskFormWithoutSharing {
                     } 
                     else{//str4Level_Required_ResidentialServices  += item + glbListSeperator;
                     }                      
-            
-            
             }         
-         
              return Level_Required_ResidentialServices ;
          }
-
          public void setLevel_Required_ResidentialServices  (String[] Level_Required_ResidentialServices ) {
             this.Level_Required_ResidentialServices = Level_Required_ResidentialServices ;
         }
@@ -176,17 +213,6 @@ public without sharing class Assessment_RiskFormWithoutSharing {
             this.Staffing_Supervision_Needs= Staffing_Supervision_Needs;
         }      
         
-    public boolean editMode{get; set;}
-    public string mode{get; set;}
-    public List<Assessment__c> AllAsses = new List<Assessment__c>();
-    public List<Assessment__c> getAllAsses(){return AllAsses ;}
-
-    public Boolean canEditRisk { get {
-        List<UserRecordAccess> acls = [SELECT RecordId, HasEditAccess FROM UserRecordAccess WHERE UserId = :UserInfo.getUserId() AND RecordId = :assessment.Id ];
-        if (acls.size() > 0) {
-            return acls[0].HasEditAccess;
-        } else { return false;} 
-    } set; }
     
     public Boolean staffingRatioInFlavor {
         get {
@@ -198,35 +224,25 @@ public without sharing class Assessment_RiskFormWithoutSharing {
                 return assessment.Admission__r.State__c=='MN' || assessment.Admission__r.State__c=='IN';
         }
     }
-    public Boolean showConfirmationButton {
-        get {
-            for (Acknowledgment__c c: assessment.Acknowledgments__r) {
-                if (c.User__c == UserInfo.getUserId() && assessment.ID == c.Assessment__c) {
-                    return false;
-                }
-            }
-            if(assessment.status__c != 'Active Final'){ return false;}
-            return true;
+    public Boolean showConfirmationButton {get; private set;}
+    public List<AckWrapper> ackwrapList {get; private set;}
+        
+    public class AckWrapper {
+        public String AckBy { get; set; }
+        public Datetime AckDate { get; set; }
+        public String AckInit { get; set; }
+        
+        public AckWrapper( string b, datetime d, string i ) {
+            this.AckBy = b;
+            this.AckDate = d;
+            this.AckInit = i;
         }
     }
     
     public Assessment_RiskFormWithoutSharing(Id assessmentId) {
-        // Get a map of field name and field token
-        Map<String, Schema.SObjectField> fMap = Schema.getGlobalDescribe().get('Assessment__c').getDescribe().Fields.getMap();
-        if (fMap != null) {
-            for (Schema.SObjectField ft : fMap.values()){ // loop through all field tokens (ft)
-                Schema.DescribeFieldResult fd = ft.getDescribe(); // describe each field (fd)
-                    selectFields.add(fd.getName());
-            }
-        }
-        selectFields.addAll(new List<String>{ 'Admission__r.Name', 'Admission__r.State__c', 'LastModifiedBy.Name', 'CreatedBy.Name', 'Approved_By__r.Name', 'Admission__r.Person_Being_Served__r.Name'});
-        String strSQL =  'SELECT ' + String.join(selectFields, ',') + ' FROM Assessment__c WHERE Id = \'' + assessmentId + '\'';
-        this.assessment = (Assessment__c) Database.query(strSQL)[0];
+    	super(assessmentId);
         
-        mode = 'view';
         RecDayServicesStaffingRatio.clear();
-        hasErrorOnFinalize = false;
-        
         if(assessment.Recommended_Day_Services_Staffing_Ratio__c !=null){
             RecDayServicesStaffingRatio =  assessment.Recommended_Day_Services_Staffing_Ratio__c.split(glbListSeperator);
             // 01/01/14 - adding this line to support the display of staffing ratio in summary mode
@@ -248,30 +264,12 @@ public without sharing class Assessment_RiskFormWithoutSharing {
             levelRequiredResidentialFull = String.valueOf(displayLevel_Required_ResidentialServices.size() > 0);
         }
         
-        mapCurrentResps  = new Map<id, Assessment_Response__c>();
-        CurrentResps = [Select id, Rating__c, Description_of_Risk__c, Plan_to_reduce_Risk__c, Comment__c, 
-                               Assessment_Domain_Result__c, Question__c, Question__r.External_Id__c,  
-                               Question__r.Question_Domain__c, Question__r.Question_Title__c 
-                          From Assessment_Response__c Where assessment__c = :assessment.id and rating__c = 'Presents a Risk'];
-       
-        ID idDomId = null;
+        
+        String strSQLResp =  'SELECT ' + String.join(selectFieldsAssessResp, ',') + ' FROM Assessment_Response__c WHERE assessment__c = \'' + assessment.id + '\' and rating__c = \'Presents a Risk\'';
+        List<Assessment_Response__c> CurrentResps = (List<Assessment_Response__c>) Database.query(strSQLResp);
         for(Assessment_Response__c local: CurrentResps){
-            idDomId = local.Question__r.Question_Domain__c;
-            DomainsInScopeIDs.Add(idDomId);
+            DomainsInScopeIDs.Add(local.Question__r.Question_Domain__c);
             QuestionsInScopeIDs.Add(local.Question__c);
-            mapCurrentResps.put(local.Question__c, local);
-            
-            // calculate whether this domain as a whole has risk
-            if (mapDomainHasRisk.containsKey(idDomId) && mapDomainHasRisk.get(idDomId)) {
-                continue;
-            } else {
-                if(local.rating__c != null  &&  local.rating__c.equalsIgnoreCase('presents a risk') ) {
-                    mapDomainHasRisk.put(idDomId,true);
-                    //system.debug('Putting ' + idDomId + ' into hasrisk list with true');
-                } else {
-                    mapDomainHasRisk.put(idDomId,false);
-                } 
-            }
         }
         List<Assessment_Question__c > tmpQ = [Select ID, External_Id__c, Question_Number__c, Question_Title__c, Name, Question_Description__c, Assessment_Type__c,  
 								                     (Select Name, Score__c, Rating__c, Color__c, Rating_Description__c, Show_These_Fields__c, id
@@ -288,16 +286,17 @@ public without sharing class Assessment_RiskFormWithoutSharing {
                 // add the question options for when the radio button is not selected
                 mapQuestions.put(local.id, showFields);
         }
+     
+        // get existing acknowledgments on the assessment 
+        ackwrapList = new List<AckWrapper>();
+        showConfirmationButton =  true;
+        for ( Acknowledgment__c a : [ select user__c, user__r.name, CreatedDate from acknowledgment__c where Assessment__c = :assessment.id order by CreatedDate desc LIMIT 1000]) {
+             AckWrapper aw = new AckWrapper( a.user__r.name, a.CreatedDate, '');
+             ackwrapList.add( aw );
+             if ( a.user__c == userinfo.getUserId())
+                showConfirmationButton = false;
+        }
+           
     }
 
-    class InputException extends Exception {}
-    private Boolean isNumber(String input) {
-        // Check whether a String is a Number or not
-        try {
-            Decimal.valueOf(input);
-            return True;
-        } catch (System.TypeException ex) {
-            return False;
-        }
-    }
 }
