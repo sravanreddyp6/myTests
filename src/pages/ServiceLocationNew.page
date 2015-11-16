@@ -6,14 +6,66 @@
     	<apex:pageMessages id="msgs" />
     	<apex:pageBlock title="Create Service Location" mode="edit" id="newBlock" >
     		<apex:pageBlockSection columns="2" collapsible="true">
-    			<apex:inputField value="{!Service_location__c.Alias_lookup__c}" />
-    			<apex:inputField label="Facility" value="{!Service_Location__c.FacilityID__c}" />
-                <apex:inputField label="Program Code" value="{!Service_Location__c.ProgramID__c}" />
-                <apex:inputField value="{!Service_Location__c.Service_Value__c}" />
-                <apex:inputField value="{!Service_Location__c.Program__c}" />
+    			<apex:inputField value="{!Service_location__c.Alias_lookup__c}" >
+    				<apex:actionsupport event="onchange" reRender="newBlock,msgs" />
+    			</apex:inputField>
+    		</apex:pageBlockSection>
+    		
+    		<apex:pageBlockSection columns="2" id="aliasSection" rendered="{!location.Alias_lookup__c != null}">
+    			<apex:outputField value="{!alias.Alias_Operating_Group__c}" />
+    			<apex:outputField value="{!alias.Alias_Business_Unit__c}" />
+    			<apex:outputField value="{!alias.Alias_Region__c}" />
+    			<apex:outputField value="{!alias.Alias_Service_Line__c}" />
+    			<apex:outputField value="{!alias.Alias_State__c}" />
+    			<apex:outputField value="{!alias.Alias_Responsibility_Center_Code__c}" />
+    		</apex:pageBlockSection>
+    		
+    		<apex:pageblockSection columns="2" >
+    			<apex:pageBlockSectionItem>
+    				<apex:outputLabel value="Facility" />
+    				<apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                           <apex:inputField label="Facility" value="{!Service_Location__c.FacilityID__c}" required="false"/>
+                        </div> 
+                        <br/> 
+                    </apex:outputPanel>
+    			</apex:pageBlockSectionItem>
+    			<apex:pageBlockSectionItem>
+    				<apex:outputLabel value="Service Value" />
+    				<apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                           <apex:inputField label="Facility" value="{!Service_Location__c.Service_Value__c}" required="false"/>
+                        </div> 
+                        <br/> 
+                    </apex:outputPanel>
+    			</apex:pageBlockSectionItem>
+    			<apex:pageBlockSectionItem>
+    				<apex:outputLabel value="Program Code" />
+    				<apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                           <apex:inputField label="Facility" value="{!Service_Location__c.ProgramID__c}" required="false"/>
+                        </div> 
+                        <br/> 
+                    </apex:outputPanel>
+    			</apex:pageBlockSectionItem>
+    			<apex:pageBlockSectionItem>
+    				<apex:outputLabel value="Program" />
+    				<apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                           <apex:inputField label="Facility" value="{!Service_Location__c.Program__c}" required="false"/>
+                        </div> 
+                        <br/> 
+                    </apex:outputPanel>
+    			</apex:pageBlockSectionItem>
                 <apex:inputField value="{!Service_Location__c.Setting__c}" />
                 <apex:inputField value="{!Service_Location__c.Program_Rollup__c}" />
-    		</apex:pageBlockSection>
+          </apex:pageblockSection>
+         
+    		
 <!--     		<hr/> -->
 <!--     		<apex:pageBlockSection columns="2" > -->
 <!--     			<apex:inputField value="{!Service_location__c.Location_Nickname__c}" /> -->
