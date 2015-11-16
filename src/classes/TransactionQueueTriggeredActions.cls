@@ -119,6 +119,32 @@ public without sharing class TransactionQueueTriggeredActions {
                     
                 }
 
+                else if ( t.request_type__c == 'ISSA' ) {
+                    try {
+                        // get the pbs id from the request pararms
+                        ID admId = t.input_params__c;
+                        
+                        // execute the transaction as requested
+                        Assessment__c assessment = [select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Type__c = 'ISSA' limit 1];
+                        Assessment_IssaFormWithoutSharing issaAssessment = new Assessment_IssaFormWithoutSharing(assessment.id); 
+    
+                        // serialize the result
+                        String jsonstring = json.serialize(issaAssessment);
+                        //system.debug( 'GOT RESULT: '  + jsonstring);
+
+                        // update the request as having been fulfilled
+                        newreq.return_value__c = jsonstring;
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                        
+                    } catch (Exception e) {   
+                        // flag the error
+                        newreq.fulfilled__c = false;
+                        newreq.return_value__c = json.serialize( e.getMessage() );
+                    }
+                    
+                }
+
                 else if ( t.request_type__c == 'Acknowledge Assessment') {
                     try {
                         // get the pbs id from the request pararms
