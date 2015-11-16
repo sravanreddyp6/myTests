@@ -1,7 +1,8 @@
 <apex:component controller="GenerateEvalComponent">
 	<apex:attribute name="parentId" description="Id of the parent Evaluation record" type="Id" assignTo="{!evaluationId}" />
-	<apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" />
+	<apex:attribute name="editEnabled" description="Whether Edit functionality is enabled" type="Boolean" default="true" assignTo="{!editable}" />
 	<apex:attribute name="onEntrySaveSuccess" description="The Javascript to call when an entry is successfully saved" type="String" required="false" />
+	<apex:attribute name="showActions" description="Whether to show the action buttons (Save, Cancel) or not" type="Boolean" required="false" default="false" assignTo="{!showActionButtons}" />
 
 	<apex:attribute name="evaltype" description="Kind of eval" type="string" assignTo="{!evalname}" required="true" />
 	<apex:attribute name="category" description="Section of the Eval" type="string" assignTo="{!cat}" required="true" />
@@ -245,6 +246,7 @@
 			};
 			window.bindSubmitEvent = function() {
 				$('#evalForm').on("submit", function(event) {
+					$('#evalSecValMsgs').hide();
 					beforeEvaluationSave();
 					handleFormErrors();
 					event.preventDefault();
@@ -255,6 +257,7 @@
 					GenerateEvalComponent.saveFields('{!parentID}', '{!evalSectionUuid}', '{!evalSectionType}', '{!evaltype}', jsonData, function(result, event) {
 						if (!event.status) {
 							$('#evalSecValMsgs .error-messages').html('<li>' + event.message + '</li>');
+							$('#evalSecValMsgs').show();
 						} else {
 							{!onEntrySaveSuccess}
 						}
