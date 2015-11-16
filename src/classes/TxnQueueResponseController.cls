@@ -5,6 +5,7 @@ public with sharing class TxnQueueResponseController {
     public DSPPersonBeingServed_WithoutSharing pbsViewResponse { get; private set; }
     public DSP_PbsSeizureListing pbsSeizureListing { get; private set; }
     public Assessment_RiskFormWithoutSharing assessmentResponse { get; private set; }
+    public Assessment_IssaFormWithoutSharing assessmentIssaResponse { get; private set; }
     public DSP_Worksheets apWorksheets { get; private set; }
 	
 //Constructor
@@ -47,10 +48,15 @@ public with sharing class TxnQueueResponseController {
                 pbsViewResponse = (DSPPersonBeingServed_WithoutSharing) JSON.deserialize(thisTxn.return_value__c, DSPPersonBeingServed_WithoutSharing.class);
             else if ( thisTxn.request_type__c == 'Seizures' || thisTxn.request_type__c == 'Upsert Seizure')
                 pbsSeizureListing = (DSP_PbsSeizureListing) JSON.deserialize(thisTxn.return_value__c, DSP_PbsSeizureListing.class);
-            else if ( thisTxn.request_type__c == 'Risk' || thisTxn.request_type__c == 'Acknowledge Risk'){
+            else if ( thisTxn.request_type__c == 'Risk')
                 assessmentResponse= (Assessment_RiskFormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, Assessment_RiskFormWithoutSharing.class);
-                system.debug(assessmentResponse);
-            } 
+            else if ( thisTxn.request_type__c == 'ISSA')
+                assessmentResponse= (Assessment_RiskFormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, Assessment_RiskFormWithoutSharing.class);
+            else if ( thisTxn.request_type__c == 'Acknowledge Assessment'){
+                String assessmentType = ApexPages.currentPage().getUrl().contains('DSP_Assessment_RiskForm') ? 'Risk' : 'ISSA';
+                if (assessmentType == 'Risk') assessmentResponse = (Assessment_RiskFormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, Assessment_RiskFormWithoutSharing.class);
+                else assessmentIssaResponse = (Assessment_IssaFormWithoutSharing) JSON.deserialize(thisTxn.return_value__c, Assessment_IssaFormWithoutSharing.class);
+            }
             else if ( thisTxn.request_type__c == 'SkillList' || thisTxn.request_type__c == 'BehaviorList') {
             	system.debug( thisTxn.return_value__c);
             	apWorksheets = (DSP_Worksheets) JSON.deserialize( thisTxn.return_value__c, DSP_Worksheets.class);

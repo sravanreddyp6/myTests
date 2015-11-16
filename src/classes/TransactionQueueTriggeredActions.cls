@@ -118,7 +118,38 @@ public without sharing class TransactionQueueTriggeredActions {
                     }
                     
                 }
-                
+
+                else if ( t.request_type__c == 'Acknowledge Assessment') {
+                    try {
+                        // get the pbs id from the request pararms
+                        ID admId = t.input_params__c;
+                        Assessment__c assessment;
+                        DSP_AssessmentResponseType assessmentDetails;
+                        String assessmentType = ApexPages.currentPage().getUrl().contains('DSP_Assessment_RiskForm') ? 'Risk' : 'ISSA';
+                        if (assessmentType == 'Risk'){
+                            assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Assessment_Type__r.name = 'Risk' limit 1];
+                            assessmentDetails = new Assessment_RiskFormWithoutSharing(assessment.id);                            
+                        }
+                        else { //ISSA
+                            assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Type__c = 'ISSA' limit 1];
+                            assessmentDetails = new Assessment_IssaFormWithoutSharing(assessment.id);
+                        }
+                        Acknowledgment__c confirmRec = new Acknowledgment__c(Assessment__c = assessment.id, User__c = UserInfo.getUserId());
+                        insert confirmRec;
+ 
+                        // serialize the result
+                        String jsonstring = json.serialize( assessmentDetails );
+                        // update the request as having been fulfilled
+                        newreq.return_value__c = jsonstring;
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+//                          newreq.return_code__c = 'ERROR';
+                            system.debug( e );
+                            newreq.fulfilled__c = false;
+                            newreq.return_value__c = json.serialize( e.getMessage() );
+                    }
+                }
                 else if ( t.request_type__c == 'Seizures' ) {
                     try {
                         // get the pbs id from the request pararms

@@ -3,6 +3,7 @@
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
 <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:variable var="vfManagedQuestions" value="IADAY17a,IADAY17b,IADAY17c,IADAY17d"/>
 
 <style>
@@ -55,6 +56,12 @@ table[id*=dayServiceWithoutCaregiverRadio] {
     top: -71px;
     left: 220px;
 }
+.popupform{
+    position:absolute; left:35%; top:40%; background-color: white; border: 2px solid gray; padding: 2px;
+    width: 343px;
+    opacity: 1;
+
+}
 .hbbg{
     position:fixed;
     width:100%;
@@ -64,7 +71,13 @@ table[id*=dayServiceWithoutCaregiverRadio] {
     z-index:1000;
 }        
 </style>
-<script>function setFocusOnLoad() {}</script>
+<script>function setFocusOnLoad() {}
+jQuery.noConflict();
+var j$ = jQuery.noConflict();
+function toggleById(id, ms){
+    j$(document.getElementById(id)).toggle(ms);
+};
+</script>
 
 <apex:form id="myfrm" >
     <apex:pageMessages />
@@ -120,10 +133,245 @@ table[id*=dayServiceWithoutCaregiverRadio] {
         </apex:pageBlockSection>   
         <br/>
         
+        <apex:variable value="" var="currentHeader" />
+        <apex:repeat value="{!assessmentResponse.DomainsInScope}" var="Domain">
+            <apex:outputPanel layout="block" rendered="{!Domain.Header != currentHeader}"  >
+            <hr class="branded-hr"/>
+                <apex:outputPanel layout="block" styleClass="risk-section-header">{!Domain.Header}</apex:outputPanel>
+                <br/>
+            </apex:outputPanel>
+            <div class="risk-domain">
+            <apex:outputPanel >{!Domain.Name}<c:HelpTooltip helpText="{!Domain.Description}"  rendered="{!Domain.Description !=''}"/>
+            </apex:outputPanel>
+            <apex:variable value="{!Domain.Header}" var="currentHeader" />
+            </div>
+            
+            <!-- output questions within domain -->
+            <apex:dataTable value="{!Domain.QuestionWrappers}" var="Question" width="100%" rowClasses="risk-question-odd, risk-question-even">
+                
+                    <apex:column style="width:400px;padding-left:20px;vertical-align:top;" >
+                        <apex:outputPanel layout="block" style="padding-top:5px">
+                        {!Question.QuestionTitle}
+                        <c:HelpTooltip helpText="{!Question.QuestionDescription}" rendered="{!Question.QuestionDescription !=''}"/>
+                        </apex:outputPanel> 
+                    </apex:column>
+                    
+                    <apex:column >                   
+                        <apex:outputPanel layout="block" >
+                            <apex:outputText style="position:relative;top:5px;padding-left:7px;" value="Presents a Risk"/>
+                            <apex:outputPanel id="xQuestions" >
+
+                                <div id="{!Question.id}_options" style="padding-bottom:20px;">  
+                                <!-- main senario -->
+                                    <apex:repeat value="{!assessmentResponse.mapQuestions[Question.id+assessmentResponse.mapCurrentResps[Question.ID]['Rating__c']]}" var="g" rendered="{! !Contains( vfManagedQuestions, Question.externalId) }">
+                                        <apex:outputPanel rendered="{!g !='false'}" layout="block" >
+                                            <apex:dataTable value="{!g}" var="h" style="position:relative;left:-200px;top:20px;">
+                                                <apex:column style="vertical-align: top; width:140px; margin-bottom:7px"> 
+                                                    <span style="font-weight:bold">{!$ObjectType.Assessment_Response__c.fields[h].Label}</span>
+                                                </apex:column>
+                                                <apex:column style="vertical-align: top; width:700px;padding-bottom:5px">
+                                                    <apex:outputtext value="{!assessmentResponse.mapCurrentResps[Question.ID][h]}" />
+                                                </apex:column>
+                                                
+                                            </apex:dataTable>
+                                        </apex:outputPanel> 
+                                    </apex:repeat> 
+                                    <!-- secondary senarios -->
+                                        <apex:outputPanel rendered="{! Question.externalId =='IADAY17a'}" layout="block" >
+                                            <table  style="position:relative;left:-200px;top:20px;">
+                                                <tr>
+                                                    <td style="vertical-align: top; width:140px; margin-bottom:7px;" >
+                                                        <span style="font-weight:bold">Plan to Reduce Risk</span>
+                                                    </td>
+                                                    <td style="vertical-align: top; width:700px;padding-bottom:5px">
+                                                        <apex:outputtext value="{!assessmentResponse.mapCurrentResps[Question.ID]['Plan_to_reduce_Risk__c']}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align: top; width:140px; margin-bottom:7px;" >
+                                                        <span style="font-weight:bold">Do the dietary needs address a significant health or safety risk to the individual?</span>
+                                                    </td>
+                                                    <td style="vertical-align: top; width:700px;padding-bottom:5px">
+                                                        <apex:outputtext value="{!assessmentResponse.mapCurrentResps[Question.ID]['Description_of_Risk__c']}"/>
+                                                    </td>
+                                                </tr>                                               
+                                            </table>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{! Question.externalId =='IADAY17b'}" layout="block" >
+                                            <table  style="position:relative;left:-200px;top:20px;">
+                                                <tr>
+                                                    <td style="vertical-align: top; width:140px; margin-bottom:7px;" >
+                                                        <span style="font-weight:bold">Plan to Reduce Risk</span>
+                                                    </td>
+                                                    <td style="vertical-align: top; width:700px;padding-bottom:5px">
+                                                        <apex:outputtext value="{!assessmentResponse.mapCurrentResps[Question.ID]['Plan_to_reduce_Risk__c']}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="vertical-align: top; width:140px; margin-bottom:7px;" >
+                                                        <span style="font-weight:bold">Describe signs or symptoms that would require the need for the PRN to be administered</span>
+                                                    </td>
+                                                    <td style="vertical-align: top; width:700px;padding-bottom:5px">
+                                                        <apex:outputtext value="{!assessmentResponse.mapCurrentResps[Question.ID]['Description_of_Risk__c']}" />
+                                                        <div id="prn-day-symptoms" style="padding: 3px; {! if(assessmentResponse.mapCurrentResps[Question.ID]['Description_of_Risk__c'] == 'CMA/MM observes the need based on the following symptoms:', '', 'display:none;')}">
+                                                            <b>Add Symptoms</b><br/>
+                                                            <apex:outputtext value="{!assessmentResponse.mapCurrentResps[Question.ID]['Comment__c']}" />
+                                                        </div>
+                                                    </td>
+                                                </tr>                                               
+                                            </table>
+                                        </apex:outputPanel>                                         
+                                       <apex:outputPanel rendered="{! Question.externalId =='IADAY17c' || Question.externalId =='IADAY17d' }" layout="block" >
+                                            <table  style="position:relative;left:-200px;top:20px;">
+                                                <tr>
+                                                    <td style="vertical-align: top; width:140px; margin-bottom:7px;" >
+                                                        <span style="font-weight:bold">Plan to Reduce Risk</span>
+                                                    </td>
+                                                    <td style="vertical-align: top; width:700px;padding-bottom:5px">
+                                                        <apex:outputtext value="{!assessmentResponse.mapCurrentResps[Question.ID]['Plan_to_reduce_Risk__c']}"  />
+                                                    </td>
+                                                </tr>                                               
+                                            </table>
+                                        </apex:outputPanel>
+                                 </div>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:column>
+                </apex:dataTable>
+        </apex:repeat> 
+
+    <apex:outputPanel layout="block" style="margin-bottom: 10px;" rendered="{!assessmentResponse.assessmentWrapper['Additional_Areas_of_Concern__c'] != ''}">
+        <hr class="branded-hr"/>
+            <div class="risk-section-header">Additional Areas of Concern
+            <c:HelpTooltip helpText="This area would be used to include any risk areas of the person which are not defined or asked in other sections of this assessment.
+                    Describe training for the person to reduce the risk and specific verbal and/or physical assistance to ensure safety." />
+            </div>
+        <apex:outputPanel style="padding-left: 20px;">{!assessmentResponse.assessmentWrapper['Additional_Areas_of_Concern__c']}</apex:outputPanel>
+    </apex:outputPanel>
+
+
+        <apex:pageBlock id="extraQs" rendered="{! assessmentResponse.assessmentWrapper['Staffing_Supervision_Needs__c'] != ''  ||
+                                ( assessmentResponse.staffingRatioInFlavor && assessmentResponse.recommendedDayServicesStaffingRatioFull != '') ||
+                                ( assessmentResponse.dayServicesInFlavor && assessmentResponse.levelRequiredDayServicesFull != '') ||
+                                assessmentResponse.levelRequiredResidentialFull != '' }">
+                                
+            <apex:outputPanel layout="none" rendered="{!assessmentResponse.assessmentWrapper['Staffing_Supervision_Needs__c'] != '' }">
+                <span class="risk-section-subhead">Staffing/Supervision Needs &nbsp;</span> 
+                <apex:outputPanel rendered="{assessmentResponse.assessmentWrapper['Staffing_Supervision_Needs__c'] == ''}"><br/>None</apex:outputPanel>
+                <apex:outputPanel layout="block" rendered="{!assessmentResponse.assessmentWrapper['Staffing_Supervision_Needs__c'] != ''}">
+                    <apex:repeat value="{!assessmentResponse.Staffing_Supervision_Needs}" var="item">
+                         &nbsp;{!item}
+                        <br/>
+                    </apex:repeat>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <br/>
+            
+            <apex:outputPanel layout="none" rendered="{!assessmentResponse.staffingRatioInFlavor && assessmentResponse.RecDayServicesStaffingRatio.size > 0
+                                                        && assessmentResponse.assessmentWrapper['Admission__r.State__c'] != 'AZ'}">
+                <b>Recommended Day Services Staffing Ratio (Rule 38 for DT&amp;H)</b> &nbsp; 
+                <apex:outputPanel rendered="{! assessmentResponse.RecDayServicesStaffingRatio.size==0}"><br/>None</apex:outputPanel>
+                
+                <apex:outputPanel layout="block">
+                    <apex:repeat value="{!assessmentResponse.RecDayServicesStaffingRatio}" var="item">&nbsp;{!SUBSTITUTE(item,assessmentResponse.glbItemSeperator , ' ')}  <br/> </apex:repeat>
+                </apex:outputPanel>
+                <br/>
+            </apex:outputPanel>            
+            <apex:outputPanel layout="none" rendered="{!assessmentResponse.dayServicesInFlavor && assessmentResponse.displayLevel_Required_DayServices.size >0 
+                                                        && assessmentResponse.assessmentWrapper['Admission__r.State__c'] != 'AZ'}">
+                <span class="risk-section-subhead">Level of Services Required for Day Services</span>           
+                <apex:outputPanel rendered="{! assessmentResponse.displayLevel_Required_DayServices.size ==0 }"><br/>None</apex:outputPanel>
+                
+                <apex:outputPanel layout="block">
+                    <apex:repeat value="{!assessmentResponse.displayLevel_Required_DayServices}" var="item">&nbsp;{!SUBSTITUTE(item,assessmentResponse.glbItemSeperator , ' ')}  <br/> </apex:repeat>                
+                </apex:outputPanel>
+                <br />
+            </apex:outputPanel>
+            <!-- If state not AZ ends -->
+
+            <apex:outputPanel layout="none" rendered="{!assessmentResponse.displayLevel_Required_ResidentialServices.size >0}">
+                <span class="risk-section-subhead">{! IF(assessmentResponse.assessmentWrapper['Admission__r.State__c'] == 'IA','Level of Support Required for Day Services' ,'Level of Support Required for Residential Services')}</span>
+                <apex:outputPanel rendered="{! assessmentResponse.displayLevel_Required_ResidentialServices.size==0 }"><br/>None</apex:outputPanel>
+                                
+                <apex:outputPanel layout="block">
+                    <apex:repeat value="{!assessmentResponse.displayLevel_Required_ResidentialServices}" var="item">&nbsp;{!SUBSTITUTE(item,assessmentResponse.glbItemSeperator , ' ')}  <br/> </apex:repeat>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            
+            <!-- start IA extras -->
+            <apex:outputPanel rendered="{!assessmentResponse.assessmentWrapper['Admission__r.State__c'] == 'IA'}">
+                <br/>
+                <span class="risk-section-subhead">Service Needs/Support (Describe needs for selected service(s))</span>
+                <br/>
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Service_Needs_Support__c']}"/>       
+                <br/><br/>
+                
+                <apex:outputPanel rendered="{!Len(assessmentResponse.assessmentWrapper['Dsc_Prevocational_Services__c']) > 0}" layout="block" >
+                Describe Prevocational Services <br/>           
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Dsc_Prevocational_Services__c']}"/>  
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!Len(assessmentResponse.assessmentWrapper['Dsc_Day_Habilitation_Services__c']) > 0}" layout="block" >
+                Describe Day Habilitation Services  <br/>           
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Dsc_Day_Habilitation_Services__c']}"/>  
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!Len(assessmentResponse.assessmentWrapper['Dsc_Organizational_Employment_Services__c']) > 0}" layout="block" >
+                Describe Organizational Employment Services <br/>           
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Dsc_Organizational_Employment_Services__c']}" />
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!Len(assessmentResponse.assessmentWrapper['Dsc_School_Transition_Services__c']) > 0}" layout="block" >
+                Describe School Transition Services <br/>           
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Dsc_School_Transition_Services__c']}" />  
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!Len(assessmentResponse.assessmentWrapper['Dsc_Private_Pay_Services__c']) > 0}" layout="block" >
+                Describe Private Pay Services   <br/>           
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Dsc_Private_Pay_Services__c']}" />  
+                </apex:outputPanel> 
+                
+                <br/>  
+                <span class="risk-section-subhead">Individual Rights Review: Has this individual made any achievements towards their rights restriction restoration plans (lifting rights restrictions?)</span>
+                <br/>
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Individual_Rights_Review__c']}" /> 
+                <apex:outputPanel rendered="{!Len(assessmentResponse.assessmentWrapper['Individual_Rights_Review_Explain__c']) > 0}" layout="block" >
+                <br/>           
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Individual_Rights_Review_Explain__c']}"/>  
+                </apex:outputPanel>
+                
+                <br/>  
+                <span class="risk-section-subhead">Strengths</span>
+                <br/>
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Strengths__c']}"/>
+                
+                <br/><br/>  
+                <span class="risk-section-subhead">Needs</span>
+                <br/>
+                <apex:outputText value="{!assessmentResponse.assessmentWrapper['Needs__c']}"/>     
+            </apex:outputPanel>            
+            <!-- end IA extras -->
+            </apex:pageBlock>
+
+
+	        <div style="float:right">
+	        <apex:outputPanel >
+	            <apex:commandButton value="Acknowledge" styleClass="ackbtn" onClick="toggleById('ackfrom'); return false;" rendered="{!assessmentResponse.showConfirmationButton}">&nbsp;
+	            </apex:commandButton>  
+	        </apex:outputPanel>     
+	       </div>     
+
+        <apex:pageBlock title="Acknowledgment History">
+            <apex:pageBlockTable style="width: 100%; " value="{!assessmentResponse.ackwrapList}" var="item">
+                <apex:column style="width: 40%; padding-right: 10px;" headerValue="Staff Member" value="{!item.AckBy}" />
+                <apex:column headerValue="Acknowledgment Date & Time" value=" {!item.AckDate}" />
+            </apex:pageBlockTable>
+        </apex:pageBlock>
 
     </apex:pageBlock>
+
     
-    
+            
 <div id="ackfrom" class="hbbg" style="display: none;">
 	<div id="p" class="popupform" >
 	    <apex:pageBlock >
@@ -146,7 +394,7 @@ table[id*=dayServiceWithoutCaregiverRadio] {
 	            </apex:pageBlockSectionItem>
 	
 	            <apex:outputPanel layout="block" style="width: 100%; text-align: center;" >
-	                            <apex:commandButton action="{!ackActionPlan}" accesskey="" value="Acknowledge" status="myStatus" />
+	                            <apex:commandButton action="{!ackAssessment}" accesskey="" value="Acknowledge" status="myStatus" />
 	                &nbsp;
 	                <apex:commandButton onclick="toggleById('ackfrom', '500'); return false;"  value="Cancel" />
 	            </apex:outputPanel>
