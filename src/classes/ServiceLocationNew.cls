@@ -4,7 +4,7 @@ public with sharing class ServiceLocationNew {
 	
 	public Alias__c alias{get {
 		if(string.isNotBlank(this.location.Alias_lookup__c)){
-			return [SELECT Id, Name, Alias_Operating_Group__c,Alias_Business_Unit__c,Alias_Description__c, Alias_Level__c,  Alias_Region__c, Alias_State__c, Alias_Service_Line__c FROM Alias__c WHERE Id= :this.location.Alias_lookup__c];
+			return [SELECT Id, Name, Alias_Operating_Group__c,Alias_Business_Unit__c,Alias_Description__c, Alias_Level__c,  Alias_Region__c, Alias_State__c, Alias_Service_Line__c, Alias_Responsibility_Center_Code__c FROM Alias__c WHERE Id= :this.location.Alias_lookup__c];
 			}
 			return null;
 		} set;}

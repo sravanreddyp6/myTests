@@ -49,17 +49,17 @@ j$(document).ready(function(){
             	<apex:inputField value="{!Service_Location__c.Network_Offering__c}" />
             	<apex:inputField value="{!Service_Location__c.Setting_picklist__c}" />
             	<apex:inputField value="{!Service_Location__c.Service_type__c}" />
+            	<apex:inputField value="{!Service_Location__c.TIN__c}" />
+                <apex:inputField value="{!Service_Location__c.NPI__c}" />
                 <apex:inputField id="locStatus" value="{!Service_Location__c.Status__c}" rendered="{! NOT(AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR'))}"/>
                 <apex:outputText label="Status" value="This location has been inactivated in {!Service_Location__c.Source_System__c} and cannot be edited." rendered="{! AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR')}"/>
             	<apex:outputField value="{!Service_location__c.Source_System__c}" />
             </apex:pageBlockSection>
             <hr/>
-            <apex:pageBlockSection columns="2"  >
+            <apex:pageBlockSection columns="2"  rendered="{!Service_Location__c.Alias_lookup__r.Alias_Operating_group__c == 'NeuroRestorative'}">
             	<apex:inputField value="{!Service_Location__c.Room_and_Board_Rate__c}" label="Room and Board Cost" />
             	<apex:inputField value="{!Service_Location__c.PRN_DS_Per_Hour__c}" />
-            	<apex:inputField value="{!Service_Location__c.Per_Productive_Unit__c}" /> 
-            	<apex:inputField value="{!Service_Location__c.TIN__c}" />
-                <apex:inputField value="{!Service_Location__c.NPI__c}" />           
+            	<apex:inputField value="{!Service_Location__c.Per_Productive_Unit__c}" />  
             </apex:pageBlockSection>
         </apex:pageBlock>
         <c:SObjectHistories object="{!Service_Location__c}" title="Field History for Service Location" />
