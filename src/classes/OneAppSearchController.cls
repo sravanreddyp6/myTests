@@ -37,7 +37,7 @@ public with sharing class OneAppSearchController {
 				
 				string activeQuery = 'SELECT Id, service_assignment__r.person_being_served__r.firstname, service_assignment__r.person_being_served__r.lastname,' +  
 					' service_assignment__r.person_being_served__r.age__c, service_assignment__r.Person_Being_Served__c, service_assignment__r.admission__r.state__c, service_assignment__r.admission__c, ' + 
-					' service_assignment__c, service_assignment__r.Service_Location__r.program__c, ' + 
+					' service_assignment__c, service_assignment__r.Service_Location__r.location_nickname__c, ' + 
 			       ' service_assignment__r.Service_Location__r.Alias__c,' + 
 			       ' effective_date__c,' + 
 			       ' Status__c ' +
@@ -60,7 +60,7 @@ public with sharing class OneAppSearchController {
 			 	searchResults.add( new SearchResult( ap.service_assignment__r.person_Being_served__r.firstname, ap.service_assignment__r.person_Being_served__r.lastname,
 			 						string.valueof(ap.service_assignment__r.person_being_served__r.age__c), ap.service_assignment__r.admission__r.state__c, 'Person Being Served',
 			 						ap.service_assignment__r.person_being_served__c, ap.service_assignment__r.admission__c, ap.service_assignment__c, ap.Id, ap.service_assignment__r.service_location__r.alias__c,
-			 						ap.service_assignment__r.service_location__r.program__c ));
+			 						ap.service_assignment__r.service_location__r.location_nickname__c ));
 			 }
 				
 			} else {
