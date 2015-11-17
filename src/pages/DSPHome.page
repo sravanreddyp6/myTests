@@ -214,28 +214,16 @@
                  
                 <apex:column headerValue="Daily Actions">
                 
-                <apex:selectList id="actionlist" size="1">
-                
-                <apex:selectOption itemValue="" itemLabel="--- Select ---" />
-                <apex:selectOption itemvalue="submitTxnRequest('Action Plan','{!person.apID}');" itemlabel="Acknowledge Action Plan" rendered="{!person.hasActionPlan && person.needsAPAck}"/>
-                <apex:selectOption itemvalue="submitTxnRequest('ISSA','{!person.admID}');" itemlabel="Acknowledge ISSA" rendered="{!person.hasISSA && person.needsISSAAck}"/>
-                <apex:selectOption itemvalue="submitTxnRequest('Risk','{!person.admID}');" itemlabel="Acknowledge Risk Assessment" rendered="{!person.hasRisk && person.needsRiskAck}"/>
-                <apex:selectOption itemvalue="submitTxnRequest('Seizures','{!person.admID}');" itemlabel="Record Seizure" />
-                <apex:selectOption itemvalue="submitTxnRequest('BehaviorList','{!person.apID}');" itemlabel="View Behavior Data" rendered="{!person.hasActionPlan}"/>
-                <apex:selectOption itemvalue="submitTxnRequest('SkillList','{!person.apID}');" itemlabel="View Skill Data" rendered="{!person.hasActionPlan}"/>
+                <apex:selectList id="actionlist" size="1" >
+                <apex:selectOptions value="{!person.actionList}" />
                 </apex:selectList>
                 <apex:commandButton value="Go" onClick="var action = jQuery(document.getElementById('{!$Component.actionlist}')).val(); if (action != '') { eval(action); } return false;" />
                 </apex:column>
                 
                  
                 <apex:column headerValue="Navigation">
-                <apex:selectList id="navigationList" size="1">
-                <apex:selectOption itemValue="" itemLabel="--- Select ---" />
-                <apex:selectOption itemvalue="/apex/DSPShiftNoteSummary" itemlabel="Shift Note Summary" />
-                <apex:selectOption itemValue="submitTxnRequest('Action Plan','{!person.apID}');" itemLabel="Action Plan" rendered="{!person.apID != null && person.hasActionPlan}"/>
-                <apex:selectOption itemValue="submitTxnRequest('ISSA','{!person.admID}');" itemLabel="ISSA Assessment" rendered="{!person.hasISSA}"/>
-                <apex:selectOption itemValue="submitTxnRequest('Risk','{!person.admID}');" itemLabel="Risk Assessment" rendered="{!person.hasRisk}"/>
-                <apex:selectOption itemValue="submitTxnRequest('Seizures','{!person.pbsID}');" itemLabel="Seizures" />
+                <apex:selectList id="navigationList" size="1" >
+                <apex:selectOptions value="{!person.navList}" />
                 </apex:selectList>
                 <apex:commandButton value="Go" onclick="var action = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (action != '') { eval(action); } return false;" />
                 
