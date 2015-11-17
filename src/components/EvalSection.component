@@ -176,21 +176,34 @@
 				return; </apex:outputPanel>
 
 				// Apply rules to input fields
-				$('#evalForm input').on("change", function(event) {
+				$('#evalForm input#NotApplicable').each(function (_, target) {
+					applyRulesToField(target, window.CommonJS.Strategy.Selector);
+				});
+				$('#evalForm input#NotApplicable').on("change", function (event) {
+					applyRulesToField(event.target, window.CommonJS.Strategy.Selector);
+					if (!$(event.target).is(":checked")) {
+						// We need to manually apply the rules here again because all the fields
+						// will be enabled by the Not Applicable field.
+						$('#evalForm input').not('#NotApplicable').each(function(_, target) {
+							applyRulesToField(target);
+						});
+					}
+				});
+				$('#evalForm input').not('#NotApplicable').on("change", function(event) {
 					applyRulesToField(event.target);
 					applyShowHideRulesToField(event.target);
 				});
-				$('#evalForm select').on("change", function(event) {
+				$('#evalForm select').not('#NotApplicable').on("change", function(event) {
 					applyShowHideRulesToField(event.target);
 					applyRulesToField(event.target);
 				});
-				$('#evalForm input').each(function(_, target) {
+				$('#evalForm input').not('#NotApplicable').each(function(_, target) {
 					applyRulesToField(target);
 				});
-				$('#evalForm input').each(function(_, target) {
+				$('#evalForm input').not('#NotApplicable').each(function(_, target) {
 					applyShowHideRulesToField(target);
 				});
-				$('#evalForm select').each(function(_, target) {
+				$('#evalForm select').not('#NotApplicable').each(function(_, target) {
 					applyShowHideRulesToField(target);
 					applyRulesToField(target);
 				});
@@ -234,13 +247,12 @@
 				});
 
 				for (var composite in errorMsg) {
-					console.log(composite);
-					if (errorMsg[composite] != '') {
-						$('#IsValid[data-composite="' + composite + '"]').val("false").trigger('change');
-						$('#ErrorMsg[data-composite="' + composite + '"]').val(errorMsg[composite]).trigger('change');
-					} else {
+					if ($('#NotApplicable[data-composite="' + composite + '"]').is(":checked") || errorMsg[composite] == '') {
 						$('#IsValid[data-composite="' + composite + '"]').val("true").trigger('change');
 						$('#ErrorMsg[data-composite="' + composite + '"]').val("").trigger('change');
+					} else {
+						$('#IsValid[data-composite="' + composite + '"]').val("false").trigger('change');
+						$('#ErrorMsg[data-composite="' + composite + '"]').val(errorMsg[composite]).trigger('change');
 					}
 				}
 			};

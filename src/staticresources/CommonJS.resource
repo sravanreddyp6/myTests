@@ -1,6 +1,12 @@
 (function($) {
 	"use strict";
 
+	window.CommonJS = {};
+	window.CommonJS.Strategy = {
+		Id: 'Id',
+		Selector: 'Selector'
+	};
+
 	window.scrollToTop = function() {
 		window.scrollTo(0, 0);
 	};
@@ -23,7 +29,14 @@
 	// Do the field disabling/enabling functionality here
 	// When values are in map -> will be enabled when key is changed
 	// This doesn't support the use case when 2 fields try to control 1 field.
-	window.applyRulesToField = function(element) {
+	// @param strategy this controls how the script looks for the controlled fields. It defaults to
+	// the 'Id' strategy, which means that the controlled fields are looked for using their Ids.
+	// Another alternative is the 'Selector' strategy - in which case the controlled fields are
+	// found using a CSS selector.
+	window.applyRulesToField = function(element, strategy) {
+		if (!strategy) {
+			strategy = window.CommonJS.Strategy.Id;
+		}
 		var $element = $(element);
 		if ($element.attr('multiple') == 'multiple' && !$element.attr('id').endsWith('_selected') & !$element.attr('id').endsWith('_unselected')) {
 			// This is the hidden select field for multi-picklist that gets
@@ -69,10 +82,18 @@
 			var $targets = [];
 			if (value instanceof Array) {
 				$.each(value, function(_, selector) {
-					$targets.push($(document.getElementById(selector)));
+					if (strategy == window.CommonJS.Strategy.Id) {
+						$targets.push($(document.getElementById(selector)));
+					} else if (strategy == window.CommonJS.Strategy.Selector) {
+						$targets.push($(selector));
+					}
 				});
 			} else {
-				$targets.push($(document.getElementById(value)));
+				if (strategy == window.CommonJS.Strategy.Id) {
+					$targets.push($(document.getElementById(value)));
+				} else if (strategy == window.CommonJS.Strategy.Selector) {
+					$targets.push($(value));
+				}
 			}
 			var val = $element.realVal();
 			if (val == key || (val instanceof Array && $.inArray(key, val) != -1)) {

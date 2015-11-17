@@ -231,6 +231,8 @@ public with sharing class GenerateEvalComponent {
 		String strval = '';
 		String reqfldHTML = '';
 		String subcategory = '';  // Assumption: this is all part of the same subcategory
+		String sectionComposite = '';
+		Id notApplicableFieldId;
 		Set<String> fieldsWithPreviousEntries = new Set<String>();
 		for (Set<String> association: previousEntryAssociation) {
 			fieldsWithPreviousEntries.addAll(association);
@@ -238,6 +240,7 @@ public with sharing class GenerateEvalComponent {
 		for(Eval__c e : listEvalItems){
 			try {
 				subcategory = e.Sub_Category__c;
+				sectionComposite = e.Composite__c;
 				newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
 				newHTMLfld = '';
 				strval = '';
@@ -260,17 +263,25 @@ public with sharing class GenerateEvalComponent {
 
 
 				if (e.Field_Type__c == 'Hidden')  {
-					newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
-					newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" data-composite="' + e.Composite__c + '" ';
-					if (mapEvalValues.ContainsKey(e.id)) {
-						newHTMLfld += 'value="' ;
-						if (e.Field_Sub_Type__c == 'Boolean') {
-							newHTMLfld += mapEvalValues.get(e.id).boolean__c;
-						} else if (e.Field_Sub_Type__c == 'String') {
-							newHTMLfld += mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
+					if (e.HtmlId__c == 'NotApplicable') {
+						// This is a special field that is shown in the header, so we'll suppress
+						// showing it here
+						newHtmlLbl = '';
+						newHtmlFld = '';
+						notApplicableFieldId = e.Id;
+					} else {
+						newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
+						newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" data-composite="' + e.Composite__c + '" ';
+						if (mapEvalValues.ContainsKey(e.id)) {
+							newHTMLfld += 'value="' ;
+							if (e.Field_Sub_Type__c == 'Boolean') {
+								newHTMLfld += mapEvalValues.get(e.id).boolean__c;
+							} else if (e.Field_Sub_Type__c == 'String') {
+								newHTMLfld += mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
+							}
 						}
+						newHTMLfld += '"/></td>';
 					}
-					newHTMLfld += '"/></td>';
 
 				} else if (e.Field_Type__c == 'Boolean')  { // Boolean can be Checkbox, Radio, or Dropdown
 					if (e.Field_Sub_Type__c == 'Checkbox') {
@@ -491,7 +502,28 @@ public with sharing class GenerateEvalComponent {
 			}
 		}
 
-		Component.Apex.PageBlock pageBlock = new Component.Apex.PageBlock(title=subcategory, rendered=(cat != ''));
+		Component.Apex.PageBlock pageBlock = new Component.Apex.PageBlock(rendered=(cat != ''));
+		String selector = String.format(
+			'input{0}, select{0}, textarea{0}',
+			new String[] {
+				'[data-composite=\'' + sectionComposite + '\']:not(#NotApplicable)'
+			}
+		);
+		String notApplicableField = '';
+		if (notApplicableFieldId != null) {
+			String checked = '';
+			if (mapEvalValues.containsKey(notApplicableFieldId) && mapEvalValues.get(notApplicableFieldId).Boolean__c) {
+				checked = 'checked';
+			}
+			notApplicableField = '<input id="NotApplicable" name="' + notApplicableFieldId + '" type="checkbox" value="true" ' + checked + ' data-composite="' + sectionComposite + '" style="margin-right: 3px; " data-rules="{&quot;0&quot;: &quot;' + selector + '&quot;}" /><span>Not Applicable</span>';
+		}
+		String header = String.format(
+			'<table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="pbTitle"><h2 class="mainTitle">{0}</h2></td><td style="text-align: right;">{1}</td></tr></tbody></table>',
+			new String[]{
+				subcategory,
+				notApplicableField
+			});
+		pageBlock.facets.header = new Component.Apex.OutputText(value=header, escape=false);
 		Component.Apex.OutputPanel actionPanel = new Component.Apex.OutputPanel(
 			layout='block',
 			rendered=(showActionButtons && editable),
@@ -614,7 +646,7 @@ public with sharing class GenerateEvalComponent {
 			if (mapEvalValues.containsKey((ID)f) && !batchInsert)  {
 				// value exists - need to update value
 				ev = (Eval_Value__c) mapEvalValues.remove((ID)f);
-			}   else {
+			} else {
 				ev = new Eval_Value__c();
 				ev.eval__c = (ID)f;
 				ev.eval_Section_Id__c = evalSectionId;
