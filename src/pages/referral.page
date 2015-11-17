@@ -1670,7 +1670,7 @@
                     <apex:pageBlockSection columns="2" id="diagnosisEntry">
                     	<apex:inputField value="{!diag.ICD__c}"  id="diagnosisEntry_icd10" />
                     	 <apex:pageBlockSectionItem ><apex:outputLabel Value="Effective Date and Time"/>
-                        	<c:MilitaryDateTime edit="true" hiddenFieldId="diagnosisEntry_EffDate" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
+                        	<c:MilitaryDatetime edit="true" hiddenFieldId="diagnosisEntry_EffDate" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
                     	</apex:pageBlockSectionItem>
                         <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
                         <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagnosisEntry_EffDate" />
@@ -2026,10 +2026,12 @@
 
                 <apex:inputField value="{!Referral__c.Current_Location_Name__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
                 <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}" />
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
                 <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" id="MN_Street1" />
 
                 <!--<apex:inputTextarea cols="50" rows="3" value="{!Referral__c.Axis_V__c}" rendered="{!ReferralRecordType != 'CareMeridian' && ReferralRecordType != 'NeuroRestorative' }" />-->
+                <apex:pageBlockSectionItem rendered="{!OR(ReferralRecordType == 'Minnesota',ReferralRecordType == 'North Dakota')}" />
 
                 <apex:inputField value="{!Referral__c.Street_1__c}" rendered="{!ReferralRecordType == 'NeuroRestorative'}" id="Neuro_Street1" />
                 <apex:pageBlockSectionItem rendered="{!AND(ReferralRecordType != 'Minnesota',ReferralRecordType != 'NeuroRestorative',ReferralRecordType != 'North Dakota')}" />
