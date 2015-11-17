@@ -319,7 +319,7 @@ public with sharing class referrals_Controller{
 	public List<Service_Location__c> searchedServiceLocationResults{
 		get{
 			// 2014-12-05 EB-273 only get active locations
-			return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c from service_location__c where id in :tmpResults and status__c = 'Active' order by name limit :QueryLimit offset :OffsetSize] : null;
+			return (tmpResults!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c, Alias_lookup__r.Alias_Operating_Group__c, Alias_lookup__c, Location_Nickname__c, Setting_picklist__c, Service_Type__c from service_location__c where id in :tmpResults and status__c = 'Active' order by name limit :QueryLimit offset :OffsetSize] : null;
 		}
 		set;
 	}
@@ -339,6 +339,7 @@ public with sharing class referrals_Controller{
 		nameFilter=null;
 		stateFilter=null;
 		cityFilter=null;
+		nickNameFilter = null;
 		searchedServiceLocationName=null;
 		searchedServiceLocationId=null;
 		OffsetSize = 0;
@@ -349,10 +350,11 @@ public with sharing class referrals_Controller{
 		tmpResults=null;
 		searchedServiceLocationResults=null;
 
-		String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where ';
+		String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, Alias_lookup__r.Alias_Operating_Group__c, Alias_lookup__c, Location_Nickname__c, Setting_picklist__c, Service_Type__c from service_location__c where ';
 		string qs = '';
+		string opGroup = this.operatinggroup;
 
-		if(!((nameFilter=='' || nameFilter==null)&&(cityFilter=='' || cityFilter==null)&&(stateFilter=='' || stateFilter==null))){
+		if(!((nameFilter=='' || nameFilter==null)&&(cityFilter=='' || cityFilter==null)&&(stateFilter=='' || stateFilter==null) && (nickNameFilter=='' || nickNameFilter==null))){
 			if(!(nameFilter=='' || nameFilter==null)){
 				if(nameFilter.contains('*')){
 					qs+=' name like \''+String.escapeSingleQuotes(nameFilter.replace('*','%'))+'\' ';
@@ -391,6 +393,24 @@ public with sharing class referrals_Controller{
 				}
 
 			}
+			if(!(nickNameFilter=='' || nickNameFilter==null)){
+				if(!((nameFilter=='' || nameFilter2==null) && (cityFilter=='' || cityFilter==null) && (stateFilter=='' || stateFilter==null))){
+					if(nickNameFilter.contains('*')){
+						qs+=' and Location_Nickname__c like \''+String.escapeSingleQuotes(nickNameFilter.replace('*','%'))+'\' ';
+					}else{
+						qs+=' and Location_Nickname__c = :nickNameFilter ';
+					}
+				}else{
+					if(nickNameFilter.contains('*')){
+						qs+=' Location_Nickname__c like \''+String.escapeSingleQuotes(nickNameFilter.replace('*','%'))+'\' ';
+					}else{
+						qs+=' Location_Nickname__c = :nickNameFilter ';
+					}
+				}
+
+			}
+			
+			
 			if ( qs != '') qs += ' and ';
 			if (this.operatinggroup == 'NeuroRestorative') {
 				qs += 'FacilityId__c = 20';
@@ -399,11 +419,11 @@ public with sharing class referrals_Controller{
 				qs += 'FacilityId__c = 13';
 			}
 			else {
-				qs += 'FacilityId__c Not In (20, 13)';
+				qs += 'FacilityId__c Not In (20, 13) AND Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
 			}
 
 			// 2014-12-05 - EB-273 - only retrieve Active locations
-			tmpResults=Database.query(qs1 + qs + 'and status__c = \'Active\' ');
+			tmpResults=Database.query(qs1 + qs + ' and status__c = \'Active\' LIMIT 250 ');
 			countTotalRecords=tmpResults.size();
 		}else{
 			tmpResults=null;
@@ -421,6 +441,11 @@ public with sharing class referrals_Controller{
 	}
 
 	public String cityFilter{
+		get;
+		set;
+	}
+	
+	public String nickNameFilter{
 		get;
 		set;
 	}
@@ -470,7 +495,7 @@ public with sharing class referrals_Controller{
 	public List<Service_Location__c> tmpResults2{get;set;}
 	public List<Service_Location__c> searchedServiceLocationResults2{
 		get{
-			return (tmpResults2!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by name limit :QueryLimit2 offset :OffsetSize2] : null;
+			return (tmpResults2!=null) ? [select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, programid__c, zip__c, phone__c, Alias_lookup__r.Alias_Operating_Group__c, Alias_lookup__c, Location_Nickname__c, Setting_picklist__c, Service_Type__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by name limit :QueryLimit2 offset :OffsetSize2] : null;
 		}
 		set;
 	}
@@ -490,6 +515,7 @@ public with sharing class referrals_Controller{
 		nameFilter2=null;
 		stateFilter2=null;
 		cityFilter2=null;
+		nicknameFilter2 = null;
 		searchedServiceLocationName2=null;
 		searchedServiceLocationId2=null;
 		OffsetSize2 = 0;
@@ -499,10 +525,10 @@ public with sharing class referrals_Controller{
 	public void search2(){
 		tmpResults2=null;
 		searchedServiceLocationResults2=null;
-		String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c from service_location__c where ';
+		String qs1='select name, city__c, state__c, street__c, setting__c, service_value__c, program__c, zip__c, phone__c, Alias_lookup__r.Alias_Operating_Group__c, Alias_lookup__c, Location_Nickname__c, Setting_picklist__c, Service_Type__c from service_location__c where ';
 		String qs = '';
-
-		if(!((nameFilter2=='' || nameFilter2==null)&&(cityFilter2=='' || cityFilter2==null)&&(stateFilter2=='' || stateFilter2==null))){
+		string opGroup = this.operatinggroup;
+		if(!((nameFilter2=='' || nameFilter2==null)&&(cityFilter2=='' || cityFilter2==null)&&(stateFilter2=='' || stateFilter2==null) && (nicknameFilter2=='' || nicknameFilter2==null))){
 			if(!(nameFilter2=='' || nameFilter2==null)){
 				if(nameFilter2.contains('*')){
 					qs+=' name like \''+String.escapeSingleQuotes(nameFilter2.replace('*','%'))+'\' ';
@@ -541,6 +567,21 @@ public with sharing class referrals_Controller{
 				}
 
 			}
+			if(!(nicknameFilter2=='' || nicknameFilter2==null)){
+				if(!((nameFilter2=='' || nameFilter2==null) && (cityFilter2=='' || cityFilter2==null) && (stateFilter2=='' || stateFilter2==null))){
+					if(nicknameFilter2.contains('*')){
+						qs+=' and Location_Nickname__c like \''+String.escapeSingleQuotes(nicknameFilter2.replace('*','%'))+'\' ';
+					}else{
+						qs+=' and Location_Nickname__c = :nicknameFilter2 ';
+					}
+				}else{
+					if(nicknameFilter2.contains('*')){
+						qs+=' Location_Nickname__c like \''+String.escapeSingleQuotes(nicknameFilter2.replace('*','%'))+'\' ';
+					}else{
+						qs+=' Location_Nickname__c = :nicknameFilter2 ';
+					}
+				}
+			}
 
 			if ( qs != '') qs += ' and ';
 
@@ -551,12 +592,13 @@ public with sharing class referrals_Controller{
 				qs += 'FacilityId__c = 13';
 			}
 			else {
-				qs += 'FacilityId__c Not In (20, 13)';
+				qs += 'FacilityId__c Not In (20, 13) AND Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
 			}
 
 			System.debug('!@#$ '+qs);
+			system.debug('Query>>>>>'+qs1 + qs + ' and status__c = \'Active\' LIMIT 250');
 			// 2014-12-05 - EB-273 - only retrieve Active locations
-			tmpResults2=Database.query(qs1 + qs + 'and status__c = \'Active\' ');
+			tmpResults2=Database.query(qs1 + qs + ' and status__c = \'Active\' LIMIT 250');
 			countTotalRecords2=tmpResults2.size();
 		}else{
 			tmpResults2=null;
@@ -593,6 +635,11 @@ public with sharing class referrals_Controller{
 	}
 
 	public String cityFilter2{
+		get;
+		set;
+	}
+	
+	public String nicknameFilter2{
 		get;
 		set;
 	}
@@ -861,7 +908,8 @@ public with sharing class referrals_Controller{
 			this.locations = [
 				select Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c,status__c,
 				       service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c, service_location_service_value__c,
-				       service_location_setting__c, service_location__c, LastModifiedDate, Service_Location_Program__c, Service_Location__r.Setting__c, rank__c
+				       service_location_setting__c, service_location__c, Service_location__r.Alias_lookup__r.Alias_Operating_Group__c, Service_location__r.Alias_lookup__c, Service_location__r.Location_Nickname__c, Service_location__r.Setting_picklist__c, Service_location__r.Service_Type__c,
+				        LastModifiedDate, Service_Location_Program__c, Service_Location__r.Setting__c, rank__c
 				  from Referral_Location__c
 				 where Referral__c = :this.referralRecord.Id
 				 limit 150

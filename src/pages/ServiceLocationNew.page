@@ -7,7 +7,7 @@
     	<apex:pageBlock title="Create Service Location" mode="edit" id="newBlock" >
     		<apex:pageBlockSection columns="2" collapsible="true">
     			<apex:inputField value="{!Service_location__c.Alias_lookup__c}" >
-    				<apex:actionsupport event="onchange" reRender="newBlock,msgs" />
+    				<apex:actionsupport event="onchange" reRender="newBlock,msgs" action="{!setLocationFields}"/>
     			</apex:inputField>
     		</apex:pageBlockSection>
     		
@@ -65,13 +65,13 @@
                 <apex:inputField value="{!Service_Location__c.Program_Rollup__c}" />
           </apex:pageblockSection>
           
-          <apex:pageblockSection columns="2" title="Address" collapsible="true" >
-    			<apex:inputField value="{!Service_Location__c.Street__c}" />
-    			<apex:inputField value="{!Service_Location__c.City__c}" />
-    			<apex:inputField value="{!Service_Location__c.State__c}" />
-    			<apex:inputField value="{!Service_Location__c.Zip__c}" />
-    			<apex:inputField value="{!Service_Location__c.Phone__c}" />
-    		</apex:pageblockSection>
+<!--           <apex:pageblockSection columns="2" title="Address" collapsible="true" > -->
+<!--     			<apex:inputField value="{!Service_Location__c.Street__c}" /> -->
+<!--     			<apex:inputField value="{!Service_Location__c.City__c}" /> -->
+<!--     			<apex:inputField value="{!Service_Location__c.State__c}" /> -->
+<!--     			<apex:inputField value="{!Service_Location__c.Zip__c}" /> -->
+<!--     			<apex:inputField value="{!Service_Location__c.Phone__c}" /> -->
+<!--     		</apex:pageblockSection> -->
     			
 <!--     		<hr/> -->
 <!--     		<apex:pageBlockSection columns="2" > -->

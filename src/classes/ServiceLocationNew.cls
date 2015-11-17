@@ -18,13 +18,15 @@ public with sharing class ServiceLocationNew {
 	}
 	
 	public pageReference save(){
-		if(string.isBlank(this.location.Alias_lookup__c) ){
+		
+		if(string.isBlank(this.location.Alias_lookup__c)){
 			Apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, 'Alias is mandatory for a service location'));
 			return null;
 		}
 		this.location.Name = alias.Name;
 		this.location.Alias__c = alias.Name;
 		this.location.UniqueID__c = location.FacilityID__c+'||'+location.ProgramID__c;
+		this.location.State__c = alias.Alias_State__c;
 		try{
 			insert location;
 			PageReference pg = new PageReference('/apex/ServiceLocationEdit?id='+location.Id);
@@ -37,4 +39,36 @@ public with sharing class ServiceLocationNew {
 	
 	}
 	
+	public void setlocationFields(){
+		if(string.isNOTBLANK(this.location.Alias_lookup__c)){
+			
+			List<Service_location__c> existingLocs = [SELECT Id, Name, ProgramID__c, FacilityID__c, Program_Rollup__c, Alias_lookup__r.Name FROM Service_location__c WHERE Alias_lookup__c = :this.location.Alias_lookup__c order by CreatedDate desc LIMIT 1];
+			
+			if(existingLocs.size() == 0){
+				this.location.ProgramID__c = this.alias.Name+'000';
+				this.location.Program_Rollup__c = this.alias.Name+'000';
+				this.location.FacilityID__c = null;
+			}else{
+				this.location.ProgramID__c = (null != existingLocs[0].ProgramID__c  && existingLocs[0].ProgramID__c.isNumeric()) ? String.valueof(integer.valueOf(existingLocs[0].ProgramID__c)+1) : null;
+				this.location.Program_Rollup__c = (null != existingLocs[0].Program_Rollup__c && existingLocs[0].Program_Rollup__c.isNumeric()) ? string.valueof(integer.valueof(existingLocs[0].Program_Rollup__c)+1) : null;
+				this.location.FacilityID__c = existingLocs[0].FacilityID__c;
+			}
+			
+		}else{
+			this.location.ProgramID__c = null;
+			this.location.Program_Rollup__c = null;
+			this.location.FacilityID__c = null;
+			
+		}
+		
+	}
+	
+	/*public string setProgramCode(){
+		List<Service_location__c> existingLocs = [SELECT Id, Name, ProgramID__c, Alias_lookup__r.Name FROM Service_location__c WHERE Alias_lookup__c = :this.location.Alias_lookup__c order by CreatedDate desc LIMIT 1];
+		if(existingLocs.size() == 0){
+			return existingLocs[0].Alias_lookup__r.Name+'000';
+		}else{
+			return existingLocs[0].Alias_lookup__r.Name+1;
+		}	
+	}*/
 }

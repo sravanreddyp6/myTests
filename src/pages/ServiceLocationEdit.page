@@ -34,15 +34,16 @@ j$(document).ready(function(){
                 <apex:outputField value="{!Service_Location__c.Program__c}" />
                 <apex:outputField value="{!Service_Location__c.Setting__c}" />
                 <apex:outputField value="{!Service_Location__c.Program_Rollup__c}" />
-                <apex:pageBlockSectionItem >
-                <apex:outputLabel value="Address" />
-                <apex:outputPanel >
-                <c:AddressDisplay Street1="{!Service_Location__c.Street__c}" city="{!Service_Location__c.City__c}"
-  					state="{!Service_Location__c.State__c}" zip="{!Service_Location__c.Zip__c}" /><br />
-  				<apex:outputText value="{!Service_Location__c.Phone__c}" />	
-  				</apex:outputPanel>
-  				</apex:pageBlockSectionItem>
+<!--                 <apex:pageBlockSectionItem > -->
+<!--                 <apex:outputLabel value="Address" /> -->
+<!--                 <apex:outputPanel > -->
+<!--                 <c:AddressDisplay Street1="{!Service_Location__c.Street__c}" city="{!Service_Location__c.City__c}" -->
+<!--   					state="{!Service_Location__c.State__c}" zip="{!Service_Location__c.Zip__c}" /><br /> -->
+<!--   				<apex:outputText value="{!Service_Location__c.Phone__c}" />	 -->
+<!--   				</apex:outputPanel> -->
+<!--   				</apex:pageBlockSectionItem> -->
             </apex:pageBlockSection>
+          	
             <hr/>
             <apex:pageBlockSection columns="2" >
             	<apex:inputField value="{!Service_Location__c.Location_Nickname__c}" />
@@ -55,6 +56,14 @@ j$(document).ready(function(){
                 <apex:outputText label="Status" value="This location has been inactivated in {!Service_Location__c.Source_System__c} and cannot be edited." rendered="{! AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR')}"/>
             	<apex:outputField value="{!Service_location__c.Source_System__c}" />
             </apex:pageBlockSection>
+            
+            <apex:pageblockSection columns="2" title="Address" collapsible="true" >
+    			<apex:inputField value="{!Service_Location__c.Street__c}" />
+    			<apex:inputField value="{!Service_Location__c.City__c}" />
+    			<apex:inputField value="{!Service_Location__c.State__c}" />
+    			<apex:inputField value="{!Service_Location__c.Zip__c}" />
+    			<apex:inputField value="{!Service_Location__c.Phone__c}" />
+    		</apex:pageblockSection>
             <hr/>
             <apex:pageBlockSection columns="2"  rendered="{!Service_Location__c.Alias_lookup__r.Alias_Operating_group__c == 'NeuroRestorative'}">
             	<apex:inputField value="{!Service_Location__c.Room_and_Board_Rate__c}" label="Room and Board Cost" />
