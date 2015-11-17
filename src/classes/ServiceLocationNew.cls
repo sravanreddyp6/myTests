@@ -45,8 +45,8 @@ public with sharing class ServiceLocationNew {
 			List<Service_location__c> existingLocs = [SELECT Id, Name, ProgramID__c, FacilityID__c, Program_Rollup__c, Alias_lookup__r.Name FROM Service_location__c WHERE Alias_lookup__c = :this.location.Alias_lookup__c order by CreatedDate desc LIMIT 1];
 			
 			if(existingLocs.size() == 0){
-				this.location.ProgramID__c = this.alias.Name+'000';
-				this.location.Program_Rollup__c = this.alias.Name+'000';
+				this.location.ProgramID__c = this.alias.Name+'001';
+				this.location.Program_Rollup__c = this.alias.Name+'001';
 				this.location.FacilityID__c = null;
 			}else{
 				this.location.ProgramID__c = (null != existingLocs[0].ProgramID__c  && existingLocs[0].ProgramID__c.isNumeric()) ? String.valueof(integer.valueOf(existingLocs[0].ProgramID__c)+1) : null;
