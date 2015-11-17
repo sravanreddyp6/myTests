@@ -1,10 +1,4 @@
 public with sharing class Assessment_IssaFormWithoutSharing extends Assessment_AbstractForm implements DSP_AssessmentResponseType{
-    public string glbListSeperator {get{return ';';} set;}
-    public string glbItemSeperator {get{return '__';} set;}
-
-    public List<id> DomainsInScopeIDs = new List<id>();
-    public List<id> QuestionsInScopeIDs = new List<id>();
-    public List<id> OptionsInScope = new List<id>();
     public List<Assessment_Response__c> CurrentResps = new List<Assessment_Response__c>();
     public List<Assessment_Response__c> getCurrentResps(){ return CurrentResps;}
     
@@ -12,46 +6,16 @@ public with sharing class Assessment_IssaFormWithoutSharing extends Assessment_A
     
     public List<WrappedResponse> listOfWrappedResponses { get; set; }
     public List<WrappedResponseLists> listOfWrappedResponseLists { get; set; }        
-     
     
     public map<string, List<string>> mapQuestions = new map<string, List<string>>();
-    
     public map<string, List<string>> getMapQuestions(){ return mapQuestions ;}
-
     
     public map<id, boolean> mapDomainHasRisk = new map<id, boolean>();
     public map<id, boolean> getmapDomainHasRisk  (){ return mapDomainHasRisk ;}    
     
-    Public List<Assessment_Domain__c> DomainsInScope = new List<Assessment_Domain__c>();
-    Public List<Assessment_Domain__c> getDomainsInScope() {return DomainsInScope;}
-  
     public List<Assessment__c> AllAsses = new List<Assessment__c>();
     public List<Assessment__c> getAllAsses(){return AllAsses ;}
 
-
-    public Boolean staffingRatioInFlavor {
-        get {
-                return assessment.Admission__r.State__c=='MN';
-        }
-    }
-    public Boolean dayServicesInFlavor {
-        get {
-                return assessment.Admission__r.State__c=='MN' || assessment.Admission__r.State__c=='IN';
-        }
-    }
-    public Boolean showConfirmationButton {
-        get {
-            for (Acknowledgment__c c: assessment.Acknowledgments__r) {
-                if (c.User__c == UserInfo.getUserId() && assessment.ID == c.Assessment__c) {
-                    return false;
-                }
-            }
-            if(assessment.status__c != 'Active Final'){ return false;}
-            return true;
-        }
-    }
-    
-    
     public class WrappedResponse implements comparable {
         public Assessment_Question__c theQuestion { get; set; }
         public Id theQuestionId { get; set; }
@@ -160,13 +124,6 @@ public with sharing class Assessment_IssaFormWithoutSharing extends Assessment_A
                     sortedTmpSO.add(tmpSO.get(i));
                 }
             }
-            
-            DomainsInScope= [Select ID,  Name, Description__c, Assessment_Type__c, Header__c,  
-                        (Select Name, ID, Question_Description__c, Question_Title__c, Question_Number__c
-                                From Question__r 
-                                Where ID in :QuestionsInScopeIDs
-                                Order By Question_Number__c) 
-                From Assessment_Domain__c Where id in :DomainsInScopeIDs Order By Sort_Order__c];
             
     }
 
