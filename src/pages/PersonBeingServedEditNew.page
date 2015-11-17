@@ -1247,7 +1247,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             <!-- added isNR for EB-430 by Amruth -->
-            <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM || vfVarIsRwMN) }">
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsCM }">
             <a id="assistiveDevices" />            
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device"
@@ -1270,6 +1270,22 @@
                                            rows="5" />
                 <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>  
             </apex:pageBlock>
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwMN }">
+            <a id="assistiveDevices" />            
+                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                                           type="Assistive Device MN"
+                                           title="Assistive Device"
+                                           formId="{!$Component.FormID}"
+                                           uniqueId="Assistive_Devices_MN"
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],  
+                                                                                                        &quot;Glasses&quot; : [ &quot;Glasses_Present__c&quot;, &quot;Contacts_Type__c&quot;,&quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Contacts&quot; : [ &quot;Contacts_Present__c&quot;, &quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;]                                                                                                       
+                                                                                                        }}"
+                                           cols="1" 
+                                           rows="5" />
+                <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>  
+            </apex:pageBlock>              
             <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwCA }">
             <a id="assistiveDevices" />            
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
@@ -1277,9 +1293,9 @@
                                            title="Assistive Device"
                                            formId="{!$Component.FormID}"
                                            uniqueId="Assistive_Devices_CA"
-                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],  
-                                                                                                        &quot;Glasses&quot; : [ &quot;Glasses_Present__c&quot;],
-                                                                                                        &quot;Contacts&quot; : [ &quot;Contacts_Present__c&quot;],
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Type__c&quot;],  
+                                                                                                        &quot;Glasses&quot; : [ &quot;Has_Glasses__c&quot;],
+                                                                                                        &quot;Contacts&quot; : [ &quot;Has_Contacts__c&quot;],
                                                                                                         &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
                                                                                                         &quot;Side Rail Half&quot; : [&quot;Side_Rail_Position__c&quot; ],
                                                                                                         &quot;Side Rail Full&quot; : [&quot;Side_Rail_Position__c&quot; ]                                                                                                        
