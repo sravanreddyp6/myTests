@@ -274,7 +274,9 @@ public with sharing class referralConversion_Controller {
         return pg;
         }
         catch (Exception e) {
-            throw(e);
+        	//throw(e);
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Could not convert the referral - '+ e.getMessage()));
+            return null;
 
         }
 
@@ -411,7 +413,9 @@ public with sharing class referralConversion_Controller {
             update this.personBeingRefRecord;
 
         } catch ( Exception e ) {
-            throw new referralConversionException('Unable to create new Person Being Served - ' + e);
+            //throw new referralConversionException('Unable to create new Person Being Served - ' + e);
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Unable to create new Person Being Served - '+ e.getMessage()));
+            return null;
         }
     }
     return person;
