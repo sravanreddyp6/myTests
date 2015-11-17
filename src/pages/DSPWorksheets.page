@@ -1,5 +1,7 @@
 <apex:page controller="TxnQueueResponseController" extensions="DSP_Worksheets" sidebar="false" standardStylesheets="true">
 
+<c:OneApp_PersonCard pbsID='{! apworksheets.pbsID}' servAssignId='{!apworksheets.saID}' admID = '{!apworksheets.admID}' />
+
 <apex:pageBlock title="Worksheets">
 <apex:repeat value="{! apworksheets.mapSheets }" var="stype">
 

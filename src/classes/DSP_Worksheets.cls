@@ -2,10 +2,16 @@ public without sharing class DSP_Worksheets {
 
 	public ID ActionPlanId { get; set; }
 	public map<String, List<WorksheetWrapper>> mapSheets { get;  set; }
+	public ID pbsID { get; set; }
+	public ID saID { get; set; }
+	public ID admID { get; set; }
 	
 	public DSP_Worksheets ( ID APId) {
 		this.ActionPlanID = APId;
 		mapSheets = new Map<String, List<WorksheetWrapper>>();
+		
+		getAPData();
+		
 		populateWorksheets();
 	}
 	
@@ -36,7 +42,19 @@ public without sharing class DSP_Worksheets {
 		
 		
 	}
-	
+	public void getAPData() {
+		
+		Action_Plan__c ap = [ select service_assignment__r.person_being_served__c, service_assignment__r.admission__c, service_assignment__c
+    						from Action_Plan__c
+    						where id = :ActionPlanId ];
+    						
+    	if ( ap != null ) {
+    		pbsID = ap.service_assignment__r.person_being_served__c;
+    		saID = ap.service_assignment__c;
+    		admID = ap.service_assignment__r.admission__c;
+    	}
+    	
+	}
 	public void populateWorksheets() {
     	List<Action_Plan_Worksheet__c> wks = [ select id, name, start_date__c, recordtype.name, createdby.name, createddate, lastmodifiedby.name, lastmodifieddate
     											from Action_Plan_Worksheet__c
