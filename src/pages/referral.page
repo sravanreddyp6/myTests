@@ -1503,11 +1503,13 @@
                     </apex:pageBlockButtons>
 
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!nameFilter}" id="nameFilter" />
+                    <apex:inputText value="{!nameFilter}" id="nameFilter" size="6"/>&nbsp;&nbsp;
+                    <apex:outputLabel >Nick Name&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                    <apex:inputText value="{!nickNameFilter}" id="nickNameFilter" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!cityFilter}" />
+                    <apex:inputText value="{!cityFilter}" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText id="addlocationstate" value="{!stateFilter}" />&nbsp;&nbsp;&nbsp;
+                    <apex:inputText id="addlocationstate" value="{!stateFilter}" size="2"/>&nbsp;&nbsp;&nbsp;
                     <apex:commandButton value="Search!" action="{!search}" reRender="table,block" status="searchStatus" />
                     <apex:actionStatus id="searchStatus" startText=" Searching..." />
                     <br />
@@ -1516,6 +1518,9 @@
 
                         <apex:column headerValue="Alias">
                             <a href="#" onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialog('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
+                        </apex:column>
+                        <apex:column headerValue="Nick Name">
+                            <apex:outputText >{!r.Location_Nickname__c}</apex:outputText>
                         </apex:column>
                         <apex:column headerValue="Program Code">
                             <apex:outputText >{!r.ProgramID__c}</apex:outputText>
@@ -1570,11 +1575,13 @@
                     </apex:pageBlockButtons>
 
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!nameFilter2}" id="nameFilter2" />
+                    <apex:inputText value="{!nameFilter2}" id="nameFilter2" size="6"/>&nbsp;&nbsp;
+                    <apex:outputLabel >Nick Name&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                    <apex:inputText value="{!nicknameFilter2}" id="nicknameFilter2" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!cityFilter2}" />
+                    <apex:inputText value="{!cityFilter2}" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText id="originstate" value="{!stateFilter2}" />&nbsp;&nbsp;&nbsp;
+                    <apex:inputText id="originstate" value="{!stateFilter2}" size="2" />&nbsp;&nbsp;&nbsp;
                     <apex:commandButton value="Search!" action="{!search2}" reRender="table2,block2" status="searchStatus2" />
                     <apex:actionStatus id="searchStatus2" startText=" Searching..." />
                     <br />
@@ -1583,6 +1590,9 @@
 
                         <apex:column headerValue="Alias">
                             <a href="#" onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialog('searchDialog2', 'span', 'Search Service Location');return false ">{!r.name}</a>
+                        </apex:column>
+                        <apex:column headerValue="Nick Name">
+                            <apex:outputText >{!r.Location_Nickname__c}</apex:outputText>
                         </apex:column>
                         <apex:column headerValue="Program Code">
                             <apex:outputText >{!r.ProgramID__c}</apex:outputText>
