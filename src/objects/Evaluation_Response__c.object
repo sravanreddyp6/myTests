@@ -199,7 +199,7 @@
         <displayedFields>
             <field>Assistive_Device_Start_Date__c</field>
             <isFieldManaged>false</isFieldManaged>
-            <isRequired>true</isRequired>
+            <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
             <field>Assistive_Device_End_Date__c</field>
@@ -212,17 +212,12 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Hearing_Aid_Present__c</field>
+            <field>Has_Contacts__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
         <displayedFields>
-            <field>Glasses_Present__c</field>
-            <isFieldManaged>false</isFieldManaged>
-            <isRequired>false</isRequired>
-        </displayedFields>
-        <displayedFields>
-            <field>Contacts_Present__c</field>
+            <field>Has_Glasses__c</field>
             <isFieldManaged>false</isFieldManaged>
             <isRequired>false</isRequired>
         </displayedFields>
@@ -237,6 +232,61 @@
             <isRequired>false</isRequired>
         </displayedFields>
         <label>Assistive Device CA</label>
+    </fieldSets>
+    <fieldSets>
+        <fullName>Assistive_Device_MN</fullName>
+        <description>Used for MNs flavor of assistive devices</description>
+        <displayedFields>
+            <field>Assistive_Device_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Assistive_Device_Start_Date__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>true</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Assistive_Device_End_Date__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Glasses_Contacts_Purpose__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Contacts_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Contacts_Present__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Glasses_Present__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Denture_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Hearing_Aid_Type__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <displayedFields>
+            <field>Hearing_Aid_Present__c</field>
+            <isFieldManaged>false</isFieldManaged>
+            <isRequired>false</isRequired>
+        </displayedFields>
+        <label>Assistive Device MN</label>
     </fieldSets>
     <fieldSets>
         <fullName>Chem_Detail</fullName>
@@ -1285,7 +1335,7 @@
     <fields>
         <fullName>Assistive_Device_Removable__c</fullName>
         <externalId>false</externalId>
-        <label>Resident can easily remove the device?</label>
+        <label>PBS can easily remove the device?</label>
         <picklist>
             <picklistValues>
                 <fullName>Yes</fullName>
@@ -1303,7 +1353,7 @@
     <fields>
         <fullName>Assistive_Device_Restricts_Movement__c</fullName>
         <externalId>false</externalId>
-        <label>Device restricts Resident&apos;s movement?</label>
+        <label>Device restricts PBS&apos;s movement?</label>
         <picklist>
             <picklistValues>
                 <fullName>Yes</fullName>
@@ -1525,7 +1575,7 @@
     <fields>
         <fullName>Contacts_Present__c</fullName>
         <externalId>false</externalId>
-        <label>Does resident have contacts at facility?</label>
+        <label>Does PBS have contacts at facility?</label>
         <picklist>
             <picklistValues>
                 <fullName>Yes</fullName>
@@ -1781,7 +1831,7 @@
     <fields>
         <fullName>Glasses_Present__c</fullName>
         <externalId>false</externalId>
-        <label>Does resident have glasses at facility?</label>
+        <label>Does PBS have glasses at facility?</label>
         <picklist>
             <picklistValues>
                 <fullName>Yes</fullName>
@@ -1874,9 +1924,45 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
+        <fullName>Has_Contacts__c</fullName>
+        <externalId>false</externalId>
+        <label>Contacts</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Has_Glasses__c</fullName>
+        <externalId>false</externalId>
+        <label>Glasses</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Hearing_Aid_Present__c</fullName>
         <externalId>false</externalId>
-        <label>Resident have aid at the facility?</label>
+        <label>Does PBS have a hearing aid at facility?</label>
         <picklist>
             <picklistValues>
                 <fullName>Yes</fullName>
@@ -3073,6 +3159,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -3644,6 +3752,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -4205,6 +4335,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -4790,6 +4942,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -5192,10 +5366,6 @@
                 <default>false</default>
             </values>
             <values>
-                <fullName>Enclosure Bed</fullName>
-                <default>false</default>
-            </values>
-            <values>
                 <fullName>Front-Wheeled Walker</fullName>
                 <default>false</default>
             </values>
@@ -5351,6 +5521,597 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Hearing_Aid_Present__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Hearing_Aid_Type__c</picklist>
+            <values>
+                <fullName>Both</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Left</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Intake_Type__c</picklist>
+            <values>
+                <fullName>Enteral</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>IV</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Isolation_Status__c</picklist>
+            <values>
+                <fullName>Isolated</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not Isolated</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Isolation_Type__c</picklist>
+            <values>
+                <fullName>Contact - C%2E Difficile</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Contact - MRSA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Contact - PPE</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Droplet</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reverse</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>JawWires_Present__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Location_picklist__c</picklist>
+            <values>
+                <fullName>Left Arm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right Arm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>O2_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>PPD_Administration_Interval__c</picklist>
+            <values>
+                <fullName>Annual</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>First</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Second</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Position__c</picklist>
+            <values>
+                <fullName>Lying</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>N%2FA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Sitting</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Standing</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Restraint_Action__c</picklist>
+            <values>
+                <fullName>Applied Alternative to Restraint</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Applied Restraint</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Restraint_Type__c</picklist>
+            <values>
+                <fullName>Bed Enclosure</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chest Restraint</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MITT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Passive Range of Motion</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pressure Release</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Restrain Release</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vest</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Service_Type__c</picklist>
+            <values>
+                <fullName>Day Habilitation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pre-Vocational</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Private</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transition</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Side_Rail_Position__c</picklist>
+            <values>
+                <fullName>Both</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Left</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Right</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Test_Type__c</picklist>
+            <values>
+                <fullName>Acintobacter</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>C-diff</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MDR</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRSA</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>TB</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>VRE</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Vaccine_Type__c</picklist>
+            <values>
+                <fullName>Diptheria%2FTetanus%2FPertussis</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Heamophilus influensae type b</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hepatitis A</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hepatitis B</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Inactivated Poliovirus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Influenza</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Influenza Vaccine</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Measles%2FMumps%2FRubella</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pneumococcal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pnuemonia Vaccine</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rotavirus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Varicella</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Wound_Type__c</picklist>
+            <values>
+                <fullName>Abrasion</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Bruising</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Burn</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Open</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Surgical</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Traumatic</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>X2_Negative_Cultures__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Assistive_Device_MN</fullName>
+        <active>true</active>
+        <label>Assistive Device MN</label>
+        <picklistValues>
+            <picklist>Allergy_Type__c</picklist>
+            <values>
+                <fullName>Drug</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Food</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Assistive_Device_Removable__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Assistive_Device_Restricts_Movement__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Assistive_Device_Type__c</picklist>
+            <values>
+                <fullName>Bed Alarm</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Cane</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Contacts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Dentures</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Elastic Hose</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Front-Wheeled Walker</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Glasses</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hand Rails</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hearing Aid</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Low Bed</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Overhead Trapeze</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Wheelchair</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Associated_Pain__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Category__c</picklist>
+            <values>
+                <fullName>CT</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Doppler</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>MRI</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>X-Ray</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Contacts_Present__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Contacts_Type__c</picklist>
+            <values>
+                <fullName>Hard</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Soft</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Denture_Type__c</picklist>
+            <values>
+                <fullName>Full</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Lower</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Partial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Upper</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Glasses_Contacts_Purpose__c</picklist>
+            <values>
+                <fullName>For Distance</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>For Reading</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Multifocal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Glasses_Present__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -5944,6 +6705,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -6509,6 +7292,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -7090,6 +7895,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -7651,6 +8478,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -8232,6 +9081,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -8797,6 +9668,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -9387,6 +10280,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -9952,6 +10867,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -10537,6 +11474,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -11066,6 +12025,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -11638,6 +12619,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -12227,6 +13230,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -12792,6 +13817,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -13381,6 +14428,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -13947,6 +15016,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -14532,6 +15623,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -15097,6 +16210,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -15686,6 +16821,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -16251,6 +17408,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -16832,6 +18011,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -17397,6 +18598,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -17983,6 +19206,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -18548,6 +19793,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -19124,6 +20391,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -19713,6 +21002,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -20284,6 +21595,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -20845,6 +22178,28 @@
         </picklistValues>
         <picklistValues>
             <picklist>HR_Intervention_Needed__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
             <values>
                 <fullName>No</fullName>
                 <default>false</default>
@@ -21431,6 +22786,28 @@
             </values>
         </picklistValues>
         <picklistValues>
+            <picklist>Has_Contacts__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Has_Glasses__c</picklist>
+            <values>
+                <fullName>No</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Yes</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
             <picklist>Hearing_Aid_Present__c</picklist>
             <values>
                 <fullName>No</fullName>
@@ -21770,14 +23147,14 @@
     <validationRules>
         <fullName>AssisDev_EndDateLessStart</fullName>
         <active>true</active>
-        <errorConditionFormula>(RecordType.DeveloperName == &apos;Assistive_Device&apos; || RecordType.DeveloperName == &apos;Assistive_Device_CA&apos;)&amp;&amp; 
+        <errorConditionFormula>(RecordType.DeveloperName == &apos;Assistive_Device&apos; || RecordType.DeveloperName == &apos;Assistive_Device_CA&apos;|| RecordType.DeveloperName == &apos;Assistive_Device_MN&apos;)&amp;&amp; 
 Assistive_Device_End_Date__c &lt; Assistive_Device_Start_Date__c</errorConditionFormula>
         <errorMessage>End Date must be after Start Date</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>AssisDev_StartGreaterThenEnd</fullName>
         <active>true</active>
-        <errorConditionFormula>(RecordType.DeveloperName == &apos;Assistive_Device&apos; || RecordType.DeveloperName == &apos;Assistive_Device_CA&apos;) &amp;&amp; 
+        <errorConditionFormula>(RecordType.DeveloperName == &apos;Assistive_Device&apos; || RecordType.DeveloperName == &apos;Assistive_Device_CA&apos;|| RecordType.DeveloperName == &apos;Assistive_Device_MN&apos;) &amp;&amp; 
 Assistive_Device_Start_Date__c &gt; Assistive_Device_End_Date__c</errorConditionFormula>
         <errorMessage>Start Date must be before or on End Date</errorMessage>
     </validationRules>
