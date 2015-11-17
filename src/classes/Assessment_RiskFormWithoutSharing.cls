@@ -1,19 +1,11 @@
 public without sharing class Assessment_RiskFormWithoutSharing extends Assessment_AbstractForm implements DSP_AssessmentResponseType{
-    public string glbListSeperator {get{return ';';} set;}
-    public string glbItemSeperator {get{return '__';} set;}
-    public boolean hasErrorOnFinalize {get; set;}
     public list<string> displayLevel_Required_ResidentialServices = new list<string>();
     public list<string> getdisplayLevel_Required_ResidentialServices(){return displayLevel_Required_ResidentialServices ;}
     public list<string> displayLevel_Required_DayServices = new list<string>();
     public list<string> getdisplayLevel_Required_DayServices (){return displayLevel_Required_DayServices  ;}   
 
-    public List<id> DomainsInScopeIDs = new List<id>();
-    public List<id> QuestionsInScopeIDs = new List<id>();
-    public List<id> OptionsInScope = new List<id>();
-
     public map<string, List<string>> mapQuestions = new map<string, List<string>>();
     public map<string, List<string>> getMapQuestions(){ return mapQuestions ;}
-
 
     transient public Map<id, Map<string,Object>> mapCurrentResps;
     public Map<id, Map<string,Object>> getMapCurrentResps(){
@@ -31,73 +23,6 @@ public without sharing class Assessment_RiskFormWithoutSharing extends Assessmen
             }
         } 
         return this.mapCurrentResps;
-    }
-
-    transient public List<AssessmentDomainWrapper> DomainsInScope;
-    public List<AssessmentDomainWrapper> getDomainsInScope(){
-    	if (this.DomainsInScope == null) return DomainsInScope = buildDomainsInScopeWrapper();
-    	 else return this.DomainsInScope;
-    }
-    private List<AssessmentDomainWrapper> buildDomainsInScopeWrapper(){
-        List<AssessmentDomainWrapper> DomainsInScopeWrapperTemp = new List<AssessmentDomainWrapper>();
-        for(Assessment_Domain__c domain : [Select ID,  Name, Description__c, Assessment_Type__c, Header__c,  External_Id__c,
-					                             (Select Name, ID, Question_Description__c, Question_Title__c, Question_Number__c , External_Id__c
-					                                From Question__r 
-					                                Where ID in :QuestionsInScopeIDs
-					                                Order By Question_Number__c) 
-					                       From Assessment_Domain__c Where id in :DomainsInScopeIDs Order By Sort_Order__c] ){
-                	DomainsInScopeWrapperTemp.add(new AssessmentDomainWrapper(domain));
-        }
-        return DomainsInScopeWrapperTemp;
-    }
-    public class AssessmentDomainWrapper {
-    	public String id {get;set;}
-    	public String name {get;set;}
-    	public String description {get;set;}
-    	public String assessmentType {get;set;}
-    	public String header {get;set;}
-    	public String externalId {get;set;}
-    	public list<QuestionWrapper> QuestionWrappers {get;set;}
-    	public AssessmentDomainWrapper(Assessment_Domain__c domain){
-    		this.QuestionWrappers = new list<QuestionWrapper>();
-            for (Assessment_Question__c q : domain.Question__r) {
-            	this.QuestionWrappers.add(new QuestionWrapper(q));
-            }
-            this.id = domain.ID;
-            this.name = domain.Name;
-            this.description = domain.Description__c;
-            this.assessmentType = domain.Assessment_Type__c;
-            this.header = domain.Header__c;
-            this.externalId = domain.External_Id__c;
-    	}
-    }
-    public class QuestionWrapper {
-        public String name {get;set;}
-        public String id {get;set;}
-        public String questionDescription {get;set;} 
-        public String questionTitle {get;set;}
-        public decimal questionNumber {get;set;}
-        public String externalId {get;set;}
-        public QuestionWrapper(Assessment_Question__c q){
-                this.Name = q.name;
-                this.id = q.ID;
-                this.questionDescription = q.Question_Description__c;
-                this.questionTitle = q.Question_Title__c;
-                this.questionNumber = q.Question_Number__c;
-                this.externalId = q.External_Id__c;
-        }
-    }  
-
-    public transient Map<String, Object> assessmentWrapper;
-    public Map<String, Object> getAssessmentWrapper() {
-    	if (this.assessmentWrapper == null){
-	    	Map<String, Object> m = new Map<String, Object>();
-	    	for(String s : selectFields){
-	    		m.put(s,'');
-	    	}
-	    	updateMapWithRelationshipKeys(m, JSON.serialize(this.assessment), '');
-            return m;
-    	} else return this.assessmentWrapper;
     }
     
     public String recommendedDayServicesStaffingRatio { get; set; }
@@ -224,20 +149,6 @@ public without sharing class Assessment_RiskFormWithoutSharing extends Assessmen
                 return assessment.Admission__r.State__c=='MN' || assessment.Admission__r.State__c=='IN';
         }
     }
-    public Boolean showConfirmationButton {get; private set;}
-    public List<AckWrapper> ackwrapList {get; private set;}
-        
-    public class AckWrapper {
-        public String AckBy { get; set; }
-        public Datetime AckDate { get; set; }
-        public String AckInit { get; set; }
-        
-        public AckWrapper( string b, datetime d, string i ) {
-            this.AckBy = b;
-            this.AckDate = d;
-            this.AckInit = i;
-        }
-    }
     
     public Assessment_RiskFormWithoutSharing(Id assessmentId) {
     	super(assessmentId);
@@ -285,16 +196,6 @@ public without sharing class Assessment_RiskFormWithoutSharing extends Assessmen
                     }
                 // add the question options for when the radio button is not selected
                 mapQuestions.put(local.id, showFields);
-        }
-     
-        // get existing acknowledgments on the assessment 
-        ackwrapList = new List<AckWrapper>();
-        showConfirmationButton =  true;
-        for ( Acknowledgment__c a : [ select user__c, user__r.name, CreatedDate from acknowledgment__c where Assessment__c = :assessment.id order by CreatedDate desc LIMIT 1000]) {
-             AckWrapper aw = new AckWrapper( a.user__r.name, a.CreatedDate, '');
-             ackwrapList.add( aw );
-             if ( a.user__c == userinfo.getUserId())
-                showConfirmationButton = false;
         }
            
     }
