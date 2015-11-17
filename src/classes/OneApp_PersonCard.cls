@@ -1,12 +1,9 @@
-public with sharing class DSP_PersonCard {
+public with sharing class OneApp_PersonCard {
 
 	
-	public DSP_PersonCard ( ) {
+	public OneApp_PersonCard ( ) {
 	}
 	
-	public DSP_PersonCard(TxnQueueResponseController controller) {
-	}
-
 	public String photoUrl { get; set; }
 	public blob photo { get; set; }
 	public Contact con { get; set; }
