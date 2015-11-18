@@ -1,4 +1,7 @@
-<apex:component controller="TxnQueueResponseController" extensions="OneApp_PersonCard" layout="block" allowDML="true">
+<apex:component controller="OneApp_PersonCard" layout="block" allowDML="true">
+
+<apex:attribute name="RequestInfo" type="String" description="type of txn request | ID" required="true" assignTo="{!reqInfo}" />
+
     <apex:stylesheet value="{!$Resource.pbscardcss}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />	
@@ -92,7 +95,7 @@
                                 <td width="25%"><label>Ethnicity:</label>&nbsp;
                                     <apex:OutputText value="{!con.Ethnicity_Picklist__c}" />
                                 </td>
-                                <apex:outputLabel rendered="{!guardianCount>0}">
+                                <apex:outputLabel rendered="{! guardianCount != null && guardianCount>0}">
                                     <td width="25%"><label>Guardian:</label>&nbsp;
                                         <apex:OutputText value="{!con.Guardian1_Name__c}" />
                                     </td>
@@ -111,7 +114,7 @@
                                 <td width="25%"><label>Primary Language:</label>&nbsp;
                                     <apex:OutputText value="{!con.Primary_Language__c}" />
                                 </td>
-                                <apex:outputLabel rendered="{!guardianCount>0}">
+                                <apex:outputLabel rendered="{!guardiancount != null && guardianCount>0}">
                                     <td width="25%"><label>Guardian Phone:</label>&nbsp;
                                         <apex:OutputText value="{!con.Guardian_Phone_Number__c}" />
                                     </td>

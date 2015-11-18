@@ -79,7 +79,7 @@ function toggleById(id, ms){
 };
 </script>
 
-<c:OneApp_PersonCard />
+<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + InputParams}" />
 <apex:form id="myfrm" >
     <apex:pageMessages />
     <apex:pageBlock id="main_detail" title="{!assessmentResponse.assessmentWrapper['Person_Being_Served__r.Name'] + ' - Risk Assessment Summary'}">
