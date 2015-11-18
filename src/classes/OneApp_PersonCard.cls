@@ -1,9 +1,33 @@
 public with sharing class OneApp_PersonCard {
 
-	
+
 	public OneApp_PersonCard ( ) {
 	}
 	
+	public OneApp_PersonCard(TxnQueueResponseController controller) {
+		// get the txn info
+		String reqType = controller.thisTxn.request_type__c;
+		String inputID = (ID)controller.thisTxn.input_params__c;
+		
+		if ( reqType == 'Action Plan' || reqType == 'Acknowledge Plan' || reqType == 'SkillList' || reqType == 'BehaviorList') {
+			// id is the Action Plan ID
+			Action_Plan__c ap = [ select service_assignment__r.person_being_served__c from action_Plan__c where id = :inputID];
+			if ( ap != null)
+				contactID = ap.service_assignment__r.person_being_served__c;
+						
+		}
+	    else if ( reqType == 'Seizures' || reqType == 'Upsert Seizure')
+            this.contactID = inputID;
+        else if ( reqType == 'Risk' || reqType == 'ISSA' || reqType == 'Acknowledge Assessment' ){
+        	// id is admission id
+        	Admission__c adm = [ select person_being_served__c from admission__c where id =  :inputID];
+        	if (adm != null)
+        		contactID = adm .person_being_served__c;
+        	
+        }
+        // else return out!
+      
+	}
 	public String photoUrl { get; set; }
 	public blob photo { get; set; }
 	public Contact con { get; set; }
@@ -39,7 +63,7 @@ public with sharing class OneApp_PersonCard {
 			} else
 				this.hasPhoto = false;
 	
-			servAssigns = [Select Id, Name from Service_Assignment__c where Person_Being_Served__c = : value and Status__c = 'Active'];
+			servAssigns = [Select Id, Name from Service_Assignment__c where Person_Being_Served__c = :value and Status__c = 'Active'];
 		}
 	}
 	
