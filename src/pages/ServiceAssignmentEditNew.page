@@ -14,6 +14,7 @@
     <apex:variable value="{!$ObjectType.Action_Plan_Worksheet__c.accessible}" var="vfVarCanAccessWS" />
     <apex:variable value="{!$User.Operating_Group__c == 'Cambridge'}" var="vfVarIsCB" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRW" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && Service_Assignment__c.Admission__r.state__c =='MN'}" var="vfVarIsRwMN" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:variable value="{!theServAssign.Flavor__c == 'CA FSS'}" var="isCAFSS" />
@@ -1736,6 +1737,9 @@ END: Uncomment to have the element collapsed by default -->
                         <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
                     </apex:pageBlockSectionItem>
                     <apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy"/>
+                    <apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwMN}"/>
+                    <apex:inputField value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" rendered="{!vfVarIsRwMN}"/>
+                    <apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRwMN}"/>
                     <apex:inputField value="{!seizure.Comments__c}" id="seizureEntry_comments" />
                     <apex:inputField value="{!seizure.Duplicate_Entry__c}" id="seizureEntry_duplicateEntry" />
                     <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
@@ -1766,7 +1770,7 @@ END: Uncomment to have the element collapsed by default -->
         </apex:outputPanel>
 
         <a id="Seizure_Tracking"></a>
-        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{!! vfVarIsCB && !newSA && !vfVarIsRW && !isNR && !isCAFSS}">
+        <apex:pageBlock id="SeizureTrackingList" mode="maindetail" rendered="{! (!vfVarIsCB && !newSA && !vfVarIsRW  && !isNR && !isCAFSS) ||  vfVarIsRwMN}">
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
     <!--             <apex:actionStatus id="AddSeizureStatus"> -->
