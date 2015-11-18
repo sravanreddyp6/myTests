@@ -20,7 +20,7 @@
 		var $obj = $(this);
 		var val = $obj.val();
 		var type = $obj.attr('type');
-		if (type && type === 'checkbox') {
+		if (type && type === 'checkbox' && !$obj.prop("disabled")) {
 			return $obj.prop('checked') ? '1' : '0';
 		} else {
 			return val;
