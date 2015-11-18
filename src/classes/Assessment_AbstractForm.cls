@@ -7,6 +7,8 @@ public abstract class Assessment_AbstractForm {
     
     protected List<id> DomainsInScopeIDs = new List<id>();
     protected List<id> QuestionsInScopeIDs = new List<id>();
+    public transient Map<id, Map<string,Object>> mapCurrentResps;
+    public abstract Map<id, Map<string,Object>> getMapCurrentResps();
     
     transient public List<AssessmentDomainWrapper> DomainsInScope;
     public List<AssessmentDomainWrapper> getDomainsInScope(){
@@ -138,6 +140,5 @@ public abstract class Assessment_AbstractForm {
             m.putAll(newMap);
             m.remove(String.IsBlank(relationshipKey) ? 'attributes' : relationshipKey + '.attributes'); // this is to remove this key, SF adds this when serializing the sObject.
     }
-    
     
 }

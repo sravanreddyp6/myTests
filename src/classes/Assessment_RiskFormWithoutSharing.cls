@@ -7,24 +7,6 @@ public without sharing class Assessment_RiskFormWithoutSharing extends Assessmen
     public map<string, List<string>> mapQuestions = new map<string, List<string>>();
     public map<string, List<string>> getMapQuestions(){ return mapQuestions ;}
 
-    transient public Map<id, Map<string,Object>> mapCurrentResps;
-    public Map<id, Map<string,Object>> getMapCurrentResps(){
-        if (this.mapCurrentResps == null) {
-			this.mapCurrentResps = new Map<id, Map<String,Object>>();
-			String strSQLResp =  'SELECT ' + String.join(selectFieldsAssessResp, ',') + ' FROM Assessment_Response__c WHERE assessment__c = \'' + assessment.id + '\' and rating__c = \'Presents a Risk\'';
-            List<Assessment_Response__c> CurrentResps = (List<Assessment_Response__c>) Database.query(strSQLResp);
-			for (Assessment_Response__c response : CurrentResps){
-	            Map<String, Object> m = new Map<String, Object>();
-	            for(String s : selectFieldsAssessResp){
-	                m.put(s,'');
-	            }
-	            updateMapWithRelationshipKeys(m, JSON.serialize(response), '');
-                mapCurrentResps.put(response.Question__c, m);
-            }
-        } 
-        return this.mapCurrentResps;
-    }
-    
     public String recommendedDayServicesStaffingRatio { get; set; }
     public String recommendedDayServicesStaffingRatioOther { get; set; }
     public String recommendedDayServicesStaffingRatioFull { get; set; }
@@ -199,5 +181,20 @@ public without sharing class Assessment_RiskFormWithoutSharing extends Assessmen
         }
            
     }
-
+    public override Map<id, Map<string,Object>> getMapCurrentResps(){
+        if (this.mapCurrentResps == null) {
+            this.mapCurrentResps = new Map<id, Map<String,Object>>();
+            String strSQLResp =  'SELECT ' + String.join(selectFieldsAssessResp, ',') + ' FROM Assessment_Response__c WHERE assessment__c = \'' + assessment.id + '\' and rating__c = \'Presents a Risk\'';
+            List<Assessment_Response__c> CurrentResps = (List<Assessment_Response__c>) Database.query(strSQLResp);
+            for (Assessment_Response__c response : CurrentResps){
+                Map<String, Object> m = new Map<String, Object>();
+                for(String s : selectFieldsAssessResp){
+                    m.put(s,'');
+                }
+                updateMapWithRelationshipKeys(m, JSON.serialize(response), '');
+                mapCurrentResps.put(response.Question__c, m);
+            }
+        } 
+        return this.mapCurrentResps;
+    }
 }
