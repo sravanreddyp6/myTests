@@ -182,7 +182,7 @@ public with sharing class GenerateEvalComponent {
 			' WHERE eval__c in :listEvalItems ' +
 			'   AND eval__r.Visible__c = true ' +
 			'   AND what_id__c = :evaluationID ' +
-			((evalSectionId == '' && batchInsert) ? '' : '   AND eval_Section_Id__c = :evalSectionId')
+			'   AND eval_Section_Id__c = :evalSectionId'
 		);
 		Set<String> sectionsToBypass = new Set<String>();
 		for (Eval_Value__c value: listEvalValues) {
@@ -266,9 +266,8 @@ public with sharing class GenerateEvalComponent {
 					if (e.HtmlId__c == 'NotApplicable') {
 						// This is a special field that is shown in the header, so we'll suppress
 						// showing it here
-						newHtmlLbl = '';
-						newHtmlFld = '';
 						notApplicableFieldId = e.Id;
+						continue;
 					} else {
 						newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
 						newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" data-composite="' + e.Composite__c + '" ';
@@ -288,9 +287,11 @@ public with sharing class GenerateEvalComponent {
 						newHTMLfld = '<td class="dataCol"><div style="display: table-row;"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '" ';
 
 						// insert value
-						if (mapEvalValues.ContainsKey(e.id))
-							if (mapEvalValues.get(e.id).boolean__c)
+						if (mapEvalValues.ContainsKey(e.id)) {
+							if (mapEvalValues.get(e.id).boolean__c) {
 								newHTMLFld += ' checked ';
+							}
+						}
 
 						newHTMLfld += '/></div></td>';
 					} else if (e.Field_Sub_Type__c == 'Dropdown') {
