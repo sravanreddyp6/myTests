@@ -185,25 +185,16 @@
 						// We need to manually apply the rules here again because all the fields
 						// will be enabled by the Not Applicable field.
 						$('#evalForm input').not('#NotApplicable').each(function(_, target) {
+							applyShowHideRulesToField(target);
 							applyRulesToField(target);
 						});
 					}
 				});
-				$('#evalForm input').not('#NotApplicable').on("change", function(event) {
-					applyRulesToField(event.target);
-					applyShowHideRulesToField(event.target);
-				});
-				$('#evalForm select').not('#NotApplicable').on("change", function(event) {
+				$('#evalForm input, #evalForm select').not('#NotApplicable').on("change", function(event) {
 					applyShowHideRulesToField(event.target);
 					applyRulesToField(event.target);
 				});
-				$('#evalForm input').not('#NotApplicable').each(function(_, target) {
-					applyRulesToField(target);
-				});
-				$('#evalForm input').not('#NotApplicable').each(function(_, target) {
-					applyShowHideRulesToField(target);
-				});
-				$('#evalForm select').not('#NotApplicable').each(function(_, target) {
+				$('#evalForm input, #evalForm select').not('#NotApplicable').each(function(_, target) {
 					applyShowHideRulesToField(target);
 					applyRulesToField(target);
 				});
