@@ -176,6 +176,16 @@
 				return; </apex:outputPanel>
 
 				// Apply rules to input fields
+
+				// Note about the order of operations: Here we apply rules to the Not Applicable
+				// fields first, before applying them to the other fields - this mostly work right,
+				// except when used in conjunction with show/hide rules. This starts from commit
+				// efe3813, in which disabled fields cannot be used to show/hide other fields. In
+				// effect, if a Not Applicable field is checked - show/hide rules will not be
+				// applied in a section. Right now, this is an acceptable compromise. If we move
+				// the rule application of Not Applicable field after other rule applications
+				// instead, we'll run into an issue in which disabled fields are enabled due to
+				// the Not Applicable field not being checked, which is a much worse UX issue.
 				$('#evalForm input#NotApplicable').each(function (_, target) {
 					applyRulesToField(target, window.CommonJS.Strategy.Selector);
 				});
