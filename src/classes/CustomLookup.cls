@@ -190,7 +190,7 @@ public class CustomLookup {
 				queryFilter += 'FacilityId__c = 13 and ';
 	        }
 	        else {
-	            queryFilter += 'FacilityId__c Not In (20, 13) and ';
+	            queryFilter += 'FacilityId__c Not In (20, 13) and Alias_lookup__r.Alias_Operating_Group__c =:operatinggroup and ';
 	        }
 	        queryFilter += 'Status__c = \'Active\' and ';
 		}
@@ -230,9 +230,9 @@ public class CustomLookup {
         
         if(!queryFilter.equalsIgnoreCase('Where ')){
             queryFilter = queryFilter.removeEnd('and ');
-            system.debug('$$$$$wholeQuery '+query+queryFilter+' Order By Name');
+            system.debug('$$$$$wholeQuery '+query+queryFilter+' Order By Name LIMIT 250');
             System.debug('stringTemp: ' + stringTemp);
-            tmpResult = Database.query(query+queryFilter+' Order By Name');
+            tmpResult = Database.query(query+queryFilter+' Order By Name LIMIT 250');
             countTotalRecords=tmpResult.size();
         }
     }
