@@ -1,14 +1,28 @@
 public with sharing class OneApp_PersonCard {
 
-
-	public OneApp_PersonCard ( ) {
-	}
+	public String reqInfo { get; set { populateCard(value);}}
+	private string reqType;
+	private string inputID;
 	
-	public OneApp_PersonCard(TxnQueueResponseController controller) {
-		// get the txn info
-		String reqType = controller.thisTxn.request_type__c;
-		String inputID = (ID)controller.thisTxn.input_params__c;
+	void populateCard (String req) {
+		system.debug( req);
+	
+		if ( !String.IsEmpty( req )) {
+			String[] strs = req.split(',');
+			if ( strs.size() == 2 ) {
+				reqType = strs[0];
+				inputID = strs[1];
+			} else 
+				return;
+			
+		} else 
+			return;
 		
+		// need both to be set to continue
+		if ( reqType == '' || inputID == '')
+			return;
+		
+		// get the txn info
 		if ( reqType == 'Action Plan' || reqType == 'Acknowledge Plan' || reqType == 'SkillList' || reqType == 'BehaviorList') {
 			// id is the Action Plan ID
 			Action_Plan__c ap = [ select service_assignment__r.person_being_served__c from action_Plan__c where id = :inputID];
@@ -22,12 +36,19 @@ public with sharing class OneApp_PersonCard {
         	// id is admission id
         	Admission__c adm = [ select person_being_served__c from admission__c where id =  :inputID];
         	if (adm != null)
-        		contactID = adm .person_being_served__c;
+        		contactID = adm.person_being_served__c;
         	
         }
         // else return out!
       
+		
 	}
+	public OneApp_PersonCard ( ) {
+	}
+	
+	// get the txn info
+	
+	
 	public String photoUrl { get; set; }
 	public blob photo { get; set; }
 	public Contact con { get; set; }
@@ -51,7 +72,7 @@ public with sharing class OneApp_PersonCard {
 			];
 			
 			getAllergyList( value);
-			this.guardianCount = [select count() from related_party__c where person_being_served__c =:value and type__c = 'Guardian'];
+			guardianCount  = [select count() from related_party__c where person_being_served__c =:value and type__c = 'Guardian'];
 
 			List<Attachment> headShot = [
 				SELECT id, parentId, Name, Description FROM Attachment
@@ -64,10 +85,27 @@ public with sharing class OneApp_PersonCard {
 				this.hasPhoto = false;
 	
 			servAssigns = [Select Id, Name from Service_Assignment__c where Person_Being_Served__c = :value and Status__c = 'Active'];
+			
+			Related_Party__c[] party = [select id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c from Related_Party__c where Person_Being_Served__c = :value And Type__c =: 'Physician - Primary' limit 1];
+			if (party.size() > 0 ) {
+				primaryPhysician = party[0].Name;
+				if (party[0].Phone_1_Type__c == 'Work'){
+					primaryPhysicianPhone = party[0].Phone__c;
+				}
+				else if(party[0].Phone_2_Type__c == 'Work'){
+					primaryPhysicianPhone = party[0].Phone_2__c;
+				}
+				
+			} else {
+				primaryPhysician = '';
+				primaryPhysicianPhone = '';
+			}
+			
+			age = Utility.getAge(this.con.Age_year__c,this.con.Age_month__c,this.con.Age_days__c);
 		}
 	}
 	
-	public String age {set;get{	return Utility.getAge(this.con.Age_year__c,this.con.Age_month__c,this.con.Age_days__c);	}}
+	public String age { get; set; }
 
 	public class evalResponseWrapper {
 		public string eType { get; set; }
@@ -143,30 +181,7 @@ public with sharing class OneApp_PersonCard {
 		set;
 	}
 	
-	public String primaryPhysician{
-		get{
-			if (primaryPhysician != null) {
-				return primaryPhysician;
-			}
-			Related_Party__c[] party = [select id, Name, Phone__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c from Related_Party__c where Person_Being_Served__c = :con.Id And Type__c =: 'Physician - Primary' limit 1];
-			if (party.size() > 0 ) {
-				primaryPhysician = party[0].Name;
-				if (party[0].Phone_1_Type__c == 'Work'){
-					primaryPhysicianPhone = party[0].Phone__c;
-				}
-				else if(party[0].Phone_2_Type__c == 'Work'){
-					primaryPhysicianPhone = party[0].Phone_2__c;
-				}
-				
-			} else {
-				primaryPhysician = '';
-				primaryPhysicianPhone = '';
-			}
-			return primaryPhysician;
-		}
-		set;
-	}
-
+	public String primaryPhysician{ get; set; }
 	public String primaryPhysicianPhone { get; set; }
 
 	public String isolationStatus{

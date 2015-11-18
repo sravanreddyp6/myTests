@@ -1,6 +1,8 @@
 public with sharing class TxnQueueResponseController {
     public Transaction_Queue__c thisTxn;
 	public String TxnResponse { get; private set; }
+	public String RequestType { get { return thisTxn.request_type__c; } }
+	public String InputParams { get { return thisTxn.input_params__c; } }
 	public ActionPlan_FormWithoutSharing  response { get; private set; }
     public DSPPersonBeingServed_WithoutSharing pbsViewResponse { get; private set; }
     public DSP_PbsSeizureListing pbsSeizureListing { get; private set; }
