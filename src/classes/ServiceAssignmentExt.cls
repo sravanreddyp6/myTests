@@ -2359,7 +2359,8 @@ public without sharing class ServiceAssignmentExt {
     public string seizureEnd_DateTime {get;set;}
 
     public void populateSeizures() {
-        this.seizures = [select id, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c
+        this.seizures = [select id, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, 
+        					Duplicate_Entry__c, Post_seizure_phase__c, Pre_seizure_phase__c, Seizure_Description__c 
                          from Seizure__c
                          where Service_Assignment__c = : this.theServAssign.Id
                          //And Duplicate_Entry__c = false
@@ -2380,7 +2381,8 @@ public without sharing class ServiceAssignmentExt {
     }
     public void showEditSeizure() {
         string seizureId = ApexPages.CurrentPage().getParameters().get('seizureId');
-        this.seizure = [select id, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c
+        this.seizure = [select id, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, 
+        					Duplicate_Entry__c, Post_seizure_phase__c, Pre_seizure_phase__c, Seizure_Description__c 
                         from Seizure__c
                         where id = : seizureId];
     }
