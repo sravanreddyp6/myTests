@@ -17,7 +17,7 @@
                                cols="1"
                                showDisregard="true" 
                                eSign="true"
-                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device' && $CurrentPage.parameters.FS != 'Time Log'}" />
+                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device' && $CurrentPage.parameters.FS == 'Assistive Device MN'  && $CurrentPage.parameters.FS == 'Assistive Device CA' && $CurrentPage.parameters.FS != 'Time Log'}" />
 
         <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
                                type="{!$CurrentPage.parameters.FS}"
@@ -38,6 +38,33 @@
                                                                                                         }}"
                                cols="1"
                                rendered="{!$CurrentPage.parameters.FS == 'Assistive Device'}" />
+
+        <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                               type="{!$CurrentPage.parameters.FS}"
+                               title="Assistive Device"
+                               formId="{!$Component.frm}"
+                               uniqueId="Assistive_Devices_MN"
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],  
+                                                                                                        &quot;Glasses&quot; : [ &quot;Glasses_Present__c&quot;, &quot;Contacts_Type__c&quot;,&quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Contacts&quot; : [ &quot;Contacts_Present__c&quot;, &quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;]                                                                                                       
+                                                                                                        }}"
+                               cols="1"
+                               rendered="{!$CurrentPage.parameters.FS == 'Assistive Device MN'}" />   
+        <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                               type="{!$CurrentPage.parameters.FS}"
+                               title="Assistive Device"
+                               formId="{!$Component.frm}"
+                               uniqueId="Assistive_Devices_MN"
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Type__c&quot;],  
+                                                                                                        &quot;Glasses&quot; : [ &quot;Has_Glasses__c&quot;],
+                                                                                                        &quot;Contacts&quot; : [ &quot;Has_Contacts__c&quot;],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
+                                                                                                        &quot;Side Rail Half&quot; : [&quot;Side_Rail_Position__c&quot; ],
+                                                                                                        &quot;Side Rail Full&quot; : [&quot;Side_Rail_Position__c&quot; ]                                                                                                        
+                                                                                                        }}"
+                               cols="1"
+                               rendered="{!$CurrentPage.parameters.FS == 'Assistive Device CA'}" />                                                           
                                
         <c:EvaluationResponseTable saParentId="{!$CurrentPage.parameters.SA}"
                                     type="{!$CurrentPage.parameters.FS}"
