@@ -84,8 +84,11 @@ public without sharing class TransactionQueueTriggeredActions {
                         // serialize the result
                         String jsonstring = json.serialize( pbsWithoutSharing );
                         system.debug( 'GOT RESULT: '  + jsonstring);
+                        
+                        // break up the string if necessary
+						storeResultString( newreq, jsonstring );
+						
                         // update the request as having been fulfilled
-                        newreq.return_value__c = jsonstring;
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
 	                } catch ( Exception e ) {
@@ -109,8 +112,10 @@ public without sharing class TransactionQueueTriggeredActions {
                         String jsonstring = json.serialize(riskAssessment);
                         //system.debug( 'GOT RESULT: '  + jsonstring);
 
+						// break up the string if necessary
+						storeResultString( newreq, jsonstring );
+						
                         // update the request as having been fulfilled
-                        newreq.return_value__c = jsonstring;
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
                         
@@ -138,9 +143,7 @@ public without sharing class TransactionQueueTriggeredActions {
 						// break up the string if necessary
 						storeResultString( newreq, jsonstring );
 
-
                         // update the request as having been fulfilled
-                        newreq.return_value__c = jsonstring;
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
                         
@@ -169,8 +172,11 @@ public without sharing class TransactionQueueTriggeredActions {
  
                         // serialize the result
                         String jsonstring = json.serialize( assessmentDetails );
+                        
+                        // break up the string if necessary
+						storeResultString( newreq, jsonstring );
+						
                         // update the request as having been fulfilled
-                        newreq.return_value__c = jsonstring;
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
                     } catch ( Exception e ) {
@@ -190,8 +196,11 @@ public without sharing class TransactionQueueTriggeredActions {
                         // serialize the result
                         String jsonstring = json.serialize( dsp_PbsSeizureListing );
                         //system.debug( 'GOT RESULT: '  + jsonstring);
+
+						// break up the string if necessary
+						storeResultString( newreq, jsonstring );
+						
                         // update the request as having been fulfilled
-                        newreq.return_value__c = jsonstring;
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
                     } catch ( Exception e ) {
@@ -210,8 +219,11 @@ public without sharing class TransactionQueueTriggeredActions {
                             DSP_PbsSeizureListing dsp_PbsSeizureListing = new DSP_PbsSeizureListing(PBSid);
                             // serialize the result
                             String jsonstring = json.serialize( dsp_PbsSeizureListing );
+                            
+                            // break up the string if necessary
+							storeResultString( newreq, jsonstring );
+						
                             // update the request as having been fulfilled
-                            newreq.return_value__c = jsonstring;
                             newreq.fulfilled__c = true;
                             newreq.Date_Time_Fulfilled__c = DateTime.Now();
                     } catch ( Exception e ) {
@@ -240,8 +252,10 @@ public without sharing class TransactionQueueTriggeredActions {
 							String jsonstring = json.serialize( apWithoutSharing );
 							system.debug( 'GOT RESULT: '  + jsonstring);
 	
+							// break up the string if necessary
+							storeResultString( newreq, jsonstring );
+						
 							// update the request as having been fulfilled
-							newreq.return_value__c = jsonstring;
 							newreq.fulfilled__c = true;
 							newreq.Date_Time_Fulfilled__c = DateTime.Now();
 							
@@ -265,8 +279,12 @@ public without sharing class TransactionQueueTriggeredActions {
                         // serialize the result
                         String jsonstring = json.serialize( worksheets );
                         system.debug( 'GOT RESULT: '  + jsonstring);
+
+						// break up the string if necessary
+						storeResultString( newreq, jsonstring );
+						
                         // update the request as having been fulfilled
-                        newreq.return_value__c = jsonstring;
+
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
                     } catch ( Exception e ) {
