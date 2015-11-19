@@ -1,0 +1,93 @@
+<apex:page controller="TherapistLicExpiring" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab" showheader="true" readOnly="True">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+    <apex:form >
+        <apex:pageMessages id="errors" />
+        <apex:pageBlock id="theBlock" title="Expired/Expiring in next 30 Days Therapist License, Insurance, or CPR">
+        <a class="btn" href="#" onClick="window.close();return false;" style="float: right;">Close</a>
+            <apex:pageBlockSection columns="1" id="theSection">
+                
+                <apex:pageBlockTable styleclass="pcBody-list" value="{!therapistList}" var="therapist"  id="therapistT" styleClass="dataTable">
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Therapist Name" action="{!toggleSort}"  reRender="therapistT,errors" status="therapistSortStatus" >
+                                <apex:param name="sortField" value="First_Name__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputText value="{!therapist.First_Name__c}" />&nbsp;<apex:outputText value="{!therapist.Last_Name__c}" />
+                    </apex:column>
+                                                
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Discipline" action="{!toggleSort}"  reRender="therapistT,errors" status="therapistSortStatus" >
+                                <apex:param name="sortField" value="Discipline__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputText value="{!therapist.Discipline__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="License Expires Date" action="{!toggleSort}"  reRender="therapistT,errors" status="therapistSortStatus" >
+                                <apex:param name="sortField" value="License_Expires__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!therapist.License_Expires__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="Insurance Expired Date" action="{!toggleSort}"  reRender="therapistT,errors" status="therapistSortStatus" >
+                                <apex:param name="sortField" value="Insurance_Expires__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!therapist.Insurance_Expires__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <apex:commandLink Value="CPR Expires" action="{!toggleSort}"  reRender="therapistT,errors" status="therapistSortStatus" >
+                                <apex:param name="sortField" value="CPR_Expires__c" assignTo="{!sortField}" />
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!therapist.CPR_Expires__c}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header" >Contact information </apex:facet>
+                        Work Phone:&nbsp;<apex:outputText value="{!therapist.Office_Phone__c}" />&nbsp;&nbsp;Ext:&nbsp;<apex:outputText value="{!therapist.phone_ext__c}" /><br/>
+                        Mobile Phone:&nbsp;<apex:outputText value="{!therapist.Mentor_Cell_Phone__c}" /><br/>
+                        Email:&nbsp;<a href="mailto:{!therapist.Personal_Email__c}">{!therapist.Personal_Email__c}</a>
+                    </apex:column>
+                </apex:pageBlockTable>
+                <a class="btn" href="#" onClick="window.close();return false;" style="float: right;">Close</a>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+        <apex:actionStatus id="therapistSortStatus" >
+            <apex:facet name="start">  
+                    <style>
+                    .thinkingwheel{position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;}
+                .foggy{
+                    opacity:0.8;
+                    background-color:#ccc;
+                    position:fixed;
+                    width:100%;
+                    height:100%;
+                    top:0px;
+                    left:0px;
+                    z-index:1000;
+                }  
+                </style>
+                <div class="foggy" />        
+                <div class="thinkingwheel" >    
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+                </div> 
+            </apex:facet>  
+            <apex:facet name="stop"> </apex:facet>         
+        </apex:actionStatus>    
+
+</apex:page>
