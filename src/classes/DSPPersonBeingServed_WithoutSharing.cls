@@ -122,7 +122,12 @@ public map<String, String> getmapEvalResposeFldLbls(){ return this.mapEvalRespos
         return TMNUser.Operating_Group__c=='Redwood' || TMNUser.Operating_Group__c=='Cambridge' || TMNUser.Operating_Group__c=='NeuroRestorative' || isCAFSS;
     }}
     public list<Diagnosis__c> diagnosis{get{
-        return [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:Apexpages.currentpage().getparameters().get('Id')];
+    	return [select Id, Name, ICD__c, ICD__r.name, ICD__r.Code_Type__c, ICD__r.Icd_Description__c, PBS__c, Type__c, Status__c, Effective_Date__c 
+                         from Diagnosis__c
+                         where PBS__c = :contact.Id order by Status__c, Type__c];
+                         
+        //return [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:contact.ID
+        //and service_assignment__r != null];
     } set;}
     
   private void populateRelParties() {

@@ -2,14 +2,12 @@
     <apex:attribute name="responses" description="List of evaluation responses to display" type="Evaluation_Response__c[]" />
     <apex:attribute name="columnsToFetch" description="List of columns" type="String[]" />
     <apex:attribute name="type" description="The type of this table" type="String" required="true" />
-    <apex:attribute name="style" description="Set the style for the Table displayed on the PDF"
-        type="String" default="padding:10px;margin:10px;text-align:center;" />
+    <apex:attribute name="style" description="Set the style for the Table displayed on the PDF" type="String" default="padding:10px;margin:10px;text-align:center;" />
     <apex:attribute name="columnsToHeadersMap" description="columns labels map" type="map" required="false" />
     <apex:attribute name="displayTitle" description="Title of the evaluation response teable" type="boolean" default="true" />
 
-
-    <apex:pageBlockSection columns="1" title="{! IF(displayTitle, type, '')}" collapsible="false">
-        <apex:outputText value="None" rendered="{!responses==null || responses.size == 0 }" />
+    <apex:pageBlockSection columns="1" collapsible="false" >
+        <apex:outputText value="No {!type} to display" rendered="{!responses==null || responses.size == 0 }" />
         <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="text-align:center;th padding:10px;">
             <apex:repeat value="{!columnsToFetch}" var="column">
                 <apex:column value="{!response[column]}"  style="{!style}" 
