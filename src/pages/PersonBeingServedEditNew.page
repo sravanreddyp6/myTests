@@ -282,7 +282,10 @@
         	var today = new Date(moment(new Date()).format());
 
             if (j$('input[id$=diagnosisEntry_icd]').val() == '') {
-                errors += '<li>ICD Code is a required field.</li>';
+                errors += '<li>ICD-10 Code is a required field.</li>';
+            }
+            if (j$('input[id$=diagnosisEntry_icd]').val() != '' && j$('input[id$=diagnosisEntry_icd_lkid]').val() == '') {
+                errors += '<li>Please perform a search using the lookup icon to add ICD-10 Code.</li>';
             }
             if (j$('input[id$=diagnosisEntry_EffTime]').val() == '') {
                 errors += '<li>Date and Time of Diagnosis is a required field.</li>';
@@ -1074,7 +1077,7 @@
                 <apex:pageblockTable value="{!diagnoses}" var="diag" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" id="diagTable">
                     <apex:column headerValue="Action"><a href="#Diag" onclick="showEditDiagnosis('{!diag.id}');return false;">Edit</a>
                     </apex:column>
-                    <apex:column value="{!diag.ICD__r.name}" headerValue="ICD Code" />
+                    <apex:column value="{!diag.ICD__r.name}" headerValue="ICD-10 Code" />
                     <apex:column value="{!diag.ICD__r.Code_Type__c}" />
                     <apex:column value="{!diag.ICD__r.Icd_Description__c}" />
                     <apex:column headerValue="Date and Time of Diagnosis" >
@@ -1115,11 +1118,17 @@
                     </apex:facet>
                     <div id='diagnosisErrors' style='color:red'></div>
                     <apex:pageBlockSection columns="2" id="diagnosisEntry">
-                        <apex:inputField value="{!diag.ICD__c}"  id="diagnosisEntry_icd" label="ICD Code"/>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputPanel >
+                                <apex:outputLabel value="ICD-10 Code" style="font-weight:bold"/> &nbsp; &nbsp;
+                                <apex:inputField value="{!diag.ICD__c}" id="diagnosisEntry_icd"/> 
+                                <c:HelpTooltip helpText="Please note: When searching, use “Name” to search by the alphanumeric ICD-10 Code. Use “All Fields” to search by ICD-10 Code OR Description."  />
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
                         	<apex:outputLabel Value="Date and Time of Diagnosis" />
                         	<c:MilitaryDatetime edit="true" shiftTop="20"  hiddenFieldId="diagnosisEntry_EffTime" dateTimeVal="{!diag.Effective_Date__c}" datetimepickerid="diagnosisEntry_effDateTimeInput"/>
-                        </apex:pageBlockSectionItem>
+                        </apex:pageBlockSectionItem> 
                         <apex:inputField value="{!diag.Status__c}"  id="diagnosisEntry_status" />
                         <apex:inputField value="{!diag.Type__c}"  id="diagnosisEntry_type" />
                          <apex:inputHidden value="{!diag.Effective_Date__c}" id="diagnosisEntry_EffTime" />
