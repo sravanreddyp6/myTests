@@ -17,7 +17,6 @@ public with sharing class Report_CANS_PBSOverTimeGraph {
     public String selectedPerson { get ; set;}
     public boolean showData { get; set;}
     public transient List<CANSData> pbsCANS {get; set;}
-    private Map<ID, String> mapPBS;
     
     public Report_CANS_PBSOverTimeGraph() {
         
@@ -30,7 +29,6 @@ public with sharing class Report_CANS_PBSOverTimeGraph {
             
         QuestionsList = new Map<ID, Assessment_Question__c>();
     
-        mapPBS = new Map<ID, String>();
         optPBS = new List<SelectOption>();
         optPBS.Add( new SelectOption('','--None--'));
         // get the list of people i can see who have final, non-diregarded cans
@@ -38,7 +36,6 @@ public with sharing class Report_CANS_PBSOverTimeGraph {
                 
         for ( AggregateResult ar : arCANSList ) {
             optPBS.Add( new SelectOption((String)ar.get('accountperson__c'), (String)ar.get('lastname') + ',' + (String)ar.get('firstname')));
-            mapPBS.put ( (ID)ar.get('accountperson__c'), (String)ar.get('name')); // store to retrieve person's name
         }
         showData = false;
                 
@@ -67,7 +64,7 @@ public with sharing class Report_CANS_PBSOverTimeGraph {
 
 
         // get the selected person's name
-        selectedPerson = mapPBS.get(selectedPBS);
+        selectedPerson = [select name from account where id = :selectedPBS].name;
 
         // get the CANS scores for this person being served
         pbsCANS = new List<CANSdata>();
