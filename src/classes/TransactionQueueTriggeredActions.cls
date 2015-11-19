@@ -33,8 +33,11 @@ public without sharing class TransactionQueueTriggeredActions {
 						String jsonstring = json.serialize( apWithoutSharing );
 						//system.debug( 'GOT RESULT: '  + jsonstring);
 
+						// break up the string if necessary
+						storeResultString( newreq, jsonstring );
+						
+						
 						// update the request as having been fulfilled
-						newreq.return_value__c = jsonstring;
 						newreq.fulfilled__c = true;
 						newreq.Date_Time_Fulfilled__c = DateTime.Now();
 						
@@ -131,6 +134,10 @@ public without sharing class TransactionQueueTriggeredActions {
                         // serialize the result
                         String jsonstring = json.serialize(issaAssessment);
                         //system.debug( 'GOT RESULT: '  + jsonstring);
+
+						// break up the string if necessary
+						storeResultString( newreq, jsonstring );
+
 
                         // update the request as having been fulfilled
                         newreq.return_value__c = jsonstring;
@@ -274,5 +281,27 @@ public without sharing class TransactionQueueTriggeredActions {
 			// update the request back to the user
 			update newreq;
 			}
+	}
+	
+	void storeResultString( transaction_queue__c req, String longstring) {
+		
+			Pattern p = Pattern.compile('(.{1,131072})+');
+			Matcher m = p.matcher(longstring);
+			String[] parts = new String[0];
+			while(m.find()) {
+				parts.add(m.group(0));
+			}
+			
+			system.debug('THE STRING BROKEN UP:' + parts);
+			if ( parts.size() > 0 )
+				req.return_value__c = parts[0];
+			if (parts.size() > 1 )
+				req.return_value_2__c = parts[1];
+			if ( parts.size() > 2 )
+				req.return_value_3__c = parts[2];
+			if ( parts.size() > 3 )
+				req.return_value_4__c = parts[3];
+			if ( parts.size() > 4 )
+				req.return_value_5__c = parts[4];
 	}
 }
