@@ -53,11 +53,11 @@ public with sharing class AdmissionViewExtension {
     	
     	showCANS = false;
     	// look for this op grp in the custom setting
-    	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :curUser.operating_group__c];
+    	List<CANS_Settings__c> cansList = [ select name, state__c, programs__c from CANS_Settings__c where name = :getOperatingGroup()];
     	// this op group isn't allowed 
     	if ( cansList.size() == 0 )
     		return;
-    	
+    		
     	String admState = admission.state__c;
     	
     	Set<string> states = new Set<string>();
@@ -73,7 +73,7 @@ public with sharing class AdmissionViewExtension {
     	
     	// if there's a state listed, check against admission state
     	// if no states are listed, then all states apply
-    	if ( states.size() > 0 && !states.contains( admState )  )
+    	if ( states.size() > 0 && !states.contains( admState ) )
     		return;
     		
     	// if there's a program listed, check against SA programs - check both alias and full program id
