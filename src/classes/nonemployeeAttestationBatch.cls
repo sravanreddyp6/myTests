@@ -5,12 +5,12 @@ global class nonemployeeAttestationBatch implements Database.Batchable<sObject>,
 
 	global Database.QueryLocator start(Database.BatchableContext BC){
 		
-		//Comment the line below after pilot
-		List<TMN_User__c> pilotManagers = [SELECT id FROM TMN_User__c WHERE (Alias__c = '001130' or alias__c = '001140')];
+		//Comment the line below after pilot - Sravan for EPIM-195
+		//List<TMN_User__c> pilotManagers = [SELECT id FROM TMN_User__c WHERE (Alias__c = '001130' or alias__c = '001140')];
 		string query = 'SELECT Id, Job_Status__c, Job_title__c, Last_Day__c, First_Name__c,Termination_Date__c,Last_Name__c, Email__c, Manager_Lookup__c, Manager_Lookup__r.Salesforce_User_Account__c FROM TMN_user__c WHERE Current_Person_Type__c =\'Non-Employee\' AND Job_Status__c = \'Active\'';
 		query += ' AND (Last_Day__c = : todayplusone OR Last_Day__c = : todayplusSeven OR Last_Day__c = : todayplusfourteen)';
 		//Comment the line below after pilot
-		query += ' AND Manager_lookup__c IN : pilotManagers';
+		//query += ' AND Manager_lookup__c IN : pilotManagers';
 		system.debug('query============= '+query);
 		return Database.getQueryLocator(query);
 	}
