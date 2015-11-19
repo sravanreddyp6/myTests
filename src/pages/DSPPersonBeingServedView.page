@@ -4,14 +4,16 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
     <apex:variable value="{!pbsViewResponse.contact}" var="contactObj" />
-<!--     <c:PersonalRecord pbsId="{!PBSId}" parentPage="PBS" /> -->
+
     <br />
     <div id="theWholeForm">
     <apex:form id="FormId">
         <apex:pageMessages />
         <!--Person Being Served Section-->
-        <apex:pageBlock id="PBSDetailID" title="Person Being Served">            
+        <apex:pageBlock id="PBSDetailID" mode="maindetail">
+        <div class="tmn-h1">Person Being Served</div>            
             <apex:pageBlockSection title="Person Being Served" showHeader="false" columns="2" collapsible="false" id="pbsOutPutsectionId">
                 <!--  view -->
                 <apex:outputField value="{!contactObj.FirstName}" />
@@ -161,9 +163,9 @@
 
         <!--Related Parties Section-->
         <a id="RP"></a>
-        <apex:pageBlock id="relatedPartiesListId">
-            <apex:pageBlockSection columns="1" title="Related Parties" id="relatedParties" collapsible="false">
-                <apex:pageBlockTable value="{!pbsViewResponse.relPartiesWrapper}" var="relParty">
+        <apex:pageBlock id="relatedPartiesListId" mode="maindetail">
+            <apex:pageBlockSection columns="1" title="Related Parties" id="relatedParties_Alt1_Header" collapsible="false">
+                <apex:pageBlockTable value="{!pbsViewResponse.relPartiesWrapper}" var="relParty" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column value="{!relParty.TypeC}" headerValue="Type"/>
                     <apex:column value="{!relParty.Name}" headerValue="Party Name"/>
                     <apex:column value="{!relParty.Address}" headerValue="Address"/>
@@ -178,100 +180,74 @@
             </apex:pageBlockSection>
         </apex:pageBlock>
 
-        <!--Agencies Related to Person Section-->
-<!--         <a name="Agency" id="Agency"></a> -->
-<!--         <apex:pageBlock id="relatedAgenciesId" rendered="{!pbsViewResponse.showDiagnosis}"> -->
-<!--             <apex:pageBlockSection columns="1" title="Agencies Involved With Individual" id="relatedAgencies" collapsible="false"> -->
-<!--                 <apex:pageBlockSectionItem > -->
-<!--                 </apex:pageBlockSectionItem> -->
-<!--                 <apex:pageBlockTable value="{!pbsViewResponse.relAgencies}" var="relAgency"> -->
-<!--                     <apex:column value="{!relAgency.Name}" /> -->
-<!--                     <apex:column value="{!relAgency.Address__c}" /> -->
-<!--                     <apex:column value="{!relAgency.Phone__c}" /> -->
-<!--                     <apex:column value="{!relAgency.Reason_for_Involvement__c}" /> -->
-<!--                 </apex:pageBlockTable> -->
-<!--             </apex:pageBlockSection> -->
-<!--         </apex:pageBlock> -->
-
         <!--Diagnosis Section -->
-<!--         <a name="Diag" id="Diag" /> -->
-<!--         <apex:pageBlock id="Diagnosis" rendered="{!pbsViewResponse.showDiagnosis && contactObj.MailingState != 'Arizona'}"> -->
-<!--             <apex:pageBlockSection title="Diagnosis" showHeader="true" columns="1" collapsible="false"> -->
-<!--                 <apex:pageblockTable value="{!pbsViewResponse.diagnosis}" var="diag" rendered="{!(pbsViewResponse.diagnosis.size>0)}"> -->
-<!--                     <apex:column headerValue="Effective Date" value="{!diag.Effective_Date__c}" /> -->
-<!--                     <apex:column headerValue="Service Assignment"><a href="/{!diag.Service_Assignment__c}">{!diag.Service_Assignment__r.Name}</a> -->
-<!--                     </apex:column> -->
-<!--                     <apex:column value="{!diag.Primary_Diagnosis__c}" headerValue="Primary" /> -->
-<!--                     <apex:column value="{!diag.Secondary_Diagnosis__c}" headerValue="Secondary" /> -->
-<!--                     <apex:column value="{!diag.Axis_I__c}" headerValue="Axis I" /> -->
-<!--                     <apex:column value="{!diag.Axis_II__c}" headerValue="Axis II" /> -->
-<!--                     <apex:column value="{!diag.Axis_III__c}" headerValue="Axis III" /> -->
-<!--                     <apex:column value="{!diag.Axis_IV__c}" headerValue="Axis IV" /> -->
-<!--                     <apex:column value="{!diag.Axis_V__c}" headerValue="Axis V" /> -->
-<!--                     <apex:column value="{!diag.Comments__c}" headerValue="Comments" /> -->
-<!--                 </apex:pageblockTable> -->
-<!--                 <apex:outputText value="No diagnoses to display" rendered="{!(pbsViewResponse.diagnosis.size=0)}" /> -->
-<!--             </apex:pageBlockSection> -->
-<!--         </apex:pageBlock> -->
+         <a name="Diag" id="Diag" /> 
+         <apex:pageBlock id="Diagnosis" mode="maindetail"> 
+             <apex:pageBlockSection title="Diagnosis" showHeader="true" columns="1" id="diag_Alt1_Header" collapsible="false"> 
+                 <apex:pageblockTable value="{!pbsViewResponse.diagnosis}" var="diag" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  rendered="{!(pbsViewResponse.diagnosis.size>0)}"> 
+                     <apex:column value="{!diag.ICD__r.name}" headerValue="ICD Code" />
+                    <apex:column value="{!diag.ICD__r.Code_Type__c}" />
+                    <apex:column value="{!diag.ICD__r.Icd_Description__c}" />
+                    <apex:column headerValue="Date and Time of Diagnosis" >
+                    	<c:MilitaryDatetime datetimeval="{!diag.Effective_Date__c}" />
+                    </apex:column>
+                    <apex:column value="{!diag.Status__c}" headerValue="Status" />
+                    <apex:column value="{!diag.Type__c}" headerValue="Type" /> 
+                 </apex:pageblockTable> 
+                 <apex:outputText value="No diagnoses to display" rendered="{!(pbsViewResponse.diagnosis.size=0)}" /> 
+             </apex:pageBlockSection> 
+         </apex:pageBlock> 
         
         <a id="allergy"></a>
-        <apex:pageBlock title="Allergy" >
+        <apex:pageBlock mode="maindetail">
+        <div class="tmn-h1">Allergy</div>
             <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'Allergy'))}">
                 <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['Allergy']}"
                     columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['Allergy']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
                     type="Allergy" displayTitle="false" style="padding:5px;text-align:left;" />
             </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'Allergy'))}" style="padding-left:10px;padding-top:3px">No allergies to display</apex:outputPanel>
         </apex:pageBlock>
         <a id="immunization"></a>
-        <apex:pageBlock title="Immunization - Adult" >
+        <apex:pageBlock mode="maindetail" rendered="{!contactObj.age__c >= 18}">
+        <div class="tmn-h1">Immunization - Adult</div>
             <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'Immunization - Adult'))}">
                 <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['Immunization - Adult']}"
                     columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['Immunization - Adult']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
                     type="Immunization - Adult" displayTitle="false" style="padding:5px;text-align:left;" />
             </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'Immunization - Adult'))}" style="padding-left:10px;padding-top:3px">No immunizations to display</apex:outputPanel>
         </apex:pageBlock>
-        <apex:pageBlock title="Immunization - Child" >
+        <apex:pageBlock mode="maindetail" rendered="{!contactObj.age__c < 18}">
+        <div class="tmn-h1">Immunization - Child</div>
             <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'Immunization - Child'))}" >
                 <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['Immunization - Child']}"
                     columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['Immunization - Child']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
                     type="Immunization - Child" displayTitle="false" style="padding:5px;text-align:left;" />
             </apex:outputPanel>
+             <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'Immunization - Child'))}" style="padding-left:10px;padding-top:3px">No immunizations to display</apex:outputPanel>
         </apex:pageBlock>
         <a id="PPDSkinTest"></a>
-        <apex:pageBlock title="PPD Skin Test"  >
+        <apex:pageBlock mode="maindetail">
+        <div class="tmn-h1">PPD Skin Test</div>
             <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'PPD Skin Test'))}" >
                 <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['PPD Skin Test']}"
                     columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['PPD Skin Test']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
                     type="PPD Skin Test" displayTitle="false" style="padding:5px;text-align:left;" />
             </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'PPD Skin Test'))}" style="padding-left:10px;padding-top:3px">No PPD skin tests to display</apex:outputPanel>
         </apex:pageBlock>
         <a id="assistiveDevices"></a>
-        <apex:pageBlock title="Assistive Device" >
+        <apex:pageBlock mode="maindetail">
+        <div class="tmn-h1">Assistive Devices</div>
             <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'Assistive Device'))}">
                 <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['Assistive Device']}"
                     columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['Assistive Device']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
                     type="Assistive Device" displayTitle="false" style="padding:5px;text-align:left;" />
             </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'Assistive Device'))}" style="padding-left:10px;padding-top:3px">No assistive devices to display</apex:outputPanel>
         </apex:pageBlock>
         </apex:form>
         </div>
-<!--         <c:SObjectNotesAndAttachments parentId="{!contactObj.id}" showAction="true" parentPage="PBS"></c:SObjectNotesAndAttachments>  -->
-<!--         <apex:pageBlock > -->
-<!--             PersonBeing Served History Section -->
-<!--             <apex:pageBlockSection title="Person Being Served History" showHeader="true" columns="1" collapsible="false"> -->
-<!--                 <apex:outputText /> -->
-<!--                 <apex:pageBlockTable value="{!pbsViewResponse.personHistory}" var="PBSHistory" rendered="{!(pbsViewResponse.personHistory.size>0)}"> -->
-<!--                     <apex:column headerValue="Date" value=" {!PBSHistory.createddate}" /> -->
-<!--                     <apex:column headerValue="User" value="{!PBSHistory.CreatedBy.Name}" /> -->
-<!--                     <apex:column headerValue="Action"> -->
-<!--                         <apex:outputPanel rendered="{! PBSHistory.field != ''}"> -->
-<!--                             <apex:outputText rendered="{!(PBSHistory.field!='created')}">Changed <b>{!pbsViewResponse.fieldMap[Lower(PBSHistory.field)]}</b> from <b>{!PBSHistory.oldvalue}</b> to <b>{!PBSHistory.newvalue}</b> -->
-<!--                             </apex:outputText> -->
-<!--                             <apex:outputText rendered="{!(PBSHistory.field='created')}">Created.</apex:outputText> -->
-<!--                         </apex:outputPanel>                   -->
-<!--                     </apex:column> -->
-<!--                 </apex:pageBlockTable> -->
-<!--                 <apex:outputText value="No Recent History to display" rendered="{!(pbsViewResponse.personHistory.size=0)}" /> -->
-<!--             </apex:pageBlockSection> -->
-<!--         </apex:pageBlock> -->
+ 
 </apex:page>
