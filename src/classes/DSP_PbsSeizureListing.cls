@@ -56,6 +56,7 @@ public class SeizureWrapper {
 	public datetime startDateTime {get;set;}
 	public string seizureStart_DateTime {get;set;}
 	public string seizureEnd_DateTime {get;set;}
+	public Id ownerId {get;set;}
 	
     public SeizureWrapper(){}	
 	public SeizureWrapper(Seizure__c seizure){
@@ -68,6 +69,8 @@ public class SeizureWrapper {
         this.observedByNameC = seizure.Observed_By__r.Name;
         this.startDate = seizure.StartDate__c;
         this.startDateTime = seizure.Start_DateTime__c;
+        this.ownerId = seizure.CreatedById;
+        
 	}
 	public Seizure__c SeizureSObject(){
 		return new Seizure__c(Id=this.id, 
@@ -83,8 +86,8 @@ public class SeizureWrapper {
 }
 
 public void populateSeizures() {
-    this.seizures = [select id,Observed_By__r.Name, Service_Assignment__r.Name, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c, StartDate__c, Service_Assignment__c
-                     from Seizure__c where Service_Assignment__r.Admission__r.Person_Being_Served__c = : this.PBSid order by Start_DateTime__c desc];
+    this.seizures = [select id,Observed_By__r.Name, Service_Assignment__r.Name, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c, StartDate__c, Service_Assignment__c, CreatedById
+                     from Seizure__c where Service_Assignment__r.Admission__r.Person_Being_Served__c = : this.PBSid and Start_DateTime__c >= : datetime.now().addMonths(-1) order by Start_DateTime__c desc];
 
     activeServAssign = [select id, Name from Service_Assignment__c where Status__c = 'Active' And Admission__r.Person_Being_Served__c = : this.PBSid order by Name];
 /*  if (servAssigns.size() != 1) activeServAssign.add(new SelectOption('', '--Select--'));
@@ -123,7 +126,7 @@ public PageReference saveSeizure() {
 
 public void showEditSeizure() {
         string seizureId = ApexPages.CurrentPage().getParameters().get('seizureId');
-        this.seizure = new SeizureWrapper([select id,Observed_By__r.Name, Service_Assignment__r.Name, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c, StartDate__c from Seizure__c where id = : seizureId]);
+        this.seizure = new SeizureWrapper([select id,Observed_By__r.Name, Service_Assignment__r.Name, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c, StartDate__c, CreatedById from Seizure__c where id = : seizureId]);
 }
 
 public static Datetime getDateTimeFromString(String dateTimeStr) {
