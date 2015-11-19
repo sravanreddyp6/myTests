@@ -1,4 +1,4 @@
-<apex:page title="Seizures" controller="TxnQueueResponseController" extensions="DSP_PbsSeizureListing" sidebar="false" standardStylesheets="true">
+<apex:page title="Seizures" controller="TxnQueueResponseController" extensions="DSP_PbsSeizureListing" sidebar="false" standardStylesheets="true" tabStyle="ESD_Home_DSP__tab">
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -8,7 +8,6 @@
     <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
     	
-<!--     <c:PersonalRecord pbsId="{!PBSId}" parentPage="PBS" /> -->
 <br />
     <style type="text/css">
         .custPopup{
@@ -220,6 +219,8 @@
             });
         });
     </script>
+    
+<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + pbsSeizureListing.PBSid}" />
 <apex:form id="myFRM">
     <apex:actionFunction name="saveSeizure" action="{!saveSeizure}" status="saveSeizureStatus" oncomplete="seizureScrollToTop(true); if (closeSeizure && jQuery('.errorMsg').length == 0) closeModalDialogSA('seizureTrackingModal', 'div');" rerender="SeizureTrackingList,seizureEntry,seizureMessages" />
     <apex:actionFunction name="showEditSeizure" action="{!showEditSeizure}" status="AddEditSeizureStatus" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600);seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry, seizureMessages">
@@ -301,7 +302,9 @@
 
                 <apex:pageBlockTable value="{!SeizuresWrapper}" var="sWrapper" rendered="{!SeizuresWrapper.size>0}" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                     <apex:column headerValue="Action" width="5%">
-                         <a href="#" onclick="loadSeizure('{!sWrapper.Id}');return false; ">Edit</a>
+                        <apex:outputPanel rendered="{! sWrapper.ownerId == $User.Id}" layout="none" >
+                            <a href="#" onclick="loadSeizure('{!sWrapper.Id}');return false; ">Edit</a>
+                        </apex:outputPanel>
                     </apex:column>
                     <apex:column headerValue="Service Assignment" width="15%" value="{!sWrapper.serviceAssignmentName}" />
                     <apex:column headerValue="Seizure Start Time" width="15%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!sWrapper.startDateTime}"/></apex:column>
