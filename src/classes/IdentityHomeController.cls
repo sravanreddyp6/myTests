@@ -182,7 +182,6 @@ public with sharing class IdentityHomeController {
 			if(userList.size()>0 && userList[0].Salesforce_User_Account__c!=null) {
 	        RecordsList = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c  FROM TMN_User__c 
 	                   WHERE LastModifiedById =: userList[0].Salesforce_User_Account__c  ORDER BY LastModifiedDate  desc  LIMIT 10];
-	        System.debug('Records Count is ' + Records.size());
 			}
 			return RecordsList;
 	    }
