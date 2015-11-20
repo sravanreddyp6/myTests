@@ -249,7 +249,7 @@
         </apex:form>      
     </apex:pageBlockSection>
 
-        <apex:pageBlockSection columns="1" title="My Recently Edited Workforce">
+        <apex:pageBlockSection columns="1" title="My Recently Edited Workforce" rendered="{!Records.size!=0}">
             <apex:form >
             <apex:pageBlockTable value="{!Records}" var="r">
                 <apex:column headerValue="Name" >
