@@ -231,14 +231,12 @@ public with sharing class EvalRepeaters {
 			permissionSets.add(assignment.PermissionSet.Name);
 		}
 
-		if ( evalname.indexOf('CNA') < 0 ) {
-			if ( permissionSets.contains('iServe_Tier_III') || permissionSets.contains('iServe_Tier_II')) {
-				canEditEvalType = true;
-			}
-		}	else if ( permissionSets.contains('iServe_Tier_III') ||  permissionSets.contains('iServe_Tier_I') || permissionSets.contains('iServe_Tier_II')) {
-			// anyone can edit CNA
-			// but only if owner EC-173
-			canEditEvalType = ( parentevalOwnerID == UserInfo.getUserId());
+		// EC-305 - different users can add CNA entries now
+		if ( permissionSets.contains('iServe_Tier_III') || permissionSets.contains('iServe_Tier_II')) {
+			canEditEvalType = true;
+		}
+		if (evalname.indexOf('CNA') < 0 && permissionSets.contains('iServe_Tier_I')) {
+			canEditEvalType = true;
 		}
 
 		return canEditEvalType;

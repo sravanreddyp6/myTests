@@ -522,18 +522,18 @@ public with sharing class EvalDynamicExt {
 			showRevise = false;
 			showShiftDone = false;
 
-
+			// show esign only for Draft
+			if (thiseval.status__c == 'Draft') {
+				showEsign = true;
+			}
 			if ( isUserOwner) {
 				// EC-198 - 06/10/2015 - show disregard for all statuses other than already diregarded!
 				system.debug( ' isuserowner is true, status is ' + thiseval.status__c);
-				if ( thiseval.status__c != 'Disregard')
+				if ( thiseval.status__c != 'Disregard') {
 					showDisregard = true;
-
-
-				// show esign only for Draft
-				if ( thiseval.status__c == 'Draft') {
-					showEsign = true;
 				}
+			} else if (isDON) {
+				showEndOfShiftDON = true;
 			}
 
 			if ( thiseval.status__c == 'Pending Approval' && isApprover) {
@@ -541,14 +541,14 @@ public with sharing class EvalDynamicExt {
 			}
 		}
 
-		if (!isUserOwner && evalType != 'Restraint Event' && evalType != 'Residential') {  // EC-153 - Let other people finalize Restraint Events, EC-219 - Let other people edit Residential
+		if (!isUserOwner && evalType != 'Restraint Event' && evalType != 'Residential' && evalType != 'CNA Workbook') {  // EC-153 - Let other people finalize Restraint Events, EC-219 - Let other people edit Residential
 			showEsign=false;
 			showRevise = false;
 			// show disregard for owner or supervisory user - TO DO: figure out who is in perm set above this user
 			showDisregard = false;
 
 			if (isDON) {
-				if ((evalType == 'Head to Toe' || evalType == 'CNA Workbook') && thisEval.Status__c == 'Draft') {  // EC-163
+				if (evalType == 'Head to Toe' && thisEval.Status__c == 'Draft') {  // EC-163
 					showEndOfShiftDON = true;
 				}
 			}
