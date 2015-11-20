@@ -174,16 +174,21 @@ public with sharing class GenerateEvalComponent {
 			ORDER BY whatid__c, Sequence__c
 		];
 		// get any populated values for this eval and section
-		List<Eval_Value__c> listEvalValues = Database.query(
-			'SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c, ' +
-			'       text_over_250__c, text_under_250__c, eval__c, eval__r.length__c, ' +
-			'       eval__r.composite__c ' +
-			'  FROM eval_value__c '+
-			' WHERE eval__c in :listEvalItems ' +
-			'   AND eval__r.Visible__c = true ' +
-			'   AND what_id__c = :evaluationID ' +
-			'   AND eval_Section_Id__c = :evalSectionId'
-		);
+		// The query to get these populated values can potentially run VERY slow, so we'll
+		// optimize by not running it when we KNOW it's not necessary (e.g. when we're doing insert)
+		List<Eval_Value__c> listEvalValues = new List<Eval_Value__c>();
+		if (batchInsert || evalSectionId != '') {
+			listEvalValues = Database.query(
+				'SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c, ' +
+				'       text_over_250__c, text_under_250__c, eval__c, eval__r.length__c, ' +
+				'       eval__r.composite__c ' +
+				'  FROM eval_value__c '+
+				' WHERE eval__c in :listEvalItems ' +
+				'   AND eval__r.Visible__c = true ' +
+				'   AND what_id__c = :evaluationID ' +
+				(batchInsert ? '' :'   AND eval_Section_Id__c = :evalSectionId')  // We don't need to fill in the values for batch insert, but we do need to figure out whether a section should be bypassed or not
+			);
+		}
 		Set<String> sectionsToBypass = new Set<String>();
 		for (Eval_Value__c value: listEvalValues) {
 			if (!repeatables.contains(value.Eval__r.Composite__c)) {
@@ -192,8 +197,12 @@ public with sharing class GenerateEvalComponent {
 		}
 		Component.Apex.OutputPanel fullPanel = new Component.Apex.OutputPanel(layout='none');
 		for (String composite: sectionMap.keySet()) {
-			if (!batchInsert || !sectionsToBypass.contains(composite)) {
-				fullPanel.childComponents.add(generateSubsectionHtml(sectionMap.get(composite), dd, listEvalValues));
+			if (!sectionsToBypass.contains(composite)) {
+				if (batchInsert) {
+					fullPanel.childComponents.add(generateSubsectionHtml(sectionMap.get(composite), dd, new List<Eval_Value__c>()));
+				} else {
+					fullPanel.childComponents.add(generateSubsectionHtml(sectionMap.get(composite), dd, listEvalValues));
+				}
 			}
 		}
 		return fullPanel;
