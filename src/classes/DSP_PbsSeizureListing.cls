@@ -1,6 +1,14 @@
 public without sharing class DSP_PbsSeizureListing {
 
 public SeizureWrapper seizure {get;set;}
+
+public boolean isRwMN {get{
+	if (this.isRwMN == null)
+    this.isRwMN = [SELECT operating_group__c From User WHERE ID=:UserInfo.getUserId() limit 1].operating_group__c == 'Redwood' && 
+           [Select state__c from Admission__c where Status__c = 'Active' and Person_Being_Served__c =: PBSid limit 1].state__c == 'MN' ;
+    return this.isRwMN;
+}private set;}
+
 private list<Seizure__c> seizures;
 public list<SeizureWrapper> getSeizuresWrapper() {
 	list<SeizureWrapper> sWrapper = new list<SeizureWrapper>();
@@ -57,6 +65,9 @@ public class SeizureWrapper {
 	public string seizureStart_DateTime {get;set;}
 	public string seizureEnd_DateTime {get;set;}
 	public Id ownerId {get;set;}
+	public String seizureDescription {get;set;}
+	public String preSeizurePhase {get;set;}
+	public String postSeizurePhase {get;set;}
 	
     public SeizureWrapper(){}	
 	public SeizureWrapper(Seizure__c seizure){
@@ -70,7 +81,9 @@ public class SeizureWrapper {
         this.startDate = seizure.StartDate__c;
         this.startDateTime = seizure.Start_DateTime__c;
         this.ownerId = seizure.CreatedById;
-        
+        this.seizureDescription = seizure.Seizure_Description__c;
+        this.preSeizurePhase = seizure.Pre_seizure_phase__c;
+        this.postSeizurePhase = seizure.Post_seizure_phase__c;
 	}
 	public Seizure__c SeizureSObject(){
 		return new Seizure__c(Id=this.id, 
@@ -79,14 +92,18 @@ public class SeizureWrapper {
 		                      Start_DateTime__c = getDateTimeFromString(this.seizureStart_DateTime), 
 		                      End_DateTime__c = getDateTimeFromString(this.seizureEnd_DateTime), 
 		                      Observed_By__c = UserInfo.getUserId(), 
-                              Duplicate_Entry__c = this.duplicateEntry
+                              Duplicate_Entry__c = this.duplicateEntry,
+                              Seizure_Description__c = this.seizureDescription,
+                              Pre_seizure_phase__c = this.preSeizurePhase,
+                              Post_seizure_phase__c = this.postSeizurePhase
 		                      );
 	}
 	
 }
 
 public void populateSeizures() {
-    this.seizures = [select id,Observed_By__r.Name, Service_Assignment__r.Name, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c, StartDate__c, Service_Assignment__c, CreatedById
+    this.seizures = [select id,Observed_By__r.Name, Service_Assignment__r.Name, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c, StartDate__c, Service_Assignment__c, CreatedById,
+                            Seizure_Description__c, Pre_seizure_phase__c, Post_seizure_phase__c
                      from Seizure__c where Service_Assignment__r.Admission__r.Person_Being_Served__c = : this.PBSid and Start_DateTime__c >= : datetime.now().addMonths(-1) order by Start_DateTime__c desc];
 
     activeServAssign = [select id, Name from Service_Assignment__c where Status__c = 'Active' And Admission__r.Person_Being_Served__c = : this.PBSid order by Name];
@@ -126,7 +143,7 @@ public PageReference saveSeizure() {
 
 public void showEditSeizure() {
         string seizureId = ApexPages.CurrentPage().getParameters().get('seizureId');
-        this.seizure = new SeizureWrapper([select id,Observed_By__r.Name, Service_Assignment__r.Name, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c, StartDate__c, CreatedById from Seizure__c where id = : seizureId]);
+        this.seizure = new SeizureWrapper([select id,Observed_By__r.Name, Service_Assignment__r.Name, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, Duplicate_Entry__c, StartDate__c, CreatedById, Seizure_Description__c, Pre_seizure_phase__c, Post_seizure_phase__c from Seizure__c where id = : seizureId]);
 }
 
 public static Datetime getDateTimeFromString(String dateTimeStr) {
