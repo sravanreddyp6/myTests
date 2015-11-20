@@ -207,7 +207,7 @@ public with sharing class GenerateEvalComponent {
 				}
 			}
 		}
-		if (numSection == 0) {
+		if (numSection == 0 && cat != null) {
 			fullPanel.childComponents.add(new Component.Apex.OutputText(value='No section can be added at this time'));
 		}
 		return fullPanel;
