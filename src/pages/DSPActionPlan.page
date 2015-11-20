@@ -94,6 +94,7 @@
 background-color: cornsilk;
 }
 </style>
+<apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>
 
 <c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + InputParams}" />
 <br />
@@ -112,7 +113,7 @@ background-color: cornsilk;
     	<apex:outputText label="Baseline" value="{! IF(response.apw.baseline, 'Yes', 'No')}" />   
     	<apex:outputText label="Finalized By" value="{!response.apw.fby}" />
     	<apex:outputText value="" />
-    	<apex:outputText label="Finalized Date" value="{!response.apw.fdate}" /> 	
+    	<apex:outputText label="Finalized Date" value="{! response.apw.fdate}" /> 	
     </apex:pageBlockSection>
 
     <apex:pageBlockSection title="" collapsible="false" columns="1" >
@@ -128,16 +129,18 @@ background-color: cornsilk;
                                 </td>                
                                 <td>
                                     <apex:outputPanel layout="block" style="padding-bottom:20px">
-                                        <apex:outputText value="{!response.planStuff[g].Description}" />
+                                        <apex:outputText value="{!response.planStuff[g].Description}" escape="false" style="white-space:pre;"/>
                                     </apex:outputPanel>            
                                 </td>            
                             </tr>
                                     <apex:repeat value="{!response.planStuff[g].GoalObjs}" var="o" >
                             <tr>
-                                            <td style="text-indent: 1em;"><apex:outputText ><b>{!response.ObjAlias}</b></apex:outputText> </td>                    
+                                            <td style="text-indent: 1em;">
+                                            <apex:outputText ><b>{!response.ObjAlias}</b></apex:outputText> 
+                                            </td>                    
                                             <td>
                                                 <apex:outputPanel layout="block" id="theObj" style="padding-bottom:.5em;" styleClass="newObjClass">
-                                                    <apex:outputText value="{!response.planStuff[g].GoalObjs[o].Description}"/> 
+                                                    <apex:outputText value="{!response.planStuff[g].GoalObjs[o].Description}" escape="false" style="white-space:pre;"/> 
 
                                                     <table style="width: 100%;">
                                                     <tr>
@@ -164,7 +167,7 @@ background-color: cornsilk;
                                                     </td> 
                                                     <td>
                                                         <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
-                                                              <apex:outputText value="{!response.planStuff[g].GoalObjs[o].ObjActs[a].description}"/>
+                                                              <apex:outputText value="{!response.planStuff[g].GoalObjs[o].ObjActs[a].description}" escape="false" style="white-space:pre;" />
                                                                                                           
                                                         </apex:outputPanel>
                                                     </td>
