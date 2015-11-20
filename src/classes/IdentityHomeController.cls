@@ -8,7 +8,7 @@ public with sharing class IdentityHomeController {
     public String generatedKey1 {get; set;}
     public String generatedKey2 {get; set;}
     public String aliasName {get; set;}  
-    public List<TMN_User__c> Records {get; set;}
+    public List<TMN_User__c> Records ;
     public List<TMN_User__c> mySubordinates {get; set;}
     public List<TMN_User__c> searchResult {get; set;}
     public List<TMN_User__c> searchDelegateResult ;
@@ -52,12 +52,12 @@ public with sharing class IdentityHomeController {
     public IdentityHomeController() {
        searchDelegateResult = new List<TMN_User__c> (); 
         searchNonEmpResult = new List<TMN_User__c> (); 
-        Records = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c  
+      /**  Records = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c  
                    FROM TMN_User__c 
                    WHERE lastvieweddate != null 
                    ORDER BY lastvieweddate desc 
                    LIMIT 10];
-        System.debug('Records Count is ' + Records.size());
+        System.debug('Records Count is ' + Records.size());*/
                         
         mySubordinates = [SELECT Id 
                           FROM TMN_User__c 
@@ -176,6 +176,16 @@ public with sharing class IdentityHomeController {
         return myWorkforce;
     }                           
 
+	public List<TMN_User__c> getRecords() {
+	    List<TMN_User__c> RecordsList = new List<TMN_User__c>();
+	    List<TMN_User__c> userList = [select id,name,Salesforce_User_Account__c,Email__c from TMN_User__c where Email__c= :aliasName limit 1];
+			if(userList.size()>0 && userList[0].Salesforce_User_Account__c!=null) {
+	        RecordsList = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c  FROM TMN_User__c 
+	                   WHERE LastModifiedById =: userList[0].Salesforce_User_Account__c  ORDER BY LastModifiedDate  desc  LIMIT 10];
+			}
+			return RecordsList;
+	    }
+	     
     //Build select option list for creation of TMN_User__c records on behalf of.
     public List<SelectOption> getDelValues(){
         List<SelectOption> dl = new List<SelectOption>();
