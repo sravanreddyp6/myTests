@@ -7,7 +7,6 @@
     <apex:stylesheet value="{!URLFOR($Resource.datetimepicker,  'datetimepicker/jquery.datetimepicker.css')}" />
     <apex:includeScript value="{!URLFOR($Resource.datetimepicker, 'datetimepicker/jquery.datetimepicker.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.momentJs)}" />
-    	
 <br />
     <style type="text/css">
         .custPopup{
@@ -152,7 +151,10 @@
             var formatEnd = new Date(moment(new Date(endValue)).format());
 
             j$('#seizureMessages').html('');
-            if (startValue == '' && endValue == '') {
+            if (j$('[id$=seizureEntry_serviceAssignmentId]').val() == '') {
+                seizureErrors.push('Please select a Service Assignment from the list.');
+            }
+            else if (startValue == '' && endValue == '') {
                 seizureErrors.push('The Date must contain a valid value. Please enter the date of the Seizure event.');
             }
             else if (startValue == '') {
@@ -252,6 +254,21 @@
 	                    <apex:outputText value="{!seizure['observedByNameC']}" id="seizureEntry_observedBy"/>
                     </apex:pageBlockSectionItem>
                     
+                    <apex:pageBlockSectionItem helpText="Note movements observed, body parts involved, level of consciousness, etc.)" rendered="{!isRwMN}">
+	                    <label for="seizureEntry_Desc" >Seizure Description</label>                 
+                        <apex:inputText value="{!seizure['seizureDescription']}" id="seizureEntry_Desc" />
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem helpText="Describe what the person was doing prior to the seizure and if there were any indications of the seizure activity prior to it’s occurrence" rendered="{!isRwMN}">
+                        <label for="seizureEntry_preSeizurePhase" >Pre-seizure phase</label>                 
+                        <apex:inputText value="{!seizure['preSeizurePhase']}" id="seizureEntry_preSeizurePhase" />
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem helpText="Note what the person did after the seizure- immediately, 1 hour, and 2 hours. Examples might be rested for 1 hour, cried, etc" rendered="{!isRwMN}">
+                        <label for="seizureEntry_postSeizurePhase" >Post-seizure phase</label>                 
+                        <apex:inputText value="{!seizure['postSeizurePhase']}" id="seizureEntry_postSeizurePhase" />
+                    </apex:pageBlockSectionItem>                
+                
                     <apex:pageBlockSectionItem > <apex:outputLabel Value="Comments"/>
                         <apex:inputTextarea value="{!seizure['comments']}" id="seizureEntry_comments" />
                     </apex:pageBlockSectionItem>
@@ -306,10 +323,13 @@
                             <a href="#" onclick="loadSeizure('{!sWrapper.Id}');return false; ">Edit</a>
                         </apex:outputPanel>
                     </apex:column>
-                    <apex:column headerValue="Service Assignment" width="15%" value="{!sWrapper.serviceAssignmentName}" />
+<!--                     <apex:column headerValue="Service Assignment" width="15%" value="{!sWrapper.serviceAssignmentName}" /> -->
                     <apex:column headerValue="Seizure Start Time" width="15%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!sWrapper.startDateTime}"/></apex:column>
                     <apex:column headerValue="Seizure End Time" width="15%"><c:MilitaryDateTimeWithSeconds dateTimeVal="{!sWrapper.endDateTime}"/></apex:column>
                     <apex:column headerValue="Observed By" value="{!sWrapper.observedByNameC}" width="15%"/>
+                    <apex:column headerValue="Description" value="{!sWrapper.seizureDescription}" width="15%" rendered="{!isRwMN}"/>
+                    <apex:column headerValue="Pre-seizure phase" value="{!sWrapper.preSeizurePhase}" width="15%" rendered="{!isRwMN}"/>
+                    <apex:column headerValue="Post-seizure phase" value="{!sWrapper.postSeizurePhase}" width="15%" rendered="{!isRwMN}"/>
                     <apex:column headerValue="Comments" value="{!sWrapper.comments}" width="30%"/>
                     <apex:column headerValue="Duplicate Entry" width="5%"> 
                         <apex:image value="/img/checkbox_checked.gif" rendered="{!sWrapper.duplicateEntry}" /> 
