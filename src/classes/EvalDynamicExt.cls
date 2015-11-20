@@ -32,6 +32,8 @@ public with sharing class EvalDynamicExt {
 	public Boolean isTierIII { get; set; }
 	public Boolean isTierII { get; set; }
 
+	public Boolean disregardCloneDisabled { get; set; }
+
 	public String getEvalStatusDate() {
 		if (evalType == 'Head to Toe') {
 			return thisEval.Shift_Start_Time__c.format('MM/dd/yyyy HH:mm:ss', UserInfo.getTimeZone().toString() );
@@ -345,7 +347,6 @@ public with sharing class EvalDynamicExt {
 
 
 	public pageReference disregardAssessment() {
-
 		Savepoint sp2 = Database.setSavepoint(); // Make sure the whole transaction is rolled back to prevent side effects
 
 		if(evalType == 'Residential' || evalType == 'CNA Workbook'){
@@ -370,8 +371,12 @@ public with sharing class EvalDynamicExt {
 
 			try{
 				update thisEval;
-				Evaluation__c clonedShift = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian', PBSId);
-				PageReference pg = new PageReference('/apex/EvalDynamic?evalId='+clonedShift.Id+'&evalType='+evalType+'&opGrp=Care Meridian');
+				Id evalId = thisEval.Id;
+				if (!disregardCloneDisabled) {
+					Evaluation__c clonedShift = EvalDynamicExt.cloneEvalContent(thisEval, this.evalType, 'Care Meridian', PBSId);
+					evalId = clonedShift.Id;
+				}
+				PageReference pg = new PageReference('/apex/EvalDynamic?evalId=' + evalId + '&evalType=' + evalType + '&opGrp=Care Meridian');
 				pg.setRedirect(true);
 				return pg;
 			} catch (exception e){

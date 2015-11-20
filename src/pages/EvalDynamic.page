@@ -159,12 +159,7 @@
 			}
 
 			if (evalType == 'Head to Toe') {
-				var c = confirm('Disregarding this Assessment will create a new Draft and you will be redirected to the new one');
-				if (c == true) {
-					disregardAssessment();
-				} else {
-					return null;
-				}
+				jQuery("[id$='dialog-confirm-disregard']").dialog("open");
 			}
 
 			if (evalType == 'Restraint Event') {
@@ -258,6 +253,23 @@
 					},
 					Cancel: function() {
 						jQuery(this).dialog("close");
+					}
+				}
+			});
+			$("[id$='dialog-confirm-disregard']").dialog({
+				resizable: false,
+				draggable: false,
+				width: 450,
+				modal: true,
+				autoOpen: false,
+				buttons: {
+					"Disregard and Clone": function() {
+						jQuery(this).dialog("close");
+						disregardAssessment();
+					},
+					"Disregard Completely": function() {
+						jQuery(this).dialog("close");
+						disregardAssessment(true);
 					}
 				}
 			});
@@ -481,7 +493,9 @@
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="" uniqueId="2" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialog2(); saveLateEntryNote(); return false;" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="EndOfShiftEsign" uniqueId="Esign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialogEsign(); location.reload(true); return false;" />
 		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
-		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs" />
+		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs">
+			<apex:param name="cloneDisabled" value="" assignTo="{!disregardCloneDisabled}" />
+		</apex:actionFunction>
 		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
 		<apex:actionregion >
 			<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
@@ -584,6 +598,14 @@
 			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
 			</apex:outputPanel>
 			Do you want to save before navigating away?
+		</apex:outputPanel>
+	</apex:outputPanel>
+
+	<apex:outputPanel id="dialog-confirm-disregard" title="Confirm disregard" layout="block">
+		<apex:outputPanel layout="inline">
+			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+			</apex:outputPanel>
+			Do you want to disregard and clone the evaluation, or disregard it completely?
 		</apex:outputPanel>
 	</apex:outputPanel>
 
