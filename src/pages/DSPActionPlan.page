@@ -8,32 +8,6 @@
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 
-<script>
-    function setFocusOnLoad() {}
-    var actionPlan = {! txnresponse };
-    var j$ = jQuery.noConflict();
-j$(document).ready(function($) {
-    $("[id='actionPlan.ActionPlan.Name']").html(actionPlan.ActionPlan.Name);
-    $("[id='actionPlan.ActionPlan.Service_Assignment__r.Admission__r.Name']").html(actionPlan.ActionPlan.Service_Assignment__r.Admission__r.Name);
-    $("[id='actionPlan.ActionPlan.Service_Assignment__r.Name']").html(actionPlan.ActionPlan.Service_Assignment__r.Name);
-    $("[id='actionPlan.ActionPlan.Effective_Date__c']").html(actionPlan.ActionPlan.Effective_Date__c);
-    $("[id='actionPlan.ActionPlan.Target_Date__c']").html(actionPlan.ActionPlan.Target_Date__c);
-    $("[id='actionPlan.ActionPlan.Date_Service_Started__c']").html(actionPlan.ActionPlan.Date_Service_Started__c);
-    $("[id='actionPlan.ActionPlan.Status__c']").html(actionPlan.ActionPlan.Status__c);
-    createtbl();
-    
-});
-
-function createtbl(){
-    j$('.acktbl').dataTable({"bPaginate": false, "bFilter": true, "bRetrieve": true, "aoColumnDefs": [
-      { "sTitle": " ", "aTargets": [ 0 ] },],
-	"oLanguage": {
-    "sSearch": " "
-  }
-      });
-}
-
-</script>
 <style>
 .nodisplay{display: none; }
 .label{
@@ -126,23 +100,19 @@ background-color: cornsilk;
 <apex:pageMessages id="msg" />
 <apex:pageBlock mode="maindetail">
 
-    <apex:pageBlockSection title="Plan Detail" collapsible="False" columns="1" id="detail_Alt1_Header">
-		<table class="detailList" border="0" cellpadding="0" cellspacing="0">
-		<tbody><tr>
-		<th class="labelCol vfLabelColTextWrap  first " scope="row">Action Plan Name</th><td class="dataCol  first "><span id="actionPlan.ActionPlan.Name"></span></td>
-		<th class="labelCol vfLabelColTextWrap  first " scope="row">Admission</th><td class="dataCol  first "><span id="actionPlan.ActionPlan.Service_Assignment__r.Admission__r.Name"></span></td>
-		</tr><tr>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Service Assignment</th><td class="dataCol "><span id="actionPlan.ActionPlan.Service_Assignment__r.Name"></span></td>
-		<th class="labelCol vfLabelColTextWrap " scope="row">External Plan</th><td class="dataCol "><span id="j_id0:j_id145:j_id172:j_id188:j_id192"><img src="/img/checkbox_unchecked.gif" alt="Not Checked" width="21" height="16" class="checkImg" title="Not Checked" /></span></td>
-		</tr><tr>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Effective Date</th><td class="dataCol "><span id="actionPlan.ActionPlan.Effective_Date__c"></span></td>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Target Date</th><td class="dataCol "><span id="actionPlan.ActionPlan.Target_Date__c"></span></td>
-		</tr><tr>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Date Service Started</th><td class="dataCol "><span id="actionPlan.ActionPlan.Date_Service_Started__c">&nbsp;</span></td>
-		<th class="labelCol vfLabelColTextWrap " scope="row">Status</th><td class="dataCol "><span id="actionPlan.ActionPlan.Status__c"></span></td>
-		</tr><tr>
-		<th class="labelCol vfLabelColTextWrap  last " scope="row">Baseline</th><td class="dataCol  last "><span id="j_id0:j_id145:j_id172:j_id188:j_id197"><img src="/img/checkbox_unchecked.gif" alt="Not Checked" width="21" height="16" class="checkImg" title="Not Checked" /></span></td><td class="labelCol empty">&nbsp;</td><td class="dataCol empty">&nbsp;</td>
-		</tr></tbody></table>
+    <apex:pageBlockSection title="Plan Detail" collapsible="False" columns="2" id="detail_Alt1_Header">
+    	<apex:outputText label="Action Plan Name" value="{!response.apw.apname}" />
+    	<apex:outputText label="Admission" value="{!response.apw.admName}" />
+    	<apex:outputText label="Service Assignment" value="{!response.apw.saName}" />
+    	<apex:outputText label="External Plan" value="{! IF(response.apw.extplan, 'Yes','No')}" />
+    	<apex:outputText label="Effective Date" value=" {!response.apw.effDate}" />
+        <apex:outputText label="Target Date" value=" {!response.apw.endDate}" />
+    	<apex:outputText label="Date Service Started" value=" {!response.apw.startDate}" />
+    	<apex:outputText label="Status" value="{!response.apw.status}" />
+    	<apex:outputText label="Baseline" value="{! IF(response.apw.baseline, 'Yes', 'No')}" />   
+    	<apex:outputText label="Finalized By" value="{!response.apw.fby}" />
+    	<apex:outputText value="" />
+    	<apex:outputText label="Finalized Date" value="{!response.apw.fdate}" /> 	
     </apex:pageBlockSection>
 
     <apex:pageBlockSection title="" collapsible="false" columns="1" >

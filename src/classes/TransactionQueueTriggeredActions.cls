@@ -26,6 +26,7 @@ public without sharing class TransactionQueueTriggeredActions {
 						ID APId = t.input_params__c;
 						
 						// execute the transaction as requested
+						// make sure it still exists
 						Action_plan__c ap = [ select id, name, status__c, service_assignment__c from action_plan__c where id= :APId and status__c='Active Final' LIMIT 1];
 	                    ActionPlan_FormWithoutSharing apWithoutSharing = new ActionPlan_FormWithoutSharing(ap.id); 
 	
@@ -36,7 +37,6 @@ public without sharing class TransactionQueueTriggeredActions {
 						// break up the string if necessary
 						storeResultString( newreq, jsonstring );
 						
-						
 						// update the request as having been fulfilled
 						newreq.fulfilled__c = true;
 						newreq.Date_Time_Fulfilled__c = DateTime.Now();
@@ -46,6 +46,8 @@ public without sharing class TransactionQueueTriggeredActions {
 						// flag the error
 						newreq.fulfilled__c = false;
 						newreq.return_value__c = json.serialize( e.getMessage() );
+						throw(e);
+						return;
 					}
 					
 				}
@@ -284,7 +286,6 @@ public without sharing class TransactionQueueTriggeredActions {
 						storeResultString( newreq, jsonstring );
 						
                         // update the request as having been fulfilled
-
                         newreq.fulfilled__c = true;
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
                     } catch ( Exception e ) {
