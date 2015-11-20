@@ -1523,35 +1523,33 @@
                         <apex:column headerValue="Alias">
                             <a href="#" onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialog('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
                         </apex:column>
-                        <apex:column headerValue="Nick Name">
+                       <apex:column headerValue="Program Code">
+                            <apex:outputText >{!r.ProgramId__c}</apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="NickName">
                             <apex:outputText >{!r.Location_Nickname__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Program Code">
-                            <apex:outputText >{!r.ProgramID__c}</apex:outputText>
+                        <apex:column headerValue="Address" >
+		     				<apex:outputPanel >
+		     					<c:AddressDisplay Street1="{!r.Street__c}" city="{!r.City__c}"
+			  						state="{!r.State__c}" zip="{!r.Zip__c}" /><br />
+			  					<apex:outputText value="{!r.Phone__c}" />	
+			  				</apex:outputPanel>
+		     			</apex:column>
+                        <apex:column headerValue="TMN Scope">
+                            <apex:outputText >{!r.TMN_Scope__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Setting">
-                            <apex:outputText >{!r.Setting__c}</apex:outputText>
+                        <apex:column headerValue="Population Served">
+                            <apex:outputText >{!r.Population_Served__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Program">
-                            <apex:outputText >{!r.Program__c}</apex:outputText>
+                        <apex:column headerValue="Physical Location">
+                            <apex:outputText >{!r.Physical_Location__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Service Value">
-                            <apex:outputText >{!r.Service_Value__c}</apex:outputText>
+                        <apex:column headerValue="Service Type">
+                            <apex:outputText >{!r.Service_Type__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Street">
-                            <apex:outputText >{!r.Street__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="City">
-                            <apex:outputText >{!r.City__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="State">
-                            <apex:outputText >{!r.State__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="Zip">
-                            <apex:outputText >{!r.Zip__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="Phone">
-                            <apex:outputText >{!r.Phone__c}</apex:outputText>
+                        <apex:column headerValue="Network Service Line Offering">
+                            <apex:outputText >{!r.Network_Offering__c}</apex:outputText>
                         </apex:column>
                     </apex:pageblockTable>
                 </apex:pageBlock>
@@ -1595,35 +1593,33 @@
                         <apex:column headerValue="Alias">
                             <a href="#" onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialog('searchDialog2', 'span', 'Search Service Location');return false ">{!r.name}</a>
                         </apex:column>
-                        <apex:column headerValue="Nick Name">
+                        <apex:column headerValue="Program Code">
+                            <apex:outputText >{!r.ProgramId__c}</apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="NickName">
                             <apex:outputText >{!r.Location_Nickname__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Program Code">
-                            <apex:outputText >{!r.ProgramID__c}</apex:outputText>
+                        <apex:column headerValue="Address" >
+		     				<apex:outputPanel >
+		     					<c:AddressDisplay Street1="{!r.Street__c}" city="{!r.City__c}"
+			  						state="{!r.State__c}" zip="{!r.Zip__c}" /><br />
+			  					<apex:outputText value="{!r.Phone__c}" />	
+			  				</apex:outputPanel>
+		     			</apex:column>
+                        <apex:column headerValue="TMN Scope">
+                            <apex:outputText >{!r.TMN_Scope__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Setting">
-                            <apex:outputText >{!r.Setting__c}</apex:outputText>
+                        <apex:column headerValue="Population Served">
+                            <apex:outputText >{!r.Population_Served__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Program">
-                            <apex:outputText >{!r.Program__c}</apex:outputText>
+                        <apex:column headerValue="Physical Location">
+                            <apex:outputText >{!r.Physical_Location__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Service Value">
-                            <apex:outputText >{!r.Service_Value__c}</apex:outputText>
+                        <apex:column headerValue="Service Type">
+                            <apex:outputText >{!r.Service_Type__c}</apex:outputText>
                         </apex:column>
-                        <apex:column headerValue="Street">
-                            <apex:outputText >{!r.Street__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="City">
-                            <apex:outputText >{!r.City__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="State">
-                            <apex:outputText >{!r.State__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="Zip">
-                            <apex:outputText >{!r.Zip__c}</apex:outputText>
-                        </apex:column>
-                        <apex:column headerValue="Phone">
-                            <apex:outputText >{!r.Phone__c}</apex:outputText>
+                        <apex:column headerValue="Network Service Line Offering">
+                            <apex:outputText >{!r.Network_Offering__c}</apex:outputText>
                         </apex:column>
                     </apex:pageblockTable>
                 </apex:pageBlock>
@@ -1686,7 +1682,7 @@
                             <apex:outputPanel style="padding-left: 77px">
                                 <apex:outputLabel value="ICD-10 Code" style="font-weight:bold"/> &nbsp; &nbsp;
                                 <apex:inputField value="{!diag.ICD__c}" id="diagnosisEntry_icd10"/> 
-                                <c:HelpTooltip helpText="Please note: When searching, use “Name” to search by the alphanumeric ICD-10 Code. Use “All Fields” to search by ICD-10 Code OR Description."  />
+                                <c:HelpTooltip helpText="Please note: When searching, use Name to search by the alphanumeric ICD-10 Code. Use All Fields to search by ICD-10 Code OR Description."  />
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem ><apex:outputLabel Value="Date and Time of Diagnosis"/>
@@ -2586,12 +2582,16 @@
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockTable value="{!locations}" var="location" id="referralLocations">
                     <apex:column value="{!location.Service_Location__c}" />
-                    <apex:column value="{!location.Service_Location_Service_Value__c}" />
-                    <apex:column value="{!location.Service_Location__r.Setting__c}" />
-                    <apex:column value="{!location.Service_Location_Program__c}" />
+                    <apex:column value="{!location.Service_Location__r.ProgramId__c}" headerValue="Program Code" />
+                    <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="NickName" />
                     <apex:column headerValue="Address">
-                        <c:AddressDisplay Street1="{!location.Service_Location_Street__c}" City="{!location.Service_Location_City__c}" State="{!location.Service_Location_State__c}" Zip="{!location.Service_Location_Zip__c}" />
+                    	<apex:outputPanel >
+                        	<c:AddressDisplay Street1="{!location.Service_Location_Street__c}" City="{!location.Service_Location_City__c}" State="{!location.Service_Location_State__c}" Zip="{!location.Service_Location_Zip__c}" /><br/>
+                        	<apex:outputText value="{!location.Service_Location__r.Phone__c}" />
+                        </apex:outputPanel>
                     </apex:column>
+                    <apex:column value="{!location.Service_location__r.Physical_Location__c}" />
+                    <apex:column value="{!location.Service_location__r.Service_Type__c}" />
                     <apex:column value="{!location.User_Assigned__c}" rendered="{! ReferralRecordType != 'CareMeridian'}" />
                     <apex:column value="{!location.Rank__c}" rendered="{!ReferralRecordType == 'CareMeridian' || referralRecordType=='NeuroRestorative'}" />
                     <apex:column value="{!location.Status__c}" id="locationStatus" />

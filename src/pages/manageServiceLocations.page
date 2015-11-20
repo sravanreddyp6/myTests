@@ -19,17 +19,29 @@
      	<apex:pagemessages id="msgs" />
      	<apex:pageBlockSection Columns="1" >
      		<apex:pageBlockTable value="{!locations}" var="loc" id="results" rendered="{!locations.size != 0}" >
-     			<apex:column >
-     				<a href="/apex/ServiceLocationEdit?id={!loc.Id}" target="_blank">Edit</a> |
+     			<apex:column headerValue="Action" >
+     				<apex:outputPanel rendered="{!!AND(loc.status__c == 'Inactive', loc == 'AVATAR')}" >
+     					<a href="/apex/ServiceLocationEdit?id={!loc.Id}" target="_blank">Edit</a> |
+     				</apex:outputPanel>
      				<a href="/apex/ServiceLocationView?id={!loc.Id}" target="_blank">View</a>
      			</apex:column>
-     			<apex:column value="{!loc.Alias_lookup__c}" />
-     			<apex:column value="{!loc.Status__c}" />
+     			<apex:column value="{!loc.Name}" />
+     			<apex:column value="{!loc.ProgramId__c}" headerValue="Program Code"/>
      			<apex:column value="{!loc.Location_Nickname__c}" />
-     			<apex:column value="{!loc.Network_Offering__c}" />
+     			<apex:column headerValue="Address" >
+     				<apex:outputPanel >
+     					<c:AddressDisplay Street1="{!loc.Street__c}" city="{!loc.City__c}"
+	  						state="{!loc.State__c}" zip="{!loc.Zip__c}" /><br />
+	  					<apex:outputText value="{!loc.Phone__c}" />	
+	  				</apex:outputPanel>
+     			</apex:column>
+     			<apex:column value="{!loc.TMN_Scope__c}" />
+     			<apex:column value="{!loc.Population_Served__c}" />
+     			<apex:column value="{!loc.Physical_Location__c}" />
      			<apex:column value="{!loc.Service_Type__c}" />
-     			<apex:column value="{!loc.FacilityID__c}" />
-     			<apex:column value="{!loc.Service_Value__c}" />
+     			<apex:column value="{!loc.Network_Offering__c}" />
+     			<apex:column value="{!loc.Status__c}" />
+     			<apex:column value="{!loc.Source_System__c}" />
      		</apex:pageBlockTable>
      	</apex:pageBlockSection>
      </apex:pageBlock> 
