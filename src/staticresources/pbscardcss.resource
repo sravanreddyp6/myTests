@@ -23,7 +23,7 @@
         .stickBlueCard { position:fixed !important; top:0px; width:100%; z-index:100; left:0;}
 #pbsCard-serviceLinks a, #pbsCard-serviceLinks a.visited { font-size: 9pt;
 text-decoration: underline;
-    color: #7bc145 !important;
+    color: #006c67 !important;
     white-space: nowrap;
 }
 .lta-row label{font-size: 11pt !important;}
