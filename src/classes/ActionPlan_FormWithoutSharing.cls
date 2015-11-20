@@ -14,7 +14,7 @@ public without sharing class ActionPlan_FormWithoutSharing {
     private map<string, clsGoal> planStuff = new map<string, clsGoal> ();
     public map<string, clsGoal> GETplanStuff(){return planStuff;}    
     private List<Acknowledgment__c> planAcks = new List<Acknowledgment__c>();
-    public transient List<AckWrapper> ackwraplist { get; set;}
+    public List<AckWrapper> ackwraplist { get; set;}
     public Boolean acknowledged { get; private set;}
     public string userOpGrp {get; private set;}
     public ID APId {get; set;}
