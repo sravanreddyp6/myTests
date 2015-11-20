@@ -14,33 +14,90 @@ public with sharing class ServiceLocationNew {
 		this.location = (Service_location__c) controller.getRecord();
 		this.location.Source_System__c = 'iServe';
 		this.alias = new Alias__c();
-		
 	}
 	
 	public pageReference save(){
+		List<String> errors = new list<string>();
 		
 		if(string.isBlank(this.location.Alias_lookup__c)){
 			Apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, 'Alias is mandatory for a service location'));
 			return null;
 		}
-		this.location.Name = alias.Name;
-		this.location.Alias__c = alias.Name;
-		this.location.UniqueID__c = location.FacilityID__c+'||'+location.ProgramID__c;
-		this.location.State__c = alias.Alias_State__c;
-		try{
-			insert location;
-			PageReference pg = new PageReference('/apex/ServiceLocationEdit?id='+location.Id);
-			pg.setRedirect(true);
-			return pg;
-		}catch(exception e){
-			apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, e.getMessage()));
+		if(this.location.ProgramID__c == null){
+			errors.add('Program Code is Mandatory');
+		}
+		if(this.location.Physical_Location__c == null){
+			errors.add('Physical Location is Mandatory');
+		}
+		if(this.location.FacilityID__c == null){
+			errors.add('Facility Id is Mandatory');
+		}
+		if(this.location.TMN_Scope__c == null){
+			errors.add('TMN Scope is Mandatory');
+		}
+		if(this.location.Network_Offering__c == null){
+			errors.add('Network Service Line Offering is Mandatory');
+		}
+		if(this.location.Service_Type__c == null){
+			errors.add('Service type is Mandatory');
+		}
+		if(this.location.Population_Served__c == null){
+			errors.add('Population Served is Mandatory');
+		}
+		if(this.location.Residential_Property_Status__c == null){
+			errors.add('Residential Property Status is Mandatory');
+		}
+		if(this.location.Capacity__c == null){
+			errors.add('Capacity is Mandatory');
+		}
+		if(this.location.Street__c == null){
+			errors.add('Street is Mandatory');
+		}
+		if(this.location.City__c == null){
+			errors.add('City is Mandatory');
+		}
+		if(this.location.State__c == null){
+			errors.add('State is Mandatory');
+		}
+		if(this.location.Zip__c == null){
+			errors.add('Zip Code is Mandatory');
+		}
+		if(this.location.Status__c == null){
+			errors.add('Status is Mandatory');
+		}
+		
+		if(errors.size() > 0){
+			for(string e: errors){
+				Apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, e));
+			}
 			return null;
+			
+		}else{
+			this.location.Name = alias.Name;
+			this.location.Alias__c = alias.Name;
+			this.location.State__c = alias.Alias_State__c;
+			this.location.Source_System__c = 'iServe';
+			this.location.UniqueID__c = location.FacilityID__c+'||'+location.ProgramID__c;
+			this.location.Location_nickname__c = string.isBlank(this.location.Location_nickname__c) ? this.location.city__c+' '+this.location.Physical_Location__c : this.location.Location_nickname__c;
+			this.location.Program__c = this.location.State__c+' - '+this.location.Service_Type__c+' - '+this.location.Location_Nickname__c+' - '+this.location.Network_Offering__c;
+			this.location.iServe_Program__c = this.location.Program__c;
+			try{
+				insert location;
+				PageReference pg = new PageReference('/apex/ServiceLocationView?id='+location.Id);
+				pg.setRedirect(true);
+				return pg;
+			}catch(exception e){
+				Apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, 'Cannot Create Service Location due to the error -'+e.getMessage()));
+				return null;
+			}
 		}
 	
 	}
 	
 	public void setlocationFields(){
 		if(string.isNOTBLANK(this.location.Alias_lookup__c)){
+			
+			this.location.State__c = alias.Alias_State__c;
 			
 			List<Service_location__c> existingLocs = [SELECT Id, Name, ProgramID__c, FacilityID__c, Program_Rollup__c, Alias_lookup__r.Name FROM Service_location__c WHERE Alias_lookup__c = :this.location.Alias_lookup__c order by CreatedDate desc LIMIT 1];
 			
@@ -58,17 +115,9 @@ public with sharing class ServiceLocationNew {
 			this.location.ProgramID__c = null;
 			this.location.Program_Rollup__c = null;
 			this.location.FacilityID__c = null;
-			
+			this.location.State__c = null;
 		}
 		
 	}
 	
-	/*public string setProgramCode(){
-		List<Service_location__c> existingLocs = [SELECT Id, Name, ProgramID__c, Alias_lookup__r.Name FROM Service_location__c WHERE Alias_lookup__c = :this.location.Alias_lookup__c order by CreatedDate desc LIMIT 1];
-		if(existingLocs.size() == 0){
-			return existingLocs[0].Alias_lookup__r.Name+'000';
-		}else{
-			return existingLocs[0].Alias_lookup__r.Name+1;
-		}	
-	}*/
 }

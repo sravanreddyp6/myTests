@@ -1,5 +1,6 @@
 <apex:page title="Service Location: {!Service_Location__c.Program__c}" standardController="Service_Location__c" standardStylesheets="false" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
-<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 <script src="../../soap/ajax/32.0/connection.js" type="text/javascript"></script>
 
 	<script>
@@ -13,46 +14,51 @@
     <apex:form >
     <apex:pageMessages id="msgs"/>
         <apex:pageBlock title="Service Location" id="detail" mode="detail">
+        <apex:pageMessage severity="info" strength="2" summary="This location has been inactivated in {!Service_Location__c.Source_System__c} and cannot be edited." rendered="{! AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR')}" />
         <div class="pbHeaderButton" id="buttons">
 					<apex:commandButton value="Edit" action="{!edit}" rendered="{! NOT(AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR'))}" />
             </div>
             <a onclick="window.location.href='/' + getPrefix();" href="#">Return to List</a>
             <apex:pageBlockSection columns="2">
-                <apex:outputField value="{!Service_Location__c.Alias__c}" />
-                <apex:outputField label="Facility" value="{!Service_Location__c.FacilityID__c}" />
-                <apex:outputField label="Program Code" value="{!Service_Location__c.ProgramID__c}" />
-                <apex:outputField value="{!Service_Location__c.Service_Value__c}" />
-                <apex:outputField value="{!Service_Location__c.Program__c}" />
-                <apex:outputField value="{!Service_Location__c.Setting__c}" />
-                <apex:outputField value="{!Service_Location__c.Program_Rollup__c}" />
-                
-                
-                <apex:outputField value="{!Service_Location__c.Location_Nickname__c}" />
-    			<apex:outputField value="{!Service_Location__c.Network_Offering__c}" />
-    			<apex:outputField value="{!Service_Location__c.Service_Type__c}" />
-    			<apex:outputField value="{!Service_Location__c.Setting_picklist__c}" Label="Setting (New)" />
-    			<apex:outputField value="{!Service_Location__c.Source_System__c}" />
-                
-                
-                <apex:pageBlockSectionItem >
-                <apex:outputLabel value="Address" />
-                <apex:outputPanel >
-                <c:AddressDisplay Street1="{!Service_Location__c.Street__c}" city="{!Service_Location__c.City__c}"
-  					state="{!Service_Location__c.State__c}" zip="{!Service_Location__c.Zip__c}" /><br />
-  				<apex:outputText value="{!Service_Location__c.Phone__c}" />	
-  				</apex:outputPanel>
-  				</apex:pageBlockSectionItem>
-  				<apex:outputField value="{!Service_Location__c.TIN__c}" />
-                <apex:outputField value="{!Service_Location__c.NPI__c}" />
-                <apex:outputField value="{!Service_Location__c.Status__c}" />
+                <apex:outputField value="{!Service_Location__c.Alias_lookup__c}" />
+                <apex:outputField value="{!Service_location__c.Program__c}" />
+                <apex:outputField value="{!Service_location__c.Alias_lookup__r.Alias_Operating_group__c}" label="Operating Group" />
+                <apex:outputField value="{!Service_location__c.iServe_Program__c}"  />
             </apex:pageBlockSection>
-            <apex:pageBlockSection columns="1" rendered="{!Service_Location__c.Alias_lookup__r.Alias_Operating_group__c == 'NeuroRestorative'}">
+            <apex:pageBlockSection Columns="2" title="" collapsible="false">
+            	<apex:outputField label="Program Code" value="{!Service_Location__c.ProgramID__c}" />
+                <apex:outputField value="{!Service_Location__c.Physical_Location__c}" />
+                 <apex:outputField label="Facility ID" value="{!Service_Location__c.FacilityID__c}" />
+                 <apex:outputField value="{!Service_Location__c.TMN_Scope__c}" />
+                 <apex:outputField value="{!Service_Location__c.Network_Offering__c}" />
+                 <apex:outputField value="{!Service_Location__c.Service_Type__c}" />
+                 <apex:outputField value="{!Service_Location__c.Population_Served__c}" />
+                 <apex:outputField value="{!Service_Location__c.Location_Nickname__c}"  />
+                 <apex:outputField value="{!Service_Location__c.Residential_Property_Status__c}" />
+                 <apex:outputField value="{!Service_Location__c.Capacity__c}" />
+            </apex:pageBlockSection>
+             <apex:pageBlockSection Columns="1" title="" collapsible="false">
+             	<apex:pageBlockSectionItem >
+	                <apex:outputLabel value="Address" />
+	                <apex:outputPanel >
+	                <c:AddressDisplay Street1="{!Service_Location__c.Street__c}" city="{!Service_Location__c.City__c}"
+	  					state="{!Service_Location__c.State__c}" zip="{!Service_Location__c.Zip__c}" /><br />
+	  				<apex:outputText value="{!Service_Location__c.Phone__c}" />	
+	  				</apex:outputPanel>
+  				</apex:pageBlockSectionItem>
+             </apex:pageBlockSection >
+              <apex:pageBlockSection columns="1" rendered="{!Service_Location__c.Alias_lookup__r.Alias_Operating_group__c == 'NeuroRestorative'}" title="" collapsible="false">
             	<apex:outputField value="{!Service_Location__c.Room_and_Board_Rate__c}" label="Room and Board Cost" />
             	<apex:outputField value="{!Service_Location__c.PRN_DS_Per_Hour__c}" />
             	<apex:outputField value="{!Service_Location__c.Per_Productive_Unit__c}" />             
+            </apex:pageBlockSection> 
+            <apex:pageBlockSection columns="2" title="" collapsible="false">
+				<apex:outputField value="{!Service_Location__c.TIN__c}" />
+				<apex:outputField value="{!Service_Location__c.Status__c}" />
+                <apex:outputField value="{!Service_Location__c.NPI__c}" />
+                <apex:outputField value="{!Service_location__c.Source_System__c}" />
             </apex:pageBlockSection>
         </apex:pageBlock>
         <c:SObjectHistories object="{!Service_Location__c}" title="Field History for Service Location" />
     </apex:form>
-    
 </apex:page>

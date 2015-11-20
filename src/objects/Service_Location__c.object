@@ -86,6 +86,18 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Capacity__c</fullName>
+        <externalId>false</externalId>
+        <label>Capacity</label>
+        <precision>5</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>City__c</fullName>
         <externalId>false</externalId>
         <label>City</label>
@@ -131,10 +143,14 @@
     <fields>
         <fullName>Network_Offering__c</fullName>
         <externalId>false</externalId>
-        <label>Network Offering</label>
+        <label>Network Service Line Offering</label>
         <picklist>
             <picklistValues>
-                <fullName>IDD</fullName>
+                <fullName>ABI</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ADH</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -142,15 +158,11 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
+                <fullName>IDD</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
                 <fullName>MH</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>ABI</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>ADH</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -193,6 +205,76 @@
         <type>Phone</type>
     </fields>
     <fields>
+        <fullName>Physical_Location__c</fullName>
+        <externalId>false</externalId>
+        <label>Physical Location</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Center Based</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Community Based</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Clinic</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Facility</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Group Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Host Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In-Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Office</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>School</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Population_Served__c</fullName>
+        <externalId>false</externalId>
+        <label>Population Served</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Child</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Adult</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Senior</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>ProgramID__c</fullName>
         <externalId>false</externalId>
         <label>ProgramID</label>
@@ -225,6 +307,33 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Residential_Property_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Residential Property Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Network Owned</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Network Leased</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PBS Leased</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PBS Owned</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
     </fields>
     <fields>
         <fullName>Room_and_Board_Rate__c</fullName>
@@ -292,25 +401,6 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Setting_picklist__c</fullName>
-        <externalId>false</externalId>
-        <label>Setting</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Residential</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Non-Residential</fullName>
-                <default>false</default>
-            </picklistValues>
-            <sorted>false</sorted>
-        </picklist>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Picklist</type>
-    </fields>
-    <fields>
         <fullName>Source_System__c</fullName>
         <description>system of record for data</description>
         <externalId>false</externalId>
@@ -325,6 +415,7 @@
     <fields>
         <fullName>State__c</fullName>
         <externalId>false</externalId>
+        <inlineHelpText>State is auto-populated based on the Alias chosen.</inlineHelpText>
         <label>State</label>
         <length>2</length>
         <required>false</required>
@@ -392,6 +483,25 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>TMN_Scope__c</fullName>
+        <externalId>false</externalId>
+        <label>TMN Scope</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Residential</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Non-Residential</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>UniqueID__c</fullName>
         <caseSensitive>false</caseSensitive>
         <description>unique id from source db</description>
@@ -409,6 +519,17 @@
         <externalId>false</externalId>
         <label>Zip</label>
         <length>10</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>iServe_Program__c</fullName>
+        <externalId>false</externalId>
+        <label>iServe Program</label>
+        <length>100</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
