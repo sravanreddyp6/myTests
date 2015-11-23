@@ -206,7 +206,7 @@
 		</apex:outputPanel>
 		<apex:variable value="{!AND(OperatingGroup == 'Care Meridian', canSeePBS) || (AND(OperatingGroup == 'Redwood',BEGINS($UserRole.DeveloperName, 'IA'), canSeePBS))}"
 				var="vfIsNotDefaultUser"/>
-		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!canSeePBS}">
+		<apex:pageBlock title="Persons Being Served" id="pbsBlock" rendered="{!(canSeePBS && canAccessSA)}">
 			<apex:pageBlockSection columns="2">
 				<apex:selectList id="selectprograms" value="{!selectedAlias}" label="Select Program" size="1">
 					<apex:actionSupport event="onchange" reRender="pbsBlock" action="{!updateProgramSelection}" oncomplete="reloadPBSTable(); " status="pageProcessing" />
@@ -240,7 +240,7 @@
 					<apex:outputPanel rendered="{! canCreateProgressNotes || vfVarIsHt || isCAFSS}">
                         <a href="{!$Page.Notes_ProgressNote_Create}?service_assignment={!serviceAssignment.Id}&plan={!saActiveactionMap[serviceAssignment.Id]}&admission={!serviceAssignment.Admission__c}&person={!serviceAssignment.Person_Being_Served__c}&state={!serviceAssignment.Admission__r.State__c}&retURL={!HTMLENCODE('/apex/home')}">Add Progress Note</a><br />
 					</apex:outputPanel>
-                    <apex:outputPanel rendered="{!hasadmissionCANSMap[serviceAssignment.Admission__r.Id] && (vfVarIsHt || isCAFSS)}" >
+                    <apex:outputPanel rendered="{! canAccessSA && hasadmissionCANSMap[serviceAssignment.Admission__r.Id]  && (vfVarIsHt || isCAFSS)}" >
                        <a href="/{!admissionCANSMap[serviceAssignment.Admission__r.Id].Id}">{!admissionCANSMap[serviceAssignment.Admission__c].Name}</a><br />                        
                      </apex:outputPanel>
 					<apex:outputPanel rendered="{!((isIARole || (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA')) && vfVarIsRW && !vfVarIsHt && !isCAFSS && serviceAssignment.Action_Plans__r.size != 0)}">
@@ -838,7 +838,7 @@
 				else if ( selectedText == 'Create New Action Plan') {
 					makeNewPlan(selectedValue);
 				}
-				else if ( selectedText == 'Acknowledge Action Plan' ||  selectedText == 'Acknowledge Risk Assessment' || selectedText == 'View Behavior Data' || selectedText == 'View Skill Data') {
+				else if ( selectedText == 'Acknowledge Action Plan' ||  selectedText == 'Acknowledge Risk Assessment' ||  selectedText == 'Acknowledge ISSA Assessment' || selectedText == 'View Behavior Data' || selectedText == 'View Skill Data') {
 					window.location.href= selectedValue;
 				}
 					
