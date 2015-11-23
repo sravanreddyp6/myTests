@@ -79,7 +79,7 @@ function toggleById(id, ms){
 };
 </script>
 
-<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + InputParams}" />
+<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + assessmentResponse.assessmentWrapper['Admission__r.Person_Being_Served__c']}" />
 <apex:form id="myfrm" >
     <apex:pageMessages />
     <apex:pageBlock id="main_detail" title="{!assessmentResponse.assessmentWrapper['Person_Being_Served__r.Name'] + ' - Risk Assessment Summary'}">
@@ -128,7 +128,7 @@ function toggleById(id, ms){
 
             <apex:pageBlockSectionItem >
                     <apex:outputPanel >Verbal Approval Obtained On</apex:outputPanel>
-                    <apex:outputText value=" {!DATEVALUE(assessmentResponse.assessmentWrapper['Verbal_Approval_Obtained_On__c'])}" />
+                    <apex:outputText value=" {!assessmentResponse.assessmentWrapper['Verbal_Approval_Obtained_On__c']}" />
             </apex:pageBlockSectionItem>
                               
         </apex:pageBlockSection>   
