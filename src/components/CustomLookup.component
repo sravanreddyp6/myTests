@@ -76,14 +76,11 @@
                 </apex:outputLabel> &nbsp;
                 <apex:inputText id="nameFilter" value="{!nameField.value}" size="6"/>&nbsp;&nbsp; 
                 <apex:repeat value="{!fields}" var="f">
-                	
                		<apex:outputLabel >
                        	{!f.Label}
                    	</apex:outputLabel> &nbsp;
                    	<apex:inputText value="{!f.value}" Size="2" rendered="{!f.Label == 'State'}"/>&nbsp;&nbsp;
-                   	<apex:inputText value="{!f.value}" size="15" rendered="{!!(f.Label == 'State')}"/>&nbsp;&nbsp; 
-           
-                    
+                   	<apex:inputText value="{!f.value}" size="15" rendered="{!!(f.Label == 'State')}"/>&nbsp;&nbsp;  
                 </apex:repeat>
                 <apex:commandButton value="Cancel" onclick="closeMD('{!$Component.comp.searchDialog}', 'span');return false;" />
                 <apex:commandButton value="Search!" action="{!Search}" reRender="table,block" status="searchStatus"/>

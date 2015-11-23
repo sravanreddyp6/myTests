@@ -47,9 +47,9 @@ public with sharing class ServiceLocationNew {
 		if(this.location.Residential_Property_Status__c == null){
 			errors.add('Residential Property Status is Mandatory');
 		}
-		if(this.location.Capacity__c == null){
+		/*if(this.location.Capacity__c == null){
 			errors.add('Capacity is Mandatory');
-		}
+		}*/
 		if(this.location.Street__c == null){
 			errors.add('Street is Mandatory');
 		}

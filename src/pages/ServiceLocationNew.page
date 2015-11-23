@@ -106,15 +106,16 @@
                         </div>  
                     </apex:outputPanel>
     			</apex:pageBlockSectionItem>
-    			<apex:pageBlockSectionItem>
-    				<apex:outputLabel value="Capacity" />
-    				<apex:outputPanel >
-                        <div class="requiredInput">
-                            <div class="requiredBlock"></div>
-                           <apex:inputField value="{!Service_Location__c.Capacity__c}" required="false" />
-                        </div> 
-                    </apex:outputPanel>
-    			</apex:pageBlockSectionItem>
+<!--     			<apex:pageBlockSectionItem> -->
+<!--     				<apex:outputLabel value="Capacity" /> -->
+<!--     				<apex:outputPanel > -->
+<!--                         <div class="requiredInput"> -->
+<!--                             <div class="requiredBlock"></div> -->
+                <apex:inputField value="{!Service_Location__c.Capacity__c}"  />
+<!--                         </div>  -->
+<!--                     </apex:outputPanel> -->
+<!--     			</apex:pageBlockSectionItem> -->
+				<apex:inputField value="{!Service_Location__c.Facility_Number_Oracle_Fixed_Assets__c}" />
     		</apex:pageblockSection>
 
     		 <apex:pageblockSection columns="1" rendered="{!Service_location__c.Alias_lookup__c != null}" title="" >

@@ -1343,7 +1343,7 @@
                     <!-- Added by Kossi 05/06/13 2:00 AM -->
                     <apex:pageBlockSectionItem id="sectionItem">
                         <apex:outputLabel value="Alias" />
-                        <c:CustomLookup id="sl" formID="referralForm" uniqueId="searchLocation" type="Service_Location__c" parentId="{!location.Service_Location__c}" parentName="{!location.Service_Location__r.Name}" filters="name,Location_nickname__c,city__c,state__c" return="programid__c,Location_nickname__c,setting__c,program__c,service_value__c,street__c,city__c,state__c,zip__c,phone__c" />
+                        <c:CustomLookup id="sl" formID="referralForm" uniqueId="searchLocation" type="Service_Location__c" parentId="{!location.Service_Location__c}" parentName="{!location.Service_Location__r.Name}" filters="name,Location_nickname__c,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c, Network_offering__c" />
                     </apex:pageBlockSectionItem>
                     <apex:inputField value="{!location.User_Assigned__c}" id="locationEntry_User" rendered="{!referralRecordType != 'CareMeridian'}" />
                     <apex:inputField value="{!location.Rank__c}" id="locationEntry_Rank" rendered="{!referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative'}" />
@@ -1374,7 +1374,7 @@
                             <apex:outputPanel style="padding-left: 77px">
                                 <apex:outputLabel value="ICD-10 Code" style="font-weight:bold"/> &nbsp; &nbsp;
                                 <apex:inputField value="{!diag.ICD__c}" id="diagnosisEntry_icd"/> 
-                                <c:HelpTooltip helpText="Please note: When searching, use “Name” to search by the alphanumeric ICD-10 Code. Use “All Fields” to search by ICD-10 Code OR Description."  />
+                                <c:HelpTooltip helpText="Please note: When searching, use Name to search by the alphanumeric ICD-10 Code. Use All Fields to search by ICD-10 Code OR Description."  />
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem ><apex:outputLabel Value="Date and Time of Diagnosis"/>
@@ -1424,7 +1424,7 @@
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem id="admSectionItem" >
                             <apex:outputLabel value="Alias" />
-                            <c:CustomLookup id="al" formID="referralForm" uniqueId="searchAdmissionLocation" type="Service_Location__c" parentId="{!referralRecord.Service_Location__c}" parentName="{!admissionLocationName}" filters="name,Location_nickname__c,city__c,state__c" return="Location_nickname__c,programid__c,setting__c,program__c,service_value__c,street__c,city__c,state__c,zip__c,phone__c" />
+                            <c:CustomLookup id="al" formID="referralForm" uniqueId="searchAdmissionLocation" type="Service_Location__c" parentId="{!referralRecord.Service_Location__c}" parentName="{!admissionLocationName}" filters="name,Location_nickname__c,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c, Network_offering__c" />
                         </apex:pageBlockSectionItem>
                     </apex:pageblockSection>
                 </apex:pageBlock>
@@ -2015,20 +2015,35 @@
                     <c:MilitaryDatetime dateTimeVal="{!Referral__c.Anticipated_Admission_DateTime__c}" />
                 </apex:pageBlockSectionItem>
 
-                <apex:outputField value="{!Referral__c.Service_Location__c}" />
-                <apex:outputField value="{!Referral__c.Service_Location_Service_Value__c}" />
-                <apex:outputField value="{!Referral__c.Service_Location_Setting__c}" />
-                <apex:outputField value="{!Referral__c.Service_Location_Street__c}" />
-                <apex:pageBlockSectionItem >
-                    <apex:outputText value="City" />
-                    <apex:outputPanel styleClass="nowrap">
-                        <apex:outputText value="{!Referral__c.Service_Location_City__c}" />&nbsp;
-                        <apex:outputLabel value="State" />&nbsp;
-                        <apex:outputField value="{!Referral__c.Service_Location_State__c}" />&nbsp;
-                        <apex:outputLabel value="Zip" />&nbsp;
-                        <apex:outputText value="{!Referral__c.Service_Location_Zip__c}" style="width: 42px;" />
-                    </apex:outputPanel>
-                </apex:pageBlockSectionItem>
+<!--                 <apex:outputField value="{!Referral__c.Service_Location__c}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Service_Location_Service_Value__c}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Service_Location_Setting__c}" /> -->
+<!--                 <apex:outputField value="{!Referral__c.Service_Location_Street__c}" /> -->
+<!--                 <apex:pageBlockSectionItem > -->
+<!--                     <apex:outputText value="City" /> -->
+<!--                     <apex:outputPanel styleClass="nowrap"> -->
+<!--                         <apex:outputText value="{!Referral__c.Service_Location_City__c}" />&nbsp; -->
+<!--                         <apex:outputLabel value="State" />&nbsp; -->
+<!--                         <apex:outputField value="{!Referral__c.Service_Location_State__c}" />&nbsp; -->
+<!--                         <apex:outputLabel value="Zip" />&nbsp; -->
+<!--                         <apex:outputText value="{!Referral__c.Service_Location_Zip__c}" style="width: 42px;" /> -->
+<!--                     </apex:outputPanel> -->
+<!--                 </apex:pageBlockSectionItem> -->
+			<apex:outputField value="{!Referral__c.Service_Location__c}" />
+			<apex:outputField value="{!Referral__c.Service_Location__r.ProgramId__c}" label="Program Code" />
+			<apex:outputField value="{!Referral__c.Service_Location__r.Location_Nickname__c}" />
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value="Address" />
+				<apex:outputPanel >
+	               	<c:AddressDisplay Street1="{!Referral__c.Service_Location__r.Street__c}" City="{!Referral__c.Service_Location__r.City__c}" State="{!Referral__c.Service_Location__r.State__c}" Zip="{!Referral__c.Service_Location__r.ZIP__c}" /><br/>
+	               	<apex:outputText value="{!Referral__c.Service_Location__r.Phone__c}" />
+               </apex:outputPanel>
+			</apex:pageBlockSectionItem>
+			<apex:outputField value="{!Referral__c.Service_location__r.TMN_Scope__c}" />
+			<apex:outputField value="{!Referral__c.Service_location__r.Population_Served__c}" />
+			<apex:outputField value="{!Referral__c.Service_location__r.Physical_location__c}" />
+			<apex:outputField value="{!Referral__c.Service_location__r.Service_type__c}" />
+			<apex:outputField value="{!Referral__c.Service_location__r.Network_Offering__c}" />
 
             </apex:pageBlockSection>
             <apex:outputText value="{!nonClosedPrimaryLocationId}" id="nonClosedPrimaryLocationId" style="display: none; " />
@@ -2049,13 +2064,16 @@
                         <a href="#" onclick="loadLocation('{!location.Id}');return false; ">Edit</a>
                     </apex:column>
                     <apex:column value="{!location.Service_Location__c}" />
-
-                    <apex:column value="{!location.Service_Location_Service_Value__c}" />
-                    <apex:column value="{!location.Service_Location_Setting__c}" />
-                    <apex:column value="{!location.Service_Location_Program__c}" />
+					<apex:column value="{!location.Service_Location__r.ProgramId__c}" headerValue="Program Code" />
+                    <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="NickName" />
                     <apex:column headerValue="Address">
-                        <c:AddressDisplay Street1="{!location.Service_Location_Street__c}" City="{!location.Service_Location_City__c}" State="{!location.Service_Location_State__c}" Zip="{!location.Service_Location_Zip__c}" />
+                    	<apex:outputPanel >
+                        	<c:AddressDisplay Street1="{!location.Service_location__r.Street__c}" City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}" Zip="{!location.Service_Location__r.Zip__c}" /><br/>
+                        	<apex:outputText value="{!location.Service_Location__r.Phone__c}" />
+                        </apex:outputPanel>
                     </apex:column>
+                    <apex:column value="{!location.Service_location__r.Physical_Location__c}" />
+                    <apex:column value="{!location.Service_location__r.Service_Type__c}" />
                     <apex:column value="{!location.User_Assigned__c}" rendered="{!referralRecordType != 'CareMeridian'}" />
                     <apex:column value="{!location.Rank__c}" rendered="{!referralRecordType == 'CareMeridian' || referralRecordType == 'NeuroRestorative'}" />
                     <apex:column value="{!location.Status__c}" />
