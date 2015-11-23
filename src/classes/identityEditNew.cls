@@ -61,6 +61,10 @@ public class identityEditNew {
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
         if(TMNUser.id!=null) {
+        	if( TMNUser.Current_Person_Type__c=='Non-Employee' && TMNUser.Vendor_list__c!=null && TMNUser.Vendor_list__c!='OTHER'){
+        			TMNUser.BAA_Signed__c =true;
+        	} 
+        	
                 attachments=[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name from Attachment where parentId=:TMNUser.id order by createddate ];
              for(integer i = attachments.size(); i<3;i++){
                         newAttachments.add(new  ProxyAttachment(new Attachment())); 
@@ -240,7 +244,7 @@ public class identityEditNew {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Start Date is required to save this record'));
     	 	error = true;
         }
-        if(TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' && TMNUser.Vendor_list__c ==null){
+        if(TMNUser.Current_Person_Type__c!=null && TMNUser.Current_Person_Type__c == 'Non-Employee' && (TMNUser.Vendor_list__c ==null || TMNUser.Vendor_list__c =='NONE')){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Vendor information is required to save this record'));
     	 	error = true;
         }
