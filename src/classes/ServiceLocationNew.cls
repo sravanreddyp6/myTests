@@ -95,20 +95,27 @@ public with sharing class ServiceLocationNew {
 	}
 	
 	public void setlocationFields(){
+		
 		if(string.isNOTBLANK(this.location.Alias_lookup__c)){
-			
-			this.location.State__c = alias.Alias_State__c;
-			
+			Alias__c a = this.alias;
+			this.location.State__c = a.Alias_State__c;
+			//Query most recently created service location in the System for the selected alias
 			List<Service_location__c> existingLocs = [SELECT Id, Name, ProgramID__c, FacilityID__c, Program_Rollup__c, Alias_lookup__r.Name FROM Service_location__c WHERE Alias_lookup__c = :this.location.Alias_lookup__c order by CreatedDate desc LIMIT 1];
-			
 			if(existingLocs.size() == 0){
-				this.location.ProgramID__c = this.alias.Name+'001';
-				this.location.Program_Rollup__c = this.alias.Name+'001';
-				this.location.FacilityID__c = null;
+				this.location.ProgramID__c = a.Name+'001';
+				this.location.Program_Rollup__c = a.Name+'001';
 			}else{
 				this.location.ProgramID__c = (null != existingLocs[0].ProgramID__c  && existingLocs[0].ProgramID__c.isNumeric()) ? String.valueof(integer.valueOf(existingLocs[0].ProgramID__c)+1) : null;
 				this.location.Program_Rollup__c = (null != existingLocs[0].Program_Rollup__c && existingLocs[0].Program_Rollup__c.isNumeric()) ? string.valueof(integer.valueof(existingLocs[0].Program_Rollup__c)+1) : null;
-				this.location.FacilityID__c = existingLocs[0].FacilityID__c;
+			}
+			
+			//populate the facility ID based based on the alias State or Operating group (NR and CM)
+			if(a.Alias_Operating_Group__c == 'Care Meridian' || a.Alias_Operating_Group__c == 'CareMeridian'){
+				this.location.FacilityID__c = Utility.FACILITYID_MAP.get('CareMeridian'); //13
+			}else if(a.Alias_Operating_Group__c == 'NeuroRestorative'){
+				this.location.FacilityID__c = Utility.FACILITYID_MAP.get('NeuroRestorative'); //20
+			}else{
+				this.location.FacilityID__c =  Utility.FACILITYID_MAP.containsKey(a.Alias_State__c) ? Utility.FACILITYID_MAP.get(a.Alias_State__c) : null;
 			}
 			
 		}else{

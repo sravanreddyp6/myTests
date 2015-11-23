@@ -1069,7 +1069,8 @@ public without sharing class ServiceAssignmentExt {
             //diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
         }
         if ( currentrecord.Service_Location__c != null) {
-            serviceLocation = [ select ID, Name, Service_Value__c, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c,Room_and_Board_Rate__c, PRN_DS_Per_Hour__c from Service_Location__c where ID = :currentrecord.Service_Location__c];
+            serviceLocation = [ select ID, Name, Service_Value__c, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c,Room_and_Board_Rate__c, PRN_DS_Per_Hour__c, 
+            		Location_Nickname__c,TMN_Scope__c,Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c  from Service_Location__c where ID = :currentrecord.Service_Location__c];
             currentProgramId = serviceLocation.programID__c;
         }
         
