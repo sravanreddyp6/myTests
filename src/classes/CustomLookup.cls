@@ -232,7 +232,7 @@ public class CustomLookup {
             queryFilter = queryFilter.removeEnd('and ');
             system.debug('$$$$$wholeQuery '+query+queryFilter+' Order By Name LIMIT 250');
             System.debug('stringTemp: ' + stringTemp);
-            tmpResult = Database.query(query+queryFilter+' Order By Name LIMIT 250');
+            tmpResult = Database.query(query+queryFilter+' Order by State__c, Name, ProgramId__c asc LIMIT 250');
             countTotalRecords=tmpResult.size();
         }
     }
