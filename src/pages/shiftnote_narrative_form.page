@@ -1,149 +1,154 @@
-<apex:page standardController="Progress_Note__c" extensions="Shift_Note_Narrative" sidebar="false" >
-<apex:variable value="{!Progress_Note__c}" var="pn"/>
+<apex:page standardController="Progress_Note__c" extensions="Shift_Note_Narrative" sidebar="false">
+	<apex:variable value="{!Progress_Note__c}" var="pn" />
 
-<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
-<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
-<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
-
-
-<script>
-
-    function setFocusOnLoad() {}
-
-    var j$ = jQuery.noConflict();
-    
-</script>
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
 
 
-<style>
-    .txtarea{ width: 90%;}
-    textarea{ padding: 5px;}
-.thinking{
-    opacity:0.8;
-    background-color:#ccc;
-    position:fixed;
-    width:100%;
-    height:100%;
-    top:0px;
-    left:0px;
-    z-index:1000;
-}
+	<script>
+		function setFocusOnLoad() {}
 
-.thinkingwheel{
-    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
-}    
-.hbbg{
-    position:fixed;
-    width:100%;
-    height:100%;
-    top:0px;
-    left:0px;
-    z-index:1000;
-}  
-.hbbg{
-    position:fixed;
-    width:100%;
-    height:100%;
-    top:0px;
-    left:0px;
-    background-color: gray;
-    opacity: .6;
-    z-index:1000;
-}
-.checkb{margin-left: -17px;}
-.chldwrapper{ max-width: 850px;}
-.chldheader{margin-left: -19px; font-weight: bold;  border-bottom: 1px solid #ececec;}
-</style>
+		var j$ = jQuery.noConflict();
+	</script>
 
-<apex:outputPanel style="display: none;">    
-    <apex:outputField value="{!pn.Person_Being_Served__r.name}" />
-    <apex:outputField value="{!pn.RecordType.name}" />
-</apex:outputPanel>
+	<style>
+		.txtarea {
+			width: 90%;
+		}
 
-    <c:PersonalRecord pbsId="{!pn.Person_Being_Served__c}" 
-                        parentPage="ShiftNote" 
-                        servAssignId="{! IF( pn.Action_Plan__c != null, pn.Action_Plan__r.Service_Assignment__c, pn.Service_Assignment__c)}" 
-                        admId="{!pn.Admission__c}"
-                        />
-    <br />
+		textarea {
+			padding: 5px;
+		}
 
-    <apex:form id="myFrm">      
-				
+		.thinking {
+			opacity: 0.8;
+			background-color: #ccc;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 1000;
+		}
 
-        <apex:pageBlock title="Shift Note">  
-        <apex:outputPanel id="messages">
-            <apex:pageMessages />
-        </apex:outputPanel>
-            <apex:pageBlockButtons >
-                <div style="float: right" > 
-                    <apex:commandButton value="E-sign"
-                    					action="{!mySave}"
-                                        onComplete="authenticate();" 
-                                        rendered="{! editMode && !pn.locked__c}"
-                                        rerender="messages, authcomponent"
-                                        status="myStatus"
-                                        />
-                    <apex:commandButton value="Cancel"
-                                        action="{!myCancel}" 
-                                        immediate="true"
-                                        rendered="{!editMode}" 
-                                        status="myStatus"
-                                        />
-                                                 
-                </div>           
-            </apex:pageBlockButtons>
-            
-            
-            <apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{!editMode}">
-            	<apex:pageblocksectionitem >
-            	<apex:outputLabel for="narr" value="Narrative Note" />
-            	<apex:outputPanel layout="none">
-            	<div class="requiredInput"><div class="requiredBlock"></div>
-            	<apex:inputField id="narr" styleClass="txtarea" value="{!pn.Narrative__c}"/>
-                </div>
-                </apex:outputPanel>
-                </apex:pageblocksectionitem>
-            </apex:pageBlockSection>
-    
-            <apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{! !editMode}">
-                <apex:outputField value="{!pn.Narrative__c}"/> 
-            </apex:pageBlockSection>
-            
-            <apex:pageBlockSection title="System Information" collapsible="false">
-                <apex:outputField value="{!pn.createdbyid}"/>
-                <apex:outputField value=" {!pn.CreatedDate}" />
-            </apex:pageBlockSection>
-	     <apex:pageBlocksection title="Other Shift Notes" collapsible="False" columns="1">
-	    
-            <apex:pageBlockTable value="{!pastnotes}" var="result" id="resultTable1" rendered="{! pastnotes != null && pastnotes.size>0}">
-            
-                 <apex:column headerValue="Created Date" width="10%" >
-                        <nobr>
-                        <c:MilitaryDatetime dateTimeVal="{!result['createddate']}" /> 
-                        </nobr>
-                </apex:column>
-                
-                    <apex:column value="{!shortdescs[result.id]}"  headervalue="Narrative"/>  
-                   <apex:column width="20%" value="{!result['createdbyid']}" />
-             
-            </apex:pageBlockTable>
-            </apex:pageBlocksection>
-        
-        </apex:pageBlock>
-   
-        
-   <apex:actionStatus id="myStatus" >
-    <apex:facet name="start">
-        <div  class="thinking">
-            <div class="thinkingwheel">    
-                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
-            </div>
-        </div>   
-    </apex:facet>  
-    <apex:facet name="stop"> </apex:facet>         
-</apex:actionStatus> 
-<c:Authentication id="authcomponent" formId="{!$Component.myFrm}" title="E-Sign" handler="Shift_Note_Narrative" objectId="{!pn.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');closeAuthenticationDialog();window.location.href='{!retURL}';" />
+		.thinkingwheel {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			background-color: white;
+			border: 2px solid gray;
+			padding: 2px;
+		}
 
-</apex:form>     
+		.hbbg {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			z-index: 1000;
+		}
+
+		.hbbg {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			background-color: gray;
+			opacity: .6;
+			z-index: 1000;
+		}
+
+		.checkb {
+			margin-left: -17px;
+		}
+
+		.chldwrapper {
+			max-width: 850px;
+		}
+
+		.chldheader {
+			margin-left: -19px;
+			font-weight: bold;
+			border-bottom: 1px solid #ececec;
+		}
+	</style>
+
+	<apex:outputPanel style="display: none;">
+		<apex:outputField value="{!pn.Person_Being_Served__r.name}" />
+		<apex:outputField value="{!pn.RecordType.name}" />
+	</apex:outputPanel>
+
+	<c:PersonalRecord pbsId="{!pn.Person_Being_Served__c}" parentPage="ShiftNote" servAssignId="{! IF( pn.Action_Plan__c != null, pn.Action_Plan__r.Service_Assignment__c, pn.Service_Assignment__c)}" admId="{!pn.Admission__c}" />
+	<br />
+
+	<apex:form id="myFrm">
+		<apex:pageBlock title="Shift Note">
+			<apex:outputPanel id="messages">
+				<apex:pageMessages />
+			</apex:outputPanel>
+			<apex:pageBlockButtons location="top">
+				<div style="float: right">
+					<apex:commandButton value="E-sign" action="{!mySave}" onComplete="authenticate();" rendered="{! editMode && !pn.locked__c}" rerender="messages, authcomponent" status="myStatus" />
+					<apex:commandButton value="Cancel" action="{!myCancel}" immediate="true" rendered="{!editMode}" status="myStatus" />
+					<apex:commandButton value="Disregard" action="{!disregard}" immediate="true" rendered="{!AND(!editMode, pn.Status__c != 'Disregard')}" status="myStatus" />
+				</div>
+			</apex:pageBlockButtons>
+
+			<apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{!editMode}">
+				<apex:pageblocksectionitem >
+					<apex:outputLabel for="narr" value="Narrative Note" />
+					<apex:outputPanel layout="none">
+						<div class="requiredInput">
+							<div class="requiredBlock"></div>
+							<apex:inputField id="narr" styleClass="txtarea" value="{!pn.Narrative__c}" />
+						</div>
+					</apex:outputPanel>
+				</apex:pageblocksectionitem>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Narrative" columns="1" collapsible="false" rendered="{! !editMode}">
+				<apex:outputField value="{!pn.Narrative__c}" />
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel value="Disregarded" for="disregarded" />
+					<apex:image id="disregarded" url="{!if(pn.Status__c == 'Disregard', '/img/checkbox_checked.gif', '/img/checkbox_unchecked.gif')}" />
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="System Information" collapsible="false">
+				<apex:outputField value="{!pn.createdbyid}" />
+				<apex:outputField value=" {!pn.CreatedDate}" />
+			</apex:pageBlockSection>
+			<apex:pageBlocksection title="Other Shift Notes" collapsible="False" columns="1">
+				<apex:pageBlockTable value="{!pastnotes}" var="result" id="resultTable1" rendered="{! pastnotes != null && pastnotes.size>0}">
+					<apex:column headerValue="Created Date" width="10%">
+						<nobr>
+							<c:MilitaryDatetime dateTimeVal="{!result['createddate']}" />
+						</nobr>
+					</apex:column>
+
+					<apex:column value="{!shortdescs[result.id]}" headervalue="Narrative" />
+					<apex:column width="10%" headerValue="Disregarded">
+						<apex:image url="{!if(result.Status__c == 'Disregard', '/img/checkbox_checked.gif', '/img/checkbox_unchecked.gif')}" />
+					</apex:column>
+					<apex:column width="20%" value="{!result['createdbyid']}" />
+				</apex:pageBlockTable>
+			</apex:pageBlocksection>
+		</apex:pageBlock>
+
+		<apex:actionStatus id="myStatus">
+			<apex:facet name="start">
+				<div class="thinking">
+					<div class="thinkingwheel">
+						<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+					</div>
+				</div>
+			</apex:facet>
+			<apex:facet name="stop"> </apex:facet>
+		</apex:actionStatus>
+		<c:Authentication id="authcomponent" formId="{!$Component.myFrm}" title="E-Sign" handler="Shift_Note_Narrative" objectId="{!pn.id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');closeAuthenticationDialog();window.location.href='{!retURL}';" />
+	</apex:form>
 </apex:page>
