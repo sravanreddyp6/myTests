@@ -433,9 +433,10 @@ public with sharing class referral_Controller2 {
 
 	private void populateLocations() {
 		this.locations = [
-			select Id, Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c, status__c,
-			       service_location_city__c,service_location_state__c,service_location_street__c,service_location_zip__c,service_location_program__c,
-			       service_location_service_value__c, service_location_setting__c, service_location__c, rank__c, LastModifiedDate
+			select Name, Referral__c, location__c, street_1__c, street_2__c, city__c, zip_code__c, state__c, user_assigned__c,status__c, Rank__c,Service_Location_Program__c,
+				   service_location__c, Service_location__r.ProgramID__c,Service_location__r.Location_Nickname__c,Service_location__r.Street__c,Service_location__r.City__c,
+				   Service_location__r.Phone__c, Service_location__r.TMN_Scope__c, Service_location__r.Population_Served__c, Service_location__r.Physical_Location__c,
+				   Service_location__r.State__c, Service_location__r.ZIP__c, Service_location__r.Service_Type__c, Service_location__r.Network_Offering__c, LastModifiedDate
 			from Referral_Location__c
 			where Referral__c = :this.referralRecord.Id
 			limit 150
