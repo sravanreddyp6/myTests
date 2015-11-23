@@ -92,7 +92,12 @@ public with sharing class HomePageController{
     public Map<Id, Assessment__c> admissionCANSMap {get; set;} 
     public Map<Id, Boolean> hasadmissionCANSMap {get;set;}
 
-
+    //Active Final Risk/ISSA 
+    public Map<Id, Assessment__c> admissionActFinMap {get; set;} 
+    public Map<Id, Boolean> hasadmissionActFinMap {get;set;}
+    public Map<Id, Assessment__c> admissionActFinISSAMap {get; set;} 
+    public Map<Id, Boolean> hasadmissionActFinISSAMap {get;set;}
+    
 	//Constructor
 	public HomePageController(){
         
@@ -103,7 +108,6 @@ public with sharing class HomePageController{
             this.businessUnit =  tmnUser[0].Business_Unit__c;
             this.isCAFSS = (tmnUser[0].Business_Unit__c != null && tmnUser[0].Business_Unit__c.startsWith('BU 008')) ? true : false;
         }
-
 		//PBS object
 		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
 		canSeePBS = oSchema.isAccessible();
@@ -246,12 +250,17 @@ public with sharing class HomePageController{
         set<id> admissions = new set<id>();
         admissionCANSMap = new Map<id, assessment__C>();
         hasadmissionCANSMap = new Map<Id, Boolean>();
-            
+        admissionActFinMap = new Map<id, assessment__C>();
+        admissionActFinISSAMap = new Map<id, assessment__C>();
+        hasadmissionActFinMap = new Map<Id, Boolean>(); 
+        hasadmissionActFinISSAMap = new Map<Id, Boolean>();
         for (Service_Assignment__c serviceAssignment: serviceAssignments) {
             saactionMap.put(serviceAssignment.id,false);
             saActiveactionMap.put(serviceAssignment.id,serviceAssignment.id);
             admissions.add(serviceAssignment.Admission__r.Id);
             hasadmissionCANSMap.put(serviceAssignment.Admission__r.Id, false);
+            hasadmissionActFinMap.put(serviceAssignment.Admission__r.Id, false);
+            hasadmissionActFinISSAMap.put(serviceAssignment.Admission__r.Id, false);
             for(Action_Plan__c ap:serviceAssignment.Action_Plans__r){
                 if(ap.Status__c == 'Active Final'){
                     saactionMap.put(serviceAssignment.id,True);
@@ -266,7 +275,19 @@ public with sharing class HomePageController{
                 hasadmissionCANSMap.put(asmt.Admission__c, true);
                 admissionCANSMap.put(asmt.Admission__c, asmt);
             }
-        } 
+        }
+        for(Assessment__c asmt: [SELECT Id, Name,status__c, Admission__c FROM Assessment__c WHERE Admission__c IN:admissions Or (Admission__c IN:admissions And Name like 'ISSA') ORDER BY CreatedDate,Admission__c ASC]){ 
+            if(asmt.Status__c == 'Active Final' && !asmt.name.contains('ISS')){
+                hasadmissionActFinMap.put(asmt.Admission__c, true);
+                admissionActFinMap.put(asmt.Admission__c, asmt);
+            }
+            System.debug('asmt.name.substring(0,3)'+ asmt.name);
+            if(asmt.Status__c == 'Active Final' && asmt.name.contains('ISSA')){
+                hasadmissionActFinISSAMap.put(asmt.Admission__c, true);
+                admissionActFinISSAMap.put(asmt.Admission__c, asmt);
+            }
+        }
+        
 		for (Service_Assignment__c serviceAssignment: serviceAssignments) {
 			// Get the latest shift doc/CNA Workbook
 			shiftDocMap.put(serviceAssignment.Id, null);
@@ -359,8 +380,11 @@ public with sharing class HomePageController{
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
 					
 				}
-				if ( serviceAssignment.Admission__r.Assessments__r.size() > 0 ) {
-					optionList.add( new SelectOption('/' + serviceAssignment.Admission__r.Assessments__r[0].Id, 'Acknowledge Risk Assessment'));
+				if ( hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+					optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
+				}
+				if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+					optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
 				}
 				if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
@@ -370,21 +394,22 @@ public with sharing class HomePageController{
 				
 			}
 			//PRI-326 Redwood MN, IN, CA homepage values.
-			if ( operatingGroup == 'Redwood' && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA') && !isCAFSS) {
+			if ( operatingGroup == 'Redwood' && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA') && !isCAFSS && !isIARole) {
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
 				}
-				if ((serviceAssignment.Admission__r.Assessments__r.size() > 0 ) && (serviceAssignment.Admission__r.State__c != 'MN')) {
-					optionList.add( new SelectOption('/' + serviceAssignment.Admission__r.Assessments__r[0].Id, 'Acknowledge Risk Assessment'));
-				}
-				if ((serviceAssignment.Admission__r.Assessments__r.size() > 0 ) && (serviceAssignment.Admission__r.State__c == 'MN')) {
-					optionList.add( new SelectOption('/' + serviceAssignment.Admission__r.Assessments__r[0].Id, 'Acknowledge ISSA Assessment'));
-				}
 				if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
 				}
+				if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+                    optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
+				}
+				if ( hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+					optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
+				}				
+				
 			}
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
@@ -832,7 +857,7 @@ public with sharing class HomePageController{
        return type.id;
     
     }
-		
+	
 	@TestVisible private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
 		
 		Boolean overlaps = false;
