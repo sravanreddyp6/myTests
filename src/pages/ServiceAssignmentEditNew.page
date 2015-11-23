@@ -800,7 +800,7 @@
                     <apex:actionregion >
                         <apex:outputPanel layout="block" styleClass="requiredInput">
                             <apex:outputpanel styleClass="requiredBlock" />
-                            <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}" parentName="{!serviceLocation.Name}" filters="name,city__c,state__c" return="programid__c, setting__c, program__c, service_value__c,street__c,city__c,state__c,zip__c,phone__c" />
+                            <c:CustomLookup id="sl" formID="myFRM" uniqueId="searchLocation" type="Service_Location__c" parentId="{!theServAssign.Service_Location__c}" parentName="{!serviceLocation.Name}" filters="name,Location_nickname__c,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c, Network_offering__c" />
                         </apex:outputPanel>
                     </apex:actionregion>
                 </apex:pageBlockSectionItem>
