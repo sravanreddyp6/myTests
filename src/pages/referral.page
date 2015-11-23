@@ -1524,7 +1524,7 @@
                             <a href="#" onClick="j$('input[id$=locationEntry_ServiceLocation]').val('{!r.name}');j$('input[id$=locationEntry_ServiceLocation_lkid]').val('{!r.id}');closeModalDialog('searchDialog', 'span', 'Search Service Location');return false ">{!r.name}</a>
                         </apex:column>
                        <apex:column headerValue="Program Code">
-                            <apex:outputText >{!r.ProgramId__c}</apex:outputText>
+                            <apex:outputText >{!r.ProgramID__c}</apex:outputText>
                         </apex:column>
                         <apex:column headerValue="NickName">
                             <apex:outputText >{!r.Location_Nickname__c}</apex:outputText>
@@ -1594,7 +1594,7 @@
                             <a href="#" onClick="j$('input[id$=sl]').val('{!r.name}');j$('input[id$=sl_lkid]').val('{!r.id}');closeModalDialog('searchDialog2', 'span', 'Search Service Location');return false ">{!r.name}</a>
                         </apex:column>
                         <apex:column headerValue="Program Code">
-                            <apex:outputText >{!r.ProgramId__c}</apex:outputText>
+                            <apex:outputText >{!r.ProgramID__c}</apex:outputText>
                         </apex:column>
                         <apex:column headerValue="NickName">
                             <apex:outputText >{!r.Location_Nickname__c}</apex:outputText>
@@ -2582,7 +2582,7 @@
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockTable value="{!locations}" var="location" id="referralLocations">
                     <apex:column value="{!location.Service_Location__c}" />
-                    <apex:column value="{!location.Service_Location__r.ProgramId__c}" headerValue="Program Code" />
+                    <apex:column value="{!location.Service_Location__r.ProgramID__c}" headerValue="Program Code" />
                     <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="NickName" />
                     <apex:column headerValue="Address">
                     	<apex:outputPanel >
