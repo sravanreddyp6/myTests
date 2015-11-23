@@ -294,6 +294,28 @@ public without sharing class TransactionQueueTriggeredActions {
                                 newreq.fulfilled__c = false;
                                 newreq.return_value__c = json.serialize( e.getMessage() );
                     }
+                 
+                }
+                
+                else if ( t.request_type__c == 'Skill') {
+                	try {
+                		ID wksheetid = t.input_params__c;
+                		
+                		DSP_WeeklySkillTracking wksht = new DSP_WeeklySkillTracking( wksheetid );
+                		
+                		String jsonstring = json.serialize( wksht);
+                		storeResultSTring( newreq, jsonstring );
+                		
+                        // update the request as having been fulfilled
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+    //                          newreq.return_code__c = 'ERROR';
+                                system.debug( e );
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                    }
+                 
                 }
                 
 			

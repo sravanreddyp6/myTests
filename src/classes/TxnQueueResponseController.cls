@@ -9,6 +9,7 @@ public with sharing class TxnQueueResponseController {
     public Assessment_RiskFormWithoutSharing assessmentResponse { get; private set; }
     public Assessment_IssaFormWithoutSharing assessmentIssaResponse { get; private set; }
     public DSP_Worksheets apWorksheets { get; private set; }
+    public DSP_WeeklySkillTracking skillResponse { get; private set;}
 	
 //Constructor
 	public TxnQueueResponseController(){
@@ -65,6 +66,9 @@ public with sharing class TxnQueueResponseController {
             	system.debug( thisTxn.return_value__c);
             	apWorksheets = (DSP_Worksheets) JSON.deserialize( TxnResponse, DSP_Worksheets.class);
             	system.debug(apWorksheets);
+            }
+            else if ( thisTxn.request_type__c == 'Skill') {
+            	skillResponse = (DSP_WeeklySkillTracking) JSON.deserialize ( TxnResponse, DSP_WeeklySkillTracking.class);
             }
 
 			
