@@ -121,10 +121,22 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Facility_Number_Oracle_Fixed_Assets__c</fullName>
+        <externalId>false</externalId>
+        <label>Facility Number (Oracle Fixed Assets)</label>
+        <precision>10</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Location_Nickname__c</fullName>
         <externalId>false</externalId>
         <label>Location Nickname</label>
-        <length>20</length>
+        <length>100</length>
         <required>false</required>
         <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
@@ -214,11 +226,11 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Community Based</fullName>
+                <fullName>Clinic</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Clinic</fullName>
+                <fullName>Community Based</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -238,7 +250,7 @@
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Office</fullName>
+                <fullName>Office - Non-Service</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
@@ -352,24 +364,169 @@
         <externalId>false</externalId>
         <label>Service Type</label>
         <picklist>
+            <controllingField>TMN_Scope__c</controllingField>
             <picklistValues>
-                <fullName>AFC – Adult Family Care</fullName>
+                <fullName>AFC - Adult Family Care</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>CSS – Community Support Services</fullName>
+                <fullName>CI - Crisis Intervention</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>DAYTX – Day Activity Treatment</fullName>
+                <fullName>CM - Case Management</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>HH – Host Home</fullName>
+                <fullName>CSS - Community Support Services</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>SL – Supported Living</fullName>
+                <fullName>DA - Diagnostic Assessment</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DayAct - Day Activity</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DayVoc - Day Vocational</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>EI - Early Intervention</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FBS - Family Behavioral Services</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FC - Foster Care</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>FCT - Family Centered Treatment</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ICFCN - Intermediate Care Facility Continuous Nursing</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ICFH - Intermediate Care Facility Habilitative</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ICFIDD - ICFIDD</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>ICFN - Intermediate Care Facility Nursing</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>IIH - Intensive In Home</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>LC - Life Care</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NB - Neurobehavioral</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NRN - Neurorehab</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NRR - Neurorehab</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OPT - Outpatient Therapy</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OS - Offender Services</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PCH - Personal Care Home</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>RS - Respite Service</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SE - Supported Employment</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SIL - Supported Independent Living</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>SL - Supported Living</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TFC - Therapeutic Foster Care</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TFS - Therapeutic Family Services</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TL - Transitional Living</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TransC - Transitional Care</fullName>
+                <controllingFieldValues>Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>TransP - Transportation</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>WRAP - Wrap Around Services/Supports</fullName>
+                <controllingFieldValues>Non-Residential</controllingFieldValues>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
