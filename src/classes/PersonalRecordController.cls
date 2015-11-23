@@ -108,7 +108,7 @@ public with sharing class PersonalRecordController {
 				return primaryDiagnosis;
 			}
             ServiceAssignment_Diagnosis_JO__c[] d = [SELECT Diagnosis__r.ICD__r.Icd_Description__c FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c=:con.Id And Service_Assignment__r.Status__c = 'Active' AND Ranking__c = 'Primary' order by CreatedDate desc];
-            if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || this.con.flavor__c == 'CA FSS') {
+            if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || opGrp == 'NeuroRestorative' || this.con.flavor__c == 'CA FSS') {
                 if (d.size() > 0) {
                     List<String> diag = new List<String>();
                     for(Integer i=0;i<=d.size()-1;i++){
