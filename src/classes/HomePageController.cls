@@ -60,7 +60,7 @@ public with sharing class HomePageController{
 	public Boolean canCreateNote { get; private set; }
 	//PBS object
 	public Boolean canSeePBS { get; private set; }
-
+    public Boolean canAccessSA { get; private set; }
 	public Map<Id, Evaluation__c> shiftDocMap { get; set; }
 	public Map<Id, Evaluation__c> cnaWorkbookMap { get; set; }
 	public Map<Id, Boolean> hasShiftDocMap { get; set; }
@@ -111,6 +111,11 @@ public with sharing class HomePageController{
 		//PBS object
 		Schema.DescribeSObjectResult oSchema = Account.sObjectType.getDescribe();
 		canSeePBS = oSchema.isAccessible();
+		
+		//Service Assignment
+		Schema.DescribeSObjectResult oSchema1 = Service_Assignment__c.sObjectType.getDescribe();
+		canAccessSA = oSchema1.isAccessible();
+		
 
 		pbsOnlyShowActiveServiceAssignment = true;
 		searchResultList = new List<HomePageSearchController.SearchResult>();
@@ -281,7 +286,6 @@ public with sharing class HomePageController{
                 hasadmissionActFinMap.put(asmt.Admission__c, true);
                 admissionActFinMap.put(asmt.Admission__c, asmt);
             }
-            System.debug('asmt.name.substring(0,3)'+ asmt.name);
             if(asmt.Status__c == 'Active Final' && asmt.name.contains('ISSA')){
                 hasadmissionActFinISSAMap.put(asmt.Admission__c, true);
                 admissionActFinISSAMap.put(asmt.Admission__c, asmt);
@@ -380,10 +384,12 @@ public with sharing class HomePageController{
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
 					
 				}
-				if ( hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+				if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+				    if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null )
 					optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
 				}
-				if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+				if ( hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+				    if(admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null )
 					optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
 				}
 				if (  serviceAssignment.Action_Plans__r.size() == 0 ) {
@@ -404,10 +410,12 @@ public with sharing class HomePageController{
 					optionList.add( new SelectOption(serviceAssignment.Id, 'Create New Action Plan'));
 				}
 				if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
-                    optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
+				    if(hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null )
+                        optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
 				}
-				if ( hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
-					optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
+				if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+				    if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null )
+					    optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
 				}				
 				
 			}
