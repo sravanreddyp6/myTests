@@ -1,0 +1,49 @@
+<!-- think this is a dead end - gonna delete it-->
+<apex:page standardController="Action_Summary__c" extensions="ActionSummaryCreateForm" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+  <style>
+  .skillSummary table {
+      border: 1px solid black;
+      border-collapse: collapse;
+      }
+  .skillSummary .sstable tbody tr th {
+      border-width: 1px;
+      border-style: dashed;
+      border-color: black;
+      }
+  .skillSummary .sstable tbody tr td {
+      border: 1px dashed black;
+      }
+  </style>
+  <br />
+  <c:PersonalRecord pbsId="{!personId}" parentPage="ActionSummaryReport"
+     servAssignId="{!Action_Summary__c.Service_Assignment__c}"
+     admId="{!Action_Summary__c.Service_Assignment__r.Admission__c}"/>
+  <apex:Form >
+  <apex:pagemessages />
+  <apex:PageBlock title="Action Plan Summary">
+  <div class="pbHeaderButton">
+          <apex:commandButton value="Add " action="{!formNew}" id="formSave" status="myStatus"/>
+          <apex:commandButton value="Cancel" action="{!Cancel}" />
+  </div>
+  <apex:pageBlockSection title="Summary Details" columns="2">
+      <apex:selectList value="{!Action_Summary__c.Start_Date__c}" size="1" >
+           <apex:selectoptions value="{!MonthsInServiceAssignment}"></apex:selectOptions>
+      </apex:selectList>
+
+      <apex:pageBlockSectionItem >
+          Duration
+          <apex:selectList value="{!Duration}" size="1" title="Duration" >
+              <apex:selectoptions value="{!AllowedDurations}"></apex:selectOptions>
+          </apex:selectList>
+      </apex:pageBlockSectionItem>
+
+      <apex:outputField value="{!Action_Summary__c.Service_Assignment__c}"/>
+      <apex:outputText title="Monthly time"></apex:outputText>
+      <apex:outputField value="{!Action_Summary__c.Service_Assignment__r.Admission__c}"/>
+      <apex:outputText title="Monthly time"></apex:outputText>
+      <apex:outputField value="{!Action_Summary__c.Status__c}"/>
+  </apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

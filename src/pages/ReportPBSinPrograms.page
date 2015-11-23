@@ -1,0 +1,56 @@
+<apex:page controller="ReportPBSinProgramsController" docType="html-5.0" readonly="true">
+	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+     
+    <apex:sectionheader subtitle="PBS in Programs" />
+    <script>
+    	j$ = jQuery.noConflict();
+    	 
+   		runReport = function(){
+   			var fromDate = 'test';//j$('input[id$=fromDate]').val();
+   			var toDate = 'test'; //j$('input[id$=toDate]').val();
+   		
+   		
+   		
+   		
+   		
+    		 Visualforce.remoting.Manager.invokeAction(
+	                '{!$RemoteAction.ReportPBSinProgramsController.getServiceAssignments}',
+	                	fromDate,toDate,
+                        function(result, event) {
+                        	if(event.status){
+                        		var res = "";
+                        		for(var i=0; i<10000; i++ ){
+                        			res += "<button>"+i+"</button> <br/>";
+                        		}
+                        		document.getElementById("reportResults").innerHTML = res;
+                        	}else if (event.type === 'exception') {
+	                        	document.getElementById("reportResults").innerHTML = event.message;
+	                        }else {
+	                        	document.getElementById("reportResults").innerHTML = event.message;
+	                    	}
+                            
+                        }, {
+                            escape: true
+                        }
+                    ); 
+    		
+   		}
+    
+    </script>
+    <apex:form>
+    <apex:pageBlock id="filtersBlock" >
+    	<apex:pageBlockSection columns="1" >
+<!--     		<apex:input type="date"  value="{!fromDate}" label="From" id="fromDate" /> -->
+<!--     		<apex:input type="date" value="{!toDate}" label="To" id="toDate" /> -->
+    	</apex:pageBlockSection>
+    	<apex:pageBlockButtons location="Bottom" >
+    		<apex:commandbutton value="Run" id="run" onclick="runReport(); return false;" reRender="dummy"/>
+    	</apex:pageBlockButtons>
+    </apex:pageBlock>
+    </apex:form>
+    <div id="reportResults" />  
+</apex:page>
