@@ -188,16 +188,30 @@ public with sharing class EvalRepeaters {
 				categoryMap.get(repeater.cat).hasError = true;
 			}
 			categoryMap.get(repeater.cat).panels.add(repeater);
+
+			// Checking to see if a repeater is addable
+			Boolean appliedStatus = (parentEvalStatus.indexOf('Applied') != -1);
+			if (parentEvalStatus != 'Completed' && parentEvalStatus != 'End of Shift' && (repeater.repeatable || (parentEvalOwnerID == UserInfo.getUserId() && !repeater.hasData) || (evalName=='CNA Workbook' && !repeater.hasData) || (evalName == 'Residential' && !repeater.hasData)) && canEditEvalType) {
+				repeater.addable = true;
+			}
+			if (repeater.compositeKey == 'Reduction Review~Reduction Review~' && (!appliedStatus || (appliedStatus && parentHasOpenAsmt))) {
+				repeater.addable = false;
+			}
 		}
 
 		for (Category category: categoryMap.values()) {
 			Boolean completed = true;
+			Boolean addable = false;
 			for (EvalRepeaterWrapper panel: category.panels) {
 				if (panel.numErrors > 0 || !panel.hasData) {
 					completed = false;
 				}
+				if (panel.addable) {
+					addable = true;
+				}
 			}
 			category.completed = completed;
+			category.addable = addable;
 		}
 	}
 
@@ -279,6 +293,7 @@ public with sharing class EvalRepeaters {
 		public boolean repeatable { get; set; }
 		public Boolean hasData { get; set; }
 		public Boolean hasActivityLogs { get; set; }
+		public Boolean addable { get; set; }
 
 		public EvalRepeaterWrapper(String cat, string subcat, string subsubcat, string compKey, boolean repeats){
 			this.cat = cat;
@@ -289,18 +304,21 @@ public with sharing class EvalRepeaters {
 			this.repeatable= repeats;
 			this.hasData = false;
 			this.hasActivityLogs = false;
+			this.addable = false;
 		}
 	}
 
 	private class Category {
 		public Boolean completed { get; set; }
 		public Boolean hasError { get; set; }
+		public Boolean addable { get; set; }
 		public List<EvalRepeaterWrapper> panels { get; set; }
 
 		public Category() {
 			this.completed = false;
 			this.hasError = false;
 			this.panels = new List<EvalRepeaterWrapper>();
+			this.addable = false;
 		}
 	}
 
