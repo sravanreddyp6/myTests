@@ -198,16 +198,16 @@ public with sharing class GenerateEvalComponent {
 		Component.Apex.OutputPanel fullPanel = new Component.Apex.OutputPanel(layout='none');
 		Integer numSection = 0;
 		for (String composite: sectionMap.keySet()) {
-			if (!sectionsToBypass.contains(composite)) {
-				numSection++;
-				if (batchInsert) {
+			if (batchInsert) {
+				if (!sectionsToBypass.contains(composite)) {
+					numSection++;
 					fullPanel.childComponents.add(generateSubsectionHtml(sectionMap.get(composite), dd, new List<Eval_Value__c>()));
-				} else {
-					fullPanel.childComponents.add(generateSubsectionHtml(sectionMap.get(composite), dd, listEvalValues));
 				}
+			} else {
+				fullPanel.childComponents.add(generateSubsectionHtml(sectionMap.get(composite), dd, listEvalValues));
 			}
 		}
-		if (numSection == 0 && cat != null) {
+		if (numSection == 0 && cat != null && batchInsert) {
 			fullPanel.childComponents.add(new Component.Apex.OutputText(value='No section can be added at this time'));
 		}
 		return fullPanel;
