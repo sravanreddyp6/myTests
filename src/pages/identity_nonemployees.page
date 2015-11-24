@@ -267,7 +267,7 @@
                      <apex:selectOption itemValue="/apex/identity_view?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="View" />
                      <apex:selectOption itemValue="/apex/identity_edittmnu?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Edit" />  
                      <apex:selectOption itemValue="Req" itemLabel="Request Access" />
-                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" rendered="{!r.BAA_Signed==true}"/>
+                     <apex:selectOption itemValue="/apex/identity_Terminate?id={!r.id}&TAU={!aliasNameValue}&retURL=/apex/identity_nonemployees" itemLabel="Terminate" rendered="{!r.tmnUser.BAA_Signed__c==true}"/>
                  </apex:selectList>   
                   <apex:commandButton value="Go" onclick="var url = j$(document.getElementById('{!$Component.EditedList1}')).val(); if (url != 'Req') { window.location = url; }  else { window.open('{!requestAccessUrl}', '_blank');}return false;" />
                  </apex:column>                        
