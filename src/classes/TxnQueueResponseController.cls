@@ -67,7 +67,7 @@ public with sharing class TxnQueueResponseController {
             	apWorksheets = (DSP_Worksheets) JSON.deserialize( TxnResponse, DSP_Worksheets.class);
             	system.debug(apWorksheets);
             }
-            else if ( thisTxn.request_type__c == 'Skill') {
+            else if ( thisTxn.request_type__c == 'Skill' || thisTxn.request_type__c == 'Update Skill' ) {
             	skillResponse = (DSP_WeeklySkillTracking) JSON.deserialize ( TxnResponse, DSP_WeeklySkillTracking.class);
             }
 
