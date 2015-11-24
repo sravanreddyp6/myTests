@@ -2,9 +2,36 @@ public without sharing class DSP_WeeklySkillTracking {
 
 	public Date startdate { get; set; } 
     private Action_Plan_Worksheet__c result;
-    private List<ObjectiveWrapper> objectivesMap;
+    public List<DSPObjectiveWrapper> objectivesMap;
     public boolean hasError = false;
+    public ID APId { get; private set;}
+    public List<SelectOption> prompts { get; private set;}
+    public List<SelectOption> metlist { get; private set;}
     
+    public DSP_WeeklySkillTracking( TxnQueueResponseController c)
+    {
+    
+    	
+    	prompts = new List<SelectOption> {
+    		new SelectOption('','--None--'),
+        	new SelectOption('I','I'),
+        	new SelectOption('V', 'V'),
+        	new SelectOption('M','M'),
+        	new SelectOption('PP','PP'),
+        	new SelectOption('FP','FP'),
+        	new SelectOption('D','D'),
+        	new SelectOption('L','L'),
+        	new SelectOption('S','S'),
+        	new SelectOption('H','H'),
+        	new SelectOption('HL','HL')
+        	};
+        	
+	    metlist = new List<SelectOption> { 
+    		new SelectOption('','--None--'),
+        	new SelectOption('Y','Y'),
+        	new SelectOption('N', 'N')
+        };       
+    }
     
     public DSP_WeeklySkillTracking( ID wsID) {
     	
@@ -13,8 +40,14 @@ public without sharing class DSP_WeeklySkillTracking {
                      Action_Plan__r.Service_Assignment__r.Admission__c, Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c 
                     from Action_Plan_Worksheet__c
                     where Id = :wsId];
+                    
+        if ( result != null ) {            
+        	APId = result.action_plan__c;
+        	startdate = result.start_date__c;
+        }
+        
+        
     }
-    
     
     public List<Date> getDaysOfWeek() {
         List<Date> week = new List<Date>();
@@ -29,7 +62,7 @@ public without sharing class DSP_WeeklySkillTracking {
     }
     
     
-    public List<ObjectiveWrapper>  getObjectivesMap(){
+    public List<DSPObjectiveWrapper>  getObjectivesMap(){
         if (objectivesmap == null){
             objectivesMap = calcObjectivesMap();
         }
@@ -38,10 +71,10 @@ public without sharing class DSP_WeeklySkillTracking {
     
     public boolean editable { get { return !result.Action_plan__r.Status__c.contains('Inactive');}}
     
-    private List<ObjectiveWrapper>  calcObjectivesMap(){
+    private List<DSPObjectiveWrapper>  calcObjectivesMap(){
         Date firstDay = result.Start_Date__c;
         List<Action_Plan_Objective__c> objectives = ReportableSkillObjectives(firstDay);
-        List<ObjectiveWrapper> out = new List<ObjectiveWrapper>();
+        List<DSPObjectiveWrapper> out = new List<DSPObjectiveWrapper>();
          
          for(Action_Plan_Objective__c objective:objectives){
              //Map<Date, Action_Skill_Result__c> dayResult = new Map<Date, Action_Skill_Result__c>();
@@ -61,7 +94,7 @@ public without sharing class DSP_WeeklySkillTracking {
                      dayResult.Put(day, blankResult);
                  }
              }
-             ObjectiveWrapper wrapper = new ObjectiveWrapper(objective);
+             DSPObjectiveWrapper wrapper = new DSPObjectiveWrapper(objective);
              wrapper.ResultsMap = dayResult;
              out.Add(wrapper);
          }
@@ -122,7 +155,7 @@ public without sharing class DSP_WeeklySkillTracking {
     {
     
          List <Action_Skill_Result__c> toupdate = new List<Action_Skill_Result__c>();
-         for(ObjectiveWrapper objectivewrp:getobjectivesmap()){
+         for(DSPObjectiveWrapper objectivewrp:getobjectivesmap()){
              for(Date day: objectivewrp.ResultsMap.keyset()){
                  ASRWrapper result = objectivewrp.ResultsMap.get(day);
                  if (result.Attempts != null ||
@@ -203,16 +236,6 @@ public without sharing class DSP_WeeklySkillTracking {
     	}
     	
     }
-    
-    public class ObjectiveWrapper{
-        public Action_Plan_Objective__c Objective {get;set;}
-        public Map<Date, ASRWrapper> ResultsMap {get;set;}
-        
-        public ObjectiveWrapper(Action_Plan_Objective__c obj){
-            Objective = obj;
-            ResultsMap = new Map<Date, ASRWrapper>();
-        }
-    }
-    
+
 
 }
