@@ -96,7 +96,7 @@ background-color: cornsilk;
 </style>
 <apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>
 
-<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + InputParams}" />
+<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + response.apID}" />
 <br />
 <apex:pageMessages id="msg" />
 <apex:pageBlock mode="maindetail">
@@ -199,7 +199,9 @@ background-color: cornsilk;
     <apex:pageBlockSection collapsible="False" columns="2" rendered="{! !response.acknowledged}">
     <apex:pageBlockSectionItem >
     <apex:outputLabel value="Initials" />
-    <apex:inputText id="initials" value="{!initials}"/>
+    <apex:outputPanel layout="none">
+    <div class="requiredInput"><div class = "requiredBlock"></div><apex:inputText label="Initials" id="initials" value="{!initials}" required="true"/></div>
+    </apex:outputPanel>
     </apex:pageBlockSectionItem>
     
     <apex:commandlink styleClass="btn" value="Acknowledge" action="{!ackActionPlan}">
