@@ -210,6 +210,33 @@ public with sharing class GenerateEvalComponent {
 		if (numSection == 0 && cat != null && batchInsert) {
 			fullPanel.childComponents.add(new Component.Apex.OutputText(value='No section can be added at this time'));
 		}
+		if (editable) {
+			Component.Apex.OutputPanel batchActionWrapper = new Component.Apex.OutputPanel(
+				layout = 'block',
+				style = 'display: none;'
+			);
+			Component.Apex.OutputPanel batchActionPanel = new Component.Apex.OutputPanel(
+				layout = 'block',
+				id = 'evalFormButtons',
+				style = 'right: 10px; float: right; position: relative;'
+			);
+			if ((!batchInsert || numSection > 0) && cat != null) {
+				batchActionPanel.childComponents.add(
+					new Component.Apex.OutputText(
+						value = '<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery(\'#btnHiddenSave\').click(); return false;" />',
+						escape = false
+					)
+				);
+			}
+			batchActionPanel.childComponents.add(
+				new Component.Apex.OutputText(
+					value = '<input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />',
+					escape = false
+				)
+			);
+			batchActionWrapper.childComponents.add(batchActionPanel);
+			fullPanel.childComponents.add(batchActionWrapper);
+		}
 		return fullPanel;
 	}
 
