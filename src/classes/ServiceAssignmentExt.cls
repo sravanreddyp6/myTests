@@ -32,9 +32,6 @@ public without sharing class ServiceAssignmentExt {
 	public ID authRecTypeId { get; set; }
 	public Boolean authsIncDisregard { get; set; }
 	
-	
-   // public static Boolean showdiagModal { get; set; }
-   // public string diagEditId {get; set; }
     public static Boolean showServAssignCloseModal { get; set; }
     public string showServAssignCloseEditId {get; set; }
     public string servAssignCloseEditId { get; set; }
@@ -329,17 +326,6 @@ public without sharing class ServiceAssignmentExt {
         // empty for action support
     }
 
-   /* public list<Diagnosis__c> diagnoses{get; set;}
-
-    public Diagnosis__c diag {
-        get {
-            if (diag == null)
-                diag = new Diagnosis__c();
-            return diag;
-        }
-        set;
-    }*/
-    
     public list<ServiceAssignment_Diagnosis_JO__c> sadiagJOList {get; set;}
     public ServiceAssignment_Diagnosis_JO__c sadiagJO {
     	get{
@@ -400,69 +386,6 @@ public without sharing class ServiceAssignmentExt {
   		this.sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
   		this.selectedDiagnosis = '--None--';
   }
-
-    public Boolean newDiagnosis{ get; set;} // comment after release
-    public void showAddDiagnosis() {
-       /* newDiagnosis = true;
-        showdiagModal = true;
-        diag = new Diagnosis__c();
-        System.Debug('showdiagModal='+ showdiagModal);*/
-    }
-
-    public void showEditDiagnosis() {
-       /* showdiagModal = true;
-        System.Debug('showdiagModal=' + showdiagModal);*/
-    }
-
-    public void saveDiagnosis() {
-       /* Boolean foundDiag = false;
-        Diagnosis__c dgnew = this.diag;
-        System.debug('dgnew: ' + dgnew);
-        // if this diagnosis contains an ID, look for it to update
-        if ( diagnoses != null ) {
-            for ( Diagnosis__c dg : diagnoses ) {
-                if ( dg.Id != null && dg.Id == dgnew.Id ) {
-                    // update in place
-                    dg.Effective_Date__c = dgnew.Effective_Date__c;
-                    dg.Axis_I__c = dgnew.Axis_I__c;
-                    dg.Axis_II__c = dgnew.Axis_II__c;
-                    dg.Axis_III__c = dgnew.Axis_III__c;
-                    dg.Axis_IV__c = dgnew.Axis_IV__c;
-                    dg.Axis_V__c = dgnew.Axis_V__c;
-                    dg.Primary_Diagnosis__c = dgnew.Primary_Diagnosis__c;
-                    dg.Secondary_Diagnosis__c = dgnew.Secondary_Diagnosis__c;
-                    dg.Level_of_Disability__c = dgnew.Level_of_Disability__c;
-                    dg.Comments__c = dgnew.Comments__c;
-                    system.debug('updating ' + dg.Id + ', ' + dgnew);
-                    foundDiag = true;
-                    break;
-                }
-            }
-        }
-        if ( !foundDiag )
-            this.diagnoses.add(dgnew);
-
-        this.diag= new Diagnosis__c();
-        //newDiagnosis = false;*/
-    }
-
-    public void refreshDiagnoses() {
-        // requery the diagnosis list
-     /*   diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
-        newDiagnosis = false;*/
-
-    }
-
-    public void createDiagnoses() {
-       /* if (diagnoses != null && this.theServAssign.Id != null) {
-            for (Diagnosis__c dg : diagnoses ) {
-                dg.Service_Assignment__c = this.theServAssign.Id;
-            }
-            System.Debug('DIAG LIST = ' + diagnoses);
-            upsert diagnoses;
-        }*/
-
-    } 
 
     public list<Funding_Source__c> referralFundingsources {get { return [select id, CreatedDate, name, funding_source__c,Type_of_Coverage__c, Payer_Name__c, recordtype.name, service_being_funded__c, Effective_Date__c,Termination_Date__c,Status__c,Comment__c from funding_source__C where service_Assignment__C = null and Referral__c = :referral.id];} set;}
     
@@ -2295,48 +2218,6 @@ public without sharing class ServiceAssignmentExt {
 	// END CMAUTH work
 
     public class MyException extends Exception {}
-
-  /*  @RemoteAction
-    public static Diagnosis__c loadDiagnosis(string diagnosisId) {
-        Diagnosis__c dg =
-                [select Id, Effective_Date__c, Axis_I__c, Axis_II__c, Axis_III__c, Axis_IV__c, Axis_V__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Level_of_Disability__c, Comments__c, Service_Assignment__c
-                 from Diagnosis__c where id = :diagnosisId];
-        system.debug('LOD:' + dg.Level_Of_disability__c);
-        return dg;
-    }
-
-
-    @RemoteAction
-    public static boolean saveSingleDiagnosis (string diagId, long effDate, string axisI, string axisII, string axisIII, string axisIV, string axisV, string primDiag, string secondDiag, string lod, string comments, string saID) {
-        Diagnosis__c dg;
-        ID newID;
-        if (diagId == '') {
-
-            dg = new Diagnosis__c ( Effective_Date__c = datetime.newInstance(effDate), Axis_I__c = axisI, Axis_II__c = axisII, Axis_III__c = axisIII, Axis_IV__c = axisIV, Axis_V__c = axisV, Primary_Diagnosis__c = primDiag, Secondary_Diagnosis__c = secondDiag, Level_of_Disability__c = lod, Comments__c = comments, Service_Assignment__c = saID );
-        }
-        else {
-
-            dg = [select Id, Effective_Date__c, Axis_I__c, Axis_II__c, Axis_III__c, Axis_IV__c, Axis_V__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Level_of_Disability__c, Comments__c, Service_Assignment__c
-                  from Diagnosis__c where id = :diagId];
-
-            dg.Effective_Date__c = datetime.newInstance(effDate);
-            dg.Axis_I__c = axisI;
-            dg.Axis_II__c = axisII;
-            dg.Axis_III__c = axisIII;
-            dg.Axis_IV__c = axisIV;
-            dg.Axis_V__c = axisV;
-            dg.Primary_Diagnosis__c = primDiag;
-            dg.Secondary_Diagnosis__c = secondDiag;
-            dg.Level_of_Disability__c = lod;
-            dg.Comments__c = comments;
-            dg.Service_Assignment__c = saID;
-            system.debug('updating ' + dg.Id + ', ' + dg);
-        }
-
-        upsert dg;
-        return true;
-    } */
-
 
     @RemoteAction
     public static Service_Location__c loadServiceLocation(string locationId) {
