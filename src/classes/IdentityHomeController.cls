@@ -38,7 +38,7 @@ public with sharing class IdentityHomeController {
     User u = [SELECT Id FROM User WHERE Id=:UserInfo.getUserId()];
     String userId = u.id;
     
-    TMN_User__c t = [SELECT Id,Name,Operating_Group__c,Manager_Name__c,Email__c 
+    TMN_User__c t = [SELECT Id,Name,Operating_Group__c,Manager_Name__c,Email__c,Approval_Level__c 
                      FROM TMN_User__c 
                      WHERE Salesforce_User_Account__c=:userId 
                      LIMIT 1];
@@ -49,6 +49,14 @@ public with sharing class IdentityHomeController {
     public String tmnEmail = t.Email__c;                          
     public Boolean onloadDialog {set;get;}
     public String DropdownList {get; set;} 
+    public Integer ApprovalLevel {get{
+    			List<TMN_User__c> managerList = [select id,Manager_Lookup__c from TMN_User__c where  Manager_Lookup__c = : tmnId];
+    				if (managerList!=null && managerList.size()>0){
+    				return Integer.valueOf(t.Approval_Level__c);
+    				}
+    				return 0;
+    		}set;}
+    public Boolean canTerminate{set;get;}
     public IdentityHomeController() {
        searchDelegateResult = new List<TMN_User__c> (); 
         searchNonEmpResult = new List<TMN_User__c> (); 
@@ -147,7 +155,7 @@ public with sharing class IdentityHomeController {
     //Get list of assigned delegates for the user.    
     List<TMN_User_Delegate__c> myDelegates;        
     public List<TMN_User_Delegate__c> getMyDelegates() {
-        myDelegates = [SELECT Name,Time_Assigned__c,Delegate_for_Name__c 
+        myDelegates = [SELECT Name,Time_Assigned__c,Delegate_for_Name__c,TMN_Delegate_Name__c 
                        FROM TMN_User_Delegate__c 
                        WHERE TMN_Delegate_For__c=:tmnId 
                        AND Delegation_Complete__c = FALSE];
@@ -168,22 +176,66 @@ public with sharing class IdentityHomeController {
     //Get list of all direct reports for user.
     List<TMN_User__c> myWorkforce;
     public List<TMN_User__c> getmyWorkforce() {
-        myWorkforce = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c ,Salesforce_User_Account__r.isActive
+        myWorkforce = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c ,Salesforce_User_Account__r.isActive,BAA_Signed__c,Approval_Level__c
                        FROM TMN_User__c 
                        WHERE  Manager_Email__c=:aliasName
                        AND Job_Status__c IN ('Active','Pending') 
-                       ORDER BY Last_Name__c ASC];        
+                       ORDER BY Last_Name__c ASC];   
+           // This logic to determine whether user[logged-in User or Salesforce] can  terminate this tmn User	   
+           for(TMN_User__c tmn:myWorkforce){
+	          if(ApprovalLevel>=3 && ApprovalLevel>tmn.Approval_Level__c){
+	         tmn.BAA_Signed__c = true;
+	         }else {
+	         tmn.BAA_Signed__c = false;
+	         }
+           }            
         return myWorkforce;
     }                           
 
-	public List<TMN_User__c> getRecords() {
+/**
+Recent edited list contains records edited by manager as well as his delegates. So first I am qureying user list and  if user have any delegates, If they have then I am querying records each of them.
+And aslo I am using sort beacuse return list contains only latest 20 records[LastModifiedDate desc]. 
+*/
+	public List<TMNUserSort> getRecords() {
 	    List<TMN_User__c> RecordsList = new List<TMN_User__c>();
-	    List<TMN_User__c> userList = [select id,name,Salesforce_User_Account__c,Email__c from TMN_User__c where Email__c= :aliasName limit 1];
-			if(userList.size()>0 && userList[0].Salesforce_User_Account__c!=null) {
-	        RecordsList = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c  FROM TMN_User__c 
-	                   WHERE LastModifiedById =: userList[0].Salesforce_User_Account__c  ORDER BY LastModifiedDate  desc  LIMIT 10];
+		List<TMN_User_Delegate__c>	delegateList = [SELECT Name,Time_Assigned__c,Delegate_for_Name__c,TMN_Delegate_Name__c  FROM TMN_User_Delegate__c   WHERE TMN_Delegate_For__c=:tmnId ];
+        
+	        RecordsList = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c,BAA_Signed__c,Approval_Level__c,LastModifiedDate,LastModifiedby.name  FROM TMN_User__c 
+	                   WHERE LastModifiedById =: UserInfo.getUserId()  ORDER BY LastModifiedDate  desc  LIMIT 20];
+				if(delegateList!=null && delegateList.size()>0){
+						for(TMN_User_Delegate__c del:delegateList){
+						TMN_User__c tmn = [select id,name,Salesforce_User_Account__c from TMN_User__c where id=:del.TMN_Delegate_Name__c];
+
+					List<TMN_User__c>  tempRecordsList = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c,BAA_Signed__c,Approval_Level__c,LastModifiedDate,LastModifiedby.name  FROM TMN_User__c 
+	                   WHERE LastModifiedById =:tmn.Salesforce_User_Account__c   ORDER BY LastModifiedDate  desc  LIMIT 20];
+	                   		RecordsList.addAll(tempRecordsList);
+						}
+				}
+		List<TMNUserSort> sortedrecords = new List<TMNUserSort>();
+		for(TMN_User__c tmn:RecordsList) {
+				sortedrecords.add(new TMNUserSort(tmn) );
+		} 				
+		sortedrecords.sort();	
+		
+		 List<TMNUserSort> newRecordsList = new List<TMNUserSort>();	
+			if (sortedrecords.size()>20){
+					for(Integer j=0;j<20;j++ ) {
+						newRecordsList.add(sortedrecords[j]);
+					}
+			}else {
+				newRecordsList.addAll(sortedrecords);
 			}
-			return RecordsList;
+			
+						
+		// This logic to determine whether user[logged-in User or Salesforce] can  terminate this tmn User	
+			for(TMNUserSort tmn:newRecordsList){
+	          if(ApprovalLevel>=3 && ApprovalLevel>tmn.Approval_Level){
+	         tmn.BAA_Signed = true;
+	         }else {
+	         tmn.BAA_Signed = false;
+	         }
+           }  
+			return newRecordsList;
 	    }
 	     
     //Build select option list for creation of TMN_User__c records on behalf of.
@@ -555,7 +607,13 @@ public with sharing class IdentityHomeController {
                             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c,
                             BAA_Signed__c,Vendor_Name__c ,Vendor_list__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,Custodians__c,office_flag__c,Pre_Hire_ID__c
                             FROM TMN_User__c 
-                            WHERE Id =:selectedID];    
+                            WHERE Id =:selectedID];   
+         if(ApprovalLevel>=3 && ApprovalLevel>theTMNUser.Approval_Level__c){
+         canTerminate = true;
+         }else {
+         canTerminate = false;
+         }
+                             
         attachments=[select Id, ParentId, Name, Description,CreatedDate,Owner.Name, OwnerID from Attachment where parentId=:theTMNUser.id order by createddate desc];               
         showInfo();
         onloadDialog = false;
@@ -605,6 +663,36 @@ public with sharing class IdentityHomeController {
         setCon.last();
         }     
     }
+    
+    public class TMNUserSort  implements Comparable {
+    	
+    public TMN_User__c tmnUser {set;get;}
+    public String id {get { return tmnUser.id;}}
+    public String Name {get { return tmnUser.name;}}
+	public String Email {get { return tmnUser.Email__c;}}
+	public String Professional_Title {get { return tmnUser.Professional_Title__c;}}
+	public String Job_Status {get { return tmnUser.Job_Status__c;}}
+	public String Current_Person_Type {get { return tmnUser.Current_Person_Type__c;}}
+	public Boolean BAA_Signed {get { return tmnUser.BAA_Signed__c;}set;}
+	public Integer Approval_Level {get { return Integer.valueOf(tmnUser.Approval_Level__c);}}
+    public DateTime LastModifiedDate {get { return tmnUser.LastModifiedDate;}}	
+    public String LastModifiedby {get { return tmnUser.LastModifiedby.name;}} 
+    public String LastModifiedDateString { get {  return tmnUser.LastModifiedDate.format('MM/dd/yyyy hh:mm a'); }}
+        	   	
+    public TMNUserSort (TMN_User__c tmnUser){
+    		this.tmnUser = tmnUser;
+    	}
+    	
+    public Integer compareTo(Object objToCompare) {
+    		 TMNUserSort obj = (TMNUserSort) objToCompare;
+            if (this.LastModifiedDate == obj.LastModifiedDate) return 0;
+            if (this.LastModifiedDate > obj.LastModifiedDate) return -1;
+            return 1;
+        }
+    
+    }
+    
+    
 }
 //Script to update Soundex Keys
 //List<TMN_User__c> tmnusers = [select id,name,Last_Name_Soundex_Key__c,First_Name_Soundex_Key__c 
