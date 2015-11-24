@@ -805,11 +805,12 @@
                 <apex:pageBlockSectionItem helpText="{!$ObjectType.Person_Being_Referred__c.fields.Age_year__c.inlineHelpText}">
                     <apex:outputText value="Age " />
                     <apex:outputPanel styleClass="nowrap">
-                        <apex:inputField value="{!personBeingRefRecord.Age_year__c}" taborderhint="1" style="width: 30px;"/>&nbsp;Years&nbsp;
-                        <apex:outputLabel value=" " />
-                        <apex:inputField value="{!personBeingRefRecord.Age_month__c}" taborderhint="1"  />&nbsp; Months &nbsp;
-                        <apex:outputLabel value=" " />&nbsp;
-                        <apex:inputField value="{!personBeingRefRecord.Age_days__c}"  taborderhint="1" /> Days
+                        <apex:outputLabel value="Years" rendered="{!personBeingRefRecord.Age_year__c!=null &&personBeingRefRecord.Age_year__c>=1}" />
+                        <apex:inputField value="{!personBeingRefRecord.Age_year__c}" rendered="{!personBeingRefRecord.Age_year__c!=null &&personBeingRefRecord.Age_year__c>=1}"  taborderhint="1" style="width: 30px;"/>
+                        <apex:outputLabel value="Months" rendered="{!(personBeingRefRecord.Age_year__c==0 && personBeingRefRecord.Age_month__c!='0')}" />
+                        <apex:inputField value="{!personBeingRefRecord.Age_month__c}" rendered="{!(personBeingRefRecord.Age_year__c==0 && personBeingRefRecord.Age_month__c!='0')}" taborderhint="1"  />
+                        <apex:outputLabel value="Days" rendered="{!personBeingRefRecord.Age_year__c==0}" />&nbsp;
+                        <apex:inputField value="{!personBeingRefRecord.Age_days__c}" rendered="{!personBeingRefRecord.Age_year__c==0}"  taborderhint="1" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:inputField value="{!personBeingRefRecord.Level_of_Education__c}" id="levelOfEducation" required="{!AND(Referral__c.Referral_Status__c='Closed', Referral__c.Close_Reason__c='Admitted', ReferralRecordType = 'NeuroRestorative')}" />
