@@ -434,7 +434,7 @@ public without sharing class Utility {
 		'CA'=>7,
 		'CO'=>504,
 		'CT'=>505,
-		//'DC' => 'District of Columbia' ,
+		'DC' =>529,
 		'DE'=>9,
 		'FL'=>10,
 		'GA'=>11,

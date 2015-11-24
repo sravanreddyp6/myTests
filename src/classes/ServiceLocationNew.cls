@@ -107,17 +107,19 @@ public with sharing class ServiceLocationNew {
 			}else{
 				this.location.ProgramID__c = (null != existingLocs[0].ProgramID__c  && existingLocs[0].ProgramID__c.isNumeric()) ? String.valueof(integer.valueOf(existingLocs[0].ProgramID__c)+1) : null;
 				this.location.Program_Rollup__c = (null != existingLocs[0].Program_Rollup__c && existingLocs[0].Program_Rollup__c.isNumeric()) ? string.valueof(integer.valueof(existingLocs[0].Program_Rollup__c)+1) : null;
+				this.location.FacilityID__c = existingLocs[0].FacilityID__c;
 			}
 			
-			//populate the facility ID based based on the alias State or Operating group (NR and CM)
-			if(a.Alias_Operating_Group__c == 'Care Meridian' || a.Alias_Operating_Group__c == 'CareMeridian'){
-				this.location.FacilityID__c = Utility.FACILITYID_MAP.get('CareMeridian'); //13
-			}else if(a.Alias_Operating_Group__c == 'NeuroRestorative'){
-				this.location.FacilityID__c = Utility.FACILITYID_MAP.get('NeuroRestorative'); //20
-			}else{
-				this.location.FacilityID__c =  Utility.FACILITYID_MAP.containsKey(a.Alias_State__c) ? Utility.FACILITYID_MAP.get(a.Alias_State__c) : null;
+			if(this.location.FacilityID__c == null){
+				//populate the facility ID based based on the alias State or Operating group (NR and CM)
+				if(a.Alias_Operating_Group__c == 'Care Meridian' || a.Alias_Operating_Group__c == 'CareMeridian'){
+					this.location.FacilityID__c = Utility.FACILITYID_MAP.get('CareMeridian'); //13
+				}else if(a.Alias_Operating_Group__c == 'NeuroRestorative'){
+					this.location.FacilityID__c = Utility.FACILITYID_MAP.get('NeuroRestorative'); //20
+				}else{
+					this.location.FacilityID__c =  Utility.FACILITYID_MAP.containsKey(a.Alias_State__c) ? Utility.FACILITYID_MAP.get(a.Alias_State__c) : null;
+				}
 			}
-			
 		}else{
 			this.location.ProgramID__c = null;
 			this.location.Program_Rollup__c = null;
