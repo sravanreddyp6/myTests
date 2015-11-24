@@ -1,0 +1,46 @@
+<apex:component >
+    <apex:attribute name="responses" description="List of evaluation responses to display" type="Evaluation_Response__c[]" />
+    <apex:attribute name="columnsToFetch" description="List of columns" type="String[]" />
+    <apex:attribute name="type" description="The type of this table" type="String" required="true" />
+    <apex:attribute name="style" description="Set the style for the Table displayed on the PDF" type="String" default="padding:10px;margin:10px;text-align:center;" />
+    <apex:attribute name="columnsToHeadersMap" description="columns labels map" type="map" required="false" />
+    <apex:attribute name="displayTitle" description="Title of the evaluation response teable" type="boolean" default="true" />
+
+    <apex:pageBlockSection columns="1" collapsible="false" >
+        <apex:outputText value="No {!type} to display" rendered="{!responses==null || responses.size == 0 }" />
+        <apex:pageBlockTable value="{!responses}" var="response" id="responseTable" border="1px" style="text-align:center;th padding:10px;">
+            <apex:repeat value="{!columnsToFetch}" var="column">
+                <apex:column value="{!response[column]}"  style="{!style}" 
+                        rendered="{! column != 'Hearing_Aid_Type__c'
+				                    && column != 'Hearing_Aid_Present__c'
+				                    && column != 'Glasses_Contacts_Purpose__c'
+				                    && column != 'Glasses_Present__c'
+				                    && column != 'Contacts_Type__c'
+				                    && column != 'Contacts_Present__c'
+				                    && column != 'JawWires_Present__c'
+				                    && column != 'Denture_Type__c'
+				                    && column != 'Side_Rail_Position__c'
+				                    && column != 'Assistive_Device_Removable__c'
+				                    && column != 'Assistive_Device_Restricts_Movement__c'
+				                    && column != 'Isolation_Event_Start_Date__c'
+				                    && column != 'Isolation_Event_End_Date__c'
+				                    && column != 'Surrounding_Tissue_Color_and_Condition__c'
+				                    && column != 'Undermining_in_cm__c'
+				                    && column != 'Tunneling_in_cm__c'
+				                    && column != 'Time_Observed__c' 
+				                    && column != 'End_Date_Time__c'
+				                    && column != 'Start_Date_Time__c'}" >
+	                     <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                </apex:column>
+                <apex:column style="{!style}" 
+                       rendered="{! column=='Isolation_Event_Start_Date__c' || column=='Isolation_Event_End_Date__c' || column=='Time_Observed__c' || column == 'Start_Date_Time__c' || column == 'End_Date_Time__c' }">
+                        <c:MilitaryDatetime dateTimeVal="{!response[column]}" />
+                         <apex:facet name="header">{!columnsToHeadersMap[column]}</apex:facet>
+                </apex:column>
+            </apex:repeat>    
+        </apex:pageBlockTable>
+
+    </apex:pageBlockSection>
+    
+   
+</apex:component>
