@@ -11,6 +11,8 @@ public with sharing class manageservicelocationsController {
 		}
 		return show;
 	}set;}
+	
+	
 	public manageservicelocationsController(Apexpages.StandardController controller){
 		this.controller = controller;
 		this.servicelocation = (Service_location__c)controller.getRecord();
