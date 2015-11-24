@@ -707,7 +707,7 @@
                 <apex:commandButton value="Search for Duplicates" action="{!redirectToSearch}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBR}" rendered="{!Referral__c.OldPBR__c != null}" />
                 <apex:commandButton value="Unlink Referral" action="{!unlinkPBS}" rendered="{!Referral__c.OldPBS__c != null}" />
-                <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert }"  />
+                <apex:commandButton value="Convert" onclick="openlocationPopup(); return false;"  rendered="{!editable && canConvert && $ObjectType.Contact.Createable }"  />
             </apex:pageblockButtons>
 
             <apex:pageBlockSection title="Person Being Referred" showHeader="true" columns="2" collapsible="false" rendered="{!AND(!ISNULL(personBeingRefRecord.Id), ISNULL(personBeingServedRecord.Id))}" id="PBRSection">
