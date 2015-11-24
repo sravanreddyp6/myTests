@@ -10,7 +10,7 @@
      	</apex:pageBlockbuttons>
      	<apex:pageBlockSection columns="2" >
      	<apex:inputField value="{!Service_Location__c.Alias_lookup__c}" />
-     	<apex:pageBlockSectionItem rendered="{!$ObjectType.Service_location__c.Createable}" >
+     	<apex:pageBlockSectionItem  rendered="{!showCreate}" >
      		<apex:commandbutton value="Create New Service Location" onclick="window.open('/apex/ServiceLocationNew');" />
      	</apex:pageBlockSectionItem>
      	</apex:pageBlockSection>
