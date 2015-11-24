@@ -811,7 +811,9 @@
 				var serviceAssignmentName = $selectElement.data('service-assignment-name');
 				var selectedValue = $selected.val();
 				var selectedText = $selected.text();
-				if (selectedValue == 'createShiftDoc') {
+				if(selectedText == null || selectedText == ''){
+                    return false;
+                } else if (selectedValue == 'createShiftDoc') {
 					showAddShiftDocModal(serviceAssignmentId);
 				} else if (selectedValue.indexOf('shiftDocAction-') == 0) {
 					var category = selectedValue.replace('shiftDocAction-', '').split('~')[0];
