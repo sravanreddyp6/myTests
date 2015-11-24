@@ -52,30 +52,6 @@ public without sharing class TransactionQueueTriggeredActions {
 					
 				}
 				
-				else if ( t.request_type__c == 'Person Card' ) {
-					
-					/*
-					// modify an account - testing
-					// get the pbs id from the request pararms
-					
-					Contact c = [ select id, name, middle_name__c from contact where id = :pbsid2];
-					c.middle_name__c = 'Benjamin';
-					update c;
-					
-					// serialize the result
-					String jsonstring = json.serialize( c );
-					system.debug( 'GOT RESULT: '  + jsonstring);
-					*/
-
-					// leverage existing controller?
-					/*
-					PersonRecordController prc = new PersonRecordController( );
-					ID PBSid2 = t.input_params__c;
-					prc.contactID = PBSid2;
-					*/				
-					
-				}
-
                 else if ( t.request_type__c == 'Person Being Served' ) {
                     try {
                         // get the pbs id from the request pararms
@@ -363,7 +339,55 @@ public without sharing class TransactionQueueTriggeredActions {
                     }
                  
                 }
-                
+                else if ( t.request_type__c == 'Update Skill') {
+                	
+                	// get the worksheet id and updated data from the request pararms
+					system.debug( t.input_params__c);
+					Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
+					
+					system.debug( 'WORKSHEET ID: ' + inputs.get('Action_plan_worksheet__c'));
+					system.debug( 'ASR LIST: ' + json.deserialize(inputs.get('action_skill_results'), List<DSP_WeeklySkillTracking.ASRWrapper>.class));
+					
+					ID wksheetId = inputs.get('Action_plan_worksheet__c');
+					
+					List<DSP_WeeklySkillTracking.ASRWrapper> ASRs = (List<DSP_WeeklySkillTracking.ASRWrapper>)json.deserialize(inputs.get('action_skill_results'), List<DSP_WeeklySkillTracking.ASRWrapper>.class);
+					 
+					// update the action skill results that correspond to what was passed in
+					List<Action_Skill_Result__c> toUpd = new List<Action_Skill_Result__c>();
+					
+					for ( DSP_WeeklySkillTracking.ASRWrapper a : ASRs ) {
+						Action_Skill_Result__c newResult = new Action_Skill_Result__c();
+						newResult.action_plan_objective__c = a.oid;
+						newResult.id = a.id;
+						newResult.attempts__c = a.attempts;
+						newResult.status__c = a.status;
+						newResult.met_objective__c = a.met;
+						newResult.initials__c = a.initials;
+						newResult.day__c = a.day;
+						
+						toUpd.add( newResult);
+					}
+					
+					try {
+						upsert( toUpd);
+                	
+             	  		DSP_WeeklySkillTracking wksht = new DSP_WeeklySkillTracking( wksheetId );
+                		
+                		String jsonstring = json.serialize( wksht);
+                		storeResultString( newreq, jsonstring );
+                		
+                        // update the request as having been fulfilled
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+//                      newreq.return_code__c = 'ERROR';
+                        system.debug( e );
+                        newreq.fulfilled__c = false;
+                        newreq.return_value__c = json.serialize( e.getMessage() );
+                    	throw(e);
+						return;
+                    }
+                }
 			
 			// update the request back to the user
 			update newreq;

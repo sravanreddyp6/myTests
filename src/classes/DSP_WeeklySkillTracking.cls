@@ -7,6 +7,7 @@ public without sharing class DSP_WeeklySkillTracking {
     public ID APId { get; private set;}
     public List<SelectOption> prompts { get; private set;}
     public List<SelectOption> metlist { get; private set;}
+    public ID wsID { get; set; }
     
     public DSP_WeeklySkillTracking( TxnQueueResponseController c)
     {
@@ -30,7 +31,9 @@ public without sharing class DSP_WeeklySkillTracking {
     		new SelectOption('','--None--'),
         	new SelectOption('Y','Y'),
         	new SelectOption('N', 'N')
-        };       
+        };   
+        
+        wsID = c.skillResponse.wsID;    
     }
     
     public DSP_WeeklySkillTracking( ID wsID) {
@@ -44,6 +47,7 @@ public without sharing class DSP_WeeklySkillTracking {
         if ( result != null ) {            
         	APId = result.action_plan__c;
         	startdate = result.start_date__c;
+        	this.wsID = wsID;
         }
         
         
@@ -103,7 +107,7 @@ public without sharing class DSP_WeeklySkillTracking {
 
     private List<Action_Plan_Objective__c> ReportableSkillObjectives(Date firstDay){
         return [ select Description__c, effective_Date__c, Target_end_date__c, 
-                        (select Day__c, Attempts__c, Initials__c, Met_Objective__c, Status__c
+                        (select action_plan_objective__c, Day__c, Attempts__c, Initials__c, Met_Objective__c, Status__c
                            from Action_Skill_Results__r
                           where Day__c >= :firstDay 
                             and Day__c < :firstDay + 7
@@ -153,8 +157,12 @@ public without sharing class DSP_WeeklySkillTracking {
     
     public PageReference mySave()
     {
-    
-         List <Action_Skill_Result__c> toupdate = new List<Action_Skill_Result__c>();
+    	
+    	//List <Action_Skill_Result__c> toupdate = new List<Action_Skill_Result__c>();
+    	List <ASRWrapper> toupdate = new List<ASRWrapper>();
+    	
+    	system.debug('OBJMAP IS:' + objectivesMap);
+    	
          for(DSPObjectiveWrapper objectivewrp:getobjectivesmap()){
              for(Date day: objectivewrp.ResultsMap.keyset()){
                  ASRWrapper result = objectivewrp.ResultsMap.get(day);
@@ -174,14 +182,33 @@ public without sharing class DSP_WeeklySkillTracking {
                         if (result.status == 'D' ) {
                             result.Met = 'N';
                         }
-                        //toupdate.Add( result );
+                        toupdate.Add( result );
                      
                  }
                  // else - usually it will but it exist but if it does try to delete it?
              }
          }
+         // submit this to the transaction queue
         try {
-            upsert toupdate;
+          //  upsert toupdate;
+        	Transaction_Queue__c txn  = new Transaction_Queue__c( requesting_user__c = UserInfo.getUserId());
+			txn.request_type__c = 'Update Skill Results';
+			txn.requested_date_time__c = DateTime.Now();
+			Map<String, String> inputs = new Map<String, String>{ 'Action_plan_woksheet__c' => string.valueOf(wsId), 'action_skill_results' => json.serialize(toUpdate)}; 
+		
+			txn.input_params__c = json.serialize( inputs);
+		
+			try { 
+				insert txn;
+				PageReference pr =  Page.DSPWeeklySkillTracking;
+				pr.getParameters().put('txnID', txn.ID);
+				pr.setRedirect(true);
+				return pr;
+			}
+			catch (Exception e) {
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+				return null;
+			}	
         } 
         catch (DmlException ex){
             system.debug(ex);
