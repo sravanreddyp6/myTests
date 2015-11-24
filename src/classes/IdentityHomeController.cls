@@ -200,13 +200,13 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
 	    List<TMN_User__c> RecordsList = new List<TMN_User__c>();
 		List<TMN_User_Delegate__c>	delegateList = [SELECT Name,Time_Assigned__c,Delegate_for_Name__c,TMN_Delegate_Name__c  FROM TMN_User_Delegate__c   WHERE TMN_Delegate_For__c=:tmnId ];
         
-	        RecordsList = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c,BAA_Signed__c,Approval_Level__c,LastModifiedDate,LastModifiedby.name  FROM TMN_User__c 
+	        RecordsList = [SELECT id,Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c,BAA_Signed__c,Approval_Level__c,LastModifiedDate,LastModifiedby.name  FROM TMN_User__c 
 	                   WHERE LastModifiedById =: UserInfo.getUserId()  ORDER BY LastModifiedDate  desc  LIMIT 20];
 				if(delegateList!=null && delegateList.size()>0){
 						for(TMN_User_Delegate__c del:delegateList){
 						TMN_User__c tmn = [select id,name,Salesforce_User_Account__c from TMN_User__c where id=:del.TMN_Delegate_Name__c];
 
-					List<TMN_User__c>  tempRecordsList = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c,BAA_Signed__c,Approval_Level__c,LastModifiedDate,LastModifiedby.name  FROM TMN_User__c 
+					List<TMN_User__c>  tempRecordsList = [SELECT id,Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c,BAA_Signed__c,Approval_Level__c,LastModifiedDate,LastModifiedby.name  FROM TMN_User__c 
 	                   WHERE LastModifiedById =:tmn.Salesforce_User_Account__c   ORDER BY LastModifiedDate  desc  LIMIT 20];
 	                   		RecordsList.addAll(tempRecordsList);
 						}
@@ -226,13 +226,12 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
 				newRecordsList.addAll(sortedrecords);
 			}
 			
-						
 		// This logic to determine whether user[logged-in User or Salesforce] can  terminate this tmn User	
 			for(TMNUserSort tmn:newRecordsList){
-	          if(ApprovalLevel>=3 && ApprovalLevel>tmn.Approval_Level){
-	         tmn.BAA_Signed = true;
+	          if(ApprovalLevel>=3 && ApprovalLevel>tmn.tmnUser.Approval_Level__c){
+	         tmn.tmnUser.BAA_Signed__c = true;
 	         }else {
-	         tmn.BAA_Signed = false;
+	         tmn.tmnUser.BAA_Signed__c = false;
 	         }
            }  
 			return newRecordsList;
