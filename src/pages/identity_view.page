@@ -44,7 +44,7 @@
                    <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
                    <apex:commandButton value="Request Access" action="{!goRequestAccess}" html-formtarget="_blank" />
                   
-                   <apex:commandButton value="Terminate" action="{!goTerminate}" /> 
+                   <apex:commandButton value="Terminate" action="{!goTerminate}"  rendered="{!canTerminate}"/> 
                 </div>   
                     <apex:pageBlockSection columns="2" title="Person Information">                   
                         <apex:outputField label="First Name" value="{!TMNUser.First_Name__c}"/>
@@ -156,7 +156,7 @@
                    <apex:commandButton value="Edit" action="{!goEdit}" rendered="{!TMNUser.Current_Person_Type__c=='Non-Employee'}"/>      
                    <apex:commandButton value="Back" action="{!goBack}" immediate="true" html-formnovalidate="formnovalidate"/>
                    <apex:commandButton value="Request Access" action="{!goRequestAccess}" html-formtarget="_blank" />
-                   <apex:commandButton value="Terminate" action="{!goTerminate}" /> 
+                   <apex:commandButton value="Terminate" action="{!goTerminate}" rendered="{!canTerminate}"/>  
                 </div>   
                
             </apex:pageBlock>

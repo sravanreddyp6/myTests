@@ -37,6 +37,19 @@ public class identityEditNew {
     	return JSON.Serialize(keyVal); 
     }
     
+   TMN_User__c tmn = [SELECT Id,Name,Operating_Group__c,Manager_Name__c,Email__c,Approval_Level__c 
+                     FROM TMN_User__c 
+                     WHERE Salesforce_User_Account__c=:UserInfo.getUserId() 
+                     LIMIT 1]; 
+      public Integer ApprovalLevel {get{
+    			List<TMN_User__c> managerList = [select id,Manager_Lookup__c from TMN_User__c where  Manager_Lookup__c = : tmn.id];
+    				if (managerList!=null && managerList.size()>0){
+    				return Integer.valueOf(tmn.Approval_Level__c);
+    				}
+    				return 0;
+    		}set;}
+    public Boolean canTerminate{set;get;}
+    
     public identityEditNew(ApexPages.StandardController controller) {
                                     
         Id id = ApexPages.currentPage().getParameters().get('ID');
@@ -64,6 +77,13 @@ public class identityEditNew {
         	if( TMNUser.Current_Person_Type__c=='Non-Employee' && TMNUser.Vendor_list__c!=null && TMNUser.Vendor_list__c!='OTHER'){
         			TMNUser.BAA_Signed__c =true;
         	} 
+        	
+        if(ApprovalLevel>=3 && ApprovalLevel>TMNUser.Approval_Level__c){
+         canTerminate = true;
+         }else {
+         canTerminate = false;
+         }
+         
         	
                 attachments=[select Id, ParentId, Name, LastModifiedDate,Description,CreatedDate,Owner.Name, OwnerID ,LastModifiedById, CreatedById, BodyLength,IsPrivate,CreatedBy.name,LastModifiedBy.name from Attachment where parentId=:TMNUser.id order by createddate ];
              for(integer i = attachments.size(); i<3;i++){
