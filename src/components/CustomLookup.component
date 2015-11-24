@@ -83,12 +83,12 @@
                    	<apex:inputText value="{!f.value}" size="15" rendered="{!!(f.Label == 'State')}"/>&nbsp;&nbsp;  
                 </apex:repeat>
                 <apex:commandButton value="Cancel" onclick="closeMD('{!$Component.comp.searchDialog}', 'span');return false;" />
-                <apex:commandButton value="Search!" action="{!Search}" reRender="table,block" status="searchStatus"/>
+                <apex:commandButton value="Search!" action="{!Search}" reRender="table,table2,block" status="searchStatus"/>
                 
                 <apex:actionStatus id="searchStatus" startText=" Searching... "/>
                 <br/><br/>
                 
-                <apex:pageBlockTable value="{!searchResult}" var="r" id="table" rendered="true">
+                <apex:pageBlockTable value="{!searchResult}" var="r" id="table" rendered="{!type != 'Service_Location__c'}" >
                     <apex:column headerValue="{!$ObjectType[objectType].Fields['name'].label}">
                         <a href="#" onClick="j$(getIdSelector('{!$Component.comp.lookupElement}')).val('{!r[$ObjectType[objectType].Fields['name'].localName]}');
                                         j$(getIdSelector('{!$Component.comp.lookupElement_lkid}')).val('{!r[$ObjectType[objectType].Fields['id'].localName]}');
@@ -97,11 +97,49 @@
                                         return false;"
                                         >{!r[$ObjectType[objectType].Fields['name'].localName]}</a>
                     </apex:column>
-                    <apex:repeat value="{!rfieldsOrdered}" var="f">
-                        <apex:column headerValue="{!$ObjectType[objectType].Fields[f.Name].label}">
+                    <apex:repeat value="{!rfieldsOrdered}" var="f" >
+                        <apex:column headerValue="{!$ObjectType[objectType].Fields[f.Name].label}" >
                             {!r[$ObjectType[objectType].Fields[f.Name].localName]}
                         </apex:column>
                     </apex:repeat>
+                </apex:pageBlockTable>
+                
+                <apex:pageBlockTable value="{!searchResult}" var="r" id="table2"  rendered="{!type == 'Service_Location__c'}" >
+                    <apex:column headerValue="{!$ObjectType[objectType].Fields['name'].label}">
+                        <a href="#" onClick="j$(getIdSelector('{!$Component.comp.lookupElement}')).val('{!r[$ObjectType[objectType].Fields['name'].localName]}');
+                                        j$(getIdSelector('{!$Component.comp.lookupElement_lkid}')).val('{!r[$ObjectType[objectType].Fields['id'].localName]}');
+                                        closeMD('{!$Component.comp.searchDialog}', 'span');
+                                        j$(getIdSelector('{!$Component.comp.lookupElement_lkid}')).change();
+                                        return false;"
+                                        >{!r[$ObjectType[objectType].Fields['name'].localName]}</a>
+                    </apex:column>
+                    <apex:column headerValue="Program Code" >
+                    	  {!r[$ObjectType[objectType].Fields['ProgramId__c'].localName]}
+                	</apex:column>
+                	<apex:column headerValue="NickName" >
+                    	  {!r[$ObjectType[objectType].Fields['Location_nickname__c'].localName]}
+                	</apex:column>
+                	<apex:column headerValue="Address" >
+                    	 <apex:outputPanel >
+                        	<c:AddressDisplay Street1="{!r[$ObjectType[objectType].Fields['Street__c'].localName]}" City="{!r[$ObjectType[objectType].Fields['City__c'].localName]}" State="{!r[$ObjectType[objectType].Fields['State__c'].localName]}" Zip="{!r[$ObjectType[objectType].Fields['Zip__c'].localName]}" /><br/>
+                        	<apex:outputText value="{!r[$ObjectType[objectType].Fields['Phone__c'].localName]}" />
+                        </apex:outputPanel>
+                	</apex:column>
+                	<apex:column headerValue="TMN Scope" >
+                    	  {!r[$ObjectType[objectType].Fields['TMN_Scope__c'].localName]}
+                	</apex:column>
+                	<apex:column headerValue="Population Served" >
+                    	  {!r[$ObjectType[objectType].Fields['Population_Served__c'].localName]}
+                	</apex:column>
+                    <apex:column headerValue="Physical Location" >
+                    	  {!r[$ObjectType[objectType].Fields['Physical_location__c'].localName]}
+                	</apex:column>
+                	<apex:column headerValue="Service Type" >
+                    	  {!r[$ObjectType[objectType].Fields['Service_Type__c'].localName]}
+                	</apex:column>
+                	<apex:column headerValue="Network Service Line Offering" >
+                    	  {!r[$ObjectType[objectType].Fields['Network_offering__c'].localName]}
+                	</apex:column>
                 </apex:pageBlockTable>
                
                 <apex:pageBlockButtons id="buttons" location="bottom" >
@@ -109,13 +147,13 @@
                         <apex:outputText ><i style="color:#696969;">{!OffsetSize+1}&nbsp;&nbsp;-&nbsp;&nbsp;{!(OffsetSize+searchSize)}&nbsp;&nbsp;of&nbsp;&nbsp;{!CountTotalRecords}</i></apex:outputText>
                     </apex:outputPanel> 
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <apex:commandButton value="First" action="{!First}" rerender="table,block"
+                    <apex:commandButton value="First" action="{!First}" rerender="table,table2,block"
                                     status="status" disabled="{!DisablePrevious}" />
-                    <apex:commandButton value="Previous" action="{!Previous}" rerender="table,block"
+                    <apex:commandButton value="Previous" action="{!Previous}" rerender="table,table2,block"
                                     status="status" disabled="{!DisablePrevious}" />
-                    <apex:commandButton value="Next" action="{!Next}" reRender="table,block"
+                    <apex:commandButton value="Next" action="{!Next}" reRender="table,table2,block"
                                     status="status" disabled="{!DisableNext}" />
-                    <apex:commandButton value="Last" action="{!Last}" rerender="table,block"
+                    <apex:commandButton value="Last" action="{!Last}" rerender="table,table2,block"
                                     status="status" disabled="{!DisableNext}" />
                     <apex:actionStatus id="status" startText=" Paging... "/>
                     

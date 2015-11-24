@@ -42,9 +42,9 @@ j$(document).ready(function(){
 	                       
     			
             
-                <apex:outputField label="Facility" value="{!Service_Location__c.FacilityID__c}" rendered="{!Service_Location__c.Source_System__c == 'AVATAR'}" />
-                <apex:inputField value="{!Service_Location__c.FacilityID__c}" required="true" rendered="{!Service_Location__c.Source_System__c == 'iServe'}"/>
-                
+                <apex:outputField label="Facility" value="{!Service_Location__c.FacilityID__c}"  />
+<!--                 <apex:inputField value="{!Service_Location__c.FacilityID__c}" required="true" rendered="{!Service_Location__c.Source_System__c == 'iServe'}"/> -->
+                <apex:inputField value="{!Service_Location__c.Physical_Location__c}" required="true"/>
                 <apex:inputField value="{!Service_Location__c.TMN_Scope__c}" required="true" />
                 <apex:inputField value="{!Service_Location__c.Network_Offering__c}" required="true" />
                 <apex:inputField value="{!Service_Location__c.Service_Type__c}" required="true" />
