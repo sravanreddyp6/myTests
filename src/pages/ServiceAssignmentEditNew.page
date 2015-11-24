@@ -3401,6 +3401,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageBlockSection id="summary_Alt1_Header" title="Action Plan Summaries" collapsible="true" columns="1">
             <!-- <apex:relatedList list="Action_Summaries__r" /> -->
             <apex:pageBlockTable value="{!Service_Assignment__c.Action_Summaries__r}" var="summary" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                <apex:column headerValue="Action" width="70px"><a href="/{!summary.ID}">Edit</a></apex:column>
                 <apex:column value="{!summary.name}"></apex:column>
                 <apex:column value="{!summary.Status__c}"></apex:column>
             </apex:pageBlockTable>
