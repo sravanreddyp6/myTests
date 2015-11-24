@@ -18,7 +18,7 @@ public with sharing class DSPHomePageController {
 
     public String viewstsk{get;set;}
     public List<Task> populateTasks{get;set;}
-    public Map<Id, String> taskToNameMap { get; set; }
+    public Map<Id, String[]> taskToNameMap { get; set; }
     
     private Set<PBSWrapper> peopleToServe { get; set; } // list of PBS on this page (includes favorites and single-transaction PBS)
     private Set<ID> admissions = new Set<ID>(); // list of admissions in focus
@@ -408,7 +408,7 @@ public with sharing class DSPHomePageController {
     // get list of tasks for this user
     public void mineTasks(){
         Id userId = UserInfo.getUserId();
-        String query ='select id, subject,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
+        String query ='select id, subject,Description,WhatId,What.Name,WhoId,Who.Name,status,RecordTypeId, ActivityDate, Priority, CreatedDate from Task where OwnerId=:userId and status!=\'Completed\'';
         String orderStatement = '';
         // NEVAL-56
         Map<String, String> colNumToFieldMap = new Map<String, String>{
@@ -456,16 +456,21 @@ public with sharing class DSPHomePageController {
         // associated with Referrals cannot have their WhoId set to the Person
         // Being Referred record, so we need to construct the names manually
         // here
-        taskToNameMap = new Map<Id, String>();
+        taskToNameMap = new Map<Id, String[]>();
         Set<Id> whatIdSet = new Set<Id>();
         for (Task task: populateTasks) {
             if (task.WhoId != null) {
-                taskToNameMap.put(task.Id, '<a href="/' + task.WhoId + '">' + task.Who.Name + '</a>');
+                taskToNameMap.put(task.Id, new list<String>{'<a href="#" onclick="submitTxnRequest(\'Person Being Served\',\'' + task.WhoId + '\');">' + task.Who.Name + '</a>'});
+                if (task.WhatId.getSObjectType().getDescribe().getName() == 'Action_Plan__c')
+                    taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'Action Plan\',\'' + task.WhatId + '\'); return false;">' + task.What.Name + '</a>');
+                else if (task.WhatId.getSObjectType().getDescribe().getName() == 'Assessment__c') 
+                    taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'' + (task.What.Name.containsIgnoreCase('ISSA') ? 'ISSA': 'Risk') + '\',\'' + task.WhatId + '\');">' + task.What.Name + '</a>');
             } else {
-                whatIdSet.add(task.WhatId);
+            	taskToNameMap.put(task.Id, new list<String>{'',''});
+          //      whatIdSet.add(task.WhatId);
             }
         }
-        Map<Id, Referral__c> referrals = new Map<Id, Referral__c>([
+/*        Map<Id, Referral__c> referrals = new Map<Id, Referral__c>([
             SELECT Id, Person_Being_Referred__r.Full_Name__c
             FROM Referral__c
             WHERE Id IN :whatIdSet
@@ -477,7 +482,7 @@ public with sharing class DSPHomePageController {
             } else if (task.WhoId == null) {  // Do not override the entry from above if WhoId != null
                 taskToNameMap.put(task.Id, '');
             }
-        }
+        } */
     }
     
     
