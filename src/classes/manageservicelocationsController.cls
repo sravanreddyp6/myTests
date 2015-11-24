@@ -1,23 +1,32 @@
 public with sharing class manageservicelocationsController {
 	private Apexpages.StandardController controller {get;set;}
 	public Service_location__c servicelocation {get;set;}
-	public boolean manage {get; set;}
+	//public boolean manage {get; set;}
 	public transient list<Service_location__c> locations {get;set;}
+	public boolean showCreate{get{
+		Boolean show = false;
+		List<PermissionSetAssignment> userPerms = [SELECT Id FROM PermissionSetAssignment WHERE PermissionSet.Name = 'Create_Service_Locations' AND AssigneeId = :UserInfo.getUserID()];
+		if(userPerms.size() > 0){
+			show = true;
+		}
+		return show;
+	}set;}
 	public manageservicelocationsController(Apexpages.StandardController controller){
 		this.controller = controller;
 		this.servicelocation = (Service_location__c)controller.getRecord();
 		this.locations = new list<Service_location__c>();
-		this.manage = false;
+		//this.manage = false;
 	}
 	
-	public pageReference createNew(){
+	
+	/*public pageReference createNew(){
 		 return new pageReference('/apex/ServiceLocationEdit');
-	}
+	}*/
 	
-	public pageReference manageExisting(){
+/*	public pageReference manageExisting(){
 		this.manage = true;
 		return null;
-	}
+	}*/
 	
 	public void run(){
 		if(string.isBlank(this.servicelocation.Alias_lookup__c)){
