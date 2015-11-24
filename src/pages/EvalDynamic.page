@@ -95,6 +95,7 @@
 		}
 
 		function showForm(key) {
+			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
 			if (key.indexOf('Head to Toe~Skin/Body~Wound Detail') > -1 || key.indexOf('Head to Toe~Skin/Body~Pressure Ulcer Details') > -1 || key.indexOf('Residential~Skin/Body~Pressure Ulcer Detail') > -1 || key.indexOf('Residential~Skin/Body~Wound Detail') > -1) {
 				jQuery("#panel-form").empty().append(jQuery("[id$='evalResponsesForm']"));
 			} else if (key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key == 'Residential~Skin/Body~Skin Assessment~Residential') {
@@ -103,6 +104,7 @@
 				jQuery("#panel-form").empty().append(jQuery("[id$='restraintForm']"));
 			} else {
 				jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
+				jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
 				bindSubmitEvent();
 				setUpFields();
 				var errors = '';
@@ -460,10 +462,6 @@
 					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
 						<div class="panel-heading clearfix">
 							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}</h3>
-							<apex:outputPanel layout="block" style="right: 10px;float: right;position: relative;" rendered="{!$CurrentPage.parameters.canEdit}">
-								<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery('#btnHiddenSave').click(); return false;" />
-								<input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />
-							</apex:outputPanel>
 						</div>
 						<div id="panel-form" class="panel-body">
 
