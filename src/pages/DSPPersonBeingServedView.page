@@ -1,0 +1,255 @@
+<apex:page title="Person Being Served View" controller="TxnQueueResponseController" sidebar="false" tabStyle="Persons_Being_Served_New__tab" standardStylesheets="true">
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+    <apex:variable value="{!pbsViewResponse.contact}" var="contactObj" />
+
+	<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + InputParams}" />
+
+    <br />
+    <div id="theWholeForm">
+    <apex:form id="FormId">
+        <apex:pageMessages />
+        <!--Person Being Served Section-->
+        <apex:pageBlock id="PBSDetailID" mode="maindetail">
+        <div class="tmn-h1">Person Being Served</div>            
+            <apex:pageBlockSection title="Person Being Served" showHeader="false" columns="2" collapsible="false" id="pbsOutPutsectionId">
+                <!--  view -->
+                <apex:outputField value="{!contactObj.FirstName}" />
+                <apex:outputField value="{!contactObj.Race__c }" />
+                <apex:outputField value="{!contactObj.Middle_Name__c}" />
+                <apex:outputField value="{!contactObj.Ethnicity_Picklist__c}" />
+                <apex:outputField value="{!contactObj.LastName}" />
+                <apex:outputField value="{!contactObj.Marital_Status__c}" />
+                <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Date of Birth" for="txtDOB" />
+                          <apex:outputPanel layout="block" >
+                           <apex:outputPanel layout="block" />
+                             <apex:outputField id="txtDOB"  value="{!contactObj.Birthdate}"/>
+                             </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="Primary Language" />
+                    <apex:outputPanel styleClass="nowrap">
+                        <apex:outputField value="{!contactObj.Primary_Language__c}" /> &nbsp;&nbsp;
+                        <apex:outputLabel value="Non-Verbal" />&nbsp;
+                        <apex:outputField value="{!contactObj.Non_Verbal__c}"  />&nbsp;
+                        <apex:outputLabel value="Sign Language" />&nbsp;
+                        <apex:outputField value="{!contactObj.Sign_Language__c}"  />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>    
+                
+                <apex:outputField value="{!contactObj.Age__c}" />
+                <apex:outputField value="{!contactObj.Level_of_Education__c}" />
+                <apex:outputField value="{!contactObj.Gender__c}" />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection_view">
+                <apex:outputField value="{!contactObj.Medicaid_ID__c }" />
+                <apex:outputField value="{!contactObj.Other_ID__c }" />
+                <apex:outputField value="{!contactObj.Avatar_ID__c }" />
+                <apex:outputField value="{!contactObj.Other_ID_Description__c }" />
+                <apex:outputField value="{!contactObj.Avatar_Source_System__c }" />
+                <apex:outputField value="{!contactObj.UCI_ID__c }" rendered="{! contactObj.MailingStateCode == 'CA' && !pbsViewResponse.isCAFSS}"/>
+            </apex:pageBlockSection>            
+
+            <!--Contact Information Section-->
+            <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputContactInfo">              
+                <!-- view -->
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mailing Street 1" for="Ma" />
+                    <apex:outputField id="ma"  value="{!contactObj.MailingStreet}" label="Mailing Street 1" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Other Street 1" for="os" />
+                    <apex:outputField id="os"  value="{!contactObj.OtherStreet}" label="Other Street 1" />
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!contactObj.Mailing_Street_2__c}" />
+                <apex:outputField value="{!contactObj.Other_Street_2__c}" />
+                <apex:outputField value="{!contactObj.MailingCity}" />
+                <apex:outputField value="{!contactObj.OtherCity}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mailing Country" for="os" />
+                    <apex:outputField styleClass="setMailStateTab" value="{!contactObj.MailingCountryCode}" label="Mailing Country" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Other Country" for="os" />
+                    <apex:outputField styleclass="setOtherStateTab"  value="{!contactObj.OtherCountryCode}" label="Other Country" />
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mailing State/Province" for="os" />
+                    <apex:outputPanel >
+                        <apex:outputField id="MailingStateCode"  html-class="testingTabs"  value="{!contactObj.MailingStateCode}" label="Mailing State/Province" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Other State/Province" for="os" />
+                    <apex:outputField id="OtherStateCode"  value="{!contactObj.OtherStateCode}" label="Other State/Province" />
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!contactObj.MailingPostalCode}"  styleClass="setMailStateTab"  />
+                <apex:outputField styleclass="setOtherStateTab"     value="{!contactObj.OtherPostalCode}" />
+                <apex:outputField value="{!contactObj.Mailing_County__c}" />
+                <apex:outputField value="{!contactObj.Other_County__c}"  />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Home Phone" for="phone"/>
+                    <apex:outputField value="{!contactObj.Phone}" id="phone"/>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!contactObj.OtherPhone}" />
+                <apex:outputField value="{!contactObj.Email}" />
+                <apex:outputField value="{!contactObj.Other_Contact_Information__c}" />
+            </apex:pageBlockSection>
+
+
+            <!--Additional Information Section-->
+
+            <a id="AI"></a>
+            <apex:pageBlockSection columns="2" title="Additional Information" showHeader="true" collapsible="False" id="pbsOutputAdditionalInfo_view">
+                <apex:outputField value="{!contactObj.Family_Member_Other__c}" />
+                <apex:outputField value="{!contactObj.Legal_Guardianship_Status__c}" />
+                
+                <apex:outputField value="{!contactObj.VIP_Indicator__c}" />
+                <apex:outputField value="{!contactObj.Current_Medications__c}" rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Current_Medications__c')}" />
+                <apex:pageBlockSectionItem rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Current_Medications__c')}" /> 
+                
+                <apex:pageBlockSectionItem rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Advanced_Directives__c')}" />
+                <apex:outputField value="{!contactObj.Advanced_Directives__c}" rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Advanced_Directives__c')}" html-data-rules="{&quot;1&quot;: &quot;{!$Component.advanceAttached}&quot;}" />                
+                <apex:outputField value="{!contactObj.Code_Status__c}" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.codeStatusOther}&quot;}" rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Code_Status__c')}" />                
+                
+                <apex:outputField value="{!contactObj.Advanced_Directives_Attached__c}" rendered="{!  !Contains(pbsViewResponse.dontShowFields, 'Advanced_Directives_Attached__c')}" id="advanceAttached" />                
+                <apex:outputField value="{!contactObj.Code_Status_Other__c}" id="codeStatusOther" label="Specify Other" rendered="{! !Contains(pbsViewResponse.dontShowFields, 'Code_Status_Other__c')}" />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection columns="2" collapsible="False" id="pbsOutputRecordInfo">
+                <apex:pageBlockSectionItem />    
+                <apex:pageBlockSectionItem />    
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Created By" />
+                    <apex:outputPanel layout="none">
+                        <apex:outputField value="{!contactObj.CreatedById}" />,&nbsp;
+                        <apex:outputText value=" {!contactObj.CreatedDate}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Last Modified By" />
+                    <apex:outputPanel layout="none">
+                        <apex:outputField value="{!contactObj.LastModifiedById}" />,&nbsp;
+                        <apex:outputText value=" {!contactObj.LastModifiedDate}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Owner" />
+                    <apex:outputPanel layout="none">
+                        <apex:outputField value="{!contactObj.OwnerId}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+            
+            <!--Family Information Section-->
+            <apex:pageBlockSection columns="2"  title="Family Information" showHeader="true" collapsible="True" id="pbsOutputFamilyInfo" >
+                <apex:outputfield value="{!contactObj.Family_Annual_Income__c}" />
+                <apex:outputfield value="{!contactObj.Family_Military_Involvement__c}" />
+                <apex:outputfield value="{!contactObj.Family_Native_American_Ancestry__c}" />
+                <apex:outputfield value="{!contactObj.Family_Military_Involvement_Branch__c}" rendered="{! contactObj.Family_Military_Involvement__c != 'None'}" />
+                <apex:outputfield value="{!contactObj.Family_Native_American_Tribe__c}" rendered="{! contactObj.Family_Native_American_Ancestry__c}" />
+                <apex:outputfield value="{!contactObj.Family_Prior_Military_Involvement_Date__c}" rendered="{! contactObj.Family_Military_Involvement__c = 'Prior'}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+
+        <!--Related Parties Section-->
+        <a id="RP"></a>
+        <apex:pageBlock id="relatedPartiesListId" mode="maindetail">
+            <apex:pageBlockSection columns="1" title="Related Parties" id="relatedParties_Alt1_Header" collapsible="false">
+                <apex:pageBlockTable value="{!pbsViewResponse.relPartiesWrapper}" var="relParty" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+                    <apex:column value="{!relParty.TypeC}" headerValue="Type"/>
+                    <apex:column value="{!relParty.Name}" headerValue="Party Name"/>
+                    <apex:column value="{!relParty.Address}" headerValue="Address"/>
+                    <apex:column value="{!relParty.Email}" headerValue="Email"/>
+                    <apex:column value="{!relParty.Phone}" headerValue="Phone 1"/>
+                    <apex:column value="{!relParty.Phone_1_Type}" headerValue="Phone 1 Type"/>
+                    <apex:column value="{!relParty.Phone_2}" headerValue="Phone 2"/>
+                    <apex:column value="{!relParty.Phone_2_Type}" headerValue="Phone 2 Type"/>
+                    <apex:column value="{!relParty.Status}" headerValue="Status"/>
+                    <apex:column value="{!relParty.Comments}" headerValue="Comments"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+
+        <!--Diagnosis Section -->
+         <a name="Diag" id="Diag" /> 
+         <apex:pageBlock id="Diagnosis" mode="maindetail"> 
+             <apex:pageBlockSection title="Diagnosis" showHeader="true" columns="1" id="diag_Alt1_Header" collapsible="false"> 
+                 <apex:pageblockTable value="{!pbsViewResponse.diagnosis}" var="diag" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  rendered="{!(pbsViewResponse.diagnosis.size>0)}"> 
+                     <apex:column value="{!diag.ICD__r.name}" headerValue="ICD Code" />
+                    <apex:column value="{!diag.ICD__r.Code_Type__c}" />
+                    <apex:column value="{!diag.ICD__r.Icd_Description__c}" />
+                    <apex:column headerValue="Date and Time of Diagnosis" >
+                    	<c:MilitaryDatetime datetimeval="{!diag.Effective_Date__c}" />
+                    </apex:column>
+                    <apex:column value="{!diag.Status__c}" headerValue="Status" />
+                    <apex:column value="{!diag.Type__c}" headerValue="Type" /> 
+                 </apex:pageblockTable> 
+                 <apex:outputText value="No diagnoses to display" rendered="{!(pbsViewResponse.diagnosis.size=0)}" /> 
+             </apex:pageBlockSection> 
+         </apex:pageBlock> 
+        
+        <a id="allergy"></a>
+        <apex:pageBlock mode="maindetail">
+        <div class="tmn-h1">Allergy</div>
+            <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'Allergy'))}">
+                <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['Allergy']}"
+                    columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['Allergy']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
+                    type="Allergy" displayTitle="false" style="padding:5px;text-align:left;" />
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'Allergy'))}" style="padding-left:10px;padding-top:3px">No allergies to display</apex:outputPanel>
+        </apex:pageBlock>
+        <a id="immunization"></a>
+        <apex:pageBlock mode="maindetail" rendered="{!contactObj.age__c >= 18}">
+        <div class="tmn-h1">Immunization - Adult</div>
+            <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'Immunization - Adult'))}">
+                <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['Immunization - Adult']}"
+                    columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['Immunization - Adult']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
+                    type="Immunization - Adult" displayTitle="false" style="padding:5px;text-align:left;" />
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'Immunization - Adult'))}" style="padding-left:10px;padding-top:3px">No immunizations to display</apex:outputPanel>
+        </apex:pageBlock>
+        <apex:pageBlock mode="maindetail" rendered="{!contactObj.age__c < 18}">
+        <div class="tmn-h1">Immunization - Child</div>
+            <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'Immunization - Child'))}" >
+                <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['Immunization - Child']}"
+                    columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['Immunization - Child']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
+                    type="Immunization - Child" displayTitle="false" style="padding:5px;text-align:left;" />
+            </apex:outputPanel>
+             <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'Immunization - Child'))}" style="padding-left:10px;padding-top:3px">No immunizations to display</apex:outputPanel>
+        </apex:pageBlock>
+        <a id="PPDSkinTest"></a>
+        <apex:pageBlock mode="maindetail">
+        <div class="tmn-h1">PPD Skin Test</div>
+            <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'PPD Skin Test'))}" >
+                <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['PPD Skin Test']}"
+                    columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['PPD Skin Test']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
+                    type="PPD Skin Test" displayTitle="false" style="padding:5px;text-align:left;" />
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'PPD Skin Test'))}" style="padding-left:10px;padding-top:3px">No PPD skin tests to display</apex:outputPanel>
+        </apex:pageBlock>
+        <a id="assistiveDevices"></a>
+        <apex:pageBlock mode="maindetail">
+        <div class="tmn-h1">Assistive Devices</div>
+            <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResposesTypes != '' , CONTAINS(pbsViewResponse.evalResposesTypes, 'Assistive Device'))}">
+                <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResposes['Assistive Device']}"
+                    columnsToFetch="{!pbsViewResponse.mapEvalResposeFlds['Assistive Device']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResposeFldLbls}"
+                    type="Assistive Device" displayTitle="false" style="padding:5px;text-align:left;" />
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResposesTypes = '' , !CONTAINS(pbsViewResponse.evalResposesTypes, 'Assistive Device'))}" style="padding-left:10px;padding-top:3px">No assistive devices to display</apex:outputPanel>
+        </apex:pageBlock>
+        </apex:form>
+        </div>
+ 
+</apex:page>
