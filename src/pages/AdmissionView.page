@@ -8,7 +8,7 @@
 	<apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.dataTables, '/dataTables/media/css/jquery.dataTables.css')}" />
 	<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />
-	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' && Admission__c.State__c == 'MN'}" var="vfVarIsRwMN" />
+	<apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (Admission__c.State__c =='MN' || Admission__c.State__c =='IA' || Admission__c.State__c =='CA')}" var="vfVarIsRwExtraItems" />
 	<style type="text/css">
 		.dialogLoadingSpinner {
 			margin-left: 5px;
@@ -476,7 +476,7 @@
 		</apex:pageBlock>
 <hr/>
 		<a id="admissionDocuments">
-			<apex:pageBlock mode="maindetail"  rendered="{!(isCM || isCAFSS || vfVarIsRwMN) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
+			<apex:pageBlock mode="maindetail"  rendered="{!(isCM || isCAFSS || vfVarIsRwExtraItems) && $Setup.SystemSettings__c.PB_AdmissionDocumentFeature__c}" id="associatedDocuments">
 				<apex:pageBlockButtons location="top">
 					<apex:actionStatus id="AddEditDocStatus" rendered="{!$ObjectType.PB_AssociatedDoc__c.updateable}" >
 						<apex:facet name="start">

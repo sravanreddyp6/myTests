@@ -5,7 +5,7 @@
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
-    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='Minnesota' }" var="vfVarIsRwMN" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (contact.MailingState =='Minnesota' || contact.MailingState =='Iowa')}" var="vfVarIsRwExtraItems" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='California' }" var="vfVarIsRwCA" />
      <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
@@ -1122,7 +1122,7 @@
                             <apex:outputPanel >
                                 <apex:outputLabel value="ICD-10 Code" style="font-weight:bold"/> &nbsp; &nbsp;
                                 <apex:inputField value="{!diag.ICD__c}" id="diagnosisEntry_icd"/> 
-                                <c:HelpTooltip helpText="Please note: When searching, use “Name” to search by the alphanumeric ICD-10 Code. Use “All Fields” to search by ICD-10 Code OR Description."  />
+                                <c:HelpTooltip helpText="Please note: When searching, use Name to search by the alphanumeric ICD-10 Code. Use All Fields to search by ICD-10 Code OR Description."  />
                             </apex:outputPanel>
                         </apex:pageBlockSectionItem>
                         <apex:pageBlockSectionItem >
@@ -1208,7 +1208,7 @@
             </apex:pageBlock>
         </a>
             <a id="immunization"></a>
-            <apex:pageBlock mode="maindetail"  rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || contact.Age__c < 18) && (vfVarIsCM || vfVarIsRwMN)}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || contact.Age__c < 18) && (vfVarIsCM || vfVarIsRwExtraItems || vfVarIsRwCA)}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Child"
                                            formId="{!$Component.FormID}"
@@ -1225,7 +1225,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             
-            <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && (vfVarIsCM || vfVarIsRwMN)}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && (vfVarIsCM || vfVarIsRwExtraItems || vfVarIsRwCA)}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Adult"
                                            formId="{!$Component.FormID}"
@@ -1242,7 +1242,7 @@
 
             </apex:pageBlock>
             
-            <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM || vfVarIsRwMN) }" >
+            <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM || vfVarIsRwExtraItems || vfVarIsRwCA) }" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="PPD Skin Test"
                                            formId="{!$Component.FormID}"
@@ -1279,7 +1279,7 @@
                                            rows="5" />
                 <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>  
             </apex:pageBlock>
-            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwMN }">
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwExtraItems }">
             <a id="assistiveDevices" />            
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device MN"
