@@ -95,10 +95,12 @@ public without sharing class TransactionQueueTriggeredActions {
                         newreq.Date_Time_Fulfilled__c = DateTime.Now();
 	                } catch ( Exception e ) {
 	//                          newreq.return_code__c = 'ERROR';
-	                            system.debug( e );
-	                            newreq.fulfilled__c = false;
-	                            newreq.return_value__c = json.serialize( e.getMessage() );
-	                }
+                            system.debug( e );
+                            newreq.fulfilled__c = false;
+                            newreq.return_value__c = json.serialize( e.getMessage() );
+                           	throw(e);
+							return;
+					}
                 }
                 
                 else if ( t.request_type__c == 'Risk' ) {
@@ -130,6 +132,8 @@ public without sharing class TransactionQueueTriggeredActions {
                         // flag the error
                         newreq.fulfilled__c = false;
                         newreq.return_value__c = json.serialize( e.getMessage() );
+                        throw(e);
+						return;
                     }
                     
                 }
@@ -163,6 +167,8 @@ public without sharing class TransactionQueueTriggeredActions {
                         // flag the error
                         newreq.fulfilled__c = false;
                         newreq.return_value__c = json.serialize( e.getMessage() );
+                        throw(e);
+						return;
                     }
                     
                 }
@@ -201,7 +207,9 @@ public without sharing class TransactionQueueTriggeredActions {
                             system.debug( e );
                             newreq.fulfilled__c = false;
                             newreq.return_value__c = json.serialize( e.getMessage() );
-                    }
+                            throw(e);
+							return;
+                    	}
                 }
                 else if ( t.request_type__c == 'Seizures' ) {
                     try {
@@ -225,6 +233,8 @@ public without sharing class TransactionQueueTriggeredActions {
                                 system.debug( e );
                                 newreq.fulfilled__c = false;
                                 newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+								return;
                     }
                 }
                 else if ( t.request_type__c == 'Upsert Seizure' ) {
@@ -248,6 +258,8 @@ public without sharing class TransactionQueueTriggeredActions {
                             system.debug( e );
                             newreq.fulfilled__c = false;
                             newreq.return_value__c = json.serialize( e.getMessage() );
+                         	throw(e);
+							return;
                     }
                 }
 				else if ( t.request_type__c == 'Acknowledge Plan') {
@@ -282,6 +294,8 @@ public without sharing class TransactionQueueTriggeredActions {
 							system.debug( e );
 							newreq.fulfilled__c = false;
 							newreq.return_value__c = json.serialize( e.getMessage() );
+                        	throw(e);
+							return;
 					}
 				}
 				else if ( t.request_type__c == 'BehaviorList' || t.request_type__c == 'SkillList' ) {
@@ -308,14 +322,29 @@ public without sharing class TransactionQueueTriggeredActions {
                                 system.debug( e );
                                 newreq.fulfilled__c = false;
                                 newreq.return_value__c = json.serialize( e.getMessage() );
-                    }
+                        		throw(e);
+								return;
+					}
                  
                 }
                 
                 else if ( t.request_type__c == 'Skill') {
                 	try {
-                		ID wksheetid = t.input_params__c;
+                		ID inputID = t.input_params__c;
+                		ID wksheetID;
                 		
+                		// if the id is an action plan and we need to create a new worksheet first
+                		if ( inputID.getSObjectType().getDescribe().Name == 'Action_Plan__c') {
+                			// start date is Monday of this week
+                			Date sd = Date.Today().toStartofWeek() +1;
+                			RecordType rt = [ select id from recordtype where sobjecttype = 'Action_Plan_Worksheet__c' and developername = 'Weekly_Skill_Result' LIMIT 1];
+                			Action_Plan_Worksheet__c newsheet = new Action_Plan_Worksheet__c( Action_Plan__c = inputID, start_date__c = sd, recordtypeid = rt.Id);
+                			insert newsheet;
+                			wksheetID = newsheet.id;
+                		} else {
+                			wksheetID = inputID;
+                		}
+                			
                 		DSP_WeeklySkillTracking wksht = new DSP_WeeklySkillTracking( wksheetid );
                 		
                 		String jsonstring = json.serialize( wksht);
@@ -329,6 +358,8 @@ public without sharing class TransactionQueueTriggeredActions {
                                 system.debug( e );
                                 newreq.fulfilled__c = false;
                                 newreq.return_value__c = json.serialize( e.getMessage() );
+                        		throw(e);
+								return;
                     }
                  
                 }
