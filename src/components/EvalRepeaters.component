@@ -52,9 +52,11 @@
 				<a class="pull-right sidebar-interactable" style="display: block; margin: 5px; ">
 					<span class="glyphicon glyphicon-chevron-down expand-arrow" />
 				</a>
-				<a class="pull-right sidebar-interactable batch-entry-insert" style="display: block; margin: 5px; " data-category="{!category}">
-					<span class="glyphicon glyphicon-plus" />
-				</a>
+				<apex:outputPanel layout="none" rendered="{!categoryMap[category].addable}">
+					<a class="pull-right sidebar-interactable batch-entry-insert" style="display: block; margin: 5px; " data-category="{!category}">
+						<span class="glyphicon glyphicon-plus" />
+					</a>
+				</apex:outputPanel>
 				<div class="panel-title">{!category}</div>
 			</div>
 			<div class="panel-body" style="display: none; ">
@@ -65,9 +67,7 @@
 						</div>
 						<div class="panel-body">
 							<a id="{!eval.compositeKey}Summary" class="btn btn-info btn-sm pull-right" href="/apex/EvalLogView?evalID={!parentID}&evalname={!evaltype}&opGrp={!opGrp}&cat={!eval.cat}&subcat={!eval.subcat}" role="button" target="_blank"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a>
-							<apex:outputPanel layout="none" rendered="{!IF(AND(eval.compositeKey == 'Reduction Review~Reduction Review~', (!CONTAINS(parentEvalStatus, 'Applied') || (Contains(parentEvalStatus,'Applied') && parentHasOpenAsmt))),
-								false,
-								parentEvalStatus != 'Completed' && parentEvalStatus != 'End of Shift' && (eval.repeatable || ( parentEvalOwnerID == $User.Id && !eval.hasData ) || (evalType=='CNA Workbook' && !eval.hasData) || (evalType == 'Residential' && !eval.hasData)) && canEditEvalType) }">
+							<apex:outputPanel layout="none" rendered="{!eval.addable}">
 								<a id="{! eval.compositeKey}" class="btn btn-info btn-sm pull-right" style="margin-right: 5px;" href="#" role="button" onClick="createPanel('{!evaltype}', '{!eval.cat}', '{!eval.subcat}', null, '{! IF( AND( eval.compositeKey != 'Reduction Review~Reduction Review~', OR(eval.hasData, AND(parentEvalOwnerID != $User.Id, evaltype != 'Residential', evaltype != 'CNA Workbook'))),'Activity Log',evaltype )}', true); return false;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
 							</apex:outputPanel>
 							<apex:outputPanel rendered="{!eval.hasData}" layout="none">
