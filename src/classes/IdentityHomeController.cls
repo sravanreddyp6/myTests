@@ -179,7 +179,7 @@ public with sharing class IdentityHomeController {
         myWorkforce = [SELECT Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c ,Salesforce_User_Account__r.isActive,BAA_Signed__c,Approval_Level__c
                        FROM TMN_User__c 
                        WHERE  Manager_Email__c=:aliasName
-                       AND Job_Status__c IN ('Active','Pending') 
+                       AND Job_Status__c IN ('Active','Pending') AND Job_Title__c NOT IN ('Family Member Caregiver','Family Provider','Vocational Program Participant') 
                        ORDER BY Last_Name__c ASC];   
            // This logic to determine whether user[logged-in User or Salesforce] can  terminate this tmn User	   
            for(TMN_User__c tmn:myWorkforce){
@@ -201,13 +201,13 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
 		List<TMN_User_Delegate__c>	delegateList = [SELECT Name,Time_Assigned__c,Delegate_for_Name__c,TMN_Delegate_Name__c  FROM TMN_User_Delegate__c   WHERE TMN_Delegate_For__c=:tmnId ];
         
 	        RecordsList = [SELECT id,Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c,BAA_Signed__c,Approval_Level__c,LastModifiedDate,LastModifiedby.name  FROM TMN_User__c 
-	                   WHERE LastModifiedById =: UserInfo.getUserId()  ORDER BY LastModifiedDate  desc  LIMIT 20];
+	                   WHERE LastModifiedById =: UserInfo.getUserId()  AND Job_Title__c NOT IN ('Family Member Caregiver','Family Provider','Vocational Program Participant')  ORDER BY LastModifiedDate  desc  LIMIT 20];
 				if(delegateList!=null && delegateList.size()>0){
 						for(TMN_User_Delegate__c del:delegateList){
 						TMN_User__c tmn = [select id,name,Salesforce_User_Account__c from TMN_User__c where id=:del.TMN_Delegate_Name__c];
 
 					List<TMN_User__c>  tempRecordsList = [SELECT id,Name,Email__c,Professional_Title__c,Job_Status__c,Current_Person_Type__c,BAA_Signed__c,Approval_Level__c,LastModifiedDate,LastModifiedby.name  FROM TMN_User__c 
-	                   WHERE LastModifiedById =:tmn.Salesforce_User_Account__c   ORDER BY LastModifiedDate  desc  LIMIT 20];
+	                   WHERE LastModifiedById =:tmn.Salesforce_User_Account__c  AND Job_Title__c NOT IN ('Family Member Caregiver','Family Provider','Vocational Program Participant') ORDER BY LastModifiedDate  desc  LIMIT 20];
 	                   		RecordsList.addAll(tempRecordsList);
 						}
 				}
@@ -440,19 +440,19 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
         }else if (String.IsNotBlank(srchFNameDel) && String.IsBlank(srchLNameDel)){
             tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__r.isActive  FROM TMN_User__c '; 
             tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+   generatedKey2 +'%\') ';
-            tmlUserQuery += '  AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) ';
+            tmlUserQuery += '  AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) AND Job_Title__c NOT IN (\'Family Member Caregiver\',\'Family Provider\',\'Vocational Program Participant\') ';
             tmlUserQuery +=  '  ORDER BY First_Name__c,Last_Name__c';
         }else if (String.IsBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
             tmlUserQuery =  'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__r.isActive   FROM TMN_User__c'; 
             tmlUserQuery += ' WHERE (Last_Name__c like \'%'+ generatedKey1 +'%\' OR Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\') ';  
-            tmlUserQuery += ' AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) ORDER BY First_Name__c,Last_Name__c';
+            tmlUserQuery += ' AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) AND Job_Title__c NOT IN (\'Family Member Caregiver\',\'Family Provider\',\'Vocational Program Participant\') ORDER BY First_Name__c,Last_Name__c';
         }else if (String.IsNotBlank(srchFNameDel) && String.IsNotBlank(srchLNameDel)){
             tmlUserQuery = 'SELECT Name,Email__c,Professional_Title__c,Manager_Name__c,Operating_Group__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c,Salesforce_User_Account__r.isActive  FROM TMN_User__c';
             tmlUserQuery +=' WHERE ((Last_Name__c like \'%'+  generatedKey1 +'%\' AND First_Name__c like \'%'+  generatedKey2 +'%\') ';
             tmlUserQuery +=' OR (Preferred_Last_Name__c like \'%'+  generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+  generatedKey2 +'%\') ';
             tmlUserQuery +=' OR (Last_Name__c like \'%'+  generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 
             tmlUserQuery +=' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND First_Name__c like \'%'+ generatedKey2 +'%\')) ';
-            tmlUserQuery +=' AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\'))  ORDER BY First_Name__c,Last_Name__c' ;
+            tmlUserQuery +=' AND (Current_Person_Type__c IN (\'Employee\') AND Job_Status__c IN (\'Active\')) AND Job_Title__c NOT IN (\'Family Member Caregiver\',\'Family Provider\',\'Vocational Program Participant\')  ORDER BY First_Name__c,Last_Name__c' ;
         }
         return null;
     }       
@@ -484,13 +484,13 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
             btnDisable = true;
         }else if (String.IsNotBlank(srchFNameNonEmp) && String.IsBlank(srchLNameNonEmp)){
              tmlUserQuery  = 'SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c FROM TMN_User__c '; 
-            tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 
+            tmlUserQuery += ' WHERE (First_Name__c like \'%'+  generatedKey2 +'%\' OR Preferred_First_Name__c like \'%'+ generatedKey2 +'%\') AND Job_Title__c NOT IN (\'Family Member Caregiver\',\'Family Provider\',\'Vocational Program Participant\') '; 
             tmlUserQuery += '  ORDER BY Last_Name__c,First_Name__c';
             btnDisable = false;
             showPopup();
         }else if (String.IsBlank(srchFNameNonEmp) && String.IsNotBlank(srchLNameNonEmp)){
              tmlUserQuery = 'SELECT Name,Professional_Title__c,Manager_Name__c,Operating_Group__c,Current_Person_Type__c,Job_Status__c,First_Name__c,Last_Name__c,Preferred_First_Name__c,Preferred_Last_Name__c  FROM TMN_User__c '; 
-             tmlUserQuery += ' WHERE (Last_Name__c like \'%'+ generatedKey1 +'%\' OR Preferred_Last_Name__c like \'%'+  generatedKey1 +'%\') ';
+             tmlUserQuery += ' WHERE (Last_Name__c like \'%'+ generatedKey1 +'%\' OR Preferred_Last_Name__c like \'%'+  generatedKey1 +'%\') AND Job_Title__c NOT IN (\'Family Member Caregiver\',\'Family Provider\',\'Vocational Program Participant\') ';
              tmlUserQuery += '  ORDER BY Last_Name__c,First_Name__c ';
             btnDisable = false;
            showPopup();
@@ -499,7 +499,7 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
              tmlUserQuery += ' WHERE ((Last_Name__c like \'%'+  generatedKey1 +'%\' AND First_Name__c like \'%'+ generatedKey2 +'%\') '; 
              tmlUserQuery += ' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+ generatedKey2 +'%\')'; 
              tmlUserQuery += ' OR (Last_Name__c like \'%'+ generatedKey1 +'%\' AND Preferred_First_Name__c like \'%'+  generatedKey2 +'%\') ';
-             tmlUserQuery += ' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND First_Name__c like \'%'+  generatedKey2 +'%\'))  ORDER BY Last_Name__c,First_Name__c';
+             tmlUserQuery += ' OR (Preferred_Last_Name__c like \'%'+ generatedKey1 +'%\' AND First_Name__c like \'%'+  generatedKey2 +'%\')) AND Job_Title__c NOT IN (\'Family Member Caregiver\',\'Family Provider\',\'Vocational Program Participant\')  ORDER BY Last_Name__c,First_Name__c';
             btnDisable = false;
             showPopup();
         }
