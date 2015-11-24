@@ -1,0 +1,115 @@
+<apex:page standardController="Progress_Note__c" extensions="ProgressNoteExtension" renderAs="pdf" showheader="false" applyHtmlTag="false">
+<head>
+<style type="text/css">
+.myTB{
+    width: 99%;
+    text-align: left;
+    }
+.borderTable{
+	border-top: 0px;	
+    border-collapse: collapse;
+    width:99%;
+    }
+.sm{
+    font-size: 10pt;
+    }
+.med{
+    font-size: 9pt;
+    font-weight: normal;
+    margin: 5px;
+    }
+.medBold{
+    font-size: 11px;
+    font-weight: bold;
+    padding: .5px;
+    }
+.smBold{
+    font-size: 10pt;
+    font-weight: bold;
+    }
+.medBoldBrdr{
+    font-size: 13px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 1px;
+    padding: 2px;
+    }
+</style>
+</head>
+<body>
+<table class="myTB">
+  <tr><td align="center" style="font-size:15pt">NC Division of Mental Health, Developmental Disabilities and Substance Abuse Services</td></tr>
+  <tr><td align="center">Phase 1 (first six weeks) Clinical Consultation Service Note</td></tr>
+  <tr><td align="center">Clinical Consultation and Skills Enhancement</td></tr>
+</table>
+<br/>
+<table class="borderTable" style="border-left:0px;">
+  <tr>
+  	<td width="35%" class="medBoldBrdr">Date:&nbsp;
+  		<span style="font-weight:normal;">
+	  		<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+	    		<apex:param value="{!Progress_Note__c.Start_Time__c}" /> 
+			</apex:outputText>
+		</span>
+	</td>
+  	<td width="65%" class="medBoldBrdr" colspan="2">Agency:&nbsp;<span style="font-weight:normal;"><apex:outputText value="NC Mentor" /></span></td>  
+  </tr>
+</table>
+<table class="borderTable">
+  <tr>
+	<td width="35%" class="medBoldBrdr">Client:&nbsp;<span style="font-weight:normal;"><apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Name}"/></span></td>      
+    <td width="65%" class="medBoldBrdr" colspan="2">Client Number:&nbsp;<span style="font-weight:normal;"><apex:outputField value="{!Progress_Note__c.Person_Being_Served__r.Other_ID__c}"/></span></td>  
+  </tr>
+  <tr>
+  	<td width="100%" class="medBoldBrdr" colspan="3">Foster Parent(s):&nbsp;<span style="font-weight:normal;"><apex:outputField value="{!Progress_Note__c.Foster_Parents__c}" /></span></td>
+  </tr>
+  <tr>
+  	<td width="35%" class="medBoldBrdr">Location:&nbsp;<span style="font-weight:normal;"><apex:outputField value="{!Progress_Note__c.Service_Location__c}"/></span></td>
+    <td width="65%" class="medBoldBrdr" colspan="2">Contact Type:&nbsp;<span style="font-weight:normal;"><apex:outputField value="{!Progress_Note__c.Type_of_Contact__c}"/></span></td>
+  </tr>
+  <tr>
+  	<td width="35%" class="medBoldBrdr">Total Duration:&nbsp;<span style="font-weight:normal;"><apex:outputField value="{!Progress_Note__c.Total_Time__c}"/></span></td>
+  	<td width="32%" class="medBoldBrdr">Start Time:&nbsp;
+   		<span style="font-weight:normal;">
+  			<apex:outputText value="{!pnStartTime}" />
+  		</span>
+  	</td>  
+  	<td width="32%" class="medBoldBrdr">End Time:&nbsp;
+  		<span style="font-weight:normal;">
+  			<apex:outputText value="{!pnEndTime}" />
+  		</span>
+  	</td>
+  </tr>
+</table>
+<table class="borderTable">	
+  <tr style="border: solid black 1px;">
+	<td width="100%" class="medBold" style="border-left: solid black 1px;border-right: solid black 1px;">Services Delivered:&nbsp;<span style="font-weight:normal;"><apex:outputField value="{!Progress_Note__c.Service_Code__r.Service_Value__c}" /></span></td> 
+  </tr>
+  <tr>
+  	<td width="100%" style="border-left: solid black 1px;border-right: solid black 1px;"><span class="medBold">Service Frequency: </span><span style="font-size:9pt;">WEEKLY, AS REQUIRED BY FIRST SIX WEEKS "PLACEMENT INSIGHTS" IMPLEMENTATION</span></td>
+  </tr>
+</table>
+<div class="medBoldBrdr" style="width:98.2%;">
+	<div class="medBold">TFC Coordinator Tasks Checklist (Related to Placement Insights Handbook):</div>
+	<div class="med"><apex:include pageName="progressnote_actionplan_embed_include"/></div>
+	<br />
+	<div class="medBold">Clinical Consultation and Skill Enhancement Topics discussed this visit:</div>
+	<div style="margin-left:5px;font-weight:normal;">
+		<apex:repeat value="{!topicsDiscussed}" var="s">
+		{!s}<br />
+		</apex:repeat>
+	</div>
+	<br />	
+	<div class="medBold">Brief summary for each topic:</div>
+	<div class="sm" style="margin-left:5px;font-weight:normal;"><apex:outputText value="{!Progress_Note__c.Interventions__c}"/><br/><br /></div>
+	<div class="medBold">Notes:</div>
+	<div class="sm" style="margin-left:5px;font-weight:normal;"><apex:outputField value="{!Progress_Note__c.Notes_For_Next_Visit__c}"/><br/><br /></div>	
+</div><br /><br />
+	<div class="medBold">Signature  Credentials, Degree/Licensure of Staff:_________________________________________</div><br/>
+	<div class="sm" align="center" style="color:rgb(128,128,128)">Created By:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Name}"/>,&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedBy.Title}"/></div>
+	<div class="sm" align="center" style="color:rgb(128,128,128)">Created Date:&nbsp;<apex:outputField value="{!Progress_Note__c.CreatedDate}"/><apex:outputLabel rendered="{!Progress_Note__c.Is_Note_Late__c == 'Yes'}"  > - LATE ENTRY</apex:outputLabel></div>
+	<div class="sm" align="center" style="color:rgb(128,128,128)">Latest release of form: 8/13/12</div>
+	<br /><br /><br /><br />
+	<div style="text-align:center;">THIS IS NOT A BILLABLE EVENT</div>
+</body>
+</apex:page>
