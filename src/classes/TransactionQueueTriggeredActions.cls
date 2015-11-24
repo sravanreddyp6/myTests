@@ -104,11 +104,16 @@ public without sharing class TransactionQueueTriggeredActions {
                 else if ( t.request_type__c == 'Risk' ) {
                     try {
                         // get the pbs id from the request pararms
-                        ID admId = t.input_params__c;
+                        ID idInputParam = t.input_params__c;
+                        Id assessmentId;
+                        if (idInputParam.getSObjectType().getDescribe().getName() == 'Assessment__c'){
+                            assessmentId = idInputParam;
+                        } else {
+	                        assessmentId = [ select id from Assessment__c where Admission__c = :idInputParam and status__c= 'Active Final' and Assessment_Type__r.name = 'Risk' limit 1].id;
+                        }
                         
                         // execute the transaction as requested
-                        Assessment__c assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Assessment_Type__r.name = 'Risk' limit 1];
-                        Assessment_RiskFormWithoutSharing riskAssessment = new Assessment_RiskFormWithoutSharing(assessment.id); 
+                        Assessment_RiskFormWithoutSharing riskAssessment = new Assessment_RiskFormWithoutSharing(assessmentId); 
     
                         // serialize the result
                         String jsonstring = json.serialize(riskAssessment);
@@ -132,11 +137,16 @@ public without sharing class TransactionQueueTriggeredActions {
                 else if ( t.request_type__c == 'ISSA' ) {
                     try {
                         // get the pbs id from the request pararms
-                        ID admId = t.input_params__c;
+                        ID idInputParam = t.input_params__c;
+                        Id assessmentId;
+                        if (idInputParam.getSObjectType().getDescribe().getName() == 'Assessment__c'){
+                            assessmentId = idInputParam;
+                        } else {
+                            assessmentId = [select id from Assessment__c where Admission__c = :idInputParam and status__c= 'Active Final' and Type__c = 'ISSA' limit 1].id;
+                        }
                         
                         // execute the transaction as requested
-                        Assessment__c assessment = [select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Type__c = 'ISSA' limit 1];
-                        Assessment_IssaFormWithoutSharing issaAssessment = new Assessment_IssaFormWithoutSharing(assessment.id); 
+                        Assessment_IssaFormWithoutSharing issaAssessment = new Assessment_IssaFormWithoutSharing(assessmentId); 
     
                         // serialize the result
                         String jsonstring = json.serialize(issaAssessment);
@@ -160,17 +170,22 @@ public without sharing class TransactionQueueTriggeredActions {
                 else if ( t.request_type__c == 'Acknowledge Assessment') {
                     try {
                         // get the pbs id from the request pararms
-                        ID admId = t.input_params__c;
-                        Assessment__c assessment;
+                        ID idInputParam = t.input_params__c;
+                        Id assessmentId;
                         DSP_AssessmentResponseType assessmentDetails;
                         String assessmentType = ApexPages.currentPage().getUrl().containsIgnoreCase('DSP_Assessment_RiskForm') ? 'Risk' : 'ISSA';
-                        if (assessmentType == 'Risk') assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Assessment_Type__r.name = 'Risk' limit 1];
-                        else  assessment = [ select id from Assessment__c where Admission__c = :admId and status__c= 'Active Final' and Type__c = 'ISSA' limit 1];
-                        Acknowledgment__c confirmRec = new Acknowledgment__c(Assessment__c = assessment.id, User__c = UserInfo.getUserId());
+                        
+                        if (idInputParam.getSObjectType().getDescribe().getName() == 'Assessment__c'){
+                            assessmentId = idInputParam;
+                        }else{	
+	                        if (assessmentType == 'Risk') assessmentId = [ select id from Assessment__c where Admission__c = :idInputParam and status__c= 'Active Final' and Assessment_Type__r.name = 'Risk' limit 1].id;
+	                        else  assessmentId = [ select id from Assessment__c where Admission__c = :idInputParam and status__c= 'Active Final' and Type__c = 'ISSA' limit 1].id;
+                        }
+                        Acknowledgment__c confirmRec = new Acknowledgment__c(Assessment__c = assessmentId, User__c = UserInfo.getUserId());
                         insert confirmRec;
                         
-                        if (assessmentType == 'Risk') assessmentDetails = new Assessment_RiskFormWithoutSharing(assessment.id);
-                        else assessmentDetails = new Assessment_IssaFormWithoutSharing(assessment.id);
+                        if (assessmentType == 'Risk') assessmentDetails = new Assessment_RiskFormWithoutSharing(assessmentId);
+                        else assessmentDetails = new Assessment_IssaFormWithoutSharing(assessmentId);
  
                         // serialize the result
                         String jsonstring = json.serialize( assessmentDetails );

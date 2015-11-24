@@ -233,7 +233,6 @@
         </apex:pageBlock>
         
         <apex:pageBlock title="My Tasks">
-
             <apex:pageBlockButtons location="Top">
                 <table width="100%">
                     <tr>
@@ -242,7 +241,7 @@
                         <apex:selectOptions value="{!viewvalues}" />
                         <apex:actionSupport event="onchange" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(); " status="pageProcessing" />
                     </apex:selectList>
-                    &nbsp;<apex:commandButton action="/setup/ui/recordtypeselect.jsp?ent=Task&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2F00T%2Fe%3FretURL%3D%252Fhome%252Fhome.jsp" value="Add Task" />
+                    &nbsp;<apex:commandButton action="/setup/ui/recordtypeselect.jsp?ent=Task&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2F00T%2Fe%3FretURL=/apex/DSPHome" value="Add Task" />
                     </td>
                     </tr>
                 </table>
@@ -251,23 +250,19 @@
             <br />
             <br />
             <apex:pageBlockTable value="{!populateTasks}" var="tsk" id="PageBT">
-                <apex:column >
-                    <a href="/{!tsk.Id}/e?close=1&retURL=/apex/DSPHome">X</a>
-                </apex:column>
-                <apex:column headerValue="Created">
-                    <apex:outputText value=" {!tsk.CreatedDate}" /></apex:column>
-                <apex:column headerValue="Subject"><a href="/{!tsk.Id}?retURL=/apex/DSPHome">{!tsk.Subject}</a>
-                </apex:column>
+                <apex:column ><a href="/{!tsk.Id}/e?close=1&retURL=/apex/DSPHome">X</a></apex:column>
+<!--                 <apex:column headerValue="Created"><apex:outputText value=" {!tsk.CreatedDate}" /></apex:column> -->
+                <apex:column headerValue="Subject"><a href="/{!tsk.Id}/e?retURL=/apex/DSPHome">{!tsk.Subject}</a> </apex:column>
+                <apex:column headerValue="Comments">{!tsk.Description}</apex:column>
                 <apex:column headerValue="Priority">{!tsk.Priority}</apex:column>
                 <apex:column headerValue="Status">{!tsk.Status}</apex:column>
-                <apex:column headerValue="Due Date">
-                    <apex:outputText value=" {!tsk.ActivityDate}" /></apex:column>
-                <apex:column headerValue="Name">
-                    <apex:outputText value="{!taskToNameMap[tsk.Id]}" escape="false" /></apex:column>
-                <apex:column headerValue="Related To"><a href="/{!tsk.WhatId}">{!tsk.What.Name}</a>
-                </apex:column>
+                <apex:column headerValue="Due Date"><apex:outputText value=" {!tsk.ActivityDate}" /></apex:column>
+                <apex:column headerValue="Name"><apex:outputText value="{!taskToNameMap[tsk.Id][0]}" escape="false" /></apex:column>
+                <apex:column headerValue="Related To"><apex:outputText value="{!taskToNameMap[tsk.Id][1]}" escape="false" /></apex:column>
             </apex:pageBlockTable>
         </apex:pageBlock>
+        
+        
         <apex:actionFunction name="getSearchResults" action="{!getSearchResults}" status="pageProcessing" oncomplete="showSearchResultDialog(); " rerender="pageMessages, searchResultPanel" />
         <apex:actionFunction status="pageProcessing" name="updateTaskTable" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(request.options.parameters.sort_column, request.options.parameters.sort_order);">
             <apex:param name="sort_column" value="" assignTo="{!sortColumn}" />
