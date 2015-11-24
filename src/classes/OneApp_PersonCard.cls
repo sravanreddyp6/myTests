@@ -30,14 +30,8 @@ public with sharing class OneApp_PersonCard {
 				contactID = ap.service_assignment__r.person_being_served__c;
 						
 		}
-	    else if ( reqType == 'Seizures' || reqType == 'Upsert Seizure' || reqType == 'Person Being Served')
-            this.contactID = inputID;
-        else if ( reqType == 'Risk' || reqType == 'ISSA' || reqType == 'Acknowledge Assessment' ){
-        	// id is admission id
-        	Admission__c adm = [ select person_being_served__c from admission__c where id =  :inputID];
-        	if (adm != null)
-        		contactID = adm.person_being_served__c;
-        	
+	    else if ( reqType == 'Seizures' || reqType == 'Upsert Seizure' || reqType == 'Person Being Served' || reqType == 'Risk' || reqType == 'ISSA' || reqType == 'Acknowledge Assessment' ) {
+            this.contactID = inputID;        	
         }
         // else return out!
       
