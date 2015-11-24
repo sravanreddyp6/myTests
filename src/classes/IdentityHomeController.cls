@@ -49,13 +49,7 @@ public with sharing class IdentityHomeController {
     public String tmnEmail = t.Email__c;                          
     public Boolean onloadDialog {set;get;}
     public String DropdownList {get; set;} 
-    public Integer ApprovalLevel {get{
-    			List<TMN_User__c> managerList = [select id,Manager_Lookup__c from TMN_User__c where  Manager_Lookup__c = : tmnId];
-    				if (managerList!=null && managerList.size()>0){
-    				return Integer.valueOf(t.Approval_Level__c);
-    				}
-    				return 0;
-    		}set;}
+    public Integer ApprovalLevel {get;set;}    
     public Boolean canTerminate{set;get;}
     public IdentityHomeController() {
        searchDelegateResult = new List<TMN_User__c> (); 
@@ -101,7 +95,13 @@ public with sharing class IdentityHomeController {
             aliasName = ApexPages.currentPage().getParameters().get('TAU');
             aliasNameValue = ApexPages.currentPage().getParameters().get('TAU');
             }  
-                                                                                                                                                                                                         
+            
+            List<TMN_User__c> managerList = [select id,Manager_Lookup__c from TMN_User__c where  Manager_Lookup__c = : tmnId];
+    				if (managerList!=null && managerList.size()>0){
+    				ApprovalLevel =  Integer.valueOf(t.Approval_Level__c);
+    				}else{
+    				ApprovalLevel = 0;
+    			}	
     }
 
     //Standard Default Edit page
@@ -604,9 +604,13 @@ And aslo I am using sort beacuse return list contains only latest 20 records[Las
                             Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Teleo_ID__c,
                             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,Program_String__c ,
                             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c,
-                            BAA_Signed__c,Vendor_Name__c ,Vendor_list__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,Custodians__c,office_flag__c,Pre_Hire_ID__c
+                            BAA_Signed__c,Vendor_Name__c ,Vendor_list__c,Job_Code__c,Recruiter_Name__c,Recruiter_Email_Address__c,Custodians__c,office_flag__c,Pre_Hire_ID__c,other_Vendor_name__c
                             FROM TMN_User__c 
                             WHERE Id =:selectedID];   
+         if( theTMNUser.Current_Person_Type__c=='Non-Employee' && theTMNUser.Vendor_list__c!=null && !(theTMNUser.Vendor_list__c=='OTHER' || theTMNUser.Vendor_list__c=='INDEPENDENT CONTRACTOR' )){
+        			theTMNUser.BAA_Signed__c =true;
+        	} 
+        	                   
          if(ApprovalLevel>=3 && ApprovalLevel>theTMNUser.Approval_Level__c){
          canTerminate = true;
          }else {

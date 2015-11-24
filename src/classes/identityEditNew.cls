@@ -74,7 +74,7 @@ public class identityEditNew {
             WHERE Id = :id];
          newAttachments = new List<ProxyAttachment>();
         if(TMNUser.id!=null) {
-        	if( TMNUser.Current_Person_Type__c=='Non-Employee' && TMNUser.Vendor_list__c!=null && TMNUser.Vendor_list__c!='OTHER'){
+        	if( TMNUser.Current_Person_Type__c=='Non-Employee' && TMNUser.Vendor_list__c!=null && !(TMNUser.Vendor_list__c=='OTHER' || TMNUser.Vendor_list__c=='INDEPENDENT CONTRACTOR' )){
         			TMNUser.BAA_Signed__c =true;
         	} 
         	
@@ -135,8 +135,9 @@ public class identityEditNew {
 				for(TMN_Corp_Contract__c contract:tmnContract){
 					Options.add(new SelectOption(contract.Supplier__r.name,contract.Supplier__r.name));
 				}
-				
+		Options.add(new SelectOption('INDEPENDENT CONTRACTOR','INDEPENDENT CONTRACTOR'));		
 		Options.add(new SelectOption('OTHER','OTHER'));
+		
 		return Options;
 	}
 	
