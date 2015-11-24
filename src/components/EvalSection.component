@@ -86,7 +86,6 @@
 			);
 		}
 
-
 		function removeAnnotation(annotation) {
 			Visualforce.remoting.Manager.invokeAction(
 				'{!$RemoteAction.GenerateEvalComponent.deleteAnnotation}',
@@ -100,9 +99,7 @@
 			);
 		}
 
-
 		jQuery(document).ready(function($) {
-
 			window.beforeEvaluationSave = function() {
 				// Temporarily enable all the disabled fields before saving the
 				// record, so that they are included in the POST to the server.
@@ -302,8 +299,7 @@
 				format: 'm/d/Y H:i'
 			});
 
-
-			<apex:outputPanel layout="none" rendered="{!subcategory == 'Current Pain' || subcategory == 'Pain'}">
+			<apex:outputPanel layout="none" rendered="{!OR(subcategory == 'Current Pain', subcategory == 'Pain', AND(subcategory == '', category == 'Neurological'))}">
 
 			var options = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 			var initialValue = '0';
@@ -340,8 +336,7 @@
 					return $initialValue.val();
 			}
 			</apex:outputPanel>
-
-			<apex:outputPanel layout="none" rendered="{!(subcategory == 'Body Map' || subcategory=='Current Pain' || subcategory == 'Pain')}">
+			<apex:outputPanel layout="none" rendered="{!OR(subcategory == 'Body Map', subcategory=='Current Pain', subcategory == 'Pain', AND(subcategory == '', OR(category == 'Skin/Body', category == 'Neurological')))}">
 			anno.reset();
 			var el = $('#bodyMap{!evalSectionUuid}').get(0);
 			if (el) {
@@ -357,18 +352,10 @@
 				shapes: [{
 					type: "{!JSENCODE(annotation.Annotation_Shape__c)}",
 					geometry: {
-						x: {
-							!annotation.Annotation_X__c
-						},
-						y: {
-							!annotation.Annotation_Y__c
-						},
-						width: {
-							!annotation.Annotation_Width__c
-						},
-						height: {
-							!annotation.Annotation_Height__c
-						}
+						x: {!annotation.Annotation_X__c},
+						y: {!annotation.Annotation_Y__c},
+						width: {!annotation.Annotation_Width__c},
+						height: {!annotation.Annotation_Height__c}
 					}
 				}]
 			});
@@ -401,7 +388,7 @@
 		});
 	</script>
 
-	<apex:outputPanel layout="none" rendered="{! subcategory == 'Vitals Signs' || subcategory == 'Elimination - Bowel'}">
+	<apex:outputPanel layout="none" rendered="{!OR(subcategory == 'Vitals Signs', subcategory == 'Elimination - Bowel', AND(subcategory == '', OR(category == 'GU/GI/Nutrition', category == 'Diagnostics')))}">
 		<script type="text/javascript">
 			var lbs;
 			var oz;
@@ -413,12 +400,10 @@
 			j$ = jQuery.noConflict();
 			jQuery(document).ready(function($) {
 				// setup the auto calc
-				if ('{!subcategory}' == 'Vitals Signs') {
+				if ({!subcategory == 'Vitals Signs' || category == 'Diagnostics'}) {
 					calculate($('#weightAtAdmission'), 'kg');
 					calculate($('#heightAtAdmission'), 'cm');
-				} else if ({
-						!subcategory == 'Elimination - Bowel'
-					}) {
+				} else if ({!subcategory == 'Elimination - Bowel' || category == 'GU/GI/Nutrition'}) {
 					calculate($('#kg'), 'kg');
 				}
 			});
@@ -431,7 +416,7 @@
 				var ftfield;
 				var infield;
 
-				if ('{!subcategory}' == 'Vitals Signs') {
+				if ({!subcategory == 'Vitals Signs' || category == 'Diagnostics'}) {
 					kgfield = j$('[id=weightAtAdmission]');
 					lbfield = j$('[id=weightAtAdmissionlb]');
 					ozfield = j$('[id=weightAtAdmissionoz]');
