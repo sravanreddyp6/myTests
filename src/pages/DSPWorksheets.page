@@ -1,24 +1,32 @@
-<apex:page controller="TxnQueueResponseController" extensions="DSP_Worksheets" sidebar="false" tabStyle="ESD_Home_DSP__tab">
-<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
-<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
-<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + InputParams}" />
+<apex:page controller="TxnQueueResponseController" extensions="DSPSubmitTxn" sidebar="false" tabStyle="ESD_Home_DSP__tab">
 
-<apex:pageBlock title="Worksheets">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+
+<c:OneApp_PersonCard RequestInfo="{! 'SkillList,' + InputParams}" />
+
+<apex:form>
+<apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="pageProcessing" rerender="pageMessages" >
+    <apex:param name="reqType" value="" assignTo="{!requestType}" />
+    <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
+</apex:actionFunction>
+
+<apex:pageBlock id="PBSDetailID" mode="maindetail">
+<div class="tmn-h1">Worksheets</div>   
 <apex:repeat value="{! apworksheets.mapSheets }" var="stype">
 
 <a name="#{!stype}" /><apex:pageBlockSection title="{! stype}">
 
-<apex:datatable value="{! apWorksheets.mapSheets[stype]}" var="w">
-<apex:column headervalue="Action">
-</apex:column>
+<apex:pageblocktable value="{! apWorksheets.mapSheets[stype]}" var="w" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
 <apex:column headerValue="Start Date">
+<apex:commandlink  onclick="submitTxnRequest('{!stype}','{!w.wid}');return false;">
 <apex:outputText value="Week of {!w.startdate}"  rendered="{!stype == 'Skill'}"/><br />
 <apex:outputText value=" {!w.startdate}"  rendered="{!stype == 'Behavior'}"/><br />
+</apex:commandlink>
 </apex:column>
-</apex:datatable>
+</apex:pageblocktable>
 </apex:pageBlockSection>
 
 </apex:repeat>
 </apex:pageBlock>
-
+</apex:form>
 </apex:page>

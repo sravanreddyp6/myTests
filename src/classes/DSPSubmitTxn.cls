@@ -2,6 +2,8 @@ public with sharing class DSPSubmitTxn {
 public TxnQueueResponseController controller;
 public string ackAPID { get; set;}
 public string initials { get; set; }
+public string requestType { get; set; }
+public string inputArgs { get; set; }
 
 public DSPSubmitTxn (TxnQueueResponseController controller) {
 	this.controller = controller;
@@ -106,7 +108,45 @@ public pageReference saveSkillResults ( ) {
         return null;
     }
 
-	
+
+private Map<String,String> requestToPage = new Map<String, String> { 'Action Plan' => '/apex/DSPActionPlan', 
+                                                                         'Person Being Served' => '/apex/DSPPersonBeingServedView',
+                                                                         'Seizures' => '/apex/DSP_PbsSeizureListing',
+                                                                         'Risk' => '/apex/DSP_Assessment_RiskForm',
+                                                                         'ISSA' => '/apex/DSP_Assessment_ISSAForm',
+                                                                         'BehaviorList' => '/apex/DSPWorksheets#Behavior',  // list of worksheets
+                                                                         'SkillList' => '/apex/DSPWorksheets#Skill',    // list of worksheets
+                                                                         'Behavior' => '/apex/DSPBehaviorTracking',
+                                                                         'Skill' => '/apex/DSPWeeklySkillTracking'
+                                                                         };
+public pageReference submitTxnRequest() {
+        // submit a transaction queue request 
+        // redirect to the correct page with the transaction queue id
+        //system.debug('inside submitrequest:' + requestType + ', ' + inputArgs);
+        
+        // get out if the action type is not understood
+        if ( !requestToPage.keyset().contains( requestType )) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unknown action type: ' + requestType));
+            return null;
+        }
+        Transaction_Queue__c txn  = new Transaction_Queue__c( requesting_user__c = UserInfo.getUserId());
+        txn.request_type__c = requestType;
+        txn.requested_date_time__c = DateTime.Now();
+        txn.input_params__c = inputArgs;
+        
+        try { 
+            insert txn;
+            PageReference pr =  new PageReference( requestToPage.get( requestType ));
+            pr.getParameters().put('txnID', txn.ID);
+            pr.setRedirect(true);
+            return pr;
+        }
+        catch (Exception e) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
+            return null;
+        }
+        
+    }
 	
 
 }

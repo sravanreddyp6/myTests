@@ -65,13 +65,14 @@ public with sharing class TxnQueueResponseController {
             else if ( thisTxn.request_type__c == 'SkillList' || thisTxn.request_type__c == 'BehaviorList') {
             	system.debug( thisTxn.return_value__c);
             	apWorksheets = (DSP_Worksheets) JSON.deserialize( TxnResponse, DSP_Worksheets.class);
+            	system.debug('TXN TYPE' + thisTxn.request_type__c);
             	system.debug(apWorksheets);
             }
             else if ( thisTxn.request_type__c == 'Skill' || thisTxn.request_type__c == 'Update Skill' ) {
             	skillResponse = (DSP_WeeklySkillTracking) JSON.deserialize ( TxnResponse, DSP_WeeklySkillTracking.class);
             }
 
-			
+
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to retrieve result'));
 			return;
