@@ -3,6 +3,7 @@ public with sharing class manageservicelocationsController {
 	public Service_location__c servicelocation {get;set;}
 	//public boolean manage {get; set;}
 	public transient list<Service_location__c> locations {get;set;}
+	
 	public boolean showCreate{get{
 		Boolean show = false;
 		List<PermissionSetAssignment> userPerms = [SELECT Id FROM PermissionSetAssignment WHERE PermissionSet.Name = 'Create_Service_Locations' AND AssigneeId = :UserInfo.getUserID()];
@@ -20,15 +21,6 @@ public with sharing class manageservicelocationsController {
 		//this.manage = false;
 	}
 	
-	
-	/*public pageReference createNew(){
-		 return new pageReference('/apex/ServiceLocationEdit');
-	}*/
-	
-/*	public pageReference manageExisting(){
-		this.manage = true;
-		return null;
-	}*/
 	
 	public void run(){
 		if(string.isBlank(this.servicelocation.Alias_lookup__c)){
