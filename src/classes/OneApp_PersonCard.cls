@@ -95,6 +95,23 @@ public with sharing class OneApp_PersonCard {
 				primaryPhysicianPhone = '';
 			}
 			
+			// get all primary diagnoses	
+			ServiceAssignment_Diagnosis_JO__c[] d = [SELECT Diagnosis__r.ICD__r.Icd_Description__c FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__r.Admission__r.Person_Being_Served__c=:value And Service_Assignment__r.Status__c = 'Active' AND Ranking__c = 'Primary' order by CreatedDate desc];
+            if (opGrp =='Redwood' || opGrp =='Cambridge' || opGrp == 'Care Meridian' || opGrp == 'NeuroRestorative' || this.con.flavor__c == 'CA FSS') {
+                if (d.size() > 0) {
+                    List<String> diag = new List<String>();
+                    for(Integer i=0;i<=d.size()-1;i++){
+                        primaryDiagnosis = d[i].Diagnosis__r.ICD__r.Icd_Description__c;
+                        diag.add(primaryDiagnosis);
+                        primaryDiagnosis = string.join(diag, ',');
+                    }
+                } else {
+                    primaryDiagnosis = '';
+                }
+			} else {
+				primaryDiagnosis = '';
+			}
+			
 			age = Utility.getAge(this.con.Age_year__c,this.con.Age_month__c,this.con.Age_days__c);
 		}
 	}
