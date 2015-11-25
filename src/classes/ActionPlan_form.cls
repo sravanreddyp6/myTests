@@ -632,7 +632,7 @@ public pagereference mySave(){
 
     public ActionPlan_Form(ApexPages.StandardController controller) {
         if(!test.isRunningTest()){
-            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c', 'Service_Assignment__r.Service_location__r.ProgramID__c', 'Service_Assignment__r.Flavor__c'});
+            controller.addFields(new List<String> {'Service_Assignment__r.Service_Location__r.Service_Value__c', 'Service_Assignment__r.Service_location__r.ProgramID__c', 'Service_Assignment__r.Flavor__c','Service_Assignment__r.Service_Location__r.Network_offering__c'});
         }
         ActionPlan = (Action_Plan__c)controller.getRecord();
 
@@ -664,8 +664,8 @@ public pagereference mySave(){
 
         ctlgs = new List<SelectOption>();
         ctlgs.add(new SelectOption('','Select Catalog'));
-        string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c;
-
+      //  string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c; - Sravan - PRI-347
+		string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c;
         List<Clinical_Programs__c> allPrgms = Clinical_Programs__c.getall().values();
         map< Decimal, string > mapAllPrgs = new map< Decimal, string >();
         for(Clinical_Programs__c item: allPrgms){
@@ -699,7 +699,8 @@ public pagereference mySave(){
         system.debug('catalog enabled - ' + showThis);
         system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
         if(showThis){
-            if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){
+          //  if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){
+          	if(ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){
                 GoalAlias = 'Problem';
                 ObjAlias = 'Goal';
                 ActAlias = 'Intervention';
