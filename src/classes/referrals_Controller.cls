@@ -1071,6 +1071,12 @@ public with sharing class referrals_Controller{
 	}
 
 	public PageReference saveRef() {
+		//PRI-359
+		if(referralRecord.Referral_Source_Type__c =='Other' && referralRecord.Referral_Source_Type_Other_Describe__c== null){
+			
+			referralRecord.Referral_Source_Type_Other_Describe__c.addError('Referral Source Type Other - Please Enter a Value');
+		}
+		//end 359
 		// start CTEAE -34
 		if(referralRecord.Adjudicated_offense_status__c){
 			if(!referralRecord.Misdemeanor_s__c   & !referralRecord.Felony_ies__c){
