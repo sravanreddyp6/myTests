@@ -114,10 +114,10 @@ public with sharing class DSPHomePageController {
         	}
         		
 			actionList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Record Seizure'));        			
-			navList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Seizures'));        			
+			navList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Seizures'));
+            navList.add( new SelectOption('dspShiftNoteSummary(\'' + pbsID + '\');', 'Shift Note Summary'));		
 			actionList.add( new SelectOption('submitTxnRequest(\'BehaviorList\',\'' + apID + '\');', 'View Behavior Data'));        			
-			actionList.add( new SelectOption('submitTxnRequest(\'SkillList\',\'' + apID + '\');', 'View Skill Data'));        			
-        	
+			actionList.add( new SelectOption('submitTxnRequest(\'SkillList\',\'' + apID + '\');', 'View Skill Data'));
         	system.debug( this);
         	
         }
@@ -658,5 +658,11 @@ public with sharing class DSPHomePageController {
         
     }
     
-   
+    public pageReference dspShiftNoteSummary() {
+        PageReference pageRef = new PageReference('/apex/DSP_shiftnote_summary_rpt');
+        pageRef.getParameters().put('selectedPBS', this.pbsID);
+        pageRef.getParameters().put('currentPBSList', json.serialize(this.currentPBSList));
+        pageRef.setRedirect(true);
+        return pageRef;
+    }   
 }
