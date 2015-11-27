@@ -8,7 +8,7 @@
     	}    
      </style>
      <div id="breadCrumb" class="breadCrumb" >
-     	<a href="/apex/Home" >Home</a>&nbsp;>&nbsp;<apex:outputText >Manage Service Locations</apex:outputText>
+     	<a href="/apex/Home" >iServe Home</a>&nbsp;>&nbsp;<apex:outputText >Manage Service Locations</apex:outputText>
      </div>
      <apex:sectionheader subtitle="Manage Service Locations" />
      <apex:form >
@@ -32,7 +32,7 @@
 	     	<apex:pagemessages id="msgs" />
 	     	<apex:pageBlockSection Columns="1" >
 	     		<apex:pageBlockTable value="{!locations}" var="loc" id="results" rendered="{!locations.size != 0}" >
-	     			<apex:column headerValue="Action" >
+	     			<apex:column headerValue="Action" style="width:80px;">
 	     				<apex:outputPanel rendered="{!!AND(loc.Status__c == 'Inactive', loc == 'AVATAR')}" >
 	     					<a href="/apex/ServiceLocationEdit?id={!loc.Id}" target="_self">Edit</a> |
 	     				</apex:outputPanel>
