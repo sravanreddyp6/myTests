@@ -1,0 +1,91 @@
+<apex:page sidebar="false" docType="HTML-5.0" controller="EvalResp_ShowAllList">
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+  <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+  <c:PersonalRecord pbsId="{!$CurrentPage.parameters.PBS}" parentPage="" servAssignId="{!$CurrentPage.parameters.SA}"/>
+  <br/>
+  <apex:form id="frm">
+  <apex:pageBlock >
+        <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                               type="{!$CurrentPage.parameters.FS}"
+                               formId="{!$Component.frm}"
+                               uniqueId="Immunization"
+                               rules="{&quot;Vaccine_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"
+                               cols="1"
+                               showDisregard="true" 
+                               eSign="true"
+                               rendered="{!$CurrentPage.parameters.FS != 'Isolation Event' && $CurrentPage.parameters.FS != 'Assistive Device' && $CurrentPage.parameters.FS == 'Assistive Device MN'  && $CurrentPage.parameters.FS == 'Assistive Device CA' && $CurrentPage.parameters.FS != 'Time Log'}" />
+
+        <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                               type="{!$CurrentPage.parameters.FS}"
+                               formId="{!$Component.frm}"
+                               uniqueId="Assistive_Devices"
+                               visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],  
+                                                                                                        &quot;Glasses&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Glasses_Present__c&quot;],
+                                                                                                        &quot;Contacts&quot; : [&quot;Glasses_Contacts_Purpose__c&quot; , &quot;Contacts_Type__c&quot; , &quot;Contacts_Present__c&quot;],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
+                                                                                                        &quot;UE&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;LE&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Seat Belt&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Lap Tray&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Trunk Supports&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Enclosure Bed&quot; : [&quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Side Rail Half&quot; : [&quot;Side_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;],
+                                                                                                        &quot;Side Rail Full&quot; : [&quot;Side_Rail_Position__c&quot; , &quot;Assistive_Device_Removable__c&quot; , &quot;Assistive_Device_Restricts_Movement__c&quot;]
+                                                                                                        }}"
+                               cols="1"
+                               rendered="{!$CurrentPage.parameters.FS == 'Assistive Device'}" />
+
+        <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                               type="{!$CurrentPage.parameters.FS}"
+                               title="Assistive Device"
+                               formId="{!$Component.frm}"
+                               uniqueId="Assistive_Devices_MN"
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Present__c&quot; , &quot;Hearing_Aid_Type__c&quot;],  
+                                                                                                        &quot;Glasses&quot; : [ &quot;Glasses_Present__c&quot;, &quot;Contacts_Type__c&quot;,&quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Contacts&quot; : [ &quot;Contacts_Present__c&quot;, &quot;Glasses_Contacts_Purpose__c&quot; ],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;]                                                                                                       
+                                                                                                        }}"
+                               cols="1"
+                               rendered="{!$CurrentPage.parameters.FS == 'Assistive Device MN'}" />   
+        <c:EvaluationResponseTable pbsParentId="{!$CurrentPage.parameters.PBS}"
+                               type="{!$CurrentPage.parameters.FS}"
+                               title="Assistive Device"
+                               formId="{!$Component.frm}"
+                               uniqueId="Assistive_Devices_MN"
+                                           visiblityRowRules="{&quot;Assistive_Device_Type__c&quot; : { &quot;Hearing Aid&quot; : [&quot;Hearing_Aid_Type__c&quot;],  
+                                                                                                        &quot;Glasses&quot; : [ &quot;Has_Glasses__c&quot;],
+                                                                                                        &quot;Contacts&quot; : [ &quot;Has_Contacts__c&quot;],
+                                                                                                        &quot;Dentures&quot; : [&quot;Denture_Type__c&quot;],
+                                                                                                        &quot;Side Rail Half&quot; : [&quot;Side_Rail_Position__c&quot; ],
+                                                                                                        &quot;Side Rail Full&quot; : [&quot;Side_Rail_Position__c&quot; ]                                                                                                        
+                                                                                                        }}"
+                               cols="1"
+                               rendered="{!$CurrentPage.parameters.FS == 'Assistive Device CA'}" />                                                           
+                               
+        <c:EvaluationResponseTable saParentId="{!$CurrentPage.parameters.SA}"
+                                    type="{!$CurrentPage.parameters.FS}"
+                                    formId="{!$Component.frm}"
+                                    uniqueId="Isolation"
+                                    rules="{&quot;Isolation_Type__c&quot;: {&quot;Other&quot;: [&quot;Other__c&quot;]}}"                                       
+                                    cols="1"
+                                    rendered="{!$CurrentPage.parameters.SA != null && $CurrentPage.parameters.FS == 'Isolation Event' }" />
+      
+		<c:EvaluationResponseTable saParentId="{!$CurrentPage.parameters.SA}"
+                                    type="{!$CurrentPage.parameters.FS}"
+                                    formId="{!$Component.frm}"
+                                    uniqueId="TimeLog"
+                                    showDisregard="true"
+                                    eSign="true"
+                                    cols="1"
+                                    addEnabled="true"
+                                    editEnabled="true"
+                                    customLabels="[{&quot;field&quot;:&quot;TMN_User__c&quot;, &quot;label&quot;:&quot;Accompanied By&quot;}]" 
+                                    rendered="{!$CurrentPage.parameters.SA != null && $CurrentPage.parameters.FS == 'Time Log' }" />  
+   
+		</apex:pageBlock>
+   </apex:form> 
+</apex:page>

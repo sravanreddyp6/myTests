@@ -1,0 +1,31 @@
+<apex:page controller="incidentsListViewController">
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.TmnPageLoad)}" />	
+	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:form >
+	<apex:pageBlock title="{!IF(myIncidents, 'My Incidents','All Incidents')}">
+		<apex:pageBlockButtons location="top" > 
+ 				 <table width="100%"> 
+					<tr>
+ 					<td align="right"> 
+ 					<apex:selectList value="{!selectedIncident}" size="1">
+ 						<apex:selectOptions value="{!incidentTypes}" /> 
+ 						<apex:actionSupport event="onchange" action="{!displayIncidents}" rerender="incidentsTable" status="pageProcessing" /> 
+					</apex:selectList> 
+					</td> 
+					</tr> 
+ 				</table> 
+			</apex:pageBlockButtons>
+		<apex:pageBlockTable value="{!incidents}" var="i" id="incidentsTable"  >
+			<apex:column headerValue="Action" >
+				<a href="/apex/Incident_Form_CreateEdit?Id={!i.Id}">Edit</a>
+			</apex:column>
+			<apex:column headerValue="Incident Number" >
+                <a href="/{!i.id}" >{!i.Name}</a>
+             </apex:column>
+			<apex:column value="{!i.Recordtype.Name}" headerValue="Incident Type"/>
+			<apex:column value="{!i.Status__c}" />
+		</apex:pageBlockTable>
+	</apex:pageBlock>
+	</apex:form>
+</apex:page>

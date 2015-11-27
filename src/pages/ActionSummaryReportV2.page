@@ -1,0 +1,653 @@
+<apex:page standardController="Action_Summary__c"
+	extensions="ActionSummaryReportV2" action="{!checkFinalizedEdit}">
+	
+	<apex:includeScript
+		value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript
+		value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
+	<apex:stylesheet
+		value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+	<apex:stylesheet
+		value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+		
+<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />		
+	<style>
+#pbsBlueCard {
+	margin-bottom: 15px;
+}
+
+.leftAndTheRest {
+	padding-left: 300px;
+}
+
+.recommendationBlock {
+	float: left;
+	padding: 4px;
+	padding-left: 120px;
+	position: relative;
+	width: 180px;
+	right: 300px;
+	margin-left: -100%;
+}
+
+.commentBlock {
+	float: left;
+	padding: 4px;
+	width: 100%;
+	position: relative;
+}
+
+.objectiveCommentInput {
+	width: 100%;
+}
+
+tr.dataRow {
+	background-color: white;
+}
+
+tr.dataRow.changed {
+	background-color: #FFF8DC;
+}
+
+tr.dataRow:hover {
+	background-color: #e3f3ff;
+}
+
+table.alignTop td {
+	vertical-align: top !important;
+}
+
+a.viewAllLink {
+	display: inline-block;
+	margin-top: 5px;
+	margin-left: 5px;
+}
+
+.thinking {
+	opacity: 0.8;
+	background-color: #ccc;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	z-index: 1000;
+}
+
+.thinkingwheel {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	background-color: white;
+	border: 2px solid gray;
+	padding: 2px;
+}
+
+<!--
+Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
+	{
+	max-height: 500px;
+	overflow: auto;
+}
+</style>
+
+	<c:PersonalRecord
+		pbsId="{!Action_Summary__c.Service_Assignment__r.Admission__r.Person_Being_Served__r.Id}"
+		parentPage="ActionSummaryReport"
+		servAssignId="{!Action_Summary__c.Service_Assignment__c}"
+		admId="{!Action_Summary__c.Service_Assignment__r.Admission__c}" />
+
+	<apex:pageMessages id="pageMessages" />
+	<apex:form id="mainForm">
+		<apex:pageBlock title="Action Plan Summary">
+			<div class="pbHeaderButton">
+				<apex:commandButton value="Go To Prior Summaries"
+					id="priorSummariesButton" rendered="{!mode == 'edit'}"
+					onclick="openPastSummariesDialog(); return false; " />
+				<apex:commandButton value="Save" action="{!save}" id="saveButton"
+					status="pageProcessingStatus" rendered="{!mode == 'edit'}" />
+				<apex:commandButton value="Cancel" action="{!cancel}"
+					id="cancelButton" rendered="{!mode == 'edit'}" />
+				<apex:commandButton value="Edit" id="editButton"
+					onclick="window.location='/apex/ActionSummaryReportV2?id={!Action_Summary__c.Id}&mode=edit'; return false;"
+					rendered="{!AND(mode == 'view', editable, Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
+				<apex:commandButton value="Finalize"
+					onclick="authenticate(); return false; " id="finalizeButton"
+					rendered="{!AND(mode == 'view', editable, Action_Summary__c.Status__c != 'Final', Action_Summary__c.Status__c != 'Disregard')}" />
+				<apex:commandButton value="Disregard" id="disregardButton"
+					onclick="if (confirm('Are you sure you want to disregard this summary?')) { disregard(); } return false; "
+					rendered="{!AND(mode == 'view', Action_Summary__c.Status__c = 'Final')}" />
+				<apex:commandButton value="Print" id="printButton"
+					onclick="window.open('/apex/ActionSummaryReportPDFV2?id={!Action_Summary__c.Id}', '_blank'); return false;"
+					rendered="{!mode == 'view'}" />
+			</div>
+			<apex:pageBlockSection title="Summary Details" columns="2">
+				<apex:outputField value="{!Action_Summary__c.Name}"
+					label="Summary Name" />
+				<apex:outputField value="{!Action_Summary__c.Start_Date__c}" />
+				<apex:outputField
+					value="{!Action_Summary__c.Service_Assignment__r.Admission__c}" />
+				<apex:outputField value="{!Action_Summary__c.End_Date__c}" />
+				<apex:outputField value="{!Action_Summary__c.Service_Assignment__c}" />
+				<apex:outputField value="{!Action_Summary__c.Status__c}" />
+				<apex:pageBlockSectionItem>
+					<apex:outputLabel for="summaryCreatedBy" value="Created By" />
+					<apex:outputLink id="summaryCreatedBy"
+						value="/{!Action_Summary__c.CreatedBy.Id}">{!Action_Summary__c.CreatedBy.Name}</apex:outputLink>
+				</apex:pageBlockSectionItem>
+				<apex:outputText label="Created Date">
+					<c:MilitaryDatetime dateTimeVal="{!Action_Summary__c.CreatedDate}" />
+				</apex:outputText>
+				<apex:outputText label="Finalized Date"
+					rendered="{!Action_Summary__c.Status__c = 'Final'}">
+					<c:MilitaryDatetime
+						dateTimeVal="{!Action_Summary__c.Finalized_Date__c}" />
+				</apex:outputText>
+				<apex:outputField value="{!Action_Summary__c.Finalized_By__c}"
+					rendered="{!Action_Summary__c.Status__c = 'Final'}" />
+			</apex:pageBlockSection>
+			<apex:pageBlockSection title="Vitals Detail Summary" columns="1" rendered="{! !vfVarIsRw}">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
+					<apex:pageBlockTable value="{!vitalsDetails}" var="vital"
+						rows="{!LIST_LIMIT}">
+						<apex:column headerValue="Date">
+							<c:MilitaryDatetime dateTimeVal="{!vital.dateTaken}" />
+						</apex:column>
+						<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
+						<apex:column headerValue="Blood Pressure"
+							value="{!vital.bloodPressure}" />
+						<apex:column headerValue="O2" value="{!vital.o2}" />
+						<apex:column headerValue="Temperature"
+							value="{!vital.temperature}" />
+					</apex:pageBlockTable>
+					<apex:commandLink styleClass="viewAllLink"
+						onclick="openAllVitalsDialog(); return false;" value="View All"
+						rendered="{!vitalsDetails.size > LIST_LIMIT}" />
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection title="Seizure Activity" columns="1" rendered="{! !vfVarIsRw}">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
+					<apex:pageBlockTable value="{!seizures}" var="seizure"
+						rows="{!LIST_LIMIT}">
+						<apex:column headerValue="Start Date/Time">
+							<c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.startTime}" />
+						</apex:column>
+						<apex:column headerValue="End Date/Time">
+							<c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.endTime}" />
+						</apex:column>
+						<apex:column headerValue="Duration"
+							value="{!seizure.duration} seconds" />
+						<apex:column headerValue="Observed By">
+							<a href="/{!seizure.observedById}">{!seizure.observedByName}</a>
+						</apex:column>
+					</apex:pageBlockTable>
+					<apex:commandLink styleClass="viewAllLink"
+						onclick="openAllSeizuresDialog(); return false;" value="View All"
+						rendered="{!seizures.size > LIST_LIMIT}" />
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection title="Isolation Events" columns="1" rendered="{! !vfVarIsRw}">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}">
+					<apex:pageBlockTable value="{!isolationEvents}" var="event"
+						rows="{!LIST_LIMIT}">
+						<apex:column headerValue="Start Date/Time">
+							<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
+						</apex:column>
+						<apex:column headerValue="End Date/Time">
+							<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
+						</apex:column>
+						<apex:column headerValue="Type" value="{!event.type}" />
+					</apex:pageBlockTable>
+					<apex:commandLink styleClass="viewAllLink"
+						onclick="openAllIsolationEventsDialog(); return false;"
+						value="View All" rendered="{!isolationEvents.size > LIST_LIMIT}" />
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection title="Restraint Events" columns="1" rendered="{! !vfVarIsRw}">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
+					<apex:pageBlockTable value="{!restraintEvents}" var="event"
+						rows="{!LIST_LIMIT}">
+						<apex:column headerValue="Start Date/Time">
+							<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
+						</apex:column>
+						<apex:column headerValue="End Date/Time">
+							<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
+						</apex:column>
+						<apex:column headerValue="Status" value="{!event.status}" />
+						<apex:column headerValue="Most Current Restraint Reduction Score"
+							value="{!event.score}" />
+					</apex:pageBlockTable>
+					<apex:commandLink styleClass="viewAllLink"
+						onclick="openAllRestraintEventsDialog(); return false;"
+						value="View All" rendered="{!restraintEvents.size > LIST_LIMIT}" />
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection title="Systems" columns="1">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
+					<table class="list" cellspacing="0" cellpadding="0" border="0">
+						<thead>
+							<tr class="headerRow">
+								<th style="width: 20%;">System Name</th>
+								<th style="width: 20%;">Status</th>
+								<th style="width: 60%;">Comment</th>
+							</tr>
+						</thead>
+						<tbody>
+							<apex:repeat value="{!systemSummaryResultDomain}" var="domain">
+								<tr class="dataRow">
+									<td class="dataCell">{!domain}</td>
+									<td class="dataCell"><apex:selectRadio
+											layout="pageDirection"
+											value="{!systemSummaryResultMap[domain].status}"
+											rendered="{!mode = 'edit'}">
+											<apex:selectOptions value="{!systemStatusOptions}" />
+										</apex:selectRadio> <apex:outputText
+											value="{!systemSummaryResultMap[domain].status}"
+											rendered="{!mode != 'edit'}" /></td>
+									<td class="dataCell"><apex:inputTextArea
+											style="width: 95%;" rows="4"
+											value="{!systemSummaryResultMap[domain].comment}"
+											rendered="{!mode = 'edit'}" /> <apex:outputText
+											value="{!systemSummaryResultMap[domain].comment}"
+											rendered="{!mode != 'edit'}" /></td>
+								</tr>
+							</apex:repeat>
+						</tbody>
+					</table>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Weekly IV Evaluation" columns="1"
+				rendered="{! CONTAINS(diagnosticsIvTypes, 'PICC') || CONTAINS(diagnosticsIvTypes, 'CENTRAL') || diagnosticsIvEvaluation.resultSObject != null }">
+				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
+					<table class="list" cellspacing="0" cellpadding="0" border="0">
+						<thead>
+							<tr class="headerRow">
+								<th style="width: 70%;">Procedure</th>
+								<th style="width: 30%;">Comment</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="dataRow">
+								<td class="dataCell">
+									<table class="list" cellspacing="0" cellpadding="0" border="0">
+										<thead>
+											<tr class="headerRow">
+												<th style="width: 60%;"></th>
+												<th style="width: 40%;"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr class="dataRow">
+												<td class="dataCell"><apex:outputText
+														value="Dressing change, external catheter length and resident&rsquo;s upper arm circumference measured <strong><u>weekly</u></strong> and prn."
+														escape="false" /></td>
+												<td class="dataCell"><apex:selectRadio
+														value="{!diagnosticsIvEvaluation.dressingChange}"
+														rendered="{!mode = 'edit'}">
+														<apex:selectOptions value="{!yesNoOptions}" />
+													</apex:selectRadio> <apex:outputText
+														value="{!diagnosticsIvEvaluation.dressingChange}"
+														rendered="{!mode != 'edit'}" /></td>
+											</tr>
+											<tr class="dataRow">
+												<td class="dataCell, labelCol"><apex:outputText
+														value="External Catheter Length" escape="false" /></td>
+												<td class="dataCell"><apex:inputText
+														value="{!diagnosticsIvEvaluation.externalCatheterLength}"
+														rendered="{!mode = 'edit'}" /> <apex:outputText
+														value="{!diagnosticsIvEvaluation.externalCatheterLength}"
+														rendered="{!mode != 'edit'}" /></td>
+											</tr>
+
+											<apex:outputPanel layout="none"
+												rendered="{! CONTAINS(diagnosticsIvTypes, 'PICC') }">
+												<tr class="dataRow">
+													<td class="dataCell, labelCol"><apex:outputText
+															value="Arm Circumference" escape="false" /></td>
+													<td class="dataCell"><apex:inputText
+															value="{!diagnosticsIvEvaluation.armCircumference}"
+															rendered="{!mode = 'edit'}" /> <apex:outputText
+															value="{!diagnosticsIvEvaluation.armCircumference}"
+															rendered="{!mode != 'edit'}" /></td>
+												</tr>
+											</apex:outputPanel>
+											<tr class="dataRow">
+												<td class="dataCell, labelCol"><apex:outputText
+														value="Total Length of Catheter Inserted (cm)"
+														escape="false" /></td>
+												<td class="dataCell"><apex:inputText
+														value="{!diagnosticsIvEvaluation.totalCatheterLength}"
+														rendered="{!mode = 'edit'}" /> <apex:outputText
+														value="{!diagnosticsIvEvaluation.totalCatheterLength}"
+														rendered="{!mode != 'edit'}" /></td>
+											</tr>
+											<tr class="dataRow">
+												<td class="dataCell, labelCol"><apex:outputText
+														value="Source of Information" escape="false" /></td>
+												<td class="dataCell"><apex:outputText
+														value="<Auto populated via the E-Sign when Finalized>"
+														rendered="{!summary.Status__c == 'Draft'}" /> <apex:outputPanel
+														layout="inline" rendered="{!summary.Status__c == 'Final'}">
+														<apex:outputField
+															value="{!Action_Summary__c.Finalized_By__c}" /> @ <c:MilitaryDatetime
+															dateTimeVal="{!summary.Finalized_Date__c}" />
+													</apex:outputPanel></td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+
+								<td class="dataCell"><apex:inputTextArea
+										style="width: 95%;" rows="8"
+										value="{!diagnosticsIvEvaluation.comment}"
+										rendered="{!mode = 'edit'}" /> <apex:outputText
+										value="{!diagnosticsIvEvaluation.comment}"
+										rendered="{!mode != 'edit'}" /></td>
+							</tr>
+						</tbody>
+					</table>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+
+			<apex:repeat value="{!objectiveMap}" var="objectiveType">
+				<apex:pageBlockSection title="{!objectiveType}" columns="1">
+					<apex:outputPanel layout="block" id="objectivePanel"
+						style="clear: both; ">
+						<apex:repeat value="{!objectiveMap[objectiveType]}"
+							var="objectiveParentToChildrenMap">
+							<apex:repeat value="{!objectiveParentToChildrenMap}"
+								var="parentId">
+								<table class="list alignTop"
+									style="clear: both; margin-bottom: 20px;" cellspacing="0"
+									cellpadding="0" border="0">
+									<thead>
+										<tr class="headerRow">
+											<th style="width: 40%;">Description</th>
+											<th style="width: 15%;">Revised</th>
+											<th style="width: 15%;">Attribute</th>
+											<th style="width: 30%;"><apex:outputText
+													value="Progress"
+													rendered="{!OR(objectiveType == 'Skill', objectiveType == 'Behavior - Count')}" />
+												<apex:outputText value="Narrative Notes"
+													rendered="{!objectiveType == 'Narrative'}" /></th>
+										</tr>
+									</thead>
+									<tbody>
+										<apex:repeat value="{!objectiveMap[objectiveType][parentId]}"
+											var="objective">
+											<tr class="dataRow {!IF(objective.highlight, 'changed', '')}">
+												<td class="dataCell"
+													style="padding-top: 10px; padding-left: 5px;">
+													{!objective.objectiveSObject.Description__c}</td>
+												<td class="dataCell"
+													style="padding-top: 10px; padding-left: 5px;"><apex:outputText
+														rendered="{!parentId != objective.objectiveSObject.Id}"
+														value="{0, date, M/d/yyyy}">
+														<apex:param
+															value="{!objective.objectiveSObject.CreatedDate}" />
+													</apex:outputText></td>
+												<td class="dataCell"
+													style="padding-top: 10px; padding-left: 5px;">Status -
+													{!Objective.objectiveSObject.Status__c}<br /> Effective
+													Date - <apex:outputText value="{0, date, M/d/yyyy}">
+														<apex:param
+															value="{!Objective.objectiveSObject.Effective_Date__c}" />
+													</apex:outputText> <br /> Target Date - <apex:outputText
+														value="{0, date, M/d/yyyy}">
+														<apex:param
+															value="{!Objective.objectiveSObject.Target_End_Date__c}" />
+													</apex:outputText>
+												</td>
+												<td class="dataCell"
+													style="padding-top: 5px; padding-left: 5px;"><apex:outputPanel
+														rendered="{!objectiveType == 'Skill'}">
+														<table>
+															<thead>
+																<tr>
+																	<th>Time Period</th>
+																	<th>Met Obj.</th>
+																	<th>Did Not Meet Obj.</th>
+																	<th>% Obj. Met</th>
+																</tr>
+															</thead>
+															<tbody>
+																<apex:repeat value="{!objective.skillResults}"
+																	var="result">
+																	<tr>
+																		<td><apex:outputText value="{0, date, MMM yyyy}">
+																				<apex:param value="{!result.resultDate}" />
+																			</apex:outputText></td>
+																		<td>{!result.met}</td>
+																		<td>{!result.notMet}</td>
+																		<td>{!result.percentMet}</td>
+																	</tr>
+																</apex:repeat>
+																<apex:outputPanel layout="none"
+																	rendered="{!objective.skillResults.size == 0}">
+																	<tr>
+																		<td colspan="4">No data recorded</td>
+																	</tr>
+																</apex:outputPanel>
+															</tbody>
+														</table>
+													</apex:outputPanel> <apex:outputPanel
+														rendered="{!objectiveType == 'Behavior - Count'}">
+														<table>
+															<thead>
+																<tr>
+																	<th>Time Period</th>
+																	<th>Occurrences</th>
+																</tr>
+															</thead>
+															<tbody>
+																<apex:repeat value="{!objective.countResults}"
+																	var="result">
+																	<tr>
+																		<td><apex:outputText value="{0, date, MMM yyyy}">
+																				<apex:param value="{!result.resultDate}" />
+																			</apex:outputText></td>
+																		<td>{!result.occurrences}</td>
+																	</tr>
+																</apex:repeat>
+																<apex:outputPanel layout="none"
+																	rendered="{!objective.countResults.size == 0}">
+																	<tr>
+																		<td colspan="2">No data recorded</td>
+																	</tr>
+																</apex:outputPanel>
+															</tbody>
+														</table>
+													</apex:outputPanel> <apex:outputPanel
+														rendered="{!objectiveType == 'Narrative'}" layout="block"
+														style="max-height: 200px; overflow: auto;">
+														<table>
+															<tbody>
+																<apex:repeat value="{!objective.narrativeResults}"
+																	var="result">
+																	<tr>
+																		<td><apex:outputText value="{0, date, M/d/yyyy}">
+																				<apex:param value="{!result.resultDate}" />
+																			</apex:outputText></td>
+																		<td>{!result.description}</td>
+																	</tr>
+																</apex:repeat>
+																<apex:outputPanel layout="none"
+																	rendered="{!objective.narrativeResults.size == 0}">
+																	<tr>
+																		<td colspan="2">No data recorded</td>
+																	</tr>
+																</apex:outputPanel>
+															</tbody>
+														</table>
+													</apex:outputPanel></td>
+											</tr>
+										</apex:repeat>
+									</tbody>
+								</table>
+								<apex:outputPanel layout="block" styleClass="leftAndTheRest">
+									<apex:outputPanel layout="block" styleClass="commentBlock">
+										<div style="font-weight: bold">Comment</div>
+										<apex:inputTextArea styleClass="objectiveCommentInput"
+											value="{!recommendationSummaryResultMap[parentId].comment}"
+											rows="6" rendered="{!mode='edit'}" />
+										<apex:outputText
+											value="{!recommendationSummaryResultMap[parentId].comment}"
+											rendered="{!mode!='edit'}" />
+									</apex:outputPanel>
+									<apex:outputPanel layout="block"
+										styleClass="recommendationBlock">
+										<div style="color: #cc6600; font-weight: bold;">Recommendation</div>
+										<apex:selectRadio
+											value="{!recommendationSummaryResultMap[parentId].recommendation}"
+											layout="pageDirection" rendered="{!mode='edit'}">
+											<apex:selectoptions value="{!recommendationOptions}"></apex:selectoptions>
+										</apex:selectRadio>
+										<apex:outputText
+											value="{!recommendationSummaryResultMap[parentId].recommendation}"
+											rendered="{!mode!='edit'}" />
+									</apex:outputPanel>
+								</apex:outputPanel>
+							</apex:repeat>
+						</apex:repeat>
+					</apex:outputPanel>
+				</apex:pageBlockSection>
+			</apex:repeat>
+		</apex:pageBlock>
+		<apex:actionFunction name="disregard" action="{!disregard}"
+			status="pageProcessingStatus" />
+		<c:Authentication formId="{!$Component.mainForm}" title="E-Sign"
+			handler="ActionSummaryReportV2" objectId="{!Action_Summary__c.Id}"
+			oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}');" />
+	</apex:form>
+	<apex:outputPanel id="allVitalsDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!vitalsDetails}" var="vital">
+				<apex:column headerValue="Date">
+					<c:MilitaryDatetime dateTimeVal="{!vital.dateTaken}" />
+				</apex:column>
+				<apex:column headerValue="Heart Rate" value="{!vital.heartRate}" />
+				<apex:column headerValue="Blood Pressure"
+					value="{!vital.bloodPressure}" />
+				<apex:column headerValue="O2" value="{!vital.o2}" />
+				<apex:column headerValue="Temperature" value="{!vital.temperature}" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	<apex:outputPanel id="allSeizuresDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!seizures}" var="seizure">
+				<apex:column headerValue="Start Date/Time">
+					<c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.startTime}" />
+				</apex:column>
+				<apex:column headerValue="End Date/Time">
+					<c:MilitaryDateTimeWithSeconds dateTimeVal="{!seizure.endTime}" />
+				</apex:column>
+				<apex:column headerValue="Duration"
+					value="{!seizure.duration} seconds" />
+				<apex:column headerValue="Observed By">
+					<a href="/{!seizure.observedById}">{!seizure.observedByName}</a>
+				</apex:column>
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	<apex:outputPanel id="allIsolationEventsDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!isolationEvents}" var="event">
+				<apex:column headerValue="Start Date/Time">
+					<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
+				</apex:column>
+				<apex:column headerValue="End Date/Time">
+					<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
+				</apex:column>
+				<apex:column headerValue="Type" value="{!event.type}" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	<apex:outputPanel id="allRestraintEventsDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!restraintEvents}" var="event">
+				<apex:column headerValue="Start Date/Time">
+					<c:MilitaryDatetime dateTimeVal="{!event.startTime}" />
+				</apex:column>
+				<apex:column headerValue="End Date/Time">
+					<c:MilitaryDatetime dateTimeVal="{!event.endTime}" />
+				</apex:column>
+				<apex:column headerValue="Status" value="{!event.status}" />
+				<apex:column headerValue="Most Current Restraint Reduction Score"
+					value="{!event.score}" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	<apex:outputPanel id="pastSummariesDialog" style="display: none; ">
+		<apex:pageBlock>
+			<apex:pageBlockTable value="{!summaries}" var="s">
+				<apex:column headerValue="Name">
+					<apex:outputLink value="/{!s.Id}" target="_blank">{!s.Name}</apex:outputLink>
+				</apex:column>
+				<apex:column headerValue="Start Date">
+					<apex:outputText value="{0, date, M/d/yyyy}">
+						<apex:param value="{!s.Start_Date__c}" />
+					</apex:outputText>
+				</apex:column>
+				<apex:column headerValue="End Date">
+					<apex:outputText value="{0, date, M/d/yyyy}">
+						<apex:param value="{!s.End_Date__c}" />
+					</apex:outputText>
+				</apex:column>
+				<apex:column headerValue="Status" value="{!s.Status__c}" />
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	<apex:actionStatus id="pageProcessingStatus">
+		<apex:facet name="start">
+			<div class="thinking">
+				<div class="thinkingwheel">
+					<span><img class="waitingImage" src="/img/loading.gif"
+						title="Please Wait..." />&nbsp; Processing...</span>
+				</div>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop">
+		</apex:facet>
+	</apex:actionStatus>
+	<script>
+		jQuery.noConflict();
+		jQuery(document).ready(function ($) {
+			'use strict';
+
+			window.openAllVitalsDialog = function () {
+				openModalDialog('{!$Component.allVitalsDialog}', 'Vitals Details', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+				setUpCloseButtons();
+			};
+			window.openAllSeizuresDialog = function () {
+				openModalDialog('{!$Component.allSeizuresDialog}', 'Seizure Activities', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+				setUpCloseButtons();
+			};
+			window.openAllIsolationEventsDialog = function () {
+				openModalDialog('{!$Component.allIsolationEventsDialog}', 'Isolation Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+				setUpCloseButtons();
+			};
+			window.openAllRestraintEventsDialog = function () {
+				openModalDialog('{!$Component.allRestraintEventsDialog}', 'Restraint Events', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+				setUpCloseButtons();
+			};
+			window.openPastSummariesDialog = function () {
+				openModalDialog('{!$Component.pastSummariesDialog}', 'Past Summaries', '{!$Component.mainForm}', 'fixed-dialog', null, false);
+				setUpCloseButtons();
+			};
+			var setUpCloseButtons = function () {
+				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
+				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
+					closeModalDialog('{!$Component.allVitalsDialog}');
+					closeModalDialog('{!$Component.allSeizuresDialog}');
+					closeModalDialog('{!$Component.allIsolationEventsDialog}');
+					closeModalDialog('{!$Component.allRestraintEventsDialog}');
+					closeModalDialog('{!$Component.pastSummariesDialog}');
+					event.preventDefault();
+				});
+			};
+		});
+	</script>
+</apex:page>
