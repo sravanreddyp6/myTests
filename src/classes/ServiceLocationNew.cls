@@ -13,6 +13,7 @@ public with sharing class ServiceLocationNew {
 		this.controller = controller;
 		this.location = (Service_location__c) controller.getRecord();
 		this.location.Source_System__c = 'iServe';
+		this.location.Status__c = 'Active';
 		this.alias = new Alias__c();
 	}
 	
@@ -87,8 +88,14 @@ public with sharing class ServiceLocationNew {
 				pg.setRedirect(true);
 				return pg;
 			}catch(exception e){
-				Apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, 'Cannot Create Service Location due to the error -'+e.getMessage()));
-				return null;
+				if(e.getMessage().contains('duplicate value found')){
+					Apexpages.addMessage(new apexpages.Message(ApexPages.Severity.ERROR,'There is already an existing Service location with Same Facility and Program Code'));
+					return null;
+				}
+				else{
+					Apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, 'Cannot Create Service Location due to the error -'+e.getMessage()));
+					return null;
+				}
 			}
 		}
 	
@@ -130,7 +137,7 @@ public with sharing class ServiceLocationNew {
 	}
 	
 	public pageReference cancel(){
-		PageReference pg = new PageReference('/apex/Home');
+		PageReference pg = new PageReference('/apex/manageServiceLocations');
 		pg.setRedirect(true);
 		return pg;
 	}
