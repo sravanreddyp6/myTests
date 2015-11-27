@@ -660,7 +660,8 @@ public with sharing class DSPHomePageController {
     
     public pageReference dspShiftNoteSummary() {
         PageReference pageRef = new PageReference('/apex/DSP_shiftnote_summary_rpt');
-        pageRef.getParameters().put('selectedPBS', this.pbsID);
+        String selectedPBS =  this.pbsID == null || this.pbsID == '' ?  String.join(this.currentPBSList, ',') : this.pbsID;
+        pageRef.getParameters().put('selectedPBS', selectedPBS );
         pageRef.getParameters().put('currentPBSList', json.serialize(this.currentPBSList));
         pageRef.setRedirect(true);
         return pageRef;

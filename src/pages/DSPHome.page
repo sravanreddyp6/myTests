@@ -181,7 +181,11 @@
                 
         <apex:pageBlock title="Persons Being Served" id="pbsBlock" >
             <a id="pbsTable"></a>
-
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns" style="text-align: right;padding-right: 10px;">
+                    <a id="theLink" name="theLink" href="#" onClick="dspShiftNoteSummary()">Shift Note Summary</a>
+                </div>
+            </apex:pageBlockButtons>
             <apex:pageBlockTable value="{!mypbsList}" var="person" id="serviceAssignmentTable" >
                 <apex:column >
                     <a onclick="toggleFavorite('{!person.PBSId}','{!person.saID}',{! !person.isfavorite});">

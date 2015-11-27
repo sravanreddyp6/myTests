@@ -26,14 +26,9 @@ public without sharing class DSP_shiftnote_summary_rpt {
         
     public DSP_shiftnote_summary_rpt() {    
         opGroup = [ select operating_group__c from user where id = :UserInfo.getUserId()].operating_group__c;
-        selectedPBS = new List<id>();
         hasRunOnce =false;
         
-        //selectedPBS.add(Id.valueOf('003g000000Y499UAAR'));
-		//selectedPBS.add(Id.valueOf('003g000000YYxnPAAT'));
-		//selectedPBS.add(Id.valueOf('003g000000Yx4CdAAJ'));
-		
-        //ApexPages.currentPage.getParameters().get('selectedPBS');
+        selectedPBS = Apexpages.currentPage().getParameters().containsKey('selectedPBS') ? String.valueOf(Apexpages.currentPage().getParameters().get('selectedPBS')).split(',') : new List<id>();
         currentPBSList = (list<String>) JSON.DeSerialize(Apexpages.currentPage().getParameters().get('currentPBSList'), list<String>.class);
 		for (Contact c : [select id, name from contact where id in : currentPBSList order by name]){
 			PBSList.add(new SelectOption(c.id, c.name));
