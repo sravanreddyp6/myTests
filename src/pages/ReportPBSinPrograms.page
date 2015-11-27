@@ -10,8 +10,8 @@
     	j$ = jQuery.noConflict();
     	 
    		runReport = function(){
-   			var fromDate = 'test';//j$('input[id$=fromDate]').val();
-   			var toDate = 'test'; //j$('input[id$=toDate]').val();
+   			var fromDate = j$('input[id$=fromDate]').val();
+   			var toDate = j$('input[id$=toDate]').val();
    		
    		
    		
@@ -23,8 +23,8 @@
                         function(result, event) {
                         	if(event.status){
                         		var res = "";
-                        		for(var i=0; i<10000; i++ ){
-                        			res += "<button>"+i+"</button> <br/>";
+                        		for(var i=0; i < (result.length - 5200); i++ ){
+                        			res += "<button>"+result[i].Id+"</button> <br/>";
                         		}
                         		document.getElementById("reportResults").innerHTML = res;
                         	}else if (event.type === 'exception') {
@@ -44,8 +44,60 @@
     <apex:form >
     <apex:pageBlock id="filtersBlock" >
     	<apex:pageBlockSection columns="1" >
-<!--     		<apex:input type="date"  value="{!fromDate}" label="From" id="fromDate" /> -->
-<!--     		<apex:input type="date" value="{!toDate}" label="To" id="toDate" /> -->
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="fromDate" value="From" /> 
+    			<input type="date"  label="From" id="fromDate" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="toDate" value="To" /> 
+    			<input type="date" label="To" id="toDate" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="minAge" value="Min age in Years" />
+    			<input type="number" label="Min age in Years" id="minAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		
+    		
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
     	</apex:pageBlockSection>
     	<apex:pageBlockButtons location="Bottom" >
     		<apex:commandbutton value="Run" id="run" onclick="runReport(); return false;" reRender="dummy"/>
