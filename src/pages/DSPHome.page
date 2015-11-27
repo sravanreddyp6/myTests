@@ -277,7 +277,9 @@
             <apex:param name="reqType" value="" assignTo="{!requestType}" />
             <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
         </apex:actionFunction>
-        
+        <apex:actionFunction name="dspShiftNoteSummary" action="{!dspShiftNoteSummary}" status="pageProcessing" rerender="pageMessages" >
+            <apex:param name="pbsId" value="" assignTo="{!pbsId}" />
+        </apex:actionFunction>
         
 </apex:form>    
 <div id="searchResultDialog"></div>

@@ -6,11 +6,9 @@ public without sharing class DSP_shiftnote_summary_rpt {
     public list<SelectOption> PBSList = new list<SelectOption>();
     public list<SelectOption> getPBSList(){ return PBSList ;}
     public boolean hasRunOnce {get; set;}
-    // START: ERD-11 - Add property to hold PDF run datetime as string in report runner's time zone.  J. Gilliam, 11/5/14
     public string pdfRunDateTimeString { get; set; }
-    // END: ERD-11 - Add property to hold PDF run datetime as string in report runner's time zone.  J. Gilliam, 11/5/14
     public string opGroup { get; private set; }
-    
+    public list<String> currentPBSList {get; set;}
     public transient list<map<String, Object>> notes;
     public list<map<String, Object>> getnotes(){
         return notes ;
@@ -30,15 +28,22 @@ public without sharing class DSP_shiftnote_summary_rpt {
         opGroup = [ select operating_group__c from user where id = :UserInfo.getUserId()].operating_group__c;
         selectedPBS = new List<id>();
         hasRunOnce =false;
+        
+        //selectedPBS.add(Id.valueOf('003g000000Y499UAAR'));
+		//selectedPBS.add(Id.valueOf('003g000000YYxnPAAT'));
+		//selectedPBS.add(Id.valueOf('003g000000Yx4CdAAJ'));
+		
+        //ApexPages.currentPage.getParameters().get('selectedPBS');
+        currentPBSList = (list<String>) JSON.DeSerialize(Apexpages.currentPage().getParameters().get('currentPBSList'), list<String>.class);
+		for (Contact c : [select id, name from contact where id in : currentPBSList order by name]){
+			PBSList.add(new SelectOption(c.id, c.name));
+		}
+		
     }
 
     public pagereference runReport(){
        boolean inputErr = false;
        ApexPages.getMessages().clear();
-       
-selectedPBS.add(Id.valueOf('003g000000Y499UAAR'));
-selectedPBS.add(Id.valueOf('003g000000YYxnPAAT'));
-selectedPBS.add(Id.valueOf('003g000000Yx4CdAAJ'));
               
        if(startDate == null || endDate == null   ){
             ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,
@@ -147,6 +152,7 @@ selectedPBS.add(Id.valueOf('003g000000Yx4CdAAJ'));
     }
     public PageReference cancelToNewRun() {
         PageReference pageRef = new PageReference('/apex/DSP_shiftnote_summary_rpt');
+        pageRef.getParameters().put('currentPBSList', json.serialize(this.currentPBSList));
         pageRef.setRedirect(true);
         return pageRef;
     }

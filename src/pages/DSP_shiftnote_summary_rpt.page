@@ -1,4 +1,4 @@
-<apex:page controller="DSP_shiftnote_summary_rpt" sidebar="false" docType="html-5.0" readOnly="true" >
+<apex:page controller="DSP_shiftnote_summary_rpt"  docType="html-5.0" readOnly="true" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home_DSP__tab">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
 <apex:includeScript value="{!$Resource.jquery}"/>
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -50,8 +50,8 @@
 	        <apex:commandButton value="Run" 
 	            action="{!runReport}" 
 	            reRender="dataTable, tbl_maker, pbsOPTS, messages, buttonPanel" 
-	            status="myStatus"
-	            rendered="{!!hasRunOnce}" />
+	            status="myStatus"/>
+<!-- 	            rendered="{!!hasRunOnce}" /> -->
 	        <apex:commandButton value="Reset" 
 	            action="{!cancelToNewRun}"
 	            immediate="true" />
