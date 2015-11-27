@@ -23,17 +23,24 @@ public with sharing class manageservicelocationsController {
 	
 	
 	public void run(){
-		if(string.isBlank(this.servicelocation.Alias_lookup__c)){
-			apexpages.addmessage(new apexpages.message(ApexPages.Severity.ERROR, 'Please Choose an alias'));
-			return;
-		}
-		this.locations = [SELECT Id, Name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c,
+		if(string.isNOTBlank(this.servicelocation.Alias_lookup__c)){
+			this.locations = [SELECT Id, Name, Alias_lookup__c, Alias_lookup__r.Name, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c,
 							Service_Type__c, Network_Offering__c, Status__c, Source_System__c FROM Service_location__c WHERE Alias_lookup__c =: this.servicelocation.Alias_lookup__c order by State__c, Name, ProgramId__c asc];
 		
-		if(this.locations.size() == 0){
-			apexpages.addmessage(new apexpages.message(ApexPages.Severity.INFO, 'Service locations does not exist for the Alias chosen'));
-			return;
+			if(this.locations.size() == 0){
+				apexpages.addmessage(new apexpages.message(ApexPages.Severity.INFO, 'Service locations does not exist for the Alias chosen'));
+				return;
+			}
+		
+		}else{ //Prevent Querying all records and hitting collection size governor limit
+			this.locations = new list<Service_location__c>();
 		}
+	}
+	
+	public pageReference createNew(){
+		PageReference pg = new PageReference('/apex/ServiceLocationNew');
+		pg.SetRedirect(true);
+		return pg;
 	}
 
 }

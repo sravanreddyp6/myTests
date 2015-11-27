@@ -129,4 +129,10 @@ public with sharing class ServiceLocationNew {
 		
 	}
 	
+	public pageReference cancel(){
+		PageReference pg = new PageReference('/apex/Home');
+		pg.setRedirect(true);
+		return pg;
+	}
+	
 }
