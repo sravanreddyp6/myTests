@@ -910,7 +910,7 @@
                         </div>
                         </apex:outputPanel>
                         </apex:pageBlockSectionItem>
-                        <apex:pageBlockSectionItem rendered="{!(editSA)}"  id="end2" >
+                        <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Active' && editSA)}"  id="end2" >
                         <apex:outputLabel id="end2lab" value="End Date" />
                         <apex:outputPanel >
                             <apex:inputField value="{!theServAssign.End_Date__c}" id="enddate" rendered="{!editSA}" onblur="changeEffectiveDates();" />
