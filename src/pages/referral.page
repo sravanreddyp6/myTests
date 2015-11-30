@@ -1506,7 +1506,7 @@
                         <apex:actionStatus id="status" startText="Paging..." />
 
                     </apex:pageBlockButtons>
-					<apex:pageMessage severity="info" strength="1" summary="Please use more than one parameter to narrow down the search results"  />
+					<apex:pageMessage severity="info" strength="1" summary="Please use at least one parameter to search Service Locations"  />
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nameFilter}" id="nameFilter" size="6"/>&nbsp;&nbsp;
                     <apex:outputLabel >Nick Name&nbsp;&nbsp;&nbsp;</apex:outputLabel>
@@ -1576,7 +1576,7 @@
                         <apex:actionStatus id="status2" startText="Paging..." />
 
                     </apex:pageBlockButtons>
-					<apex:pageMessage severity="info" strength="1" summary="Please use more than one parameter to narrow down the search results"  />
+					<apex:pageMessage severity="info" strength="1" summary="Please use at least one parameter to search Service Locations"  />
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nameFilter2}" id="nameFilter2" size="6"/>&nbsp;&nbsp;
                     <apex:outputLabel >Nick Name&nbsp;&nbsp;&nbsp;</apex:outputLabel>
@@ -1623,6 +1623,7 @@
                             <apex:outputText >{!r.Network_Offering__c}</apex:outputText>
                         </apex:column>
                     </apex:pageblockTable>
+<!--                     <apex:pageMessage summary="No Service Locations found matching the search criteria." severity="info" strength="2"  rendered="{!IF(searchedServiceLocationResultSize2 == 0,True,False)}" /> -->
                 </apex:pageBlock>
             </apex:outputPanel>
         </apex:actionregion>
