@@ -1507,7 +1507,7 @@
                         <apex:actionStatus id="status" startText="Paging..." />
 
                     </apex:pageBlockButtons>
-					<apex:pageMessage severity="info" strength="1" summary="Please use at least one parameter to search Service Locations"  />
+					<apex:pageMessage severity="warning" strength="1" summary="Please use at least one parameter to search Service Locations"  />
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nameFilter}" id="nameFilter" size="6"/>&nbsp;&nbsp;
                     <apex:outputLabel >Nick Name&nbsp;&nbsp;&nbsp;</apex:outputLabel>
@@ -1554,6 +1554,7 @@
                             <apex:outputText >{!r.Network_Offering__c}</apex:outputText>
                         </apex:column>
                     </apex:pageblockTable>
+                    <apex:pageMessages id="SlMSG1" />
                 </apex:pageBlock>
             </apex:outputPanel>
         </apex:actionregion>
@@ -1577,7 +1578,7 @@
                         <apex:actionStatus id="status2" startText="Paging..." />
 
                     </apex:pageBlockButtons>
-					<apex:pageMessage severity="info" strength="1" summary="Please use at least one parameter to search Service Locations"  />
+					<apex:pageMessage severity="warning" strength="1" summary="Please use at least one parameter to search Service Locations"  />
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nameFilter2}" id="nameFilter2" size="6"/>&nbsp;&nbsp;
                     <apex:outputLabel >Nick Name&nbsp;&nbsp;&nbsp;</apex:outputLabel>
@@ -1586,7 +1587,7 @@
                     <apex:inputText value="{!cityFilter2}" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText id="originstate" value="{!stateFilter2}" size="2" />&nbsp;&nbsp;&nbsp;
-                    <apex:commandButton value="Search!" action="{!search2}" reRender="table2,block2" status="searchStatus2" />
+                    <apex:commandButton value="Search!" action="{!search2}" reRender="table2,block2,SlMSG2" status="searchStatus2" />
                     <apex:actionStatus id="searchStatus2" startText=" Searching..." />
                     <br />
                     <br />
@@ -1624,7 +1625,7 @@
                             <apex:outputText >{!r.Network_Offering__c}</apex:outputText>
                         </apex:column>
                     </apex:pageblockTable>
-<!--                     <apex:pageMessage summary="No Service Locations found matching the search criteria." severity="info" strength="2"  rendered="{!IF(searchedServiceLocationResultSize2 == 0,True,False)}" /> -->
+                    <apex:pageMessages id="SlMSG2" />
                 </apex:pageBlock>
             </apex:outputPanel>
         </apex:actionregion>

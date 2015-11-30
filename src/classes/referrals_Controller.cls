@@ -425,9 +425,13 @@ public with sharing class referrals_Controller{
 			// 2014-12-05 - EB-273 - only retrieve Active locations
 			tmpResults=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c, Name, ProgramId__c asc LIMIT 250 ');
 			countTotalRecords=tmpResults.size();
+			if(countTotalRecords == 0){
+				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
+			}
 		}else{
 			tmpResults=null;
 			countTotalRecords=0;
+			Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'Please use at least one parameter to search Service Locations.'));
 		}
 	}
 
@@ -600,9 +604,13 @@ public with sharing class referrals_Controller{
 			// 2014-12-05 - EB-273 - only retrieve Active locations
 			tmpResults2=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c, Name, ProgramId__c asc LIMIT 250');
 			countTotalRecords2=tmpResults2.size();
+			if(countTotalRecords2 == 0){
+				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
+			}
 		}else{
 			tmpResults2=null;
 			countTotalRecords2=0;
+			Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'Please use at least one parameter to search Service Locations.'));
 		}
 	}
 

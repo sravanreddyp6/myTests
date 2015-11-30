@@ -180,6 +180,7 @@ public class CustomLookup {
         DateTime dateTimeTemp;
         Id idTemp;
         Double doubleTemp;
+        Boolean paramEntered = false; //Check whether user entered a param or not.
 
 		// 2014-12-05 EB-273 - modify location search to only retrieve Active locations
         String operatinggroup = [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].operating_group__c;
@@ -195,7 +196,7 @@ public class CustomLookup {
 	        queryFilter += 'Status__c = \'Active\' and ';
 		}
         if(namefield.value!='' && namefield.value!=null && (namefield.value.length()>2 || (namefield.value.length() ==2 && !namefield.value.contains('*')))){
-        	
+        	paramEntered = true;
             if(namefield.value.contains('*')){
                 queryFilter+=' '+namefield.Name+' like \''+String.escapeSingleQuotes(namefield.value.replace('*','%'))+'\' and ';
             }else{
@@ -206,7 +207,9 @@ public class CustomLookup {
 
         for(FieldWrapper field: fields){
             if(field.value!='' && field.value!=null) { // && (field.value.length()>2 || (field.value.length() ==2 && !field.value.contains('*')))){
-            	
+            	if(!paramEntered){
+            		paramEntered = true;
+            	}
                 if(field.fieldType.equalsIgnoreCase(Schema.DisplayType.Double.name()) || field.fieldType.equalsIgnoreCase(Schema.DisplayType.Percent.name())){
                     try{
                         doubleTemp = null;
@@ -226,16 +229,26 @@ public class CustomLookup {
                     }
                 }
             }
+         
         }
         
-        if(!queryFilter.equalsIgnoreCase('Where ')){
+        if((!queryFilter.equalsIgnoreCase('Where ')) && (paramEntered)){
             queryFilter = queryFilter.removeEnd('and ');
             system.debug('$$$$$wholeQuery '+query+queryFilter+' Order By Name LIMIT 250');
             System.debug('stringTemp: ' + stringTemp);
             tmpResult = Database.query(query+queryFilter+' Order by State__c, Name, ProgramId__c asc LIMIT 250');
             countTotalRecords=tmpResult.size();
+            if(countTotalRecords == 0){
+				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No results found matching the search criteria.'));
+			}
+        }else{
+        	tmpResult = null;
+        	countTotalRecords = 0;
+        	Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'Please use at least one parameter to search.'));
+        	//return;
         }
     }
+    
     
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Pagination Properties and Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     public Integer OffsetSize = 0;

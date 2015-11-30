@@ -69,7 +69,7 @@
                                     
   
         <apex:outputPanel id="searchDialog" style="display:none"  >
-        	<apex:pageMessage severity="info" strength="1" summary="Please use at least one parameter to search Service Locations"  />
+        	<apex:pageMessage severity="warning" strength="1" summary="Please use at least one parameter to search Service Locations"  />
             <apex:pageBlock id="block"> 
                 <apex:outputLabel >
                         {!nameField.Label}
@@ -141,6 +141,7 @@
                     	  {!r[$ObjectType[objectType].Fields['Network_offering__c'].localName]}
                 	</apex:column>
                 </apex:pageBlockTable>
+                <apex:pageMessages id="slMsgs" />
                
                 <apex:pageBlockButtons id="buttons" location="bottom" >
                     <apex:outputPanel rendered="{!IF(searchSize!=0,True,False)}">
