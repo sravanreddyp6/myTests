@@ -12,38 +12,42 @@
    		runReport = function(){
    			var fromDate = j$('input[id$=fromDate]').val();
    			var toDate = j$('input[id$=toDate]').val();
-   		
-   		
-   		
-   		
-   		
-    		 Visualforce.remoting.Manager.invokeAction(
-	                '{!$RemoteAction.ReportPBSinProgramsController.getServiceAssignments}',
-	                	fromDate,toDate,
-                        function(result, event) {
-                        	if(event.status){
-                        		var res = "";
-                        		for(var i=0; i < (result.length - 5200); i++ ){
-                        			res += "<button>"+result[i].Id+"</button> <br/>";
-                        		}
-                        		document.getElementById("reportResults").innerHTML = res;
-                        	}else if (event.type === 'exception') {
-	                        	document.getElementById("reportResults").innerHTML = event.message;
-	                        }else {
-	                        	document.getElementById("reportResults").innerHTML = event.message;
-	                    	}
-                            
-                        }, {
-                            escape: true
-                        }
-                    ); 
-    		
+   			var maxAge = j$('input[id$=maxAge]').val();
+   			var minAge = j$('input[id$=minAge]').val();
+   			var gender = j$('select[id$=gender]').val();
+   			var admState = j$('select[id$=admState]').val();
+   			var admStatus = j$('select[id$=admStatus]').val();
+   			var saStatus = j$('select[id$=saStatus]').val();
+   			var alias =  j$('input[id$=alias]').val();
+   			var tmnScope = j$('select[id$=tmnScope]').val();
+   			var serviceType = 'test'; //j$('select[id$=serviceType]').val();
+   			var networkLine = j$('select[id$=networkLine]').val();
+   			var populationServed = j$('select[id$=populationServed]').val();
+   			var physicalLocation = j$('select[id$=physicalLocation]').val();
+   			
+		 Visualforce.remoting.Manager.invokeAction(
+	           '{!$RemoteAction.ReportPBSinProgramsController.getServiceAssignments}',
+	           	fromDate,toDate,maxAge,minAge,gender,admState,admStatus,saStatus,alias,tmnScope,serviceType,
+	           	networkLine,populationServed,physicalLocation,
+	                  function(result, event) {
+	                  	if(event.status){
+	      					document.getElementById("reportResults").innerHTML = event.message;
+	                  	}else if (event.type === 'exception') {
+	                   		document.getElementById("reportResults").innerHTML = event.message;
+	                   }else {
+	                   		document.getElementById("reportResults").innerHTML = event.message;
+	               	}
+	                      
+	                  }, {
+	                      escape: true
+	                  }
+	          ); 
    		}
     
     </script>
     <apex:form >
     <apex:pageBlock id="filtersBlock" >
-    	<apex:pageBlockSection columns="1" >
+    	<apex:pageBlockSection columns="2" >
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="fromDate" value="From" /> 
     			<input type="date"  label="From" id="fromDate" />
@@ -53,51 +57,38 @@
     			<input type="date" label="To" id="toDate" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="minAge" value="Min age in Years" />
     			<input type="number" label="Min age in Years" id="minAge" min="0" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
-    		</apex:pageBlockSectionItem>
-    		
-    		
-    		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    			<apex:outputlabel for="gender" value="Gender" />
+    			<apex:inputField value="{!SA.Person_being_Served__r.Gender__c}" id="gender" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    			<apex:outputlabel for="admState" value="Admission State" />
+    			<apex:inputField value="{!SA.Admission__r.State__c}" id="admState" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    			<apex:outputlabel for="admStatus" value="Admission Status" />
+    			<apex:inputField value="{!SA.Admission__r.Status__c}" id="admStatus" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    			<apex:outputlabel for="saStatus" value="Service Assignment Status" />
+    			<apex:inputField value="{!SA.Status__c}" id="saStatus" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    			<apex:outputlabel for="alias" value="Alias" />
+    			<input type="text" id="alias" />
     		</apex:pageBlockSectionItem>
-    		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
-    		</apex:pageBlockSectionItem>
-    		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
-    		</apex:pageBlockSectionItem>
-    		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
-    		</apex:pageBlockSectionItem>
-    		<apex:pageBlockSectionItem >
-    			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
-    		</apex:pageBlockSectionItem>
+    		<apex:inputField value="{!SA.Service_location__r.TMN_Scope__c}" id="tmnScope"/>
+<!--     		<apex:inputField value="{!SA.Service_location__r.Service_type__c}" id="serviceType" /> -->
+    		<apex:inputField value="{!SA.Service_location__r.Network_offering__c}" id="networkLine"/>
+    		<apex:inputField value="{!SA.Service_location__r.Population_Served__c}" id="populationServed" />
+    		<apex:inputField value="{!SA.Service_location__r.Physical_location__c}" id="physicalLocation" />
     	</apex:pageBlockSection>
     	<apex:pageBlockButtons location="Bottom" >
     		<apex:commandbutton value="Run" id="run" onclick="runReport(); return false;" reRender="dummy"/>
