@@ -129,7 +129,6 @@ public with sharing class EvalRepeaters {
 				// if it's the base type, reduce the number of empty sections
 				if ( evw.sectionType == evalname) {
 					numEmpty -= (evalDataList.get(compositeKey)).size() == 0 ? 1 : 0;
-					system.debug( compositeKey + ' is not empty');
 				}
 
 				// add this entry to the list
@@ -137,7 +136,6 @@ public with sharing class EvalRepeaters {
 			}	else {
 				// reduce the number of empty sections
 				if ( evw.sectionType == evalname){
-					system.debug( compositeKey + ' is not empty');
 					numEmpty -= 1;
 				}
 
@@ -164,7 +162,6 @@ public with sharing class EvalRepeaters {
 
 		for (AggregateResult ag : evalErrors){
 			compositeKey = (string)ag.get('category__c') + '~' +  (string)ag.get('sub_category__c') + '~' + ( String.isBlank((string)ag.get('sub_sub_category__c')) ? '' : (string)ag.get('sub_sub_category__c'));
-			//			system.debug(compositeKey);
 			for (EvalRepeaterWrapper e : workingEvals)
 				if ( e.compositekey == compositeKey) {
 					e.numErrors = 1;
@@ -246,10 +243,7 @@ public with sharing class EvalRepeaters {
 		}
 
 		// EC-305 - different users can add CNA entries now
-		if ( permissionSets.contains('iServe_Tier_III') || permissionSets.contains('iServe_Tier_II')) {
-			canEditEvalType = true;
-		}
-		if (evalname.indexOf('CNA') < 0 && permissionSets.contains('iServe_Tier_I')) {
+		if (permissionSets.contains('iServe_Tier_III') || permissionSets.contains('iServe_Tier_II') || permissionSets.contains('iServe_Tier_I')) {
 			canEditEvalType = true;
 		}
 
