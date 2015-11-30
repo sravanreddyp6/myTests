@@ -37,7 +37,7 @@ public with sharing class AdmissionEditExtension {
         
         }
         allSAforAdmint = new list<Service_Assignment__c>();
-        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c from Service_Assignment__c where Admission__c = :this.admission.id];
+        allSAforAdmint = [select id, name, Service_Location__r.Program__c, Service_Location__r.Setting__c, Service_Location__r.TMN_Scope__c, Service_Location__r.Network_Offering__c  from Service_Assignment__c where Admission__c = :this.admission.id];
         
         curUser = new TMN_User__c();
         // EC-185 get operating group for whether to show new discharge section
