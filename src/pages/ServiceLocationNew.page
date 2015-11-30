@@ -1,14 +1,28 @@
 <apex:page standardController="Service_Location__c" extensions="ServiceLocationNew" sidebar="false">
 	<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
-    
+     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+	 <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
     <style>
      	.breadCrumb{
      		padding: 2px 2px 10px; 
      		font-weight: bold;
      		text-decoration: none !important;
     	}    
+    	.input-disabled{background-color:#EBEBE4;border:1px solid #ABADB3;padding:2px 1px;}
      </style>
+     <script>
+     	j$ = jQuery.noConflict();
+     	j$(document).ready(function($) {
+     		setReadOnly();
+     		
+     	});
+     	setReadOnly = function(){
+    		j$('[id$=aliasLookup]').prop("readonly", true);
+     		j$('[id$=aliasLookup]').addClass('input-disabled');
+     	}
+     	
+     </script>
      <div id="breadCrumb" class="breadCrumb" >
      	<a href="/apex/Home">Home</a>&nbsp;>&nbsp;<a href="/apex/manageServiceLocations">Manage Service Locations</a>&nbsp;>&nbsp;
      	<apex:outputText >Create Service Location</apex:outputText>
@@ -26,13 +40,13 @@
     				<apex:outputPanel >
                        <div class="requiredInput">
                            <div class="requiredBlock"></div>
-	    					<apex:inputField value="{!Service_Location__c.Alias_lookup__c}" >
-	    						<apex:actionsupport event="onchange" reRender="newBlock,msgs" action="{!setLocationFields}"/>
+	    					<apex:inputField value="{!Service_Location__c.Alias_lookup__c}" id="aliasLookup" >
+	    						<apex:actionsupport event="onchange" reRender="newBlock,msgs" action="{!setLocationFields}" oncomplete="setReadOnly();"/>
 	    					</apex:inputField>
 	    				</div>
 	    			</apex:outputPanel>
     			</apex:pageBlockSectionItem>
-    			<apex:outputField value="{!alias.Alias_Operating_Group__c}" label="Alias Operating Group"  rendered="{!Service_Location__c.Alias_lookup__c != null}"/>
+    			<apex:outputField value="{!alias.Alias_Operating_Group__c}" label="Operating Group"  rendered="{!Service_Location__c.Alias_lookup__c != null}"/>
     		</apex:pageBlockSection>    		
     		<apex:pageblockSection columns="2" rendered="{!Service_Location__c.Alias_lookup__c != null}" title="" >
 	    		<apex:pageBlockSectionItem >
