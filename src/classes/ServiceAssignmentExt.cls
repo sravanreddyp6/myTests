@@ -561,6 +561,8 @@ public without sharing class ServiceAssignmentExt {
         setcanEditSA();
         setcanCreatePlan();
         setcanCreateSummary();
+        
+        populateAuths();
 
         getContractsAndXrefs();
         contractsList = new List<SelectOption>();
