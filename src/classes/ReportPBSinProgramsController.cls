@@ -1,29 +1,105 @@
 public with sharing class ReportPBSinProgramsController {
 	
-	public List<Service_Assignment__c> servAssigns {get;set;}
-	public Service_Assignment__c SA{get; set;}
+	public List<Service_Assignment__c> servAssigns {get;set;} // for excel export
+	public list<Service_Assignment__c> subServAssigns {get; set;} // for display on page - Limit 500
+	public Service_Assignment__c SA{get; set;} // for field binding
+	public Service_Location__c sl {get; set;} //Field binding - Issue with dependent picklist when relationship field is used
+	public string maxAge{get;set;}
+	public string minAge{get; set;}
+	public string alias{get;set;}
 	public string queryString;
+	//filter Conditions - Sravan - using public variables due to this issue - http://salesforce.stackexchange.com/questions/8408/bind-variable-with-dotted-name-not-working-in-dynamic-soql
+	public string pbsGender;
+	public string admState;
+	public string admStatus;
+	public string saStatus;
+	public string sltmnscope;
+	public string slserviceType;
+	public string slNetworkOffering;
+	public string populationServed;
+	public string physicalLocation;
+	
+	//sortorder
+	String sortOrder = ' order by Person_Being_Served__r.PBS_Identifier__c, admission__r.Name, Name asc';
+	
+	//Constructor
 	public ReportPBSinProgramsController(){
 		this.servAssigns = new list<Service_Assignment__c>();
+		this.subServAssigns = new list<Service_Assignment__c>();
 		this.SA = new Service_Assignment__c();
-		this.SA.Status__c = null;
+		this.sl = new Service_Location__c();
+		this.SA.Status__c = '';
 		queryString = 'SELECT Id, Person_Being_Served__r.PBS_Identifier__c, Person_being_served__r.LastName,Person_being_served__r.FirstName, Person_being_served__r.Age__c, Person_being_served__r.Gender__c, Person_Being_Served__r.Does_the_person_Identify__c, Person_being_served__r.Race__c, Person_being_served__r.MailingStateCode,';
 		queryString = queryString+' admission__r.Name, Admission__r.State__c, Admission__r.Status__c, Admission__r.Admission_Effective_DateTime__c, Admission__r.Discharged_Date__c, Name, Status__c, SA_Start_DateTime__c, End_Date__c, Alias__c, Service_Location__r.Location_Nickname__c,';
 		queryString = queryString+' Service_Location__r.TMN_Scope__c, Service_Location__r.Network_Offering__c,Service_Location__r.Population_Served__c, Service_Location__r.Physical_Location__c, Service_Location__r.Service_Type__c,';
 		queryString = queryString+' Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c,Highest_Level_of_Education_at_Start__c,Service_Began_via_Acquisition_Company__c,Service_Ended_via_Business_Divested__c,Was_dissatisfaction_reason_for_service_e__c,Who_was_dissatisfied__c, Primary_Reason_for_Dissatisfaction__c FROM Service_Assignment__c WHERE id!= null';
-		this.servAssigns = Database.Query(queryString + ' LIMIT 10000');
+		
 	}
 	
-	public void run(){
-		this.servAssigns = Database.Query(queryString);
+	//Display Results on the Page
+	public pageReference run(){
+		this.subServAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 500');
+		return null;
 	}
 	
+	//Export Results to Excel
 	public pageReference exporttoExcel(){
-		//this.servAssigns = Database.Query(queryString);
+		this.subServAssigns = new List<Service_Assignment__c>();
+		system.debug('full Query>>>>>>> '+queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
+		this.servAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
 		PageReference pg = new pageReference('/apex/ReportPBSinProgramsExcel');
 		pg.getHeaders().put('content-disposition', 'attachment;');
 		pg.setRedirect(false);
 		return pg;
+	}
+	
+	//Generate the Where clause based on filter conditions
+	public string generateWhereClause(){
+		
+		Datetime fromDate = DateTime.newInstance( this.SA.Start_Date__c, Time.newInstance(0,0,0,0));
+        Datetime toDate = DateTime.newInstance ( this.SA.End_Date__c, Time.newInstance(0, 0, 0, 0)); 
+		string filter = ' AND ((Start_Date__c >= '+fromDate.format('yyyy-MM-dd')+' AND Start_Date__c <= '+toDate.format('yyyy-MM-dd')+')';
+		filter = filter +' OR (End_Date__c >= '+fromDate.format('yyyy-MM-dd')+' AND End_Date__c <= '+toDate.format('yyyy-MM-dd')+')';
+		filter = filter +' OR (Start_Date__c <= '+fromDate.format('yyyy-MM-dd')+' AND End_Date__c = null))';
+		
+		if(this.SA.Person_being_served__r.Gender__c != null){
+			pbsGender = this.SA.Person_being_served__r.Gender__c;
+			filter += ' AND Person_being_served__r.Gender__c = :pbsGender';
+		}
+		if(this.SA.Admission__r.State__c != null){
+			admState = this.SA.Admission__r.State__c;
+			filter += ' AND Admission__r.State__c = :admState';
+		}
+		if(this.SA.Admission__r.Status__c != null){
+			admStatus = this.SA.Admission__r.Status__c;
+			filter += ' AND Admission__r.Status__c = :admStatus';
+		}
+		if(this.SA.Status__c != null){
+			saStatus = this.SA.Status__c;
+			filter += ' AND Status__c = :saStatus';
+		}
+		if(this.sl.Tmn_Scope__c != null){
+			sltmnscope = this.sl.Tmn_Scope__c;
+			filter += ' AND Service_location__r.TMN_Scope__c = :sltmnscope';
+		}
+		if(this.sl.Service_Type__c != null){
+			slserviceType = this.sl.Service_Type__c;
+			filter += ' AND Service_location__r.Service_Type__c = :slserviceType';
+		}
+		if(this.sl.Network_offering__c != null){
+			slNetworkOffering = this.sl.Network_offering__c;
+			filter += ' AND Service_location__r.Network_offering__c = :slNetworkOffering';
+		}
+		if(this.sl.Population_Served__c  != null){
+			populationServed = this.sl.Population_Served__c;
+			filter += ' AND Service_location__r.Population_Served__c = :populationServed';
+		}
+		if(this.sl.physical_location__c != null){
+			physicalLocation = this.sl.physical_location__c;
+			filter += ' AND Service_location__r.Population_Served__c = :physicalLocation';
+		}
+		
+		return filter;
 	}
 	
 	

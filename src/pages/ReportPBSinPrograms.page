@@ -1,4 +1,4 @@
-<apex:page controller="ReportPBSinProgramsController" docType="html-5.0" readonly="true">
+<apex:page controller="ReportPBSinProgramsController" docType="html-5.0" readonly="true" cache="false" >
 	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
      <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
      <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
@@ -111,19 +111,19 @@
     	<apex:pageBlockSection columns="1" >
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="fromDate" value="From" /> 
-    			<apex:inputField value="{!SA.Start_Date__c}"  label="From" id="fromDate" />
+    			<apex:inputField value="{!SA.Start_Date__c}"  label="From" id="fromDate" required="true" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="toDate" value="To" /> 
-    			<apex:inputField value="{!SA.Start_Date__c}" label="To" id="toDate" />
+    			<apex:inputField value="{!SA.End_Date__c}" label="To" id="toDate" required="true" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="maxAge" value="Max age in Years" />
-    			<input type="number" label="Max age in Years" id="maxAge" min="0" />
+    			<apex:inputText value="{!maxAge}" id="maxAge" size="3" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="minAge" value="Min age in Years" />
-    			<input type="number" label="Min age in Years" id="minAge" min="0" />
+    			<apex:inputText value="{!minAge}" id="minAge"  size="3"/>
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="gender" value="Gender" />
@@ -143,60 +143,99 @@
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="alias" value="Alias" />
-    			<input type="text" id="alias" />
+    			<apex:inputText value="{!sl.Name}" id="alias" size="6" />
     		</apex:pageBlockSectionItem>
-    		<apex:inputField value="{!SA.Service_location__r.TMN_Scope__c}" id="tmnScope"/>
-<!--     		<apex:inputField value="{!SA.Service_location__r.Service_type__c}" id="serviceType" /> -->
-    		<apex:inputField value="{!SA.Service_location__r.Network_offering__c}" id="networkLine"/>
-    		<apex:inputField value="{!SA.Service_location__r.Population_Served__c}" id="populationServed" />
-    		<apex:inputField value="{!SA.Service_location__r.Physical_location__c}" id="physicalLocation" />
+    		<apex:inputField value="{!sl.TMN_Scope__c}" id="tmnScope"/>
+    		<apex:inputField value="{!sl.Service_type__c}" id="serviceType" />
+    		<apex:inputField value="{!sl.Network_offering__c}" id="networkLine"/>
+    		<apex:inputField value="{!sl.Population_Served__c}" id="populationServed" />
+    		<apex:inputField value="{!sl.Physical_location__c}" id="physicalLocation" />
     	</apex:pageBlockSection>
     	<apex:pageBlockButtons location="Bottom" >
     		<apex:commandbutton value="Run" id="run" onclick="runReport(); return false;" reRender="dummy"/>
+    		<apex:commandbutton value="Display Results" action="{!run}"  />
     		<apex:commandbutton value="Export to Excel JS" id="export" onclick="tableToExcel('searchResults','PBS in Programs'); return false;" reRender="dummy"/>
     		<apex:commandbutton value="Export to Excel VF" id="exportVF" action="{!exporttoExcel}" />
     	</apex:pageBlockButtons>
     </apex:pageBlock>
     </apex:form>
     <div id="reportResults" />
-    
-    <table cellspacing="1" cellpadding="1" border="1" id="searchResults" class="list ">
-        <colgroup span="2"></colgroup>
-	        <thead class="rich-table-thead">
-	            <tr class="headerRow ">
-	                <th colspan="1" scope="col" class="headerRow"> Person# </th>
-	                <th colspan="1" scope="col" class="headerRow"> PBS Initials </th>
-	                <th colspan="1" scope="col" class="headerRow"> Age </th>
-	                <th colspan="1" scope="col" class="headerRow"> Gender </th>
-	                <th colspan="1" scope="col" class="headerRow"> Does the person identify with a gender other than legal gender selected? </th>
-	                <th colspan="1" scope="col" class="headerRow"> Race </th>
-	                <th colspan="1" scope="col" class="headerRow"> PBS Mailing State/Province </th>
-	                <th colspan="1" scope="col" class="headerRow"> Admission Name </th>
-	                <th colspan="1" scope="col" class="headerRow"> Admission State </th>
-	                <th colspan="1" scope="col" class="headerRow"> Admission Status </th>
-	                <th colspan="1" scope="col" class="headerRow"> Admission Date </th>
-	                <th colspan="1" scope="col" class="headerRow"> Discharged Date </th>
-	                <th colspan="1" scope="col" class="headerRow"> Service Assignment Name </th>
-	                <th colspan="1" scope="col" class="headerRow"> Service Assignment Status </th>
-	                <th colspan="1" scope="col" class="headerRow"> Service Assignment Start Date </th>
-	                <th colspan="1" scope="col" class="headerRow"> Service Assignment End Date </th>
-	                <th colspan="1" scope="col" class="headerRow"> Alias </th>
-	                <th colspan="1" scope="col" class="headerRow"> Location Nickname </th>
-	                <th colspan="1" scope="col" class="headerRow"> TMN Scope </th>
-	                <th colspan="1" scope="col" class="headerRow"> Network Service Line Offering </th>
-	                <th colspan="1" scope="col" class="headerRow"> Population Served </th>
-	                <th colspan="1" scope="col" class="headerRow"> Physical Location </th>
-	                <th colspan="1" scope="col" class="headerRow"> Service Type </th>
-	                <th colspan="1" scope="col" class="headerRow"> Transfer from Another Service Assignment </th>
-	                <th colspan="1" scope="col" class="headerRow"> Transfer to Another Service Assignment </th>
-	                <th colspan="1" scope="col" class="headerRow"> Highest Level of Education at Start of Service </th>
-	                <th colspan="1" scope="col" class="headerRow"> Service Began via Acquisition Company </th>
-	                <th colspan="1" scope="col" class="headerRow"> Service Ended via Business Divested </th>
-	                <th colspan="1" scope="col" class="headerRow"> Was dissatisfaction the reason for service ending? </th>
-	                <th colspan="1" scope="col" class="headerRow"> Who was dissatisfied? </th>
-	                <th colspan="1" scope="col" class="headerRow"> Primary Reason for Dissatisfaction </th>                                  
-	            </tr>
-	        </thead>
-        <tbody />
-    </table>  
+    <apex:outputPanel layout="none"  id="resultsDisplay" rendered="{!null != subServAssigns && subServAssigns.size > 0}" >
+	    <table cellspacing="1" cellpadding="1" border="1" id="searchResults" class="list" >
+	        <colgroup span="2"></colgroup>
+		        <thead class="rich-table-thead">
+		            <tr class="headerRow ">
+		                <th colspan="1" scope="col" class="headerRow"> Person# </th>
+		                <th colspan="1" scope="col" class="headerRow"> PBS Initials </th>
+		                <th colspan="1" scope="col" class="headerRow"> Age </th>
+		                <th colspan="1" scope="col" class="headerRow"> Gender </th>
+		                <th colspan="1" scope="col" class="headerRow"> Does the person identify with a gender other than legal gender selected? </th>
+		                <th colspan="1" scope="col" class="headerRow"> Race </th>
+		                <th colspan="1" scope="col" class="headerRow"> PBS Mailing State/Province </th>
+		                <th colspan="1" scope="col" class="headerRow"> Admission Name </th>
+		                <th colspan="1" scope="col" class="headerRow"> Admission State </th>
+		                <th colspan="1" scope="col" class="headerRow"> Admission Status </th>
+		                <th colspan="1" scope="col" class="headerRow"> Admission Date </th>
+		                <th colspan="1" scope="col" class="headerRow"> Discharged Date </th>
+		                <th colspan="1" scope="col" class="headerRow"> Service Assignment Name </th>
+		                <th colspan="1" scope="col" class="headerRow"> Service Assignment Status </th>
+		                <th colspan="1" scope="col" class="headerRow"> Service Assignment Start Date </th>
+		                <th colspan="1" scope="col" class="headerRow"> Service Assignment End Date </th>
+		                <th colspan="1" scope="col" class="headerRow"> Alias </th>
+		                <th colspan="1" scope="col" class="headerRow"> Location Nickname </th>
+		                <th colspan="1" scope="col" class="headerRow"> TMN Scope </th>
+		                <th colspan="1" scope="col" class="headerRow"> Network Service Line Offering </th>
+		                <th colspan="1" scope="col" class="headerRow"> Population Served </th>
+		                <th colspan="1" scope="col" class="headerRow"> Physical Location </th>
+		                <th colspan="1" scope="col" class="headerRow"> Service Type </th>
+		                <th colspan="1" scope="col" class="headerRow"> Transfer from Another Service Assignment </th>
+		                <th colspan="1" scope="col" class="headerRow"> Transfer to Another Service Assignment </th>
+		                <th colspan="1" scope="col" class="headerRow"> Highest Level of Education at Start of Service </th>
+		                <th colspan="1" scope="col" class="headerRow"> Service Began via Acquisition Company </th>
+		                <th colspan="1" scope="col" class="headerRow"> Service Ended via Business Divested </th>
+		                <th colspan="1" scope="col" class="headerRow"> Was dissatisfaction the reason for service ending? </th>
+		                <th colspan="1" scope="col" class="headerRow"> Who was dissatisfied? </th>
+		                <th colspan="1" scope="col" class="headerRow"> Primary Reason for Dissatisfaction </th>                                  
+		            </tr>
+		        </thead>
+	        	<tbody>
+					<apex:repeat value="{!subServAssigns}" var="s" >
+						<tr>
+							<td class="dataCell">{!s.Person_Being_Served__r.PBS_Identifier__c}</td>
+							<td class="dataCell">{!s.Person_Being_Served__r.FirstName}</td>
+							<td class="dataCell">{!s.Person_Being_Served__r.Age__c}</td>
+			    			<td class="dataCell">{!s.Person_Being_Served__r.Gender__c}</td>
+							<td class="dataCell">{!s.Person_Being_Served__r.Does_the_person_Identify__c}</td>
+							<td class="dataCell">{!s.Person_Being_Served__r.Race__c}</td>
+							<td class="dataCell">{!s.Person_Being_Served__r.MailingStateCode}</td>
+							<td class="dataCell">{!s.Admission__r.Name}</td>
+							<td class="dataCell">{!s.Admission__r.State__c}</td>
+							<td class="dataCell">{!s.Admission__r.Status__c}</td>
+							<td class="dataCell">{!s.Admission__r.Admission_Effective_DateTime__c}</td>
+							<td class="dataCell">{!s.Admission__r.Discharged_Date__c}</td>
+							<td class="dataCell">{!s.Name}</td>
+							<td class="dataCell">{!s.Status__c}</td>
+							<td class="dataCell">{!s.SA_Start_DateTime__c}</td>
+							<td class="dataCell">{!s.End_Date__c}</td>
+							<td class="dataCell">{!s.Alias__c}</td>
+							<td class="dataCell">{!s.Service_Location__r.Location_Nickname__c}</td>
+							<td class="dataCell">{!s.Service_Location__r.TMN_Scope__c}</td>
+							<td class="dataCell">{!s.Service_Location__r.Network_Offering__c}</td>
+							<td class="dataCell">{!s.Service_Location__r.Population_Served__c}</td>
+							<td class="dataCell">{!s.Service_Location__r.Physical_Location__c}</td>
+							<td class="dataCell">{!s.Service_Location__r.Service_Type__c}</td>
+			
+							<td class="dataCell">{!s.Was_this_transfer_frm_another_ServAssig__c}</td>
+							<td class="dataCell">{!s.Is_this_transfer_to_another_ServAssign__c}</td>
+							<td class="dataCell">{!s.Highest_Level_of_Education_at_Start__c}</td>
+							<td class="dataCell">{!s.Service_Began_via_Acquisition_Company__c}</td>
+							<td class="dataCell">{!s.Service_Ended_via_Business_Divested__c}</td>
+							<td class="dataCell">{!s.Was_dissatisfaction_reason_for_service_e__c}</td>
+							<td class="dataCell">{!s.Who_was_dissatisfied__c}</td>
+							<td class="dataCell">{!s.Primary_Reason_for_Dissatisfaction__c}</td>
+						</tr>
+					</apex:repeat>
+				</tbody>
+	    </table>
+   </apex:outputPanel>  
 </apex:page>
