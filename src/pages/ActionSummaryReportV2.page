@@ -223,7 +223,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
 						value="View All" rendered="{!restraintEvents.size > LIST_LIMIT}" />
 				</apex:outputPanel>
 			</apex:pageBlockSection>
-			<apex:pageBlockSection title="Systems" columns="1">
+			<apex:pageBlockSection title="Systems" columns="1" rendered="{! !vfVarIsRw}">
 				<apex:outputPanel layout="block" style="width: {!TABLE_WIDTH}; ">
 					<table class="list" cellspacing="0" cellpadding="0" border="0">
 						<thead>
