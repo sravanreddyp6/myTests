@@ -7,6 +7,7 @@
     <apex:variable value="{!$User.Operating_Group__c == 'CareMeridian' || $User.Operating_Group__c == 'Care Meridian'}" var="vfVarIsCM" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && (contact.MailingState =='Minnesota' || contact.MailingState =='Iowa')}" var="vfVarIsRwExtraItems" />
     <apex:variable value="{!$User.Operating_Group__c == 'Redwood' && contact.MailingState =='California' }" var="vfVarIsRwCA" />
+    <apex:variable value="{!$User.Operating_Group__c == 'Redwood' }" var="vfVarIsRw" />
      <apex:variable value="{!$User.Operating_Group__c == 'NeuroRestorative' || $User.Operating_Group__c == 'Neuro Restorative'}" var="isNR" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
@@ -1280,7 +1281,7 @@
                                            rows="5" />
                 <apex:outputPanel >Showing the 5 most recent assistive devices click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Assistive Device" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>  
             </apex:pageBlock>
-            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwExtraItems }">
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwExtraItems || (vfVarIsRw && contact.MailingState =='Indiana')}">
             <a id="assistiveDevices" />            
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Assistive Device MN"
