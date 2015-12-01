@@ -57,6 +57,7 @@ public pageReference saveSkillResults ( ) {
 	
 	List <DSP_WeeklySkillTracking.ASRWrapper> toupdate = new List<DSP_WeeklySkillTracking.ASRWrapper>();
     
+    Boolean err = false;
 	for(DSP_WeeklySkillTracking.DSPObjectiveWrapper objectivewrp: controller.SkillResponse.objectivesmap){
              for(Date day: objectivewrp.ResultsMap.keyset()){
                  DSP_WeeklySkillTracking.ASRWrapper result = objectivewrp.ResultsMap.get(day);
@@ -67,7 +68,7 @@ public pageReference saveSkillResults ( ) {
 
                      // Enforce the Validation rules.  Deactivating the controls means the values not sent from client
                      // So have to do it here.
-                        if (result.status == 'A' ||
+                        if (result.status == 'L' ||
                             result.status == 'H' ||
                             result.status == 'S' ||
                             result.status == 'HL' ) {
@@ -77,9 +78,41 @@ public pageReference saveSkillResults ( ) {
                         if (result.status == 'D' ) {
                             result.Met = 'N';
                         }
-                        toupdate.Add( result );
+	                    if ( result.status == 'I' || 
+                        	 result.status == 'V' ||
+                        	 result.status == 'P' ||
+                        	 result.status == 'FP' ||
+                        	 result.status == 'M' ||
+                        	 result.status == 'PP' ||
+                        	 result.status == 'D') {
+							if ( result.attempts == null  ) {
+								ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, result.day.format() + ': Attempts required for prompt/status' + result.status));	
+								err = true;	
+							}
+							if ( result.met == null ) {
+								ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, result.day.format() + ': Met objective required for prompt/status ' + result.status));
+								err = true;
+							}
+                        } else {
+                        
+                        	if ( result.status == null ) {
+								ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, result.day.format() + ': Please enter a prompt/status'));
+								err = true;
+							}
+                       	}                        
+
+						if ( String.IsEmpty(result.initials)) {
+							ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, result.day.format() + ': Please enter your initials ' ));
+							err = true;
+						}
+						
+						
+    					if ( err) 
+    						return null;
+    					else                    
+                        	toupdate.Add( result );
                      
-                 }
+                 } 
              }
          }
  	

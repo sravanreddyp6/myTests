@@ -129,7 +129,7 @@ public without sharing class DSP_WeeklySkillTracking {
     }
 
     public PageReference myNewNote(){
-        mySave();
+       // mySave();
         
         if (ApexPages.hasMessages() ) {
         	return null;
@@ -153,70 +153,6 @@ public without sharing class DSP_WeeklySkillTracking {
         
         	return page; 
         }        
-    }
-    
-    public PageReference mySave()
-    {
-    	
-    	//List <Action_Skill_Result__c> toupdate = new List<Action_Skill_Result__c>();
-    	List <ASRWrapper> toupdate = new List<ASRWrapper>();
-    	
-    	system.debug('OBJMAP IS:' + objectivesMap);
-    	
-         for(DSPObjectiveWrapper objectivewrp:getobjectivesmap()){
-             for(Date day: objectivewrp.ResultsMap.keyset()){
-                 ASRWrapper result = objectivewrp.ResultsMap.get(day);
-                 if (result.Attempts != null ||
-                     result.status != null ||
-                     result.Met != null ||
-                     result.Initials != null) {
-                     // Enforce the Validation rules.  Deactivating the controls means the values not sent from client
-                     // So have to do it here.
-                        if (result.status == 'A' ||
-                            result.status == 'H' ||
-                            result.status == 'S' ||
-                            result.status == 'HL' ) {
-                            result.Met = null;
-                            result.Attempts = null;
-                        }
-                        if (result.status == 'D' ) {
-                            result.Met = 'N';
-                        }
-                        toupdate.Add( result );
-                     
-                 }
-                 // else - usually it will but it exist but if it does try to delete it?
-             }
-         }
-         // submit this to the transaction queue
-        try {
-          //  upsert toupdate;
-        	Transaction_Queue__c txn  = new Transaction_Queue__c( requesting_user__c = UserInfo.getUserId());
-			txn.request_type__c = 'Update Skill Results';
-			txn.requested_date_time__c = DateTime.Now();
-			Map<String, String> inputs = new Map<String, String>{ 'Action_plan_woksheet__c' => string.valueOf(wsId), 'action_skill_results' => json.serialize(toUpdate)}; 
-		
-			txn.input_params__c = json.serialize( inputs);
-		
-			try { 
-				insert txn;
-				PageReference pr =  Page.DSPWeeklySkillTracking;
-				pr.getParameters().put('txnID', txn.ID);
-				pr.setRedirect(true);
-				return pr;
-			}
-			catch (Exception e) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
-				return null;
-			}	
-        } 
-        catch (DmlException ex){
-            system.debug(ex);
-            ApexPages.AddMessages(ex);
-            return null;
-        }
-        
-        return null;
     }
     
     
