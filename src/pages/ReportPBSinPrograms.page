@@ -5,7 +5,7 @@
      <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
      <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
      <apex:includeScript value="{!URLFOR($Resource.jQuerytmpl)}"/>
-     
+     <apex:pageMessages id="msgs" />
     <apex:sectionheader subtitle="PBS in Programs" />
     	<script id="resultTableRowTemplate" type="text/x-jquery-tmpl">
 			<tr onfocus="if (window.hiOn){hiOn(this);}" onblur="if (window.hiOff){hiOff(this);}" onmouseout="if (window.hiOff){hiOff(this);} " onmouseover="if (window.hiOn){hiOn(this);} " class="dataRow even  first">
@@ -75,7 +75,8 @@
 		                  		j$.each(event.result, function () {                
 	             					// for each result, apply it to template and append generated markup
 	             					// to the results table body.
-	             					//console.log(result);
+	             					console.log(result.length);
+	             					console.log(result[0]);
 	             					j$("#resultTableRowTemplate" ).tmpl(this).appendTo( "#searchResults tbody" );
 	          					}
           					);
@@ -152,7 +153,8 @@
     	</apex:pageBlockSection>
     	<apex:pageBlockButtons location="Bottom" >
     		<apex:commandbutton value="Run" id="run" onclick="runReport(); return false;" reRender="dummy"/>
-    		<apex:commandbutton value="Export to Excel" id="export" onclick="tableToExcel('searchResults','PBS in Programs'); return false;" reRender="dummy"/>
+    		<apex:commandbutton value="Export to Excel JS" id="export" onclick="tableToExcel('searchResults','PBS in Programs'); return false;" reRender="dummy"/>
+    		<apex:commandbutton value="Export to Excel VF" id="exportVF" action="{!exporttoExcel}" />
     	</apex:pageBlockButtons>
     </apex:pageBlock>
     </apex:form>
