@@ -25,6 +25,7 @@ public with sharing class referralResults_Controller {
   public String personLastName { get; set;}
   public String personGender { get; set;}
   public String personAge { get; set;}
+  public String ageLabel { get; set;}
   public Date personDOB { get; set; }
   public List<SelectOption> genderList { get; set;}
   private Boolean searchImmediately;
@@ -38,6 +39,7 @@ public with sharing class referralResults_Controller {
      public referralResults_Controller() {
 		submitCount = -1;
 		populateGenderList();
+		ageLabel = 'Age:';
 		
         // Fill in the information from the GET request (for new referrals only)
        searchImmediately = false;
@@ -106,7 +108,26 @@ public with sharing class referralResults_Controller {
         {
         	double age2 = null;
         	if ( !string.IsBlank(personAge))
-        		age2 = double.valueOf(personAge);
+        	{
+        		if(personAge.contains('Years')){
+        			ageLabel = 'Age:Years';
+        			personAge = personAge.replace('Years','');
+        			personAge = personAge.trim();
+        			age2 = double.valueOf(personAge);
+        		}
+        		if(personAge.contains('Months')){
+        			ageLabel = 'Age:Months';
+        			personAge = personAge.replace('Months','');
+        			personAge = personAge.trim();
+        			age2 = double.valueOf(personAge);
+        		}	
+        		if(personAge.contains('Days')){
+        			ageLabel = 'Age:Days';
+        			personAge = personAge.replace('Days','');
+        			personAge = personAge.trim();
+        			age2 = double.valueOf(personAge);
+        		}
+        	}
         	
         		
         	refResults = SearchLogicOnPBSR.search(referralNumber,personLastName, personFirstName, Date.valueOf(personDOB), age2, personGender);
