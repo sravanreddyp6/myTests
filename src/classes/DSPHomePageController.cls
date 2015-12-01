@@ -125,7 +125,7 @@ public with sharing class DSPHomePageController {
         // for equality checking within a set
         public Boolean equals(Object obj) {
             if (obj instanceof PBSWrapper) {
-                system.debug('inside equals');
+              //  system.debug('inside equals');
                 PBSWrapper p = (PBSWrapper)obj;
                 
                 // note that isfavorite is not included in compare as it is not significant test for equality
@@ -617,47 +617,7 @@ public with sharing class DSPHomePageController {
     // END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
     
     
-    // Suppport for OneApp - any action off the home page is fulfilled through TransactionQueue table
-    // When adding new request, add to the map below, and make sure there is a supporting action in TransactionQueueTriggeredActions.cls
-    private Map<String,String> requestToPage = new Map<String, String> { 'Action Plan' => '/apex/DSPActionPlan', 
-                                                                         'Person Being Served' => '/apex/DSPPersonBeingServedView',
-                                                                         'Seizures' => '/apex/DSP_PbsSeizureListing',
-                                                                         'Risk' => '/apex/DSP_Assessment_RiskForm',
-                                                                         'ISSA' => '/apex/DSP_Assessment_ISSAForm',
-                                                                         'BehaviorList' => '/apex/DSPWorksheets#Behavior',  // list of worksheets
-                                                                         'SkillList' => '/apex/DSPWorksheets#Skill',    // list of worksheets
-                                                                         'Behavior' => '/apex/DSPBehaviorTracking',
-                                                                         'Skill' => '/apex/DSPWeeklySkillTracking'
-                                                                         };
-    public pageReference submitTxnRequest() {
-        // submit a transaction queue request 
-        // redirect to the correct page with the transaction queue id
-        //system.debug('inside submitrequest:' + requestType + ', ' + inputArgs);
-        
-        // get out if the action type is not understood
-        if ( !requestToPage.keyset().contains( requestType )) {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Unknown action type: ' + requestType));
-            return null;
-        }
-        Transaction_Queue__c txn  = new Transaction_Queue__c( requesting_user__c = UserInfo.getUserId());
-        txn.request_type__c = requestType;
-        txn.requested_date_time__c = DateTime.Now();
-        txn.input_params__c = inputArgs;
-        
-        try { 
-            insert txn;
-            PageReference pr =  new PageReference( requestToPage.get( requestType ));
-            pr.getParameters().put('txnID', txn.ID);
-            pr.setRedirect(true);
-            return pr;
-        }
-        catch (Exception e) {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, e.getMessage()));
-            return null;
-        }
-        
-    }
-    
+   
     public pageReference dspShiftNoteSummary() {
         PageReference pageRef = new PageReference('/apex/DSP_shiftnote_summary_rpt');
         String selectedPBS =  this.pbsID == null || this.pbsID == '' ?  String.join(this.currentPBSList, ',') : this.pbsID;

@@ -1,5 +1,6 @@
 public with sharing class DSPSubmitTxn {
 public TxnQueueResponseController controller;
+public DSPHomePageController hpcontroller;
 public string ackAPID { get; set;}
 public string initials { get; set; }
 public string requestType { get; set; }
@@ -7,6 +8,10 @@ public string inputArgs { get; set; }
 
 public DSPSubmitTxn (TxnQueueResponseController controller) {
 	this.controller = controller;
+}
+
+public DSPSubmitTxn (DSPHomePageController controller) {
+	this.hpcontroller = controller;
 }
 
 public pageReference ackActionPlan() {
