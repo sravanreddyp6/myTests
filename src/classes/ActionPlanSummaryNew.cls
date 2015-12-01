@@ -16,7 +16,8 @@ public with sharing class ActionPlanSummaryNew {
         string SA = ApexPages.currentPage().getParameters().get('saID');
         PageReference returnURL;
         if (operatingGroup == 'Redwood') {
-            if(SA != null && [select id from service_assignment__c where id =:SA].Admission__r.State__c =='MN'){
+        	string state = [select id, Admission__r.State__c from service_assignment__c where id =:SA].Admission__r.State__c;
+            if(SA != null && (state =='MN' || state =='IA' || state =='CA' )){
                 returnURL = new PageReference('/apex/ActionSummaryCreateV2');
             }
             else{

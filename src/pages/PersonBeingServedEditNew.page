@@ -1209,7 +1209,7 @@
             </apex:pageBlock>
        
             <a id="immunization"></a>
-            <apex:pageBlock mode="maindetail"  rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || (contact.age__c != null && contact.Age__c < 18) ) && (vfVarIsCM || vfVarIsRwExtraItems || vfVarIsRwCA)}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || (contact.age__c != null && contact.Age__c < 18) ) && (vfVarIsCM || vfVarIsRwExtraItems )}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Child"
                                            formId="{!$Component.FormID}"
@@ -1226,7 +1226,7 @@
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=Immunization - Child" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
             
-            <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && (vfVarIsCM || vfVarIsRwExtraItems || vfVarIsRwCA)}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! (contact.age__c != null && contact.Age__c > 17) && (vfVarIsCM || vfVarIsRwExtraItems )}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Adult"
                                            formId="{!$Component.FormID}"
@@ -1243,7 +1243,7 @@
 
             </apex:pageBlock>
             
-            <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM || vfVarIsRwExtraItems || vfVarIsRwCA) }" >
+            <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM || vfVarIsRwExtraItems) }" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="PPD Skin Test"
                                            formId="{!$Component.FormID}"
