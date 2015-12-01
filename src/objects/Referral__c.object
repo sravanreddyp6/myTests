@@ -87676,6 +87676,13 @@ ISBLANK( Current_Location_Name__c ) &amp;&amp;  New_Address_Location__c &amp;&am
         <errorMessage>Current Location name is required when New Address Location is checked</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>DateOfInjInFuture</fullName>
+        <active>true</active>
+        <errorConditionFormula>Date_of_Injury__c &gt; today()</errorConditionFormula>
+        <errorDisplayField>Date_of_Injury__c</errorDisplayField>
+        <errorMessage>Date of Injury can&apos;t be in the future. Please correct.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Family_Involvement_Level_Validation</fullName>
         <active>true</active>
         <description>Family Involvement Level is required when Family Involvement Restrictions option is checked.</description>
