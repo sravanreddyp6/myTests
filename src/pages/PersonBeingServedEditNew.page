@@ -1203,11 +1203,11 @@
             </apex:pageBlockSection>
         </apex:pageBlock>
         <!-- End Incidents Section -->
-        <a id="allergy">
+        <a id="allergy"></a>
             <apex:pageBlock mode="maindetail"  >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}" type="Allergy" formId="{!$Component.FormID}" uniqueId="allergy" />
             </apex:pageBlock>
-        </a>
+       
             <a id="immunization"></a>
             <apex:pageBlock mode="maindetail"  rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || (contact.age__c != null && contact.Age__c < 18) ) && (vfVarIsCM || vfVarIsRwExtraItems || vfVarIsRwCA)}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
