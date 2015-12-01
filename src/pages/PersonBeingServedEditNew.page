@@ -445,7 +445,7 @@
     <apex:form id="FormId">
        
             <c:FormCompletionControl viewMode="{!!pbsEditModeOn}" />
-        <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,msgs" />
+        <apex:actionFunction name="saveRelParty" action="{!saveRelParty}" status="pageProcessing" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,msgs" />
         <apex:actionFunction name="showAddRelParty" action="{!showAddRelParty}" rerender="relatedParties_Alt1_Header,relatedPartyEntry,relatedPartyEntry2,msgs" />
         <!-- START: CTEAE-39; siblings -->
         <apex:actionFunction name="showAddSibling" action="{!showAddSibling}" rerender="siblings,msgs" />
@@ -797,7 +797,7 @@
                 		<label for="pGuardianship_Type" id="guardianshipTypeLabel">Guardianship Type</label>
                 		<br/>
                 		<br/>
-                		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel"/>
+                		<apex:outputLabel value="Partial Guardianship/Conservatorship" id="partialGuardianShipLabel" rendered="{!Contact.Guardianship_Type__c = 'Partial Guardianship/Conservatorship'}"/>
                 		<br/>
                 		<br/>
                 		<apex:outputLabel value="Legal/Guardianship Staus" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
