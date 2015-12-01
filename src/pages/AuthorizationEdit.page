@@ -1,0 +1,318 @@
+<apex:page standardController="Authorization__c" extensions="AuthorizationExt" standardStylesheets="false" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.CommonJS)}"/>
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+
+
+
+
+		
+<script>
+function setFocusOnLoad() {}
+
+var j$ = jQuery.noConflict();
+
+jQuery(document).ready(function ($) {    
+	setUpFields = function () {
+				$('body input').on("change", function (event) {
+					applyRulesToField(event.target);
+					
+				});
+				$('body select').on("change", function (event) {
+					applyRulesToField(event.target);
+				});
+				$('body input').each(function (_, target) {
+					applyRulesToField(target);
+				});
+				$('body select').each(function (_, target) {
+					applyRulesToField(target);
+				});
+			}
+	
+	
+	loadSubtypes = function ( source, target, level, sublevel ) {
+	
+		// for the source value, find the values to load into target
+		var subarray = (level == 1) ?  {!mapdepPL1} : {!mapdepPL2};
+		var $select = $('[id$=' + target + ']');
+		$select.find('option').remove();
+		$select.change();
+		
+		// if sublevel, remove options
+		if ( sublevel ) {
+			var $select2 = $('[id$=' + sublevel + ']');
+			$select2.find('option').remove();
+			$('<option>').val('').text('--None--').appendTo($select2);	// add none option
+			$select2.prop('disabled', true);
+			$select2.change();
+		}
+				
+		var setVals = false;
+		$('<option>').val('').text('--None--').appendTo($select);	// add none option
+		subarray && $.each( subarray, function( key, value ) {
+			if ( key == $(source).val() ) {
+				if ( value instanceof Array && value.length > 0) {
+					$.each( value, function( _, str ) {
+						$('<option>').val(str).text(str).appendTo($select);
+						});
+						
+					setVals = true;
+					return false;
+					}
+
+				} 
+			});
+		if ( !setVals ) { // it was empty
+			$select.prop('disabled', true);
+		} else {
+			$select.prop('disabled', false);		
+	 		}
+	 		 
+		}
+		
+	setInitialTypes = function ( dettype, addtype) {
+		// bed hold type already rendered so trigger the change event on it
+		var $bht =  $('[id$=bht]');
+		$bht.change();
+		
+		// now set the value of the subtype field
+		var $bhd =  $('[id$=bhd]');
+		$bhd.val(dettype);
+		$bhd.change();
+		
+		// now set the sub subtype
+		var $bhad = $('[id$=bhad]');
+		$bhad.val(addtype);
+		
+		// first time around need to reset the "other values" that were cleared by the change calls
+		$('[id$=bedholdtypeother]').val('{!authorization.bed_hold_type_other__c}');
+		$('[id$=bedholdtypedetailother]').val('{!authorization.bed_hold_type_detail_other__c}');
+		$('[id$=bedholdaddldetailother]').val('{!authorization.bed_hold_additional_detail_other__c}');
+	}
+	
+	setHiddenVal = function ( source, target ) {
+		var $source = $(source);
+		var $target = $('[id$=' + target + ']');
+		$target.val( $source.val());
+		
+	}
+		
+		setInitialTypes('{! authorization.bed_hold_type_detail__c}','{! authorization.bed_hold_additional_detail__c}');
+		setUpFields(); 
+	});
+		
+		
+		
+</script>
+
+<c:PersonalRecord pbsId="{!pbsID}" parentPage="Authorization" servAssignId="{!saID}" admId="{!admID}"/>
+<br/>
+<apex:form id="authForm">
+
+<apex:inputHidden id="txtbhd" value="{!authorization.Bed_Hold_Type_Detail__c}" />
+<apex:inputHidden id="txtbhad" value="{!authorization.Bed_Hold_Additional_Detail__c}" />
+
+<apex:pageMessages />   
+<apex:pageBlock title="Authorization">
+<apex:pageBlockButtons >
+<div class="pbHeaderButton" style="top: 0px;" >  
+        <apex:commandButton action="{!saveAuth}" value="Save" reRender="authForm"  status="myStatus" rendered="{! authorization.Authorization_Status__c = 'Draft' || authorization.Authorization_Status__c = ''}" />
+        <apex:commandButton onclick="window.open('/apex/ServiceAssignmentEditNew?id={!saID}#auths', '_self'); return false;" value="{!if (authorization.Authorization_Status__c = 'Final', 'Close','Cancel')}" reRender="authForm" status="myStatus" immediate="true" />
+</div>
+</apex:pageBlockButtons>   
+
+<apex:pageBlockSection collapsible="false" columns="1">
+ <apex:outputField value="{!authorization.Authorization_Status__c}" label="Status" /> 
+</apex:pageBlockSection>
+
+	<apex:pageBlockSection id="authdetail" title="Authorization Detail" collapsible="False" columns="2" > 
+		
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Type" />
+		<apex:outputPanel layout="none">
+		<apex:actionregion immediate="true">
+			<apex:actionStatus id="typeStatus">
+								<apex:facet name="start">
+									<div class="thinkingwheel">
+										<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+									</div>
+								</apex:facet>
+								<apex:facet name="stop"> </apex:facet>
+							</apex:actionStatus>
+	        <apex:inputField value="{!authorization.Type__c}">  
+    	    <apex:actionSupport event="onchange" action="{!changeAuthType}" oncomplete="setUpFields(); setInitialTypes();" status="typeStatus" rerender="authdetail1, authdetail2, authdetail"/>
+    	    </apex:inputField>
+    	    <apex:inputField id="typeother" value="{!authorization.Other_Authorization_Type__c}" rendered="{!authorization.Type__c == 'Other'}" />
+        </apex:actionregion>
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+			<apex:outputPanel layout="none">   		
+	        <div class="helpButtonOn" id="Reason-_help">
+	        <apex:outputLabel value="Reason for New Authorization" />
+	        <img src="/s.gif" alt="" class="helpOrb" title=""/>
+	            <script type="text/javascript">sfdcPage.setHelp('Reason', 'New Authorization (prior auth expired, same payer and contract)<br/>New Payer (new payer is authorizing, possible new contract)<br />New Contract (same payer, new contract)<br />Contract Change (change within existing contract, same payer)<br />Level/Rate Change (previous auth info is same, except level/rate has changed)');</script>
+			</div>
+			</apex:outputPanel>
+			<apex:inputField value="{!authorization.Reason_for_New_Authorization__c}"/>
+			
+        </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:outputPanel id="authdetail1">
+    	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c == 'Bed Hold'}">
+        
+        	<apex:pageBlockSectionItem >
+        	<apex:outputLabel value="Bed Hold Type" />
+        	<apex:outputPanel >
+        	<apex:inputField id="bht" value="{!authorization.Bed_Hold_Type__c}" onchange="loadSubtypes(this, 'bhd', 1, 'bhad');" html-data-rules="{&quot;Other&quot;: &quot;{!$Component.bedholdtypeother}&quot;}"/>
+	        &nbsp;<apex:inputField id="bedholdtypeother" value="{!authorization.Bed_Hold_Type_Other__c}" />
+	        </apex:outputPanel>
+	        </apex:pageBlockSectionItem>
+	        
+    	    <apex:inputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! authorization.isRootAuth__c || authorization.id = null }"/>    
+        	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! !authorization.isRootAuth__c && authorization.id != null }"/>
+
+        	<apex:pageBlockSectionItem >
+        	<apex:outputLabel value="Type Detail" />
+        	<apex:outputPanel >
+        	<select id="bhd" onchange="loadSubtypes(this,'bhad', 2, null); setHiddenVal(this, 'txtbhd')" data-rules='{"Other": "{!$Component.bedholdtypedetailother}"}' ></select>
+	        &nbsp;<apex:inputField id="bedholdtypedetailother" value="{!authorization.Bed_Hold_Type_Detail_Other__c}" />
+	        </apex:outputPanel>
+	        </apex:pageBlockSectionItem>
+	        
+    	    <apex:pageBlockSectionItem >
+        		<apex:outputLabel value="Received Date/Time" />
+        		<apex:outputPanel layout="none">
+    	    		<c:MilitaryDatetime datetimeval="{!authorization.Received_Date_Time__c}" edit="true" hiddenFieldId="receivedDateTime1" />
+					<apex:inputHidden id="receivedDateTime1" value="{!authorization.Received_Date_Time__c}" />
+				</apex:outputPanel>
+        	</apex:pageBlockSectionItem>	
+
+	        <apex:pageBlockSectionItem >
+        	<apex:outputLabel value="Additional Detail" />
+        	<apex:outputPanel >
+        	<select id="bhad" onchange="setHiddenVal(this, 'txtbhad')" data-rules='{"Other": "{!$Component.bedholdaddldetailother}"}' ></select>
+	        &nbsp;<apex:inputfield id="bedholdaddldetailother" value="{!authorization.Bed_Hold_Additional_Detail_Other__c}" />
+	        </apex:outputPanel>
+	        </apex:pageBlockSectionItem>
+	        
+		    <apex:inputField id="startdate" value="{!authorization.Payer_Effective_Date__c}" label="Start Date"/>
+		    
+		    <apex:inputField value="{!authorization.Bed_Hold_Classification__c}"  />
+		    <apex:inputField id="retdate" value="{!authorization.Payer_End_Date__c}" label="Return Date" />
+	
+	        <apex:pageBlockSectionItem >
+	        <apex:outputLabel value="Contract Accessed" />
+	        <apex:outputPanel layout="none">
+	        	<apex:selectList value="{!authorization.Funding_Source__c}" size="1">
+	        	<apex:selectOptions value="{!fsList}" />
+	        	</apex:selectList>
+	        </apex:outputPanel> 
+	        </apex:pageBlockSectionItem>
+        
+          	<apex:inputField value="{!authorization.Received_From__c}" label="Given By"/>
+          	
+            <apex:outputText value="" />
+	        <apex:inputField value="{!authorization.Representing_Received__c}" label="Representing (given)"/>
+	        
+	        <apex:outputText value="" />
+	        <apex:inputField value="{!authorization.Taken_By__c}" />
+    
+    	    <apex:outputText value="" />
+	        <apex:inputField value="{!authorization.Auth_Given_Method__c}" />
+        
+        </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="authdetail2">
+    	<apex:pageBlockSection collapsible="false" columns="2" rendered="{!authorization.Type__c != 'Bed Hold'}">    
+        
+        <apex:inputField value="{!authorization.Service_Being_Funded_String__c}" />
+   	    <apex:inputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! authorization.isRootAuth__c || authorization.id = null }"/>    
+       	<apex:outputField value="{!authorization.Payer_Authorization_ID__c}" label="Authorization Number" rendered="{! !authorization.isRootAuth__c && authorization.id != null }"/>
+
+        <apex:inputField value="{!authorization.Rate__c}" />   
+        
+        <apex:pageBlockSectionItem >
+        	<apex:outputLabel value="Received Date/Time" />
+        	<apex:outputPanel layout="none">
+        		<c:MilitaryDatetime datetimeval="{!authorization.Received_Date_Time__c}" edit="true" hiddenFieldId="receivedDateTime" />
+				<apex:inputHidden id="receivedDateTime" value="{!authorization.Received_Date_Time__c}" />
+			</apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+    	<apex:pageBlockSectionItem id="perRegion">
+        <apex:outputLabel value="Per" />
+        <apex:outputPanel layout="none" >
+        	<apex:actionStatus id="perStatus">
+								<apex:facet name="start">
+									<div class="thinkingwheel">
+										<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+									</div>
+								</apex:facet>
+								<apex:facet name="stop"> </apex:facet>
+							</apex:actionStatus>
+        	<apex:inputField value="{!authorization.Rate_unit__c}" >
+        	<apex:actionSupport event="onchange" status="perStatus" rerender="perRegion"/>
+    	    </apex:inputField> 
+        	<apex:inputField value="{! authorization.rate_unit_other__c}" rendered="{!authorization.Rate_unit__c == 'Unit'}" />
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{!authorization.Type__c != 'Single Charge'}">
+	        <apex:outputLabel value="Effective Date" />
+	        <apex:inputField id="effdate" value="{!authorization.Payer_Effective_Date__c}" />
+	    </apex:pageBlockSectionItem>
+	    <apex:outputText value="" rendered="{! authorization.type__c = 'Single Charge'}" />
+	    
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Contract Accessed" />
+        <apex:outputPanel layout="none">
+        	<apex:selectList value="{!authorization.Funding_Source__c}" size="1">
+        	<apex:selectOptions value="{!fsList}" />
+        	</apex:selectList>
+        </apex:outputPanel> 
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Single Charge' }" >
+        	<apex:outputLabel value="{!if(authorization.Type__c = 'Open Ended Charge' || authorization.Type__c = 'Other' || authorization.Type__c = 'Open Ended Stay', 'Review Date', 'Last Covered Day')}"  />
+	        <apex:inputField id="enddate" value="{!authorization.Payer_End_Date__c}" label="End Date"/>
+	    </apex:pageBlockSectionItem>
+	    
+	    <apex:inputField value="{!authorization.Level__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
+	    <apex:inputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c = 'Single Charge'}"/>
+        <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
+        <apex:inputField value="{!authorization.Received_From__c}" rendered="{! authorization.type__c != 'Single Charge' }"/>
+        
+        <apex:pageBlockSectionItem rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}">
+			<apex:outputPanel layout="none">   		
+	        <div class="helpButtonOn" id="justification-_help">
+	        <apex:outputLabel value="Justification" />
+	        <img src="/s.gif" alt="" class="helpOrb" title=""/>
+	            <script type="text/javascript">sfdcPage.setHelp('justification', 'e.g. complex wound, IV abx, trach, vent, etc.');</script>
+			</div>
+			</apex:outputPanel>
+	        <apex:inputField value="{!authorization.Justification__c}" />
+	    </apex:pageBlockSectionItem>
+	    
+        <apex:outputText value="" rendered="{! authorization.type__c = 'Open Ended Charge' || authorization.type__c = 'Other'}"/>
+        <apex:inputField value="{!authorization.Representing_Received__c}" rendered="{! authorization.type__c != 'Single Charge'}" label="Representing (given)"/>
+        <apex:outputText value="" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' }"/>
+        <apex:inputField value="{!authorization.Taken_By__c}" rendered="{! authorization.type__c != 'Open Ended Charge' && authorization.type__c != 'Other' && authorization.type__c != 'Single Charge'}"/>
+        <apex:outputText value="" />
+        <apex:inputField value="{!authorization.Auth_Given_Method__c}" rendered="{!authorization.Type__c != 'Single Charge'}"/>
+       
+</apex:pageBlockSection>
+</apex:outputPanel>
+<apex:pageBlockSection columns="1"> 
+<apex:inputField value="{!authorization.Comments__c}" />
+</apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form>
+
+</apex:page>
