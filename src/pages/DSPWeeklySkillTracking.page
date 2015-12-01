@@ -102,14 +102,16 @@
 <c:OneApp_PersonCard RequestInfo="{! 'SkillList,' + skillResponse.APId}" />
 
   <br />
-  <apex:pageMessages ></apex:pageMessages>
   <apex:form id="theForm" title="Weekly Skill Tracking Sheet">
-     <apex:pageBlock title="Weekly Skill Worksheet" >
+  <apex:pageBlock id="weeklyskillworksheet" mode="maindetail">
+<div class="tmn-h1">Weekly Skill Worksheet</div>  
+       <apex:pageMessages></apex:pageMessages>
+     
     <div class="pbHeaderButton">
     <!-- 
-      <apex:commandButton id="formSave3" styleClass="btn" action="{!myNewNote}" value="Save & New Note" status="waitStatus"  />    
-      <apex:commandButton id="formSave" action="{!mySave}" oncomplete="preparePage();" value="Save " status="waitStatus" rendered="{!skillResponse.editable}" rerender="theForm"/>
-     -->
+      <apex:commandButton id="formSave3" styleClass="btn" action="{!myNewNote}" value="Save & New Note" status="waitStatus"  />-->    
+      <apex:commandButton id="formSave" action="{!saveSkillResults}" oncomplete="preparePage();" value="Save " status="waitStatus" rendered="{!skillResponse.editable}" rerender="theForm"/>
+     
     </div>
         <div class="checksheetdate">
             Week of <apex:outputText value="{0, date, MMM dd yyyy}">
@@ -208,7 +210,7 @@
       <br />
       </apex:repeat>
 
-      <div style="float:right"><apex:commandButton id="formSave2" action="{!saveSkillResults}" value="Save " status="waitStatus" rendered="{!skillResponse.editable}" rerender="theForm"/></div>
+      <div style="float:right"><apex:commandButton id="formSave2" action="{!saveSkillResults}" oncomplete="preparePage();"  value="Save " status="waitStatus" rendered="{!skillResponse.editable}" rerender="theForm"/></div>
       </apex:pageBlock>
   </apex:form>
     <apex:actionStatus id="waitStatus" >
