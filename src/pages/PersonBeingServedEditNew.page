@@ -468,7 +468,7 @@
 	            <div class="blockbtns">
 	                <apex:commandButton value="Edit Person Being Served" action="{!showEditMode}" rendered="{! AND(NOT(pbsEditModeOn), isEditor)}" />
 	                <apex:commandButton value="Save" id="SavePBSId" action="{!save}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
-	                <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" />
+	                <apex:commandButton value="Cancel" id="CancelPBSId" action="{!cancelPBSController}" rendered="{!AND(pbsEditModeOn, isEditor)}" immediate="true" />
 	            </div>
         	</apex:pageBlockButtons>    
             <apex:pageBlockSection title="Demographics" showHeader="true" columns="2" collapsible="true" id="pbsOutPutsectionId">
