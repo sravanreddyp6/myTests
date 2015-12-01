@@ -93,7 +93,7 @@ var validateInput = function( ) {
         <apex:inputText label="Last Name" id="lname" value="{!personLastName}" />
         
         <apex:inputText label="Date of Birth" id="dob" value="{!personDOB}" size="10" onfocus="DatePicker.pickDate(false, this, false);" onBlur="return formatDate();" />
-       	<apex:inputText label="Age: Years" id="age" value="{!personAge}" />
+       	<apex:inputText label="{!ageLabel}" id="age" value="{!personAge}" />
        	<apex:selectlist label="Gender" value="{!personGender}" id="gender" size="1">
        		<apex:selectOptions value="{!genderList}" />
      	</apex:selectlist>
