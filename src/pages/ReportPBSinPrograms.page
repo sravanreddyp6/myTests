@@ -4,12 +4,53 @@
      <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
      <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
      <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jQuerytmpl)}"/>
      
     <apex:sectionheader subtitle="PBS in Programs" />
+    	<script id="resultTableRowTemplate" type="text/x-jquery-tmpl">
+			<tr onfocus="if (window.hiOn){hiOn(this);}" onblur="if (window.hiOff){hiOff(this);}" onmouseout="if (window.hiOff){hiOff(this);} " onmouseover="if (window.hiOn){hiOn(this);} " class="dataRow even  first">
+    			<td class="dataCell">${Person_Being_Served__r.PBS_Identifier__c}</td>
+				<td class="dataCell">${Person_Being_Served__r.FirstName +' '+ Person_Being_Served__r.LastName}</td>
+				<td class="dataCell">${Person_Being_Served__r.Age__c}</td>
+    			<td class="dataCell">${Person_Being_Served__r.Gender__c}</td>
+				<td class="dataCell">${Person_Being_Served__r.Does_the_person_Identify__c}</td>
+				<td class="dataCell">${Person_Being_Served__r.Race__c}</td>
+				<td class="dataCell">${Person_Being_Served__r.MailingStateCode}</td>
+				<td class="dataCell">${Admission__r.Name}</td>
+				<td class="dataCell">${Admission__r.State__c}</td>
+				<td class="dataCell">${Admission__r.Status__c}</td>
+				<td class="dataCell">${Admission__r.Admission_Effective_DateTime__c}</td>
+				<td class="dataCell">${Admission__r.Discharged_Date__c}</td>
+				<td class="dataCell">${Name}</td>
+				<td class="dataCell">${Status__c}</td>
+				<td class="dataCell">${SA_Start_DateTime__c}</td>
+				<td class="dataCell">${End_Date__c}</td>
+				<td class="dataCell">${Alias__c}</td>
+				<td class="dataCell">${Service_Location__r.Location_Nickname__c}</td>
+				<td class="dataCell">${Service_Location__r.TMN_Scope__c}</td>
+				<td class="dataCell">${Service_Location__r.Network_Offering__c}</td>
+				<td class="dataCell">${Service_Location__r.Population_Served__c}</td>
+				<td class="dataCell">${Service_Location__r.Physical_Location__c}</td>
+				<td class="dataCell">${Service_Location__r.Service_Type__c}</td>
+
+				<td class="dataCell">${Was_this_transfer_frm_another_ServAssig__c}</td>
+				<td class="dataCell">${Is_this_transfer_to_another_ServAssign__c}</td>
+				<td class="dataCell">${Highest_Level_of_Education_at_Start__c}</td>
+				<td class="dataCell">${Service_Began_via_Acquisition_Company__c}</td>
+				<td class="dataCell">${Service_Ended_via_Business_Divested__c}</td>
+				<td class="dataCell">${Was_dissatisfaction_reason_for_service_e__c}</td>
+				<td class="dataCell">${Who_was_dissatisfied__c}</td>
+				<td class="dataCell">${Primary_Reason_for_Dissatisfaction__c}</td>
+		</tr>           
+		</script>
+    
     <script>
     	j$ = jQuery.noConflict();
-    	 
+    	function setFocusOnLoad() {}
    		runReport = function(){
+   		
+   			j$("#searchResults tbody").html('');
+   			
    			var fromDate = j$('input[id$=fromDate]').val();
    			var toDate = j$('input[id$=toDate]').val();
    			var maxAge = j$('input[id$=maxAge]').val();
@@ -31,7 +72,13 @@
 	           	networkLine,populationServed,physicalLocation,
 	                  function(result, event) {
 	                  	if(event.status){
-	      					document.getElementById("reportResults").innerHTML = event.message;
+		                  		j$.each(event.result, function () {                
+	             					// for each result, apply it to template and append generated markup
+	             					// to the results table body.
+	             					//console.log(result);
+	             					j$("#resultTableRowTemplate" ).tmpl(this).appendTo( "#searchResults tbody" );
+	          					}
+          					);
 	                  	}else if (event.type === 'exception') {
 	                   		document.getElementById("reportResults").innerHTML = event.message;
 	                   }else {
@@ -43,18 +90,31 @@
 	                  }
 	          ); 
    		}
+   		
+   		var tableToExcel = (function() {
+		  var uri = 'data:application/vnd.ms-excel;base64,'
+		    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+		    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+		    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+		  return function(table, name) {
+		    if (!table.nodeType) table = document.getElementById(table)
+		    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+		    window.location.href = uri + base64(format(template, ctx))
+		  }
+		})()
+   		
     
     </script>
     <apex:form >
     <apex:pageBlock id="filtersBlock" >
-    	<apex:pageBlockSection columns="2" >
+    	<apex:pageBlockSection columns="1" >
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="fromDate" value="From" /> 
-    			<input type="date"  label="From" id="fromDate" />
+    			<apex:inputField value="{!SA.Start_Date__c}"  label="From" id="fromDate" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="toDate" value="To" /> 
-    			<input type="date" label="To" id="toDate" />
+    			<apex:inputField value="{!SA.Start_Date__c}" label="To" id="toDate" />
     		</apex:pageBlockSectionItem>
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="maxAge" value="Max age in Years" />
@@ -92,8 +152,49 @@
     	</apex:pageBlockSection>
     	<apex:pageBlockButtons location="Bottom" >
     		<apex:commandbutton value="Run" id="run" onclick="runReport(); return false;" reRender="dummy"/>
+    		<apex:commandbutton value="Export to Excel" id="export" onclick="tableToExcel('searchResults','PBS in Programs'); return false;" reRender="dummy"/>
     	</apex:pageBlockButtons>
     </apex:pageBlock>
     </apex:form>
-    <div id="reportResults" />  
+    <div id="reportResults" />
+    
+    <table cellspacing="1" cellpadding="1" border="1" id="searchResults" class="list ">
+        <colgroup span="2"></colgroup>
+	        <thead class="rich-table-thead">
+	            <tr class="headerRow ">
+	                <th colspan="1" scope="col" class="headerRow"> Person# </th>
+	                <th colspan="1" scope="col" class="headerRow"> PBS Initials </th>
+	                <th colspan="1" scope="col" class="headerRow"> Age </th>
+	                <th colspan="1" scope="col" class="headerRow"> Gender </th>
+	                <th colspan="1" scope="col" class="headerRow"> Does the person identify with a gender other than legal gender selected? </th>
+	                <th colspan="1" scope="col" class="headerRow"> Race </th>
+	                <th colspan="1" scope="col" class="headerRow"> PBS Mailing State/Province </th>
+	                <th colspan="1" scope="col" class="headerRow"> Admission Name </th>
+	                <th colspan="1" scope="col" class="headerRow"> Admission State </th>
+	                <th colspan="1" scope="col" class="headerRow"> Admission Status </th>
+	                <th colspan="1" scope="col" class="headerRow"> Admission Date </th>
+	                <th colspan="1" scope="col" class="headerRow"> Discharged Date </th>
+	                <th colspan="1" scope="col" class="headerRow"> Service Assignment Name </th>
+	                <th colspan="1" scope="col" class="headerRow"> Service Assignment Status </th>
+	                <th colspan="1" scope="col" class="headerRow"> Service Assignment Start Date </th>
+	                <th colspan="1" scope="col" class="headerRow"> Service Assignment End Date </th>
+	                <th colspan="1" scope="col" class="headerRow"> Alias </th>
+	                <th colspan="1" scope="col" class="headerRow"> Location Nickname </th>
+	                <th colspan="1" scope="col" class="headerRow"> TMN Scope </th>
+	                <th colspan="1" scope="col" class="headerRow"> Network Service Line Offering </th>
+	                <th colspan="1" scope="col" class="headerRow"> Population Served </th>
+	                <th colspan="1" scope="col" class="headerRow"> Physical Location </th>
+	                <th colspan="1" scope="col" class="headerRow"> Service Type </th>
+	                <th colspan="1" scope="col" class="headerRow"> Transfer from Another Service Assignment </th>
+	                <th colspan="1" scope="col" class="headerRow"> Transfer to Another Service Assignment </th>
+	                <th colspan="1" scope="col" class="headerRow"> Highest Level of Education at Start of Service </th>
+	                <th colspan="1" scope="col" class="headerRow"> Service Began via Acquisition Company </th>
+	                <th colspan="1" scope="col" class="headerRow"> Service Ended via Business Divested </th>
+	                <th colspan="1" scope="col" class="headerRow"> Was dissatisfaction the reason for service ending? </th>
+	                <th colspan="1" scope="col" class="headerRow"> Who was dissatisfied? </th>
+	                <th colspan="1" scope="col" class="headerRow"> Primary Reason for Dissatisfaction </th>                                  
+	            </tr>
+	        </thead>
+        <tbody />
+    </table>  
 </apex:page>
