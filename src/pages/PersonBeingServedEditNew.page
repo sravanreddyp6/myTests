@@ -1209,7 +1209,7 @@
             </apex:pageBlock>
         </a>
             <a id="immunization"></a>
-            <apex:pageBlock mode="maindetail"  rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || contact.Age__c < 18) && (vfVarIsCM || vfVarIsRwExtraItems || vfVarIsRwCA)}" >
+            <apex:pageBlock mode="maindetail"  rendered="{! ( (Assessments_ChildImmune != null && Assessments_ChildImmune.size > 0) || (contact.age__c != null && contact.Age__c < 18) ) && (vfVarIsCM || vfVarIsRwExtraItems || vfVarIsRwCA)}" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="Immunization - Child"
                                            formId="{!$Component.FormID}"
