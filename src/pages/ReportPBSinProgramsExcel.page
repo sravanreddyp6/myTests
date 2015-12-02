@@ -1,0 +1,153 @@
+<apex:page showHeader="false" sidebar="false" controller="ReportPBSinProgramsController" cache="false" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false" readOnly="true" contentType="application/vnd.ms-excel#PBSinPrograms-{!today()}.xls">
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40" >
+	<head>
+	<style type="text/css">
+	.style0 {
+		mso-style-name: normal;
+		mso-numberformat: general;
+		text-align: left;
+		vertical-align: bottom;
+		font-family: arial;
+		font-size: 10pt;
+		color: black
+	}
+	
+	td {
+		mso-style-parent: style0;
+		padding-top: 1px;
+		padding-right: 1px;
+		padding-left: 1px;
+		mso-ignore: padding;
+		color: black;
+		font-size: 10.5pt;
+		font-weight: 400;
+		font-style: normal;
+		text-decoration: none;
+		font-family: Calibri, sans-serif;
+		mso-font-charset: 0;
+		mso-number-format: General;
+		text-align: general;
+		vertical-align: bottom;
+		border: none;
+		mso-background-source: auto;
+		mso-pattern: auto;
+		mso-protection: locked visible;
+		white-space: nowrap;
+		mso-rotate: 0;
+	}
+	
+	.sumTotal {
+		background-color: yellow;
+		bgcolor: yellow;
+	}
+	
+	.styleDate {
+		mso-number-format: "m\/dd\/yyyy";
+	}
+	
+	.glDate {
+		mso-number-format: "m\/dd\/yyyy";
+	}
+	
+	.expPeriod {
+		mso-number-format: "mmm-yy";
+	}
+	
+	.amount {
+		mso-number-format: "0\.00";
+	}
+	</style>
+	
+	<apex:outputText value="{!'<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>'+ 
+	'</x:Name><x:WorksheetOptions><x:DisplayGridlines /></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml>' }" escape="false" />
+	</head>
+	
+	<body>
+		<apex:outputPanel >
+			<table id="pBsprogramsTable" >
+				<thead>
+					<tr>
+						<th> Person# </th>
+		                <th> PBS Initials </th>
+		                <th> Age </th>
+		                <th> Gender </th>
+		                <th> Does the person identify with a gender other than legal gender selected? </th>
+		                <th> Race </th>
+		                <th> PBS Mailing State/Province </th>
+		                <th> Admission Name </th>
+		                <th> Admission State </th>
+		                <th> Admission Status </th>
+		                <th> Admission Date </th>
+		                <th> Discharged Date </th>
+		                <th> Service Assignment Name </th>
+		                <th> Service Assignment Status </th>
+		                <th> Service Assignment Start Date </th>
+		                <th> Service Assignment End Date </th>
+		                <th> Alias </th>
+		                <th> Location Nickname </th>
+		                <th> TMN Scope </th>
+		                <th> Network Service Line Offering </th>
+		                <th> Population Served </th>
+		                <th> Physical Location </th>
+		                <th> Service Type </th>
+		                <th> Transfer from Another Service Assignment </th>
+		                <th> Transfer to Another Service Assignment </th>
+		                <th> Highest Level of Education at Start of Service </th>
+		                <th> Service Began via Acquisition Company </th>
+		                <th> Service Ended via Business Divested </th>
+		                <th> Was dissatisfaction the reason for service ending? </th>
+		                <th> Who was dissatisfied? </th>
+		                <th> Primary Reason for Dissatisfaction </th> 
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!servAssigns}" var="s" >
+						<tr>
+							<td>{!s.Person_Being_Served__r.PBS_Identifier__c}</td>
+							<td>{!s.Person_Being_Served__r.FirstName}</td>
+							<td>{!s.Person_Being_Served__r.Age__c}</td>
+			    			<td>{!s.Person_Being_Served__r.Gender__c}</td>
+							<td>{!s.Person_Being_Served__r.Does_the_person_Identify__c}</td>
+							<td>{!s.Person_Being_Served__r.Race__c}</td>
+							<td>{!s.Person_Being_Served__r.MailingStateCode}</td>
+							<td>{!s.Admission__r.Name}</td>
+							<td>{!s.Admission__r.State__c}</td>
+							<td>{!s.Admission__r.Status__c}</td>
+							<td class="styleDate"><apex:outputText value=" {!s.Admission__r.Admission_Effective_DateTime__c}" /></td>
+							<td>{!s.Admission__r.Discharged_Date__c}</td>
+							<td>{!s.Name}</td>
+							<td>{!s.Status__c}</td>
+							<td class="styleDate"><apex:outputText value=" {!s.SA_Start_DateTime__c}"/></td>
+							<td class="styleDate">{ !s.End_Date__c}</td>
+							<td>{!s.Alias__c}</td>
+							<td>{!s.Service_Location__r.Location_Nickname__c}</td>
+							<td>{!s.Service_Location__r.TMN_Scope__c}</td>
+							<td>{!s.Service_Location__r.Network_Offering__c}</td>
+							<td>{!s.Service_Location__r.Population_Served__c}</td>
+							<td>{!s.Service_Location__r.Physical_Location__c}</td>
+							<td>{!s.Service_Location__r.Service_Type__c}</td>
+			
+							<td>{!s.Was_this_transfer_frm_another_ServAssig__c}</td>
+							<td>{!s.Is_this_transfer_to_another_ServAssign__c}</td>
+							<td>{!s.Highest_Level_of_Education_at_Start__c}</td>
+							<td>{!s.Service_Began_via_Acquisition_Company__c}</td>
+							<td>{!s.Service_Ended_via_Business_Divested__c}</td>
+							<td>{!s.Was_dissatisfaction_reason_for_service_e__c}</td>
+							<td>{!s.Who_was_dissatisfied__c}</td>
+							<td>{!s.Primary_Reason_for_Dissatisfaction__c}</td>
+						</tr>
+					</apex:repeat>
+				</tbody>
+				<tfoot>
+                    <tr><td> Number of PBS : </td><td bgcolor="#FFFF00"> {!pbsCount} </td></tr>
+                    <tr><td>Number of Admissions:  </td><td bgcolor="#FFFF00"> {!admissionCount} </td></tr>
+                   	<tr><td>Number of Service Assignments:</td><td bgcolor="#FFFF00"> {!SACount} </td></tr>
+                   	<tr></tr>
+                   	<tr><td>Report Generated By</td> <td bgcolor="#FFFF00">{!$User.UserName}</td></tr>
+                   	<tr><td>Report Generated Date</td> <td class="styleDate" bgcolor="#FFFF00" ><apex:outputText value=" {!NOW()}"/></td></tr>
+            	</tfoot>
+			</table>
+		</apex:outputPanel>
+	</body>
+  </html>
+</apex:page>

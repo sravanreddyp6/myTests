@@ -1,0 +1,185 @@
+<apex:page controller="ReportPBSinProgramsController" docType="html-5.0" readonly="true" cache="false" >
+	 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+     <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+     <apex:includeScript value="{!URLFOR($Resource.jQuerytmpl)}"/>
+     <apex:sectionheader subtitle="PBS in Programs" />
+     <style>
+    	td {
+			mso-style-parent: style0;
+			padding-top: 1px;
+			padding-right: 1px;
+			padding-left: 1px;
+			mso-ignore: padding;
+			color: black;
+			font-size: 10.5pt;
+			font-weight: 400;
+			font-style: normal;
+			text-decoration: none;
+			font-family: Calibri, sans-serif;
+			mso-font-charset: 0;
+			mso-number-format: General;
+			text-align: general;
+			vertical-align: bottom;
+			border: none;
+			mso-background-source: auto;
+			mso-pattern: auto;
+			mso-protection: locked visible;
+			white-space: nowrap;
+			mso-rotate: 0;
+		}
+    </style>
+    <script>
+    	function setFocusOnLoad(){} //prevent focus on date field during initial load
+    </script>
+    <apex:form >
+    <apex:pageBlock id="filtersBlock" >
+    	<apex:pageBlockSection columns="2" >
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="fromDate" value="From" /> 
+    			<apex:inputField value="{!SA.Start_Date__c}"  label="From" id="fromDate" required="true" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="toDate" value="To" /> 
+    			<apex:inputField value="{!SA.End_Date__c}" label="To" id="toDate" required="true" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="maxAge" value="Max age in Years" />
+    			<apex:inputText value="{!maxAge}" id="maxAge" size="3" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="minAge" value="Min age in Years" />
+    			<apex:inputText value="{!minAge}" id="minAge"  size="3"/>
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="gender" value="Gender" />
+    			<apex:inputField value="{!pbs.Gender__c}" id="gender" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="admState" value="Admission State" />
+    			<apex:inputField value="{!adm.State__c}" id="admState" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="admStatus" value="Admission Status" />
+    			<apex:inputField value="{!adm.Status__c}" id="admStatus" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="saStatus" value="Service Assignment Status" />
+    			<apex:inputField value="{!SA.Status__c}" id="saStatus" />
+    		</apex:pageBlockSectionItem>
+    		<apex:pageBlockSectionItem >
+    			<apex:outputlabel for="alias" value="Alias" />
+    			<apex:inputText value="{!sl.Name}" id="alias" size="6" />
+    		</apex:pageBlockSectionItem>
+    		<apex:inputField value="{!sl.TMN_Scope__c}" id="tmnScope"/>
+    		<apex:inputField value="{!sl.Network_offering__c}" id="networkLine"/>
+    		<apex:inputField value="{!sl.Service_type__c}" id="serviceType" />
+    		<apex:inputField value="{!sl.Population_Served__c}" id="populationServed" />
+    		<apex:inputField value="{!sl.Physical_location__c}" id="physicalLocation" />
+    	</apex:pageBlockSection>
+    	<apex:pageBlockButtons location="Bottom" >
+    		<apex:commandbutton value="Display Results" action="{!run}" reRender="resultsDisplay,msgs" status="pageProcessing" />
+<!--     		<apex:commandbutton value="Export to Excel JS" id="export" onclick="tableToExcel('searchResults','PBS in Programs'); return false;" reRender="dummy"/> -->
+    		<apex:commandbutton value="Export to Excel" id="exportVF" action="{!exporttoExcel}" status="pageProcessing" />
+    	</apex:pageBlockButtons>
+    </apex:pageBlock>
+   </apex:form>
+   <apex:pageBlock id="resultsDisplay" >
+   <apex:pageMessages id="msgs" />
+   	<apex:outputPanel layout="none"  rendered="{!subServAssigns.size != 0}" >
+   		<table>
+   			<tr>
+   				<td> Number of PBS : {!pbsCount} </td>
+   				<td> Number of Admissions : {!admissionCount} </td>
+   				<td> Number of Service Assignments {!SACount} </td>
+   			</tr>
+   		</table>
+	    <table cellspacing="0" cellpadding="0" border="1" id="searchResults" class="list">
+	        <colgroup span="2"></colgroup>
+		        <thead >
+		            <tr>
+		                <th> Person# </th>
+		                <th> PBS Initials </th>
+		                <th> Age </th>
+		                <th> Gender </th>
+		                <th> Does the person identify with a gender other than legal gender selected? </th>
+		                <th> Race </th>
+		                <th> PBS Mailing State/Province </th>
+		                <th> Admission Name </th>
+		                <th> Admission State </th>
+		                <th> Admission Status </th>
+		                <th> Admission Date </th>
+		                <th> Discharged Date </th>
+		                <th> Service Assignment Name </th>
+		                <th> Service Assignment Status </th>
+		                <th> Service Assignment Start Date </th>
+		                <th> Service Assignment End Date </th>
+		                <th> Alias </th>
+		                <th> Location Nickname </th>
+		                <th> TMN Scope </th>
+		                <th> Network Service Line Offering </th>
+		                <th> Population Served </th>
+		                <th> Physical Location </th>
+		                <th> Service Type </th>
+		                <th> Transfer from Another Service Assignment </th>
+		                <th> Transfer to Another Service Assignment </th>
+		                <th> Highest Level of Education at Start of Service </th>
+		                <th> Service Began via Acquisition Company </th>
+		                <th> Service Ended via Business Divested </th>
+		                <th> Was dissatisfaction the reason for service ending? </th>
+		                <th> Who was dissatisfied? </th>
+		                <th> Primary Reason for Dissatisfaction </th>                                  
+		            </tr>
+		        </thead>
+	        	<tbody>
+					<apex:repeat value="{!subServAssigns}" var="s" >
+						<tr>
+							<td>{!s.Person_Being_Served__r.PBS_Identifier__c}</td>
+							<td>{!s.Person_Being_Served__r.FirstName}</td>
+							<td>{!s.Person_Being_Served__r.Age__c}</td>
+			    			<td>{!s.Person_Being_Served__r.Gender__c}</td>
+							<td>{!s.Person_Being_Served__r.Does_the_person_Identify__c}</td>
+							<td>{!s.Person_Being_Served__r.Race__c}</td>
+							<td>{!s.Person_Being_Served__r.MailingStateCode}</td>
+							<td>{!s.Admission__r.Name}</td>
+							<td>{!s.Admission__r.State__c}</td>
+							<td>{!s.Admission__r.Status__c}</td>
+							<td>{!s.Admission__r.Admission_Effective_DateTime__c}</td>
+							<td>{!s.Admission__r.Discharged_Date__c}</td>
+							<td>{!s.Name}</td>
+							<td>{!s.Status__c}</td>
+							<td>{!s.SA_Start_DateTime__c}</td>
+							<td>{!s.End_Date__c}</td>
+							<td>{!s.Alias__c}</td>
+							<td>{!s.Service_Location__r.Location_Nickname__c}</td>
+							<td>{!s.Service_Location__r.TMN_Scope__c}</td>
+							<td>{!s.Service_Location__r.Network_Offering__c}</td>
+							<td>{!s.Service_Location__r.Population_Served__c}</td>
+							<td>{!s.Service_Location__r.Physical_Location__c}</td>
+							<td>{!s.Service_Location__r.Service_Type__c}</td>
+							<td>{!s.Was_this_transfer_frm_another_ServAssig__c}</td>
+							<td>{!s.Is_this_transfer_to_another_ServAssign__c}</td>
+							<td>{!s.Highest_Level_of_Education_at_Start__c}</td>
+							<td>{!s.Service_Began_via_Acquisition_Company__c}</td>
+							<td>{!s.Service_Ended_via_Business_Divested__c}</td>
+							<td>{!s.Was_dissatisfaction_reason_for_service_e__c}</td>
+							<td>{!s.Who_was_dissatisfied__c}</td>
+							<td>{!s.Primary_Reason_for_Dissatisfaction__c}</td>
+						</tr>
+					</apex:repeat>
+				</tbody>
+	 	    </table> 
+	    </apex:outputPanel>
+	  </apex:pageBlock>
+	  	<apex:actionStatus id="pageProcessing" >
+	       <apex:facet name="start">
+	       <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+	       <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+	           <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+	       </div>
+	       </apex:facet>
+	       <apex:facet name="stop" />
+	   </apex:actionStatus>
+</apex:page>
