@@ -95,7 +95,7 @@ background-color: cornsilk;
 </style>
 <apex:variable value="{!$User.Operating_Group__c ='Care Meridian'}" var="isCM"/>
 
-<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + response.apID}" />
+<c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + response.apID}" />
 <br />
 <apex:pageMessages id="msg" />
 <apex:pageBlock mode="maindetail">

@@ -2,7 +2,7 @@
 
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 
-<c:OneApp_PersonCard RequestInfo="{! 'SkillList,' + InputParams}" />
+<c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + txnInputParams}" />
 
 <apex:form>
 <apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="pageProcessing" rerender="pageMessages" >

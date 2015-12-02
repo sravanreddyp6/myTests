@@ -222,7 +222,7 @@
         });
     </script>
     
-<c:OneApp_PersonCard RequestInfo="{!RequestType + ',' + pbsSeizureListing.PBSid}" />
+<c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + pbsSeizureListing.PBSid}" />
 <apex:form id="myFRM">
     <apex:actionFunction name="saveSeizure" action="{!saveSeizure}" status="saveSeizureStatus" oncomplete="seizureScrollToTop(true); if (closeSeizure && jQuery('.errorMsg').length == 0) closeModalDialogSA('seizureTrackingModal', 'div');" rerender="SeizureTrackingList,seizureEntry,seizureMessages" />
     <apex:actionFunction name="showEditSeizure" action="{!showEditSeizure}" status="AddEditSeizureStatus" oncomplete="openModalDialogSA('seizureTrackingModal', 'div', 'Add Seizure', null, 600);seizureScrollToTop(); seizureClearMessages();" rerender="seizureEntry, seizureMessages">
