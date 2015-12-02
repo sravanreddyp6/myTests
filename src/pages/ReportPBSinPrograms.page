@@ -80,16 +80,22 @@
     		<apex:inputField value="{!sl.Physical_location__c}" id="physicalLocation" />
     	</apex:pageBlockSection>
     	<apex:pageBlockButtons location="Bottom" >
-<!--     		<apex:commandbutton value="Run" id="run" onclick="runReport(); return false;" reRender="dummy"/> -->
-    		<apex:commandbutton value="Display Results" action="{!run}" reRender="resultsDisplay,msgs" />
+    		<apex:commandbutton value="Display Results" action="{!run}" reRender="resultsDisplay,msgs" status="pageProcessing" />
 <!--     		<apex:commandbutton value="Export to Excel JS" id="export" onclick="tableToExcel('searchResults','PBS in Programs'); return false;" reRender="dummy"/> -->
-    		<apex:commandbutton value="Export to Excel" id="exportVF" action="{!exporttoExcel}" />
+    		<apex:commandbutton value="Export to Excel" id="exportVF" action="{!exporttoExcel}" status="pageProcessing" />
     	</apex:pageBlockButtons>
     </apex:pageBlock>
    </apex:form>
    <apex:pageBlock id="resultsDisplay" >
    <apex:pageMessages id="msgs" />
    	<apex:outputPanel layout="none"  rendered="{!subServAssigns.size != 0}" >
+   		<table>
+   			<tr>
+   				<td> Number of PBS : {!pbsCount} </td>
+   				<td> Number of Admissions : {!admissionCount} </td>
+   				<td> Number of Service Assignments {!SACount} </td>
+   			</tr>
+   		</table>
 	    <table cellspacing="0" cellpadding="0" border="1" id="searchResults" class="list">
 	        <colgroup span="2"></colgroup>
 		        <thead >
@@ -167,4 +173,13 @@
 	 	    </table> 
 	    </apex:outputPanel>
 	  </apex:pageBlock>
+	  	<apex:actionStatus id="pageProcessing" >
+	       <apex:facet name="start">
+	       <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
+	       <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+	           <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+	       </div>
+	       </apex:facet>
+	       <apex:facet name="stop" />
+	   </apex:actionStatus>
 </apex:page>
