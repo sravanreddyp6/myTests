@@ -55,10 +55,14 @@ public with sharing class ReportPBSinProgramsController {
 	//Display Results on the Page
 	public pageReference run(){
 		system.debug('full Query>>>>>>> '+queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
-		this.subServAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 500');
+		//this.subServAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 500');
+		this.servAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
 		set<id> adms = new set<id>();
 		set<id> pbs = new set<id>();
-		for(Service_Assignment__c s: subServAssigns){
+		for(Service_Assignment__c s: servAssigns){
+			if(this.subServAssigns.size() < 500){
+				this.subServAssigns.add(s);
+			}
 			if(!adms.contains(s.Admission__c)){
 				adms.add(s.Admission__c);
 			}
@@ -67,14 +71,16 @@ public with sharing class ReportPBSinProgramsController {
 			}
 			
 		}
-		this.SACount = this.subServAssigns.size();
+		this.SACount = this.servAssigns.size();
 		this.pbsCount = pbs.size();
 		this.admissionCount = adms.size();
 		
-		if(this.subServAssigns.size() == 0){
+		if(this.servAssigns.size() == 0){
 			Apexpages.addMessage(new Apexpages.Message(Apexpages.Severity.INFO,'No Service Assignments found for the selected criteria'));
-		}else if(this.subServAssigns.size() == 500){
-			Apexpages.addMessage(new Apexpages.Message(Apexpages.Severity.Warning,'Only top 500 results are displayed. Please click on export to excel to download full results'));
+		}else if(this.servAssigns.size() > 0 && this.servAssigns.size() <= 500 ){
+			Apexpages.addMessage(new Apexpages.Message(Apexpages.Severity.INFO,'Showing '+this.subServAssigns.size()+' out of '+this.SACount+' Service assignments. Please click on export to excel to download the results'));
+		}else if(this.servAssigns.size() > 500){
+			Apexpages.addMessage(new Apexpages.Message(Apexpages.Severity.WARNING,'Showing '+this.subServAssigns.size()+' out of '+this.SACount+' Service assignments. Please click on export to excel to download the full results'));
 		}
 		return null;
 	}
@@ -83,7 +89,26 @@ public with sharing class ReportPBSinProgramsController {
 	public pageReference exporttoExcel(){
 		this.subServAssigns = new List<Service_Assignment__c>();
 		system.debug('full Query>>>>>>> '+queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
-		this.servAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
+		if(this.servAssigns.size() == 0){ // In case user direclty clicks Export button
+			this.servAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
+			set<id> adms = new set<id>();
+			set<id> pbs = new set<id>();
+			for(Service_Assignment__c s: servAssigns){
+				if(this.subServAssigns.size() < 500){
+					this.subServAssigns.add(s);
+				}
+				if(!adms.contains(s.Admission__c)){
+					adms.add(s.Admission__c);
+				}
+				if(!adms.contains(s.Person_being_served__c)){
+					pbs.add(s.Person_being_Served__c);
+				}
+				
+			}
+			this.SACount = this.servAssigns.size();
+			this.pbsCount = pbs.size();
+			this.admissionCount = adms.size();
+			}
 		PageReference pg = new pageReference('/apex/ReportPBSinProgramsExcel');
 		pg.getHeaders().put('content-disposition', 'attachment;');
 		pg.setRedirect(false);
