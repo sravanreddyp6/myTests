@@ -56,11 +56,14 @@ public with sharing class ReportPBSinProgramsController {
 	public pageReference run(){
 		system.debug('full Query>>>>>>> '+queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
 		//this.subServAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 500');
+		this.subServAssigns = new List<Service_Assignment__c>(); //Clear the State of previous results
+		this.servAssigns = new List<Service_Assignment__c>(); ////Clear the State of previous results
+		
 		this.servAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
 		set<id> adms = new set<id>();
 		set<id> pbs = new set<id>();
 		for(Service_Assignment__c s: servAssigns){
-			if(this.subServAssigns.size() < 500){
+			if(this.subServAssigns.size() <= 500){
 				this.subServAssigns.add(s);
 			}
 			if(!adms.contains(s.Admission__c)){
@@ -82,12 +85,14 @@ public with sharing class ReportPBSinProgramsController {
 		}else if(this.servAssigns.size() > 500){
 			Apexpages.addMessage(new Apexpages.Message(Apexpages.Severity.WARNING,'Showing '+this.subServAssigns.size()+' out of '+this.SACount+' Service assignments. Please click on export to excel to download the full results'));
 		}
+		this.servAssigns  = new list<Service_Assignment__c>(); //Clearing the view State
 		return null;
 	}
 	
 	//Export Results to Excel
 	public pageReference exporttoExcel(){
 		this.subServAssigns = new List<Service_Assignment__c>();
+		this.servAssigns  = new list<Service_Assignment__c>(); //Clearing the view State from display results
 		system.debug('full Query>>>>>>> '+queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
 		if(this.servAssigns.size() == 0){ // In case user direclty clicks Export button
 			this.servAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
