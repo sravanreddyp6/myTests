@@ -1,8 +1,8 @@
 public with sharing class TxnQueueResponseController {
     public Transaction_Queue__c thisTxn;
 	public String TxnResponse { get; private set; }
-	public String RequestType { get { return thisTxn.request_type__c; } }
-	public String InputParams { get { return thisTxn.input_params__c; } }
+	public String TxnRequestType { get { return thisTxn.request_type__c;} }
+	public String TxnInputParams { get { return thisTxn.input_params__c;} }
 	public ActionPlan_FormWithoutSharing  response { get; private set; }
     public DSPPersonBeingServed_WithoutSharing pbsViewResponse { get; private set; }
     public DSP_PbsSeizureListing pbsSeizureListing { get; private set; }
@@ -65,14 +65,12 @@ public with sharing class TxnQueueResponseController {
             else if ( thisTxn.request_type__c == 'SkillList' || thisTxn.request_type__c == 'BehaviorList') {
             	system.debug( thisTxn.return_value__c);
             	apWorksheets = (DSP_Worksheets) JSON.deserialize( TxnResponse, DSP_Worksheets.class);
-            	system.debug('TXN TYPE' + thisTxn.request_type__c);
             	system.debug(apWorksheets);
             }
             else if ( thisTxn.request_type__c == 'Skill' || thisTxn.request_type__c == 'Update Skill' ) {
             	skillResponse = (DSP_WeeklySkillTracking) JSON.deserialize ( TxnResponse, DSP_WeeklySkillTracking.class);
             }
-
-
+			
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to retrieve result'));
 			return;
