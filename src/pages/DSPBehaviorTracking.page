@@ -75,6 +75,12 @@
 <c:OneApp_PersonCard RequestInfo="{! txnRequestType + ',' + behaviorResponse.APId}" />
 <br />
 <apex:form id="wholeform">
+
+        <apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="waitStatus" rerender="messages" >
+            <apex:param name="reqType" value="" assignTo="{!requestType}" />
+            <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
+        </apex:actionFunction>
+        
     <apex:pageMessages id="messages"></apex:pageMessages>
     <apex:outputtext value="{! behaviorResponse.startdate}" rendered="false"/>
     <apex:outputtext value="{! behaviorResponse.APId}" rendered="false"/>
@@ -83,13 +89,8 @@
             <apex:pageBlockTable var="otherobjectives" value="{! behaviorResponse.objectives}" rowClasses="row-odd,row-even" headerClass="listheader" styleClass="listtable">
                 <apex:column width="150px">
                     <apex:facet name="header">Actions</apex:facet>
- <!--                    <apex:commandButton action="{!PrintOtherObjective}"
-                        value="Print:"
-                        rerender="wholeform" status="waitStatus"
-                        rendered="{!behaviorResponse.editable}">
-                        <apex:param name="objectiveIdparam" assignTo="{!objectiveIdChosen}" value="{!otherobjectives.id}"/>
-                    </apex:commandButton>  -->
-                    <apex:commandButton action="{!saveAndSwitchObjective}"
+                    
+                    <apex:commandButton onclick="submitTxnRequest('Behavior','{! behaviorResponse.wsid},{!otherobjectives.id}'); return false;" 
                         value="Save & Go To:"
                         rerender="wholeform" status="waitStatus"
                         rendered="{!behaviorResponse.editable}">
