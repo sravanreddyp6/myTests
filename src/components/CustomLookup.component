@@ -59,7 +59,7 @@
   
   <apex:inputText value="{!parentName}" id="lookupElement" styleClass="{!uniqueId}LookupElement" html-readonly="readonly"/>
       <a onClick="j$('input[id$=nameFilter]').val(j$(getIdSelector('{!$Component.comp.lookupElement}')).val());
-          openMD('{!$Component.comp.searchDialog}', 'span', 'Lookup','custom-lookup-dialog'); return false;">
+          openMD('{!$Component.comp.searchDialog}', 'span', '{!IF(type == 'Service_Location__c', 'Search Service Location', 'Lookup')}','custom-lookup-dialog'); return false;">
                                     <img valign="bottom" src="/s.gif" alt="Custom Lookup" class="lookupIcon" 
                                         onblur="this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" 
                                         onmouseout="this.className = 'lookupIcon';" 
@@ -116,7 +116,7 @@
                     <apex:column headerValue="Program Code" >
                     	  {!r[$ObjectType[objectType].Fields['ProgramId__c'].localName]}
                 	</apex:column>
-                	<apex:column headerValue="NickName" >
+                	<apex:column headerValue="Location Nickname" >
                     	  {!r[$ObjectType[objectType].Fields['Location_nickname__c'].localName]}
                 	</apex:column>
                 	<apex:column headerValue="Address" >

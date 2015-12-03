@@ -319,7 +319,7 @@ public with sharing class referrals_Controller{
 	public List<Service_Location__c> searchedServiceLocationResults{
 		get{
 			// 2014-12-05 EB-273 only get active locations
-			return (tmpResults!=null) ? [select name,Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults and status__c = 'Active' order by State__c, Name, ProgramId__c asc limit :QueryLimit offset :OffsetSize] : null;
+			return (tmpResults!=null) ? [select name,Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit offset :OffsetSize] : null;
 		}
 		set;
 	}
@@ -423,7 +423,7 @@ public with sharing class referrals_Controller{
 			}
 
 			// 2014-12-05 - EB-273 - only retrieve Active locations
-			tmpResults=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c, Name, ProgramId__c asc LIMIT 250 ');
+			tmpResults=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 250 ');
 			countTotalRecords=tmpResults.size();
 			if(countTotalRecords == 0){
 				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
@@ -499,7 +499,7 @@ public with sharing class referrals_Controller{
 	public List<Service_Location__c> tmpResults2{get;set;}
 	public List<Service_Location__c> searchedServiceLocationResults2{
 		get{
-			return (tmpResults2!=null) ? [select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by State__c, Name, ProgramId__c asc limit :QueryLimit2 offset :OffsetSize2] : null;
+			return (tmpResults2!=null) ? [select name, Alias_lookup__c, ProgramID__c, Location_Nickname__c, Street__c, City__c, State__c, ZIP__c, Phone__c, TMN_Scope__c, Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c from service_location__c where id in :tmpResults2 and status__c = 'Active' order by State__c asc, Name asc, ProgramId__c asc limit :QueryLimit2 offset :OffsetSize2] : null;
 		}
 		set;
 	}
@@ -602,7 +602,7 @@ public with sharing class referrals_Controller{
 			System.debug('!@#$ '+qs);
 			system.debug('Query>>>>>'+qs1 + qs + ' and status__c = \'Active\' LIMIT 250');
 			// 2014-12-05 - EB-273 - only retrieve Active locations
-			tmpResults2=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c, Name, ProgramId__c asc LIMIT 250');
+			tmpResults2=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 250');
 			countTotalRecords2=tmpResults2.size();
 			if(countTotalRecords2 == 0){
 				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
