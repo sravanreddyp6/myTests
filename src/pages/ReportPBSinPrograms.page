@@ -38,12 +38,22 @@
     <apex:pageBlock id="filtersBlock" >
         <apex:pageBlockSection columns="1" >
             <apex:pageBlockSectionItem >
-                <apex:outputlabel for="fromDate" value="From" /> 
-                <apex:inputField value="{!SA.Start_Date__c}"  label="From" id="fromDate" required="true" />
+                <apex:outputlabel for="fromDate" value="From" />
+                <apex:outputPanel >
+					<div class="requiredInput">
+						<div class="requiredBlock"></div> 
+                		<apex:input value="{! fDate}" type="auto" id="fromDate" required="true" />
+                	</div>
+               	</apex:outputPanel>
             </apex:pageBlockSectionItem>
             <apex:pageBlockSectionItem >
-                <apex:outputlabel for="toDate" value="To" /> 
-                <apex:inputField value="{!SA.End_Date__c}" label="To" id="toDate" required="true" />
+                <apex:outputlabel for="toDate" value="To" />
+                <apex:outputPanel >
+					<div class="requiredInput">
+						<div class="requiredBlock"></div>
+                		<apex:input value="{! tDate}" type="auto" id="toDate" required="true" />
+                	</div>
+                </apex:outputPanel>
             </apex:pageBlockSectionItem>
         </apex:pageblockSection>
         <apex:pageBlockSection Columns="1" collapsible="true" title="Additional Filters (Optional) :Additional filter selections may be applied to further refine the report results. Filters that are left blank in this section will include all eligible records" >
