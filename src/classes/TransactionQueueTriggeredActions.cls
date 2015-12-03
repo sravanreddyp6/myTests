@@ -388,6 +388,41 @@ public without sharing class TransactionQueueTriggeredActions {
 						return;
                     }
                 }
+                else if ( t.request_type__c == 'Behavior') {
+                	try {
+                		ID inputID = t.input_params__c;
+                		ID wksheetID;
+                		
+                		// if the id is an action plan and we need to create a new worksheet first
+                		if ( inputID.getSObjectType().getDescribe().Name == 'Action_Plan__c') {
+                			// start date is Monday of this week
+                			Date sd = Date.Today().toStartofMonth();
+                			RecordType rt = [ select id from recordtype where sobjecttype = 'Action_Plan_Worksheet__c' and developername = 'Monthly_Behavior_Result' LIMIT 1];
+                			Action_Plan_Worksheet__c newsheet = new Action_Plan_Worksheet__c( Action_Plan__c = inputID, start_date__c = sd, recordtypeid = rt.Id);
+                			insert newsheet;
+                			wksheetID = newsheet.id;
+                		} else {
+                			wksheetID = inputID;
+                		}
+                			
+                		DSP_BehaviorTracking wksht = new DSP_BehaviorTracking( wksheetid, null );
+                		
+                		String jsonstring = json.serialize( wksht);
+                		storeResultSTring( newreq, jsonstring );
+                		
+                        // update the request as having been fulfilled
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+    //                          newreq.return_code__c = 'ERROR';
+                                system.debug( e );
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                        		throw(e);
+								return;
+                    }
+                 
+                }
 			
 			// update the request back to the user
 			update newreq;
@@ -396,14 +431,23 @@ public without sharing class TransactionQueueTriggeredActions {
 	
 	void storeResultString( transaction_queue__c req, String longstring) {
 		
-			Pattern p = Pattern.compile('(.{1,131072})+');
-			Matcher m = p.matcher(longstring);
+
 			String[] parts = new String[0];
-			while(m.find()) {
-				parts.add(m.group(0));
+			system.debug('STRING IS ' + longstring.length());
+			Integer lastEnd = 0;
+			integer totalAdd = 0;
+			String substr;
+
+			while ( totalAdd < longstring.length()) {
+				
+				system.debug('TOTALADD' + totalAdd );
+				substr = longstring.substring( totaladd, totaladd + Math.Min( 131072, longstring.length() - totalAdd));
+				system.debug( substr.length());
+				parts.add( substr );
+				totalAdd += substr.length();
+				
 			}
-			
-			system.debug('THE STRING BROKEN UP:' + parts);
+			system.debug('THE STRING BROKEN UP:' + parts.size());
 			if ( parts.size() > 0 )
 				req.return_value__c = parts[0];
 			if (parts.size() > 1 )
@@ -414,5 +458,10 @@ public without sharing class TransactionQueueTriggeredActions {
 				req.return_value_4__c = parts[3];
 			if ( parts.size() > 4 )
 				req.return_value_5__c = parts[4];
-	}
+			if ( parts.size() > 5 )
+				req.return_value_6__c = parts[5];
+			if ( parts.size() > 6 )
+				req.return_value_7__c = parts[6];
+		}
+
 }

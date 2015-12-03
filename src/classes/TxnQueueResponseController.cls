@@ -10,6 +10,7 @@ public with sharing class TxnQueueResponseController {
     public Assessment_IssaFormWithoutSharing assessmentIssaResponse { get; private set; }
     public DSP_Worksheets apWorksheets { get; private set; }
     public DSP_WeeklySkillTracking skillResponse { get; private set;}
+    public DSP_BehaviorTracking behaviorResponse { get; private set;}
 	
 //Constructor
 	public TxnQueueResponseController(){
@@ -33,7 +34,7 @@ public with sharing class TxnQueueResponseController {
 		try {
 			// get the txn result
 			thisTxn =[ select id, result_code__c, fulfilled__c, date_time_fulfilled__c, 
-								return_value__c, return_value_2__c, return_value_3__c, return_value_4__c, return_value_5__c, 
+								return_value__c, return_value_2__c, return_value_3__c, return_value_4__c, return_value_5__c, return_value_6__c, return_value_7__c,
 								request_type__c, input_params__c
 									from transaction_queue__c
 									where id = :txnID
@@ -45,7 +46,24 @@ public with sharing class TxnQueueResponseController {
 				return;
 			}
 			
-			TxnResponse = thisTxn.return_value__c + thisTxn.return_value_2__c + thisTxn.return_value_3__c + thisTxn.return_value_4__c + thisTxn.return_value_5__c;
+			TxnResponse = thisTxn.return_value__c;
+			if ( thisTxn.return_value_2__c != null )
+				txnResponse += thisTxn.return_value_2__c;
+			
+			if ( thisTxn.return_value_3__c != null) 
+				txnResponse += thisTxn.return_value_3__c;
+				
+			if ( thisTxn.return_value_4__c != null )
+				txnResponse += thisTxn.return_value_4__c;
+				
+			if ( thisTxn.return_value_5__c != null )
+				txnResponse += thisTxn.return_value_5__c;
+			
+			if ( thisTxn.return_value_6__c != null )
+				txnResponse += thisTxn.return_value_6__c;
+				
+			if ( thisTxn.return_value_7__c != null )
+				txnResponse += thisTxn.return_value_7__c;
 			
 			if ( thisTxn.request_type__c == 'Action Plan' || thisTxn.request_type__c == 'Acknowledge Plan')
 				response = (ActionPlan_FormWithoutSharing) JSON.deserialize(TxnResponse, ActionPlan_FormWithoutSharing.class);
@@ -70,9 +88,16 @@ public with sharing class TxnQueueResponseController {
             else if ( thisTxn.request_type__c == 'Skill' || thisTxn.request_type__c == 'Update Skill' ) {
             	skillResponse = (DSP_WeeklySkillTracking) JSON.deserialize ( TxnResponse, DSP_WeeklySkillTracking.class);
             }
-			
+			else if ( thisTxn.request_type__c == 'Behavior' || thisTxn.request_type__c == 'Update Behavior' ) {
+				
+				// LEAVE THIS IN - it's a complete hack to get by a serializing error with date class
+				txnresponse = txnresponse.replace(' 00:00:00', '');
+
+				//system.debug('TO DESERIALIZE: ' + txnresponse);
+            	behaviorResponse = (DSP_BehaviorTracking) JSON.deserializeStrict ( TxnResponse, DSP_BehaviorTracking.class);
+            }
 		} catch (Exception e2) {
-			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, 'Unable to retrieve result'));
+			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e2.getmessage()));
 			return;
 		}
 	}
