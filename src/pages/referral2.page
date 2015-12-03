@@ -2029,21 +2029,21 @@
 <!--                         <apex:outputText value="{!Referral__c.Service_Location_Zip__c}" style="width: 42px;" /> -->
 <!--                     </apex:outputPanel> -->
 <!--                 </apex:pageBlockSectionItem> -->
-			<apex:outputField value="{!Referral__c.Service_Location__c}" />
+			<apex:outputField value="{!Referral__c.Service_Location__r.name}" label="Alias"/>
 			<apex:outputField value="{!Referral__c.Service_Location__r.ProgramID__c}" label="Program Code" />
 			<apex:outputField value="{!Referral__c.Service_Location__r.Location_Nickname__c}" />
 			<apex:pageBlockSectionItem >
 				<apex:outputLabel value="Address" />
 				<apex:outputPanel >
-	               	<c:AddressDisplay Street1="{!Referral__c.Service_Location__r.Street__c}" City="{!Referral__c.Service_Location__r.City__c}" State="{!Referral__c.Service_Location__r.State__c}" Zip="{!Referral__c.Service_Location__r.Zip__c}" /><br/>
+	               	<c:AddressDisplay City="{!Referral__c.Service_Location__r.City__c}" State="{!Referral__c.Service_Location__r.State__c}" Zip="{!Referral__c.Service_Location__r.Zip__c}" /><br/>
 	               	<apex:outputText value="{!Referral__c.Service_Location__r.Phone__c}" />
                </apex:outputPanel>
 			</apex:pageBlockSectionItem>
-			<apex:outputField value="{!Referral__c.Service_location__r.TMN_Scope__c}" />
-			<apex:outputField value="{!Referral__c.Service_location__r.Population_Served__c}" />
+<!-- 			<apex:outputField value="{!Referral__c.Service_location__r.TMN_Scope__c}" /> -->
+<!-- 			<apex:outputField value="{!Referral__c.Service_location__r.Population_Served__c}" /> -->
 			<apex:outputField value="{!Referral__c.Service_location__r.Physical_Location__c}" />
 			<apex:outputField value="{!Referral__c.Service_location__r.Service_Type__c}" />
-			<apex:outputField value="{!Referral__c.Service_location__r.Network_Offering__c}" />
+<!-- 			<apex:outputField value="{!Referral__c.Service_location__r.Network_Offering__c}" /> -->
 
             </apex:pageBlockSection>
             <apex:outputText value="{!nonClosedPrimaryLocationId}" id="nonClosedPrimaryLocationId" style="display: none; " />
