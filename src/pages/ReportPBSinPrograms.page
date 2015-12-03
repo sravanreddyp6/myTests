@@ -5,7 +5,7 @@
      <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
      <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
      <apex:includeScript value="{!URLFOR($Resource.jQuerytmpl)}"/>
-     <apex:sectionheader subtitle="PBS in Programs" />
+     <apex:sectionheader title="PBS in Programs" />
      <style>
     	td {
 			mso-style-parent: style0;
@@ -36,7 +36,7 @@
     </script>
     <apex:form >
     <apex:pageBlock id="filtersBlock" >
-    	<apex:pageBlockSection columns="2" >
+    	<apex:pageBlockSection columns="1" >
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="fromDate" value="From" /> 
     			<apex:inputField value="{!SA.Start_Date__c}"  label="From" id="fromDate" required="true" />
@@ -45,6 +45,8 @@
     			<apex:outputlabel for="toDate" value="To" /> 
     			<apex:inputField value="{!SA.End_Date__c}" label="To" id="toDate" required="true" />
     		</apex:pageBlockSectionItem>
+    	</apex:pageblockSection>
+    	<apex:pageBlockSection Columns="1" collapsible="true" title="Additional Filters (Optional) :Additional filter selections may be applied to further refine the report results. Filters that are left blank in this section will include all eligible records" >
     		<apex:pageBlockSectionItem >
     			<apex:outputlabel for="maxAge" value="Max age in Years" />
     			<apex:inputText value="{!maxAge}" id="maxAge" size="3" />
@@ -69,13 +71,13 @@
     			<apex:outputlabel for="saStatus" value="Service Assignment Status" />
     			<apex:inputField value="{!SA.Status__c}" id="saStatus" />
     		</apex:pageBlockSectionItem>
-    		<apex:pageBlockSectionItem >
+    		<apex:pageBlockSectionItem helpText="Include a comma between each Alias if Filtering for multiple Values">
     			<apex:outputlabel for="alias" value="Alias" />
-    			<apex:inputText value="{!sl.Name}" id="alias" size="6" />
+    			<apex:inputTextArea value="{!aliases}" id="alias" cols="20" rows="3" />
     		</apex:pageBlockSectionItem>
     		<apex:inputField value="{!sl.TMN_Scope__c}" id="tmnScope"/>
-    		<apex:inputField value="{!sl.Network_offering__c}" id="networkLine"/>
     		<apex:inputField value="{!sl.Service_type__c}" id="serviceType" />
+    		<apex:inputField value="{!sl.Network_offering__c}" id="networkLine"/>
     		<apex:inputField value="{!sl.Population_Served__c}" id="populationServed" />
     		<apex:inputField value="{!sl.Physical_location__c}" id="physicalLocation" />
     	</apex:pageBlockSection>
@@ -91,53 +93,57 @@
    	<apex:outputPanel layout="none"  rendered="{!subServAssigns.size != 0}" >
    		<table>
    			<tr>
-   				<td> Number of PBS : {!pbsCount} </td>
-   				<td> Number of Admissions : {!admissionCount} </td>
-   				<td> Number of Service Assignments {!SACount} </td>
+   				<td><b>Summary</b></td>
+   			</tr>
+   			<tr>
+   				<td><i>Number of PBS</i>: <b>{!pbsCount} </b></td>
+   				<td><i>Number of Admissions</i>: <b>{!admissionCount} </b></td>
+   				<td><i>Number of Service Assignments</i>: <b>{!SACount} </b></td>
    			</tr>
    		</table>
-	    <table cellspacing="0" cellpadding="0" border="1" id="searchResults" class="list">
+	    <table cellspacing="0" cellpadding="0" border="1" id="searchResults" class="list" style="width:100%;">
 	        <colgroup span="2"></colgroup>
 		        <thead >
 		            <tr>
-		                <th> Person# </th>
-		                <th> PBS Initials </th>
-		                <th> Age </th>
-		                <th> Gender </th>
-		                <th> Does the person identify with a gender other than legal gender selected? </th>
-		                <th> Race </th>
-		                <th> PBS Mailing State/Province </th>
-		                <th> Admission Name </th>
-		                <th> Admission State </th>
-		                <th> Admission Status </th>
-		                <th> Admission Date </th>
-		                <th> Discharged Date </th>
-		                <th> Service Assignment Name </th>
-		                <th> Service Assignment Status </th>
-		                <th> Service Assignment Start Date </th>
-		                <th> Service Assignment End Date </th>
-		                <th> Alias </th>
-		                <th> Location Nickname </th>
-		                <th> TMN Scope </th>
-		                <th> Network Service Line Offering </th>
-		                <th> Population Served </th>
-		                <th> Physical Location </th>
-		                <th> Service Type </th>
-		                <th> Transfer from Another Service Assignment </th>
-		                <th> Transfer to Another Service Assignment </th>
-		                <th> Highest Level of Education at Start of Service </th>
-		                <th> Service Began via Acquisition Company </th>
-		                <th> Service Ended via Business Divested </th>
-		                <th> Was dissatisfaction the reason for service ending? </th>
-		                <th> Who was dissatisfied? </th>
-		                <th> Primary Reason for Dissatisfaction </th>                                  
+		                <th>Person#</th>
+		                <th>PBS Initials</th>
+		                <th>Age</th>
+		                <th>Gender</th>
+		                <th>Does the person<br/>identify with a gender<br/>other than legal<br/>gender selected?</th>
+		                <th>Race</th>
+		                <th>PBS Mailing<br/>State/Province</th>
+		                <th>Admission Name</th>
+		                <th>Admission State</th>
+		                <th>Admission Status</th>
+		                <th>Admission Date</th>
+		                <th>Discharged Date</th>
+		                <th>Service Assignment Name</th>
+		                <th>Service Assignment<br/>Status </th>
+		                <th>Service Assignment<br/>Start Date </th>
+		                <th>Service Assignment<br/>End Date </th>
+		                <th>Alias</th>
+		                <th>Program Code</th>
+		                <th>Location Nickname</th>
+		                <th>TMN Scope</th>
+		                <th>Network Service<br/>Line Offering</th>
+		                <th>Population Served</th>
+		                <th>Physical Location</th>
+		                <th>Service Type</th>
+		                <th>Transfer from Another <br/>Service Assignment</th>
+		                <th>Transfer to Another <br/>Service Assignment</th>
+		                <th>Highest Level<br/>of Education at<br/>Start of Service</th>
+		                <th>Service Began via<br/>Acquisition Company</th>
+		                <th>Service Ended via<br/>Business Divested</th>
+		                <th>Was dissatisfaction<br/>the reason for<br/> service ending?</th>
+		                <th>Who was dissatisfied?</th>
+		                <th>Primary Reason for <br/>Dissatisfaction</th>                                  
 		            </tr>
 		        </thead>
 	        	<tbody>
 					<apex:repeat value="{!subServAssigns}" var="s" >
 						<tr>
 							<td>{!s.Person_Being_Served__r.PBS_Identifier__c}</td>
-							<td>{!s.Person_Being_Served__r.FirstName}</td>
+							<td>{!LEFT(s.Person_Being_Served__r.FirstName, 1)} {!s.Person_Being_Served__r.FirstName}</td>
 							<td>{!s.Person_Being_Served__r.Age__c}</td>
 			    			<td>{!s.Person_Being_Served__r.Gender__c}</td>
 							<td>{!s.Person_Being_Served__r.Does_the_person_Identify__c}</td>
@@ -153,6 +159,7 @@
 							<td>{!s.SA_Start_DateTime__c}</td>
 							<td>{!s.End_Date__c}</td>
 							<td>{!s.Alias__c}</td>
+							<td>{!s.Service_location__r.ProgramID__c}</td>
 							<td>{!s.Service_Location__r.Location_Nickname__c}</td>
 							<td>{!s.Service_Location__r.TMN_Scope__c}</td>
 							<td>{!s.Service_Location__r.Network_Offering__c}</td>
@@ -170,7 +177,7 @@
 						</tr>
 					</apex:repeat>
 				</tbody>
-	 	    </table> 
+	 	    </table>
 	    </apex:outputPanel>
 	  </apex:pageBlock>
 	  	<apex:actionStatus id="pageProcessing" >

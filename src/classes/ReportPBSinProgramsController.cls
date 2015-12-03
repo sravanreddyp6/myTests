@@ -1,15 +1,14 @@
 public with sharing class ReportPBSinProgramsController {
-	
 	public List<Service_Assignment__c> servAssigns {get;set;} // for excel export
 	public list<Service_Assignment__c> subServAssigns {get; set;} // for display on page - Limit 500
 	public Service_Assignment__c SA{get; set;} // for field binding
 	public Service_Location__c sl {get; set;} //Field binding - Issue with dependent picklist when relationship field is used
-	public Admission__c adm {get; set;}
-	public Contact pbs {get; set;}
+	public Admission__c adm {get; set;}// Field binding
+	public Contact pbs {get; set;}// Field binding 
 	
 	public string maxAge{get;set;}
 	public string minAge{get; set;}
-	public string alias{get;set;}
+	public string aliases{get;set;}
 	public string queryString;
 	//filter Conditions - Sravan - using public variables due to this issue - http://salesforce.stackexchange.com/questions/8408/bind-variable-with-dotted-name-not-working-in-dynamic-soql
 	public string pbsGender;
@@ -23,6 +22,7 @@ public with sharing class ReportPBSinProgramsController {
 	public string physicalLocation;
 	public integer max;
 	public integer min;
+	public list<string> aliasList = new list<string>();
 	
 	//Sum Counts
 	public integer pbsCount {get; set;}
@@ -30,7 +30,7 @@ public with sharing class ReportPBSinProgramsController {
 	public integer SACount {get; set;}
 	
 	//sortorder
-	String sortOrder = ' order by Person_Being_Served__r.PBS_Identifier__c, admission__r.Name, Name asc';
+	String sortOrder = ' order by Person_Being_Served__r.PBS_Identifier__c asc, admission__r.Name asc, Name asc';
 	
 	//Constructor
 	public ReportPBSinProgramsController(){
@@ -47,8 +47,8 @@ public with sharing class ReportPBSinProgramsController {
 		this.SACount = 0;
 		queryString = 'SELECT Id, Person_Being_Served__c,Person_Being_Served__r.PBS_Identifier__c, Person_being_served__r.LastName,Person_being_served__r.FirstName, Person_being_served__r.Age__c, Person_being_served__r.Gender__c, Person_Being_Served__r.Does_the_person_Identify__c, Person_being_served__r.Race__c, Person_being_served__r.MailingStateCode,';
 		queryString = queryString+' Admission__c, admission__r.Name, Admission__r.State__c, Admission__r.Status__c, Admission__r.Admission_Effective_DateTime__c, Admission__r.Discharged_Date__c, Name, Status__c, SA_Start_DateTime__c, End_Date__c, Alias__c, Service_Location__r.Location_Nickname__c,';
-		queryString = queryString+' Service_Location__r.TMN_Scope__c, Service_Location__r.Network_Offering__c,Service_Location__r.Population_Served__c, Service_Location__r.Physical_Location__c, Service_Location__r.Service_Type__c,';
-		queryString = queryString+' Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c,Highest_Level_of_Education_at_Start__c,Service_Began_via_Acquisition_Company__c,Service_Ended_via_Business_Divested__c,Was_dissatisfaction_reason_for_service_e__c,Who_was_dissatisfied__c, Primary_Reason_for_Dissatisfaction__c FROM Service_Assignment__c WHERE id!= null';
+		queryString = queryString+' Service_Location__r.TMN_Scope__c, Service_location__r.ProgramId__c, Service_Location__r.Network_Offering__c,Service_Location__r.Population_Served__c, Service_Location__r.Physical_Location__c, Service_Location__r.Service_Type__c,';
+		queryString = queryString+' Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c,Highest_Level_of_Education_at_Start__c,Service_Began_via_Acquisition_Company__c,Service_Ended_via_Business_Divested__c,Was_dissatisfaction_reason_for_service_e__c,Who_was_dissatisfied__c, Primary_Reason_for_Dissatisfaction__c FROM Service_Assignment__c WHERE ';
 		
 	}
 	
@@ -63,7 +63,7 @@ public with sharing class ReportPBSinProgramsController {
 		set<id> adms = new set<id>();
 		set<id> pbs = new set<id>();
 		for(Service_Assignment__c s: servAssigns){
-			if(this.subServAssigns.size() <= 500){
+			if(this.subServAssigns.size() < 500){
 				this.subServAssigns.add(s);
 			}
 			if(!adms.contains(s.Admission__c)){
@@ -91,29 +91,24 @@ public with sharing class ReportPBSinProgramsController {
 	
 	//Export Results to Excel
 	public pageReference exporttoExcel(){
-		this.subServAssigns = new List<Service_Assignment__c>();
-		this.servAssigns  = new list<Service_Assignment__c>(); //Clearing the view State from display results
+		this.subServAssigns = new List<Service_Assignment__c>();//Clearing the view State from display results
+		this.servAssigns  = new list<Service_Assignment__c>(); //Clearing the view State from display results 
 		system.debug('full Query>>>>>>> '+queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
-		if(this.servAssigns.size() == 0){ // In case user direclty clicks Export button
-			this.servAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
-			set<id> adms = new set<id>();
-			set<id> pbs = new set<id>();
-			for(Service_Assignment__c s: servAssigns){
-				if(this.subServAssigns.size() < 500){
-					this.subServAssigns.add(s);
-				}
-				if(!adms.contains(s.Admission__c)){
-					adms.add(s.Admission__c);
-				}
-				if(!adms.contains(s.Person_being_served__c)){
-					pbs.add(s.Person_being_Served__c);
-				}
-				
+		this.servAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
+		set<id> adms = new set<id>();
+		set<id> pbs = new set<id>();
+		for(Service_Assignment__c s: servAssigns){
+			if(!adms.contains(s.Admission__c)){
+				adms.add(s.Admission__c);
 			}
-			this.SACount = this.servAssigns.size();
-			this.pbsCount = pbs.size();
-			this.admissionCount = adms.size();
+			if(!adms.contains(s.Person_being_served__c)){
+				pbs.add(s.Person_being_Served__c);
 			}
+		}
+		this.SACount = this.servAssigns.size();
+		this.pbsCount = pbs.size();
+		this.admissionCount = adms.size();
+		
 		PageReference pg = new pageReference('/apex/ReportPBSinProgramsExcel');
 		pg.getHeaders().put('content-disposition', 'attachment;');
 		pg.setRedirect(false);
@@ -125,9 +120,10 @@ public with sharing class ReportPBSinProgramsController {
 		
 		Datetime fromDate = DateTime.newInstance( this.SA.Start_Date__c, Time.newInstance(0,0,0,0));
         Datetime toDate = DateTime.newInstance ( this.SA.End_Date__c, Time.newInstance(0, 0, 0, 0)); 
-		string filter = ' AND ((Start_Date__c >= '+fromDate.format('yyyy-MM-dd')+' AND Start_Date__c <= '+toDate.format('yyyy-MM-dd')+')';
+		string filter = '((Start_Date__c >= '+fromDate.format('yyyy-MM-dd')+' AND Start_Date__c <= '+toDate.format('yyyy-MM-dd')+')';
 		filter = filter +' OR (End_Date__c >= '+fromDate.format('yyyy-MM-dd')+' AND End_Date__c <= '+toDate.format('yyyy-MM-dd')+')';
-		filter = filter +' OR (Start_Date__c <= '+fromDate.format('yyyy-MM-dd')+' AND End_Date__c = null))';
+		filter = filter +' OR (Start_Date__c <= '+fromDate.format('yyyy-MM-dd')+' AND End_Date__c = null)';
+		filter = filter +' OR (Start_Date__c <= '+fromDate.format('yyyy-MM-dd')+' AND End_Date__c >= '+toDate.format('yyyy-MM-dd')+'))';
 		
 		if(string.isNotBlank(maxAge) && maxAge.isNumeric()){
 			max = integer.valueOf(maxAge);
@@ -173,6 +169,14 @@ public with sharing class ReportPBSinProgramsController {
 			physicalLocation = this.sl.physical_location__c;
 			filter += ' AND Service_location__r.Population_Served__c = :physicalLocation';
 		}
+		if(string.isNOTBlank(aliases)){
+			aliasList = aliases.split(',');
+			filter += ' AND Service_Location__r.Name IN :aliasList';
+		}
+		if(string.isBlank(this.SA.Status__c)){
+			filter += ' AND Status__c IN(\'Active\',\'Inactive\')'; // Not using != 'Created due to error' as != condition will trigger full database scan and is inefficient	
+		}
+		
 		
 		return filter;
 	}
