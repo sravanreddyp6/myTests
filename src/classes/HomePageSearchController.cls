@@ -27,13 +27,14 @@ public with sharing class HomePageSearchController{
 		Id recordId;
 
 		if (searchPbs) {
-			String conQuery = 'select Id,Name,FirstName,LastName,Age__c,Age_year__c,Age_month__c,Age_days__c,Account.First_Name_SoundEx_Key__c,Account.Last_Name_SoundEx_Key__c,MailingState,(select Person_Being_Served__r.Name,Person_Being_Served__c,State__c from Episodes__r) from Contact where ' + buildCriteria(lastName, firstName, 'lastname', 'firstname');
+			String conQuery = 'select Id,Name,FirstName,LastName,Age_Text__c,Age__c,Age_year__c,Age_month__c,Age_days__c,Account.First_Name_SoundEx_Key__c,Account.Last_Name_SoundEx_Key__c,MailingState,(select Person_Being_Served__r.Name,Person_Being_Served__c,State__c from Episodes__r) from Contact where ' + buildCriteria(lastName, firstName, 'lastname', 'firstname');
 			system.debug(conQuery);
 
 			for(Contact cnt:database.Query(conQuery)) {
 				firstNames = cnt.FirstName;
 				LastNames = cnt.LastName;
-				age = Utility.getAge(String.valueOf(cnt.Age_year__c),cnt.Age_month__c,cnt.Age_days__c); 
+				//age = Utility.getAge(String.valueOf(cnt.Age_year__c),cnt.Age_month__c,cnt.Age_days__c); 
+				age = cnt.Age_Text__c;
 				for(Admission__c adm:cnt.Episodes__r) {
 					if( adm.State__c!=null) {
 						// convert state code to name
@@ -51,13 +52,13 @@ public with sharing class HomePageSearchController{
 		}
 
 		if (searchPbr) {
-			String pbrQuery = 'select Id,Name,First_Name__c,Age_year__c,Age_month__c,Age_days__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c,(select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c');
+			String pbrQuery = 'select Id,Name,First_Name__c,Age_Text__c,Age_year__c,Age_month__c,Age_days__c,First_Name_SoundEx_Key__c,Last_Name__c,Last_Name_SoundEx_Key__c,Full_Name__c,Age__c,State__c,(select Name,State_for_Preferred_Service__c,Name_PBR__c,Person_Being_Referred__r.Name,Person_Being_Referred__c from Referrals__r) from Person_Being_Referred__c where ' +buildCriteria(lastName, firstName, 'last_name__c', 'first_name__c');
 			system.debug(pbrQuery);
 
 			for(Person_Being_Referred__c pbr:database.Query(pbrQuery)) {
 				firstNames = pbr.First_Name__c;
 				LastNames = pbr.Last_Name__c;
-				age = Utility.getAge(String.valueOf(pbr.Age_year__c),pbr.Age_month__c,pbr.Age_days__c);   
+				age = pbr.Age_Text__c;   
 				for(Referral__c ref:pbr.Referrals__r) {
 					if(ref.State_for_Preferred_Service__c!=null && ref.Person_Being_Referred__c==pbr.Id) {
 						state = ref.State_for_Preferred_Service__c;
