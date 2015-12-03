@@ -1,12 +1,13 @@
 public with sharing class ReportPBSinProgramsController {
-    public List<Service_Assignment__c> servAssigns {get;set;} // for excel export
+	
+    public List<Service_Assignment__c> servAssigns {get;set;} // for excel export - Limit 10,000
     public list<Service_Assignment__c> subServAssigns {get; set;} // for display on page - Limit 500
-    public Service_Assignment__c SA{get; set;} // for field binding
-    public Service_Location__c sl {get; set;} //Field binding - Issue with dependent picklist when relationship field is used
-    public Admission__c adm {get; set;}// Field binding
+    public Service_Location__c sl = new Service_location__c(); // to dynamically obtain picklist values
+    public Admission__c adm = new Admission__c(); // to dynamically obtain picklist values
    
     
-  
+  	public Date fDate {get; set;} //thanks to Winter'14 release
+  	public Date tDate {get; set;}
     public string maxAge{get;set;}
     public string minAge{get; set;}
     public string pbsGender {get; set;}
@@ -54,12 +55,8 @@ public with sharing class ReportPBSinProgramsController {
     public ReportPBSinProgramsController(){
         this.servAssigns = new list<Service_Assignment__c>();
         this.subServAssigns = new list<Service_Assignment__c>();
-        this.SA = new Service_Assignment__c();
-        this.sl = new Service_Location__c();
-        this.adm = new Admission__c();
-        //this.pbs = new Contact();
-       // this.SA.Status__c = '';
-       // this.adm.Status__c = '';
+        //this.sl = new Service_Location__c();
+      	//this.adm = new Admission__c();
         this.pbsCount = 0;
         this.admissionCount = 0;
         this.SACount = 0;
@@ -72,6 +69,11 @@ public with sharing class ReportPBSinProgramsController {
     
     //Display Results on the Page
     public pageReference run(){
+    	//Browsers are inconsistent in validating the Required="true" atribute
+    	if(fDate == null || tDate == null){
+    		Apexpages.addMessage(new Apexpages.Message(Apexpages.Severity.INFO,'From and To Dates are required to run the report'));
+    		return null;
+    	}
         system.debug('full Query>>>>>>> '+queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
         //this.subServAssigns = Database.Query(queryString + generateWhereClause()+ sortOrder+' LIMIT 500');
         this.subServAssigns = new List<Service_Assignment__c>(); //Clear the State of previous results
@@ -109,6 +111,11 @@ public with sharing class ReportPBSinProgramsController {
     
     //Export Results to Excel
     public pageReference exporttoExcel(){
+    	//Browsers are inconsistent in validating the Required="true" atribute
+    	if(fDate == null || tDate == null){
+    		Apexpages.addMessage(new Apexpages.Message(Apexpages.Severity.INFO,'From and To Dates are required to run the report'));
+    		return null;
+    	}
         this.subServAssigns = new List<Service_Assignment__c>();//Clearing the view State from display results
         this.servAssigns  = new list<Service_Assignment__c>(); //Clearing the view State from display results 
         system.debug('full Query>>>>>>> '+queryString + generateWhereClause()+ sortOrder+' LIMIT 10000');
@@ -136,8 +143,8 @@ public with sharing class ReportPBSinProgramsController {
     //Generate the Where clause based on filter conditions
     public string generateWhereClause(){
         
-        Datetime fromDate = DateTime.newInstance( this.SA.Start_Date__c, Time.newInstance(0,0,0,0));
-        Datetime toDate = DateTime.newInstance ( this.SA.End_Date__c, Time.newInstance(0, 0, 0, 0)); 
+        Datetime fromDate = DateTime.newInstance( this.fDate, Time.newInstance(0,0,0,0));
+        Datetime toDate = DateTime.newInstance ( this.tDate, Time.newInstance(0, 0, 0, 0)); 
         string filter = '((Start_Date__c >= '+fromDate.format('yyyy-MM-dd')+' AND Start_Date__c <= '+toDate.format('yyyy-MM-dd')+')';
         filter = filter +' OR (End_Date__c >= '+fromDate.format('yyyy-MM-dd')+' AND End_Date__c <= '+toDate.format('yyyy-MM-dd')+')';
         filter = filter +' OR (Start_Date__c <= '+fromDate.format('yyyy-MM-dd')+' AND End_Date__c = null)';
@@ -189,6 +196,7 @@ public with sharing class ReportPBSinProgramsController {
         
         return filter;
     }
+    
     
     
     
