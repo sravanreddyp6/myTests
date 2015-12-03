@@ -772,7 +772,10 @@
                 		<apex:inputField value="{!Contact.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"  html-data-countInFormProgress="1" />
                 		<br/>
                 		<br/>
+                		<div class="requiredInput">
+                            <div class="requiredBlock"></div>
                 		<apex:inputField value="{!Contact.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
+                		</div>
                 		<br/>
                 		<br/>
                 		<apex:outputField value="{!Contact.Legal_Guardianship_Status__c}" rendered="{!Contact.Legal_Guardianship_Status__c != null}" />
@@ -1422,8 +1425,8 @@
         </apex:pageBlock>
         <apex:actionStatus id="pageProcessing">
 	        <apex:facet name="start">
-	            <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:100;"/>
-	            <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 200;">
+	            <div style="opacity:0.8; background-color:#ccc; position:fixed; width:100%; height:100%; top:0px; left:0px; z-index:2000;"/>
+	            <div style="position: fixed; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px; z-index: 2000;">
 	                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
 	            </div>
 	        </apex:facet>
