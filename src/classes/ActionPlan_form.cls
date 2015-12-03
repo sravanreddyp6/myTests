@@ -664,8 +664,8 @@ public pagereference mySave(){
 
         ctlgs = new List<SelectOption>();
         ctlgs.add(new SelectOption('','Select Catalog'));
-      //  string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c; - Sravan - PRI-347
-		string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c;
+        string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c; 
+	//	string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c; - Reverted back Sravan - PRI-347
         List<Clinical_Programs__c> allPrgms = Clinical_Programs__c.getall().values();
         map< Decimal, string > mapAllPrgs = new map< Decimal, string >();
         for(Clinical_Programs__c item: allPrgms){
@@ -699,8 +699,8 @@ public pagereference mySave(){
         system.debug('catalog enabled - ' + showThis);
         system.debug( 'Program is: ' + ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c );
         if(showThis){
-          //  if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){
-          	if(ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){
+            if(ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){
+          //	if(ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c != null && ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c =='ABI' && ActionPlan.Service_Assignment__r.Service_Location__r.ProgramID__c != '114165002'){ // Sracvan - Revered back - PRI-347
                 GoalAlias = 'Problem';
                 ObjAlias = 'Goal';
                 ActAlias = 'Intervention';
