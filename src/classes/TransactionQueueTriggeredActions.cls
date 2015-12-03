@@ -390,22 +390,31 @@ public without sharing class TransactionQueueTriggeredActions {
                 }
                 else if ( t.request_type__c == 'Behavior') {
                 	try {
-                		ID inputID = t.input_params__c;
+                		List<String> ids = t.input_params__c.split(',');
+                		ID inputID;
                 		ID wksheetID;
+                		ID objID = null;
                 		
-                		// if the id is an action plan and we need to create a new worksheet first
-                		if ( inputID.getSObjectType().getDescribe().Name == 'Action_Plan__c') {
-                			// start date is Monday of this week
-                			Date sd = Date.Today().toStartofMonth();
-                			RecordType rt = [ select id from recordtype where sobjecttype = 'Action_Plan_Worksheet__c' and developername = 'Monthly_Behavior_Result' LIMIT 1];
-                			Action_Plan_Worksheet__c newsheet = new Action_Plan_Worksheet__c( Action_Plan__c = inputID, start_date__c = sd, recordtypeid = rt.Id);
-                			insert newsheet;
-                			wksheetID = newsheet.id;
+                		if ( ids.size() == 1 ) {
+                			inputID = (ID)ids[0];
+                		
+	                		// if the id is an action plan and we need to create a new worksheet first
+	                		if ( inputID.getSObjectType().getDescribe().Name == 'Action_Plan__c') {
+	                			// start date is Monday of this week
+	                			Date sd = Date.Today().toStartofMonth();
+	                			RecordType rt = [ select id from recordtype where sobjecttype = 'Action_Plan_Worksheet__c' and developername = 'Monthly_Behavior_Result' LIMIT 1];
+	                			Action_Plan_Worksheet__c newsheet = new Action_Plan_Worksheet__c( Action_Plan__c = inputID, start_date__c = sd, recordtypeid = rt.Id);
+	                			insert newsheet;
+	                			wksheetID = newsheet.id;
+	                		} else {
+	                			wksheetID = inputID;
+	                		}
                 		} else {
-                			wksheetID = inputID;
-                		}
-                			
-                		DSP_BehaviorTracking wksht = new DSP_BehaviorTracking( wksheetid, null );
+                			wksheetID = ids[0];
+                			objID = ids[1];
+                		}                 	
+                				
+                		DSP_BehaviorTracking wksht = new DSP_BehaviorTracking( wksheetid, objID);
                 		
                 		String jsonstring = json.serialize( wksht);
                 		storeResultSTring( newreq, jsonstring );
