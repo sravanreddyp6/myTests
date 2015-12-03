@@ -1200,6 +1200,12 @@
         <errorMessage>The Other ID and Other ID Description fields must be filled in for a person being served with a Mailing State of North Carolina.</errorMessage>
     </validationRules>
     <validationRules>
+        <fullName>Partial_guardianship_required</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Guardianship_Type__pc, &apos;Partial Guardianship/Conservatorship&apos;) &amp;&amp; ISBLANK(Partial_Guardianship_Conservatorship__pc) &amp;&amp; NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;))</errorConditionFormula>
+        <errorMessage>When Guardianship type is Partial Guardianship/Conservatorship you must fill Partial Guardianship/Conservatorship</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>Req_Mailing_Address_State</fullName>
         <active>true</active>
         <errorConditionFormula>AND(  RecordType.DeveloperName =&apos;Person_Being_Served&apos;, ISBLANK(PersonMailingState), NOT(CONTAINS($User.Username,&apos;integration@thementornetwork.com&apos;)))</errorConditionFormula>
