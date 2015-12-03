@@ -1,0 +1,464 @@
+<apex:page controller="DSPHomePageController" extensions="DSPSubmitTxn" sidebar="false" id="thePage" tabStyle="ESD_Home_DSP__tab">
+
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/JQ/jquery.tinysort.min.js')}" />
+    
+    <apex:includeScript value="{!URLFOR($Resource.ReferralsJS)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+    <style type="text/css">
+        .thinking {
+            opacity: 0.8;
+            background-color: #ccc;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            left: 0px;
+            z-index: 100000;
+        }
+        .thinkingwheel {
+            position: absolute;
+            left: 40%;
+            top: 48%;
+            background-color: white;
+            border: 2px solid gray;
+            padding: 2px;
+        }
+        .grid-container {
+            margin-left: 0;
+            margin-right: 0;
+            max-width: none;
+            padding: 0;
+        }
+
+        .taskbutton {
+            background-color: #002C59;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 8px 8px 8px 8px;
+            padding: 6px 6px 6px 6px;
+            margin-top: 4px;
+            display: block;
+            text-decoration: none;
+        }
+        a.taskbutton:hover {
+            text-decoration: none;
+        }
+        .custPopup {
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding: 10px;
+            position: absolute;
+
+            /* These are the 3 css properties you will need to change so the popup
+            displays in the center of the screen. First set the width. Then set
+            margin-left to negative half of what the width is. You can add
+            the height property for a fixed size pop up if you want. */
+            width: 500px;
+            margin-left: -250px;
+            top: 100px;
+        }
+        .popupBackground {
+            background-color: black;
+            opacity: 0.20;
+            filter: alpha(opacity 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .dataTable {
+            width: 100% !important;
+        }
+        .dataTables_filter {
+            float: right;
+            !important;
+        }
+        .dataTables_filter input {
+            margin-left: 3px;
+        }
+        .dataTables_length {
+            width: 150px;
+            float: left;
+            !important;
+        }
+        .dataTables_info {
+            float: left;
+            width: 250px;
+            !important;
+        }
+        .dataTables_paginate {
+            float: right;
+            !important;
+        }
+        .sorting {
+            background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_both.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_asc {
+            background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_desc {
+            background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_asc_disabled {
+            background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_asc_disabled.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_desc_disabled {
+            background: #7AC143 url('{! URLFOR($Resource.dataTables, 'dataTables/media/images/sort_desc_disabled.png') }') no-repeat center right !important;
+            padding-right: 20px !important;
+        }
+        .sorting_disabled {
+            background: #7AC143 !important;
+        }
+        .paginate_button {
+            margin-left: 5px;
+            border-radius: 12%;
+            width: 10px;
+            height: 8px;
+            padding: 0.5px;
+            background: #F8F8F8;
+            border: 1px solid #666;
+            color: #666;
+            text-align: center;
+            font: 10px Time New Roman, sans-serif;
+            cursor: pointer;
+        }
+        .paginate_active {
+            margin-left: 5px;
+            border-radius: 12%;
+            width: 10px;
+            height: 8px;
+            padding: 0.5px;
+            background: #7AC143;
+            border: 1px solid #666;
+            color: #666;
+            text-align: center;
+            font: 10px Times New Roman, sans-serif;
+            cursor: pointer;
+        }
+        table.dataTable {
+            clear: both;
+        }
+        .dataTables_length,
+        .dataTables_filter,
+        .dataTables_info,
+        .dataTables_paginate {
+            padding: 10px 3px 5px 3px;
+        }
+        #evalForm {
+            width: 0px;
+            height: 0px;
+            visibility: hidden;
+        }
+        
+
+    </style>
+
+    <apex:form id="mainForm">
+        <apex:pageMessages id="pageMessages" />
+        <br />
+        <apex:outputPanel layout="none" >
+            <apex:outputLabel for="{!$Component.PbsSearchFirstName}" value="First Name" style="margin-left: 5px; margin-right: 5px; " />
+            <apex:inputText title="First Name" value="{!FrstName}" id="PbsSearchFirstName" />
+            <apex:outputLabel for="{!$Component.PbsSearchLastName}" value="Last Name" style="margin-left: 20px; margin-right: 5px; " />
+            <apex:inputText title="Last Name" value="{!LstName}" id="PbsSearchLastName" />
+            <apex:commandButton style="margin-left: 10px; " value="Find" onclick="initiateSearch(); return false;"> </apex:commandButton>
+        </apex:outputPanel>
+        <br />
+        <br />
+                
+        <apex:pageBlock title="Persons Being Served" id="pbsBlock" >
+            <a id="pbsTable"></a>
+            <apex:pageBlockButtons location="top">
+                <div class="blockbtns" style="text-align: right;padding-right: 10px;">
+                    <a id="theLink" name="theLink" href="#" onClick="dspShiftNoteSummary()">Shift Note Summary</a>
+                </div>
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!mypbsList}" var="person" id="serviceAssignmentTable" >
+                <apex:column >
+                    <a onclick="toggleFavorite('{!person.PBSId}','{!person.saID}',{! !person.isfavorite});">
+                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}" rendered="{!person.isfavorite}"/>
+                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" rendered="{! !person.isfavorite}"/>
+                    </a>
+                </apex:column>
+                <apex:column headerValue="Person Being Served Name">
+                    <a href="#" onclick="submitTxnRequest('Person Being Served','{!person.PBSID}'); return false;">{!person.PBSName}</a>
+                </apex:column>
+                <apex:column headerValue="Alias - Nickname" value="{!person.program}" />
+                <apex:column headerValue="Current Documentation">
+                <apex:outputPanel rendered="{!person.hasActionPlan && person.hasBW && person.bwID != null}">
+                    <a href="#" onclick="submitTxnRequest('Behavior','{!person.bwID}')">Add Behavior Data</a><br />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!person.hasActionPlan && person.hasBW && person.bwID = null}">
+                    <a href="#" onclick="submitTxnRequest('Behavior','{!person.apID}')">Add Behavior Data</a><br />
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSW && person.swID != null}">
+                    <a href="#" onclick="submitTxnRequest('Skill','{!person.swID}')">Add Skill Data</a><br />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSW && person.swID = null}">
+                    <a href="#" onclick="submitTxnRequest('Skill','{!person.apID}')">Add Skill Data</a><br />
+                </apex:outputPanel>
+                <apex:outputPanel >
+                    <a href="#" onclick="">Add Shift Note</a>
+                </apex:outputPanel>
+                </apex:column>
+                 
+                <apex:column headerValue="Daily Actions">
+                
+                <apex:selectList id="actionlist" size="1" >
+                <apex:selectOptions value="{!person.actionList}" />
+                </apex:selectList>
+                <apex:commandButton value="Go" onClick="var action = jQuery(document.getElementById('{!$Component.actionlist}')).val(); if (action != '') { eval(action); } return false;" />
+                </apex:column>
+                
+                 
+                <apex:column headerValue="Navigation">
+                <apex:selectList id="navigationList" size="1" >
+                <apex:selectOptions value="{!person.navList}" />
+                </apex:selectList>
+                <apex:commandButton value="Go" onclick="var action = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (action != '') { eval(action); } return false;" />
+                
+                </apex:column>
+        </apex:pageBlockTable>
+            <div style="clear: both; "></div> <!-- Because pagination are floated left and right, this ensures the floated elements stay within the pageBlock -->
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="My Tasks">
+            <apex:pageBlockButtons location="Top">
+                <table width="100%">
+                    <tr>
+                    <td align="right">
+                    <apex:selectList value="{!viewstsk}" size="1">
+                        <apex:selectOptions value="{!viewvalues}" />
+                        <apex:actionSupport event="onchange" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(); " status="pageProcessing" />
+                    </apex:selectList>
+                    &nbsp;<apex:commandButton action="/setup/ui/recordtypeselect.jsp?ent=Task&retURL=%2Fhome%2Fhome.jsp&save_new_url=%2F00T%2Fe%3FretURL=/apex/DSPHome" value="Add Task" />
+                    </td>
+                    </tr>
+                </table>
+            </apex:pageBlockButtons>
+<!--             <a href="/007">View All</a> -->
+<!--             <br /> -->
+<!--             <br /> -->
+            <apex:pageBlockTable value="{!populateTasks}" var="tsk" id="PageBT">
+                <apex:column ><a href="/{!tsk.Id}/e?close=1&retURL=/apex/DSPHome">X</a></apex:column>
+                <apex:column headerValue="Created"><apex:outputText value=" {!tsk.CreatedDate}" /></apex:column>
+                <apex:column headerValue="Subject"><a href="/{!tsk.Id}/e?retURL=/apex/DSPHome">{!tsk.Subject}</a> </apex:column>
+                <apex:column headerValue="Comments">{!tsk.Description}</apex:column>
+                <apex:column headerValue="Priority">{!tsk.Priority}</apex:column>
+                <apex:column headerValue="Status">{!tsk.Status}</apex:column>
+                <apex:column headerValue="Due Date"><apex:outputText value=" {!tsk.ActivityDate}" /></apex:column>
+                <apex:column headerValue="Name"><apex:outputText value="{!taskToNameMap[tsk.Id][0]}" escape="false" /></apex:column>
+                <apex:column headerValue="Related To"><apex:outputText value="{!taskToNameMap[tsk.Id][1]}" escape="false" /></apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+        
+        
+        <apex:actionFunction name="getSearchResults" action="{!getSearchResults}" status="pageProcessing" oncomplete="showSearchResultDialog(); " rerender="pageMessages, searchResultPanel" />
+        <apex:actionFunction status="pageProcessing" name="updateTaskTable" action="{!mineTasks}" rerender="PageBT" oncomplete="reloadTaskTable(request.options.parameters.sort_column, request.options.parameters.sort_order);">
+            <apex:param name="sort_column" value="" assignTo="{!sortColumn}" />
+            <apex:param name="sort_order" value="" assignTo="{!sortOrder}" />
+        </apex:actionFunction>
+        <apex:actionFunction name="toggleFavorite" action="{!toggleFavorite}" status="pageProcessing" oncomplete="reloadPBSTable();" rerender="pbsBlock" >
+            <apex:param name="pbsId" value="" assignTo="{!searchResultPBS}" />
+            <apex:param name="saId" value="" assignTo="{!searchResultSA}" />
+            <apex:param name="isFavorite" value="" assignTo="{!searchResultIsFav}" />
+        </apex:actionFunction>
+        <apex:actionFunction name="submitTxnRequest" action="{!submitTxnRequest}" status="pageProcessing" rerender="pageMessages" >
+            <apex:param name="reqType" value="" assignTo="{!requestType}" />
+            <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
+        </apex:actionFunction>
+        <apex:actionFunction name="dspShiftNoteSummary" action="{!dspShiftNoteSummary}" status="pageProcessing" rerender="pageMessages" >
+            <apex:param name="pbsId" value="" assignTo="{!pbsId}" />
+        </apex:actionFunction>
+        
+</apex:form>    
+<div id="searchResultDialog"></div>
+
+        <apex:outputPanel id="searchResultPanel" style="display: none; ">
+        <apex:form id="searchPanelForm">
+            <apex:actionFunction name="setfocusPBS" action="{!setfocusPBS}" status="pageProcessing" rerender="pbsBlock" oncomplete="reloadPBSTable(); closeModalDialog('searchResultDialog', 'div'); ">
+                <apex:param name="pbsId" value="" assignTo="{!searchResultPBS}" />
+                <apex:param name="saId" value="" assignTo="{!searchResultSA}" />
+                <apex:param name="isFavorite" value="" assignTo="{!searchResultIsFav}" />
+            </apex:actionFunction>
+            <apex:outputPanel id="searchTablePanel">
+                <apex:pageBlock >
+                <apex:outputText >
+                Click on the person's name for one-time actions.  Click on the star icon to set the person as a favorite on your home page.  A PBS already on your home page will not show up in the search results.
+                </apex:outputText>
+                    <apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
+                        <apex:column headerValue="" style="width:30px;text-align:center">
+                                <a class="pbsSearchResult" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="true">
+                                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}" /> 
+                                </a>
+                        </apex:column>
+
+                        <apex:column headerValue="Name">
+                                <a class="pbsSearchResult" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="false">
+                                    {!IF(searchResult.lastName != '', searchResult.lastName + ', ', '')}{!searchResult.firstName}
+                                </a>
+                        </apex:column>
+                        <apex:column headerValue="Age">{!searchResult.age}</apex:column>
+                        <apex:column headerValue="Alias">{!searchResult.alias}</apex:column>
+                        <apex:column headerValue="Program">{!searchResult.program}</apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:form>
+    </apex:outputPanel>
+
+    <script>
+        function search_Names() {
+            var fname = document.getElementById("{!$Component.thePage.mainForm.FName}").value;
+            var lname = document.getElementById("{!$Component.thePage.mainForm.LName}").value;
+            if ((fname == null || fname == '') && (lname == null || lname == '')) {
+                alert('Please fill one of the search boxes before you click on find');
+            }
+            return false;
+        }
+    </script>
+    <script type="text/javascript">
+        jQuery.noConflict();
+        jQuery.fn.dataTableExt.oApi.fnDisplayRow = function(oSettings, nRow) {
+            // Account for the "display" all case - row is already displayed
+            if (oSettings._iDisplayLength == -1) {
+                return;
+            }
+
+            // Find the node in the table
+            var iPos = -1;
+            for (var i = 0, iLen = oSettings.aiDisplay.length; i < iLen; i++) {
+                if (oSettings.aoData[oSettings.aiDisplay[i]].nTr == nRow) {
+                    iPos = i;
+                    break;
+                }
+            }
+
+            // Alter the start point of the paging display
+            if (iPos >= 0) {
+                oSettings._iDisplayStart = (Math.floor(i / oSettings._iDisplayLength)) * oSettings._iDisplayLength;
+                if (this.oApi._fnCalculateEnd) {
+                    this.oApi._fnCalculateEnd(oSettings);
+                }
+            }
+
+            this.oApi._fnDraw(oSettings);
+        };
+        jQuery(document).ready(function($) {
+        
+            window.initiateSearch = function () {
+                var fname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchFirstName}").value;
+                var lname = document.getElementById("{!$Component.thePage.mainForm.PbsSearchLastName}").value;
+                if ((fname == null || fname == '') && (lname == null || lname == '')) {
+                    alert('Please fill one of the search boxes before you click on find');
+                } else {
+                    getSearchResults();
+                }
+            };
+            
+            $('body').on('click', '[id$=searchTablePanel] a.pbsSearchResult', function (event) {
+                var pbsId = $(this).data('record-id');
+                var saId = $(this).data('sa-id');
+                var isfav = $(this).data('isfav');
+                setfocusPBS(pbsId, saId, isfav);
+                event.preventDefault();
+            });
+            
+            window.showSearchResultDialog = function () {
+            
+                $("#searchResultDialog").empty().append($(document.getElementById('{!$Component.searchPanelForm}')));
+                openModalDialog('searchResultDialog', 'div', 'Search Results', null, 1000, 'mainForm', false);
+                $('[id$=searchTable]').dataTable({
+                    bLengthChange: false,
+                    sPaginationType: "full_numbers",
+                    pageLength: 10,
+                    "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [0] }],
+                    "aaSorting":[1]
+                });
+                $("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
+                $("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
+                    closeModalDialog('searchResultDialog', 'div');
+                    event.preventDefault();
+                });
+            };
+            
+            
+            $('table.dataTable').dataTable({
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [0]
+                }],
+                sPaginationType: "full_numbers"
+            });
+            
+            // This is not the usual way that dataTable server side processing works.
+            // Usually it needs to be fed a JSON object with the data in it, but
+            // I (Dang) think in this case that approach is not the optimal because
+            // we'll have to write a custom AJAX end point in the controller. Instead
+            // I choose to rerender the table and re-initialize the DataTable every
+            // time a POST is requested - basically using normal Salesforce page
+            // generation technique.
+            window.reloadTaskTable = function (sort_column, sort_order) {
+                if (!sort_column || !sort_order) {
+                    sortPref = [];
+                } else {
+                    sortPref = [[ sort_column, sort_order ]];
+                }
+                $('[id$=PageBT]').dataTable({
+                    searching: false,
+                    paging: false,
+                    bInfo: false,
+                    aoColumnDefs: [{
+                        bSortable: false,
+                        aTargets: [0, 6]
+                    }],
+                    serverSide: true,
+                    ajax: function (data, callback, settings) {
+                        updateTaskTable(data.order[0].column, data.order[0].dir);
+                    },
+                    aaSorting: sortPref, // initial sort
+                    deferLoading: {!populateTasks.size} // To make sure DataTables doesn't call the server when the table is populated
+                });
+            };
+            reloadTaskTable();
+            window.reloadPBSTable = function () {
+                window.pbsTable = $('[id$=serviceAssignmentTable]').dataTable({
+                    searching: false,
+                    aoColumnDefs: [{
+                        bSortable: false,
+                        aTargets: [3, 4]
+                    }],
+                    bLengthChange: false,
+                    sPaginationType: "full_numbers",
+                    pageLength: 10
+                });
+            };
+            reloadPBSTable();
+        });
+            
+    </script>
+    <apex:actionStatus id="pageProcessing">
+        <apex:facet name="start">
+            <div class="thinking">
+                <div class="thinkingwheel">
+                    <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+                </div>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop" />
+    </apex:actionStatus>
+</apex:page>
