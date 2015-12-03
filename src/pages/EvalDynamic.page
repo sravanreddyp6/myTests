@@ -96,25 +96,17 @@
 
 		function showForm(key) {
 			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
-			if (key.indexOf('Head to Toe~Skin/Body~Wound Detail') > -1 || key.indexOf('Head to Toe~Skin/Body~Pressure Ulcer Details') > -1 || key.indexOf('Residential~Skin/Body~Pressure Ulcer Detail') > -1 || key.indexOf('Residential~Skin/Body~Wound Detail') > -1) {
-				jQuery("#panel-form").empty().append(jQuery("[id$='evalResponsesForm']"));
-			} else if (key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key == 'Residential~Skin/Body~Skin Assessment~Residential') {
-				jQuery("#panel-form").empty().append(jQuery("[id$='assessmentForm']"));
-			} else if (key.indexOf('Restraint Event~Reduction Review~Reduction Review') > -1) {
-				jQuery("#panel-form").empty().append(jQuery("[id$='restraintForm']"));
-			} else {
-				jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
-				jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
-				bindSubmitEvent();
-				setUpFields();
-				var errors = '';
-				jQuery('[id=ErrorMsg]').each(function(_, target) {
-					errors += jQuery(target).val();
-				});
-				jQuery('#evalSecValMsgs .error-messages').html(errors);
-				if (errors) {
-					jQuery('#evalSecValMsgs').show();
-				}
+			jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
+			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
+			bindSubmitEvent();
+			setUpFields();
+			var errors = '';
+			jQuery('[id=ErrorMsg]').each(function(_, target) {
+				errors += jQuery(target).val();
+			});
+			jQuery('#evalSecValMsgs .error-messages').html(errors);
+			if (errors) {
+				jQuery('#evalSecValMsgs').show();
 			}
 			setUpMainSectionPosition();
 		}
@@ -478,13 +470,13 @@
 	<!-- /.container -->
 
 	<apex:form id="wholePage">
-		<apex:actionFunction name="createPanelAF" action="{!myAction}" rerender="evalFormBody,evalRepeaters, outputsection, assessments, restraintReduction, evalResponsesSection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat+'~'+evalSecType}');filterNavigation();">
-			<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
-			<apex:param name="Category" value="" AssignTo="{!cat}" />
-			<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
-			<apex:param name="evalSectionId" value="" AssignTo="{!evalSecId}" />
-			<apex:param name="evalSectionType" value="" AssignTo="{!evalSecType}" />
-			<apex:param name="canEdit" value="" />
+		<apex:actionFunction name="createPanelAF" action="{!myAction}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat+'~'+evalSecType}');filterNavigation();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="Category" value="" assignTo="{!cat}" />
+			<apex:param name="SubCategory" value="" assignTo="{!subCat}" />
+			<apex:param name="evalSectionId" value="" assignTo="{!evalSecId}" />
+			<apex:param name="evalSectionType" value="" assignTo="{!evalSecType}" />
+			<apex:param name="canEdit" value="" assignTo="{!canEdit}" />
 		</apex:actionFunction>
 		<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (OR(evalType=='CNA Workbook', AND(evalType=='Residential', thisEval.OwnerId == $User.Id)),'completeShift();', 'location.reload(true);')} return false;" />
@@ -514,20 +506,7 @@
 		</apex:actionregion>
 	</apex:form>
 
-	<c:EvalSection id="outputsection" category="{!$CurrentPage.parameters.Category}" subcategory="{!$CurrentPage.parameters.SubCategory}" evaltype="{!$CurrentPage.parameters.evaltype}" evalSectionUuid="{!$CurrentPage.parameters.evalSectionId}" evalSectionType="{!$CurrentPage.parameters.evalSectionType}" editEnabled="{!$CurrentPage.parameters.canEdit}" parentID="{!$CurrentPage.parameters.evalId}" rendered="{!showMainComponent}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters(); " />
-
-	<apex:outputPanel style="display:none" id="assessments">
-		<apex:form id="assessmentForm">
-			<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain" rendered="{!key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential'}" AssessmentName="Fall Risk Assessment" lowerScore="1" medianScore="30" higherScore="31" />
-			<c:fallAssessmentComponent Domain="Skin Assessment Domain" rendered="{!key == 'Residential~Skin/Body~Skin Assessment~Residential'}" AssessmentName="Skin Assessment" lowerScore="1" medianScore="14" higherScore="14" />
-		</apex:form>
-	</apex:outputPanel>
-
-	<apex:outputPanel style="display: none" id="restraintReduction">
-		<apex:form id="restraintForm">
-			<c:restraintReductionComponent rendered="{!key == 'Restraint Event~Reduction Review~Reduction Review~Restraint Event' || key=='Restraint Event~Reduction Review~Reduction Review~Activity Log'}" AssessmentId="{!currentAssessId}" />
-		</apex:form>
-	</apex:outputPanel>
+	<c:EvalSection id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="{!canEdit}" parentID="{!evalId}" currentAssessId="{!currentAssessId}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters(); " />
 
 	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
 		<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}" enddate="{!thisEval.Shift_End_Time__c}" />
@@ -559,24 +538,6 @@
 					</apex:pageBlockSection>
 				</apex:pageblock>
 			</apex:actionRegion>
-		</apex:form>
-	</apex:outputPanel>
-
-	<apex:outputPanel id="evalResponsesSection" style="display:none">
-		<apex:form id="evalResponsesForm">
-			<apex:pageBlock >
-				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="wound" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Head to Toe' || key == 'Residential~Skin/Body~Wound Detail~Residential'}"
-				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
-				<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="woundLog" rendered="{!key == 'Head to Toe~Skin/Body~Wound Detail~Activity Log'}"
-                customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
-				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubiti" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Head to Toe' || key=='Residential~Skin/Body~Pressure Ulcer Detail~Residential'}"
-                customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
-				<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalResponsesForm}" uniqueId="decubitiLog" rendered="{!key == 'Head to Toe~Skin/Body~Pressure Ulcer Details~Activity Log'}"
-                customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
-				<apex:pageBlockButtons location="bottom">
-					<input class="btn" type="button" style="float:center;" value="Close" onclick="clearPanel();refreshEvalRepeaters(); return false;" />
-				</apex:pageBlockButtons>
-			</apex:pageBlock>
 		</apex:form>
 	</apex:outputPanel>
 

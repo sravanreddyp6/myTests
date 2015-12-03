@@ -158,7 +158,7 @@
 		.dataTables_paginate {
 			padding: 10px 3px 5px 3px;
 		}
-		#evalForm {
+		[id$=evalForm] {
 			width: 0px;
 			height: 0px;
 			visibility: hidden;
@@ -736,26 +736,26 @@
 			};
 			window.closeShiftDocActionDialog = function () {
 				closeModalDialog('shiftDocActionDialog', 'div');
-				$('#evalForm').css('width', '0px');
-				$('#evalForm').css('height', '0px');
-				$('#evalForm').css('visibility', 'hidden');
+				$('[id$=evalForm]').css('width', '0px');
+				$('[id$=evalForm]').css('height', '0px');
+				$('[id$=evalForm]').css('visibility', 'hidden');
 				alert('Activity Log has been saved!');
 			}
 			window.showEvalForm = function () {
-				$("#shiftDocActionDialog").empty().append($("#evalForm"));
+				$("#shiftDocActionDialog").empty().append($("[id$=evalForm]"));
 				bindSubmitEvent();
 				setUpFields();
 				$('#evalSecValMsgs .error-messages').html($('#ErrorMsg').val());
 				openModalDialog('shiftDocActionDialog', 'div', 'Add Activity Log Entry', null, 1000, 'mainForm', false);
-				$('#evalForm').css('width', 'auto');
-				$('#evalForm').css('height', 'auto');
-				$('#evalForm').css('visibility', 'visible');
+				$('[id$=evalForm]').css('width', 'auto');
+				$('[id$=evalForm]').css('height', 'auto');
+				$('[id$=evalForm]').css('visibility', 'visible');
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").off();  // Remove the standard jQuery UI event handlers for the modal's close button
 				$("[id$=mainForm] a.ui-dialog-titlebar-close").on("click", function (event) {
 					closeModalDialog('shiftDocActionDialog', 'div');
-					$('#evalForm').css('width', 'auto');
-					$('#evalForm').css('height', 'auto');
-					$('#evalForm').css('visibility', 'visible');
+					$('[id$=evalForm]').css('width', 'auto');
+					$('[id$=evalForm]').css('height', 'auto');
+					$('[id$=evalForm]').css('visibility', 'visible');
 					event.preventDefault();
 				});
 			};
