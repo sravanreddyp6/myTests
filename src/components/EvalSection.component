@@ -9,7 +9,8 @@
 	<apex:attribute name="subcategory" description="Sub-Section of the Eval" type="string" assignTo="{!subcat}" required="true" />
 	<apex:attribute name="subsubcategory" description="Section of the Eval" type="string" assignTo="{!subsubcat}" required="false" />
 	<apex:attribute name="evalSectionUuid" description="The identifier for the eval repeater section" type="string" assignTo="{!evalSectionId}" required="false" />
-	<apex:attribute name="evalSectionType" description="The type of the repeater section" type="string" assignTo="{!evalSecType}" required="false" />
+	<apex:attribute name="evalSectionType" description="The type of the repeater section, if you don't pass in anything, this will be determined by the controller, if you do, it will overwrite the controller" type="string" assignTo="{!evalSecType}" required="false" />
+	<apex:attribute name="currentAssessId" description="Current Assessment Id, used for restraint reduction component" type="Id" required="false" />
 
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
 	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -45,16 +46,81 @@
 		}
 	</style>
 
-	<form id="evalForm" method="post">
+	<apex:form id="evalForm" rendered="{!cat != ''}">
 		<div class="alert alert-danger" id="evalSecValMsgs" role="alert" style="display: none;">
 			<div class="error-messages"></div>
 		</div>
-		<apex:dynamicComponent componentValue="{!sectionContent}" invokeAfterAction="true" />
+		<apex:repeat value="{!composites}" var="composite">
+			<apex:pageBlock rendered="{!compositeToHtmlMap[composite] != 'N/A'}">
+				<apex:facet name="header">
+					<apex:outputText value="{!compositeToHeaderMap[composite]}" escape="false" />
+				</apex:facet>
+				<apex:outputPanel id="actionPanel" layout="block" rendered="{!AND(showActionButtons, editable)}">
+					<input class="btn" type="submit" value="Save" id="btnActionSave" onclick="isModified=false;" />
+				</apex:outputPanel>
+				<apex:outputText value="{!compositeToHtmlMap[composite]}" escape="false" />
+			</apex:pageBlock>
+		</apex:repeat>
+		<apex:outputText rendered="{!numSection == 0}">
+			No section can be added at this time
+		</apex:outputText>
+		<apex:outputPanel layout="block" style="display: none; " rendered="{!editEnabled}">
+			<apex:outputPanel layout="block" id="evalFormButtons" style="right: 10px; float: right; position: relative;">
+				<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery('#btnHiddenSave').click(); return false;" />
+				<input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />
+			</apex:outputPanel>
+		</apex:outputPanel>
 		<!-- This hidden button is here, so that when we submit the form programmatically by
 		clicking the button, the HTML5 checkValidity() function is called. If we simply call
 		form.submit(), the browser will bypass that check. -->
 		<input style="display: none;" type="submit" value="Save" id="btnHiddenSave" />
-	</form>
+		<apex:pageBlock rendered="{!containsWoundDetail}">
+			<apex:facet name="header">
+				<apex:outputText value="{!compositeToHeaderMap[evalType + '~' + 'Skin/Body~Wound Detail']}" escape="false" />
+			</apex:facet>
+			<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail" showTitle="false" collapsible="false" formId="{!$Component.evalForm}" uniqueId="Wound"
+				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]" />
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!containsWoundDetailLog}">
+			<apex:facet name="header">
+				<apex:outputText value="{!compositeToHeaderMap[evalType + '~' + 'Skin/Body~Wound Detail']}" escape="false" />
+			</apex:facet>
+			<c:EvaluationResponseTable parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalForm}" uniqueId="WoundLog"
+				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!containsPressureUlcerDetail}">
+			<apex:facet name="header">
+				<apex:outputText value="{!compositeToHeaderMap[evalType + '~' + 'Skin/Body~Pressure Ulcer Details']}" escape="false" />
+			</apex:facet>
+			<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalForm}" uniqueId="Decubiti"
+				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!containsPressureUlcerDetailLog}">
+			<apex:facet name="header">
+				<apex:outputText value="{!compositeToHeaderMap[evalType + '~' + 'Skin/Body~Pressure Ulcer Details']}" escape="false" />
+			</apex:facet>
+			<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail Log" showTitle="false" collapsible="false" formId="{!$Component.evalForm}" uniqueId="DecubitiLog"
+				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!containsFallAssessment}">
+			<apex:facet name="header">
+				<apex:outputText value="{!compositeToHeaderMap['Residential~Fall Risk Assessment~Fall Assessment']}" escape="false" />
+			</apex:facet>
+			<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain" AssessmentName="Fall Risk Assessment" lowerScore="1" medianScore="30" higherScore="31" />
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!containsSkinAssessment}">
+			<apex:facet name="header">
+				<apex:outputText value="{!compositeToHeaderMap['Residential~Skin/Body~Skin Assessment']}" escape="false" />
+			</apex:facet>
+			<c:fallAssessmentComponent Domain="Skin Assessment Domain" AssessmentName="Skin Assessment" lowerScore="1" medianScore="14" higherScore="14" />
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!containsRestraintReduction}">
+			<apex:facet name="header">
+				<apex:outputText value="{!compositeToHeaderMap['Restraint Event~Reduction Review~Reduction Review']}" escape="false" />
+			</apex:facet>
+			<c:restraintReductionComponent AssessmentId="{!currentAssessId}" />
+		</apex:pageBlock>
+	</apex:form>
 	<script>
 		jQuery.noConflict();
 
@@ -169,7 +235,7 @@
 			window.setUpFields = function() {
 				// if not editable, make all input fields disabled and do not apply rules
 				<apex:outputPanel rendered="{!!editEnabled}" layout="none">
-					$('#evalForm :input').prop('disabled', true);
+					$('[id$=evalForm] :input').prop('disabled', true);
 				return; </apex:outputPanel>
 
 				// Apply rules to input fields
@@ -183,31 +249,31 @@
 				// the rule application of Not Applicable field after other rule applications
 				// instead, we'll run into an issue in which disabled fields are enabled due to
 				// the Not Applicable field not being checked, which is a much worse UX issue.
-				$('#evalForm input#NotApplicable').each(function (_, target) {
+				$('[id$=evalForm] input#NotApplicable').each(function (_, target) {
 					applyRulesToField(target, window.CommonJS.Strategy.Selector);
 				});
-				$('#evalForm input#NotApplicable').on("change", function (event) {
+				$('[id$=evalForm] input#NotApplicable').on("change", function (event) {
 					applyRulesToField(event.target, window.CommonJS.Strategy.Selector);
 					if (!$(event.target).is(":checked")) {
 						// We need to manually apply the rules here again because all the fields
 						// will be enabled by the Not Applicable field.
-						$('#evalForm input').not('#NotApplicable').each(function(_, target) {
+						$('[id$=evalForm] input').not('#NotApplicable').each(function(_, target) {
 							applyShowHideRulesToField(target);
 							applyRulesToField(target);
 						});
 					}
 				});
-				$('#evalForm input, #evalForm select').not('#NotApplicable').on("change", function(event) {
+				$('[id$=evalForm] input, [id$=evalForm] select').not('#NotApplicable').on("change", function(event) {
 					applyShowHideRulesToField(event.target);
 					applyRulesToField(event.target);
 				});
-				$('#evalForm input, #evalForm select').not('#NotApplicable').each(function(_, target) {
+				$('[id$=evalForm] input, [id$=evalForm] select').not('#NotApplicable').each(function(_, target) {
 					applyShowHideRulesToField(target);
 					applyRulesToField(target);
 				});
 
 				// set isModified to true on a field value change
-				$('#evalForm input, #evalForm select').on("change", function(event) {
+				$('[id$=evalForm] input, [id$=evalForm] select').on("change", function(event) {
 					isModified = true;
 				});
 
@@ -255,7 +321,7 @@
 				}
 			};
 			window.bindSubmitEvent = function() {
-				$('#evalForm').on("submit", function(event) {
+				$('[id$=evalForm]').on("submit", function(event) {
 					$('#evalSecValMsgs').hide();
 					beforeEvaluationSave();
 					handleFormErrors();
@@ -443,7 +509,6 @@
 				if (type == 'ft' || type == 'inc') {
 					var htotal = getftValue() + getincValue();
 					j$('[id=heightAtAdmission]').val(Math.round(htotal * 100) / 100);
-
 				}
 
 				if (type == 'cm') {

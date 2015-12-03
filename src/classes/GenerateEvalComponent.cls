@@ -3,10 +3,6 @@ Fields type - sub types that are not yet handelled:
     Boolean - Radio
 */
 public with sharing class GenerateEvalComponent {
-	public Component.Apex.OutputPanel getSectionContent() {
-		return CreateFieldControls();
-	}
-
 	public string cat { get; set; }
 	public string subcat{ get; set; }
 	public string subsubcat{ get; set; }
@@ -129,17 +125,36 @@ public with sharing class GenerateEvalComponent {
 		mapEvalValues = new Map<ID, Eval_Value__c>();
 	}
 
-	public Component.Apex.OutputPanel CreateFieldControls () {
+	public List<String> getComposites() {
+		return generateForm();
+	}
+	public transient Map<String, String> compositeToHtmlMap { get; set; }
+	public transient Map<String, String> compositeToHeaderMap {get; set; }
+	public transient Map<String, String> compositeToSectionTypeMap { get; set; }
+	public transient Integer numSection { get; set; }
+	public transient Boolean batchInsert { get; set; }
+
+	public Boolean containsWoundDetail { get; set; }
+	public Boolean containsWoundDetailLog { get; set; }
+	public Boolean containsPressureUlcerDetail { get; set; }
+	public Boolean containsPressureUlcerDetailLog { get; set; }
+	public Boolean containsFallAssessment { get; set; }
+	public Boolean containsSkinAssessment { get; set; }
+	public Boolean containsRestraintReduction { get; set; }
+
+	public List<String> generateForm() {
+		List<String> composites = new List<String>();
+		compositeToHtmlMap = new Map<String, String>();
+		compositeToHeaderMap = new Map<String, String>();
+		compositeToSectionTypeMap = new Map<String, String>();
+
 		List<Eval__c> listEvalItems;
-		Boolean batchInsert = (subcat == null || subcat == '');
+		batchInsert = (subcat == null || subcat == '');
 		String additionalCondition = '';
-		//EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
-		if (evalSecType == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcat == 'IV'){
-			additionalCondition = 'AND (NOT htmlid__c LIKE \'HeadtoToeDiagnosticsIVQuestion%\') ';
-		}
 		if (!batchInsert) {
 			additionalCondition += 'AND Sub_Category__c = :subcat ';
 		}
+
 		listEvalItems = Database.query(
 			'SELECT id, htmlid__c, field_name__c, category__c, category_sequence__c, ' +
 			'       sub_category__c, sub_category_sequence__c, eval_type__r.name, Field_Type__c, ' +
@@ -159,6 +174,9 @@ public with sharing class GenerateEvalComponent {
 				evalIds.add(eval.Id);
 				if (!sectionMap.containsKey(eval.Composite__c)) {
 					sectionMap.put(eval.Composite__c, new List<Eval__c>());
+					composites.add(eval.Composite__c);
+					compositeToHtmlMap.put(eval.Composite__c, null);
+					compositeToHeaderMap.put(eval.Composite__c, eval.Sub_Category__c);
 				}
 				sectionMap.get(eval.Composite__c).add(eval);
 			} else if (eval.Field_Name__c == 'isRepeatable') {
@@ -181,7 +199,7 @@ public with sharing class GenerateEvalComponent {
 			listEvalValues = Database.query(
 				'SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c, ' +
 				'       text_over_250__c, text_under_250__c, eval__c, eval__r.length__c, ' +
-				'       eval__r.composite__c ' +
+				'       eval__r.composite__c, eval_section_type__c, eval__r.eval_type__r.name ' +
 				'  FROM eval_value__c '+
 				' WHERE eval__c in :listEvalItems ' +
 				'   AND eval__r.Visible__c = true ' +
@@ -196,53 +214,89 @@ public with sharing class GenerateEvalComponent {
 			}
 		}
 		Component.Apex.OutputPanel fullPanel = new Component.Apex.OutputPanel(layout='none');
-		Integer numSection = 0;
+
+		numSection = 0;
 		for (String composite: sectionMap.keySet()) {
 			if (batchInsert) {
 				if (!sectionsToBypass.contains(composite)) {
-					numSection++;
-					fullPanel.childComponents.add(generateSubsectionHtml(sectionMap.get(composite), dd, new List<Eval_Value__c>()));
+					numSection ++;
+					compositeToHtmlMap.put(composite, generateSubsection(sectionMap.get(composite), dd, new List<Eval_Value__c>()));
 				}
 			} else {
-				fullPanel.childComponents.add(generateSubsectionHtml(sectionMap.get(composite), dd, listEvalValues));
+				numSection ++;
+				compositeToHtmlMap.put(composite, generateSubsection(sectionMap.get(composite), dd, listEvalValues));
 			}
 		}
-		if (numSection == 0 && cat != null && batchInsert) {
-			fullPanel.childComponents.add(new Component.Apex.OutputText(value='No section can be added at this time'));
-		}
-		if (editable) {
-			Component.Apex.OutputPanel batchActionWrapper = new Component.Apex.OutputPanel(
-				layout = 'block',
-				style = 'display: none;'
-			);
-			Component.Apex.OutputPanel batchActionPanel = new Component.Apex.OutputPanel(
-				layout = 'block',
-				id = 'evalFormButtons',
-				style = 'right: 10px; float: right; position: relative;'
-			);
-			if ((!batchInsert || numSection > 0) && cat != null) {
-				batchActionPanel.childComponents.add(
-					new Component.Apex.OutputText(
-						value = '<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery(\'#btnHiddenSave\').click(); return false;" />',
-						escape = false
-					)
-				);
+		compositeToSectionTypeMap = determineSectionTypes(listEvalItems, listEvalValues, evalSecType);
+
+		containsWoundDetail = false;
+		containsWoundDetailLog = false;
+		containsPressureUlcerDetail = false;
+		containsPressureUlcerDetailLog = false;
+		containsFallAssessment = false;
+		containsSkinAssessment = false;
+		containsRestraintReduction = false;
+		for (Eval__c eval: listEvalItems) {
+			if (eval.Composite__c == 'Head to Toe~Skin/Body~Wound Detail' || eval.Composite__c == 'Residential~Skin/Body~Wound Detail') {
+				if (compositeToSectionTypeMap.get(eval.Composite__c) == 'Activity Log') {
+					compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+					containsWoundDetailLog = true;
+				} else {
+					compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+					containsWoundDetail = true;
+				}
+			} else if (eval.Composite__c == 'Head to Toe~Skin/Body~Pressure Ulcer Details' || eval.Composite__c == 'Residential~Skin/Body~Pressure Ulcer Detail') {
+				if (compositeToSectionTypeMap.get(eval.Composite__c) == 'Activity Log') {
+					compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+					containsPressureUlcerDetailLog = true;
+				} else {
+					compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+					containsPressureUlcerDetail = true;
+				}
+			} else if (eval.Composite__c == 'Residential~Fall Risk Assessment~Fall Assessment') {
+				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+				containsFallAssessment = true;
+			} else if (eval.Composite__c == 'Residential~Skin/Body~Skin Assessment') {
+				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+				containsSkinAssessment = true;
+			} else if (eval.Composite__c == 'Restraint Event~Reduction Review~Reduction Review') {
+				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+				containsRestraintReduction = true;
 			}
-			batchActionPanel.childComponents.add(
-				new Component.Apex.OutputText(
-					value = '<input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />',
-					escape = false
-				)
-			);
-			batchActionWrapper.childComponents.add(batchActionPanel);
-			fullPanel.childComponents.add(batchActionWrapper);
 		}
-		return fullPanel;
+		return composites;
 	}
 
-	private Component.Apex.PageBlock generateSubsectionHtml(List<Eval__c> listEvalItems, List<Eval_Drop_Down__c> dd, List<Eval_Value__c> listEvalValues) {
+	public static Map<String, String> determineSectionTypes(List<Eval__c> listEvalItems, List<Eval_Value__c> listEvalValues, String evalSecType) {
+		Map<String, String> compositeToSectionTypeMap = new Map<String, String>();
+		if (evalSecType != null && evalSecType != '') {
+			for (Eval__c eval: listEvalItems) {
+				compositeToSectionTypeMap.put(eval.Composite__c, evalSecType);
+			}
+			return compositeToSectionTypeMap;
+		}
+
+		for (Eval__c eval: listEvalItems) {
+			compositeToSectionTypeMap.put(eval.Composite__c, eval.Eval_Type__r.Name);
+		}
+		Set<String> compositesWithMainEntry = new Set<String>();
+		for (Eval_Value__c value: listEvalValues) {
+			if (compositesWithMainEntry.contains(value.Eval__r.Composite__c)) {
+				continue;
+			}
+			if (value.Eval_Section_Type__c != value.Eval__r.Eval_Type__r.Name) {
+				compositeToSectionTypeMap.put(value.Eval__r.Composite__c, value.Eval_Section_Type__c);
+				compositesWithMainEntry.add(value.Eval__r.Composite__c);
+			} else {
+				compositeToSectionTypeMap.put(value.Eval__r.Composite__c, 'Activity Log');
+			}
+		}
+		return compositeToSectionTypeMap;
+	}
+
+	private String generateSubsection(List<Eval__c> listEvalItems, List<Eval_Drop_Down__c> dd, List<Eval_Value__c> listEvalValues) {
 		// get the list of controls for this type, category, and subcategory
-		List<String> htmlcontrols = new List<String>();
+		List<String> htmlControls = new List<String>();
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
 
@@ -274,6 +328,7 @@ public with sharing class GenerateEvalComponent {
 		String subcategory = '';  // Assumption: this is all part of the same subcategory
 		String sectionComposite = '';
 		Id notApplicableFieldId;
+		Id isValidFieldId;
 		Set<String> fieldsWithPreviousEntries = new Set<String>();
 		for (Set<String> association: previousEntryAssociation) {
 			fieldsWithPreviousEntries.addAll(association);
@@ -285,7 +340,10 @@ public with sharing class GenerateEvalComponent {
 				newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
 				newHTMLfld = '';
 				strval = '';
-				system.debug(' field type is ' + e.field_type__c);
+				//EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
+				if (compositeToSectionTypeMap.get(sectionComposite) == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subCategory == 'IV' && e.HtmlId__c.indexOf('HeadtoToeDiagnosticsIVQuestion') != -1){
+					continue;
+				}
 				String composite = String.format('{0}%{1}%{2}%{3}', new List<String>{
 					e.eval_type__r.name,
 					e.category__c,
@@ -310,6 +368,9 @@ public with sharing class GenerateEvalComponent {
 						notApplicableFieldId = e.Id;
 						continue;
 					} else {
+						if (e.HtmlId__c == 'IsValid') {
+							isValidFieldId = e.Id;
+						}
 						newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
 						newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" data-composite="' + e.Composite__c + '" ';
 						if (mapEvalValues.ContainsKey(e.id)) {
@@ -472,7 +533,6 @@ public with sharing class GenerateEvalComponent {
 					newHTMLfld += reqfldHTML;
 					newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
-						system.debug(mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm'));
 						newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm');
 						newHTMLfld  += '"';
 					} else if (e.Required__c) {
@@ -544,7 +604,6 @@ public with sharing class GenerateEvalComponent {
 			}
 		}
 
-		Component.Apex.PageBlock pageBlock = new Component.Apex.PageBlock(rendered=(cat != ''));
 		String selector = String.format(
 			'input{0}, select{0}, textarea{0}',
 			new String[] {
@@ -552,6 +611,25 @@ public with sharing class GenerateEvalComponent {
 			}
 		);
 		String notApplicableField = '';
+		String isValidField = '';
+//		if (isValidFieldId != null) {
+//			Boolean isWoundDetail = (cat == 'Skin/Body' && subCategory == 'Wound Detail');
+//			Boolean isPressureUlcerDetail = (cat == 'Skin/Body' && subCategory == 'Pressure Ulcer Details');
+//			Boolean isSkinAssessment = (evalName == 'Residential' && cat == 'Skin/Body' && subCategory == 'Skin Assessment');
+//			Boolean isFallRiskAssessment = (evalName == 'Residential' && cat == 'Fall Risk Assessment' && subCategory == 'Fall Assessment');
+//			Boolean isReductionReview = (evalName == 'Restraint Event' && cat == 'Reduction Review' && subCategory == 'Reduction Review');
+//			Boolean initialValid;
+//			if (isWoundDetail || isPressureUlcerDetail) {
+//				initialValid = true;
+//			} else if (isReductionReview) {
+//				initialValid = false;
+//			} else if (isSkinAssessment || isFallRiskAssessment) {
+//				initialValid = !EvalDynamicExt.validateAssessmentError(evaluationId, subCategory == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain');
+//			}
+//			if (isWoundDetail || isPressureUlcerDetail || isReductionReview || isSkinAssessment || isFallRiskAssessment) {
+//				isValidField = '<input id="IsValid" name="' + isValidFieldId + '" type="hidden" data-composite="' + sectionComposite + '" value="' + String.valueOf(initialValid) + '" />';
+//			}
+//		}
 		if (notApplicableFieldId != null) {
 			String checked = '';
 			if (mapEvalValues.containsKey(notApplicableFieldId) && mapEvalValues.get(notApplicableFieldId).Boolean__c) {
@@ -560,24 +638,21 @@ public with sharing class GenerateEvalComponent {
 			notApplicableField = '<input id="NotApplicable" name="' + notApplicableFieldId + '" type="checkbox" value="true" ' + checked + ' data-composite="' + sectionComposite + '" style="margin-right: 3px; " data-rules="{&quot;0&quot;: &quot;' + selector + '&quot;}" /><span>Not Applicable</span>';
 		}
 		String header = String.format(
-			'<table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="pbTitle"><h2 class="mainTitle">{0}</h2></td><td style="text-align: right;">{1}</td></tr></tbody></table>',
+			'<table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="pbTitle"><h2 class="mainTitle">{0}</h2></td><td style="text-align: right;">{1}{2}</td></tr></tbody></table>',
 			new String[]{
 				subcategory,
-				notApplicableField
+				notApplicableField,
+				isValidField
 			});
-		pageBlock.facets.header = new Component.Apex.OutputText(value=header, escape=false);
-		Component.Apex.OutputPanel actionPanel = new Component.Apex.OutputPanel(
-			layout='block',
-			rendered=(showActionButtons && editable),
-			style='right: 10px;float: right;position: relative;'
-		);
+		compositeToHeaderMap.put(sectionComposite, header);
+
 		Component.Apex.OutputText outputText = new Component.Apex.OutputText(escape=false);
 
 		String htmlTable2 = '<label class="labelCol">Created By:</label>' + getEvalSectionOwner() + '<br />' +
 			'<label class="labelCol">Last Modified By:</label>' + getEvalSectionLastMod();
 
 		String composite = cat + '~' + subCategory;
-		if (evalSecType == 'Head To Toe' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcategory == 'IV') {
+		if (compositeToSectionTypeMap.get(sectionComposite) == 'Head To Toe' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subcategory == 'IV') {
 			htmlTable2 += '<table data-composite="' + composite  + '" style="width:100%;"><tr><th></th><th></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
 		} else {
 			htmlTable2 += '<table data-composite="' + composite  + '" style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
@@ -592,26 +667,26 @@ public with sharing class GenerateEvalComponent {
 		}
 		htmlTable2 += '</tr></table>';
 
-		outputText.value = htmlTable2;
-		actionPanel.childComponents.add(new Component.Apex.OutputText(
-			escape = false,
-			value = '<input class="btn" type="submit" value="Save" id="btnActionSave" onclick="isModified=false;" />'
-		));
-		pageBlock.childComponents.add(actionPanel);
-		pageBlock.childComponents.add(outputText);
-
-		return pageBlock;
+		return htmlTable2;
 	}
 
 	public class FormKeyVal{
-		public Id name;
+		public String name;
 		public String value;
 	}
+
 
 	@RemoteAction
 	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm) {
 		// Deserialize the form
 		List<FormKeyVal> objs = (List<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
+		for(Integer i = objs.size() - 1; i >= 0; i--) {
+			try {
+				Id dummyId = (Id) objs[i].name;
+			} catch (Exception ex) {
+				objs.remove(i);
+			}
+		}
 		Map<String,String> formData = new map<String, String>();
 		// This is used to handle multi-select picklist
 		String oldMapVal;
@@ -634,7 +709,6 @@ public with sharing class GenerateEvalComponent {
 		Set<String> composites = new Set<String>();
 		for (Eval__c eval: [ SELECT Id, Composite__c FROM Eval__c WHERE Id IN :formData.keySet() ]) {
 			composites.add(eval.Composite__c);
-
 		}
 
 		mapEvalItems = new Map<ID, Eval__c>([
@@ -684,6 +758,9 @@ public with sharing class GenerateEvalComponent {
 			// get the eval item from the map so we know what type, etc.
 			Eval__c ei = mapEvalItems.get((ID)f);
 
+//			Boolean isWoundDetailIsValid = (ei.Category__c == 'Skin/Body' && ei.Sub_Category__c == 'Wound Detail' && ei.HtmlId__c == 'IsValid');
+//			Boolean isPressureUlcerDetailIsValid = (ei.Category__c == 'Skin/Body' && ei.Sub_Category__c == 'Pressure Ulcer Details' && ei.HtmlId__c == 'IsValid');
+
 			// construct new eval_value object
 			if (mapEvalValues.containsKey((ID)f) && !batchInsert)  {
 				// value exists - need to update value
@@ -716,7 +793,6 @@ public with sharing class GenerateEvalComponent {
 				} else if (ei.Field_Type__c == 'Datetime') {
 					ev.Date_Time__c = Utility.getDateTimeFromString(formData.get(f) +':00');
 					if (EvalType == 'Head to Toe' || EvalType == 'CNA Workbook'){
-						system.debug('ShiftStartTime: ' + evalShiftStartTime.format() + '  Entered time: ' + ev.Date_Time__c.format());
 						if (evalShiftStartTime > ev.Date_Time__c || ev.Date_Time__c > Datetime.now()) {
 							throw new InvalidDateTimeValException('<li>Save failed!!! The date and time value for ' + ei.field_name__c + ' must be within the current shift start time and the current time.</li>');
 						}
@@ -731,7 +807,18 @@ public with sharing class GenerateEvalComponent {
 					}
 				} else if (ei.Field_Type__c == 'Hidden') {
 					if (ei.Field_Sub_Type__c == 'Boolean') {
-						ev.Boolean__c = Boolean.valueOf(formData.get(f));
+//						Boolean isSkinAssessmentIsValid = (evalType == 'Residential' && ei.Category == 'Skin/Body' && ei.Sub_Category__c == 'Skin Assessment' && ei.HtmlId__c == 'IsValid');
+//						Boolean isFallRiskAssessmentIsValid = (evalType == 'Residential' && ei.Category == 'Fall Risk Assessment' && ei.Sub_Category__c == 'Fall Assessment' && ei.HtmlId__c == 'IsValid');
+//						Boolean isReductionReviewIsValid = (evalType == 'Restraint Event' && ei.Category == 'Reduction Review' && ei.Sub_Category__c == 'Reduction Review' && ei.HtmlId__c == 'IsValid');
+
+//						if (isSkinAssessmentIsValid || isFallRiskAssessmentIsValid) {
+//							ev.Boolean__c = !EvalDynamicExt.validateAssessmentError(evaluationId, e.Sub_Category__c == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain');
+//						} else if (isReductionReviewIsValid) {
+							// TODO fill it in here
+							//ev.Boolean__c =
+//						} else {
+							ev.Boolean__c = Boolean.valueOf(formData.get(f));
+//						}
 					} else if (ei.Field_Sub_Type__c == 'String') {
 						ev.Text_Over_250__c = formData.get(f);
 					}

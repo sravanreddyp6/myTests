@@ -55,14 +55,13 @@ public with sharing class EvaluationResponseTableController {
 	}
 	public String frmTitle {
         get {
-        system.debug('title - '+frmTitle);
             if(frmTitle == null)
                 frmTitle = responseType;
                 return frmTitle;
 
         }
         set;
-	}	
+	}
 	public String responseType {
 		get;
 		set {
@@ -189,9 +188,9 @@ public with sharing class EvaluationResponseTableController {
 
     }
 	public void saveResponse() {
-		
+
 		hasError = false;
-		
+
 		//      Start EC-116
 		ID rtId = null;
 		List<RecordType> rt = [select id from RecordType where DeveloperName = 'Isolation_Event' and sObjectType = 'Evaluation_Response__c' limit 1];
@@ -200,7 +199,6 @@ public with sharing class EvaluationResponseTableController {
 		} else {
 			rtId = rt[0].ID;
 		}
-		//system.debug( 'RTID:' + currentResponse.RecordtypeId + ',' + rtId);
 
 		if(currentResponse.RecordTypeId == rtId){
 			if(currentResponse.Isolation_Event_Start_Date__c > currentResponse.Isolation_Event_End_Date__c){
@@ -239,11 +237,11 @@ public with sharing class EvaluationResponseTableController {
 					currentResponse.addError( 'Date and time cannot be in future.' );
 					hasError = true;
 			}
-		
+
 			if (! hasError ) {
 				// check for date overlap with another event
 				system.debug(currentresponse);
-				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currentResponse.Id and service_assignment__c = :currentResponse.service_assignment__c and disregard__c = false]; 
+				List<Evaluation_Response__c> otherTimeLogs = [ select id, start_date_time__c, end_date_time__c from evaluation_response__c where RecordTypeId = :Utility.getEvaluationResponseRecordType(responseType) and id != :currentResponse.Id and service_assignment__c = :currentResponse.service_assignment__c and disregard__c = false];
 				for ( Evaluation_Response__c tl : otherTimeLogs ) {
 					if ( checkOverlap( tl.start_date_time__c, tl.end_date_time__c, currentResponse.start_date_time__c, currentResponse.end_date_time__c) ) {
 						currentResponse.addError('A time log entry already exists for that time.  Please correct your entry.');
@@ -252,11 +250,11 @@ public with sharing class EvaluationResponseTableController {
 					}
 				}
 			}
-		
+
 		} // end IADAY-10
 		try {
 			// hasError = false;
-			
+
 			if(reqFields != null){
 				for(string rCol : reqFields){
 					if(columnsToHeadersMap.containsKey(rCol) && currentResponse.get(rCol) == null){
@@ -328,7 +326,7 @@ public with sharing class EvaluationResponseTableController {
 		);
 		auth.expressions.formId = '{!formId}';
 		auth.expressions.uniqueId = '{!uniqueId}';
-		auth.expressions.rerender = '{!$Component.evalResponseBlock.responseTableWrapper}, responseDialogMainBlock, responseDialogErrors';
+		auth.expressions.rerender = '{!$Component.evalResponseBlock_Alt1_Header.responseTableWrapper}, responseDialogMainBlock, responseDialogErrors';
 		auth.expressions.oncomplete = 'closeAuthenticationDialog{!uniqueId}(); alert("This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}");';
 		return auth;
 	}
@@ -402,9 +400,9 @@ public with sharing class EvaluationResponseTableController {
 
 	private void fetchResponsesFromServAssign(Id saId, String responseType) {
 		String query = 'SELECT Id, Disregard__c, eSigned_on__c, eSigned_By__c, Service_Assignment__r.Person_Being_Served__c, ' + getNecessaryColumns(responseType);
-		if ( responseType != 'Isolation Event') 
+		if ( responseType != 'Isolation Event')
 			query += ', Isolation_Event_End_Date__c, Isolation_Event_Start_Date__c ';
-		query += ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' + 
+		query += ' FROM Evaluation_Response__c WHERE Service_Assignment__c = :saId' +
 		 		' AND RecordTypeId = \'' + Utility.getEvaluationResponseRecordType(responseType) + '\' ORDER BY ';
 		if ( responseType == 'Isolation Event')
 			query += 'Isolation_Event_Start_Date__c DESC NULLS LAST, ';
@@ -440,7 +438,6 @@ public with sharing class EvaluationResponseTableController {
 			// check for custom label
 			string label = (string)column.getLabel();
 			Map<String,String> labelMap = new map<String, String>();
-			system.debug( labels);
 
 			if (!string.isempty( labels)) {
 				labels= labels.unescapeHtml3();
@@ -449,7 +446,6 @@ public with sharing class EvaluationResponseTableController {
 				for(FieldLabelVal d : objs){
 			    	 labelMap.put(d.field, d.label);
 				}
-				system.debug( labelMap);
 
 			}
 
@@ -457,7 +453,6 @@ public with sharing class EvaluationResponseTableController {
 				if ( labelMap.get( column.getFieldPath())!= null) {
 
 					label = String.valueof(labelMap.get( column.getFieldPath()));
-					system.debug( 'found custom label for column.getFieldPath(): '  + label );
 				}
 			}
 			columnsToHeadersMap.put(column.getFieldPath(), label);
@@ -475,12 +470,12 @@ public with sharing class EvaluationResponseTableController {
 	}
 
 	private boolean checkOverlap ( DateTime s1, DateTime e1, DateTime s2, DateTime e2) {
-		
+
 		Boolean overlaps = false;
 		system.debug( 'end date is: ' + e1 );
 		if ( e1 == null ) // first set is not a range - can't compare
 			return overlaps;
-			
+
 		if ( s2 >= s1 && s2 <= e1 ) // starts within first timeframe
 			overlaps = true;
 		else {
