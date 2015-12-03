@@ -423,7 +423,7 @@ public with sharing class referrals_Controller{
 			}
 
 			// 2014-12-05 - EB-273 - only retrieve Active locations
-			tmpResults=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 250 ');
+			tmpResults=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 100 ');
 			countTotalRecords=tmpResults.size();
 			if(countTotalRecords == 0){
 				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
@@ -600,9 +600,9 @@ public with sharing class referrals_Controller{
 			}
 
 			System.debug('!@#$ '+qs);
-			system.debug('Query>>>>>'+qs1 + qs + ' and status__c = \'Active\' LIMIT 250');
+			system.debug('Query>>>>>'+qs1 + qs + ' and status__c = \'Active\' LIMIT 100');
 			// 2014-12-05 - EB-273 - only retrieve Active locations
-			tmpResults2=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 250');
+			tmpResults2=Database.query(qs1 + qs + ' and status__c = \'Active\' order by State__c asc, Name asc, ProgramId__c asc LIMIT 100');
 			countTotalRecords2=tmpResults2.size();
 			if(countTotalRecords2 == 0){
 				Apexpages.addmessage(new apexpages.Message(Apexpages.Severity.INFO,'No Service Locations found matching the search criteria.'));
