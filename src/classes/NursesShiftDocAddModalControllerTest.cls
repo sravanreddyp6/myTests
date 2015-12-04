@@ -67,6 +67,7 @@ public with sharing class NursesShiftDocAddModalControllerTest {
 			Name = 'TEST ADM',
 			Person_Being_Served__c = aContactId,
 			Effective_Date__c = date.newInstance(2013, 1, 1),
+			Admission_Effective_DateTime__c = DateTime.newInstance(2013, 1, 1, 0, 0, 0),
 			Status__c = 'Active',
 			State__c = 'NC'
 		);
