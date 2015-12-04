@@ -40,6 +40,7 @@ Plan_ServiceAssignment_mJO__c and the VF pages and classes work together in this
             Name = 'TEST ADM',
             Person_Being_Served__c = testContact.Id,
             Effective_Date__c = date.today(),
+            Admission_Effective_DateTime__c = DateTime.Now(),
             Network_Offering__c = 'ARY'
         );
         insert testAdm;
