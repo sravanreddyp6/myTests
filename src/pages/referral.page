@@ -171,6 +171,13 @@
             if({!referralRecordType =='NeuroRestorative'}){
             j$('[id$=sfps]').addClass('refRequiedFields')
             }
+            
+            //use this function to clear the link for Name fields in pageBlock Tables
+            clearLink = function(){
+            	j$(".dataCell.noLink a").parent().html(j$(".dataCell.noLink a").html());
+            }
+            clearLink();
+            
         });
     </script>
 
@@ -1448,7 +1455,7 @@
         <apex:actionRegion >
             <apex:outputPanel id="ReferralLocationModal" style="display:none">
 
-                <apex:actionFunction name="saveLocation" action="{!saveLocation}" status="myStatus" rerender="locations,locationEntry,msgs,hasNonClosedPrimaryLocation" oncomplete="j$('input[id$=locationEntry_ServiceLocation]').val(''); return false;" />
+                <apex:actionFunction name="saveLocation" action="{!saveLocation}" status="myStatus" rerender="locations,locationEntry,msgs,hasNonClosedPrimaryLocation" oncomplete="j$('input[id$=locationEntry_ServiceLocation]').val(''); clearLink(); return false;" />
 
                 <apex:pageBlock title="Add Location">
                     <apex:pageblockButtons location="bottom">
@@ -1667,7 +1674,7 @@
              <!-- Add diagnosis modal -->
     	<apex:actionRegion >
             <apex:outputPanel id="diagnosisModal" style="display:none" >
-            	 <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" status="myStatus" rerender="diagsec,diagnosisEntry,msgs"  />
+            	 <apex:actionFunction name="saveDiagnosis" action="{!saveDiagnosis}" status="myStatus" rerender="diagsec,diagnosisEntry,msgs"  oncomplete="clearLink(); return false;"/>
                 <apex:pageBlock title="Add/Edit Diagnosis">
                     <apex:pageblockButtons location="bottom">
                         <apex:commandButton value="Save" onClick="diagnosisSave(true); return false;" />
@@ -2586,7 +2593,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockTable value="{!locations}" var="location" id="referralLocations">
-                    <apex:column value="{!location.Service_Location__c}" />
+                    <apex:column headerValue="Alias" value="{!location.Service_location__c}" styleClass="noLink" />
                     <apex:column value="{!location.Service_Location__r.ProgramID__c}" headerValue="Program Code" />
                     <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="Location Nickname" />
                     <apex:column headerValue="Address">
@@ -2631,7 +2638,7 @@
                </apex:pageBlockSectionItem>
 
                <apex:pageBlockTable value="{!diagnoses}" var="dg"  >
-                   	<apex:column value="{!dg.ICD__c}" headerValue="ICD-10 Code"/>
+                   	<apex:column value="{!dg.ICD__c}" headerValue="ICD-10 Code" styleClass="noLink"/>
                    	<apex:column value="{!dg.ICD__r.Code_Type__c}" headerValue="Code Type"/>
                    	<apex:column value="{!dg.ICD__r.Icd_Description__c}" />
                    	<apex:column headerValue="Date and Time of Diagnosis">
