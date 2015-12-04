@@ -1,0 +1,177 @@
+<apex:page standardController="Service_Assignment__c" extensions="ActionPlan_GoalObjective_rpt" docType="html-5.0"   standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab">
+<!--
+{!pbsID}
+<br/>
+{!saID }
+<br/>
+-->
+<head>
+<script>
+    function setFocusOnLoad() {}
+</script>
+<apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.dataTables, '/dataTables/media/js/jquery.dataTables.min.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables_themeroller.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.jquery, '/dataTables/media/css/jquery.dataTables.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
+
+
+<style>
+.thinking{
+    opacity:0.8;
+    background-color:#ccc;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+    z-index:1000;
+}
+
+.thinkingwheel{
+    position:absolute; left:50%; top:50%; background-color: white; border: 2px solid gray; padding: 2px;
+}
+#mytbl tr:nth-child(even)       { background-color:#eee; }
+#mytbl tr:nth-child(odd)      { //background-color:#fff; }
+
+#mytbl td{
+    font-size: 12px;
+    padding: 3px;
+}
+.headRow{
+   // background-color: white !important;
+    font-weight: bold;
+    border-bottom: 1px #dbdbdb solid;
+ //   width: 15%;
+    padding: 7px !important;
+
+}
+
+#mytbl{
+    border: 1px solid #dbdbdb;
+    border-top: none;
+    padding: 0px;
+    margin-top: -9px;
+    margin-bottom: 7px;
+    width: 900px;
+
+}
+.sorting{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_both.png')}') no-repeat center right;
+}
+.sorting_asc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_asc.png')}') no-repeat center right;
+}
+.sorting_desc{
+    background: url('{!URLFOR($Resource.dataTables, '/dataTables/media/images/sort_desc.png')}') no-repeat center right;
+}
+.txtcol{
+    
+}
+.timecol{
+}
+</style>
+</head>
+
+<c:PersonalRecord pbsId="{!Service_Assignment__c.Admission__r.Person_Being_Served__c}" admId="{!Service_Assignment__c.Admission__c}" servAssignId="{!Service_Assignment__c.Id}" parentPage="GoalObjRpt"  />
+<br/>
+<apex:form >
+<apex:pageBlock title="Goal/Objective Documentation Report"  >
+    <apex:pageBlockButtons location="bottom">
+           <apex:commandButton value="Run" action="{!runReport}" reRender="dataTable" status="myStatus" oncomplete="createtbl();"/>  
+           <Apex:pageMessages ></Apex:pageMessages> 
+    </apex:pageBlockButtons>
+    <apex:pageBlockSection columns="2" id="apgo">
+    
+       <!--
+        <apex:selectList required="true" size="7" label="Action Plan" value="{! selectPlan }">
+        
+            <apex:selectOptions value="{!plans}"></apex:selectOptions>
+            <apex:actionSupport event="onchange" reRender="apgo" status="myStatus"/>
+        </apex:selectList>
+        
+        <apex:outputPanel >
+            <apex:selectCheckboxes layout="pageDirection" value="{!selectedGO}" >
+                <apex:selectOptions value="{!goals}"></apex:selectOptions>
+            </apex:selectCheckboxes>
+        </apex:outputPanel>   
+        --> 
+       <!--  required="true"  -->
+       <apex:inputText id="start_date" size="10" onfocus="DatePicker.pickDate(false, this , false);" styleClass="datepicker" label="Start Date" value="{!StartDate }"/>
+       <apex:inputText id="end_date"  size="10" onfocus="DatePicker.pickDate(false, this , false);" styleClass="datepicker" label="End Date" value="{!EndDate }"/>
+        
+    </apex:pageBlockSection>
+
+    </apex:pageBlock>
+</apex:form>
+<apex:outputPanel id="dataTable">
+<apex:pageBlock >
+    <apex:pageBlockButtons > 
+        <div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div>
+    </apex:pageBlockButtons>
+
+<table id="mytbl" width="100%" cellpadding="0" cellspacing="0" >
+<thead class="headRow">
+    <tr class="headRow">
+        <td class="headRow" width="90px">Shift Note</td>
+        <td class="headRow" width="90px">Start Time</td>
+        <td class="headRow" width="90px">End Time</td>
+        <td class="headRow">Written By</td>
+        <td class="headRow">Action Plan</td>
+        <td class="headRow" width="300px"><div class="txtcol">Goal</div></td>
+        <td class="headRow" width="300px"><div class="txtcol">Objective</div></td>
+        <td class="headRow" width="300px"><div class="txtcol">Narrative</div></td>  
+    </tr>
+</thead>
+<apex:repeat value="{!note_plan_joins }" var="item">
+    <tr>
+        <td><apex:outputLink value="/{!item.progress_Note__c }">View</apex:outputLink></td>
+        <td><div class="timecol"><apex:outputField value="{!item.Progress_Note__r.Start_Time__c}"/></div></td>
+        <td><div class="timecol"><apex:outputField value="{!item.Progress_Note__r.End_Time__c}"/></div></td>
+        <td><apex:outputField value="{!item.Progress_Note__r.CreatedByid}"/></td>
+        <td><apex:outputField value="{!item.Progress_Note__r.Action_Plan__c}"/></td>
+        <td><div class="txtcol"><apex:outputField value="{!item.Goal__r.Description__c}"/></div></td>
+        <td><div class="txtcol"><apex:outputField value="{!item.Objective__r.Description__c}"/></div></td>
+        <td><div class="txtcol"><apex:outputField value="{!item.Progress_Note__r.Narrative__c}"/></div></td>
+
+    </tr>
+
+</apex:repeat>
+</table>
+
+</apex:pageBlock>
+</apex:outputPanel>
+
+<apex:actionStatus id="myStatus" >
+    <apex:facet name="start">
+        <div  class="thinking">
+            <div class="thinkingwheel">    
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>   
+    </apex:facet>  
+    <apex:facet name="stop"> </apex:facet>         
+</apex:actionStatus> 
+<script>
+j$ = jQuery.noConflict();
+function createtbl(){
+    j$('#mytbl').dataTable({"bPaginate": false, "bFilter": false});
+}
+j$(document).ready(function(){
+    createtbl();
+});
+var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+  }
+})()
+</script>
+</apex:page>

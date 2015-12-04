@@ -1,0 +1,25 @@
+<apex:page StandardController="Funding_Source__c" extensions="neuroreportofserviceController" contentType="application/vnd.ms-excel#NeuroAuthorizedUnits-{!today()}.xls">
+	<apex:pageBlock >
+        <apex:pageBlockTable value="{!lineItems}" var="li"   >
+            <apex:column value="{!li.fundingSource.Name}" />
+            <apex:column value="{!li.fundingSource.Service_Assignment__r.Person_Being_Served__r.Name}" HeaderValue="Person Being Served"/>
+            <apex:column value="{!li.fundingSource.Service_Assignment__c}" />
+            <apex:column value="{!li.fundingSource.Case_Manager__r.Name}" headerValue="Case Manager"/>
+            <apex:column value="{!li.fundingSource.Total_Authorized_Therapy_Units__c}" />
+            <apex:column value="{!li.otRollup}" headerValue="OT PN Sum"/>
+            <apex:column value="{!li.fundingSource.OT_Auth_Units__c}" headerValue="OT" />
+            <apex:column value="{!li.ptRollup}" headerValue="PT PN Sum"/>
+            <apex:column value="{!li.fundingSource.PT_Auth_units__c}" headerValue="PT"/>
+            <apex:column value="{!li.slpRollup}" headerValue="SLP PN Sum" />
+            <apex:column value="{!li.fundingSource.SLP_Auth_Units__c}" headerValue="SLP"/>
+            <apex:column value="{!li.bitRollup}" headerValue="BIT PN Sum" />
+            <apex:column value="{!li.fundingSource.BIT_Auth_Units__c}" headerValue="BIT"/>
+            <apex:column value="{!li.counsellingRollup}" headerValue="Counseling PN Sum" />
+            <apex:column value="{!li.fundingSource.Counselling_Auth_Units__c}" headerValue="Counseling"/>
+            <apex:column value="{!li.fundingSource.Auth_Units_Grand_Total__c}" />
+            <apex:column value="{!li.fundingSource.Auth_Excess_Justification__c}" />
+            <apex:column value="{!li.fundingSource.Effective_Date_of_Cost_therapy_Auth__c}" />
+            <apex:column value="{!li.fundingSource.Term_Date_of_Cost_therapy_Auth__c}" />
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>
