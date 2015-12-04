@@ -2,10 +2,10 @@ public without sharing class DSP_BehaviorTracking {
 	
 	public Date startdate { get; set; } 
 	private Action_Plan_Worksheet__c result;
-	private transient List<Action_Plan_Objective__c > privateobjectives;
 	private APOWrapper currentObjective;
 	public ID APId { get; private set;}
 	public id currentObjectiveid {get;set;}
+	public List<APOWrapper> Objectives { get; set; }
 	public ID wsID { get; set; }
 	public Map<ID, ABRWrapper> originalData { get; set; }
 
@@ -30,28 +30,29 @@ public without sharing class DSP_BehaviorTracking {
 		currentObjectiveid = objID;
 		system.debug( result.start_date__c );
 		
+		privateTables = calcTables();
 		originalData = ResultMap( result.start_date__c);
 		
 	}
 
 	public boolean editable { get { return !result.Action_plan__r.Status__c.contains('Inactive');}}
 
-	private List<Table >  calcTables(){
+	private List<Table>  calcTables(){
 		Date firstDay = result.Start_Date__c;
-		privateobjectives = ReportableBehaviorObjectives(firstDay);
+		objectives = ReportableBehaviorObjectives(firstDay);
 		List<Table> out = new List<Table>();
 
-		for(Action_Plan_Objective__c objective:privateobjectives){
-			if (currentObjectiveId == objective.Id){
-				currentObjective = new APOWrapper(objective);
+		for(APOWrapper o: objectives){
+			if (currentObjectiveId == o.Id){
+				currentObjective = o;
 				break;
 			}
 		}
 		if (currentObjective == null){
-			if (privateObjectives.size() == 0){
+			if (objectives.size() == 0){
 				return out;
 			}
-			currentObjective = new APOWrapper(privateObjectives[0]);
+			currentObjective = objectives[0];
 			currentObjectiveID = currentObjective.id;
 		}
 
@@ -117,8 +118,8 @@ public without sharing class DSP_BehaviorTracking {
 		return objective.oType == 'Behavior - Duration';
 	}
 
-	private List<Action_Plan_Objective__c> ReportableBehaviorObjectives(Date firstDay){
-		return [ select Description__c, effective_Date__c, Target_end_date__c, Type__c
+	private List<APOWrapper> ReportableBehaviorObjectives(Date firstDay){
+		List<Action_Plan_objective__c> objs = [ select Description__c, effective_Date__c, Target_end_date__c, Type__c
 				from  Action_Plan_Objective__c
 				where Action_Plan_Goal__r.Action_Plan__c = :result.Action_Plan__c
 					and ((effective_date__c < :firstDay.addMonths(1)) or (effective_date__c = null))
@@ -126,6 +127,13 @@ public without sharing class DSP_BehaviorTracking {
 					and (Type__c = 'Behavior - Count' or Type__c = 'Behavior - Duration')
 					and (Status__c = 'In Progress' or Status__c = 'Revised' or Status__c = 'New')
 				order by action_plan_goal__r.sort_order__c, action_plan_goal__c,  sort_order__c];
+		
+		List<APOWrapper> objwraplist = new List<APOWrapper>();
+				
+		for (Action_Plan_Objective__c o : objs ) {
+			objwraplist.add(new APOWrapper(o));
+		}
+		return objwraplist;
 	}
 
 	private List<Action_Behavior_Result__c> ResultsForObjective(APOWrapper objective, Date firstDay){
@@ -139,9 +147,9 @@ public without sharing class DSP_BehaviorTracking {
 
 	private Map<id, ABRWrapper> ResultMap(Date firstDay){
 		Map<id, ABRWrapper> origData = new Map<id, ABRWrapper>();
-		for(Action_Plan_Objective__c objective: ReportableBehaviorObjectives(firstDay)){
+		for(APOWrapper objective: objectives){
 			if (objective.id == currentObjectiveId){
-				for(Action_Behavior_Result__c result: ResultsForObjective(new APOWrapper(objective), firstDay)){
+				for(Action_Behavior_Result__c result: ResultsForObjective(objective, firstDay)){
 					origData.Put(result.id, new ABRWrapper(result));
 				}
 			}
@@ -198,15 +206,6 @@ public without sharing class DSP_BehaviorTracking {
 		return privateTables;
 	}}
 
-	public List<Action_Plan_Objective__c> Objectives {
-	get {
-		if (privateObjectives == null) {
-			privateTables = calcTables();
-		}
-		return privateObjectives;
-	}}
-
-	
 	public class Table {
 		public List<integer> FirstKeys {get;set;}
 		public List<Date> PartOneSecondKeys {get;set;}
