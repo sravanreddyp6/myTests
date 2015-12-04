@@ -20,6 +20,7 @@ public class referral_Controller2_Test{
         Test.setCurrentPage(pageRef);
         ApexPages.StandardController sc = new ApexPages.StandardController(ref);
         referral_Controller2 controller = new referral_Controller2(sc);
+        Test.startTest();
         Funding_Source__c fundSourceProp = controller.fundingSource;
         system.assertEquals(Utility.getRecordTypeForFundingSource('Generic'), fundSourceProp.RecordTypeId);
         Task taskProp = controller.activity;
@@ -119,5 +120,6 @@ public class referral_Controller2_Test{
         controller.dummyTask.OwnerId = u.Id;
         controller.addAdmissionSteps();
         System.assertEquals(oldNumTask + 9, controller.activities.size());
+        Test.stopTest();
     }
 }
