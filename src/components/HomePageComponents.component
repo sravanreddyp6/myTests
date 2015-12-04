@@ -1,0 +1,129 @@
+<apex:component controller="HomePageTileController">
+
+	<!-- Bootstrap core CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
+	<!-- Custom styles for this template -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" />
+
+	<script>
+		j$ = jQuery.noConflict();
+
+		function showHideList(obj, test) {
+			var objt = obj;
+			var testt = test;
+
+			if (objt == 'Referrals' && testt == 'links') {
+				var text1 = 'ref';
+			} else if (objt == 'Referrals' && testt == 'reports') {
+				var text1 = 'refrpt';
+			}
+			if (objt == 'Person Being Served' && testt == 'links') {
+				var text1 = 'PBS';
+			} else if (objt == 'Person Being Served' && testt == 'reports') {
+				var text1 = 'PBSrpt';
+			}
+			if (objt == 'TMN Contacts' && testt == 'links') {
+				var text1 = 'TMN';
+			} else if (objt == 'TMN Contacts' && testt == 'reports') {
+				var text1 = 'TMNrpt';
+			}
+			if (objt == 'Contract Management' && testt == 'links') {
+				var text1 = 'con';
+			} else if (objt == 'Contract Management' && testt == 'reports') {
+				var text1 = 'conrpt';
+			}
+			if (objt == 'Documents' && testt == 'links') {
+				var text1 = 'docs';
+			} else if (objt == 'Documents' && testt == 'reports') {
+				var text1 = 'docsrpt';
+			}
+
+			j$('#' + text1).slideToggle();
+		}
+	</script>
+	<style>
+	/* these are overrides of the bootstrap css just for home page */
+	/* when we move to overall branding changes, remove this */
+	.panel {
+	display: inline-block;
+	vertical-align:top;
+	width:19%;
+	*width: expression(Math.floor(0.2 * (this.parentNode.offsetWidth - parseFloat(this.parentNode.currentStyle.paddingLeft) - parseFloat(this.parentNode.currentStyle.paddingRight)) - 50) + "px");
+	margin-left:5px; margin-right:5px;
+	float:left;
+	font-size:12px;
+	}
+	.panel a {
+	color:#253e76;
+
+	}
+	.panel-heading {
+	color:#000 !important;
+	font-weight:bold !important;
+	font-size:14px;
+	}
+	body {
+	  //font-family: Georgia, "Times New Roman", Times, serif;
+	  font-family: Arial, sans-serif;
+	  font-size: 13px !important;
+	  color: #555;
+	}
+
+
+	</style>
+	<apex:attribute name="objectName" type="string" description="this is the object name" required="true" />
+
+	<apex:outputPanel rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Person Being Served',PBSView,if(objectName=='TMN Contacts',TMNView,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,if(objectName=='Incidents',IncView,false)))))))}">
+
+	<div class="panel panel-success" style="display:inline-block; vertical-align:top">
+	<div class="panel-heading">{!objectName}</div>
+	<div class="panel-body">
+			<apex:outputPanel layout="none" rendered="{!objectName=='Referrals'}">
+				<apex:outputText rendered="{!(RefCreate==true)}"><a href="/apex/referral">Create New Referral</a><br /></apex:outputText>
+				<a href="/apex/ReferralSearch">Search Referrals</a><br />
+				<a href="/{!referralPrefix}?fcf={!ReferralViews['all']}">View All Referrals</a><br />
+				<a href="/{!referralPrefix}?fcf={!ReferralViews['my']}">View My Referrals</a><br />
+			</apex:outputPanel>
+
+			<apex:outputPanel layout="none" rendered="{!objectName=='Person Being Served'}">
+				<apex:outputText rendered="{! (PBSCreate==true) && ($User.Operating_Group__c != 'Cambridge' )&& ($User.Operating_Group__c != 'Redwood' ) && ($User.Operating_Group__c != 'NeuroRestorative')  && !isCAFSS}">
+					<a href="{!URLFOR($Action.Account.New)}">Add New Person Being Served</a><br />
+				</apex:outputText>
+				<apex:outputText rendered="{!$User.Operating_Group__c != 'Care Meridian' &&
+											 !($User.Operating_Group__c == 'Redwood' && BEGINS($UserRole.DeveloperName, 'IA'))}">
+					<a href="/apex/PersonsBeingServedListView?filterId={!personsBeingServedViews['recent']}">My Recently Viewed Persons Being Served</a><br />
+				</apex:outputText>
+				<apex:outputPanel rendered="{!$ObjectType.Clinical_Catalog__c.updateable}"><apex:outputLink value="/apex/CatalogAndPrograms">Manage Plan Builder Content</apex:outputLink><br /></apex:outputPanel>
+				<apex:outputPanel rendered="{!$ObjectType.PB_DocPacket__c.updateable}"><apex:outputLink value="/apex/PB_NetworkSelection">Manage Admission Packet Content</apex:outputLink><br /></apex:outputPanel>
+				<apex:outputPanel rendered="{!$ObjectType.Service_Location__c.updateable}"><apex:outputLink value="/apex/manageServiceLocations"> Manage Service Locations</apex:outputLink><br/></apex:outputPanel>
+			</apex:outputPanel>
+
+			<apex:outputPanel layout="none" rendered="{!objectName=='TMN Contacts'}">
+				<apex:outputText rendered="{!(TMNCreate==true)}"><a href="/apex/MentorEdit?retURL=%2Fapex%2FTmnContactListView">Create New Contact</a><br /></apex:outputText>
+				<a href="/apex/TmnContactListView?j_id0%3Aj_id3%3Afcf={!(TMNViews['my'])}">My Recently Viewed Contacts</a><br />
+			</apex:outputPanel>
+
+			<apex:outputPanel layout="none" rendered="{!objectName=='Contract Management'}">
+				<apex:outputText rendered="{!(ContractCreate==true)}"><a href="/apex/EditDetailsContract?retURL=%2Fapex%2FTabContract">Create New Contract</a><br/></apex:outputText>
+				<a href="/apex/TabContract">View All Contracts</a><br />
+			</apex:outputPanel>
+
+			<apex:outputPanel layout="none" rendered="{!objectName=='Documents'}">
+				<apex:outputText rendered="{!(DocCreate==true)}"><a href="/apex/Document_Edit?save_new=1">Create New Document</a><br /></apex:outputText>
+				<a href="/apex/DocumentListView">View All Documents</a><br />
+			</apex:outputPanel>
+			
+			<apex:outputPanel layout="none" rendered="{!objectName=='Incidents'}">
+				<apex:outputPanel rendered="{!IncCreate}" >
+					<apex:commandLink value="Create New Incident" onclick="openModalDialog('incidentTypeModal', 'div', 'Choose Incident Type', null, 400, 'mainForm', false); return false;" /><br/>
+				</apex:outputPanel>
+				<a href="/apex/incidentsListView?flag=MY" >View Incidents Created by Me</a><br/>
+				<a href="/apex/incidentsListView?flag=ALL">View All Incidents</a><br />
+			</apex:outputPanel>
+
+			<a href="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</a>
+
+	</div>
+</div>
+	</apex:outputPanel>
+</apex:component>
