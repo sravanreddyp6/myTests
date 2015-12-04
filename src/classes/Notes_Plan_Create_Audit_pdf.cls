@@ -33,34 +33,6 @@ public with sharing class Notes_Plan_Create_Audit_pdf {
     }
 
 
- static testMethod void testMyController()
-   {      
-        Notes_Plan_Create_Audit_pdf controller = new Notes_Plan_Create_Audit_pdf ();
-        
-      Contact testContact = new Contact(
-        LastName = 'TestLastName'
-      );
-      insert testContact;
-      
-      Admission__c testAdm = new Admission__c(
-            Name = 'TEST ADM',
-            Person_Being_Served__c = testContact.Id,
-            Effective_Date__c = date.today(),
-            Admission_Effective_DateTime__c = DateTime.Now()
-      );
-      insert testAdm;
-        
-        
-        
-        Plan__c testPlan = new Plan__c(Status__c = 'Inactive', Long_Term_Goal_1__c = '12', Admission__c = testAdm.id);
-        insert testPlan;
-        controller.myID = testPlan.ID;
-        controller.redirect();
-        
-      //  controller.getdocs();
-        //controller.nothing();        
-   }
-
-
+ 
 
 }
