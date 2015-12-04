@@ -554,7 +554,9 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }" />
-                <apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }">
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!editSA}">
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockSectionItem rendered="{!!editSA}">
                     <label for="pStartDate">Start Date</label>
@@ -759,8 +761,11 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:outputField value="{!theServAssign.Specify_Error__c}" rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }" />
-                <apex:pageBlockSectionItem >
+                <apex:pageBlockSectionItem rendered="{!(!editSA && theServAssign.Status__c == 'Created in Error') }">
                 </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!editSA}">
+                </apex:pageBlockSectionItem>
+                
                 <apex:pageBlockSectionItem rendered="{!!editSA}">
                     <label for="pStartDate" >Start Date</label>                 
                     <apex:outputPanel >                 
