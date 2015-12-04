@@ -49,7 +49,7 @@
 		mso-number-format: "m\/dd\/yyyy";
 	}
 	.styleDatetime{
-		mso-number-format: "mm\\/dd\\/yyyy"";
+		mso-number-format: "m\/dd\/yyyy HH:MM";
 	}
 	
 	.expPeriod {
@@ -120,11 +120,11 @@
 							<td>Admission {!s.Admission__r.Admission_Hidden__c} - {!LEFT(s.Person_Being_Served__r.FirstName, 1)} {!s.Person_Being_Served__r.LastName}</td>
 							<td>{!s.Admission__r.State__c}</td>
 							<td>{!s.Admission__r.Status__c}</td>
-							<td class="printText"><c:MilitaryDatetime dateTimeVal="{!s.Admission__r.Admission_Effective_DateTime__c}" /> </td>
+							<td class="styleDatetime"> <apex:outputText value=" {!s.Admission__r.Admission_Effective_DateTime__c}" /> </td>
 							<td class="printText"><apex:outputText value=" {!s.Admission__r.Discharged_Date__c}"/></td>
 							<td>{!s.Name}</td>
 							<td>{!s.Status__c}</td>
-							<td class="printText"><c:MilitaryDatetime dateTimeVal="{!s.SA_Start_DateTime__c}" /></td>
+							<td class="styleDatetime"><apex:outputtext value=" {!s.SA_Start_DateTime__c}"/></td>
 							<td class="printText">{!s.End_Date__c}</td>
 							<td class="printText">{!s.Alias__c}</td>
 							<td class="printText">{!s.Service_location__r.ProgramID__c}</td>
@@ -138,7 +138,7 @@
 							<td>{!IF(s.Status__c == 'Active','',s.Is_this_transfer_to_another_ServAssign__c)}</td>
 							<td>{!s.Highest_Level_of_Education_at_Start__c}</td>
 							<td>{!s.Service_Began_via_Acquisition_Company__c}</td>
-							 <td>{!IF(s.Status__c == 'Active','',s.Service_Ended_via_Business_Divested__c)}</td>
+							<td>{!IF(s.Status__c == 'Active','',s.Service_Ended_via_Business_Divested__c)}</td>
 							<td>{!s.Was_dissatisfaction_reason_for_service_e__c}</td>
 							<td>{!s.Who_was_dissatisfied__c}</td>
 							<td>{!s.Primary_Reason_for_Dissatisfaction__c}</td>
