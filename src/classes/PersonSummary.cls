@@ -20,6 +20,10 @@ public with sharing class PersonSummary {
     private static map<String, String> fundingSrcFldLbls = new map<String, String>();
     public map<String, String> getFundingSrcFldLbls(){return fundingSrcFldLbls;}    
     private map<String, Object> fundingSrcFldVals = new map<String, Object>();
+    public Contact currentContact{ get { return [ select id, Birthdate, accountid, ownerid ,Age_year__c,Age_month__c,Age_days__c from contact where id = :pbsId]; }
+                                    set; }
+    public String age {set;get{	return Utility.getAge(this.currentContact.Age_year__c,this.currentContact.Age_month__c,this.currentContact.Age_days__c);	}}
+    
     public map<String, Object> getFundingSrcFldVals(){return fundingSrcFldVals;}
     public String fundingSrcFldValsKeys {get;set;}
     

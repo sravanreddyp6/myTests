@@ -272,7 +272,7 @@ private class ServiceAssignmentExtTest {
         }
     }
     
-    public testmethod static void showdiagnosis(){
+  /*  public testmethod static void showdiagnosis(){
         User tester = Referral_createTestData.createTestUser('astest', 'astest@test.com',  'Action', 'Summary', 'Redwood');
         System.runAs(tester){ 
             CreateObjects();
@@ -301,7 +301,7 @@ private class ServiceAssignmentExtTest {
             system.assertEquals(true, ServiceAssignmentExt.saveSingleDiagnosis('',datetime.now().getTime(), 'Axis_I','', '', '', '', '', '', '', '', null));
             system.assertEquals('Axis_I', ServiceAssignmentExt.loadDiagnosis([select Id from Diagnosis__c].id).Axis_I__c);
             system.assertEquals(true, ServiceAssignmentExt.saveSingleDiagnosis([select Id from Diagnosis__c].id,datetime.now().getTime(), 'Axis_I','', '', '', '', '', '', '', '', null));
-    }
+    } */
     
     public testmethod static void remoteActionLoadSaveServiceLocation(){
     	       CreateObjects();
@@ -420,7 +420,7 @@ private class ServiceAssignmentExtTest {
         Adm = new Admission__c(
             Name = 'TEST ADM',
             Person_Being_Served__c = aContactId,
-            Effective_Date__c = date.newInstance(2013, 1, 1),
+            Admission_Effective_DateTime__c = datetime.newInstance(2013, 1, 1, 13, 0, 0),
             Status__c = 'Active',
             State__c = 'NC'
         );
