@@ -300,7 +300,7 @@ IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; ( MONTH(TODAY()) - MON
 
 IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; (MONTH(TODAY()) - MONTH(Date_of_Birth__c)==1 ) &amp;&amp; (DAY(Date_of_Birth__c)  - DAY(TODAY())&gt;1),1,700), TEXT( DAY(TODAY() -DAY(Date_of_Birth__c) ))+&quot; Days&quot;,
 IF( (YEAR(TODAY()) -Year(Date_of_Birth__c)==0) &amp;&amp; ( MONTH(TODAY()) - MONTH(Date_of_Birth__c)==0) &amp;&amp;  (DAY(TODAY()) - DAY(Date_of_Birth__c))&gt;1,1,800), TEXT( DAY(TODAY() -DAY(Date_of_Birth__c) ))+&quot; Days&quot;,
-IF(Age_year__c &gt;= 1, TEXT(Age_year__c)+&quot; Years&quot;, IF(VALUE(TEXT(Age_month__c)) &gt;= 1, TEXT(Age_month__c)+&quot; Months &quot; + TEXT(Age_days__c)+&quot; Days&quot;,IF(VALUE(TEXT(Age_month__c)) &gt;= 1, TEXT(Age_days__c)+&quot; Days&quot;, &quot;&quot;))) 
+IF(Age_year__c &gt;= 1, TEXT(Age_year__c)+&quot; Years&quot;, IF(VALUE(TEXT(Age_month__c)) &gt;= 1, TEXT(Age_month__c)+&quot; Months &quot;,IF(VALUE(TEXT(Age_days__c)) &gt;= 1, TEXT(Age_days__c)+&quot; Days&quot;, &quot;&quot;)))
 )</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Age_text</label>
