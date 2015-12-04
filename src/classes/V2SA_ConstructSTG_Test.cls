@@ -18,6 +18,7 @@ private class V2SA_ConstructSTG_Test {
         Admission__c objAdmission = new Admission__c();
         objAdmission.Name = 'Test Admission';
         objAdmission.Person_Being_Served__c = objContactServed.Id;
+        objAdmission.Admission_Effective_DateTime__c = DateTime.now();
         objAdmission.Discharged_Date__c = system.today();
         objAdmission.Status__c = 'Discharged';
         objAdmission.Reason_for_Discharge__c ='just because';
@@ -27,6 +28,7 @@ private class V2SA_ConstructSTG_Test {
         Admission__c objAdmission2 = new Admission__c();
         objAdmission2.Name = 'Test Admission';
         objAdmission2.Person_Being_Served__c = objContactServed.Id;
+        objAdmission2.Admission_Effective_DateTime__c = DateTime.now();
         
         insert objAdmission2;        
         

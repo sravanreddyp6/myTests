@@ -49,6 +49,7 @@ private class AdmissionValidationTEST {
             Name = 'TEST ADM',
             Person_Being_Served__c = aContactId,
             Effective_Date__c = date.newInstance(2013, 1, 1),
+            Admission_Effective_DateTime__c = DateTime.NewInstance(2013, 1, 1, 0,0,0),
             Discharged_Date__c = date.newInstance(2013, 6, 30),
             Status__c = 'Discharged',
             Discharged_Status__c = 'Positive',
@@ -62,6 +63,7 @@ private class AdmissionValidationTEST {
             Name = 'TEST ADM 2',
             Person_Being_Served__c = aContactId,
             Effective_Date__c = date.newInstance(2013, 7, 1),
+            Admission_Effective_DateTime__c = DateTime.NewInstance(2013, 7, 1, 0,0,0),
             Network_Offering__c = 'ARY',
             State__c = 'AZ'
         );
@@ -71,6 +73,7 @@ private class AdmissionValidationTEST {
             Name = 'TEST ADM 3',
             Person_Being_Served__c = aContactId,
             Effective_Date__c = date.newInstance(2013, 9, 1),
+            Admission_Effective_DateTime__c = DateTime.NewInstance(2013, 9, 1, 0,0,0),
             Network_Offering__c = 'ARY',
             State__c = 'AZ'
         );
@@ -200,6 +203,7 @@ private class AdmissionValidationTEST {
             Name = 'TEST ADM',
             Person_Being_Served__c = aContactId,
             Effective_Date__c = date.newInstance(2013, 1, 1),
+            Admission_Effective_DateTime__c = DateTime.NewInstance(2013, 1, 1, 0,0,0),
             Discharged_Date__c = null,
             Status__c = 'Active',
             Discharged_Status__c = null,
@@ -246,6 +250,7 @@ private class AdmissionValidationTEST {
             Name = 'TEST ADM 4',
             Person_Being_Served__c = aContactId,
             Effective_Date__c = date.newInstance(2013, 1, 1),
+            Admission_Effective_DateTime__c = DateTime.NewInstance(2013, 1, 1, 0,0,0),
             Discharged_Date__c = date.newInstance(2013, 6, 30),
             Status__c = 'Discharged',
             Discharged_Status__c = 'Positive',

@@ -49,7 +49,8 @@ public with sharing class PersonsBeingServedListControllerTest {
         ];
         Admission__c admission = new Admission__c(
             Name='TestName',
-            Person_Being_Served__c=accts[0].PersonContactId
+            Person_Being_Served__c=accts[0].PersonContactId,
+            Admission_Effective_DateTime__c = DateTime.now()
         );
         insert admission;
         Service_Assignment__c sa = new Service_Assignment__c(

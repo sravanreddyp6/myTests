@@ -77,6 +77,7 @@ private class AdmissionDocumentControllerTest {
 
         adm = new Admission__c();
         adm.person_being_served__c = person.id;
+        adm.Admission_Effective_DateTime__c = DateTime.NewInstance(2013, 10, 10, 0,0,0);
         insert adm;
 
 		//create a packet		

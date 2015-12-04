@@ -93,6 +93,7 @@ private class ServiceAssignmentTriggeredActionsTest {
 								            Name = 'TEST ADM',
 								            Person_Being_Served__c = contactID,
 								            Effective_Date__c = DATE.TODAY(),
+								            Admission_Effective_DateTime__c = DateTime.now(),
 								            //Discharged_Date__c = date.today(),
 								            //Status__c = 'Discharged',
 								            //Discharged_Status__c = 'Positive',

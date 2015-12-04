@@ -26,6 +26,7 @@ public with sharing class Report_CANS_OverdueAssessments_Test {
 			Name = 'TEST ADM 2',
 			Person_Being_Served__c = aContactId,
 			Effective_Date__c = date.newInstance(2013, 7, 1),
+			Admission_Effective_DateTime__c = DateTime.newInstance(2013, 7, 1, 0,0,0),
 			Network_Offering__c = 'ARY',
 			State__c = 'AZ'
 		);
