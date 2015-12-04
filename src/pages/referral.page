@@ -174,7 +174,7 @@
             
             //Sravan - use this function to clear the link for Name fields in pageBlock Tables
             clearLink = function(){
-            	j$(".dataCell.noLink a").parent().html(j$(".dataCell.noLink a").html());
+            	j$(".dataCell.noLink a").contents().unwrap();
             }
             clearLink();
             
@@ -1497,7 +1497,7 @@
             <apex:outputPanel id="searchDialog" style="display:none">
                 <apex:pageBlock id="block">
                     <apex:pageblockButtons location="top">
-                        <input type="button" class="btn" value="Cancel" onclick="closeModalDialog('searchDialog', 'span');return false;" />
+                        <input type="button" class="btn" value="Cancel" onclick="closeModalDialog('searchDialog', 'span'); clearLink(); return false;" />
                     </apex:pageblockButtons>
                     <apex:pageBlockButtons id="buttons" location="bottom">
                         <apex:outputPanel rendered="{!IF(searchedServiceLocationResultSize!=0,True,False)}">
@@ -1516,7 +1516,7 @@
 					<apex:pageMessage severity="warning" strength="1" summary="Please use at least one parameter to search Service Locations"  />
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nameFilter}" id="nameFilter" size="6"/>&nbsp;&nbsp;
-                    <apex:outputLabel >Nick Name&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                    <apex:outputLabel >Location Nickname&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nickNameFilter}" id="nickNameFilter" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!cityFilter}" size="15"/>
@@ -1587,7 +1587,7 @@
 					<apex:pageMessage severity="warning" strength="1" summary="Please use at least one parameter to search Service Locations"  />
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nameFilter2}" id="nameFilter2" size="6"/>&nbsp;&nbsp;
-                    <apex:outputLabel >Nick Name&nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                    <apex:outputLabel >Location Nickname&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nicknameFilter2}" id="nicknameFilter2" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!cityFilter2}" size="15"/>
