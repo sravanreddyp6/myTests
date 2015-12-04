@@ -1,5 +1,6 @@
 public with sharing class EvalDynamicExt {
 
+	public Boolean showMainComponent { get; set; }
 	public ID evalID { get; set; }
 	public ID PBSID { get; set; }
 	public ID AdmID { get; set; }
