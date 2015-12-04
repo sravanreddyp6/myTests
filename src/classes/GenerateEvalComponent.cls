@@ -889,7 +889,12 @@ public with sharing class GenerateEvalComponent {
 
 	@RemoteAction
 	public static EvalValue[] getPreviousEntries(String composite, Id serviceAssignmentId) {
-		List<Evaluation__c> evaluations = [SELECT Id FROM Evaluation__c WHERE ServiceAssignment__c = :serviceAssignmentId];
+		List<Evaluation__c> evaluations = [
+			SELECT Id
+			  FROM Evaluation__c
+			 WHERE ServiceAssignment__c = :serviceAssignmentId
+			   AND Status__c != 'Disregard'
+		];
 		String evaluationStr = '(';
 		for (Evaluation__c evaluation: evaluations) {
 			evaluationStr += '\'' + evaluation.Id + '\', ';
