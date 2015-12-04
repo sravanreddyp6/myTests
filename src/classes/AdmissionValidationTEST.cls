@@ -82,9 +82,7 @@ private class AdmissionValidationTEST {
             insert Adm3;
         }
         catch(DmlException e){
-            System.Assert( e.getMessage().contains('You have attempted to create an Admission for a Person Being Served with one or ' +
-            'more existing Admissions that lack a Discharged Date. Please check the Discharged Date value(s) of the associated Admission(s) ' +
-            'and adjust as needed.'), e.getMessage() );
+            System.Assert( e.getMessage().contains('This Admission can not be set to Active until there are no other Active Admissions for this PBS'), e.getMessage() );
         }
 
 
@@ -150,9 +148,7 @@ private class AdmissionValidationTEST {
                update Adm2;
         }
         catch(DmlException e){
-            System.Assert( e.getMessage().contains('You have attempted to discharge an admission with one or more active service ' +
-            'assignments associated. Please check the Status value(s) of the associated service assignment(s) and adjust as ' +
-            'needed.'), e.getMessage() );
+            System.Assert( e.getMessage().contains('Discharged Date cannot be before a Service Assignment End Date'), e.getMessage() );
         }
 
         ServAssign.Status__c = 'Active';
