@@ -1892,10 +1892,7 @@
                 		<apex:inputField value="{!Referral__c.Guardianship_Type__c}" id="guardianShipType"  html-data-visibility-rules="{&quot;Partial Guardianship/Conservatorship&quot;: [&quot;{!$Component.partialGuardianShip}&quot;, &quot;{!$Component.partialGuardianShipLabel}&quot;]}"/>
                 		<br/>
                 		<br/>
-						<div class="requiredInput">
-                            <div class="requiredBlock"></div>
                 		<apex:inputField value="{!Referral__c.Partial_Guardianship_Conservatorship__c}" id="partialGuardianShip" />
-                		</div>
                 	</apex:outputPanel>
                 </apex:pageBlocksectionitem>
 
@@ -2593,7 +2590,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 <apex:pageBlockTable value="{!locations}" var="location" id="referralLocations">
-                    <apex:column headerValue="Alias" value="{!location.Service_location__c}" styleClass="noLink" />
+                    <apex:column headerValue="Alias" value="{!location.Service_Location__c}" styleClass="noLink" />
                     <apex:column value="{!location.Service_Location__r.ProgramID__c}" headerValue="Program Code" />
                     <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="Location Nickname" />
                     <apex:column headerValue="Address">
