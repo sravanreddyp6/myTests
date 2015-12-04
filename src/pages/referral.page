@@ -172,7 +172,7 @@
             j$('[id$=sfps]').addClass('refRequiedFields')
             }
             
-            //use this function to clear the link for Name fields in pageBlock Tables
+            //Sravan - use this function to clear the link for Name fields in pageBlock Tables
             clearLink = function(){
             	j$(".dataCell.noLink a").parent().html(j$(".dataCell.noLink a").html());
             }
@@ -1539,9 +1539,9 @@
                         </apex:column>
                         <apex:column headerValue="Address" >
 		     				<apex:outputPanel >
-		     					<c:AddressDisplay Street1="{!r.Street__c}" city="{!r.City__c}"
-			  						state="{!r.State__c}" zip="{!r.Zip__c}" /><br />
-			  					<apex:outputText value="{!r.Phone__c}" />	
+		     					<c:AddressDisplay city="{!r.City__c}"
+			  						state="{!r.State__c}" />
+<!-- 			  					<apex:outputText value="{!r.Phone__c}" />	 -->
 			  				</apex:outputPanel>
 		     			</apex:column>
                         <apex:column headerValue="TMN Scope">
@@ -1610,9 +1610,9 @@
                         </apex:column>
                         <apex:column headerValue="Address" >
 		     				<apex:outputPanel >
-		     					<c:AddressDisplay Street1="{!r.Street__c}" city="{!r.City__c}"
-			  						state="{!r.State__c}" zip="{!r.Zip__c}" /><br />
-			  					<apex:outputText value="{!r.Phone__c}" />	
+		     					<c:AddressDisplay city="{!r.City__c}"
+			  						state="{!r.State__c}" /><br />
+<!-- 			  					<apex:outputText value="{!r.Phone__c}" />	 -->
 			  				</apex:outputPanel>
 		     			</apex:column>
                         <apex:column headerValue="TMN Scope">
@@ -2598,8 +2598,8 @@
                     <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="Location Nickname" />
                     <apex:column headerValue="Address">
                     	<apex:outputPanel >
-                        	<c:AddressDisplay Street1="{!location.Service_location__r.Street__c}" City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}" Zip="{!location.Service_Location__r.Zip__c}" /><br/>
-                        	<apex:outputText value="{!location.Service_Location__r.Phone__c}" />
+                        	<c:AddressDisplay City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}"/>
+<!--                         	<apex:outputText value="{!location.Service_Location__r.Phone__c}" /> -->
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column value="{!location.Service_location__r.Physical_Location__c}" headerValue="Physical Location"/>
