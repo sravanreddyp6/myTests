@@ -4,6 +4,7 @@
 	showHeader="false">
 	<html>
 <head>
+<apex:variable value="{!$User.Operating_Group__c == 'Redwood'}" var="vfVarIsRw" />	
 <style>
 @page {
 	counter-increment: pages; @ bottom-center { font-size : 0.7em;
@@ -90,7 +91,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
 				<apex:outputField value="{!Action_Summary__c.Finalized_By__c}"
 					rendered="{!Action_Summary__c.Status__c = 'Final'}" />
 			</apex:pageBlockSection>
-			<apex:pageBlockSection title="Vitals Detail Summary" columns="1">
+			<apex:pageBlockSection title="Vitals Detail Summary" columns="1"  rendered="{! !vfVarIsRw}">
 				<apex:outputPanel layout="block">
 					<apex:pageBlockTable value="{!vitalsDetails}" var="vital"
 						rows="{!LIST_LIMIT}" width="500px">
@@ -107,7 +108,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
 					</apex:pageBlockTable>
 				</apex:outputPanel>
 			</apex:pageBlockSection>
-			<apex:pageBlockSection title="Seizure Activity" columns="1">
+			<apex:pageBlockSection title="Seizure Activity" columns="1"  rendered="{! !vfVarIsRw}">
 				<apex:outputPanel layout="block" style="width: 100%; ">
 					<apex:pageBlockTable value="{!seizures}" var="seizure"
 						rows="{!LIST_LIMIT}" width="500px">
@@ -125,7 +126,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
 					</apex:pageBlockTable>
 				</apex:outputPanel>
 			</apex:pageBlockSection>
-			<apex:pageBlockSection title="Isolation Events" columns="1">
+			<apex:pageBlockSection title="Isolation Events" columns="1"  rendered="{! !vfVarIsRw}">
 				<apex:outputPanel layout="block" style="width: 100%">
 					<apex:pageBlockTable value="{!isolationEvents}" var="event"
 						rows="{!LIST_LIMIT}" width="500px">
@@ -139,7 +140,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
 					</apex:pageBlockTable>
 				</apex:outputPanel>
 			</apex:pageBlockSection>
-			<apex:pageBlockSection title="Restraint Events" columns="1">
+			<apex:pageBlockSection title="Restraint Events" columns="1"  rendered="{! !vfVarIsRw}">
 				<apex:outputPanel layout="block" style="width: 100%; ">
 					<apex:pageBlockTable value="{!restraintEvents}" var="event"
 						rows="{!LIST_LIMIT}" width="500px">
@@ -157,7 +158,7 @@ Just overflow things in a dialog instead of pagination -->.ui-dialog .apexp
 					</apex:pageBlockTable>
 				</apex:outputPanel>
 			</apex:pageBlockSection>
-			<apex:pageBlockSection title="Systems" columns="1">
+			<apex:pageBlockSection title="Systems" columns="1"  rendered="{! !vfVarIsRw}">
 				<apex:outputPanel layout="block" style="width: 100%; ">
 					<table class="list" cellspacing="0" cellpadding="0" border="0"
 						width="700px">
