@@ -24,24 +24,24 @@ public without sharing class ServiceAssignmentExt {
     public Boolean canEditPlan { get; private set; }
     public Boolean canCreateSummary { get; set; }
     public Boolean canEditSA { get; set; }
-    
+
     public Boolean canViewAuths { get; private set; }
 	public Boolean canEditAuths { get; private set; }
 	public Boolean canCreateAuths { get; private set; }
 	public List<Authorization__c> authList { get; set; }
 	public ID authRecTypeId { get; set; }
 	public Boolean authsIncDisregard { get; set; }
-	
+
     public static Boolean showServAssignCloseModal { get; set; }
     public string showServAssignCloseEditId {get; set; }
     public string servAssignCloseEditId { get; set; }
     public Service_Location__c serviceLocation { get; set; }
-    
-    
+
+
     //for funding source coverage level
     public list<selectoption> fundingCoverageOptions {get; set;}
     public Boolean hasPrimaryActiveFS {get; set;}
-    
+
     // Get/set info for contracts
     public List<TMN_Contract__c> contractsForThisServAssignsState { get; set; }
     public List<ServiceAssignment_Contract_JO__c> servAssignContractXrefs {get;set;}
@@ -128,17 +128,17 @@ public without sharing class ServiceAssignmentExt {
     public void updateLocation(){
         System.debug('-----------' + locationSetting);
     }
-    
+
     Public PageReference gotoAdmissionEditPage(){
         return new PageReference('/apex/AdmissionEdit?id=' + admissionId +'&Mode=Discharged&DischDate='+ effEnd );
     }
-    
+
     public pagereference gototServAssignViewPage(){
         PageReference backToServAssignPage = new PageReference('/apex/ServiceAssignmentEditNew?id=' + theServAssign.Id);
         backToServAssignPage.setRedirect(true);
         return backToServAssignPage;
     }
-    
+
     public void checkFullyDischarge(){
         System.debug('------------------'+disregardSA);
         if(disregardSA == false){
@@ -150,11 +150,11 @@ public without sharing class ServiceAssignmentExt {
                 dischargePopup = 'false';
             }
         }
-        
+
     }
-    
-    
-    
+
+
+
     private void setcanCreatePlan() {
         Schema.DescribeSObjectResult oSchema = Action_Plan__c.sObjectType.getDescribe();
         canCreatePlan = oSchema.IsCreateable();
@@ -172,7 +172,7 @@ public without sharing class ServiceAssignmentExt {
         options.add(new SelectOption('','--None--'));
         options.add(new SelectOption('Active','Active'));
         options.add(new SelectOption('Inactive','Inactive'));
-        
+
         if(this.theServAssign.Id!= Null){
             List<Progress_note__c> ProgNotes = [select id, Name, Status__c,service_assignment__c, owner.name,recordtype.developername,disregard_note__c from Progress_Note__c where service_assignment__c= : this.theServAssign.Id ];//and (status__c =: 'Final' or recordtype.developername =: 'Shift_Note' or disregard_note__c =:True)];
             if(ProgNotes.size()>0){
@@ -183,7 +183,7 @@ public without sharing class ServiceAssignmentExt {
                     if(pOpGroup == 'Care Meridian' && pn.RecordType.developername == 'Shift_Note')
                         AddCIE = True ;
                     if(pn.status__c == 'Final' && pn.disregard_note__c == False)
-                        AddCIE = True  ;                      
+                        AddCIE = True  ;
                 }
                 if(AddCIE == false)
                 options.add(new SelectOption('Created in Error','Created in Error'));
@@ -191,20 +191,20 @@ public without sharing class ServiceAssignmentExt {
                 options.add(new SelectOption('Created in Error','Created in Error'));
             }
         }else{
-                options.add(new SelectOption('Created in Error','Created in Error'));        
-        
+                options.add(new SelectOption('Created in Error','Created in Error'));
+
         }
-        
-      
+
+
         return options;
     }
     private void setcanCreateSummary() {
         Schema.DescribeSObjectResult oSchema = Action_Summary__c.sObjectType.getDescribe();
         canCreateSummary = oSchema.IsCreateable();
     }
-//Model picklist 
+//Model picklist
 	public list<Selectoption> modelValues{get{
-		
+
 		if(modelValues == null){
 			modelValues = new List<SelectOption>();
 			Schema.DescribeFieldResult fieldResult = Service_Assignment__c.Model__c.getDescribe();
@@ -215,12 +215,12 @@ public without sharing class ServiceAssignmentExt {
 	        		continue;
 	        	}
 	        	modelValues.add(new SelectOption(f.getValue(), f.getLabel()));
-	     
-	  		}  
+
+	  		}
 		}
-	  		     
+
   		return modelValues;
-		
+
 	}
 	set;}
 
@@ -255,7 +255,7 @@ public without sharing class ServiceAssignmentExt {
             psetFlags = setShowFlags();
         }
         return pshowDiag;*/
-        return false; 
+        return false;
     }}
     public Boolean showCodes { get {
         if (! psetFlags ) {
@@ -335,7 +335,7 @@ public without sharing class ServiceAssignmentExt {
     	}
     	set;
     }
-    
+
     public List<SelectOption> pbsDiagnosisList{get{
    		if(pbsDiagnosisList ==  null){
    			pbsDiagnosisList = new list<SelectOption>();
@@ -348,19 +348,19 @@ public without sharing class ServiceAssignmentExt {
    				dedupe.add(d.ICD__c);
 	   			pbsDiagnosisList.add(new selectoption(d.Id,d.ICD__r.Icd_Description__c));
    			}
-   			
+
    		}
-   		
+
    		return pbsDiagnosisList;
     }
 	set;}
-    	
+
     public string selectedDiagnosis {get; set;}
-   
+
     private void populatesadiagJO(){
     try {
         this.sadiagJOList = [select Id, Service_Assignment__c, Diagnosis__c, Diagnosis__r.ICD__r.Icd_Description__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c, Injury_type_other__c, Ranking__c
-                 from ServiceAssignment_Diagnosis_JO__c 
+                 from ServiceAssignment_Diagnosis_JO__c
                  where Service_Assignment__c = : this.theServAssign.Id];
       }
     catch (Exception e) {
@@ -368,7 +368,7 @@ public without sharing class ServiceAssignmentExt {
         'An error occurred retrieving Diagnosis information. ' + e.getMessage()));
     }
   }
-  
+
   public void showAddsadiagJo() {
   		populatesadiagJO();
   		this.sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
@@ -380,7 +380,7 @@ public without sharing class ServiceAssignmentExt {
                  from ServiceAssignment_Diagnosis_JO__c where id = :sadiagJOId];
   		this.selectedDiagnosis = sadiagJO.Diagnosis__c;
   }
-  
+
   public void savesadiagJo() {
   		populatesadiagJO();
   		this.sadiagJO = new ServiceAssignment_Diagnosis_JO__c();
@@ -388,7 +388,7 @@ public without sharing class ServiceAssignmentExt {
   }
 
     public list<Funding_Source__c> referralFundingsources {get { return [select id, CreatedDate, name, funding_source__c,Type_of_Coverage__c, Payer_Name__c, recordtype.name, service_being_funded__c, Effective_Date__c,Termination_Date__c,Status__c,Comment__c from funding_source__C where service_Assignment__C = null and Referral__c = :referral.id];} set;}
-    
+
     public Funding_Source__c fundingSource {
         get{
             if (fundingSource == null) {
@@ -412,19 +412,19 @@ public without sharing class ServiceAssignmentExt {
 
 
         public String age {set;get{ return Utility.getAge(theServAssign.Person_Being_Served__r.Age_year__c,theServAssign.Person_Being_Served__r.Age_month__c,theServAssign.Person_Being_Served__r.Age_days__c); }}
-    
+
     public String getSaStrStartDateTime(){
         String strstartDt = '';
         if (theServAssign.SA_Start_DateTime__c != null)
             strstartDt = theServAssign.SA_Start_DateTime__c.format('MM/dd/yyyy HH:mm', UserInfo.getTimeZone().toString() );
         return strstartDt;
     }
-    
+
     public void setSaStrStartDateTime(String val){
         if (val != null && val != '')
             theServAssign.SA_Start_DateTime__c = getDateTimeFromString(val +':00');
     }
-    
+
     public list<Therapy_Hour__c> getTherapyList(){
     	return [select Id,Appointment_Type__c,End_Time__c,Narrative_Note__c,Number_of_Hours__c,Start_Time__c, Owner.Name
     	          from Therapy_Hour__c where Service_Assignment__c = :theServAssign.Id and status__c = 'Approved' order by Start_Time__c desc limit 6];
@@ -441,8 +441,8 @@ public without sharing class ServiceAssignmentExt {
             theServAssign = new Service_Assignment__c();
             initialRecord = new Service_Assignment__c();
             admission = [ SELECT Id, Name, State__c, Person_Being_Served__c,person_being_served__r.LastName, person_being_served__r.ownerid, person_being_served__r.Flavor__c, Network_Offering__c FROM Admission__c WHERE Id = :ApexPages.currentPage().getParameters().get('admissionID') ];
-            
-            
+
+
             admissionId = admission.Id;
             theServAssign.Admission__c = admission.Id;
             theServAssign.Name = 'TBD - Autofilled';
@@ -495,12 +495,12 @@ public without sharing class ServiceAssignmentExt {
             }
             pageHeader = 'Service Assignment Detail';
             newSA = false;
-            
+
             theServAssign = [SELECT Id, Name, Admission__c, Avatar_Upload_ID__c, Billing_System__c, Day_of_last_Note__c,
                              End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName,Admission__r.Person_Being_Served__r.FirstName, Phase__c, Phase_of_Treatment__c, Program__c,
                              Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                              Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
-                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, 
+                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
                              Person_Being_Served__r.Name, Person_Being_Served__r.Age__c,Person_Being_Served__r.Age_month__c,Person_Being_Served__r.Age_year__c,Person_Being_Served__r.Age_days__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
                              Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,Flavor__c,
                              service_location__r.programid__c, service_location__r.service_value__c,service_location__r.setting__c,
@@ -512,7 +512,7 @@ public without sharing class ServiceAssignmentExt {
                              End_Date__c, Episode__c, External_ID__c, Location_Region__c, Model__c, Outcomes__c, Person_Being_Served__c,Admission__r.Person_Being_Served__r.LastName,Admission__r.Person_Being_Served__r.FirstName, Phase__c, Phase_of_Treatment__c, Program__c,
                              Program_Code__c, Program_Detail__c, Projected_Treatment_End_Date__c, SA_Hidden__c, Service_Assignment_Number__c, Service_Line__c,
                              Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
-                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c, 
+                             Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
                              Person_Being_Served__r.Name,Person_Being_Served__r.Age__c,Person_Being_Served__r.Age_month__c,Person_Being_Served__r.Age_year__c,Person_Being_Served__r.Age_days__c, Person_Being_Served__r.SSN__c, Person_Being_Served__r.Birthdate,
                              Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, Person_Being_Served__r.AccountId, referral__c, service_location__c, Medical_Record_Number__c, clinician__c,Flavor__c,
                              service_location__r.programid__c, service_location__r.service_value__c,
@@ -561,7 +561,7 @@ public without sharing class ServiceAssignmentExt {
         setcanEditSA();
         setcanCreatePlan();
         setcanCreateSummary();
-        
+
         populateAuths();
 
         getContractsAndXrefs();
@@ -588,7 +588,7 @@ public without sharing class ServiceAssignmentExt {
         fundingCoverageOptions.add(new selectoption('Tertiary','Tertiary'));
         fundingCoverageOptions.add(new selectoption('Other','Other'));
         hasPrimaryActiveFS = false;
-        
+
         phaseSelectOptions = new List<SelectOption>();
         phaseSelectOptions.add(new SelectOption('','--None--'));
         Integer currentPhase = 0;
@@ -678,7 +678,7 @@ public without sharing class ServiceAssignmentExt {
         if(!newSA){
         	populatesadiagJO();
         }
-        
+
     }
     // END: CONSTRUCTOR
 
@@ -919,7 +919,7 @@ public without sharing class ServiceAssignmentExt {
             currentState = currentRecord.Admission__r.State__c;
         }
         else {
-            system.debug('it is a new record'); 
+            system.debug('it is a new record');
             currentRecord = theServAssign;
             Admission__c admForState = [ SELECT State__c FROM Admission__c WHERE Id = :admission.Id LIMIT 1 ];
             currentState = admForState.State__c;
@@ -979,10 +979,10 @@ public without sharing class ServiceAssignmentExt {
                               where RecordType.Name = 'Monthly Behavior Result'
                               and Action_Plan__c = :activePlan.id Order by Start_Date__c DESC];
             }
-            notes = [select name, id, Start_Time__c, End_time__c, createddate, clinician__c, 
-            			createdby.name, action_plan__r.Name, Action_plan__c 
-            		from Progress_Note__c 
-            		where Service_Assignment__c = :currentID 
+            notes = [select name, id, Start_Time__c, End_time__c, createddate, clinician__c,
+            			createdby.name, action_plan__r.Name, Action_plan__c
+            		from Progress_Note__c
+            		where Service_Assignment__c = :currentID
             			and RecordType.Name <> 'Case Management Note' Order by CreatedDate DESC Limit 10];
             caseManagementNotes = [
 				select name, id, createddate, CreatedBy.Name, CreatedBy.Id, status__c
@@ -994,15 +994,15 @@ public without sharing class ServiceAssignmentExt {
             //diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
         }
         if ( currentrecord.Service_Location__c != null) {
-            serviceLocation = [ select ID, Name, Service_Value__c, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c,Room_and_Board_Rate__c, PRN_DS_Per_Hour__c, 
+            serviceLocation = [ select ID, Name, Service_Value__c, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Sum_FS_Attributes__c , Per_Productive_Unit__c,Room_and_Board_Rate__c, PRN_DS_Per_Hour__c,
             		Location_Nickname__c,TMN_Scope__c,Population_Served__c, Physical_Location__c, Service_Type__c, Network_Offering__c  from Service_Location__c where ID = :currentrecord.Service_Location__c];
             currentProgramId = serviceLocation.programID__c;
         }
-        
+
         //Setting the default value
         if(theServAssign.Highest_Level_of_Education_at_Start__c != null){
             theServAssign.Highest_Level_of_Education_at_End_of_Ser__c = theServAssign.Highest_Level_of_Education_at_Start__c;//Setting the default value
-            
+
         }
     }
 
@@ -1285,10 +1285,10 @@ public without sharing class ServiceAssignmentExt {
         return backToServAssignPage;
     }
     public PageReference SaveServAssign() {
-        
+
         List<string> errors = new list<string>();
         string opGroup = getOperatingGroup();
-        
+
         if(theServAssign.Status__c != 'Inactive'){
             theServAssign.Highest_Level_of_Education_at_End_of_Ser__c = null;
         }
@@ -1323,23 +1323,23 @@ public without sharing class ServiceAssignmentExt {
             errors.add('Please enter a value for Child Service Goal as Service Setting is Non-Residential');
             //locationsetting = '';
         }
-        
+
         if((opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'Care Meridian') && admission.Network_offering__c == 'ARY' && theServAssign.Educational_Involvement_at_Start__c == null){
             errors.add('Educational Involvement at Start of Service: You must enter a value');
         }
-        
+
         if(admission.Network_offering__c == 'ARY' && theServAssign.Highest_Level_of_Education_at_Start__c == null){
             errors.add('Highest level of education at Start of Service: You must enter a value');
         }
-        
+
         if(opGroup == 'Cambridge' && admission.Network_offering__c == 'ARY' && (theServAssign.Model__c.Equals('FCT') || theServAssign.service_location__r.service_value__c.Contains('Host Home')) && theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c == null){
             errors.add('Number of Out-of-Home Placements Pre-Service: You must enter a value');
         }
-        
+
         if(opGroup == 'NeuroRestorative' && theServAssign.Rancho_Score__c == null){
             errors.add('Rancho Score: You must enter a Value');
         }
-        
+
         if(theServAssign.Status__c == 'Inactive'){
             if(theServAssign.Service_Ended_via_Business_Divested__c == null){
                 errors.add('Service Ended via Business Divested? : You must enter a value.');
@@ -1380,7 +1380,7 @@ public without sharing class ServiceAssignmentExt {
             if(theServAssign.Is_this_transfer_to_another_ServAssign__c == null){
                 errors.add('Service Ended via Business Divested? : You must enter a value.');
             }
-            
+
             /* PRI- 301
             if(theServAssign.End_of_Service_Status__c == null && opGroup == 'NeuroRestorative'){
                 errors.add('End of Service Status : You must enter a value.');
@@ -1388,12 +1388,12 @@ public without sharing class ServiceAssignmentExt {
             if(theServAssign.End_of_Service_Status__c =='Other' && theServAssign.Specify_Other__c == null){
                 errors.add('Specify Other : You must enter a value.');
             }*/
-            
+
         }
-    
+
         if(errors.size() > 0){
             for(string e: errors){
-                ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,e));    
+                ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,e));
             }
             return null;
         }
@@ -1486,7 +1486,7 @@ public without sharing class ServiceAssignmentExt {
                                  Start_Date__c, SA_Start_DateTime__c, Status__c, Admission__r.Person_Being_Served__c, Admission__r.State__c, Phase_1_Start_Date__c, Phase_2_Start_Date__c,
                                  Phase_3_Start_Date__c, Phase_4_Start_Date__c, Phase_1_End_Date__c, Phase_2_End_Date__c,
                                  Phase_3_End_Date__c, Phase_4_End_Date__c, RecordTypeId, RecordType.Name, Person_Being_Served__r.OwnerId, referral__c, clinician__c,
-                                 service_location__c, service_location__r.service_value__c, 
+                                 service_location__c, service_location__r.service_value__c,
                                  Medical_Record_Number__c,
                                  Service_Began_via_Acquisition_Company__c, Service_Ended_via_Business_Divested__c, Was_Child_Service_or_Permanency_Goal_met__c, Was_dissatisfaction_reason_for_service_e__c,Who_was_dissatisfied__c,Primary_Reason_for_Dissatisfaction__c,End_of_Service_Circumstances__c, Educational_Involvement_at_End_of_Servic__c, Highest_Level_of_Education_at_End_of_Ser__c, Total_no_of_Internal_moves_during_Servic__c,
                                  Child_Service_Goal__c,Child_Permanency_Goal__c,Educational_Involvement_at_Start__c,Highest_Level_of_Education_at_Start__c,Number_of_Out_of_Home_Placements_Pre_Ser__c,Rancho_Score__c, Was_this_transfer_frm_another_ServAssig__c, Is_this_transfer_to_another_ServAssign__c, Specify_Error__c
@@ -2041,10 +2041,15 @@ public without sharing class ServiceAssignmentExt {
         return ref;
     }
 
-    public boolean canCreateNote { get { 
+    public boolean canCreateNote { get {
         Schema.DescribeSObjectResult oSchema = Progress_Note__c.sObjectType.getDescribe();
         return oSchema.isCreateable();
     }}
+    public Boolean canCreateCaseManagementNote {
+        get {
+            return canCreateNote && Schema.SObjectType.Progress_Note__c.fields.getMap().get('Case_Management_Note__c').getDescribe().isUpdateable();
+        }
+    }
     public boolean canCreateFundingSource { get {
         Schema.DescribeSObjectResult oSchema = Funding_Source__c.sObjectType.getDescribe();
         return oSchema.isCreateable();
@@ -2061,26 +2066,26 @@ public without sharing class ServiceAssignmentExt {
         return oSchema.isAccessible();
 
     } }
-    
+
     //Incidents creation
-    
+
     public pageReference createIncident(){
         PageReference pr = new pageReference('/apex/Incident_Form_createEdit');
         pr.getParameters().put('RecordTypeId',Utility.getIncidentRecordType('PBS'));
         pr.getParameters().put('SAid',this.theServAssign.Id);
-        
+
         return pr;
-        
+
     }
-    
+
     public List<Incident__c> incidents{get{
         if(incidents == null){
             incidents = [SELECT Id, Name, Recordtype.name, Status__c FROM Incident__c WHERE Service_Assignment__c =: this.theServAssign.Id];
         }
             return incidents;
     }
-        
-        set;    
+
+        set;
     }
 
     public void showAddFundingSource() {
@@ -2097,7 +2102,7 @@ public without sharing class ServiceAssignmentExt {
                     fundingCoverageOptions.add(new selectoption('Other','Other'));*/
                 }
             }
-            
+
         }
     }
 
@@ -2118,9 +2123,9 @@ public without sharing class ServiceAssignmentExt {
                     hasPrimaryActiveFS = true;
                 }
             }
-            
+
         }
-        
+
     }
 
     public void saveFundingSource() {
@@ -2146,10 +2151,10 @@ public without sharing class ServiceAssignmentExt {
         this.fundingSource.RecordTypeId = Utility.getRecordTypeForFundingSource(getfundingsourceRecordType()); //Dynamically decide which recordtype funding source to create - Sravan for EB-435
         this.fundingSource.Service_Assignment__c = this.theServAssign.Id;
     }
-    
+
     public void finalizeFundingSource(){
         try{
-            
+
             this.fundingSource.Funding_Source_Status__c = 'Active Final';  //Need to Change When Approval is implemented - Sravan EB-435
             upsert this.fundingSource;
         }
@@ -2158,11 +2163,11 @@ public without sharing class ServiceAssignmentExt {
         }
         populateFundingSources();
     }
-    
+
     public void inactivateFundingSource(){
         try{
             Funding_source__c fs = [SELECT Id, Funding_Source_Status__c FROM Funding_Source__c WHERE Id =:this.fundingSource.Id ]; // To make sure only Funding Status field is in scope.
-            fs.Funding_Source_Status__c = 'Inactive';  
+            fs.Funding_Source_Status__c = 'Inactive';
             update fs;
         }
         catch (Exception e) {
@@ -2193,7 +2198,7 @@ public without sharing class ServiceAssignmentExt {
                  order by Type_of_Coverage__c
                  limit 150];
     }
-    
+
     // CMAUTH work  - Sept 2015
 	public void setauthPerms () {
 		Schema.DescribeSObjectResult oSchema = Authorization__c.sObjectType.getDescribe();
@@ -2208,15 +2213,15 @@ public without sharing class ServiceAssignmentExt {
 	public void populateAuths() {
 		//system.debug( 'SHOW DISREGARD = ' + authsIncDisregard + ', ' + theServAssign.Id);
 		ID saID = theServAssign.Id;
-		String query = '' + 'select id, funding_Source__c, payer_authorization_id__c, authorization_Status__c, type__c, service_being_Funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_Date__c, payer_end_date__c, received_date_time__c, contract_used__c ' + 
-				 'from Authorization__c' + 
+		String query = '' + 'select id, funding_Source__c, payer_authorization_id__c, authorization_Status__c, type__c, service_being_Funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_Date__c, payer_end_date__c, received_date_time__c, contract_used__c ' +
+				 'from Authorization__c' +
 				 ' where funding_source__r.Service_Assignment__c = :saID ' +
 				 (authsIncDisregard ? ''  : 'and authorization_status__c != \'Disregard\'') +
 				 ' order by payer_effective_date__c desc limit 10';
 		this.authList = Database.query(query);
 	}
 
-	 
+
 	// END CMAUTH work
 
     public class MyException extends Exception {}
@@ -2243,8 +2248,8 @@ public without sharing class ServiceAssignmentExt {
     public string seizureEnd_DateTime {get;set;}
 
     public void populateSeizures() {
-        this.seizures = [select id, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, 
-        					Duplicate_Entry__c, Post_seizure_phase__c, Pre_seizure_phase__c, Seizure_Description__c 
+        this.seizures = [select id, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c,
+        					Duplicate_Entry__c, Post_seizure_phase__c, Pre_seizure_phase__c, Seizure_Description__c
                          from Seizure__c
                          where Service_Assignment__c = : this.theServAssign.Id
                          //And Duplicate_Entry__c = false
@@ -2265,8 +2270,8 @@ public without sharing class ServiceAssignmentExt {
     }
     public void showEditSeizure() {
         string seizureId = ApexPages.CurrentPage().getParameters().get('seizureId');
-        this.seizure = [select id, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c, 
-        					Duplicate_Entry__c, Post_seizure_phase__c, Pre_seizure_phase__c, Seizure_Description__c 
+        this.seizure = [select id, Start_DateTime__c, End_DateTime__c, Observed_By__c, Comments__c,
+        					Duplicate_Entry__c, Post_seizure_phase__c, Pre_seizure_phase__c, Seizure_Description__c
                         from Seizure__c
                         where id = : seizureId];
     }
@@ -2305,8 +2310,8 @@ public without sharing class ServiceAssignmentExt {
         return dupeFound;
     }
     // EC-87: Seizure Tracking - End
-    
-    
+
+
     //Sravan - Diagnosis-SA Junction
     @RemoteAction
     public static boolean savesadiagJORemote(string diagSAJOId, string diagId, string saID, boolean ABI, boolean Billable, string injuryDate, string glasgowInjury, string glasgowSeverity, string injType, string injTypeOther, string rank) {
@@ -2332,7 +2337,7 @@ public without sharing class ServiceAssignmentExt {
            // dg.Status__c = status;
             system.debug('updating ' + dg.Id + ', ' + dg);
         }
-        
+
         dg.Date_of_Injury__c = (!String.isEmpty(injuryDate)) ? Date.parse(injuryDate) : (Date) null;
 
         upsert dg;
@@ -2345,16 +2350,16 @@ public without sharing class ServiceAssignmentExt {
                 [select Id, Service_Assignment__c, Diagnosis__c, ABI_Diagnosis__c, Billable__c, Date_of_Injury__c, Glasgow_Coma_Score_at_Injury__c, Glasgow_Coma_Scale_Severity__c, Injury_Type__c,Ranking__c
                  from ServiceAssignment_Diagnosis_JO__c where id = :diagSAJOId];
             system.debug('Date of Injury++++++++'+dg.Date_of_Injury__c);
-            
-            
+
+
         return new sadigJuncWrap(dg);
-        
+
     }
-    
+
     public class sadigJuncWrap {
     	public ServiceAssignment_Diagnosis_JO__c junction {get; set;}
     	public string injuryDate {get; set;}
-    	
+
     	public sadigJuncWrap(ServiceAssignment_Diagnosis_JO__c junction){
     		this.junction = junction;
     		if(junction.Date_of_Injury__c != null){
@@ -2363,15 +2368,15 @@ public without sharing class ServiceAssignmentExt {
     			injuryDate = null;
     		}
     	}
-    	
-    	
+
+
     }*/
-    
+
     @RemoteAction
     public static string checkErrors(string SAId, string diagSAJOId, string diagnosisId){
     	List<ServiceAssignment_Diagnosis_JO__c> primary;
     	List<ServiceAssignment_Diagnosis_JO__c> dupeDiagnosis;
-    	
+
     	if(diagSAJOId != null){
     		dupeDiagnosis = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID != :diagSAJOId AND Service_Assignment__c = :SAId AND Diagnosis__c = :diagnosisId LIMIT 1];
     		primary  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE ID != :diagSAJOId AND Service_Assignment__c = :SAId AND Ranking__c = 'Primary' LIMIT 1];
@@ -2379,18 +2384,18 @@ public without sharing class ServiceAssignmentExt {
     		dupeDiagnosis = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Diagnosis__c = :diagnosisId LIMIT 1];
     		primary  = [SELECT Id FROM ServiceAssignment_Diagnosis_JO__c WHERE Service_Assignment__c = :SAId AND Ranking__c = 'Primary' LIMIT 1];
     	}
-    	
+
     	if(dupeDiagnosis.size() > 0){
-    		return 'dupe diagnosis';	
+    		return 'dupe diagnosis';
     	}
-    	
+
 	    if(primary.size() > 0){
 	    	return 'primary error';
 	    }
-   
+
     	return 'no error';
-    	
+
     }
-    
+
 
 }
