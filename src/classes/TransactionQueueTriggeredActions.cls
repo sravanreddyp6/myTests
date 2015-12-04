@@ -432,6 +432,61 @@ public without sharing class TransactionQueueTriggeredActions {
                     }
                  
                 }
+                
+                else if ( t.request_type__c == 'Update Behavior') {
+                	
+                	// get the worksheet id and updated data from the request pararms
+					system.debug( t.input_params__c);
+					Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
+					
+					system.debug( 'WORKSHEET ID: ' + inputs.get('Action_plan_worksheet__c'));
+					system.debug( 'NEW TARGET ID: ' + inputs.get('newid'));
+					system.debug( 'ABR LIST: ' + json.deserialize(inputs.get('behavior_results'), List<DSP_BehaviorTracking.ABRWrapper>.class));
+					
+					ID wksheetId = inputs.get('Action_plan_worksheet__c');
+					ID newID = inputs.get('newid');
+					
+					List<DSP_BehaviorTracking.ABRWrapper> ABRs = (List<DSP_BehaviorTracking.ABRWrapper>)json.deserialize(inputs.get('behavior_results'), List<DSP_BehaviorTracking.ABRWrapper>.class);
+					 
+					// update the action skill results that correspond to what was passed in
+					List<Action_Behavior_Result__c> toUpd = new List<Action_Behavior_Result__c>();
+					ID ObjID; 
+					for ( DSP_BehaviorTracking.ABRWrapper a : ABRs ) {
+						Action_Behavior_Result__c newResult = new Action_Behavior_Result__c();
+						newResult.action_plan_objective__c = a.oid;
+						newResult.id = a.id;
+						if ( a.occurrences != null )
+							newResult.occurrences__c = a.occurrences;
+						
+						if ( a.occurred != null)
+							newResult.occurred__c = a.occurred;
+							
+						newResult.day_time__c = a.daytime;
+						objID = a.oid;
+						toUpd.add( newResult);
+					}
+					
+					try {
+						upsert( toUpd);
+                	
+             	  		DSP_BehaviorTracking wksht = new DSP_BehaviorTracking( wksheetId,  newid);
+                		
+                		String jsonstring = json.serialize( wksht);
+                		storeResultString( newreq, jsonstring );
+                		
+                        // update the request as having been fulfilled
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+//                      newreq.return_code__c = 'ERROR';
+                        system.debug( e );
+                        newreq.fulfilled__c = false;
+                        newreq.return_value__c = json.serialize( e.getMessage() );
+                    	throw(e);
+						return;
+                    }
+                }
+                
 			
 			// update the request back to the user
 			update newreq;

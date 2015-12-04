@@ -5,6 +5,7 @@ public string ackAPID { get; set;}
 public string initials { get; set; }
 public string requestType { get; set; }
 public string inputArgs { get; set; }
+public ID newtargetID { get; set; }
 
 public DSPSubmitTxn (TxnQueueResponseController controller) {
 	this.controller = controller;
@@ -146,6 +147,59 @@ public pageReference saveSkillResults ( ) {
         return null;
     }
 
+
+public pageReference saveBehaviorResults ( ) {
+	
+		List<DSP_BehaviorTracking.ABRWrapper> toUpDate = new List<DSP_BehaviorTracking.ABRWrapper>();
+		Map<id, DSP_BehaviorTracking.ABRWrapper> origData = controller.BehaviorResponse.originaldata;
+		for(DSP_BehaviorTracking.Table table: controller.behaviorResponse.Tables){
+			for(integer hour:table.Firstkeys){
+				for(Date day : table.AllSecondKeys){
+					DSP_BehaviorTracking.ABRWrapper cellObj = table.get(hour,day);
+					if (cellObj == null){
+						continue;
+					}
+					if (origData.containsKey(cellObj.Id)){
+						DSP_BehaviorTracking.ABRWrapper origObj = origData.get(cellObj.Id);
+						if (cellObj.occurrences != origObj.occurrences ||
+							cellObj.occurred != origObj.occurred){
+							toUpDate.Add(cellObj);
+						}
+					} else {
+						if (cellObj.occurrences != null ||
+							cellObj.occurred != false){
+							toUpDate.Add(cellobj);
+						}
+					}
+				}
+			}
+		}
+		
+		try {
+        	Transaction_Queue__c txn  = new Transaction_Queue__c( requesting_user__c = UserInfo.getUserId());
+			txn.request_type__c = 'Update Behavior';
+			txn.requested_date_time__c = DateTime.Now();
+			Map<String, String> inputs = new Map<String, String	>{ 'Action_plan_worksheet__c' => string.valueOf(controller.behaviorResponse.wsId), 'behavior_results' => json.serialize(toUpdate), 'newid' => string.valueof(newtargetid) }; 
+		
+			txn.input_params__c = json.serialize( inputs);
+		
+			try { 
+				insert txn;
+				PageReference pr =  Page.DSPBehaviorTracking;
+				pr.getParameters().put('txnID', txn.ID);
+				pr.setRedirect(true);
+				return pr;
+			}
+			catch (Exception e) {
+				throw(e);
+			}	
+        }  catch ( Exception e) {
+        	throw(e);
+        }
+        
+
+		return null;
+	}
 
 private Map<String,String> requestToPage = new Map<String, String> { 'Action Plan' => '/apex/DSPActionPlan', 
                                                                          'Person Being Served' => '/apex/DSPPersonBeingServedView',
