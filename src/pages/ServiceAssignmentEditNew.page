@@ -610,7 +610,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <apex:outputlabel value="Location NickName" styleclass="labelCol" />
+                                    <apex:outputlabel value="Location Nickname" styleclass="labelCol" />
                                 </td>
                                 <td>
                                     <apex:outputField value="{!serviceLocation.Location_Nickname__c}" />
@@ -622,37 +622,11 @@
                                     <apex:outputLabel value="Address" styleclass="labelCol" />
                                 </td>
                                 <td>
-                                    <c:AddressDisplay Street1="{!serviceLocation.Street__c}" City="{!serviceLocation.City__c}" State="{!serviceLocation.State__c}" Zip="{!serviceLocation.Zip__c}" /><br/>
+                                    <c:AddressDisplay City="{!serviceLocation.City__c}" State="{!serviceLocation.State__c}"/><br/>
                                     <apex:outputText value="{!serviceLocation.Phone__c}" />
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <apex:outputlabel value="TMN Scope" styleclass="labelCol" />
-                                </td>
-                                <td>
-                                    <apex:outputField value="{!serviceLocation.TMN_Scope__c}" />
-                                    <br/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <apex:outputlabel value="Alias" styleclass="labelCol" />
-                                </td>
-                                <td>
-                                    <apex:outputField value="{!serviceLocation.Name}" />
-                                    <br/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <apex:outputlabel value="Population Served" styleclass="labelCol" />
-                                </td>
-                                <td>
-                                    <apex:outputField value="{!serviceLocation.Population_Served__c}" />
-                                </td>
-                            </tr>
-                            <tr>
+                             <tr>
                                 <td>
                                     <apex:outputlabel value="Physical Location" styleclass="labelCol" />
                                 </td>
@@ -668,12 +642,29 @@
                                     <apex:outputField value="{!serviceLocation.Service_Type__c}" />
                                 </td>
                             </tr>
-                            <tr>
+                             <tr>
                                 <td>
                                     <apex:outputlabel value="Network Service Line Offering" styleclass="labelCol" />
                                 </td>
                                 <td>
                                     <apex:outputField value="{!serviceLocation.Network_Offering__c}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="TMN Scope" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.TMN_Scope__c}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Population Served" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Population_Served__c}" />
                                 </td>
                             </tr>
                         </table>
@@ -805,7 +796,7 @@
                 <apex:pageblocksectionitem rendered="{!!editSA || (editSA && serviceLocation != null) }">
                     <apex:outputlabel value="Location of Service" for="locationDisplay" />
                     <apex:outputPanel id="locationDisplay" layout="inline" rendered="{! serviceLocation != null}">
-                         <table>
+                          <table>
                             <tr>
                                 <td>
                                     <apex:outputlabel value="Alias" styleclass="labelCol" />
@@ -826,7 +817,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <apex:outputlabel value="Location NickName" styleclass="labelCol" />
+                                    <apex:outputlabel value="Location Nickname" styleclass="labelCol" />
                                 </td>
                                 <td>
                                     <apex:outputField value="{!serviceLocation.Location_Nickname__c}" />
@@ -838,37 +829,11 @@
                                     <apex:outputLabel value="Address" styleclass="labelCol" />
                                 </td>
                                 <td>
-                                    <c:AddressDisplay Street1="{!serviceLocation.Street__c}" City="{!serviceLocation.City__c}" State="{!serviceLocation.State__c}" Zip="{!serviceLocation.Zip__c}" /><br/>
+                                    <c:AddressDisplay City="{!serviceLocation.City__c}" State="{!serviceLocation.State__c}"/><br/>
                                     <apex:outputText value="{!serviceLocation.Phone__c}" />
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <apex:outputlabel value="TMN Scope" styleclass="labelCol" />
-                                </td>
-                                <td>
-                                    <apex:outputField value="{!serviceLocation.TMN_Scope__c}" />
-                                    <br/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <apex:outputlabel value="Alias" styleclass="labelCol" />
-                                </td>
-                                <td>
-                                    <apex:outputField value="{!serviceLocation.Name}" />
-                                    <br/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <apex:outputlabel value="Population Served" styleclass="labelCol" />
-                                </td>
-                                <td>
-                                    <apex:outputField value="{!serviceLocation.Population_Served__c}" />
-                                </td>
-                            </tr>
-                            <tr>
+                             <tr>
                                 <td>
                                     <apex:outputlabel value="Physical Location" styleclass="labelCol" />
                                 </td>
@@ -884,12 +849,29 @@
                                     <apex:outputField value="{!serviceLocation.Service_Type__c}" />
                                 </td>
                             </tr>
-                            <tr>
+                             <tr>
                                 <td>
                                     <apex:outputlabel value="Network Service Line Offering" styleclass="labelCol" />
                                 </td>
                                 <td>
                                     <apex:outputField value="{!serviceLocation.Network_Offering__c}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="TMN Scope" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.TMN_Scope__c}" />
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputlabel value="Population Served" styleclass="labelCol" />
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!serviceLocation.Population_Served__c}" />
                                 </td>
                             </tr>
                         </table>
