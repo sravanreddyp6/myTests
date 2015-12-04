@@ -2272,7 +2272,7 @@ END: Uncomment to have the element collapsed by default -->
         <a name="caseManagementNotes" id="caseManagementNotes"></a>
 		<apex:pageBlock id="CaseManagementNotes" mode="maindetail" rendered="{!AND(!editSA, OperatingGroup == 'Care Meridian')}">
 			<div class="pbHeaderButton">
-				<apex:commandButton onclick="window.open('/apex/Notes_Case_Management?saId={!Service_Assignment__c.id}', '_self'); return false;" value="New Case Management Note" rendered="{!canCreateNote}" />
+				<apex:commandButton onclick="window.open('/apex/Notes_Case_Management?saId={!Service_Assignment__c.id}', '_self'); return false;" value="New Case Management Note" rendered="{!canCreateCaseManagementNote}" />
 			</div>
 			<apex:pageBlockSection columns="1" title="Case Management Notes" id="casenotes_Alt1_Header" collapsible="true">
 				<apex:pageblockTable value="{!caseManagementNotes}" var="note" rendered="{!(caseManagementNotes != null && caseManagementNotes.size>0)}">
