@@ -80,6 +80,7 @@ public class BehaviorTrackingInputTest{
 
         Admission__c adm = new Admission__c();
         adm.person_being_served__c = person.id;
+        adm.Admission_Effective_Datetime__c = Datetime.now();
         insert adm;
         
         Service_Assignment__c sa = new Service_Assignment__c();  
