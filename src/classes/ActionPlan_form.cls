@@ -321,6 +321,36 @@ public pagereference myCancel(){
 }
     public pagereference myFinal(){
         try{
+            Pattern errorPattern = Pattern.compile('(.*?)\\[(.*?)\\](.*?)');
+            String errorMsg = 'Action Plan cannot be finalized without removing square brackets "[ ]"';
+            Boolean goalError = false;
+            Boolean objError = false;
+            Boolean actError = false;
+
+            for(string g: planStuff.keySet()){
+                if (planStuff.get(g).theGoal.Description__c != null && errorPattern.matcher(planStuff.get(g).theGoal.Description__c).find()) {
+                    planStuff.get(g).theGoal.Description__c.addError(errorMsg);
+                    goalError = true;
+                }
+            }
+            for(clsGoal g: planStuff.values()){
+                for (clsObj o: g.GoalObjs.values()){
+                    if (!String.isBlank(o.theObj.Description__c) && errorPattern.matcher(o.theObj.Description__c).find()) {
+                        o.theObj.Description__c.addError(errorMsg);
+                        objError = true;
+                    }
+                    for(clsAction a: o.objActs.values()){
+                        if (!String.isBlank(a.theAction.Description__c) && errorPattern.matcher(a.theAction.Description__c).find()) {
+                            a.theAction.Description__c.addError(errorMsg);
+                            actError = true;
+                        }
+                    }
+                }
+            }
+            if (goalError || objError || actError){
+                editMode = true;
+                return null;
+            }
 
             actionplan.Status__c = 'Active Final';
             actionplan.finalized_by__c = UserInfo.getUserId();
@@ -455,8 +485,6 @@ public pagereference mySave(){
         List<Action_Plan_Objective__c> objToInsert = new List<Action_Plan_Objective__c>();
         List<Action_Plan_Action__c> actToInsert = new List<Action_Plan_Action__c>();
 
-        Pattern errorPattern = Pattern.compile('(.*?)\\[(.*?)\\](.*?)');
-        String errorMsg = 'Action Plan cannot be finalized without removing square brackets "[ ]"';
 
     try{
         //remove any goals taht are blank as long as the obj and act are blank else throw an error
@@ -482,14 +510,9 @@ public pagereference mySave(){
                     planStuff.get(g).theGoal.Description__c.addError(GoalAlias + ' is required');
                     goalError = true;
                 }
-            } else if (errorPattern.matcher(planStuff.get(g).theGoal.Description__c).find()) {
-                planStuff.get(g).theGoal.Description__c.addError(errorMsg);
-                goalError = true;
             }
         }
 
-        Boolean objError = false;
-        Boolean actError = false;
         for(clsGoal g: planStuff.values()){
             system.debug('1st goal check - ' + g.theGoal.id);
             if(g.isNew && g.theGoal.id==null) {
@@ -501,10 +524,6 @@ public pagereference mySave(){
             }
 
             for (clsObj o: g.GoalObjs.values()){
-                if (!String.isBlank(o.theObj.Description__c) && errorPattern.matcher(o.theObj.Description__c).find()) {
-                    o.theObj.Description__c.addError(errorMsg);
-                    objError = true;
-                }
                 system.debug('1st obj check - ' + o.theobj.id);
                 if(o.isNew && o.theObj.id==null) {
                     objToInsert.add(o.theObj);
@@ -513,10 +532,6 @@ public pagereference mySave(){
                 }
 
                 for(clsAction a: o.objActs.values()){
-                    if (!String.isBlank(a.theAction.Description__c) && errorPattern.matcher(a.theAction.Description__c).find()) {
-                        a.theAction.Description__c.addError(errorMsg);
-                        actError = true;
-                    }
                     if(a.isNew && a.theAction.id==null) {
                         actToInsert.add(a.theAction);
                     } else {
@@ -545,7 +560,7 @@ public pagereference mySave(){
 
             }
         }
-        if(hadStatusErr || goalError || objError || actError){
+        if(hadStatusErr || goalError){
             return null;
         }
 
@@ -622,13 +637,8 @@ public pagereference mySave(){
                         }
                     }
                 }
-
        return null;
-
-
-}
-
-
+    }
 
     public ActionPlan_Form(ApexPages.StandardController controller) {
         if(!test.isRunningTest()){
@@ -664,7 +674,7 @@ public pagereference mySave(){
 
         ctlgs = new List<SelectOption>();
         ctlgs.add(new SelectOption('','Select Catalog'));
-        string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c; 
+        string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Service_Value__c;
 	//	string curSV = ActionPlan.Service_Assignment__r.Service_Location__r.Network_offering__c; - Reverted back Sravan - PRI-347
         List<Clinical_Programs__c> allPrgms = Clinical_Programs__c.getall().values();
         map< Decimal, string > mapAllPrgs = new map< Decimal, string >();
