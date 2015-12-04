@@ -3383,8 +3383,9 @@ END: Uncomment to have the element collapsed by default -->
             <!-- <apex:relatedList list="Action_Summaries__r" /> -->
             <apex:pageBlockTable value="{!Service_Assignment__c.Action_Summaries__r}" var="summary" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
                 <apex:column headerValue="Action" width="70px"><a href="/{!summary.ID}">Edit</a></apex:column>
-                <apex:column value="{!summary.name}"></apex:column>
+                <apex:column headerValue="Name"><a href="/{!summary.ID}">{!summary.name}</a></apex:column>
                 <apex:column value="{!summary.Status__c}"></apex:column>
+                <apex:column value="{!summary.CreatedDate}"></apex:column>                
             </apex:pageBlockTable>
         </apex:pageBlockSection>
     </apex:pageBlock>
