@@ -93,7 +93,7 @@ public with sharing class TxnQueueResponseController {
 				// LEAVE THIS IN - it's a complete hack to get by a serializing error with date class
 				txnresponse = txnresponse.replace(' 00:00:00', '');
 
-				//system.debug('TO DESERIALIZE: ' + txnresponse);
+				system.debug('TO DESERIALIZE: ' + txnresponse);
             	behaviorResponse = (DSP_BehaviorTracking) JSON.deserializeStrict ( TxnResponse, DSP_BehaviorTracking.class);
             }
 		} catch (Exception e2) {

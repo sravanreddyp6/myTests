@@ -6,8 +6,8 @@ public without sharing class DSP_BehaviorTracking {
 	private APOWrapper currentObjective;
 	public ID APId { get; private set;}
 	public id currentObjectiveid {get;set;}
-	public string objectiveIdChosen {get;set;}
 	public ID wsID { get; set; }
+	public Map<ID, ABRWrapper> originalData { get; set; }
 
 	public DSP_BehaviorTracking( TxnQueueResponseController c ){
 
@@ -30,6 +30,8 @@ public without sharing class DSP_BehaviorTracking {
 		currentObjectiveid = objID;
 		system.debug( result.start_date__c );
 		
+		originalData = ResultMap( result.start_date__c);
+		
 	}
 
 	public boolean editable { get { return !result.Action_plan__r.Status__c.contains('Inactive');}}
@@ -50,6 +52,7 @@ public without sharing class DSP_BehaviorTracking {
 				return out;
 			}
 			currentObjective = new APOWrapper(privateObjectives[0]);
+			currentObjectiveID = currentObjective.id;
 		}
 
 		out.Add(GenerateObjectiveTable(currentObjective, firstDay));
@@ -126,7 +129,7 @@ public without sharing class DSP_BehaviorTracking {
 	}
 
 	private List<Action_Behavior_Result__c> ResultsForObjective(APOWrapper objective, Date firstDay){
-		return [select Day_time__c, Occurrences__c, Occurred__c
+		return [select Day_time__c, Occurrences__c, Occurred__c, action_plan_objective__c
 						from Action_Behavior_Result__c
 						where Action_Plan_Objective__c = :objective.id
 							and Day_time__c >= :firstDay
@@ -137,7 +140,7 @@ public without sharing class DSP_BehaviorTracking {
 	private Map<id, ABRWrapper> ResultMap(Date firstDay){
 		Map<id, ABRWrapper> origData = new Map<id, ABRWrapper>();
 		for(Action_Plan_Objective__c objective: ReportableBehaviorObjectives(firstDay)){
-			if (objective.id == currentObjective.Id){
+			if (objective.id == currentObjectiveId){
 				for(Action_Behavior_Result__c result: ResultsForObjective(new APOWrapper(objective), firstDay)){
 					origData.Put(result.id, new ABRWrapper(result));
 				}
@@ -153,27 +156,7 @@ public without sharing class DSP_BehaviorTracking {
 	////////////////////
 	// Actions
 	////////////////////
-	public PageReference saveandswitchObjective(){
-		system.debug('switching to:' + objectiveidChosen);
-		try {
-//			mySave();
-		} catch (Exception e){
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,
-					e.getMessage()));
-			return null;
-		}
-		return switchObjective();
-	}
-
 	
-	public PageReference switchObjective(){
-		currentObjectiveId = objectiveidChosen;
-		privateTables = null;
-		PageReference page = new PageReference('/apex/BehaviorTracking?id=' + result.id + '&objectiveid=' + currentObjectiveID);
-		page.setRedirect(true);
-		return page;
-	}
-
 	public PageReference myNewNote(){
 //		mySave();
 
@@ -203,35 +186,7 @@ public without sharing class DSP_BehaviorTracking {
 	}
 
 
-	public PageReference mySave(){
-/*		List<Action_Behavior_Result__c> toUpDate = new List<Action_Behavior_Result__c>();
-		Map<id, ABRWrapper> origData = ResultMap(result.Start_Date__c);
-		for(Table table: Tables){
-			for(integer hour:table.Firstkeys){
-				for(Date day : table.AllSecondKeys){
-					ABRWrapper cellObj = table.get(hour,day);
-					if (cellObj == null){
-						continue;
-					}
-					if (origData.containsKey(cellObj.Id)){
-						ABRWrapper origObj = origData.get(cellObj.Id);
-						if (cellObj.occurrences != origObj.occurrences ||
-							cellObj.occurred != origObj.occurred){
-							toUpDate.Add(cellObj);
-						}
-					} else {
-						if (cellObj.occurrences != null ||
-							cellObj.occurred != false){
-							toUpDate.Add(cellobj);
-						}
-					}
-				}
-			}
-		}
-		upsert toUpdate;
-*/
-		return null;
-	}
+
 
 	// transient - 1/2 the size of viewstate
 	private transient List<Table> privateTables;

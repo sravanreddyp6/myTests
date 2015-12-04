@@ -80,6 +80,9 @@
             <apex:param name="reqType" value="" assignTo="{!requestType}" />
             <apex:param name="inputArgs" value="" assignTo="{!inputArgs}" />
         </apex:actionFunction>
+        <apex:actionFunction name="saveBehaviorResults" action="{!saveBehaviorResults}" status="waitStatus" rerender="messages" >
+            <apex:param name="objId" value="" assignTo="{!newtargetid}" />
+        </apex:actionFunction>
         
     <apex:pageMessages id="messages"></apex:pageMessages>
     <apex:outputtext value="{! behaviorResponse.startdate}" rendered="false"/>
@@ -90,17 +93,15 @@
                 <apex:column width="150px">
                     <apex:facet name="header">Actions</apex:facet>
                     
-                    <apex:commandButton onclick="submitTxnRequest('Behavior','{! behaviorResponse.wsid},{!otherobjectives.id}'); return false;" 
+                    <apex:commandButton onclick="saveBehaviorResults('{!otherobjectives.id}'); return false;" 
                         value="Save & Go To:"
                         rerender="wholeform" status="waitStatus"
                         rendered="{!behaviorResponse.editable}">
-                        <apex:param name="objectiveIdparam" assignTo="{!objectiveIdChosen}" value="{!otherobjectives.id}"/>
                     </apex:commandButton>
-                    <apex:commandButton action="{!switchObjective}"
+                    <apex:commandButton onclick="submitTxnRequest('Behavior','{! behaviorResponse.wsid},{!otherobjectives.id}'); return false;"
                         value="Go To:"
                         rendered="{!!behaviorResponse.editable}"
                         rerender="wholeform" status="waitStatus">
-                        <apex:param name="objectiveIdparam" assignTo="{!objectiveIdChosen}" value="{!otherobjectives.id}"/>
                     </apex:commandButton>
                 </apex:column>
                 <apex:column >
@@ -114,7 +115,7 @@
     <div class="tmn-h1">Behavior Worksheet</div>  
     <div class="pbHeaderButton">
           <apex:commandButton action="{!myNewNote}" value="Save & New Note" status="waitStatus"/>
-	      <apex:commandButton id="formSave" action="{!mySave}" value="Save " rerender="wholeform" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
+	      <apex:commandButton id="formSave" onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}')" value="Save " rerender="wholeform" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
     </div>
         <div class="checksheetdate">
             <apex:outputText value="{0, date, MMM yyyy}">
