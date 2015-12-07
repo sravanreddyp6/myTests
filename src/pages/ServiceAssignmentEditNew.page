@@ -1329,7 +1329,7 @@
                     <apex:outputPanel >
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
-                            <apex:inputField value="{!theServAssign.Was_Child_Service_or_Permanency_Goal_met__c}"  />
+                            <apex:inputField value="{!theServAssign.Was_Child_Service_or_Permanency_Goal_met__c}"  html-data-visibility-rules="{&quot;No&quot;: [&quot;{!$Component.myFRM.SAblock.saEndSectionEdit.circumstanceItem.endOfServiceCsValuesLabel}&quot;,&quot;{!$Component.myFRM.SAblock.saEndSectionEdit.circumstanceItem.endOfServiceCsValues}&quot;]}"/>
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
@@ -1374,10 +1374,9 @@
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <!-- Added by Amruth-->
                 
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}" >
-                    <apex:outputLabel value="End of Service Circumstances" for="endofServCs"/>
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}" id="circumstanceItem">
+                    <apex:outputLabel value="End of Service Circumstances" for="endofServCs" id="endOfServiceCsValuesLabel"/>
                     <apex:outputPanel >
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
@@ -1387,6 +1386,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                
                 
                 <!-- removed for PRI 301
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && isNR)}" >
