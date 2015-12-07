@@ -244,10 +244,10 @@
                     </apex:pageBlockSectionItem>
 
                     <apex:pageBlockSectionItem ><apex:outputLabel Value="Start Time"/>
-                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.startDateTime==null, NOW(), seizure.startDateTime) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+                        <c:MilitaryDateTimeWithSeconds edit="true" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.startDateTime==null, NOW(), seizure.startDateTime) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem > <apex:outputLabel Value="End Time"/>
-                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.endDateTime==null, NOW(), seizure.endDateTime) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+                        <c:MilitaryDateTimeWithSeconds edit="true" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.endDateTime==null, NOW(), seizure.endDateTime) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
                     </apex:pageBlockSectionItem>
 
                     <apex:pageBlockSectionItem > <apex:outputLabel Value="Observed By"/>
@@ -274,7 +274,7 @@
                     </apex:pageBlockSectionItem>
                     
                     <apex:pageBlockSectionItem > <apex:outputLabel Value="Duplicate"/>
-                        <apex:inputCheckbox value="{!seizure['duplicateEntry']}" id="seizureEntry_duplicateEntry" />
+                        <apex:inputCheckbox value="{!seizure['duplicateEntry']}" id="seizureEntry_duplicateEntry" disabled="true" />
                     </apex:pageBlockSectionItem>
                     
                     <apex:inputHidden value="{!seizure.Id}" id="seizureEntry_Id" />
@@ -289,7 +289,7 @@
                         <apex:facet name="stop">
                             <apex:outputPanel >
                                 <apex:commandButton id="saveSeizure" value="Save" onclick="seizureSave(true);return false;" />
-                                <apex:commandButton id="saveAndNewSeizure" value="Save & New" onclick="seizureSave(false); return false;" />
+<!--                                 <apex:commandButton id="saveAndNewSeizure" value="Save & New" onclick="seizureSave(false); return false;" /> -->
                                 <apex:commandButton value="Cancel" onclick="closeModalDialogSA('seizureTrackingModal', 'div');j$('#seizureMessages').html('');return false;" />
                             </apex:outputPanel>
                         </apex:facet>
