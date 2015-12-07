@@ -1452,7 +1452,10 @@ public without sharing class ServiceAssignmentExt {
             if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == 'Yes' && theServAssign.Primary_Reason_for_Dissatisfaction__c == null){
                 errors.add('Primary Reason for Dissatisfaction : You must enter a value.');
             }
-            if(theServAssign.End_of_Service_Circumstances__c == null && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative')){
+            if((theServAssign.End_of_Service_Circumstances__c == '' || theServAssign.End_of_Service_Circumstances__c == null) && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && ServiceLocation.Network_Offering__c != 'ARY'){
+                errors.add('End of Service Circumstances : You must enter a value.');
+            }
+            if((theServAssign.End_of_Service_Circumstances__c == '' || theServAssign.End_of_Service_Circumstances__c == null) && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && ServiceLocation.Network_Offering__c == 'ARY' && theServAssign.Was_Child_Service_or_Permanency_Goal_met__c  == 'No'){
                 errors.add('End of Service Circumstances : You must enter a value.');
             }
             if(theServAssign.Is_this_transfer_to_another_ServAssign__c == null){
