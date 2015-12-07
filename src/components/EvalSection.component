@@ -90,7 +90,7 @@
 		</apex:pageBlock>
 		<apex:pageBlock rendered="{!containsPressureUlcerDetail}">
 			<apex:facet name="header">
-				<apex:outputText value="{!compositeToHeaderMap[evalType + '~' + 'Skin/Body~Pressure Ulcer Details']}" escape="false" />
+				<apex:outputText value="{!IF(evalType == 'Residential', compositeToHeaderMap['Residential~Skin/Body~Pressure Ulcer Detail'], compositeToHeaderMap['Head to Toe~Skin/Body~Pressure Ulcer Details'])}" escape="false" />
 			</apex:facet>
 			<c:EvaluationResponseTable parentId="{!$CurrentPage.parameters.evalId}" type="Pressure Ulcer Detail" showTitle="false" collapsible="false" formId="{!$Component.evalForm}" uniqueId="Decubiti"
 				customLabels="[{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Observed Date/Time&quot;}]"/>
