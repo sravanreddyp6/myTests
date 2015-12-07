@@ -158,9 +158,9 @@ public with sharing class referral_Controller2 {
 		}
 		set;
 	}
-	private Id personBeingRefId {get; set;}
+	@testvisible private Id personBeingRefId {get; set;}
 	public Id pBRId { get; set; }
-	private Id personBeingServedId {get; set;}
+	@testvisible private Id personBeingServedId {get; set;}
 	public Id pBSId { get; set; }
 	public boolean isEditor{get; set;}
 	
