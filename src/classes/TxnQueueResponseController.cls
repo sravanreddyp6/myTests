@@ -10,6 +10,8 @@ public with sharing class TxnQueueResponseController {
     public Assessment_IssaFormWithoutSharing assessmentIssaResponse { get; private set; }
     public DSP_Worksheets apWorksheets { get; private set; }
     public DSP_WeeklySkillTracking skillResponse { get; private set;}
+    public DSP_Shift_Note_Basic shiftNote { get; private set;}
+    public DSP_ShiftNoteList shiftNoteList { get; private set;}
     public DSP_BehaviorTracking behaviorResponse { get; private set;}
 	
 //Constructor
@@ -61,7 +63,7 @@ public with sharing class TxnQueueResponseController {
 			
 			if ( thisTxn.return_value_6__c != null )
 				txnResponse += thisTxn.return_value_6__c;
-				
+			
 			if ( thisTxn.return_value_7__c != null )
 				txnResponse += thisTxn.return_value_7__c;
 			
@@ -96,6 +98,13 @@ public with sharing class TxnQueueResponseController {
 				system.debug('TO DESERIALIZE: ' + txnresponse);
             	behaviorResponse = (DSP_BehaviorTracking) JSON.deserializeStrict ( TxnResponse, DSP_BehaviorTracking.class);
             }
+            else if ( thisTxn.request_type__c == 'Shift Note' || thisTxn.request_type__c == 'Update Shift Note' || thisTxn.request_type__c == 'Disregard Shift Note') {
+                shiftNote = (DSP_Shift_Note_Basic) JSON.deserialize ( TxnResponse, DSP_Shift_Note_Basic.class);
+            }
+            else if ( thisTxn.request_type__c == 'Shift Note List') {
+                shiftNoteList = (DSP_ShiftNoteList) JSON.deserialize ( TxnResponse, DSP_ShiftNoteList.class);
+            }
+
 		} catch (Exception e2) {
 			ApexPages.addMessage( new ApexPages.Message(ApexPages.Severity.ERROR, e2.getmessage()));
 			return;

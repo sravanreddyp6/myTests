@@ -118,6 +118,7 @@ public with sharing class DSPHomePageController {
             navList.add( new SelectOption('dspShiftNoteSummary(\'' + pbsID + '\');', 'Shift Note Summary'));		
 			actionList.add( new SelectOption('submitTxnRequest(\'BehaviorList\',\'' + apID + '\');', 'View Behavior Data'));        			
 			actionList.add( new SelectOption('submitTxnRequest(\'SkillList\',\'' + apID + '\');', 'View Skill Data'));
+            actionList.add( new SelectOption('submitTxnRequest(\'Shift Note List\',\'' + pbsID + '\');', 'View Shift Notes'));			
         	system.debug( this);
         	
         }
@@ -617,7 +618,7 @@ public with sharing class DSPHomePageController {
     // END: SHAUN-47: Additions for checking existence of TMN_User__c record for the User.
     
     
-   
+    
     public pageReference dspShiftNoteSummary() {
         PageReference pageRef = new PageReference('/apex/DSP_shiftnote_summary_rpt');
         String selectedPBS =  this.pbsID == null || this.pbsID == '' ?  String.join(this.currentPBSList, ',') : this.pbsID;
