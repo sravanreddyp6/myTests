@@ -18,7 +18,7 @@ public without sharing class DSP_ShiftNoteList {
 		this.pbsId = pbsID;
         String strSQL =  'SELECT id, name, locked__c, Disregard_Note__c, Late_Entry__c, Start_Time__c, End_Time__c, Number_of_Required_Signatures__c, Narrative__c, Healthcare_Medical_Note__c,' +     
 						'ownerId, createdby.Name, lastmodifiedby.Name, CreatedDate, LastModifiedDate, No_Approval_Needed__c, Approval_Status__c, Approval_Status_Date__c, Status__c, ' +  
-						'Action_Plan__c, Service_Assignment__c, Admission__c, RecordTypeid, Person_Being_served__c, Person_Being_Served__r.Name, Signature_on_File__c  FROM Progress_Note__c WHERE RecordType.developername = \'Shift_Note\' and Person_Being_Served__c = \'' + pbsID + '\' and createddate = LAST_N_DAYS:30 order by createddate desc ';
+						'Action_Plan__c, Service_Assignment__c, Admission__c, RecordTypeid, Person_Being_served__c, Person_Being_Served__r.Name, Signature_on_File__c  FROM Progress_Note__c WHERE RecordType.developername = \'Shift_Note\' and Person_Being_Served__c = \'' + pbsID + '\' and createddate = LAST_N_DAYS:30 order by Start_Time__c desc ';
         pnotes = (list<Progress_Note__c>) Database.query(strSQL);
         
 	}
