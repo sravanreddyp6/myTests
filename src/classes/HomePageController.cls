@@ -87,6 +87,9 @@ public with sharing class HomePageController{
     public boolean isIARole { get; set; }	
     public boolean isCAFSS{get; set;}
     public string businessUnit {get; set;}
+    public boolean cancreateCANS{ get; set;}
+    public boolean rwLevel1{ get; set;}
+    public boolean rwLevel3{ get; set;}
     
     //key-Admission : Value-Open CANS Assessment Id
     public Map<Id, Assessment__c> admissionCANSMap {get; set;} 
@@ -97,6 +100,7 @@ public with sharing class HomePageController{
     public Map<Id, Boolean> hasadmissionActFinMap {get;set;}
     public Map<Id, Assessment__c> admissionActFinISSAMap {get; set;} 
     public Map<Id, Boolean> hasadmissionActFinISSAMap {get;set;}
+    Set<String> dupeCheck = new Set<String>();
     
 	//Constructor
 	public HomePageController(){
@@ -195,6 +199,22 @@ public with sharing class HomePageController{
 		} else {
 			canSeeShiftDoc = false;
 		}
+		if (permissionSets.contains('ESD - Assessments Only')){
+			cancreateCANS = true; 
+		} else {
+			cancreateCANS = false;
+		}
+		if (permissionSets.contains('ESD - Notes - RW - Level 1')){
+			rwLevel1 = true; 
+		} else {
+			rwLevel1 = false;
+		}
+		if (permissionSets.contains('ESD - Notes - RW - Level 3')){
+			rwLevel3 = true; 
+		} else {
+			rwLevel3 = false;
+		}
+		
 		Map<id,UserRole> rolemap =new Map<id,UserRole>([SELECT DeveloperName,Id FROM UserRole]);
         if((rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix_Clinical_Users'||rolemap.get(UserInfo.getUserRoleId()).DeveloperName=='AZ_Phoenix')&& OperatingGroup == 'Redwood' && os.AZ_OPT_Enabler__c==true){
           canCreateProgressNotes = true;
@@ -312,6 +332,7 @@ public with sharing class HomePageController{
 			}
 
 			SelectOption[] optionList = new SelectOption[]{};
+			optionList.add(new SelectOption('', '-------Select------'));
 			//adding a wrapping clause here PRI-237, this may be requested for removal 
 			//if(operatingGroup.StartsWith( 'Care') ){
 			if (canSeeShiftDoc) {
@@ -367,19 +388,127 @@ public with sharing class HomePageController{
 
             }
 				
-			// IADAY-9 - add capability for Redwood users in IA to add plan-related data
+			
+			// Redwood HomePage Daily Actions
+			if ( operatingGroup == 'Redwood' && !isCAFSS){
+				
+				if(rwLevel3){
+					if(serviceAssignment.Admission__r.State__c=='MN' || isIARole){
+						optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+						dupeCheck.add('Record Seizure');
+					}
+					if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole)){
+						optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
+						dupeCheck.add('View Behavior Data');
+					}
+					if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole)){
+						optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
+						dupeCheck.add('View Skill Data');
+					}
+					if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole)){
+						optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
+						dupeCheck.add('Acknowledge Action Plan');
+					}
+					if(serviceAssignment.Admission__r.State__c=='MN'){
+						if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+				    		if(hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null ){
+                        		optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
+                        		dupeCheck.add('Acknowledge ISSA Assessment');
+				    		}
+						}
+					}
+					if(serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole){
+						if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+				    		if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null ){
+					    		optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
+					    		dupeCheck.add('Acknowledge Risk Assessment');
+				    		}
+						}
+					}
+					if(isIARole){
+						optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+						dupeCheck.add('Create Time Log Entry');
+						optionList.add( new SelectOption('IowaDailyDataSummary', 'Create Daily Data Summary'));
+						dupeCheck.add('Create Daily Data Summary');
+						
+					}	
+				}
+				
+				if(rwLevel1){
+					
+						if(isIARole){
+							if(!dupeCheck.Contains('Record Seizure')){
+							optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+							}
+						}
+						if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA' || isIARole)){
+							if(!dupeCheck.Contains('View Behavior Data')){
+								optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
+								
+							}
+						}
+						if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA' || isIARole)){
+							if(!dupeCheck.Contains('View Skill Data')){
+								optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
+								
+							}
+						}
+						if((serviceAssignment.Action_Plans__r.size() > 0) && (serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA' || isIARole)){
+							if(!dupeCheck.Contains('Acknowledge Action Plan')){
+								optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
+								
+							}
+						}
+						if(serviceAssignment.Admission__r.State__c=='MN'){
+							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
+								if ( hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c) == True) {
+				    				if(hasadmissionActFinISSAMap != Null && hasadmissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id != Null ){
+                        				optionList.add( new SelectOption('/' + admissionActFinISSAMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge ISSA Assessment'));
+				    				}
+								}
+							}
+						}
+						if(serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA'|| isIArole){
+							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
+								if ( hasadmissionActFinMap != Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c)!= Null && hasadmissionActFinMap.get(serviceAssignment.Admission__c) == True) {
+				    				if(admissionActFinMap.get(serviceAssignment.Admission__c)!= Null && admissionActFinMap.get(serviceAssignment.Admission__c).Id != Null ){
+					    				optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
+				    				}
+								}
+							}
+						}
+						if(isIARole){
+							if(!dupeCheck.Contains('Acknowledge ISSA Assessment')){
+								optionList.add( new SelectOption('createTimeLog', 'Create Time Log Entry'));
+							}
+						}
+						
+				}
+				if(cancreateCANS && serviceAssignment.Admission__r.State__c=='WI'){
+					optionList.add( new SelectOption('createNewCansAssesment', 'Create new CANS Assessment'));
+				}
+				
+			}
+			
+			/* // IADAY-9 - add capability for Redwood users in IA to add plan-related data
 			if ( operatingGroup == 'Redwood' && isIARole && !isCAFSS) {
+					
+					optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+					dupeCheck.add('Record Seizure');
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
-					/*optionList.add(new SelectOption(
+					optionList.add(new SelectOption(
 										Page.Notes_ProgressNote_Create.getUrl() + 
 										'?service_assignment=' + serviceAssignment.ID + 
 										'&plan=' + serviceAssignment.Action_Plans__r[0].Id + 
 										'&admission=' + serviceAssignment.Admission__r.Id + 
 										'&person=' + serviceAssignment.Person_Being_Served__r.Id + 
 										'&state=' + serviceAssignment.Admission__r.State__c +
-										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));*/
-					
+										'&retURL=' + Apexpages.CurrentPage().getURL(), 'Create Shift Note'));
+					if(!dupeCheck.Contains('View Behavior Date')){
+							
+					}
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
+					dupeCheck.add('View Behavior Data');
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id, 'Acknowledge Action Plan'));
 					
@@ -401,6 +530,9 @@ public with sharing class HomePageController{
 			}
 			//PRI-326 Redwood MN, IN, CA homepage values.
 			if ( operatingGroup == 'Redwood' && (serviceAssignment.Admission__r.State__c=='MN' || serviceAssignment.Admission__r.State__c=='IN' || serviceAssignment.Admission__r.State__c== 'CA') && !isCAFSS && !isIARole) {
+				if (serviceAssignment.Admission__r.State__c=='MN') {
+					optionList.add( new SelectOption('/' + serviceAssignment.Id + '#Seizure_Tracking', 'Record Seizure'));
+				}
 				if (  serviceAssignment.Action_Plans__r.size() > 0 ) {
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Behavior Data'));
 					optionList.add( new SelectOption('/' + serviceAssignment.Action_Plans__r[0].Id + '#worksheets', 'View Skill Data'));
@@ -418,7 +550,7 @@ public with sharing class HomePageController{
 					    optionList.add( new SelectOption('/' + admissionActFinMap.get(serviceAssignment.Admission__c).Id, 'Acknowledge Risk Assessment'));
 				}				
 				
-			}
+			}*/
 			serviceAssignmentToSelectOptionMap.put(serviceAssignment.Id, optionList);
 		}
 		List<AggregateResult> responses = [
