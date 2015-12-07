@@ -203,12 +203,12 @@ public with sharing class EvalDynamicExt {
 			if (key.contains('Head to Toe~Skin/Body') || key.contains('Residential~Skin/Body')) {
 				List<Eval_Value__c> toInsert = new List<Eval_Value__c>();
 				toInsert.addAll(createEvalValueRecord(evalId, evalType, cat, 'Wound Detail', evalSecId, evalSecType));
-				toInsert.addAll(createEvalValueRecord(evalId, evalType, cat, 'Pressure Ulcer Details', evalSecId, evalSecType));
+				toInsert.addAll(createEvalValueRecord(evalId, evalType, cat, evalType == 'Residential' ? 'Pressure Ulcer Detail' : 'Pressure Ulcer Details', evalSecId, evalSecType));
 				insert toInsert;
 			} else if (key.contains('Residential~Fall Risk Assessment')) {
-				insert createEvalValueRecord(evalId, evalType, cat, subcat, evalSecId, evalSecType);
+				insert createEvalValueRecord(evalId, evalType, cat, 'Fall Assessment', evalSecId, evalSecType);
 			} else if (key.contains('Restraint Event~Reduction Review')) {
-				insert createEvalValueRecord(evalId, evalType, cat, subcat, evalSecId, evalSecType);
+				insert createEvalValueRecord(evalId, evalType, cat, 'Reduction Review', evalSecId, evalSecType);
 				currentAssessId = EvalDynamicExt.createAssessmentforRestraint(restraintSecId, evalID, PBSID, SAID, AdmID, accId);
 			}
 		}
