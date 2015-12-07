@@ -1248,7 +1248,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY'}" >
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}" >
                     <label for="pChldGoalAtStart" >Child Service Goal at Start of Service</label>                   
                     <apex:outputPanel >                 
                         <apex:outputField value="{!theServAssign.Child_Service_Goal__c}" />
@@ -1257,7 +1257,7 @@
                     </apex:outputPanel> 
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!((vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY'  && locationsetting !='Non-Residential')}" >
+                <apex:pageBlockSectionItem rendered="{!((vfVarIsRW || vfVarIsCB) && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'  && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential')}" >
                     <label for="pChldPermGoal" >Child Permanency Goal at Start of Service</label>                   
                     <apex:outputPanel >                 
                         <apex:outputField value="{!theServAssign.Child_Permanency_Goal__c}" />
