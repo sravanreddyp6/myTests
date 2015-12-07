@@ -75,7 +75,7 @@ public class SeizureWrapper {
         this.serviceAssignmentName = seizure.Service_Assignment__r.Name;
         this.serviceAssignmentId = seizure.Service_Assignment__c;
         this.comments = seizure.Comments__c;
-        this.duplicateEntry = seizure.Duplicate_Entry__c;
+        this.duplicateEntry = seizure.Duplicate_Entry__c == null ? false : seizure.Duplicate_Entry__c;
         this.endDateTime = seizure.End_DateTime__c;
         this.observedByNameC = seizure.Observed_By__r.Name;
         this.startDate = seizure.StartDate__c;
@@ -92,7 +92,7 @@ public class SeizureWrapper {
 		                      Start_DateTime__c = getDateTimeFromString(this.seizureStart_DateTime), 
 		                      End_DateTime__c = getDateTimeFromString(this.seizureEnd_DateTime), 
 		                      Observed_By__c = UserInfo.getUserId(), 
-                              Duplicate_Entry__c = this.duplicateEntry,
+                              Duplicate_Entry__c = this.duplicateEntry == null ? false : this.duplicateEntry,
                               Seizure_Description__c = this.seizureDescription,
                               Pre_seizure_phase__c = this.preSeizurePhase,
                               Post_seizure_phase__c = this.postSeizurePhase
