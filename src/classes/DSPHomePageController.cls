@@ -90,6 +90,8 @@ public with sharing class DSPHomePageController {
         }
         
         public void buildSelectLists() {
+        	
+        	// actionList will be grouped by like features, navlist will be alphabetical
         	actionList = new List<SelectOption> { new SelectOption('','--- Select ---')};
             navList = new List<SelectOption> { new SelectOption('','--- Select ---')};
         	if ( hasActionPlan ) {
@@ -97,6 +99,10 @@ public with sharing class DSPHomePageController {
         			actionList.add( new SelectOption('submitTxnRequest(\'Action Plan\',\'' + apID + '\');', 'Acknowledge Action Plan'));
         		
         		navList.add( new SelectOption('submitTxnRequest(\'Action Plan\',\'' + apID + '\');', 'Action Plan'));
+	            navList.add( new SelectOption('dspShiftNoteSummary(\'' + pbsID + '\');', 'Shift Note Summary'));		
+				actionList.add( new SelectOption('submitTxnRequest(\'BehaviorList\',\'' + apID + '\');', 'View Behavior Data'));        			
+				actionList.add( new SelectOption('submitTxnRequest(\'SkillList\',\'' + apID + '\');', 'View Skill Data'));
+            	actionList.add( new SelectOption('submitTxnRequest(\'Shift Note List\',\'' + pbsID + '\');', 'View Shift Notes'));			
         	}
         	
         	if ( hasISSA ) {
@@ -115,10 +121,7 @@ public with sharing class DSPHomePageController {
         		
 			actionList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Record Seizure'));        			
 			navList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Seizures'));
-            navList.add( new SelectOption('dspShiftNoteSummary(\'' + pbsID + '\');', 'Shift Note Summary'));		
-			actionList.add( new SelectOption('submitTxnRequest(\'BehaviorList\',\'' + apID + '\');', 'View Behavior Data'));        			
-			actionList.add( new SelectOption('submitTxnRequest(\'SkillList\',\'' + apID + '\');', 'View Skill Data'));
-            actionList.add( new SelectOption('submitTxnRequest(\'Shift Note List\',\'' + pbsID + '\');', 'View Shift Notes'));			
+			navList = SortOptionList(navList, true);
         	system.debug( this);
         	
         }
@@ -251,7 +254,7 @@ public with sharing class DSPHomePageController {
                                              focusPBS.id,
                                              hasAP ? focusPBS.action_plans__r[0].id : null, 
                                              focusPBS.person_being_served__r.name, 
-                                             focusPBS.service_location__r.location_nickname__c,
+                                             focusPBS.service_location__r.alias__c + + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
                                              focusPBS.service_location__r.alias__c,
                                              hasAP ? focusPBS.action_plans__r[0].effective_date__c : null,
                                              true,  // is favorite
@@ -309,7 +312,9 @@ public with sharing class DSPHomePageController {
         // go through the PBS List to update the settings for Risk and ISSA existence and need to acknowledge
         for ( PBSWrapper p : peopletoServe ) {
             
-            p.needsAPAck = !setAcks.contains( p.APId );
+            if ( p.hasActionPlan )
+            	p.needsAPAck = !setAcks.contains( p.APId );
+            	
             if ( admAssess.keyset().contains( p.admID + 'Risk')) { 
                 p.hasRisk = true;
                 p.needsRiskAck = !setAcks.contains( admAssess.get(p.admID + 'Risk'));
@@ -354,35 +359,35 @@ public with sharing class DSPHomePageController {
         for ( PBSWrapper p : peopletoServe ) {
             
             // only if current action plan on this PBS row
-            if ( !p.hasActionPlan) 
-                continue;
+            if ( p.hasActionPlan) { 
                 
-            // BEHAVIOR - monthly           
-            // if there is a behavior worksheet for the current month, grab ID 
-            if ( apWksht.keyset().contains( p.apId + 'Behavior')) {
-                wID = apWksht.get( p.apID + 'Behavior'); 
-                aw = wmap.get( wID);
-                p.hasBW = true;
-                p.bwID = aw.Id;
-            }
-
-            // SKILLS - weekly
-            // if there is a skills worksheet for this play, check what week            
-            if ( apWksht.keyset().contains( p.apID + 'Skill')) {
-                wID = apWksht.get(p.apId + 'Skill');
-                aw = wmap.get( wID );
-                p.hasSW = true;
-                p.swID = aw.Id;
                 
-            } 
-
-            // allow creation of worksheets if there is not one and today is before the Action Plan target date
-            if ( Date.today() <= p.apTargetDate ) {  
-                if ( !p.hasSW ) p.hasSW = true;
-                if ( !p.hasBW ) p.hasBW = true;
-                
-            }
-            
+	            // BEHAVIOR - monthly           
+	            // if there is a behavior worksheet for the current month, grab ID 
+	            if ( apWksht.keyset().contains( p.apId + 'Behavior')) {
+	                wID = apWksht.get( p.apID + 'Behavior'); 
+	                aw = wmap.get( wID);
+	                p.hasBW = true;
+	                p.bwID = aw.Id;
+	            }
+	
+	            // SKILLS - weekly
+	            // if there is a skills worksheet for this play, check what week            
+	            if ( apWksht.keyset().contains( p.apID + 'Skill')) {
+	                wID = apWksht.get(p.apId + 'Skill');
+	                aw = wmap.get( wID );
+	                p.hasSW = true;
+	                p.swID = aw.Id;
+	                
+	            } 
+	
+	            // allow creation of worksheets if there is not one and today is before the Action Plan target date
+	            if ( Date.today() <= p.apTargetDate ) {  
+	                if ( !p.hasSW ) p.hasSW = true;
+	                if ( !p.hasBW ) p.hasBW = true;
+	                
+	            }
+            }            
             // last thing to do = build the list of daily actions and navigation for each PBS
             p.buildSelectLists();           
         }
@@ -525,7 +530,7 @@ public with sharing class DSPHomePageController {
                                              focusPBS.id,
                                              hasAP ? focusPBS.Action_Plans__r[0].id : null, 
                                              focusPBS.person_being_served__r.name, 
-                                             focusPBS.service_location__r.location_nickname__c,
+                                             focusPBS.service_location__r.alias__c + (( focusPBS.service_location__r.location_nickname__c != null ) ? ' - ' + focusPBS.service_location__r.location_nickname__c : ''),
                                              focusPBS.service_location__r.alias__c,
                                              hasAP? focusPBS.Action_Plans__r[0].effective_date__c : null,
                                              searchResultIsFav, // is fav
@@ -622,5 +627,40 @@ public with sharing class DSPHomePageController {
         pageRef.getParameters().put('currentPBSList', json.serialize(this.currentPBSList));
         pageRef.setRedirect(true);
         return pageRef;
-    }   
+    }
+    
+    //  This is a simple quicksort algorithm to sort a SelectOption list (dropdown) 
+    // by label alphabetically.
+    private static List<SelectOption> SortOptionList(List<SelectOption> ListToSort, Boolean selectatTop)
+    {
+        if(ListToSort == null || ListToSort.size() <= 1)
+            return ListToSort;
+            
+        List<SelectOption> Less = new List<SelectOption>();
+        List<SelectOption> Greater = new List<SelectOption>();
+        integer pivot = ListToSort.size() / 2;
+          
+        // save the pivot and remove it from the list
+        SelectOption pivotValue = ListToSort[pivot];
+        ListToSort.remove(pivot);
+        
+        for(SelectOption x : ListToSort)
+        {
+        	if ( selectatTop && (x.getLabel() == '--- Select ---') )
+        		continue; // skip it
+        		
+            if(x.getLabel() <= pivotValue.getLabel() )
+                Less.add(x);
+            else if(x.getLabel() > pivotValue.getLabel()) Greater.add(x);   
+        }
+        List<SelectOption> returnList = new List<SelectOption> ();
+        if ( selectatTop)
+        	returnList.add( new SelectOption('','--- Select ---'));
+
+        returnList.addAll(SortOptionList(Less, false));
+        returnList.add(pivotValue);
+        returnList.addAll(SortOptionList(Greater, false));
+        	
+        return returnList; 
+    }     
 }
