@@ -237,35 +237,30 @@ public with sharing class GenerateEvalComponent {
 		containsSkinAssessment = false;
 		containsRestraintReduction = false;
 		for (Eval__c eval: listEvalItems) {
+			System.debug(eval.Composite__c);
 			if (eval.Composite__c == 'Head to Toe~Skin/Body~Wound Detail' || eval.Composite__c == 'Residential~Skin/Body~Wound Detail') {
 				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
+				if (evalName == 'Residential' || compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
 					containsWoundDetail = true;
-				} else if (evalName == 'Head to Toe') {
+				} else {
 					containsWoundDetailLog = true;
 				}
 			} else if (eval.Composite__c == 'Head to Toe~Skin/Body~Pressure Ulcer Details' || eval.Composite__c == 'Residential~Skin/Body~Pressure Ulcer Detail') {
 				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
+				if (evalName == 'Residential' || compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
 					containsPressureUlcerDetail = true;
-				} else if (evalName == 'Head To Toe') {
+				} else {
 					containsPressureUlcerDetailLog = true;
 				}
 			} else if (eval.Composite__c == 'Residential~Fall Risk Assessment~Fall Assessment') {
 				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
-					containsFallAssessment = true;
-				}
+				containsFallAssessment = true;
 			} else if (eval.Composite__c == 'Residential~Skin/Body~Skin Assessment') {
 				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
-					containsSkinAssessment = true;
-				}
+				containsSkinAssessment = true;
 			} else if (eval.Composite__c == 'Restraint Event~Reduction Review~Reduction Review') {
 				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
-					containsRestraintReduction = true;
-				}
+				containsRestraintReduction = true;
 			}
 		}
 		return composites;
