@@ -1285,7 +1285,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!vfVarIsCB}" >
+                <apex:pageBlockSectionItem rendered="{!vfVarIsCB && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home' || Service_Assignment__c.Service_location__r.Service_Type__c == 'FCT')}" >
                     <label for="outofhomeplace" >Number of Out-of-Home Placements Pre-Service</label>
                     <apex:outputPanel > 
                         <apex:outputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
@@ -1324,7 +1324,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && admission.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
                     <apex:outputLabel value="Was Child Service or Permanency Goal met at End of Service?" />
                     <apex:outputPanel >
                         <div class="requiredInput">
@@ -1336,13 +1336,13 @@
                 <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
                         <apex:outputLabel value="Educational Involvement at End of Service" />
                         <apex:outputPanel >
-                            <apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY'}">
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
                                     <apex:inputField value="{!theservAssign.Educational_Involvement_at_End_of_Servic__c}" />
                             </div>
                             </apex:outputPanel>
-                            <apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_offering__c != 'ARY'}" >
                                 <apex:inputField value="{!theservAssign.Educational_Involvement_at_End_of_Servic__c}" />
                             </apex:outputPanel>
                         </apex:outputPanel>
@@ -1350,24 +1350,24 @@
                 <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
                         <apex:outputLabel value="Highest Level of Education at End of Service" />
                         <apex:outputPanel >
-                            <apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY'}">
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
                                     <apex:inputField id="first_highEduAtEnd" value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
                             </div>
                             </apex:outputPanel>
-                            <apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_offering__c != 'ARY'}" >
                                 <apex:inputField id="second_highEduAtEnd" value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
                             </apex:outputPanel>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB && Service_Assignment__c.Service_location__r.Physical_location__c == 'Host Home'}" >
                         <apex:outputLabel value="Total Number of Internal Moves During Service" />
                         <apex:outputPanel >
                             <apex:outputPanel id="Total_no_of_Internal_moves_during_Servic__c_wrapper">
                             <div class="requiredInput">
-                                <apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }"> <div class="requiredBlock"></div> </apex:outputPanel>
+                                <div class="requiredBlock"></div>
                                     <apex:inputField value="{!theservAssign.Total_no_of_Internal_moves_during_Servic__c}" />
                             </div>
                             </apex:outputPanel>
@@ -1377,11 +1377,13 @@
                 <!-- Added by Amruth-->
                 
                 <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}" >
-                    <apex:outputLabel value="End of Service Circumstances" />
+                    <apex:outputLabel value="End of Service Circumstances" for="endofServCs"/>
                     <apex:outputPanel >
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
-                            <apex:inputField value="{!theServAssign.End_of_Service_Circumstances__c}"  />
+                            <apex:SelectList size="1" id="endOfServiceCsValues" value="{!theServAssign.End_of_Service_Circumstances__c}"  >
+                            	<apex:selectOptions value="{!endOfServiceCsValues}" />
+                            </apex:SelectList>
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
@@ -1452,7 +1454,7 @@
                     <apex:outputLabel value="Service Ended via Business Divested?" />
                     <apex:outputField value="{!theServAssign.Service_Ended_via_Business_Divested__c}" />
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && admission.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
                     <apex:outputLabel value="Was Child Service or Permanency Goal met at End of Service?" />
                     <apex:outputField value="{!theServAssign.Was_Child_Service_or_Permanency_Goal_met__c}" />
                 </apex:pageBlockSectionItem>

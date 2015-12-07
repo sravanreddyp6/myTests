@@ -223,6 +223,84 @@ public without sharing class ServiceAssignmentExt {
 
 	}
 	set;}
+	
+	//Sravan - End of Service Circumstances - Start
+	public list<SelectOption> endOfServiceCsValues{get{
+		if(endOfServiceCsValues == null){
+			endOfServiceCsValues = new List<SelectOption>();
+			Schema.DescribeFieldResult fieldResult = Service_Assignment__c.End_of_Service_Circumstances__c.getDescribe();
+			List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+			endOfServiceCsValues.add(new selectOption('', '--None--'));
+			string operatingGroup = getOperatingGroup();
+			string physicalLocation = ServiceLocation.Physical_location__c;
+			string populationServed = ServiceLocation.Population_Served__c;
+			for(Schema.PicklistEntry f : ple){
+				string label = f.getLabel();
+				if((operatingGroup == 'Cambridge' || operatingGroup == 'Redwood')){
+					if(populationServed == 'Child'){
+						if((physicalLocation == 'Host Home' || physicalLocation == 'Group Home' || physicalLocation == 'Facility')){
+							if(label == 'Did not comply with services/poor attendance' || label == 'Family refused services' || label == 'Hospitalization' || label=='No longer in need of services' || label== 'PBS/Family chose another service provider'
+								|| label== 'PBS/Guardian chose another service provider' || label== 'Qualified staff not available' || label== 'Relocation' || label== 'Termination of funding' || label== 'Unable to locate to provide services' ){
+									
+									continue;
+							}
+							
+						}else if(physicalLocation == 'Center' || physicalLocation == 'Community' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
+							if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Medical needs exceed ability to serve'|| label == 'Moved to a different level of care'
+								|| label=='No longer in need of services' || label== 'No Mentor available' || label== 'PBS/Guardian chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS'){
+								
+								continue;
+							}
+							
+						}
+						
+					}else if(populationServed == 'Adult' || populationServed == 'Senior'){
+						if(physicalLocation == 'Host Home'){
+							if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label == 'Did not comply with services/poor attendance'|| label == 'Family refused services' || label == 'Hospitalization' 
+								|| label== 'PBS/Family chose another service provider' || label== 'Qualified staff not available' || label== 'Relocation' || label== 'Termination of funding' || label== 'Unable to locate to provide services' ){
+								
+								continue;
+							}
+							
+						}else if(physicalLocation == 'Group Home' || physicalLocation == 'Facility'){
+							if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label == 'Did not comply with services/poor attendance'|| label == 'Family refused services' || label == 'Hospitalization'
+								|| label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' 
+								|| label== 'Qualified staff not available' || label== 'Relocation' || label== 'Termination of funding' || label== 'Unable to locate to provide services'){
+									
+								continue;
+								
+							}
+							
+						}else if(physicalLocation == 'Center' || physicalLocation == 'Community' || physicalLocation == 'Clinic' || physicalLocation == 'In-Home' || physicalLocation == 'School'){
+							if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change'  || label=='Elopement' || label == 'No Mentor available'
+								|| label== 'PBS/Family chose another service provider'  || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' ){
+									
+								continue;
+								
+							}
+							
+						}
+							
+					}	
+				}else if(operatingGroup == 'NeuroRestorative'){ // Start - Neuro
+					if(label =='Aged out of care' || label == 'Court decision-custody returned to bio family' || label == 'Court ordered placement change' || label == 'Did not comply with services/poor attendance' || label=='Elopement'
+						|| label == 'Family refused services' || label == 'Hospitalization' || label== 'No Mentor available' || label== 'PBS/Family chose another service provider' || label == 'Psychiatric hospitalization' || label == 'State/County moved PBS' || label== 'Qualified staff not available' || label== 'Relocation'
+						|| label== 'Unable to locate to provide services'){
+							
+						continue;
+						
+					}
+					
+				} // End Neuro
+				
+				endOfServiceCsValues.add(new selectOption(f.getValue(), f.getLabel()));
+			}
+		}
+		
+		return endOfServiceCsValues;
+		
+	}	
+	set;} // End of - End of Service Circumstances
 
     public Boolean episodeReq { get { return (admission.state__c == 'NC');} set; }
     public Boolean modelReq { get { return (pOpGroup == 'Cambridge'|| this.theServAssign.Flavor__c == 'CA FSS');} set; }
@@ -2228,7 +2306,7 @@ public without sharing class ServiceAssignmentExt {
 
     @RemoteAction
     public static Service_Location__c loadServiceLocation(string locationId) {
-        Service_Location__c loc = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Service_Value__c from Service_Location__c where ID = :locationId];
+        Service_Location__c loc = [ select ID, Name, Setting__c, Street__c, City__c, State__c, Zip__c, Phone__c, Program__c, ProgramID__c, FacilityID__c, Service_Value__c, Network_offering__c, TMN_Scope__c, Service_Type__c from Service_Location__c where ID = :locationId];
         return loc;
     }
 
