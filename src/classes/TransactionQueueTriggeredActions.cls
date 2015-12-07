@@ -486,7 +486,130 @@ public without sharing class TransactionQueueTriggeredActions {
 						return;
                     }
                 }
-                
+                else if ( t.request_type__c == 'Shift Note List') {
+                    try {
+                        ID pbsId = (ID) t.input_params__c;
+                        DSP_ShiftNoteList shiftNote = new DSP_ShiftNoteList(pbsId);
+                        String jsonstring = json.serialize( shiftNote);
+                        storeResultSTring( newreq, jsonstring );
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                system.debug( e );
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
+                else if ( t.request_type__c == 'Shift Note') {
+                    try {
+                        String inputs = t.input_params__c; // this is the comma separated list of ap,sa,admId,pbsid from the home page to create a new Shift Note, and just the id to view shift note detail form the list view 
+                        DSP_Shift_Note_Basic shiftNote = new DSP_Shift_Note_Basic(inputs);
+                        String jsonstring = json.serialize( shiftNote);
+                        storeResultSTring( newreq, jsonstring );
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
+                else if ( t.request_type__c == 'Update Shift Note') {
+                    try {
+                        Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
+                        // upsert the shift note
+                        Progress_Note__c pn = (Progress_Note__c) json.deserialize(inputs.get('payload.Note'), Progress_Note__c.class);
+                        upsert(pn);
+                        
+                        // insert-delete association with the goal-obj
+                        //if goalObjective list is empty or if not the list of Id's, then delete exsting associations and there wont be anything to insert.
+                        list<String> items = (list<String>) json.deserialize(inputs.get('payload.goalObjectAssociations'), list<String>.class);
+                        boolean processAssociations = items != null && items.size() > 0 && items[0] instanceof id ;  // 
+                        
+                        List<ProgressNote_ActionPlanChildren_mjo__c> deleteJo =  new List<ProgressNote_ActionPlanChildren_mjo__c>();
+                        List<ProgressNote_ActionPlanChildren_mjo__c> insertJo =  new List<ProgressNote_ActionPlanChildren_mjo__c>();
+                        map<Id, ProgressNote_ActionPlanChildren_mjo__c> mapOfExistingMjos = new map<Id, ProgressNote_ActionPlanChildren_mjo__c>(); 
+                        for (ProgressNote_ActionPlanChildren_mjo__c item: [select id, Progress_Note__c, Goal__c, Objective__c 
+                                                                             From ProgressNote_ActionPlanChildren_mjo__c 
+                                                                            Where Progress_Note__c =: pn.id ]) {
+                            if (item.Goal__c != null) mapOfExistingMjos.put(item.Goal__c,item);
+                            else if (item.Objective__c != null) mapOfExistingMjos.put(item.Objective__c, item);
+                        } 
+                        set<Id> idsToDelete = mapOfExistingMjos.keySet().clone();
+                        if(processAssociations) idsToDelete.removeAll((list<Id>)items);
+                        // items to remove - the ones not in the fancy tree        
+                        for(id i : idsToDelete){
+                            deleteJo.add(mapOfExistingMjos.get(i));
+                        }
+                        // items to insert
+                        set<Id> idsToInsert = processAssociations ? new set<Id>((list<Id>)items) : new set<Id>();
+                        idsToInsert.removeAll(mapOfExistingMjos.keySet()); 
+                        for(id i : idsToInsert){
+                            if (i.getSObjectType().getDescribe().getName() == 'Action_Plan_Goal__c') 
+                               insertJo.add(new ProgressNote_ActionPlanChildren_mjo__c(Progress_Note__c = pn.id, Goal__c = i));
+                            else if (i.getSObjectType().getDescribe().getName() == 'Action_Plan_Objective__c')
+                               insertJo.add(new ProgressNote_ActionPlanChildren_mjo__c(Progress_Note__c = pn.id, Objective__c = i));
+                        }
+                        delete deleteJo;
+                        insert insertJo;        
+                        
+                        // serialize again, this time with the known instance of shift note, that would set the note to view mode
+                        DSP_Shift_Note_Basic shiftNote = new DSP_Shift_Note_Basic(pn.Id);
+                        
+                        String jsonstring = json.serialize( shiftNote);
+                        storeResultSTring( newreq, jsonstring );
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }                
+                else if ( t.request_type__c == 'Disregard Shift Note') {
+                    try {
+                        ID pnId = t.input_params__c;
+                        Progress_Note__c thePN = [select id, Purpose_Service_is_Billable__c, disregard_note__c, status__c,approval_status__c, ownerid, 
+                                                         Person_Being_Served__c, Person_Being_Served__r.Account.Id, No_Approval_Needed__c, Locked__c
+                                                    from Progress_Note__c where id = :pnId];
+                        Boolean resetLocked = thePN.Locked__c;
+                        // briefly unlock to get around validation rule
+                        if (resetLocked) {
+                            thePN.No_Approval_Needed__c  = false;
+                            thePN.Locked__c  = false;
+                            update thePN;
+                        }
+                        thePN = [select id, Purpose_Service_is_Billable__c, disregard_note__c, status__c,approval_status__c, ownerid, Person_Being_Served__c, Person_Being_Served__r.Account.Id from Progress_Note__c where id = :thePN.Id];
+                        
+                        thePN.Purpose_Service_is_Billable__c = false;
+                        thePN.Disregard_Note__c = true;
+                        if (resetLocked) thePN.No_Approval_Needed__c  = resetLocked;
+                        update thePN;
+                        // Create a task reminder that indicates who marked the Progress Note as one to "Disregard."
+                        // Get the integrate account user ID to make the owner of the task.
+                        User integrateUser = [ SELECT Id FROM User WHERE Username LIKE 'integration%' LIMIT 1];
+                        Id integrateUserId = integrateUser.Id;
+                        DateTime n = DateTime.now();
+                        insert (new Task(Subject = 'Disregard', Status = 'Completed', Priority = 'Normal', OwnerId = integrateUserId, Description = 'Note disregarded by ' + UserInfo.getName() + ', ' + n.format('MM/dd/yyyy hh:mm a'), WhoId = thePN.Person_Being_Served__c, WhatId = thePN.Id, ActivityDate = n.date()));
+                        
+                        // serialize again, this time with the known instance of shift note, that would set the note to view mode
+                        DSP_Shift_Note_Basic shiftNote = new DSP_Shift_Note_Basic(pnId);
+                        
+                        String jsonstring = json.serialize( shiftNote);
+                        storeResultSTring( newreq, jsonstring );
+                        newreq.fulfilled__c = true;
+                        newreq.Date_Time_Fulfilled__c = DateTime.Now();
+                    } catch ( Exception e ) {
+                                newreq.fulfilled__c = false;
+                                newreq.return_value__c = json.serialize( e.getMessage() );
+                                throw(e);
+                                return;
+                    }
+                }
 			
 			// update the request back to the user
 			update newreq;

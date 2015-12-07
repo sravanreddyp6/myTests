@@ -1,7 +1,7 @@
 public without sharing class DSP_WeeklySkillTracking {
 
 	public Date startdate { get; set; } 
-    private Action_Plan_Worksheet__c result;
+    public Action_Plan_Worksheet__c result;
     public List<DSPObjectiveWrapper> objectivesMap;
     public boolean hasError = false;
     public ID APId { get; private set;}
@@ -127,34 +127,6 @@ public without sharing class DSP_WeeklySkillTracking {
                /* (plan.Target_Date__c= null || day <= plan.Target_Date__c) &&  */
                 ((objective.Target_End_Date__c == null) || (day <= objective.Target_End_Date__c));
     }
-
-    public PageReference myNewNote(){
-       // mySave();
-        
-        if (ApexPages.hasMessages() ) {
-        	return null;
-        } 
-        else {
-        	
-        	// clear viewstate off current page
-        	PageReference currpage = ApexPages.currentPage();
-        	Id id = currpage.getParameters().get('Id');
-       		currpage.getParameters().clear();
-       		currpage.getParameters().put('Id', id);  
-       
-        	PageReference page = new PageReference('/apex/Notes_ProgressNote_Create?plan=' + result.Action_plan__c + 
-                                                '&service_assignment=' + result.Action_plan__r.Service_Assignment__c +
-                                                '&admission=' + result.Action_Plan__r.Service_Assignment__r.Admission__c +
-                                                '&person=' + result.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c +
-                                                '&state=' + result.Action_Plan__r.Service_Assignment__r.Admission__r.State__c +
-                                                '&retURL=' + currpage.getURL());
-
-        
-        
-        	return page; 
-        }        
-    }
-    
     
     public class DSPObjectiveWrapper {
     	public APOWrapper objective { get; set; }

@@ -6,6 +6,8 @@ public string initials { get; set; }
 public string requestType { get; set; }
 public string inputArgs { get; set; }
 public ID newtargetID { get; set; }
+public boolean createNote { get; set; }
+
 
 public DSPSubmitTxn (TxnQueueResponseController controller) {
 	this.controller = controller;
@@ -67,6 +69,7 @@ public pageReference saveSkillResults ( ) {
 	for(DSP_WeeklySkillTracking.DSPObjectiveWrapper objectivewrp: controller.SkillResponse.objectivesmap){
              for(Date day: objectivewrp.ResultsMap.keyset()){
                  DSP_WeeklySkillTracking.ASRWrapper result = objectivewrp.ResultsMap.get(day);
+                 system.debug('result: ' + result);
                  if (result.Attempts != 0 ||
                      result.status != null ||
                      result.Met != null ||
@@ -132,7 +135,15 @@ public pageReference saveSkillResults ( ) {
 		
 			try { 
 				insert txn;
-				PageReference pr =  Page.DSPWeeklySkillTracking;
+                if (createNote && !err ){
+                    this.requestType = 'Shift Note';
+                    this.inputArgs = json.serialize(new Map<String, String>{'pbsID'=>string.valueOf(controller.skillResponse.result.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c),
+                        'saID'=>string.valueOf(controller.skillResponse.result.Action_Plan__r.Service_Assignment__c),
+                        'admID'=>string.valueOf(controller.skillResponse.result.Action_Plan__r.Service_Assignment__r.Admission__c),
+                        'apID'=>string.valueOf(controller.skillResponse.result.Action_Plan__c)});
+                    return submitTxnRequest();
+                }
+                PageReference pr =  Page.DSPWeeklySkillTracking;
 				pr.getParameters().put('txnID', txn.ID);
 				pr.setRedirect(true);
 				return pr;
@@ -185,6 +196,14 @@ public pageReference saveBehaviorResults ( ) {
 		
 			try { 
 				insert txn;
+				if (createNote){
+					this.requestType = 'Shift Note';
+					this.inputArgs = json.serialize(new Map<String, String>{'pbsID'=>string.valueOf(controller.behaviorResponse.result.Action_Plan__r.Service_Assignment__r.Admission__r.Person_Being_Served__c),
+						'saID'=>string.valueOf(controller.behaviorResponse.result.Action_Plan__r.Service_Assignment__c),
+						'admID'=>string.valueOf(controller.behaviorResponse.result.Action_Plan__r.Service_Assignment__r.Admission__c),
+						'apID'=>string.valueOf(controller.behaviorResponse.result.Action_Plan__c)});
+					return submitTxnRequest();
+				}
 				PageReference pr =  Page.DSPBehaviorTracking;
 				pr.getParameters().put('txnID', txn.ID);
 				pr.setRedirect(true);
@@ -209,7 +228,9 @@ private Map<String,String> requestToPage = new Map<String, String> { 'Action Pla
                                                                          'BehaviorList' => '/apex/DSPWorksheets#Behavior',  // list of worksheets
                                                                          'SkillList' => '/apex/DSPWorksheets#Skill',    // list of worksheets
                                                                          'Behavior' => '/apex/DSPBehaviorTracking',
-                                                                         'Skill' => '/apex/DSPWeeklySkillTracking'
+                                                                         'Skill' => '/apex/DSPWeeklySkillTracking',
+                                                                         'Shift Note' => '/apex/DSP_ShiftNote_Basic',
+                                                                         'Shift Note List' => '/apex/DSP_ShiftNoteList'
                                                                          };
 public pageReference submitTxnRequest() {
         // submit a transaction queue request 

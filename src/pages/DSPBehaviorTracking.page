@@ -82,6 +82,7 @@
         </apex:actionFunction>
         <apex:actionFunction name="saveBehaviorResults" action="{!saveBehaviorResults}" status="waitStatus" rerender="messages" >
             <apex:param name="objId" value="" assignTo="{!newtargetid}" />
+            <apex:param name="createNote" value="false" assignTo="{!createNote}" />            
         </apex:actionFunction>
         
     <apex:pageMessages id="messages"></apex:pageMessages>
@@ -114,7 +115,7 @@
     <apex:pageBlock mode="maindetail">
     <div class="tmn-h1">Behavior Worksheet</div>  
     <div class="pbHeaderButton">
-          <apex:commandButton action="{!myNewNote}" value="Save & New Note" status="waitStatus"/>
+          <apex:commandButton onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', true)" value="Save & New Note" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
 	      <apex:commandButton id="formSave" onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}')" value="Save " rerender="wholeform" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
     </div>
         <div class="checksheetdate">
