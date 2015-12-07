@@ -179,12 +179,12 @@ public with sharing class referrals_Controller{
 		}
 		set;
 	}
-	private Id personBeingRefId {get; set;}
+	@testVisible private Id personBeingRefId {get; set;}
 	public Id pBRId { get; set; }
 
 	public Boolean isErrorDisplayed { get; set; }
 
-	private Id personBeingServedId {get; set;}
+	@testVisible private Id personBeingServedId {get; set;}
 	public Id pBSId { get; set; }
 
 	public boolean isLinkedPersonBeingServed {
@@ -998,7 +998,7 @@ public with sharing class referrals_Controller{
 		pBSId = (this.referralRecord.Person_Being_Served__c != null) ? this.referralRecord.Person_Being_Served__c : pBSIdParam;
 	}
 
-	private Contact getPBSRec() {
+	@testVisible private Contact getPBSRec() {
 		Contact pBSRec;
 		try {
 			pBSRec = [
@@ -1309,7 +1309,7 @@ public with sharing class referrals_Controller{
 	}
 
 	//ERNS-8 - check for required fields upon attempt to close/admit
-	private Boolean checkNRRequiredCloseAdmitFields() {
+	@testVisible private Boolean checkNRRequiredCloseAdmitFields() {
 
 		Boolean hasError = false, hasError2 = false,  hasError3 = false;
 		hasError = checkForBlankFields( personBeingRefRecord, 'Person_Being_Referred__c', new list<string>{'first_name__c','last_name__c','date_of_birth__c','gender__c','race__c'}, 'A value for {0} is required to close/admit');
@@ -1344,7 +1344,7 @@ public with sharing class referrals_Controller{
 	}
 
 	//EB-206 Sravan - Check for Required fields upon Close and Close reason other than Admit 09/03/2014 3:15 PM
-	private Boolean checkNRRequiredCloseNonAdmitFields(){
+	@testVisible private Boolean checkNRRequiredCloseNonAdmitFields(){
 		Boolean hasError4 = false, hasError5 = false;
 		hasError4 = checkForBlankFields(referralRecord,'Referral__c',new list<string>{'Close_Date__c','Close_Reason__c'},'A value for {0} is Required to close');
 		/*if(referralRecord.Evaluated_By_Source__c =='Internal' && referralRecord.Evaluated_By_Internal__c == null && referralRecord.Evaluated_By_Internal_Other__c == null){
@@ -1360,7 +1360,7 @@ public with sharing class referrals_Controller{
 
 	//End of EB-206
 
-	private Boolean checkforBlankFields ( sobject obj, string classname, List<string> fieldlist, string errMsgFmtString ) {
+	@testVisible private Boolean checkforBlankFields ( sobject obj, string classname, List<string> fieldlist, string errMsgFmtString ) {
 
 		Boolean blankfield = false;
 		List<Schema.DescribeSObjectResult> describelist = Schema.describeSObjects(new List<string>{classname});
@@ -1556,7 +1556,7 @@ public void setAge () {
 		initReferralRecordType();
 	}
 
-	private PageReference getRefresh() {
+	@testVisible private PageReference getRefresh() {
 		PageReference current = new PageReference('/' + this.referralRecord.Id);
 		current.setRedirect(true);
 		return current;
