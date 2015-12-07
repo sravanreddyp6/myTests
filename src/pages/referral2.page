@@ -2035,7 +2035,7 @@
 			<apex:pageBlockSectionItem >
 				<apex:outputLabel value="Address" />
 				<apex:outputPanel >
-	               	<c:AddressDisplay street1="{!Referral__c.Service_Location__r.Street__c}" city="{!Referral__c.Service_Location__r.State__c}" State="{!Referral__c.Service_Location__r.State__c}" Zip="{!Referral__c.Service_Location__r.Zip__c}"/><br/>
+	               	<c:AddressDisplay street1="{!Referral__c.Service_Location__r.Street__c}" city="{!Referral__c.Service_Location__r.City__c}" State="{!Referral__c.Service_Location__r.State__c}" Zip="{!Referral__c.Service_Location__r.Zip__c}"/><br/>
 	               	<apex:outputText value="{!Referral__c.Service_Location__r.Phone__c}" />
                </apex:outputPanel>
 			</apex:pageBlockSectionItem>
@@ -2068,8 +2068,8 @@
                     <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="Location Nickname" />
                     <apex:column headerValue="Address">
                     	<apex:outputPanel >
-                        	<c:AddressDisplay City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}" />
-<!--                         	<apex:outputText value="{!location.Service_Location__r.Phone__c}" /> -->
+                        	<c:AddressDisplay street1="{!location.Service_Location__r.Street__c}" City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}" Zip="{!location.Service_location__r.Zip__c}"/><br/>
+                        	<apex:outputText value="{!location.Service_Location__r.Phone__c}" />
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column value="{!location.Service_location__r.Physical_Location__c}" headerValue="Physical Location"/>
