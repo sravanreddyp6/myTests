@@ -191,12 +191,12 @@ function toggleById(id, ms){
            </div>     
 
     <apex:pageBLockSection title="Acknowledgments" collapsible="False" id="acks_Alt1_Header" columns="1" >
-    <apex:pageBlockTable value="{!response.ackwraplist}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
+    <apex:pageBlockTable value="{!assessmentIssaResponse.ackwraplist}" var="ack" id="acktbl" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" >
     <apex:column headervalue="Acknowledged Date">
     	<apex:outputText value=" {!ack.ackdate}"/>
     </apex:column>
 	<apex:column headervalue="Acknowledged By" value="{!ack.ackby}" />
-	<apex:column headervalue="Initials" value="{!ack.ackinit}" />
+	
     
     </apex:pageBlockTable> 
     </apex:pageBlockSection>
