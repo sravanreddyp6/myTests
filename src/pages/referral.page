@@ -1517,7 +1517,7 @@
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nameFilter}" id="nameFilter" size="6"/>&nbsp;&nbsp;
                     <apex:outputLabel >Location Nickname&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!nickNameFilter}" id="nickNameFilter" size="15"/>
+                    <apex:inputText value="{!nickNameFilter}" id="locationNick" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!cityFilter}" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
@@ -1539,9 +1539,9 @@
                         </apex:column>
                         <apex:column headerValue="Address" >
 		     				<apex:outputPanel >
-		     					<c:AddressDisplay city="{!r.City__c}"
-			  						state="{!r.State__c}" />
-<!-- 			  					<apex:outputText value="{!r.Phone__c}" />	 -->
+		     					<c:AddressDisplay street="{!r.Street__c}" city="{!r.City__c}"
+			  						state="{!r.State__c}" /><br/>
+			  					<apex:outputText value="{!r.Phone__c}" />	
 			  				</apex:outputPanel>
 		     			</apex:column>
                         <apex:column headerValue="TMN Scope">
@@ -1588,7 +1588,7 @@
                     <apex:outputLabel >Alias&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!nameFilter2}" id="nameFilter2" size="6"/>&nbsp;&nbsp;
                     <apex:outputLabel >Location Nickname&nbsp;&nbsp;&nbsp;</apex:outputLabel>
-                    <apex:inputText value="{!nicknameFilter2}" id="nicknameFilter2" size="15"/>
+                    <apex:inputText value="{!nicknameFilter2}" id="locationNick2" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;City&nbsp;&nbsp;&nbsp;</apex:outputLabel>
                     <apex:inputText value="{!cityFilter2}" size="15"/>
                     <apex:outputLabel >&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;</apex:outputLabel>
@@ -1610,9 +1610,9 @@
                         </apex:column>
                         <apex:column headerValue="Address" >
 		     				<apex:outputPanel >
-		     					<c:AddressDisplay city="{!r.City__c}"
+		     					<c:AddressDisplay street="{!r.Street__c}"city="{!r.City__c}"
 			  						state="{!r.State__c}" /><br />
-<!-- 			  					<apex:outputText value="{!r.Phone__c}" />	 -->
+			  					<apex:outputText value="{!r.Phone__c}" />	
 			  				</apex:outputPanel>
 		     			</apex:column>
                         <apex:column headerValue="TMN Scope">
