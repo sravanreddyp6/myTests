@@ -2598,8 +2598,8 @@
                     <apex:column value="{!location.Service_location__r.Location_Nickname__c}" headerValue="Location Nickname" />
                     <apex:column headerValue="Address">
                     	<apex:outputPanel >
-                        	<c:AddressDisplay City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}"/>
-<!--                         	<apex:outputText value="{!location.Service_Location__r.Phone__c}" /> -->
+                        	<c:AddressDisplay Street1="{!location.Service_Location__r.Street__c}" City="{!location.Service_Location__r.City__c}" State="{!location.Service_location__r.State__c}" Zip="{!location.Service_location__r.Zip__c}"/> <br/>
+                        	<apex:outputText value="{!location.Service_Location__r.Phone__c}" />
                         </apex:outputPanel>
                     </apex:column>
                     <apex:column value="{!location.Service_location__r.Physical_Location__c}" headerValue="Physical Location"/>
