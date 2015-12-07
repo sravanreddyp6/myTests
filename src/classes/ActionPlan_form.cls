@@ -316,31 +316,35 @@ public pagereference myCancel(){
 
     PageReference ref =  new ApexPages.StandardController(ActionPlan).view();
     return ref;
-
-
 }
+
+    public Boolean checkInput(String input) {
+        if (input.indexOf('[') == -1 && input.indexOf(']') == -1) {
+            return true;
+        }
+        return false;
+    }
     public pagereference myFinal(){
         try{
-            Pattern errorPattern = Pattern.compile('(.*?)\\[(.*?)\\](.*?)');
             String errorMsg = 'Action Plan cannot be finalized without removing square brackets "[ ]"';
             Boolean goalError = false;
             Boolean objError = false;
             Boolean actError = false;
 
             for(string g: planStuff.keySet()){
-                if (planStuff.get(g).theGoal.Description__c != null && errorPattern.matcher(planStuff.get(g).theGoal.Description__c).find()) {
+                if (planStuff.get(g).theGoal.Description__c != null && !checkInput(planStuff.get(g).theGoal.Description__c)) {
                     planStuff.get(g).theGoal.Description__c.addError(errorMsg);
                     goalError = true;
                 }
             }
             for(clsGoal g: planStuff.values()){
                 for (clsObj o: g.GoalObjs.values()){
-                    if (!String.isBlank(o.theObj.Description__c) && errorPattern.matcher(o.theObj.Description__c).find()) {
+                    if (!String.isBlank(o.theObj.Description__c) && !checkInput(o.theObj.Description__c)) {
                         o.theObj.Description__c.addError(errorMsg);
                         objError = true;
                     }
                     for(clsAction a: o.objActs.values()){
-                        if (!String.isBlank(a.theAction.Description__c) && errorPattern.matcher(a.theAction.Description__c).find()) {
+                        if (!String.isBlank(a.theAction.Description__c) && !checkInput(a.theAction.Description__c)) {
                             a.theAction.Description__c.addError(errorMsg);
                             actError = true;
                         }
