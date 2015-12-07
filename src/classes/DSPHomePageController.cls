@@ -460,31 +460,27 @@ public with sharing class DSPHomePageController {
         taskToNameMap = new Map<Id, String[]>();
         Set<Id> whatIdSet = new Set<Id>();
         for (Task task: populateTasks) {
+            system.debug( 'WHO: ' + task.whoid + ', WHAT: ' + task.whatid );
             if (task.WhoId != null) {
                 taskToNameMap.put(task.Id, new list<String>{'<a href="#" onclick="submitTxnRequest(\'Person Being Served\',\'' + task.WhoId + '\');">' + task.Who.Name + '</a>'});
-                if (task.WhatId.getSObjectType().getDescribe().getName() == 'Action_Plan__c')
-                    taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'Action Plan\',\'' + task.WhatId + '\'); return false;">' + task.What.Name + '</a>');
-                else if (task.WhatId.getSObjectType().getDescribe().getName() == 'Assessment__c') 
-                    taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'' + (task.What.Name.containsIgnoreCase('ISSA') ? 'ISSA': 'Risk') + '\',\'' + task.WhatId + '\');">' + task.What.Name + '</a>');
+                if ( task.whatID != null) {
+                    if (task.WhatId.getSObjectType().getDescribe().getName() == 'Action_Plan__c')
+                        taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'Action Plan\',\'' + task.WhatId + '\'); return false;">' + task.What.Name + '</a>');
+                    else if (task.WhatId.getSObjectType().getDescribe().getName() == 'Assessment__c') 
+                           taskToNameMap.get(task.Id).add('<a href="#" onclick="submitTxnRequest(\'' + (task.What.Name.containsIgnoreCase('ISSA') ? 'ISSA': 'Risk') + '\',\'' + task.WhatId + '\');">' + task.What.Name + '</a>');
+                } else {
+                    taskToNameMap.get(task.Id).add( '');
+                }
             } else {
-            	taskToNameMap.put(task.Id, new list<String>{'',''});
+            taskToNameMap.put(task.Id, new list<String>{'',''});
           //      whatIdSet.add(task.WhatId);
             }
+
         }
-/*        Map<Id, Referral__c> referrals = new Map<Id, Referral__c>([
-            SELECT Id, Person_Being_Referred__r.Full_Name__c
-            FROM Referral__c
-            WHERE Id IN :whatIdSet
-        ]);
-        Set<Id> referralIdSet = referrals.keySet();
-        for (Task task: populateTasks) {
-            if (referralIdSet.contains(task.WhatId)) {
-                taskToNameMap.put(task.Id, '<a href="/' + task.WhatId + '">' + referrals.get(task.WhatId).Person_Being_Referred__r.Full_Name__c + '</a>');
-            } else if (task.WhoId == null) {  // Do not override the entry from above if WhoId != null
-                taskToNameMap.put(task.Id, '');
-            }
-        } */
+
     }
+            
+    
     
     
     // search results for PBS lookup
