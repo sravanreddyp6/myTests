@@ -175,7 +175,7 @@ public with sharing class GenerateEvalComponent {
 				if (!sectionMap.containsKey(eval.Composite__c)) {
 					sectionMap.put(eval.Composite__c, new List<Eval__c>());
 					composites.add(eval.Composite__c);
-					compositeToHtmlMap.put(eval.Composite__c, null);
+					compositeToHtmlMap.put(eval.Composite__c, 'N/A');
 					compositeToHeaderMap.put(eval.Composite__c, eval.Sub_Category__c);
 				}
 				sectionMap.get(eval.Composite__c).add(eval);
@@ -238,30 +238,34 @@ public with sharing class GenerateEvalComponent {
 		containsRestraintReduction = false;
 		for (Eval__c eval: listEvalItems) {
 			if (eval.Composite__c == 'Head to Toe~Skin/Body~Wound Detail' || eval.Composite__c == 'Residential~Skin/Body~Wound Detail') {
-				if (compositeToSectionTypeMap.get(eval.Composite__c) == 'Activity Log') {
-					compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-					containsWoundDetailLog = true;
-				} else {
-					compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
 					containsWoundDetail = true;
+				} else if (evalName == 'Head to Toe') {
+					containsWoundDetailLog = true;
 				}
 			} else if (eval.Composite__c == 'Head to Toe~Skin/Body~Pressure Ulcer Details' || eval.Composite__c == 'Residential~Skin/Body~Pressure Ulcer Detail') {
-				if (compositeToSectionTypeMap.get(eval.Composite__c) == 'Activity Log') {
-					compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-					containsPressureUlcerDetailLog = true;
-				} else {
-					compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
+				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
 					containsPressureUlcerDetail = true;
+				} else if (evalName == 'Head To Toe') {
+					containsPressureUlcerDetailLog = true;
 				}
 			} else if (eval.Composite__c == 'Residential~Fall Risk Assessment~Fall Assessment') {
 				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-				containsFallAssessment = true;
+				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
+					containsFallAssessment = true;
+				}
 			} else if (eval.Composite__c == 'Residential~Skin/Body~Skin Assessment') {
 				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-				containsSkinAssessment = true;
+				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
+					containsSkinAssessment = true;
+				}
 			} else if (eval.Composite__c == 'Restraint Event~Reduction Review~Reduction Review') {
 				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
-				containsRestraintReduction = true;
+				if (compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
+					containsRestraintReduction = true;
+				}
 			}
 		}
 		return composites;
