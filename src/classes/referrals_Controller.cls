@@ -313,7 +313,8 @@ public with sharing class referrals_Controller{
 	public string searchedServiceLocationName{get;set;}
 	public string searchedServiceLocationId{get;set;}
 	public Integer OffsetSize = 0;
-	private Integer QueryLimit = 25;
+	//private Integer QueryLimit = 25;
+	private Integer QueryLimit = 50; //PRI-101
 	public Integer CountTotalRecords{get;set;}
 	public List<Service_Location__c> tmpResults{get;set;}
 	public List<Service_Location__c> searchedServiceLocationResults{
@@ -343,7 +344,8 @@ public with sharing class referrals_Controller{
 		searchedServiceLocationName=null;
 		searchedServiceLocationId=null;
 		OffsetSize = 0;
-		QueryLimit = 25;
+		//QueryLimit = 25;
+		QueryLimit = 50; //PRI-101
 		CountTotalRecords = 0;
 	}
 	public void search(){
@@ -494,7 +496,8 @@ public with sharing class referrals_Controller{
 	public string searchedServiceLocationName2{get;set;}
 	public string searchedServiceLocationId2{get;set;}
 	public Integer OffsetSize2 = 0;
-	private Integer QueryLimit2 = 25;
+	//private Integer QueryLimit2 = 25;
+	private Integer QueryLimit2 = 50; //PRI-101
 	public Integer CountTotalRecords2{get;set;}
 	public List<Service_Location__c> tmpResults2{get;set;}
 	public List<Service_Location__c> searchedServiceLocationResults2{
@@ -523,7 +526,8 @@ public with sharing class referrals_Controller{
 		searchedServiceLocationName2=null;
 		searchedServiceLocationId2=null;
 		OffsetSize2 = 0;
-		QueryLimit2 = 25;
+		//QueryLimit2 = 25;
+		QueryLimit2 = 50; //PRI-101
 		CountTotalRecords2 = 0;
 	}
 	public void search2(){
