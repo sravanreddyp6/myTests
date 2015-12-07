@@ -74,6 +74,10 @@
 		clicking the button, the HTML5 checkValidity() function is called. If we simply call
 		form.submit(), the browser will bypass that check. -->
 		<input style="display: none;" type="submit" value="Save" id="btnHiddenSave" />
+		<!-- Why do we have all these contains* methods here instead of putting them inside the apex:repeat above?
+		Mainly because they will not work inside an apex:repeat (even though it'd make the code so much better).
+		Apparently there's an order of execution thing going on that'd render our EvaluationResponseTable component's
+		dialogs to not render correctly if it's put inside a repeater. So all the codes below are workaround for that. -->
 		<apex:pageBlock rendered="{!containsWoundDetail}">
 			<apex:facet name="header">
 				<apex:outputText value="{!compositeToHeaderMap[evalType + '~' + 'Skin/Body~Wound Detail']}" escape="false" />
