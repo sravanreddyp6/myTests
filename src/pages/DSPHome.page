@@ -183,7 +183,7 @@
             <a id="pbsTable"></a>
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns" style="text-align: right;padding-right: 10px;">
-                    <a id="theLink" name="theLink" href="#" onClick="dspShiftNoteSummary()">Shift Note Summary</a>
+                    <a id="theLink" name="theLink" href="#" onClick="dspShiftNoteSummary(); return false;">Shift Note Summary</a>
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockTable value="{!mypbsList}" var="person" id="serviceAssignmentTable" >
@@ -211,22 +211,22 @@
                 <apex:outputPanel rendered="{!person.hasActionPlan && person.hasSW && person.swID = null}">
                     <a href="#" onclick="submitTxnRequest('Skill','{!person.apID}')">Add Skill Data</a><br />
                 </apex:outputPanel>
-                <apex:outputPanel >
+                <apex:outputPanel rendered="{!person.hasActionPlan}">
                     <a href="#" onclick="submitTxnRequest('Shift Note', JSON.stringify({'pbsID':'{!person.pbsID}','saID':'{!person.saID}','admID':'{!person.admID}','apID':'{!person.apID}'}))">Add Shift Note</a>
                 </apex:outputPanel>
                 </apex:column>
                  
                 <apex:column headerValue="Daily Actions">
                 
-                <apex:selectList id="actionlist" size="1" >
+                <apex:selectList id="actionlist" size="1" style="width:250px">
                 <apex:selectOptions value="{!person.actionList}" />
                 </apex:selectList>
                 <apex:commandButton value="Go" onClick="var action = jQuery(document.getElementById('{!$Component.actionlist}')).val(); if (action != '') { eval(action); } return false;" />
                 </apex:column>
                 
                  
-                <apex:column headerValue="Navigation">
-                <apex:selectList id="navigationList" size="1" >
+                <apex:column headerValue="Navigation" >
+                <apex:selectList id="navigationList" size="1" style="width:175px">
                 <apex:selectOptions value="{!person.navList}" />
                 </apex:selectList>
                 <apex:commandButton value="Go" onclick="var action = jQuery(document.getElementById('{!$Component.navigationList}')).val(); if (action != '') { eval(action); } return false;" />
@@ -303,7 +303,7 @@
                     <apex:pageBlockTable value="{!searchResultList}" var="searchResult" id="searchTable">
                         <apex:column headerValue="" style="width:30px;text-align:center">
                                 <a class="pbsSearchResult" href="#" data-record-id="{!searchResult.recordId}" data-sa-id="{!searchResult.saID}" data-isfav="true">
-                                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_active.png')}" /> 
+                                    <apex:image width="20" height="20" url="{!URLFOR($Resource.mentoresd, 'img/star_inactive.png')}" /> 
                                 </a>
                         </apex:column>
 
@@ -314,7 +314,7 @@
                         </apex:column>
                         <apex:column headerValue="Age">{!searchResult.age}</apex:column>
                         <apex:column headerValue="Alias">{!searchResult.alias}</apex:column>
-                        <apex:column headerValue="Program">{!searchResult.program}</apex:column>
+                        <apex:column headerValue="Nickname">{!searchResult.program}</apex:column>
                     </apex:pageBlockTable>
                 </apex:pageBlock>
             </apex:outputPanel>
