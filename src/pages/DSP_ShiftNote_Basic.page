@@ -12,12 +12,63 @@ function toggleById(id, ms){
     j$(document.getElementById(id)).toggle(ms);
 };
 
-function validateFinalize(){
+function getToday() {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd
+    }
+    if (mm < 10) {
+        mm = '0' + mm
+    }
+    today = mm + '/' + dd + '/' + yyyy;
+    return today;
+}
 
+validateShiftNote = function () {
+    var shiftNoteErrors = [];
+    var startValue = j$('[id$=shiftNoteNoteStart_Time]').val();
+    var formatStart = new Date(moment(new Date(startValue)).format());
+    var endValue = j$('[id$=shiftNoteNoteEnd_Time]').val();
+    var formatEnd = new Date(moment(new Date(endValue)).format());
+
+    j$('#shiftNoteErrors').html('');
+        if (startValue == '' && endValue == '') {
+            shiftNoteErrors.push('The Shift Start Time and Shift End Time must contain a valid value.');
+        }
+        else if (startValue == '') {
+            shiftNoteErrors.push('The Shift Start Time must contain a valid value.');
+        }
+        else if (endValue == '') {
+            shiftNoteErrors.push('The Shift End Time must contain a valid value.');
+        }
+        else if (formatStart >= formatEnd) {
+            shiftNoteErrors.push('The Shift End Time must come AFTER your Shift Start Time. Please adjust the Start and End times.');
+        }
+        
+        if (startValue.substring(0,10) > getToday()) {
+            shiftNoteErrors.push('The Shift Start Time cannot be in the future. Please adjust the Shift Start Time for the note.');
+        }
+        if (j$('[id$=Narrative]').val()=='') {
+            shiftNoteErrors.push('Missing narrative for the note. Please enter a value for the Narrative.');
+        }
+        if (shiftNoteErrors.length > 0) {
+            j$(window).scrollTop(0);
+            j$.each(shiftNoteErrors, function (index, error) {
+                j$('#shiftNoteErrors').append('<li class="error">' + error + '</li>');
+            });
+            return false;
+        }
 }
 </script>
 
 <style>
+#shiftNoteErrors .error {
+    color: red;
+    font-weight: bold;
+}
 .dateFormat {
 	display: none;
 }
@@ -133,7 +184,8 @@ textarea {
     <br />
 
     <apex:form id="shiftNoteFrm">
-        <span class="ui-helper-hidden-accessible"><input type="text"/></span>      
+        <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+        <div id='shiftNoteErrors'></div>
         <apex:pageBlock title="Shift Note">  
             <apex:pageMessages />
             <c:Authentication formId="{!$Component.shiftNoteFrm}" title="E-Sign" handler="CMEsignAZOPT" objectId="{!shiftNote.noteWrapper.Id}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialog(); toggleById('finalize_form'); return false;" />
@@ -147,7 +199,8 @@ textarea {
 
                     <apex:commandButton value="Save"  
                                         action="{!shiftNote.mySave}"
-                                        rendered="{!shiftNote.editMode}" 
+                                        rendered="{!shiftNote.editMode}"
+                                        onclick="return validateShiftNote();" 
                                         status="myStatus" />
 
 <!--                     <apex:commandButton value="Cancel" -->
