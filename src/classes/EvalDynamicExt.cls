@@ -204,6 +204,9 @@ public with sharing class EvalDynamicExt {
 				List<Eval_Value__c> toInsert = new List<Eval_Value__c>();
 				toInsert.addAll(createEvalValueRecord(evalId, evalType, cat, 'Wound Detail', evalSecId, evalSecType));
 				toInsert.addAll(createEvalValueRecord(evalId, evalType, cat, evalType == 'Residential' ? 'Pressure Ulcer Detail' : 'Pressure Ulcer Details', evalSecId, evalSecType));
+				if (evalType == 'Residential') {
+					toInsert.addAll(createEvalValueRecord(evalId, evalType, cat, 'Skin Assessment', evalSecId, evalSecType));
+				}
 				insert toInsert;
 			} else if (key.contains('Residential~Fall Risk Assessment')) {
 				insert createEvalValueRecord(evalId, evalType, cat, 'Fall Assessment', evalSecId, evalSecType);
