@@ -13,6 +13,7 @@ public class referral_Controller2_Test{
         Agency_Involved_With_Individual__c agency = Referral_CreateTestData.createAgencyInvolved('Test Agency', 'Test Reason', ref);
         Funding_Source__c fund = Referral_CreateTestData.createFundingSource('Generic', 'Medicare', '123456', 'Pending Approval',
                                                         'Seniors', null, ref);
+        Diagnosis__c diag = new Diagnosis__c(Status__c = 'InActive', PBR__c = pbr.Id); insert diag;
         Task tsk = Referral_CreateTestData.createReferralTask('Test Subject', 'Normal', 'Not Started',
                                           testUser, Date.Today(), 'Test Comment', ref);
 
@@ -23,6 +24,7 @@ public class referral_Controller2_Test{
         Test.startTest();
         Funding_Source__c fundSourceProp = controller.fundingSource;
         system.assertEquals(Utility.getRecordTypeForFundingSource('Generic'), fundSourceProp.RecordTypeId);
+        Diagnosis__c diagn = controller.diag;
         Task taskProp = controller.activity;
         system.assertEquals('Not Started', taskProp.status);
         Id refId = controller.currentRefId;
@@ -31,6 +33,7 @@ public class referral_Controller2_Test{
         system.assertEquals(1, controller.locations.size());
         system.assertEquals(1, controller.activities.size());
         system.assertEquals(1, controller.fundingSources.size());
+        system.assertEquals(1, controller.diagnoses.size());
         system.assertEquals(1, controller.agencies.size());
 
         controller.showAddRelParty();
@@ -52,6 +55,12 @@ public class referral_Controller2_Test{
         controller.showEditFundingSource();
         System.debug(controller.fundingSources);
         system.assertEquals(3, controller.fundingSources.size());
+        
+        controller.showAddDiagnosis();
+        controller.saveDiagnosis();
+        String digeditId = controller.diagEditId;
+        ApexPages.currentPage().getParameters().put('diagnosisId',diag.Id);
+        controller.showEditDiagnosis();        
 
         controller.showAddActivity();
         Referral_CreateTestData.createReferralTask('Test Subject', 'Normal', 'Not Started', testUser, Date.Today(), 'Test Comment', ref);
@@ -120,6 +129,78 @@ public class referral_Controller2_Test{
         controller.dummyTask.OwnerId = u.Id;
         controller.addAdmissionSteps();
         System.assertEquals(oldNumTask + 9, controller.activities.size());
+        
+        List<Person_Being_Referred__c> refResults = controller.refResults;
+        Id reflocId = controller.referralLocationId;
+        String reflocName  = controller.referralLocationName;
+        
+        
+        Related_Party__c rp1 = Referral_CreateTestData.createRelatedParty('Test', 'Other', pbr);
+        List<Related_Party__c> relParties = controller.relParties;
+        relParties.add(rp1);
+        String myStr = controller.relPartiesJSON;
+        
+        Referral_Location__c rl = new Referral_Location__c(referral__c =ref.id, Status__c = 'Active', Rank__c ='Primary');
+        insert rl;
+        List<Referral_Location__c> rloc = controller.locations;        
+        rloc.add(rl);        
+        Id nonCloId = controller.nonClosedPrimaryLocationId;
+        
+        Id uId  = controller.userIdToAssignTasks;
+        Id pBRId = controller.personBeingRefId;
+        Id pBSId = controller.personBeingServedId;
+        boolean bool = controller.canConvert;
+        boolean primFs = controller.gethasPrimaryFS();
+        Boolean canUref = controller.canUpdateReferral;
+        Boolean canUEval = controller.canUpdateEvaluation;
+        Boolean canCEval = controller.canCreateEvaluation;
+        Boolean showNF = controller.showNeuroFeatures;
+        controller.saveAdmissionLocation();
+        boolean checkRF = controller.checkRequiredFields();
+        Funding_Source__c fund1 = new Funding_Source__c(referral__c =ref.id, Type_of_Coverage__c  = 'primary', Payer_Type__c = 'testing'); insert fund1;
+        List<Funding_Source__c> fs1 = controller.fundingSources; fs1.add(fund1);
+        Diagnosis__c diagnew = new Diagnosis__c(Status__c = 'Active', PBR__c = pbr.Id); insert diagnew;
+        List<Diagnosis__c> diagl = controller.diagnoses; diagl.add(diagnew);
+        boolean checkRF1 = controller.checkRequiredFields();
+               
         Test.stopTest();
     }
+    static testMethod void testView2() {
+      
+        Service_Location__c testLoc = Referral_CreateTestData.createServiceLocation('Test');
+        User testUser = Referral_CreateTestData.createTestUser('testU3','ReferralTestUser3@tmn.com.test');
+        Person_Being_Referred__c pbr = Referral_CreateTestData.createPersonBeingReferred(25, null);
+        Related_Party__c rp = Referral_CreateTestData.createRelatedParty('Test', 'Other', pbr);
+        Referral__c rfcm = Referral_CreateTestData.createReferral('CareMeridian', 'New', 'Test1235', pbr);
+        rfcm.Person_Being_Served__c = null;
+        Contact pbs = new Contact(LastName='Last Test', FirstName= 'Test First', Birthdate = Date.Today());
+        insert pbs;
+        
+        PageReference pageRef = Page.referral2;
+        Test.setCurrentPage(pageRef);
+        ApexPages.StandardController sc = new ApexPages.StandardController(rfcm);
+        referral_Controller2 controller = new referral_Controller2(sc);
+        Test.startTest();
+        
+        boolean checkRF = controller.checkRequiredFields();
+        Referral_Location__c rl = new Referral_Location__c(referral__c =rfcm.id, Status__c = 'Active', Rank__c ='Primary'); insert rl;
+        List<Referral_Location__c> rloc = controller.locations;  rloc.add(rl);     
+        
+        Funding_Source__c fund = new Funding_Source__c(referral__c =rfcm.id, Type_of_Coverage__c  = 'primary'); insert fund;
+        List<Funding_Source__c> fs = controller.fundingSources; fs.add(fund);
+        boolean checkRF1 = controller.checkRequiredFields();
+        boolean primFS = controller.gethasPrimaryFS();
+        controller.redirectToConversion();
+        
+        Referral__c rf1 = Referral_CreateTestData.createReferral('Cambridge North Carolina', 'New', 'Test1235', pbr);
+        rf1.person_being_referred__c = null;
+        update rf1;
+        sc = new ApexPages.StandardController(rf1);
+        controller = new referral_Controller2(sc);
+        boolean checkRF2 = controller.checkRequiredFields();
+        
+        Test.stopTest();
+        
+    }
+    
 }
