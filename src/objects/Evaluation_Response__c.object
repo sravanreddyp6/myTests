@@ -23172,9 +23172,20 @@ Assistive_Device_Start_Date__c &gt; Assistive_Device_End_Date__c</errorCondition
  RecordType.DeveloperName = &apos;Immunization_Adult&apos; ||
 RecordType.DeveloperName = &apos;Immunization_Child&apos;
 ||
-RecordType.DeveloperName = &apos;PPD_Skin_Test&apos;
+RecordType.DeveloperName = &apos;PPD_Skin_Test&apos; 
 )</errorConditionFormula>
         <errorDisplayField>Date__c</errorDisplayField>
+        <errorMessage>Date can not be in the future</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Block_future_date_AssisDev</fullName>
+        <active>true</active>
+        <errorConditionFormula>Assistive_Device_Start_Date__c  &gt; today()
+&amp;&amp;
+(
+RecordType.DeveloperName == &apos;Assistive_Device&apos; || RecordType.DeveloperName == &apos;Assistive_Device_CA&apos;|| RecordType.DeveloperName == &apos;Assistive_Device_MN&apos;
+)</errorConditionFormula>
+        <errorDisplayField>Assistive_Device_Start_Date__c</errorDisplayField>
         <errorMessage>Date can not be in the future</errorMessage>
     </validationRules>
     <validationRules>
