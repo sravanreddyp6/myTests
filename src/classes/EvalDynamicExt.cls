@@ -12,7 +12,6 @@ public with sharing class EvalDynamicExt {
 	public string evalSecId { get; set; }
 	public string evalSecType { get; set; }
 	public Boolean canEdit { get; set; }
-	public string restraintSecId;
 	public Id currentAssessId { get; set; }
 	public String key { get; set; }
 	public Evaluation_Response__c lateEntryNote { get; set; }  // EC-164
@@ -176,50 +175,24 @@ public with sharing class EvalDynamicExt {
 
 	public void myAction(){
 		Boolean batchInsert = (evalSecType == null || evalSecType == '');
+		if (evalSecId == '' || evalSecId == null) {
+			evalSecId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
+		}
 		string displayKey = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
 		key = displayKey;
 
 
-		if (!batchInsert) {
-			if (key == 'Residential~Fall Risk Assessment~Fall Assessment~Residential' || key.contains('Head to Toe~Skin/Body~Wound Detail') || key.contains('Head to Toe~Skin/Body~Pressure Ulcer Details') || key == 'Residential~Skin/Body~Skin Assessment~Residential'){
-				insert createEvalValueRecord(evalId, evalType, cat, subcat, evalSecId, evalSecType);
-			} else if (key.contains('Residential~Skin/Body~Pressure Ulcer Details') || key.contains('Residential~Skin/Body~Wound Detail')){
-				if (evalSecId == null || evalSecId == ''){
-					insert createEvalValueRecord(evalId, evalType, cat, subcat, evalSecId, evalSecType);
-				} else {
-					update updateEvalValueRecord(evalId, evalType, cat, subcat, evalSecId, evalSecType);
-				}
-			} else if (key.contains('Restraint Event~Reduction Review~Reduction Review')){
-				if (evalSecId == null || evalSecId==''){
-					insert createEvalValueRecord(evalId, evalType, cat, subcat, evalSecId, evalSecType);
-					//creating Assessment
-					currentAssessId = EvalDynamicExt.createAssessmentforRestraint(restraintSecId, evalID, PBSID, SAID, AdmID, accId);
-				} else {
-					//Retrieving Assessment
-					currentAssessId = EvalDynamicExt.retrieveAssessmentforRestraint(evalSecId, evalID);
-				}
+		if (!batchInsert && key.contains('Restraint Event~Reduction Review~Reduction Review')) {
+			currentAssessId = EvalDynamicExt.retrieveAssessmentforRestraint(evalSecId, evalID);
+			if (currentAssessId == null) {
+				currentAssessId = EvalDynamicExt.createAssessmentforRestraint(evalSecId, evalID, PBSID, SAID, AdmID, accId);
 			}
-		} else {
-			if (key.contains('Head to Toe~Skin/Body') || key.contains('Residential~Skin/Body')) {
-				List<Eval_Value__c> toInsert = new List<Eval_Value__c>();
-				toInsert.addAll(createEvalValueRecord(evalId, evalType, cat, 'Wound Detail', evalSecId, evalSecType));
-				toInsert.addAll(createEvalValueRecord(evalId, evalType, cat, evalType == 'Residential' ? 'Pressure Ulcer Detail' : 'Pressure Ulcer Details', evalSecId, evalSecType));
-				if (evalType == 'Residential') {
-					toInsert.addAll(createEvalValueRecord(evalId, evalType, cat, 'Skin Assessment', evalSecId, evalSecType));
-				}
-				insert toInsert;
-			} else if (key.contains('Residential~Fall Risk Assessment')) {
-				insert createEvalValueRecord(evalId, evalType, cat, 'Fall Assessment', evalSecId, evalSecType);
-			} else if (key.contains('Restraint Event~Reduction Review')) {
-				insert createEvalValueRecord(evalId, evalType, cat, 'Reduction Review', evalSecId, evalSecType);
-				currentAssessId = EvalDynamicExt.createAssessmentforRestraint(restraintSecId, evalID, PBSID, SAID, AdmID, accId);
-			}
+		} else if (batchInsert && key.contains('Restraint Event~Reduction Review')) {
+			currentAssessId = EvalDynamicExt.createAssessmentforRestraint(evalSecId, evalID, PBSID, SAID, AdmID, accId);
 		}
 	}
 
 	private List<Eval_Value__c> createEvalValueRecord(Id evalId, String evalType, String cat, String subcat, String evalSecId, String evalSecType){
-		String sectionId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
-		restraintSecId = sectionId;
 		List<Eval_Value__c> listEvalValues = [
 			SELECT Id, Eval__r.Composite__c, Eval__r.Eval_Type__r.Name, Eval_Section_Type__c
 			  FROM eval_value__c
@@ -265,7 +238,7 @@ public with sharing class EvalDynamicExt {
 				vals.add(
 					new eval_value__c(
 						Eval__c = e.id,
-						Eval_Section_Id__c = sectionId,
+						Eval_Section_Id__c = evalSecId,
 						Eval_Section_Type__c = compositeToSectionTypeMap.get(e.Composite__c),
 						Boolean__c = isValidVal,
 						what_id__c = evalID,
@@ -276,6 +249,7 @@ public with sharing class EvalDynamicExt {
 		} else if ( repeatableEval.size() > 0 && (evalSecId == null || evalSecId == '') ){   // Activity log Entry - evalSecId will be empty only when Adding in a new entry.
 			for (Eval__c e : evals){
 				boolean isValidVal = false;
+				// TODO deal with this
 				if(!(e.Field_name__c == 'IsValid' && e.Sub_Category__c == 'Reduction Review')){ //Skip the Eval Value creation for isValid from the Second entry
 					if (e.Field_Name__c=='IsValid'){
 						isValidVal = true;
@@ -284,7 +258,7 @@ public with sharing class EvalDynamicExt {
 					vals.add(
 						new eval_value__c(
 							Eval__c = e.id,
-							Eval_Section_Id__c = sectionId,
+							Eval_Section_Id__c = evalSecId,
 							Eval_Section_Type__c = compositeToSectionTypeMap.get(e.Composite__c),
 							Boolean__c = isValidVal,
 							what_id__c = evalID,
@@ -694,7 +668,7 @@ public with sharing class EvalDynamicExt {
 		if(existingAssess.size() > 0){
 			return existingAssess[0].Id;
 		} else {
-			return null; // Which Should never happen -------Create a Custom Exception to do Sravan --------------
+			return null;
 		}
 
 	}
