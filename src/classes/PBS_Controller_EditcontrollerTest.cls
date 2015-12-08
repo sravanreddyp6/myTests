@@ -126,6 +126,8 @@ public with sharing class PBS_Controller_EditcontrollerTest {
         
             system.Assert(editcontroller.relParties.size() ==3 ); // Making sure the related parties created on Create/Edit pages are retrieved.
             
+            String relPar = editcontroller.relPartiesJSON;
+            
             editcontroller.cancelPBSController();
             //system.Assert(editcontroller.pbsEditModeOn == false ); // Assertion to check the view mode after user clicks cancel Button.
             system.Assert(editcontroller.Attachments.size() == 0 );
@@ -243,6 +245,11 @@ public with sharing class PBS_Controller_EditcontrollerTest {
             //Testing PBSedit_controller - we can reuse the account created for testing the PBS_Controller
             Accnt = [select id, personcontactid from account where id = :Accnt.Id];
             Contact pbs = [ select id,MailingStateCode, LastName, FirstName from contact where id = :Accnt.personcontactId];
+            
+            Diagnosis__c diag = new Diagnosis__c(Status__c = 'Active', Type__c = 'Admission', PBS__c  = pbs.Id); insert diag;
+			Agency_Involved_With_Individual__c agency = new Agency_Involved_With_Individual__c(Name = 'testing', Person_Being_Served__c = pbs.Id); insert agency;
+            ICD__c icd = new ICD__c(Code_Type__c = 'ICD-10', Icd_Description__c = 'testing'); insert icd;
+            
             PageReference pageRef = Page.PersonBeingServedEditNew;
             Test.setCurrentPage(pageRef);
             ApexPages.CurrentPage().getParameters().put('id',pbs.Id);
@@ -255,6 +262,46 @@ public with sharing class PBS_Controller_EditcontrollerTest {
             system.assertEquals(editcontroller.dontShowFields.Contains('Advanced_Directives__c'), True); //this is available for CM only
             system.assertEquals(editcontroller.dontShowFields.Contains('Code_Status__c'), True); //this is available for CM only             
             system.assertEquals(editcontroller.TMNUser.id,redwoodtmnUser.id); // Making sure the returned TMN User in controller is same as the one created in test class
+            
+            boolean uAge = editcontroller.UnderAgePageMsg;
+            String pMsg = editcontroller.PageMessage;
+            String age = editcontroller.age;
+            string ld = editcontroller.loadThisAgency;
+            Boolean iUL = editcontroller.isUserLevel1or2;
+            Related_Party__c rp = editcontroller.relParty;
+            editcontroller.getAssessments_ChildImmune();
+            editcontroller.getAssessments_AdultImmune();
+            editcontroller.getImmuneReqFields();
+            List<Incident__c> inc = editcontroller.incidents;
+            List<Task> tas = editcontroller.taskOnCurrentPBSAccount;
+            List<Event> eve = editcontroller.eventOnCurrentPBSAccount;
+            List<AccountHistory>  acch = editcontroller.personHistory;
+            
+            Agency_Involved_With_Individual__c agency1 = editcontroller.agency;
+            system.assertEquals(1, editcontroller.relAgencies.size());
+            editcontroller.showAddAgency();
+            editcontroller.saveAgency();
+            editcontroller.loadAgency();
+            editcontroller.showAddSibling();
+            editcontroller.getBDayDateValue();
+            
+            Diagnosis__c diagn = editcontroller.diag;
+            system.assertEquals(1, editcontroller.diagnoses.size());            
+            
+            editcontroller.showAddDiagnosis();
+            editcontroller.saveDiagnosis();
+            ApexPages.currentPage().getParameters().put('diagnosisId',diag.Id);
+            editcontroller.showEditDiagnosis(); 
+            
+            Diagnosis__c ldiag = PBS_controller_helper.loadDiagnosis(diag.Id);
+            System.assertEquals( diag.Status__c, ldiag.Status__c);
+            
+            ldiag = PBS_controller_helper.saveDiagnosis(ldiag.id, ldiag.Type__c, 'Inactive', String.valueOf('11/6/2014 12:00 AM'), icd.Id, pbs.id);
+            Diagnosis__c ldiagNew = PBS_controller_helper.saveDiagnosis(null, ldiag.Type__c, ldiag.Status__c, String.valueOf('11/6/2014 12:00 AM'), icd.Id, pbs.Id);
+            System.assertEquals( ldiag.type__c, ldiagNew.type__c);
+            boolean diagIn = PBS_controller_helper.preventDiagInactivation(diag.id, pbs.id);
+            
+
         }
     }
     
