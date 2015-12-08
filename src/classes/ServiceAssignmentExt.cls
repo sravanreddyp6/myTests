@@ -1505,6 +1505,9 @@ public without sharing class ServiceAssignmentExt {
             for(string e: errors){
                 ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,e));
             }
+           /* if(newSA){
+            	this.serviceLocation = null;
+            }*/
             return null;
         }
 
