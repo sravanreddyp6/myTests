@@ -281,6 +281,13 @@ table#persons_table.dataTable {
                                                 <apex:param value="{!admission.Person_Being_Served__r.ID}" name="pbsId" />
                                                 <apex:param value="{!$CurrentPage.URL}" name="retURL" />
                                             </apex:outputLink>
+											<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}"
+                                                rendered="{!  $User.Operating_Group__c == 'Redwood' && admission.State__c == 'MN'}" >
+                                                Add Seizure
+                                                <apex:param value="{!sa.ID}" name="service_assignment" />
+                                                <apex:param value="{!admission.Person_Being_Served__r.ID}" name="pbsId" />
+                                                <apex:param value="{!$CurrentPage.URL}" name="retURL" />
+                                            </apex:outputLink>                                            
                                             </td>
                                         <td style="display:none;">{!admission.Status__c}</td>
                                     </tr>

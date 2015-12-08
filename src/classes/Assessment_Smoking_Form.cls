@@ -50,6 +50,7 @@ public with sharing class Assessment_Smoking_Form {
      
     }
     public PageReference mySave(){
+    	Evaluation__c orgEval = theAssessment.clone();
         Savepoint sp = Database.setSavepoint();
         try{
             if(theAssessment.id == null){
@@ -107,6 +108,7 @@ public with sharing class Assessment_Smoking_Form {
                     ApexPages.addMessage(myMsg);
                 }
                     Database.rollback(sp);
+                    theAssessment = orgEval.clone();
                     return null;                    
             }
             
@@ -124,8 +126,10 @@ public with sharing class Assessment_Smoking_Form {
         
         
         }
-        catch(DmlException e){              
+        catch(DmlException e){  
+        	theAssessment = orgEval.clone();            
             Database.rollback(sp);
+            
         }
 
             PageReference pageRef = new PageReference('/apex/Assessment_Smoking_Form?id=' + theAssessment.id);
@@ -183,7 +187,9 @@ public with sharing class Assessment_Smoking_Form {
         return null;
     }       
     public PageReference myCancel(){
-        return null;
+            PageReference pageRef = new PageReference('/apex/ServiceAssignmentEditNew?id=' + SAid);
+            pageRef.setRedirect(true);
+            return pageRef;
     } 
     public class QandA{
         public Eval__c theEval {get; set;}

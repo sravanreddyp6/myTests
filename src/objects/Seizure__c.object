@@ -166,6 +166,13 @@
     <searchLayouts/>
     <sharingModel>ControlledByParent</sharingModel>
     <validationRules>
+        <fullName>End_Time_cannot_be_in_the_future</fullName>
+        <active>true</active>
+        <errorConditionFormula>DATEVALUE(End_DateTime__c) &gt; TODAY()</errorConditionFormula>
+        <errorDisplayField>End_DateTime__c</errorDisplayField>
+        <errorMessage>The End Time cannot be in the future. Please adjust the Time of the Seizure event.</errorMessage>
+    </validationRules>
+    <validationRules>
         <fullName>End_time_Can_not_be_after_the_Start_time</fullName>
         <active>true</active>
         <errorConditionFormula>Start_DateTime__c &gt;= End_DateTime__c</errorConditionFormula>

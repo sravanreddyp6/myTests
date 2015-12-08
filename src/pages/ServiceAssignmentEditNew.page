@@ -1814,13 +1814,36 @@ END: Uncomment to have the element collapsed by default -->
             <div id='seizureMessages'></div>
             <apex:pageBlock mode="maindetail">
                 <apex:pageBlockSection columns="1" id="seizureEntry">
-                    <apex:pageBlockSectionItem ><apex:outputLabel Value="Start Time"/>
-                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+                    <apex:pageBlockSectionItem >
+                    	<apex:outputLabel Value="Start Time"/>
+                    	<apex:outputPanel>
+                    	<div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                        	<c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
+                    	</div>
+                    	</apex:outputPanel>
                     </apex:pageBlockSectionItem>
-                    <apex:pageBlockSectionItem > <apex:outputLabel Value="End Time"/>
-                        <c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+                    <apex:pageBlockSectionItem > 
+                    	<apex:outputLabel Value="End Time"/>
+                    	<apex:outputPanel>
+                    	<div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                        	<c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
+                    	</div>
+                    	</apex:outputPanel>
                     </apex:pageBlockSectionItem>
-                    <apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy"/>
+                    <apex:pageBlockSectionItem > 
+                    	<apex:outputLabel Value="Observed By"/>
+                    	<apex:outputPanel>
+                    	<div class="requiredInput">
+                            <div class="requiredBlock"></div>
+							<apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy"/>
+                    	</div>
+                    	</apex:outputPanel>
+                    </apex:pageBlockSectionItem>                    
+                    
+                    
+                    
                     <apex:inputField value="{!seizure.Seizure_Description__c}" id="seizureEntry_Desc" rendered="{!vfVarIsRwExtraItems}"/>
                     <apex:inputField value="{!seizure.Pre_seizure_phase__c}" id="seizureEntry_preSeizurePhase" rendered="{!vfVarIsRwExtraItems}"/>
                     <apex:inputField value="{!seizure.Post_seizure_phase__c}" id="seizureEntry_postSeizurePhase" rendered="{!vfVarIsRwExtraItems}"/>
@@ -2116,7 +2139,7 @@ END: Uncomment to have the element collapsed by default -->
         <apex:pageBlock mode="maindetail" rendered="{! !editSA && vfVarIsRW && (Service_Assignment__c.Admission__r.State__c =='MN' || Service_Assignment__c.Admission__r.State__c =='IN')}"> 
             <apex:pageBlockButtons location="top">
                 <div class="blockbtns">
-                    <apex:outputLink styleClass="btn" value="/apex/Assessment_Smoking_Form?SAid={!Service_Assignment__c.Id}">New Smoking Assessment</apex:outputLink>
+                    <apex:outputLink styleClass="btn" value="/apex/Assessment_Smoking_Form?SAid={!Service_Assignment__c.Id}" rendered="{! SmokingAssessments.size == 0 }">New Smoking Assessment</apex:outputLink>
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection id="resAssess_Alt1_Header" title="Smoking Assessment" collapsible="true" columns="1">
