@@ -45,10 +45,10 @@ public with sharing class ServiceLocationNew {
 		if(this.location.Population_Served__c == null){
 			errors.add('Population Served is Mandatory');
 		}
-		if(this.location.Residential_Property_Status__c == null){
+		/*if(this.location.Residential_Property_Status__c == null){
 			errors.add('Residential Property Status is Mandatory');
 		}
-		/*if(this.location.Capacity__c == null){
+		if(this.location.Capacity__c == null){
 			errors.add('Capacity is Mandatory');
 		}*/
 		if(this.location.Street__c == null){
@@ -82,6 +82,8 @@ public with sharing class ServiceLocationNew {
 			this.location.Location_nickname__c = string.isBlank(this.location.Location_nickname__c) ? this.location.city__c+' '+this.location.Physical_Location__c : this.location.Location_nickname__c;
 			this.location.Program__c = this.location.State__c+' - '+this.location.Service_Type__c+' - '+this.location.Location_Nickname__c+' - '+this.location.Network_Offering__c;
 			this.location.iServe_Program__c = this.location.Program__c;
+			//Sravan - Many places in the app Service Value is used. This is to prevent any failures until all the business rules are figured out - 12/08/2015
+			this.location.Service_Value__c = this.location.Service_Type__c;
 			try{
 				insert location;
 				PageReference pg = new PageReference('/apex/ServiceLocationView?id='+location.Id);
