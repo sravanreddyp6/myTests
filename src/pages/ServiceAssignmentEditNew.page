@@ -407,12 +407,11 @@
                 oncomplete="fundingSourceScrollToTop(true); if (closeFundingSource) closeModalDialogSA('FundingSourceModal', 'span');" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
         <apex:actionFunction name="showAddFundingSource" status="fundingSouceModalStatus" action="{!showAddFundingSource}" 
                 oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceScrollToTop(); fundingSourceClearMessages();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" />
-        <apex:actionFunction name="callcheckFullyDischarge" status="SaveStatus1" action="{!checkFullyDischarge}" rerender="myFRM" /><!--oncomplete="dispdischargePopup();"/-->
+<!--         <apex:actionFunction name="callcheckFullyDischarge" status="SaveStatus1" action="{!checkFullyDischarge}" rerender="myFRM" />oncomplete="dispdischargePopup();"/ -->
         <!--<apex:param name="bool" value="" assignTo="{!disregardSA}" />
         </apex:actionFunction>-->
-        <apex:actionFunction name="callSaveMethod" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/>
-        
-        
+        <apex:actionFunction name="callSaveMethod" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/>
+    
         <apex:actionFunction name="showEditFundingSource" action="{!showEditFundingSource}" oncomplete="openModalDialogSA('FundingSourceModal', 'span', 'Add Funding Source', null, 1000, 'myFRM'); fundingSourceAllowedEdit();" rerender="fundingSources,fundingSourcePayerDetailEntry,fundingSourceRedFlagsEntry,fundingSourceEntry,msgs,costperdayBlock,CandTblock,therapyAuthorizationBlock,therapyApprovalBlock,fundingSourceAuthorizationDetailEntry,fundingbuttonsBlock" status="fundingSouceModalStatus">
             <apex:param name="fundingId" value="" assignTo="{!fundingSource.Id}" />
         </apex:actionFunction>
@@ -491,7 +490,7 @@
                                 <!--<apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1, myFRM, msgs" rendered="{!editSA}"
                                                      onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));"/> &nbsp;
                                 action="{!SaveServAssign}"-->
-                                <apex:commandButton value="Save" oncomplete="InactiveStatusAlert();" status="SaveStatus1" rendered="{!editSA}"/> &nbsp;
+                                <apex:commandButton value="Save" action="{!SaveServAssign}" status="SaveStatus1" rerender="savestatus1,msgs" onComplete="setUpCompletionMonitor();bindAutoComplete();saStartDateTime.intializeDateTimePicker(jQuery('input[id$=startdate]'));" rendered="{!editSA}"/> &nbsp;
                                 
                                 <apex:commandButton value="Reset" action="{!ResetPage}" status="SaveStatus1" rerender="savestatus1, myFRM" rendered="{!editSA}" immediate="true" onComplete=" setUpCompletionMonitor(); "/> &nbsp;
                                 <apex:commandButton value="Cancel" immediate="true" action="{!CancelServAssignEditNew}" rendered="{!editSA}" />
@@ -1136,7 +1135,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY', true)}" id="childGoalItem">
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="childGoalItem">
                     <apex:outputLabel for="childGoalStart" value="Child Service Goal at Start of Service" id="lblchildGoal"/>
                     <apex:outputPanel id="serviceGoalPanel">
                         <apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c == null}">
@@ -1154,7 +1153,7 @@
                 </apex:pageBlockSectionItem>
                 
 <!--                 <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY' && locationsetting !='non-residential')}"> -->
-                  <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY' && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential', true))}">
+                  <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential', true))}">
                     <apex:outputLabel id="lblchildperm" for="childPermGoalStart" value="Child Permanency Goal at Start of Service" />
                     <apex:outputPanel id="permanencyGoalPanel">
                         <apex:outputPanel rendered="{!theServAssign.Child_Service_Goal__c == null}">
@@ -1192,7 +1191,7 @@
                 </apex:pageBlockSectionItem>
     
 
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsCB && IF(!(newSA),Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY' && (Service_Assignment__c.Service_location__r.Physical_location__c == 'Host Home' || Service_Assignment__c.Service_location__r.service_Type__c == 'FCT - Family Centered Treatment'),true)}"  >
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsCB && IF(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home' || Service_Assignment__c.Service_location__r.Service_Type__c == 'FCT - Family Centered Treatment'),true)}"  >
                         <apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" id="numOutOfHomePlacementsPreServiceLabel" />
                         <apex:outputPanel id="numOutOfHomePlacementsPreService">
                             <apex:outputPanel id="panelpanel">
@@ -1310,7 +1309,7 @@
                         </div>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (vfVarIsRW || vfVarIsCB)}" >
                     <apex:outputLabel value="Was Child Service or Permanency Goal met at End of Service?" />
                     <apex:outputPanel >
                         <div class="requiredInput">
@@ -1322,13 +1321,13 @@
                 <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
                         <apex:outputLabel value="Educational Involvement at End of Service" />
                         <apex:outputPanel >
-                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY'}">
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}">
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
                                     <apex:inputField value="{!theservAssign.Educational_Involvement_at_End_of_Servic__c}" />
                             </div>
                             </apex:outputPanel>
-                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_offering__c != 'ARY'}" >
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY'}" >
                                 <apex:inputField value="{!theservAssign.Educational_Involvement_at_End_of_Servic__c}" />
                             </apex:outputPanel>
                         </apex:outputPanel>
@@ -1336,19 +1335,19 @@
                 <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && (vfVarIsCB || isNR || vfVarIsRW)}" >
                         <apex:outputLabel value="Highest Level of Education at End of Service" />
                         <apex:outputPanel >
-                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY'}">
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'}">
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
                                     <apex:inputField id="first_highEduAtEnd" value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
                             </div>
                             </apex:outputPanel>
-                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_offering__c != 'ARY'}" >
+                            <apex:outputPanel rendered="{!Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY'}" >
                                 <apex:inputField id="second_highEduAtEnd" value="{!theservAssign.Highest_Level_of_Education_at_End_of_Ser__c}" />
                             </apex:outputPanel>
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB && Service_Assignment__c.Service_location__r.Physical_location__c == 'Host Home'}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}" >
                         <apex:outputLabel value="Total Number of Internal Moves During Service" />
                         <apex:outputPanel >
                             <apex:outputPanel id="Total_no_of_Internal_moves_during_Servic__c_wrapper">
@@ -3440,10 +3439,10 @@ END: Uncomment to have the element collapsed by default -->
                 callSaveMethod();
             }
         }
-        function InactiveStatusAlert(){
+       /* function InactiveStatusAlert(){
            //callcheckFullyDischarge();
            callSaveMethod();
-        }
+        } */
         
        /* function validateDiagnosis() {
             var errors = '';
@@ -3716,7 +3715,7 @@ END: Uncomment to have the element collapsed by default -->
             //callrerender();
         }
         function callrerender() {
-            var sd = j$('input[id$=lookupElement_lkid]').val();
+            var sd = j$('input[id$=hiddenLocationSetting]').val();
             //alert(sd);
             rerenderPanel();
         }
