@@ -296,6 +296,9 @@ public with sharing class GenerateEvalComponent {
 	private String generateSubsection(List<Eval__c> listEvalItems, List<Eval_Drop_Down__c> dd, List<Eval_Value__c> listEvalValues) {
 		// get the list of controls for this type, category, and subcategory
 		List<String> htmlControls = new List<String>();
+		if (evalSectionId == '' || evalSectionId == null) {
+			evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
+		}
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
 
@@ -321,9 +324,9 @@ public with sharing class GenerateEvalComponent {
 		}
 
 		String newHtmlLbl = '';
-		String newHTMLfld = '';
+		String newHtmlFld = '';
 		String strval = '';
-		String reqfldHTML = '';
+		String reqFldHtml = '';
 		String subcategory = '';  // Assumption: this is all part of the same subcategory
 		String sectionComposite = '';
 		Id notApplicableFieldId;
@@ -336,8 +339,8 @@ public with sharing class GenerateEvalComponent {
 			try {
 				subcategory = e.Sub_Category__c;
 				sectionComposite = e.Composite__c;
-				newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
-				newHTMLfld = '';
+				newHtmlLbl = '<td class="text_right"><input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" /><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
+				newHtmlFld = '';
 				strval = '';
 				//EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
 				if (compositeToSectionTypeMap.get(sectionComposite) == 'Activity Log' && evalname == 'Head to Toe' && cat == 'Diagnostics' && subCategory == 'IV' && e.HtmlId__c.indexOf('HeadtoToeDiagnosticsIVQuestion') != -1){
@@ -354,9 +357,9 @@ public with sharing class GenerateEvalComponent {
 					prevEntryStr += ' data-previous-entry="' + composite + '"';
 				}
 				if (e.Required__c) {
-					reqfldHTML = '<div class="requiredInput" style="display: table-cell;"' + prevEntryStr + '><div class="requiredBlock"></div>';
+					reqFldHtml = '<div class="requiredInput" style="display: table-cell;"' + prevEntryStr + '><div class="requiredBlock"></div>';
 				} else {
-					reqfldHTML = '<div style="display: table-cell;"'+ prevEntryStr +'>';
+					reqFldHtml = '<div style="display: table-cell;"'+ prevEntryStr +'>';
 				}
 
 
@@ -370,86 +373,86 @@ public with sharing class GenerateEvalComponent {
 						if (e.HtmlId__c == 'IsValid') {
 							isValidFieldId = e.Id;
 						}
-						newHtmlLbl = '<td></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
-						newHTMLfld = '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" data-composite="' + e.Composite__c + '" ';
+						newHtmlLbl = '<td><input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" /></td> ';  // an emtpy col for the hidden fields so that their labes wont show up on the form
+						newHtmlFld += '<td class="dataCol"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="hidden" data-composite="' + e.Composite__c + '" ';
 						if (mapEvalValues.ContainsKey(e.id)) {
-							newHTMLfld += 'value="' ;
+							newHtmlFld += 'value="' ;
 							if (e.Field_Sub_Type__c == 'Boolean') {
-								newHTMLfld += mapEvalValues.get(e.id).boolean__c;
+								newHtmlFld += mapEvalValues.get(e.id).boolean__c;
 							} else if (e.Field_Sub_Type__c == 'String') {
-								newHTMLfld += mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
+								newHtmlFld += mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 							}
 						}
-						newHTMLfld += '"/></td>';
+						newHtmlFld += '"/></td>';
 					}
 
 				} else if (e.Field_Type__c == 'Boolean')  { // Boolean can be Checkbox, Radio, or Dropdown
 					if (e.Field_Sub_Type__c == 'Checkbox') {
-						newHTMLfld = '<td class="dataCol"><div style="display: table-row;"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '" ';
+						newHtmlFld += '<td class="dataCol"><div style="display: table-row;"><input id="' + e.htmlid__c + '" name="' + e.id + '" type="checkbox" value="' + 1 + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '" ';
 
 						// insert value
 						if (mapEvalValues.ContainsKey(e.id)) {
 							if (mapEvalValues.get(e.id).boolean__c) {
-								newHTMLFld += ' checked ';
+								newHtmlFld += ' checked ';
 							}
 						}
 
-						newHTMLfld += '/></div></td>';
+						newHtmlFld += '/></div></td>';
 					} else if (e.Field_Sub_Type__c == 'Dropdown') {
 						// Boolean dropdown values = --None--, Yes, No
-						newHTMLfld = '<td class="dataCol"><div style="display: table-row;">';
-						newHTMLfld += reqfldHTML;
-						newHTMLfld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '">';
-						newHTMLfld += '<option value="">-- None --</option>';
+						newHtmlFld += '<td class="dataCol"><div style="display: table-row;">';
+						newHtmlFld += reqFldHtml;
+						newHtmlFld += '<select  id="' + e.htmlid__c + '" name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '">';
+						newHtmlFld += '<option value="">-- None --</option>';
 						if (mapEvalValues.ContainsKey(e.id)) {
 							strval = mapEvalValues.get(e.id).Text_Under_250__c.escapeHtml4();
 						}
-						newHTMLfld += '<option value="1"';
+						newHtmlFld += '<option value="1"';
 						if (strval == '1')
-							newHTMLfld += ' selected';
-						newHtmlfld += '>Yes</option>';
-						newHTMLfld += '<option value="0"';
+							newHtmlFld += ' selected';
+						newHtmlFld += '>Yes</option>';
+						newHtmlFld += '<option value="0"';
 						if (strval == '0')
-							newHTMLfld += ' selected';
-						newHTMLfld += '>No</option>';
-						newHTMLfld += '</select></div></div></td>';
+							newHtmlFld += ' selected';
+						newHtmlFld += '>No</option>';
+						newHtmlFld += '</select></div></div></td>';
 					} //TODO: output radio buttons for Radio type
 				} else if (e.Field_Type__c=='String') {
 					if (e.length__c >= 3000) {
-						newHTMLfld = '<td class="dataCol" style="vertical-align: top" ><div style="display: table-row;">';
-						newHTMLfld += reqfldHTML;
-						newHTMLfld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" data-composite="' + e.Composite__c + '">';
+						newHtmlFld += '<td class="dataCol" style="vertical-align: top" ><div style="display: table-row;">';
+						newHtmlFld += reqFldHtml;
+						newHtmlFld += '<textarea  id="' + e.htmlid__c + '"  name="' + e.id + '" data-composite="' + e.Composite__c + '">';
 						if (mapEvalValues.ContainsKey(e.id)) {
 							strVal = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 							if (strVal != null && strVal != '')
-								newHTMLfld += strVal;
+								newHtmlFld += strVal;
 						}
-						newHTMLfld +=  '</textarea></div></div></td>';
+						newHtmlFld +=  '</textarea></div></div></td>';
 
 					} else {
-						newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
-						newHTMLfld += reqfldHTML;
-						newHTMLfld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
+						newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
+						newHtmlFld += reqFldHtml;
+						newHtmlFld += '<input  id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 						if (mapEvalValues.ContainsKey(e.id)) {
-							newHTMLfld += 'value="' ;
+							newHtmlFld += 'value="' ;
 							if (e.length__c > 250)
 								strVal = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 							else
 								strVal = mapEvalValues.get(e.id).Text_Under_250__c.escapeHtml4();
 
 							if (strVal != null && strVal != '')
-								newHTMLfld += strVal;
+								newHtmlFld += strVal;
 
-							newHTMLfld += '"';
+							newHtmlFld += '"';
 						}
-						newHTMLfld +=  '/></div></div></td>';
+						newHtmlFld +=  '/></div></div></td>';
 					}
 				} else if (e.Field_Type__c == 'Double'){
-					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
-					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
+					newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
+					newHtmlFld += reqFldHtml;
+					newHtmlFld += '<input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
-						newHTMLfld += 'value="' ;
+						newHtmlFld += 'value="' ;
 						if (mapEvalValues.get(e.id).eval__r.length__c == null || mapEvalValues.get(e.id).eval__r.length__c < 250) {
 							strVal = mapEvalValues.get(e.id).Text_Under_250__c.escapeHtml4();
 						} else {
@@ -457,41 +460,41 @@ public with sharing class GenerateEvalComponent {
 						}
 
 						if (strVal != null && strVal != '')
-							newHTMLfld += strVal;
+							newHtmlFld += strVal;
 
-						newHTMLfld += '"';
+						newHtmlFld += '"';
 					}
 					if (e.htmlid__c == 'weightAtAdmission') {
-						newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="weightAtAdmission">(kg) OR</label>';
-						newHTMLfld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightAtAdmissionlb">(lb)</label>';
-						newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" data-composite="' + e.Composite__c + '" /> <label for="weightAtAdmissionoz">(oz)</label></span>';
+						newHtmlFld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="weightAtAdmission">(kg) OR</label>';
+						newHtmlFld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightAtAdmissionlb">(lb)</label>';
+						newHtmlFld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightAtAdmissionoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" data-composite="' + e.Composite__c + '" /> <label for="weightAtAdmissionoz">(oz)</label></span>';
 					}  else if (e.htmlid__c == 'kg') {
-						newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="kg" id="kgLabel2">(kg) OR</label>';
-						newHTMLfld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightlb" id="weightlbLabel">(lb)</label>';
-						newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" data-composite="' + e.Composite__c + '" /> <label for="weightoz" id="weightozLabel">(oz)</label></span>';
+						newHtmlFld += ' size="6" onkeyUp="return calculate(this, \'kg\');" /> <label for="kg" id="kgLabel2">(kg) OR</label>';
+						newHtmlFld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightlb"  size="6" name="" type="text" onkeyUp="return calculate(this, \'lb\');" /> <label for="weightlb" id="weightlbLabel">(lb)</label>';
+						newHtmlFld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="weightoz"  size="6" name="" type="text" onkeyUp="return calculate(this, \'oz\');" data-composite="' + e.Composite__c + '" /> <label for="weightoz" id="weightozLabel">(oz)</label></span>';
 					} else if (e.htmlid__c == 'heightAtAdmission') {
-						newHTMLfld += ' size="6" onkeyUp="return calculate(this, \'cm\');" /> <label for="heightAtAdmission">(cm) OR</label>';
-						newHTMLfld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionft"  size="6" name="" type="text" onkeyUp="return calculate(this, \'ft\');" /> <label for="heightAtAdmissionft">(ft)</label>';
-						newHTMLfld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionin"  size="6" name="" type="text" onkeyUp="return calculate(this, \'inc\');" data-composite="' + e.Composite__c + '" /> <label for="heightAtAdmissionin">(in)</label></span>';
+						newHtmlFld += ' size="6" onkeyUp="return calculate(this, \'cm\');" /> <label for="heightAtAdmission">(cm) OR</label>';
+						newHtmlFld += ' <br/><span style="white-space: nowrap;"><input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionft"  size="6" name="" type="text" onkeyUp="return calculate(this, \'ft\');" /> <label for="heightAtAdmissionft">(ft)</label>';
+						newHtmlFld += ' <input  pattern="^[0-9]*(?:\\.\\d{1,2})?$" title="Please enter a valid two decimal digit number." id="heightAtAdmissionin"  size="6" name="" type="text" onkeyUp="return calculate(this, \'inc\');" data-composite="' + e.Composite__c + '" /> <label for="heightAtAdmissionin">(in)</label></span>';
 					} else {
-						newHTMLfld +=  '/>';
+						newHtmlFld +=  '/>';
 					}
-					newHTMLfld += '</div></div></td>';
+					newHtmlFld += '</div></div></td>';
 
 				} else if (e.Field_Type__c == 'Int'){
-					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
-					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<input  pattern="[0-9]+" title="Please enter a valid number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
+					newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
+					newHtmlFld += reqFldHtml;
+					newHtmlFld += '<input  pattern="[0-9]+" title="Please enter a valid number." id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
-						newHTMLfld += 'value="' ;
+						newHtmlFld += 'value="' ;
 						strVal = String.valueOf(mapEvalValues.get(e.id).Number_No_Decimal__c);
 
 						if (strVal != null && strVal != '')
-							newHTMLfld += strVal;
+							newHtmlFld += strVal;
 
-						newHTMLfld += '"';
+						newHtmlFld += '"';
 					}
-					newHTMLfld +=  '/></div></div></td>';
+					newHtmlFld +=  '/></div></div></td>';
 
 				} else if (e.Field_Type__c == 'DropDown') {
 
@@ -506,39 +509,39 @@ public with sharing class GenerateEvalComponent {
 
 					// get the options
 					List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
-					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
-					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '">';
-					newHTMLfld += '<option value="">-- None --</option>';
+					newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
+					newHtmlFld += reqFldHtml;
+					newHtmlFld += '<select id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '">';
+					newHtmlFld += '<option value="">-- None --</option>';
 					for (Eval_Drop_Down__c thisdd : dropdownopts) {
-						newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
+						newHtmlFld += '<option value="' + thisdd.option_value__c + '"';
 						if (strval ==  thisdd.option_value__c)
-							newHTMLFld += ' selected ';
+							newHtmlFld += ' selected ';
 
-						newHTMLFld += '>' + thisdd.option_name__c + '</option>';
+						newHtmlFld += '>' + thisdd.option_name__c + '</option>';
 					}
-					newHTMLfld += '</select></div></div></td>';
+					newHtmlFld += '</select></div></div></td>';
 				}  else if (e.Field_Type__c == 'Date') {
-					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
-					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<input class="datepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
+					newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
+					newHtmlFld += reqFldHtml;
+					newHtmlFld += '<input class="datepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
-						newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.date().format();
-						newHTMLfld  += '"';
+						newHtmlFld += 'value="' + mapEvalValues.get(e.id).date_time__c.date().format();
+						newHtmlFld  += '"';
 					}
-					newHTMLfld +=  '/></div></div></td>';
+					newHtmlFld +=  '/></div></div></td>';
 				} else if (e.Field_Type__c == 'Datetime') {
-					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
-					newHTMLfld += reqfldHTML;
-					newHTMLfld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
+					newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
+					newHtmlFld += reqFldHtml;
+					newHtmlFld += '<input class="datetimepicker" id="' + e.htmlid__c + '"  name="' + e.id + '" type="text" data-composite="' + e.Composite__c + '" ';
 					if (mapEvalValues.ContainsKey(e.id)) {
-						newHTMLfld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm');
-						newHTMLfld  += '"';
+						newHtmlFld += 'value="' + mapEvalValues.get(e.id).date_time__c.format('MM/dd/yyyy HH:mm');
+						newHtmlFld  += '"';
 					} else if (e.Required__c) {
-						newHTMLfld += 'value="' + Datetime.now().format('MM/dd/yyyy HH:mm');
-						newHTMLfld  += '"';
+						newHtmlFld += 'value="' + Datetime.now().format('MM/dd/yyyy HH:mm');
+						newHtmlFld  += '"';
 					}
-					newHTMLfld +=  '/></div></div></td>';
+					newHtmlFld +=  '/></div></div></td>';
 				} else if (e.Field_Type__c == 'Multiselect') {
 					String selectedVals;
 					if (mapEvalValues.ContainsKey(e.id)){
@@ -551,53 +554,53 @@ public with sharing class GenerateEvalComponent {
 					// get the options
 					List<Eval_drop_Down__c> dropdownopts = ddOptions.get(e.id);
 					if (e.Field_Sub_Type__c == 'Checkbox') {
-						newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;" id=' + e.htmlid__c + '>';
+						newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;" id=' + e.htmlid__c + '>';
 						if (e.Required__c) {
-							newHtmlLbl = '<td class="text_right"><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
-							newHtmlLbl += reqfldHTML;
+							newHtmlLbl = '<td class="text_right"><input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" /><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label>';
+							newHtmlLbl += reqFldHtml;
 							newHtmlLbl +=  '</div></td>';
 						}
 						for (Eval_Drop_Down__c thisdd : dropdownopts) {
-							newHTMLfld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '" ';
+							newHtmlFld += '<input id="' + e.htmlid__c+thisdd.Option_Value__c.replaceAll('\\s','') + '" name="' + e.id + '" type="checkbox" value="' + thisdd.Option_Value__c + '" data-visibility-row-rules="' + thisdd.visibility_row_rules__c + '" data-visibility-rules="' + thisdd.visibility_rules__c + '" data-rules="' + thisdd.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '" ';
 							if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
-								newHTMLFld += ' checked ';
+								newHtmlFld += ' checked ';
 
-							newHTMLfld += '/>&nbsp<span>' + thisdd.Option_Name__c + '</span><br/>';
+							newHtmlFld += '/>&nbsp<span>' + thisdd.Option_Name__c + '</span><br/>';
 						}
-						newHTMLfld +=  '</div></td>';
+						newHtmlFld +=  '</div></td>';
 					} else {
-						newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
-						newHTMLfld += reqfldHTML;
-						newHTMLfld += '<select style="vertical-align: text-top" multiple="multiple" id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '">';
+						newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
+						newHtmlFld += reqFldHtml;
+						newHtmlFld += '<select style="vertical-align: text-top" multiple="multiple" id="' + e.htmlid__c + '"  name="' + e.id + '" data-visibility-row-rules="' + e.visibility_row_rules__c + '" data-visibility-rules="' + e.visibility_rules__c + '" data-rules="' + e.Dependent_Fields__c + '" data-composite="' + e.Composite__c + '">';
 						for (Eval_Drop_Down__c thisdd : dropdownopts) {
-							newHTMLFld += '<option value="' + thisdd.option_value__c + '"';
+							newHtmlFld += '<option value="' + thisdd.option_value__c + '"';
 							if (selectedVals != null && selectedVals.contains(thisdd.Option_Value__c))
-								newHTMLFld += ' selected ';
+								newHtmlFld += ' selected ';
 
-							newHTMLFld += '>' + thisdd.option_name__c + '</option>';
+							newHtmlFld += '>' + thisdd.option_name__c + '</option>';
 						}
-						newHTMLfld += '</select></div></div></td>';
+						newHtmlFld += '</select></div></div></td>';
 					}
 				} else if (e.field_type__c == 'BodyMap') {
-					newHTMLfld = '<td><div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
-					newHTMLfld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL(e.field_sub_type__c) + '?' + evalSectionId + '" id="bodyMap' + evalSectionID + '" />';
-					newHTMLfld += '</div>';
-					newHTMLfld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
-					newHTMLfld += '<table id="annotations">';
-					newHTMLfld += '<tbody></tbody></table></div></td>';
+					newHtmlFld += '<td><div style="position: relative; float: left; margin-left: 80px; margin-bottom: 10px;">';
+					newHtmlFld += '<img width="318" height="298" style="float: left; border: 3px solid #ECECEC;" src="' +  GetResourceURL(e.field_sub_type__c) + '?' + evalSectionId + '" id="bodyMap' + evalSectionID + '" />';
+					newHtmlFld += '</div>';
+					newHtmlFld += '<div style="margin-left: 420px; height: 298px; overflow: auto;">';
+					newHtmlFld += '<table id="annotations">';
+					newHtmlFld += '<tbody></tbody></table></div></td>';
 				} else if (e.field_type__c == 'Image') {
-					newHTMLfld = '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
-					newHTMLfld += '<img id="' + e.htmlid__c + '"  name="' + e.id + '"';
-					newHTMLfld += ' src="' + GetResourceURL(e.field_sub_type__c) + '" />';
-					newHTMLfld +=  '</td>';
+					newHtmlFld += '<td class="dataCol" style="vertical-align: top"><div style="display: table-row;">';
+					newHtmlFld += '<img id="' + e.htmlid__c + '"  name="' + e.id + '"';
+					newHtmlFld += ' src="' + GetResourceURL(e.field_sub_type__c) + '" />';
+					newHtmlFld +=  '</td>';
 				} else if (e.field_type__c == 'Slider') {
-					newHTMLfld = '<td class="dataCol" style="vertical-align: top">';
-					newHTMLfld += '<div id="' + e.htmlid__c + '" style="margin-left: 30px; margin-right: 40px;" name="' + e.id + '" />';
-					newHTMLfld += '</td>';
+					newHtmlFld += '<td class="dataCol" style="vertical-align: top">';
+					newHtmlFld += '<div id="' + e.htmlid__c + '" style="margin-left: 30px; margin-right: 40px;" name="' + e.id + '" />';
+					newHtmlFld += '</td>';
 				}
 
 				htmlControls.Add(newHtmlLbl);
-				htmlControls.Add(newHTMLfld);
+				htmlControls.Add(newHtmlFld);
 			} catch (Exception ex) {
 				System.Debug(ex);
 			}
@@ -611,30 +614,31 @@ public with sharing class GenerateEvalComponent {
 		);
 		String notApplicableField = '';
 		String isValidField = '';
-//		if (isValidFieldId != null) {
-//			Boolean isWoundDetail = (cat == 'Skin/Body' && subCategory == 'Wound Detail');
-//			Boolean isPressureUlcerDetail = (cat == 'Skin/Body' && subCategory == 'Pressure Ulcer Details');
-//			Boolean isSkinAssessment = (evalName == 'Residential' && cat == 'Skin/Body' && subCategory == 'Skin Assessment');
-//			Boolean isFallRiskAssessment = (evalName == 'Residential' && cat == 'Fall Risk Assessment' && subCategory == 'Fall Assessment');
-//			Boolean isReductionReview = (evalName == 'Restraint Event' && cat == 'Reduction Review' && subCategory == 'Reduction Review');
-//			Boolean initialValid;
-//			if (isWoundDetail || isPressureUlcerDetail) {
-//				initialValid = true;
-//			} else if (isReductionReview) {
-//				initialValid = false;
-//			} else if (isSkinAssessment || isFallRiskAssessment) {
+		if (isValidFieldId != null) {
+			Boolean isWoundDetail = (cat == 'Skin/Body' && subCategory == 'Wound Detail');
+			Boolean isPressureUlcerDetail = (cat == 'Skin/Body' && subCategory == 'Pressure Ulcer Details');
+			Boolean isSkinAssessment = (evalName == 'Residential' && cat == 'Skin/Body' && subCategory == 'Skin Assessment');
+			Boolean isFallRiskAssessment = (evalName == 'Residential' && cat == 'Fall Risk Assessment' && subCategory == 'Fall Assessment');
+			Boolean isReductionReview = (evalName == 'Restraint Event' && cat == 'Reduction Review' && subCategory == 'Reduction Review');
+			Boolean initialValid;
+			if (isWoundDetail || isPressureUlcerDetail) {
+				initialValid = true;
+			} else if (isReductionReview) {
+				initialValid = false;
+			} else if (isSkinAssessment || isFallRiskAssessment) {
 //				initialValid = !EvalDynamicExt.validateAssessmentError(evaluationId, subCategory == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain');
-//			}
-//			if (isWoundDetail || isPressureUlcerDetail || isReductionReview || isSkinAssessment || isFallRiskAssessment) {
-//				isValidField = '<input id="IsValid" name="' + isValidFieldId + '" type="hidden" data-composite="' + sectionComposite + '" value="' + String.valueOf(initialValid) + '" />';
-//			}
-//		}
+				initialValid = false;
+			}
+			if (isWoundDetail || isPressureUlcerDetail || isReductionReview || isSkinAssessment || isFallRiskAssessment) {
+				isValidField = '<input id="IsValid" name="' + isValidFieldId + '" type="hidden" data-composite="' + sectionComposite + '" value="' + String.valueOf(initialValid) + '" />';
+			}
+		}
 		if (notApplicableFieldId != null) {
 			String checked = '';
 			if (mapEvalValues.containsKey(notApplicableFieldId) && mapEvalValues.get(notApplicableFieldId).Boolean__c) {
 				checked = 'checked';
 			}
-			notApplicableField = '<input id="NotApplicable" name="' + notApplicableFieldId + '" type="checkbox" value="true" ' + checked + ' data-composite="' + sectionComposite + '" style="margin-right: 3px; " data-rules="{&quot;0&quot;: &quot;' + selector + '&quot;}" /><span>Not Applicable</span>';
+			notApplicableField = '<input type="hidden" name="' + notApplicableFieldId + '_esi" value="' + evalSectionId + '"><input id="NotApplicable" name="' + notApplicableFieldId + '" type="checkbox" value="true" ' + checked + ' data-composite="' + sectionComposite + '" style="margin-right: 3px; " data-rules="{&quot;0&quot;: &quot;' + selector + '&quot;}" /><span>Not Applicable</span>';
 		}
 		String header = String.format(
 			'<table cellspacing="0" cellpadding="0" border="0"><tbody><tr><td class="pbTitle"><h2 class="mainTitle">{0}</h2></td><td style="text-align: right;">{1}{2}</td></tr></tbody></table>',
@@ -679,7 +683,19 @@ public with sharing class GenerateEvalComponent {
 	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm) {
 		// Deserialize the form
 		List<FormKeyVal> objs = (List<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
+		Map<Id, String> evalIdToSectionId = new Map<Id, String>();
 		for(Integer i = objs.size() - 1; i >= 0; i--) {
+			String eval = objs[i].name;
+			if (objs[i].name.indexOf('_esi') != -1) {
+				eval = objs[i].name.substringBefore('_esi');
+				try {
+					evalIdToSectionId.put((Id) eval, objs[i].value);
+				} catch (StringException ex) {
+					System.debug(ex);
+				}
+				objs.remove(i);
+				continue;
+			}
 			try {
 				Id dummyId = (Id) objs[i].name;
 			} catch (Exception ex) {
@@ -700,10 +716,6 @@ public with sharing class GenerateEvalComponent {
 		// we check to see if there exists an Eval_Value__c whose Eval_Section_Type__c is not
 		// Activity Log - signalling that it belongs to a main entry.
 		Boolean batchInsert = (evalSectionType == null || evalSectionType == '');
-
-		if (evalSectionId == '' || evalSectionId == null) {
-			evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
-		}
 
 		Set<String> composites = new Set<String>();
 		for (Eval__c eval: [ SELECT Id, Composite__c FROM Eval__c WHERE Id IN :formData.keySet() ]) {
@@ -733,7 +745,7 @@ public with sharing class GenerateEvalComponent {
 			' WHERE what_id__c = :evalId ' +
 			'   AND what_id_object__c = \'Evaluation__c\' ' +
 			'   AND Eval__r.Composite__c IN :composites ' +
-			(batchInsert ? '' : '   AND eval_Section_Id__c = :evalSectionId')
+			(batchInsert ? '' : '   AND eval_Section_Id__c IN ' + String.format( '(\'\'{0}\'\')', new List<String> { String.join( evalIdToSectionId.values() , '\',\'') }))
 		);
 
 		// create a map by eval id
@@ -750,15 +762,19 @@ public with sharing class GenerateEvalComponent {
 		List<Eval_Value__c> delValues = new List<Eval_Value__c>();
 		Datetime evalShiftStartTime = [select Shift_Start_Time__c from Evaluation__c where ID = :evalId limit 1].Shift_Start_Time__c;
 
+		// For normal panels, the isValid field is determined on the client side; which means that
+		// if a N/A field is selected it can change isValid to true using JS. However, for certain
+		// panels with use custom component (e.g. restraint reduction), we need to update the
+		// isValid field in the backend, since that field is now based on multiple checks that are
+		// harder to do on the client side. We use the following map to achieve this.
+		Map<String, Eval_Value__c> isValidToEvalValueMap = new Map<String, Eval_Value__c>();
+
 		// use the values already on the eval
 		// check if data has changed
 		Eval_Value__c ev;
 		for (String f : formData.Keyset()) {
 			// get the eval item from the map so we know what type, etc.
 			Eval__c ei = mapEvalItems.get((ID)f);
-
-//			Boolean isWoundDetailIsValid = (ei.Category__c == 'Skin/Body' && ei.Sub_Category__c == 'Wound Detail' && ei.HtmlId__c == 'IsValid');
-//			Boolean isPressureUlcerDetailIsValid = (ei.Category__c == 'Skin/Body' && ei.Sub_Category__c == 'Pressure Ulcer Details' && ei.HtmlId__c == 'IsValid');
 
 			// construct new eval_value object
 			if (mapEvalValues.containsKey((ID)f) && !batchInsert)  {
@@ -767,7 +783,7 @@ public with sharing class GenerateEvalComponent {
 			} else {
 				ev = new Eval_Value__c();
 				ev.eval__c = (ID)f;
-				ev.eval_Section_Id__c = evalSectionId;
+				ev.eval_Section_Id__c = evalIdToSectionId.get((Id)f);
 				ev.Eval_Section_Type__c = batchInsert? sectionTypeMap.get(ei.Composite__c) : evalSectionType;
 				ev.what_id__c = evalID;
 				ev.what_id_object__c = 'Evaluation__c';
@@ -806,18 +822,42 @@ public with sharing class GenerateEvalComponent {
 					}
 				} else if (ei.Field_Type__c == 'Hidden') {
 					if (ei.Field_Sub_Type__c == 'Boolean') {
-//						Boolean isSkinAssessmentIsValid = (evalType == 'Residential' && ei.Category == 'Skin/Body' && ei.Sub_Category__c == 'Skin Assessment' && ei.HtmlId__c == 'IsValid');
-//						Boolean isFallRiskAssessmentIsValid = (evalType == 'Residential' && ei.Category == 'Fall Risk Assessment' && ei.Sub_Category__c == 'Fall Assessment' && ei.HtmlId__c == 'IsValid');
-//						Boolean isReductionReviewIsValid = (evalType == 'Restraint Event' && ei.Category == 'Reduction Review' && ei.Sub_Category__c == 'Reduction Review' && ei.HtmlId__c == 'IsValid');
+						Boolean isSkinAssessment = (evalType == 'Residential' && ei.Category__c == 'Skin/Body' && ei.Sub_Category__c == 'Skin Assessment');
+						Boolean isFallRiskAssessment = (evalType == 'Residential' && ei.Category__c == 'Fall Risk Assessment' && ei.Sub_Category__c == 'Fall Assessment');
+						Boolean isReductionReview = (evalType == 'Restraint Event' && ei.Category__c == 'Reduction Review' && ei.Sub_Category__c == 'Reduction Review');
+						Boolean isValid = (ei.HtmlId__c == 'IsValid');
+						Boolean notApplicable = (ei.HtmlId__c == 'NotApplicable');
 
-//						if (isSkinAssessmentIsValid || isFallRiskAssessmentIsValid) {
-//							ev.Boolean__c = !EvalDynamicExt.validateAssessmentError(evaluationId, e.Sub_Category__c == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain');
-//						} else if (isReductionReviewIsValid) {
-							// TODO fill it in here
-							//ev.Boolean__c =
-//						} else {
+						if ((isSkinAssessment || isFallRiskAssessment) && isValid) {
+							ev.Boolean__c = !EvalDynamicExt.validateAssessmentError(
+								evalId,
+								ei.Sub_Category__c == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain'
+							);
+							if (isValidToEvalValueMap.containsKey(ei.Sub_Category__c)) {
+								continue;
+							}
+						} else if (isReductionReview && isValid) {
+							ev.Boolean__c = !restraintReductionController.validateRestraintErrors(
+								EvalDynamicExt.retrieveAssessmentforRestraint(evalIdToSectionId.get((Id)f), evalId),
+								evalIdToSectionId.get((Id)f),
+								false
+							);
+							if (isValidToEvalValueMap.containsKey(ei.Sub_Category__c)) {  // it's already put there by a N/A field = true
+								continue;
+							}
+						} else if (notApplicable && (isSkinAssessment || isFallRiskAssessment || isReductionReview)) {
 							ev.Boolean__c = Boolean.valueOf(formData.get(f));
-//						}
+							if (ev.Boolean__c) {
+								if (isValidToEvalValueMap.containsKey(ei.Sub_Category__c)) {
+									isValidToEvalValueMap.get(ei.Sub_Category__c).Boolean__c = true;
+									continue;
+								} else {
+									isValidToEvalValueMap.put(ei.Sub_Category__c, ev);
+								}
+							}
+						} else {
+							ev.Boolean__c = Boolean.valueOf(formData.get(f));
+						}
 					} else if (ei.Field_Sub_Type__c == 'String') {
 						ev.Text_Over_250__c = formData.get(f);
 					}
@@ -836,6 +876,8 @@ public with sharing class GenerateEvalComponent {
 			// We never delete values when doing a batch insert
 			delete delValues;
 		}
+		System.debug(evalIdToSectionId);
+		System.debug(newValues);
 		upsert newValues;
 	}
 
