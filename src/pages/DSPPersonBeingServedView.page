@@ -107,7 +107,7 @@
 		   		</apex:pageBlockSectionItem>
 		   		
             </apex:pageBlockSection>
-
+<!--  
             <apex:pageBlockSection title="Funding Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputFundingSection_view">
                 <apex:outputField value="{!contactObj.Medicaid_ID__c }" />
                 <apex:outputField value="{!contactObj.Other_ID__c }" />
@@ -116,7 +116,7 @@
                 <apex:outputField value="{!contactObj.Avatar_Source_System__c }" />
                 <apex:outputField value="{!contactObj.UCI_ID__c }" rendered="{! contactObj.MailingStateCode == 'CA' && !pbsViewResponse.isCAFSS}"/>
             </apex:pageBlockSection>            
-
+ -->
             <!--Contact Information Section-->
             <apex:pageBlockSection title="Contact Information" showHeader="true" columns="2" collapsible="true" id="pbsOutputContactInfo">              
                 <!-- view -->
@@ -247,17 +247,17 @@
          <a name="Diag" id="Diag" /> 
          <apex:pageBlock id="Diagnosis" mode="maindetail"> 
              <apex:pageBlockSection title="Diagnosis" showHeader="true" columns="1" id="diag_Alt1_Header" collapsible="false"> 
-                 <apex:pageblockTable value="{!pbsViewResponse.diagnosis}" var="diag" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  rendered="{!(pbsViewResponse.diagnosis.size>0)}"> 
-                     <apex:column value="{!diag.ICD__r.name}" headerValue="ICD Code" />
-                    <apex:column value="{!diag.ICD__r.Code_Type__c}" />
-                    <apex:column value="{!diag.ICD__r.Icd_Description__c}" />
+                 <apex:pageblockTable value="{!pbsViewResponse.diaglist}" var="diag" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even"  rendered="{!(pbsViewResponse.diaglist.size>0)}"> 
+                     <apex:column value="{!diag.icdname}" headerValue="ICD Code" />
+                    <apex:column value="{!diag.codetype}" />
+                    <apex:column value="{!diag.icddesc}" />
                     <apex:column headerValue="Date and Time of Diagnosis" >
-                    	<c:MilitaryDatetime datetimeval="{!diag.Effective_Date__c}" />
+                    	<c:MilitaryDatetime datetimeval="{!diag.effdate}" />
                     </apex:column>
-                    <apex:column value="{!diag.Status__c}" headerValue="Status" />
-                    <apex:column value="{!diag.Type__c}" headerValue="Type" /> 
+                    <apex:column value="{!diag.status}" headerValue="Status" />
+                    <apex:column value="{!diag.diagtype}" headerValue="Type" /> 
                  </apex:pageblockTable> 
-                 <apex:outputText value="No diagnoses to display" rendered="{!(pbsViewResponse.diagnosis.size=0)}" /> 
+                 <apex:outputText value="No diagnoses to display" rendered="{!(pbsViewResponse.diaglist.size=0)}" /> 
              </apex:pageBlockSection> 
          </apex:pageBlock> 
         

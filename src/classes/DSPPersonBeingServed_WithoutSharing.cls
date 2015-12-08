@@ -6,13 +6,7 @@ public Agency_Involved_With_Individual__c agency { get; set; }
 public boolean isCAFSS{get; set;}
 private TMN_User__c TMNUser {get; set;}
 private list<Related_Party__c> relParties { get; set; }
-public list<RelatedParty> relPartiesWrapper { get {
-    list<RelatedParty> relPartyWarpper = new list<RelatedParty>();
-    for (Related_Party__c rp : this.relParties){
-    	relPartyWarpper.add(new RelatedParty(rp));
-    }
-    return relPartyWarpper;
-} private set; }
+public list<RelatedParty> relPartiesWrapper { get; set; } 
 public class RelatedParty{
      public Id Id{get; set;}
      public String typeC{get; set;}
@@ -39,6 +33,7 @@ public class RelatedParty{
          this.comments = rp.comments__c;
      }
 }
+
 public map<String, list<Evaluation_Response__c>> mapEvalResponses = new map<String, list<Evaluation_Response__c>>();
 public map<String, list<Evaluation_Response__c>> getMapEvalResponses(){ return this.mapEvalResponses; }
 public String evalResponsesTypes { get; private set; }
@@ -101,6 +96,8 @@ public map<String, String> getmapEvalResponseFldLbls(){ return this.mapEvalRespo
 
         populateMapEvalResponses();
         
+        getDiagnosisList();
+        
         Map<String, Schema.SObjectField> tempMap = Schema.getGlobalDescribe().get('Account').getDescribe().fields.getMap();
         fieldMap = new Map<String, String>();
         for (String fieldName: tempMap.keySet()) {
@@ -121,15 +118,41 @@ public map<String, String> getmapEvalResponseFldLbls(){ return this.mapEvalRespo
         }
         return TMNUser.Operating_Group__c=='Redwood' || TMNUser.Operating_Group__c=='Cambridge' || TMNUser.Operating_Group__c=='NeuroRestorative' || isCAFSS;
     }}
-    public list<Diagnosis__c> diagnosis{get{
-    	return [select Id, Name, ICD__c, ICD__r.name, ICD__r.Code_Type__c, ICD__r.Icd_Description__c, PBS__c, Type__c, Status__c, Effective_Date__c 
+    
+    public list<DiagnosisWrapper> diaglist { get; set; }
+    public class DiagnosisWrapper {
+    	public ID id { get;set; }
+    	public String name { get; set; }
+    	public ID icd { get; set; }
+    	public string icdname { get; set; }
+    	public string codetype { get; set; }
+    	public string icddesc { get; set; }
+    	public string diagtype { get; set; }
+    	public string status { get; set; } 
+    	public datetime effdate { get; set; }
+    	
+    	public DiagnosisWrapper( ID i, string n, string icdn, string ct, string cd, string t, string s, datetime e ) {
+    		id = i;
+    		name = n;
+    		icdname = icdn;
+    		codetype = ct;
+    		icddesc = cd;
+    		diagtype = t;
+    		status = s;
+    		effdate = e;
+    	}
+    }
+    
+    private void getDiagnosisList () {
+    	list<Diagnosis__c> diagnosis = [select Id, Name, ICD__c, ICD__r.name, ICD__r.Code_Type__c, ICD__r.Icd_Description__c, PBS__c, Type__c, Status__c, Effective_Date__c 
                          from Diagnosis__c
                          where PBS__c = :contact.Id order by Status__c, Type__c];
                          
-        //return [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__r.Admission__r.Person_Being_Served__c=:contact.ID
-        //and service_assignment__r != null];
-    } set;}
-    
+        diaglist = new List<DiagnosisWrapper>();
+        for (Diagnosis__c d: diagnosis) {
+        	diaglist.add( new DiagnosisWrapper( d.id, d.name, d.icd__r.name, d.icd__r.code_type__c, d.icd__r.icd_description__c, d.type__c, d.status__c, d.effective_date__c));
+        }
+    }    
   private void populateRelParties() {
     try {
         this.relParties = [select Name, Type__c, Phone__c, Email__c, Address__c, Phone_1_Type__c, Phone_2__c, Phone_2_Type__c, Comments__c,
@@ -137,6 +160,12 @@ public map<String, String> getmapEvalResponseFldLbls(){ return this.mapEvalRespo
                          from Related_Party__c
                          where Person_Being_Served__c = :pbsId order by Type__c, Name
                          ];
+                    
+        relPartiesWrapper = new List<RelatedParty>();                 
+    	for (Related_Party__c rp : this.relParties){
+    		relPartiesWrapper.add(new RelatedParty(rp));
+	    }
+        
       }
     catch (Exception e) {
       ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'An error occurred retrieving Related Parties. ' + e.getMessage()));
