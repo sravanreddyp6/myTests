@@ -40,9 +40,9 @@ j$(document).ready(function(){
             </div>
             <apex:pageBlockSection columns="2">
                 <apex:outputField value="{!Service_Location__c.Alias__c}" />
-                <apex:outputField value="{!Service_location__c.Program__c}" />
-                <apex:outputField value="{!Service_location__c.Alias_lookup__r.Alias_Operating_group__c}" label="Operating Group" />
-                <apex:outputField value="{!Service_location__c.iServe_Program__c}"  />
+                <apex:outputField value="{!Service_Location__c.Program__c}" />
+                <apex:outputField value="{!Service_Location__c.Alias_lookup__r.Alias_Operating_Group__c}" label="Operating Group" />
+                <apex:outputField value="{!Service_Location__c.iServe_Program__c}"  />
             </apex:pageBlockSection>
             
             <apex:pageBlockSection Columns="2" title="" collapsible="false">
@@ -54,42 +54,42 @@ j$(document).ready(function(){
     			
             
                 <apex:outputField label="Facility" value="{!Service_Location__c.FacilityID__c}"  />
-<!--                 <apex:inputField value="{!Service_Location__c.FacilityID__c}" required="true" rendered="{!Service_Location__c.Source_System__c == 'iServe'}"/> -->
-                <apex:inputField value="{!Service_Location__c.Physical_Location__c}" required="true"/>
                 <apex:inputField value="{!Service_Location__c.TMN_Scope__c}" required="true" />
+				<apex:inputField value="{!Service_Location__c.Location_Nickname__c}"  />
+                <apex:inputField value="{!Service_location__c.Service_type__c}" />
                 <apex:inputField value="{!Service_Location__c.Network_Offering__c}" required="true" />
-                <apex:inputField value="{!Service_Location__c.Service_Type__c}" required="true" />
+                <apex:inputField value="{!Service_Location__c.Residential_Property_Status__c}" />
                 <apex:inputField value="{!Service_Location__c.Population_Served__c}" required="true" />
-                <apex:inputField value="{!Service_Location__c.Location_Nickname__c}"  />
-                <apex:inputField value="{!Service_Location__c.Residential_Property_Status__c}" required="true" />
                 <apex:inputField value="{!Service_Location__c.Capacity__c}"  />
-                <apex:inputField value="{!Service_location__c.Facility_Number_Oracle_Fixed_Assets__c}" />
-            </apex:pageBlockSection>
-          	
-            <apex:pageBlockSection columns="1" title="" >
-            	 <apex:inputField value="{!Service_Location__c.Street__c}" required="true" />
-            	 <apex:inputField value="{!Service_Location__c.City__c}" required="true" />
-            	 <apex:inputField value="{!Service_Location__c.State__c}" required="true"  />
-            	 <apex:inputField value="{!Service_Location__c.Zip__c}" required="true" />
-            	 <apex:inputField value="{!Service_Location__c.Phone__c}" />
-            	 
-<!--                 <apex:inputField id="locStatus" value="{!Service_Location__c.Status__c}" rendered="{! NOT(AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR'))}"/> -->
-<!--                 <apex:outputText label="Status" value="This location has been inactivated in {!Service_Location__c.Source_System__c} and cannot be edited." rendered="{! AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR')}"/> -->
-            	
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{!Service_Location__c.Facility_Number_Oracle_Fixed_Assets__c}" />
             </apex:pageBlockSection>
             
-           
-            <apex:pageBlockSection columns="2"  title="" rendered="{!Service_Location__c.Alias_lookup__r.Alias_Operating_group__c == 'NeuroRestorative'}">
+             <apex:pageBlockSection columns="2"  title="" rendered="{!Service_Location__c.Alias_lookup__r.Alias_Operating_Group__c == 'NeuroRestorative'}">
             	<apex:inputField value="{!Service_Location__c.Room_and_Board_Rate__c}" label="Room and Board Cost" />
             	<apex:inputField value="{!Service_Location__c.PRN_DS_Per_Hour__c}" />
             	<apex:inputField value="{!Service_Location__c.Per_Productive_Unit__c}" />  
             </apex:pageBlockSection>
+          	
+            <apex:pageBlockSection columns="2" title="" >
+            	 <apex:inputField value="{!Service_Location__c.Street__c}" required="true" />
+            	 <apex:inputField value="{!Service_Location__c.TIN__c}" />
+            	 <apex:inputField value="{!Service_Location__c.City__c}" required="true" />
+            	 <apex:inputField value="{!Service_Location__c.NPI__c}" />
+            	 <apex:inputField value="{!Service_Location__c.State__c}" required="true"  />
+            	 <apex:pageBlockSectionitem />
+            	 <apex:inputField value="{!Service_Location__c.Zip__c}" required="true" />
+            	 <apex:pageBlockSectionItem />
+            	 <apex:inputField value="{!Service_Location__c.Phone__c}" />
+            	 
+<!--            <apex:inputField id="locStatus" value="{!Service_Location__c.Status__c}" rendered="{! NOT(AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR'))}"/> -->
+<!--            <apex:outputText label="Status" value="This location has been inactivated in {!Service_Location__c.Source_System__c} and cannot be edited." rendered="{! AND(service_location__c.status__c == 'Inactive', service_location__c.source_system__c == 'AVATAR')}"/> -->
+            	
+            </apex:pageBlockSection>
             
             <apex:pageBlockSection columns="2" title="">
-            	<apex:inputField value="{!Service_Location__c.TIN__c}" />
+            	<apex:outputField value="{!Service_Location__c.Source_System__c}" />
             	<apex:inputField value="{!Service_Location__c.Status__c}" required="true" />
-            	<apex:inputField value="{!Service_Location__c.NPI__c}" />
-    			<apex:outputField value="{!Service_location__c.Source_System__c}" />
             </apex:pageBlockSection>
             
         </apex:pageBlock>
