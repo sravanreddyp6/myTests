@@ -313,7 +313,7 @@
                     columnsToFetch="{!pbsViewResponse.mapEvalResponseFlds['Assistive Device MN']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResponseFldLbls}"
                     type="Assistive Device" displayTitle="false" style="padding:5px;text-align:left;" />
             </apex:outputPanel>
-            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResponsesTypes = '' , !CONTAINS(pbsViewResponse.evalResponsesTypes, 'Assistive Device') && !CONTAINS(pbsViewResponse.evalResponsesTypes, 'Assistive Device MN'))}" style="padding-left:10px;padding-top:3px">No assistive devices to display</apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResponsesTypes = '' , !CONTAINS(pbsViewResponse.evalResponsesTypes, 'Assistive Device'))}" style="padding-left:10px;padding-top:3px">No assistive devices to display</apex:outputPanel>
         </apex:pageBlock>
         </apex:form>
         </div>
