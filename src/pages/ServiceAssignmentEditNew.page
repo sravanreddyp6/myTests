@@ -1136,14 +1136,14 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY'}" >
-                    <apex:outputLabel for="childGoalStart" value="Child Service Goal at Start of Service" />
+                <apex:pageBlockSectionItem rendered="{!(vfVarIsRW || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY', true)}" id="childGoalItem">
+                    <apex:outputLabel for="childGoalStart" value="Child Service Goal at Start of Service" id="lblchildGoal"/>
                     <apex:outputPanel id="serviceGoalPanel">
                         <apex:outputPanel rendered="{!theServAssign.Child_Permanency_Goal__c == null}">
                             <div class="requiredInput">
                                 <div class="requiredBlock"></div>
                                 <apex:inputField id="childGoalStart" value="{!theServAssign.Child_Service_Goal__c}"  html-data-countInFormProgress="1" >
-                                    <apex:actionSupport event="onchange" reRender="permanencyGoalPanel" onComplete=" "/>
+                                    <apex:actionSupport event="onchange" reRender="permanencyGoalPanel" onComplete="setPermanencyForNew(); return false;"/>
                                 </apex:inputField>
                             </div>
                         </apex:outputPanel>
@@ -1153,7 +1153,8 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY' && locationsetting !='non-residential')}">
+<!--                 <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || vfVarIsCB) && admission.Network_Offering__c == 'ARY' && locationsetting !='non-residential')}"> -->
+                  <apex:pageBlockSectionItem Id="pbSecLocSetting" rendered="{!((vfVarIsRW || vfVarIsCB) && IF(!(newSA), Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY' && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential', true))}">
                     <apex:outputLabel id="lblchildperm" for="childPermGoalStart" value="Child Permanency Goal at Start of Service" />
                     <apex:outputPanel id="permanencyGoalPanel">
                         <apex:outputPanel rendered="{!theServAssign.Child_Service_Goal__c == null}">
@@ -1171,47 +1172,32 @@
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem rendered="{!vfVarIsCB || isNR || vfVarIsRW}" >
-                    <apex:outputPanel >
-                        <apex:outputLabel for="pEduStart2" value="Educational Involvement at Start of Service"  rendered="{!admission.Network_Offering__c == 'ARY'}"/>
-                        <apex:outputLabel for="pEduStart3" value="Educational Involvement at Start of Service" rendered="{!admission.Network_Offering__c != 'ARY'}"  />
-                    </apex:outputPanel>
+                   <apex:outputLabel for="pEduStart2" value="Educational Involvement at Start of Service" />
                      <apex:outputPanel >
-                        <apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}" >
-                        <div class="requiredInput">
-                            <div class="requiredBlock"></div>
-                            <apex:inputField id="pEduStart2" value="{!theServAssign.Educational_Involvement_at_Start__c}"  html-data-countInFormProgress="1" html-data-secondId="test"  />
-                        </div>
-                    </apex:outputPanel>
-                    <apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
-                        <apex:inputField id="pEduStart3" value="{!theServAssign.Educational_Involvement_at_Start__c}"  html-data-countInFormProgress="1" />
-                    </apex:outputPanel>
+                        <apex:outputPanel rendered="{!if(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="starteduReqPanel" >
+                        	<span class="requiredExample"> </span>
+                        </apex:outputPanel>
+                        <apex:inputField id="pEduStart2" value="{!theServAssign.Educational_Involvement_at_Start__c}"  html-data-countInFormProgress="1" html-data-secondId="test"  />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel for="highEduAtStart" value="Highest Level of Education at Start of Service" />
                     <apex:outputPanel >
-                        <apex:outputPanel rendered="{!admission.Network_Offering__c == 'ARY'}">
-                            <div class="requiredInput">
-                                <div class="requiredBlock"></div>
-                                <apex:inputField id="highEduAtStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}"  html-data-countInFormProgress="{!if(vfVarIsCM,'0','1')}" />
-                            </div>
-                        </apex:outputPanel>
-                        <apex:outputPanel rendered="{!admission.Network_Offering__c != 'ARY'}" >
-                            <apex:outputLabel for="highEduAtStart2" value="Highest Level of Education at Start of Service" style="display:none;" />
-                            <apex:inputField id="highEduAtStart2" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}"  html-data-countInFormProgress="{!if(vfVarIsCM,'0','1')}" />
-                        </apex:outputPanel>
+                         <apex:outputPanel rendered="{!if(!(newSA),Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY', true)}" id="higheduReqPanel">
+							<span class="requiredExample"> </span>
+                    	</apex:outputPanel>
+                        <apex:inputField id="highEduAtStart" value="{!theServAssign.Highest_Level_of_Education_at_Start__c}"  html-data-countInFormProgress="{!if(vfVarIsCM,'0','1')}" />
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
     
 
-                    <apex:pageBlockSectionItem rendered="{!vfVarIsCB}"  >
-                        <apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" / >
-
+                    <apex:pageBlockSectionItem rendered="{!vfVarIsCB && IF(!(newSA),Service_Assignment__c.Service_location__r.Network_offering__c == 'ARY' && (Service_Assignment__c.Service_location__r.Physical_location__c == 'Host Home' || Service_Assignment__c.Service_location__r.service_Type__c == 'FCT - Family Centered Treatment'),true)}"  >
+                        <apex:outputLabel value="Number of Out-of-Home Placements Pre-Service" id="numOutOfHomePlacementsPreServiceLabel" />
                         <apex:outputPanel id="numOutOfHomePlacementsPreService">
                             <apex:outputPanel id="panelpanel">
                                 <div class="requiredInput">
-                                    <apex:outputPanel rendered="{! admission.Network_Offering__c == 'ARY' && ( theservAssign.Model__c =='FCT' || Contains(theservAssign.service_location__r.Service_Value__c,'Host Home')) }"><div class="requiredBlock"></div></apex:outputPanel>                                  
+                                    <div class="requiredBlock"></div>                                
                                     <apex:inputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
                                 </div>
                             </apex:outputPanel>
@@ -1257,7 +1243,7 @@
                     </apex:outputPanel> 
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!((vfVarIsRW || vfVarIsCB) && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'  && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential')}" >
+                <apex:pageBlockSectionItem rendered="{!((vfVarIsRW || vfVarIsCB) && (Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY'  && Service_Assignment__c.Service_location__r.TMN_Scope__c == 'Residential'))}" >
                     <label for="pChldPermGoal" >Child Permanency Goal at Start of Service</label>                   
                     <apex:outputPanel >                 
                         <apex:outputField value="{!theServAssign.Child_Permanency_Goal__c}" />
@@ -1285,7 +1271,7 @@
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!vfVarIsCB && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home' || Service_Assignment__c.Service_location__r.Service_Type__c == 'FCT')}" >
+                <apex:pageBlockSectionItem rendered="{!vfVarIsCB && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY' && (Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home' || Service_Assignment__c.Service_location__r.Service_Type__c == 'FCT - Family Centered Treatment')}" >
                     <label for="outofhomeplace" >Number of Out-of-Home Placements Pre-Service</label>
                     <apex:outputPanel > 
                         <apex:outputField value="{!theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c}" />
@@ -1375,13 +1361,25 @@
                 </apex:pageBlockSectionItem>
                 
                 
-                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM)}" id="circumstanceItem">
-                    <apex:outputLabel value="End of Service Circumstances" for="endofServCs" id="endOfServiceCsValuesLabel"/>
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM && Service_Assignment__c.Service_location__r.Network_Offering__c == 'ARY')}" id="circumstanceItem">
+                    <apex:outputLabel value="End of Service Circumstances" for="endOfServiceCsValues" id="endOfServiceCsValuesLabel"/>
                     <apex:outputPanel >
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
                             <apex:SelectList size="1" id="endOfServiceCsValues" value="{!theServAssign.End_of_Service_Circumstances__c}"  >
                                 <apex:selectOptions value="{!endOfServiceCsValues}" />
+                            </apex:SelectList>
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!(theServAssign.Status__c == 'Inactive' && !vfVarIsCM && Service_Assignment__c.Service_location__r.Network_Offering__c != 'ARY')}" >
+                    <apex:outputLabel value="End of Service Circumstances" for="endofServCsnonARY" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:SelectList size="1" value="{!theServAssign.End_of_Service_Circumstances__c}"  id="endofServCsnonARY">
+                            	<apex:selectOptions value="{!endOfServiceCsValues}" />
                             </apex:SelectList>
                         </div>
                     </apex:outputPanel>
@@ -3633,6 +3631,7 @@ END: Uncomment to have the element collapsed by default -->
             saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));
         };
         
+        
         function saveLocation() {
             //alert("Yes");
             ServiceAssignmentExt.loadServiceLocation(j$('input[id$=lookupElement_lkid]').val(),
@@ -3653,8 +3652,53 @@ END: Uncomment to have the element collapsed by default -->
                         j$('[id$=hiddenLocationSetting]').val(result.Setting__c); 
                         j$('input[id$=currentProgramID]').val(result.ProgramID__c);
                         j$('input[id$=currentProgramID]').change();
+                        
                         var setting = result.Setting__c;
-                        if(setting.toUpperCase() == 'NON-RESIDENTIAL'){
+                        var locNetwork = result.Network_Offering__c;
+                        var locScope = result.TMN_Scope__c;
+                        var phyLocation = result.Physical_Location__c;
+                        var serType = result.Service_Type__c;
+                        gScope = result.TMN_Scope__c; // Global variable to access values in other functions
+                       
+                         
+                        if(locNetwork != '' && locNetwork.toUpperCase() == 'ARY'){
+                        	j$('[id$=lblchildGoal]').show();
+                        	j$('[id$=serviceGoalPanel]').show();
+                        	j$('[id$=higheduReqPanel]').show();
+                        	j$('[id$=starteduReqPanel]').show();
+                        }else{
+                        	j$('[id$=lblchildGoal]').hide();
+                        	j$('[id$=serviceGoalPanel]').hide();
+                        	j$('[id$=starteduReqPanel]').hide();
+                        	j$('[id$=higheduReqPanel]').hide();
+                        	j$('[id$=childGoalStart]').val('');
+                        	
+                        }
+                        
+                        if((locScope != '' && locScope == 'Residential') && (locNetwork != '' && locNetwork.toUpperCase() == 'ARY')){
+                       		j$('[id$=lblchildperm]').show();
+                       		j$('[id$=childPermGoalStart]').show();
+                       		j$('[id$=permanencyGoalPanel]').show();
+                       	}else{
+                       		j$('[id$=lblchildperm]').hide();
+                       		j$('[id$=childPermGoalStart]').hide();
+                       		j$('[id$=permanencyGoalPanel]').hide();
+                       		j$('[id$=childPermGoalStart]').val('');
+                       		
+                       		
+                       	}
+                       	
+                       	if((locNetwork != '' && locNetwork.toUpperCase() == 'ARY') && (phyLocation == 'Host Home' || serType == 'FCT - Family Centered Treatment')){
+                       		j$('[id$=numOutOfHomePlacementsPreServiceLabel]').show();
+                        	j$('[id$=numOutOfHomePlacementsPreService]').show();
+                       	}else{
+                       		j$('[id$=numOutOfHomePlacementsPreServiceLabel]').hide();
+                        	j$('[id$=numOutOfHomePlacementsPreService]').hide();
+                        	j$('[id$=numOutOfHomePlacementsPreService]').val('');
+                       	
+                       	}
+                       	
+                      /*  if(setting.toUpperCase() == 'NON-RESIDENTIAL'){
                             j$('[id$=lblchildperm]').hide();
                             j$('[id$=childPermGoalStart]').hide();
                             j$('[id$=permanencyGoalPanel]').hide(); 
@@ -3662,7 +3706,7 @@ END: Uncomment to have the element collapsed by default -->
                         }else{
                             j$('[id$=lblchildperm]').show();
                             j$('[id$=childPermGoalStart]').show();j$('[id$=permanencyGoalPanel]').show();
-                        }
+                        }*/
                         callrerender();
                     }
                 }, {
@@ -3672,10 +3716,20 @@ END: Uncomment to have the element collapsed by default -->
             //callrerender();
         }
         function callrerender() {
-            var sd = j$('input[id$=hiddenLocationSetting]').val();
+            var sd = j$('input[id$=lookupElement_lkid]').val();
             //alert(sd);
             rerenderPanel();
         }
+        
+        setPermanencyForNew = function(){
+        	var tmnscope = window.gScope;
+      		if(tmnscope == 'Non-Residential'){
+      			j$('[id$=lblchildperm]').hide();
+                j$('[id$=childPermGoalStart]').hide();
+                j$('[id$=permanencyGoalPanel]').hide();
+      		}
+      	}
+        				
         function getMode(name){
             if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
             return decodeURIComponent(name[1]);
