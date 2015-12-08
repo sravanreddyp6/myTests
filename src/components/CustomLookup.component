@@ -123,10 +123,10 @@
                 	<apex:column headerValue="Location Nickname" >
                     	  {!r[$ObjectType[objectType].Fields['Location_nickname__c'].localName]}
                 	</apex:column>
-                	<apex:column headerValue="Address" >
+                	<apex:column headerValue="Service Location Address" >
                     	 <apex:outputPanel>
-                        	<c:AddressDisplay Street1="{!r[$ObjectType[objectType].Fields['Street__c'].localName]}" City="{!r[$ObjectType[objectType].Fields['City__c'].localName]}" State="{!r[$ObjectType[objectType].Fields['State__c'].localName]}" 
-                        		Zip="{!r[$ObjectType[objectType].Fields['Zip__c'].localName]}" /><br/>
+                        	<c:addressDisplay Street1="{!r[$ObjectType[objectType].Fields['Street__c'].localName]}" city="{!r[$ObjectType[objectType].Fields['City__c'].localName]}"
+                        	State="{!r[$ObjectType[objectType].Fields['State__c'].localName]}" Zip="{!r[$ObjectType[objectType].Fields['Zip__c'].localName]}"/><br/> 
                         	<apex:outputText value="{!r[$ObjectType[objectType].Fields['Phone__c'].localName]}" />
                         </apex:outputPanel>
                 	</apex:column>

@@ -46,7 +46,9 @@
 	    				</div>
 	    			</apex:outputPanel>
     			</apex:pageBlockSectionItem>
+    			<apex:outputText label="Program" value="Auto populated upon Save" rendered="{!Service_Location__c.Alias_lookup__c != null}" />
     			<apex:outputField value="{!alias.Alias_Operating_Group__c}" label="Operating Group"  rendered="{!Service_Location__c.Alias_lookup__c != null}"/>
+    			<apex:outputText value="Auto populated upon Save" label="iServe Program" rendered="{!Service_Location__c.Alias_lookup__c != null}" />
     		</apex:pageBlockSection>    		
     		<apex:pageblockSection columns="2" rendered="{!Service_Location__c.Alias_lookup__c != null}" title="" >
 	    		<apex:pageBlockSectionItem >
@@ -85,6 +87,16 @@
                         </div> 
                     </apex:outputPanel>
     			</apex:pageBlockSectionItem>
+    			<apex:inputField value="{!Service_Location__c.Location_Nickname__c}"  />
+    			<apex:pageBlockSectionItem >
+    				<apex:outputLabel value="Service Type" />
+    				<apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                           <apex:inputField value="{!Service_Location__c.Service_Type__c}" required="false" />
+                        </div>  
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
     			<apex:pageBlockSectionItem >
     				<apex:outputLabel value="Network Service Line Offering" />
     				<apex:outputPanel >
@@ -95,11 +107,11 @@
                     </apex:outputPanel>
     			</apex:pageBlockSectionItem>
     			<apex:pageBlockSectionItem >
-    				<apex:outputLabel value="Service Type" />
+    				<apex:outputLabel value="Residential Property Status" />
     				<apex:outputPanel >
                         <div class="requiredInput">
                             <div class="requiredBlock"></div>
-                           <apex:inputField value="{!Service_Location__c.Service_Type__c}" required="false" />
+                           <apex:inputField value="{!Service_Location__c.Residential_Property_Status__c}" required="false" />
                         </div>  
                     </apex:outputPanel>
     			</apex:pageBlockSectionItem>
@@ -112,21 +124,16 @@
                         </div> 
                     </apex:outputPanel>
     			</apex:pageBlockSectionItem>
-               <apex:inputField value="{!Service_Location__c.Location_Nickname__c}"  />
-    			<apex:pageBlockSectionItem >
-    				<apex:outputLabel value="Residential Property Status" />
-    				<apex:outputPanel >
-                        <div class="requiredInput">
-                            <div class="requiredBlock"></div>
-                           <apex:inputField value="{!Service_Location__c.Residential_Property_Status__c}" required="false" />
-                        </div>  
-                    </apex:outputPanel>
-    			</apex:pageBlockSectionItem>
                 <apex:inputField value="{!Service_Location__c.Capacity__c}"  />
+                <apex:pageBlockSectionItem />
 				<apex:inputField value="{!Service_Location__c.Facility_Number_Oracle_Fixed_Assets__c}" />
     		</apex:pageblockSection>
-    		
-    		 <apex:pageblockSection columns="1" rendered="{!Service_Location__c.Alias_lookup__c != null}" title="" >
+    		<apex:pageBlockSection columns="2"  rendered="{!alias.Alias_Operating_Group__c == 'NeuroRestorative' && Service_Location__c.Alias_lookup__c != null}" title="">
+            	<apex:inputField value="{!Service_Location__c.Room_and_Board_Rate__c}" label="Room and Board Cost" />
+            	<apex:inputField value="{!Service_Location__c.PRN_DS_Per_Hour__c}" />
+            	<apex:inputField value="{!Service_Location__c.Per_Productive_Unit__c}" />  
+            </apex:pageBlockSection>
+    		 <apex:pageblockSection columns="2" rendered="{!Service_Location__c.Alias_lookup__c != null}" title="" >
 	    		 <apex:pageBlockSectionItem >
     				<apex:outputLabel value="Street" />
     				<apex:outputPanel >
@@ -136,6 +143,7 @@
                         </div> 
                     </apex:outputPanel>
     			</apex:pageBlockSectionItem>
+    			<apex:inputField value="{!Service_Location__c.TIN__c}" />
     			<apex:pageBlockSectionItem >
     				<apex:outputLabel value="City" />
     				<apex:outputPanel >
@@ -145,6 +153,7 @@
                         </div>  
                     </apex:outputPanel>
     			</apex:pageBlockSectionItem>
+    			<apex:inputField value="{!Service_Location__c.NPI__c}" />
     			<apex:pageBlockSectionItem helpText="State Code is auto-populated based on the Alias Chosen">
     				<apex:outputLabel value="State" />
     				<apex:outputPanel >
@@ -153,7 +162,8 @@
                            <apex:inputText value="{!Service_Location__c.State__c}" required="false" html-readonly="true" />
                         </div>  
                     </apex:outputPanel>
-    			</apex:pageBlockSectionItem>
+    			</apex:pageBlockSectionItem>	
+    			<apex:pageBlockSectionItem />
     			<apex:pageBlockSectionItem >
     				<apex:outputLabel value="ZIP Code" />
     				<apex:outputPanel >
@@ -163,17 +173,12 @@
                         </div>  
                     </apex:outputPanel>
     			</apex:pageBlockSectionItem>
+    			<apex:pageblockSectionitem />
     			<apex:inputField value="{!Service_Location__c.Phone__c}" />
     		</apex:pageblockSection>	
     		
-    		<apex:pageBlockSection columns="1"  rendered="{!alias.Alias_Operating_Group__c == 'NeuroRestorative' && Service_Location__c.Alias_lookup__c != null}" title="">
-            	<apex:inputField value="{!Service_Location__c.Room_and_Board_Rate__c}" label="Room and Board Cost" />
-            	<apex:inputField value="{!Service_Location__c.PRN_DS_Per_Hour__c}" />
-            	<apex:inputField value="{!Service_Location__c.Per_Productive_Unit__c}" />  
-            </apex:pageBlockSection>
- 
 			<apex:pageBlockSection columns="2" rendered="{!Service_Location__c.Alias_lookup__c != null}" title="" >
-				<apex:inputField value="{!Service_Location__c.TIN__c}" />
+				<apex:outputField value="{!Service_Location__c.Source_System__c}" />
 				<apex:pageBlockSectionItem >
     				<apex:outputLabel value="Status" />
     				<apex:outputPanel >
@@ -183,8 +188,8 @@
                         </div>  
                     </apex:outputPanel>
     			</apex:pageBlockSectionItem>
-                <apex:inputField value="{!Service_Location__c.NPI__c}" />
-    			<apex:outputField value="{!Service_Location__c.Source_System__c}" />
+                
+    			
 			</apex:pageBlockSection>
     	</apex:pageBlock>
     	
