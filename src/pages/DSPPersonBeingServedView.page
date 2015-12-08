@@ -308,7 +308,7 @@
                     columnsToFetch="{!pbsViewResponse.mapEvalResponseFlds['Assistive Device']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResponseFldLbls}"
                     type="Assistive Device" displayTitle="false" style="padding:5px;text-align:left;" />
             </apex:outputPanel>
-            <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResponsesTypes != '' , CONTAINS(pbsViewResponse.evalResponsesTypes, 'Assistive Device MN') && !CONTAINS(pbsViewResponse.evalResponsesTypes, 'Assistive Device'))}">
+            <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResponsesTypes != '' , CONTAINS(pbsViewResponse.evalResponsesTypes, 'Assistive Device MN'))}">
                 <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResponses['Assistive Device MN']}"
                     columnsToFetch="{!pbsViewResponse.mapEvalResponseFlds['Assistive Device MN']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResponseFldLbls}"
                     type="Assistive Device" displayTitle="false" style="padding:5px;text-align:left;" />
