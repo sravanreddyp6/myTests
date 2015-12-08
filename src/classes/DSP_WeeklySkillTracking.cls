@@ -159,7 +159,8 @@ public without sharing class DSP_WeeklySkillTracking {
     	public String met { get; set; }
     	public string initials { get; set; }
     	public date day { get; set; }
-    	public ASRWrapper () {}	
+    	public ASRWrapper () {
+    	}	
     	public ASRWrapper ( Action_Skill_Result__c asr ) {
     		oid = asr.action_plan_objective__c;
     		id = asr.id;
