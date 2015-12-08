@@ -1400,7 +1400,7 @@ public without sharing class ServiceAssignmentExt {
 
         if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
             errors.add('Location of Service: You must select a value.');
-            //ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
+            ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
             return null; // Without Service Location Value We cannot validate most of the fields
         }
         if(string.isNOTBLANK(theServAssign.Service_Location__c) && newSA){ // For new Service Locations
@@ -1411,7 +1411,7 @@ public without sharing class ServiceAssignmentExt {
 		if(modelreq && (theServAssign.Model__c == '--None--' || theServAssign.Model__c == null)){
 			errors.add('Model: You must select a value.');
 		}
-        if(!AssessmentOnly && theServAssign.SA_Start_DateTime__c == null) {
+        if(theServAssign.SA_Start_DateTime__c == null) {
             errors.add('Start date: You must enter a value.');
             //ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Start date: You must enter a value.'));
             //return null;
