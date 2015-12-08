@@ -39,13 +39,13 @@ public class RelatedParty{
          this.comments = rp.comments__c;
      }
 }
-public map<String, list<Evaluation_Response__c>> mapEvalResposes = new map<String, list<Evaluation_Response__c>>();
-public map<String, list<Evaluation_Response__c>> getMapEvalResposes(){ return this.mapEvalResposes; }
-public String evalResposesTypes { get; private set; }
-public map<String, list<String>> mapEvalResposeFlds = new map<String, list<String>>();
-public map<String, list<String>> getmapEvalResposeFlds(){ return this.mapEvalResposeFlds; }
-public map<String, String> mapEvalResposeFldLbls = new map<String, String>();
-public map<String, String> getmapEvalResposeFldLbls(){ return this.mapEvalResposeFldLbls; }
+public map<String, list<Evaluation_Response__c>> mapEvalResponses = new map<String, list<Evaluation_Response__c>>();
+public map<String, list<Evaluation_Response__c>> getMapEvalResponses(){ return this.mapEvalResponses; }
+public String evalResponsesTypes { get; private set; }
+public map<String, list<String>> mapEvalResponseFlds = new map<String, list<String>>();
+public map<String, list<String>> getmapEvalResponseFlds(){ return this.mapEvalResponseFlds; }
+public map<String, String> mapEvalResponseFldLbls = new map<String, String>();
+public map<String, String> getmapEvalResponseFldLbls(){ return this.mapEvalResponseFldLbls; }
  
 //  public List<Agency_Involved_With_Individual__c> relAgencies { get; set; }
 
@@ -99,7 +99,7 @@ public map<String, String> getmapEvalResposeFldLbls(){ return this.mapEvalRespos
 //        this.relAgencies = new List<Agency_Involved_With_Individual__c>();
 //        populateAgencies();
 
-        populateMapEvalResposes();
+        populateMapEvalResponses();
         
         Map<String, Schema.SObjectField> tempMap = Schema.getGlobalDescribe().get('Account').getDescribe().fields.getMap();
         fieldMap = new Map<String, String>();
@@ -143,21 +143,21 @@ public map<String, String> getmapEvalResposeFldLbls(){ return this.mapEvalRespos
     }
   }
   
-  private void populateMapEvalResposes(){
+  private void populateMapEvalResponses(){
         String fieldSetLbl='';
         String fieldName='';
         String fieldLbl='';
         List<Schema.FieldSet> allFieldSets = Schema.SObjectType.Evaluation_Response__c.FieldSets.getMap().values();
         for (Schema.FieldSet fieldSet: allFieldSets) {
             fieldSetLbl = fieldSet.getLabel();
-            if (!mapEvalResposeFlds.containsKey(fieldSetLbl)) { 
-                mapEvalResposeFlds.put(fieldSetLbl, new list<String>());
+            if (!mapEvalResponseFlds.containsKey(fieldSetLbl)) { 
+                mapEvalResponseFlds.put(fieldSetLbl, new list<String>());
             }
             for (Schema.FieldSetMember column: fieldSet.getFields()) {
                 fieldName = column.getFieldPath();
                 fieldLbl = column.getLabel();
-                mapEvalResposeFlds.get(fieldSetLbl).add(fieldName);
-                mapEvalResposeFldLbls.put(column.getFieldPath(), column.getLabel());
+                mapEvalResponseFlds.get(fieldSetLbl).add(fieldName);
+                mapEvalResponseFldLbls.put(column.getFieldPath(), column.getLabel());
             }            
         }
   	
@@ -180,10 +180,10 @@ public map<String, String> getmapEvalResposeFldLbls(){ return this.mapEvalRespos
         String strSQL =  'SELECT ' + selects + ' FROM Evaluation_Response__c WHERE Person_Being_Served__c = \'' + this.pbsId + '\'';
         list<Evaluation_Response__c> evalResponses = (list<Evaluation_Response__c>) Database.query(strSQL);          	
         for(Evaluation_Response__c evalRes : evalResponses){
-            if(!mapEvalResposes.containsKey(evalRes.RecordType.Name)) mapEvalResposes.put(evalRes.RecordType.Name, new list<Evaluation_Response__c>());
-            mapEvalResposes.get(evalRes.RecordType.Name).add(evalRes);
+            if(!mapEvalResponses.containsKey(evalRes.RecordType.Name)) mapEvalResponses.put(evalRes.RecordType.Name, new list<Evaluation_Response__c>());
+            mapEvalResponses.get(evalRes.RecordType.Name).add(evalRes);
         }
-        evalResposesTypes = String.join((new list<String>(this.mapEvalResposes.keyset())),',');
+        evalResponsesTypes = String.join((new list<String>(this.mapEvalResponses.keyset())),',');
   }
    
 //  private void populateAgencies() {
