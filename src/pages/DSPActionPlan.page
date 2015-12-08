@@ -128,7 +128,7 @@ background-color: cornsilk;
                                 </td>                
                                 <td>
                                     <apex:outputPanel layout="block" style="padding-bottom:20px">
-                                        <apex:outputText value="{!response.planStuff[g].Description}" escape="false" style="white-space:pre;"/>
+                                        <apex:outputText value="{!response.planStuff[g].Description}" escape="false" style="white-space:pre-wrap;"/>
                                     </apex:outputPanel>            
                                 </td>            
                             </tr>
@@ -139,7 +139,7 @@ background-color: cornsilk;
                                             </td>                    
                                             <td>
                                                 <apex:outputPanel layout="block" id="theObj" style="padding-bottom:.5em;" styleClass="newObjClass">
-                                                    <apex:outputText value="{!response.planStuff[g].GoalObjs[o].Description}" escape="false" style="white-space:pre;"/> 
+                                                    <apex:outputText value="{!response.planStuff[g].GoalObjs[o].Description}" escape="false" style="white-space:pre-wrap;"/> 
 
                                                     <table style="width: 100%;">
                                                     <tr>
@@ -166,7 +166,7 @@ background-color: cornsilk;
                                                     </td> 
                                                     <td>
                                                         <apex:outputPanel layout="block" id="theAction" style="padding-bottom:20px">
-                                                              <apex:outputText value="{!response.planStuff[g].GoalObjs[o].ObjActs[a].description}" escape="false" style="white-space:pre;" />
+                                                              <apex:outputText value="{!response.planStuff[g].GoalObjs[o].ObjActs[a].description}" escape="false" style="white-space:pre-wrap;" />
                                                                                                           
                                                         </apex:outputPanel>
                                                     </td>
