@@ -176,7 +176,7 @@ public with sharing class shiftnote_summary_rpt {
                                             AND Healthcare_Medical_Note__c in :isHCfilter.Values() 
                                             AND RecordType.DeveloperName = 'Shift_Note'
                                             AND Disregard_note__c = false   
-                                        ORDER BY CreatedDate ];      
+                                        ORDER BY start_time__c ]; 	// new ordering per RPII-35      
      
         Set<ID> noteIDs = new Set<id>();
         for(Progress_Note__c pn: notes){

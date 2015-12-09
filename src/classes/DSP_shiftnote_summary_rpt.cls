@@ -94,7 +94,7 @@ public without sharing class DSP_shiftnote_summary_rpt {
                                   AND Healthcare_Medical_Note__c in :isHCfilter.Values() 
                                   AND RecordType.DeveloperName = 'Shift_Note'
                                   AND Disregard_note__c = false
-                                  ORDER BY CreatedDate ]){
+                                  ORDER BY start_time__c ]){	// new ordering per RPII-35
                                       notes.add(new map<string, object>{'Name' => pn.name,
                                           'ID' => pn.ID,
                                           'Start_Time__c' => pn.Start_Time__c.format(),
