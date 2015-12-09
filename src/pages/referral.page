@@ -24,11 +24,11 @@
   }
     </style>
     <apex:pageMessage rendered="{!Referral__c.Service_Location__c == null && !isErrorDisplayed && Referral__c.Close_Reason__c != 'Admitted' && locations.size == 0 && Referral__c.id != null && ReferralRecordType != 'CareMeridian'}" title="WARNING-Alias Field is blank: No Location has been selected, please add an Anticipated Admission Location OR the section with 'Add Location' button to the Referral." severity="warning" ></apex:pageMessage>
-
+<!-- commenting out for PRI-167  Dec 2015
     <div class="refwarning">
         	<b>Fields with this formatting are required by The MENTOR Network in order to convert the referral. Please note that the system may alert you to additional data that is required by your state or Operating Group.</b>
         		</div>
-
+-->
 	<style type="text/css">
         .dialogLoadingSpinner {
             margin-left: 5px;
@@ -117,7 +117,7 @@
             color: gray !important;
         }
         .refRequiedFields {
- 		  background: #7bc145;
+ 		  /*background: #7bc145;*/ /* reversal of PRI-167 2015-12-09 */
 		}
 
 		.warning {
