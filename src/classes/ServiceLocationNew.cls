@@ -91,7 +91,7 @@ public with sharing class ServiceLocationNew {
 				return pg;
 			}catch(exception e){
 				if(e.getMessage().contains('duplicate value found')){
-					Apexpages.addMessage(new apexpages.Message(ApexPages.Severity.ERROR,'There is already an existing Service location with Same Facility and Program Code'));
+					Apexpages.addMessage(new apexpages.Message(ApexPages.Severity.ERROR,'Another Service Location exists with this Program Code and Facility ID'));
 					return null;
 				}
 				else{
