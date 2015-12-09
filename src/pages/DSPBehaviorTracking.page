@@ -94,7 +94,7 @@
                 <apex:column width="150px">
                     <apex:facet name="header">Actions</apex:facet>
                     
-                    <apex:commandButton onclick="saveBehaviorResults('{!otherobjectives.id}'); return false;" 
+                    <apex:commandButton onclick="saveBehaviorResults('{!otherobjectives.id}', false); return false;" 
                         value="Save & Go To:"
                         rerender="wholeform" status="waitStatus"
                         rendered="{!behaviorResponse.editable}">
@@ -113,15 +113,19 @@
         </apex:pageBlockSection>
     </apex:pageBlock>
     <apex:pageBlock mode="maindetail">
-    <div class="tmn-h1">Behavior Worksheet</div>  
-    <div class="pbHeaderButton">
-          <apex:commandButton onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', true)" value="Save & New Note" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
-	      <apex:commandButton id="formSave" onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}')" value="Save " rerender="wholeform" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
-    </div>
-        <div class="checksheetdate">
+    <div class="tmn-h1">Behavior Worksheet</div>
+    
+        <div class="checksheetdate" style="width:auto;">
             <apex:outputText value="{0, date, MMM yyyy}">
                 <apex:param value="{! behaviorResponse.startdate}" />
             </apex:outputText>
+            
+             
+    <div style="float:right">
+          <apex:commandButton onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', true); return false;" value="Save & New Note" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
+	      <apex:commandButton id="formSave" onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', false); return false;" value="Save " rerender="wholeform" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
+    </div>
+    
         </div>
         <br />
   <apex:repeat value="{! behaviorResponse.Tables}" var="table">
@@ -222,6 +226,14 @@
       <br />
       </div>
       </apex:repeat>
+      
+          <br />  
+    <div style="float:right">
+          <apex:commandButton onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', true); return false;" value="Save & New Note" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
+	      <apex:commandButton id="formSave4" onclick="saveBehaviorResults('{!behaviorResponse.currentobjectiveID}', false); return false;" value="Save" rerender="wholeform" status="waitStatus" rendered="{!behaviorResponse.editable}"/>
+    </div>
+      
+      
     </apex:pageBlock>
 </apex:form>
 <apex:actionStatus id="waitStatus" >
