@@ -420,7 +420,7 @@
 									</a>
 									<br />
 								</apex:repeat>
-								<apex:outputPanel layout="none" rendered="{!AND(thisEval.Status__c != 'Disregard', isTierIII)}">
+								<apex:outputPanel layout="none" rendered="{!AND(thisEval.Status__c != 'Disregard', OR(isTierII, isTierIII))}">
 									<a id="addLateEntryButton" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="refreshLateEntryNote(null, 'Head to Toe', 'Late Entry Note', 'Details'); return false;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
 								</apex:outputPanel>
 							</div>
