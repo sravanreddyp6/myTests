@@ -188,4 +188,31 @@ public class referral_Controller_Helper_Test{
         system.assert(testTask2.Subject == 'New Subject');        
         test.stopTest();
     }
+    
+    static testmethod  void testLoadDiagnosis(){
+        Person_Being_Referred__c pbr = Referral_CreateTestData.createPersonBeingReferred(25, null);
+        Diagnosis__c diag = new Diagnosis__c(Status__c = 'Inactive', PBR__c = pbr.Id); insert diag;
+        
+        test.startTest();
+        Diagnosis__c testDiag = referral_Controller_Helper.loadDiagnosis(diag.id);
+        system.assert(testDiag.Status__c == diag.Status__c);
+        
+        test.stopTest();
+    }
+    
+    static testmethod  void testSaveDiagnosis(){
+        Person_Being_Referred__c pbr = Referral_CreateTestData.createPersonBeingReferred(25, null);
+        Diagnosis__c diag = new Diagnosis__c(Status__c = 'Active', PBR__c = pbr.Id); insert diag;
+        ICD__c icd = new ICD__c(Code_Type__c = 'ICD-10', Icd_Description__c = 'testing'); insert icd;
+
+        test.startTest();
+        Diagnosis__c testDiag = referral_Controller_Helper.saveDiagnosis(diag.id, diag.Status__c, String.valueOf('11/6/2014 12:00 AM'), icd.Id, pbr.Id);
+        system.assert(testDiag.Status__c == 'Active');
+        system.assert(testDiag.Id == diag.ID);
+        
+        Diagnosis__c testDiag2 = referral_Controller_Helper.saveDiagnosis(null, testDiag.Status__c, String.valueOf('11/6/2014 12:00 AM'), icd.Id, pbr.Id);
+        system.assert(testDiag2.Status__c == 'Active');
+
+        test.stopTest();
+    }
 }
