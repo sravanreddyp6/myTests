@@ -254,7 +254,7 @@
 											<apex:param value="{!URLENCODE($CurrentPage.URL)}" name="retURL" />
 										</apex:outputLink>
 										
-										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp=='Redwood' && con.MailingState == 'Minnesota' && con.flavor__c != 'CA FSS' && servAssigns.size > 0 }">
+										<apex:outputLink styleClass="servicelink" value="{!$Page.SeizureEdit}" rendered="{! parentPage != 'ServAssign' && parentPage != 'SeizureEdit' && opGrp=='Redwood' && (con.MailingState == 'Minnesota' || con.MailingState == 'Iowa') && con.flavor__c != 'CA FSS' && servAssigns.size > 0 }">
 											Add Seizure <br />
 											<apex:param value="{!con.Id}" name="pbsId" />
 											<apex:param value="{!URLENCODE($CurrentPage.URL)}" name="retURL" />
