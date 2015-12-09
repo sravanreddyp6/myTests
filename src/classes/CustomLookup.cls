@@ -181,6 +181,7 @@ public class CustomLookup {
         Id idTemp;
         Double doubleTemp;
         Boolean paramEntered = false; //Check whether user entered a param or not.
+       // string OpGrpforCambridge ='';
 
 		// 2014-12-05 EB-273 - modify location search to only retrieve Active locations
         String operatinggroup = [select operating_group__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].operating_group__c;
@@ -189,6 +190,11 @@ public class CustomLookup {
 	            queryFilter += 'FacilityId__c = 20 and ';
 	        } else if (operatinggroup == 'Care Meridian' || operatinggroup == 'CareMeridian'){
 				queryFilter += 'FacilityId__c = 13 and ';
+	        }else if(operatinggroup == 'Cambridge' || operatinggroup == 'Hastings'){
+	        	string OpGrpforCambridge = '\'%' +'Cambridge'+ '%\'';
+	        	string OpGrpforHastings = '\'%' +'Hastings'+ '%\'';
+	        	
+	        	queryFilter += 'FacilityId__c Not In (20, 13) and (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+') and ';
 	        }
 	        else {
 	            queryFilter += 'FacilityId__c Not In (20, 13) and Alias_lookup__r.Alias_Operating_Group__c =:operatinggroup and ';
