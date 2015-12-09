@@ -120,7 +120,7 @@ public with sharing class DSPHomePageController {
         	}
         		
 			actionList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Record Seizure'));        			
-			navList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Seizures'));
+			//navList.add( new SelectOption('submitTxnRequest(\'Seizures\',\'' + pbsID + '\');', 'Seizures')); // not for MN - they can get list from action menu
 			navList = SortOptionList(navList, true);
         	system.debug( this);
         	
