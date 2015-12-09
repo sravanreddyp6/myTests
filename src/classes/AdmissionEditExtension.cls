@@ -54,19 +54,17 @@ public with sharing class AdmissionEditExtension {
          if(Mode == 'Discharged'){
             date dtEnddate = date.valueOf(apexpages.currentpage().getparameters().get('DischDate'));
             datetime dttimeEnddate = datetime.now();
-             System.debug('dttimeEnddate-->'+ dtEnddate);
-            Datetime l = dtEnddate;
-            l = l.addHours((system.Now().hour())+ 5);
-            l = l.addMinutes(Datetime.Now().minute());
-            l = l.addSeconds(Datetime.Now().second());
+            Datetime l ;
+             user u = [select timezonesidkey from user where id =:userinfo.getUserId()];
+            datetime inDateTime = system.now();
+            String dateTimeStr = inDateTime.format('yyyy-MM-dd HH:mm:ss',  u.timezonesidkey);
+            Datetime localDateTime = DateTime.valueOf(dateTimeStr);
+            l = localDateTime ;
             dttimeEnddate = dtEnddate;
             this.admission.status__c = 'Discharged';
             this.admission.Discharged_Date__c = dtEnddate;
             if(useDischargeSection == true)
                 this.admission.Discharged_Date_Time__c = l;
-        
-            System.debug('dttimeEnddate-->'+ dttimeEnddate + l);
-            
         }
         
         	
