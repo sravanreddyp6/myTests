@@ -142,6 +142,8 @@ public with sharing class GenerateEvalComponent {
 	public Boolean containsSkinAssessment { get; set; }
 	public Boolean containsRestraintReduction { get; set; }
 
+	public Boolean isInsert { get; set; }
+
 	public List<String> generateForm() {
 		List<String> composites = new List<String>();
 		compositeToHtmlMap = new Map<String, String>();
@@ -297,7 +299,10 @@ public with sharing class GenerateEvalComponent {
 		// get the list of controls for this type, category, and subcategory
 		List<String> htmlControls = new List<String>();
 		if (evalSectionId == '' || evalSectionId == null) {
+			isInsert = true;
 			evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
+		} else {
+			isInsert = false;
 		}
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
@@ -621,16 +626,35 @@ public with sharing class GenerateEvalComponent {
 			Boolean isFallRiskAssessment = (evalName == 'Residential' && cat == 'Fall Risk Assessment' && subCategory == 'Fall Assessment');
 			Boolean isReductionReview = (evalName == 'Restraint Event' && cat == 'Reduction Review' && subCategory == 'Reduction Review');
 			Boolean initialValid;
+
 			if (isWoundDetail || isPressureUlcerDetail) {
 				initialValid = true;
 			} else if (isReductionReview) {
 				initialValid = false;
 			} else if (isSkinAssessment || isFallRiskAssessment) {
-//				initialValid = !EvalDynamicExt.validateAssessmentError(evaluationId, subCategory == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain');
 				initialValid = false;
 			}
-			if (isWoundDetail || isPressureUlcerDetail || isReductionReview || isSkinAssessment || isFallRiskAssessment) {
+			if (isWoundDetail || isPressureUlcerDetail || isSkinAssessment || isFallRiskAssessment) {
 				isValidField = '<input id="IsValid" name="' + isValidFieldId + '" type="hidden" data-composite="' + sectionComposite + '" value="' + String.valueOf(initialValid) + '" />';
+				isValidField += '<input type="hidden" name="' + isValidFieldId + '_esi" value="' + evalSectionId + '">';
+			} else if (isReductionReview) {
+				// We only use one isValid field for multiple reduction review in one Restraint
+				// Event, so we'll suppress further ones here.
+				isValidField = '<input id="IsValid" name="' + isValidFieldId + '" type="hidden" data-composite="' + sectionComposite + '" value="' + String.valueOf(initialValid) + '" />';
+				Eval_Value__c[] existingIsValid = [
+					SELECT Id, Eval_Section_Id__c
+					  FROM eval_value__c
+					 WHERE what_id__c = :evaluationId
+					   AND what_id_object__c = 'Evaluation__c'
+					   AND eval__r.category__c = :cat
+					   AND eval__r.sub_category__c = :subCategory
+					   AND eval__r.htmlid__c = 'IsValid'
+				];
+				if (existingIsValid.size() == 0) {
+					isValidField += '<input type="hidden" name="' + isValidFieldId + '_esi" value="' + evalSectionId + '">';
+				} else {
+					isValidField += '<input type="hidden" name="' + isValidFieldId + '_esi" value="' + existingIsValid[0].Eval_Section_Id__c + '">';
+				}
 			}
 		}
 		if (notApplicableFieldId != null) {
@@ -829,23 +853,19 @@ public with sharing class GenerateEvalComponent {
 						Boolean notApplicable = (ei.HtmlId__c == 'NotApplicable');
 
 						if ((isSkinAssessment || isFallRiskAssessment) && isValid) {
-							ev.Boolean__c = !EvalDynamicExt.validateAssessmentError(
+							ev.Boolean__c = !fallAssessmentComponentController.validateError(
 								evalId,
 								ei.Sub_Category__c == 'Fall Assessment' ? 'Fall Risk Assessment Domain' :'Skin Assessment Domain'
 							);
-							if (isValidToEvalValueMap.containsKey(ei.Sub_Category__c)) {
+							if (isValidToEvalValueMap.containsKey(ei.Sub_Category__c)) {  // it's already put there by a N/A field = true
 								continue;
 							}
 						} else if (isReductionReview && isValid) {
 							ev.Boolean__c = !restraintReductionController.validateRestraintErrors(
 								EvalDynamicExt.retrieveAssessmentforRestraint(evalIdToSectionId.get((Id)f), evalId),
-								evalIdToSectionId.get((Id)f),
-								false
+								evalIdToSectionId.get((Id)f)
 							);
-							if (isValidToEvalValueMap.containsKey(ei.Sub_Category__c)) {  // it's already put there by a N/A field = true
-								continue;
-							}
-						} else if (notApplicable && (isSkinAssessment || isFallRiskAssessment || isReductionReview)) {
+						} else if (notApplicable && (isSkinAssessment || isFallRiskAssessment)) {
 							ev.Boolean__c = Boolean.valueOf(formData.get(f));
 							if (ev.Boolean__c) {
 								if (isValidToEvalValueMap.containsKey(ei.Sub_Category__c)) {
