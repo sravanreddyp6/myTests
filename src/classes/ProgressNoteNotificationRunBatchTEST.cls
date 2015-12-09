@@ -1,36 +1,18 @@
-/**
- * This class contains unit tests for validating the behavior of Apex classes
- * and triggers.
- *
- * Unit tests are class methods that verify whether a particular piece
- * of code is working properly. Unit test methods take no arguments,
- * commit no data to the database, and are flagged with the testMethod
- * keyword in the method definition.
- *
- * All test methods in an organization are executed whenever Apex code is deployed
- * to a production organization to confirm correctness, ensure code
- * coverage, and prevent regressions. All Apex classes are
- * required to have at least 75% code coverage in order to be deployed
- * to a production organization. In addition, all triggers must have some code coverage.
- * 
- * The @isTest class annotation indicates this class only contains test
- * methods. Classes defined with the @isTest annotation do not count against
- * the organization size limit for all Apex scripts.
- *
- * See the Apex Language Reference for more information about Testing and Code Coverage.
- *
- * Shaun Added a comment here for a Demo with Sravan.
- */
+
 @isTest
 private class ProgressNoteNotificationRunBatchTEST {
 
     static testMethod void myUnitTest() {
-          Profile p = [SELECT Id FROM Profile WHERE Name='ESD General']; 
+        Profile p = [SELECT Id FROM Profile WHERE Name='ESD General']; 
         User u = new User(Alias = 'testxxx1', Email='integration@testorg.com111', 
                     EmailEncodingKey='UTF-8',  LanguageLocaleKey='en_US', 
                     LocaleSidKey='en_US', ProfileId = p.Id, 
                     TimeZoneSidKey='America/Los_Angeles', UserName='integration@testorg.com222', LastName='integration');
-        insert u;  
+          
+        List<User> users = [ select id, name from user where lastname = 'integration'];
+        if ( users.size() == 0 )
+        	insert u;
+        	
         User usr = [ SELECT Id FROM User WHERE LastName = 'integration' LIMIT 1];        
         String RecTypeId= [select Id from RecordType where (DeveloperName='Person_Being_Served') and (SobjectType='Account') Limit 1].Id;
         
@@ -62,27 +44,31 @@ private class ProgressNoteNotificationRunBatchTEST {
           Admission__c testAdm = new Admission__c(
                 Name = 'TEST ADM',
                 Person_Being_Served__c = aContactId,
-                Effective_Date__c = date.today(),
-                Admission_Effective_DateTime__c = DateTime.now()
+                Effective_Date__c = date.today()-1,
+                Admission_Effective_DateTime__c = DateTime.now().AddDays(-1)
           );
           insert testAdm;
 
           Admission__c testAdm2 = new Admission__c(
                 Name = 'TEST ADM2',
                 Person_Being_Served__c = myContact.Id,
-                Effective_Date__c = date.today()
+                Effective_Date__c = date.today()-1,
+                Admission_Effective_DateTime__c = DateTime.now().AddDays(-1)
           );
           insert testAdm2;
             
             Service_Assignment__c testServAssignment = new Service_Assignment__c(
               Admission__c = testAdm.Id,
-              Person_Being_Served__c = aContactId
+              Person_Being_Served__c = aContactId,
+              SA_Start_DateTime__c = DateTime.now()
+              
             );
             insert testServAssignment;
 
             Service_Assignment__c testServAssignment2 = new Service_Assignment__c(
               Admission__c = testAdm2.Id,
-              Person_Being_Served__c = myContact.Id
+              Person_Being_Served__c = myContact.Id,
+              SA_Start_DateTime__c = DateTime.now()
             );
             insert testServAssignment2;
             
