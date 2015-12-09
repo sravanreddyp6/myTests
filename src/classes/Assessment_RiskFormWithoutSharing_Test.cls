@@ -21,7 +21,7 @@ private class Assessment_RiskFormWithoutSharing_Test {
                 Test.setCurrentPage(pageRef);
                 pageRef.getParameters().put('txnID', txn.ID);
                 TxnQueueResponseController controller = new TxnQueueResponseController();
-                throw new DataCreate.DataCreateException('We should have never come to this line of code.');
+                throw new DataCreateException('We should have never come to this line of code.');
             } catch(DMLException e) {
                 system.assert(true);
             } catch(Exception e) {
@@ -29,7 +29,8 @@ private class Assessment_RiskFormWithoutSharing_Test {
             } 
         }
     }
-    
+    public class DataCreateException extends Exception{
+    } 
     static testMethod void myUnitTest() {
         User tester = Referral_createTestData.createTestUser(
             'astest', 'astest@test.com', 'Action', 'Summary', 'Redwood'
