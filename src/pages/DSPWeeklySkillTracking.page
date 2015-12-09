@@ -108,15 +108,17 @@
             <apex:param name="createNote" value="false" assignTo="{!createNote}" />            
         </apex:actionFunction>
 
-  <apex:pageBlock id="weeklyskillworksheet" mode="maindetail">
-<div class="tmn-h1">Weekly Skill Worksheet</div>  
-         <apex:pageMessages id="messages"></apex:pageMessages>
-     
-        <div class="pbHeaderButton" style="top:-60px">
+      <div style="float:right">
+
       	<apex:commandButton id="formSave3" onclick="saveSkillResults(true); return false;" value="Save & New Note" rendered="{!skillResponse.editable}" oncomplete="preparePage();"  rerender="messages"/>
       	<apex:commandButton id="formSave" onclick="saveSkillResults(false); return false;" value="Save" rendered="{!skillResponse.editable}" oncomplete="preparePage();"  rerender="messages"/>
 
     		</div>      
+
+  <apex:pageBlock id="weeklyskillworksheet" mode="maindetail">
+<div class="tmn-h1">Weekly Skill Worksheet</div>  
+         <apex:pageMessages id="messages"></apex:pageMessages>
+     
  
         <div class="checksheetdate">
             Week of <apex:outputText value="{0, date, MMM dd yyyy}">
@@ -126,6 +128,7 @@
                         <apex:param value="{!skillResponse.startdate+6}" />
                     </apex:outputText>
         </div>
+        <Br />
         <div style="width:100%" class="prompts">
         <div style="float:left; width:30%" class="prompts">
         <table style="padding:10px"><tr><td rowspan="2" style="vertical-align:top"><b>Prompts</b></td>

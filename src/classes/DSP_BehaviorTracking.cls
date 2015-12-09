@@ -330,10 +330,19 @@ public without sharing class DSP_BehaviorTracking {
     	
     	public ID oid { get; set; }
     	public ID id { get; set; }
-    	public Decimal occurrences { get; set;  }
+    	public Decimal occurrences { get; set;}
+    	public String strnumoccurred;
     	public Boolean occurred { get; set; }
     	public Datetime daytime { get; set; }
     	public ABRWrapper () {}	
+    	
+    	public void setstrnumoccurred (string value) {
+    		 if ( !String.IsEmpty(value)) occurrences = decimal.valueof( value);
+    	}
+    	
+    	public string getstrnumoccurred () {
+    		 return (occurrences == null ) ? null : string.valueof( occurrences); 
+    	}
     	public ABRWrapper ( Action_Behavior_Result__c abr ) {
     		oid = abr.action_plan_objective__c;
     		id = abr.id;

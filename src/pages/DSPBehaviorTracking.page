@@ -1,4 +1,4 @@
-<apex:page Controller="TxnQueueResponseController" extensions="DSPSubmitTxn, DSP_BehaviorTracking" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home_DSP__tab">
+<apex:page Controller="TxnQueueResponseController" extensions="DSPSubmitTxn,DSP_BehaviorTracking" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home_DSP__tab">
 <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
 <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
 <apex:includeScript value="{!$Resource.AnotoJS}"/>
@@ -151,7 +151,7 @@
             <td>{!table.rows[time].Header}</td>
                <apex:repeat value="{!table.PartOneSecondKeys}" var="day">
                     <td style="text-align:center" class="{!table.rows[time].Items[day].DayofWeek + ' ' + IF(table.rows[time].Items[day].Active,'active', 'inactive')}">
-                        <apex:inputText value="{!table.rows[time].Items[day].DataObject.Occurrences}"
+                        <apex:inputText value="{!table.rows[time].Items[day].DataObject.strnumoccurred}"
                                 rendered="{!behaviorResponse.editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
                                 styleClass="occurrencesInput" html-width="2"
                                 />
@@ -159,7 +159,7 @@
                                 rendered="{!behaviorResponse.editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
                                 styleClass="occurredInput" 
                                 />
-                        <apex:outputText value="{!table.rows[time].Items[day].DataObject.Occurrences}"
+                        <apex:outputText value="{!table.rows[time].Items[day].DataObject.strnumoccurred}"
                                 rendered="{!!behaviorResponse.editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
                                 styleClass="occurrencesOutput"
                                 />
@@ -198,7 +198,7 @@
                <apex:repeat value="{!table.PartTwoSecondKeys}" var="day">
                     <td style="text-align:center" class="{!table.rows[time].Items[day].DayofWeek + ' ' + IF(table.rows[time].Items[day].Active,'active', 'inactive')}">
 
-                        <apex:inputText value="{!table.rows[time].Items[day].DataObject.Occurrences}"
+                        <apex:inputText value="{!table.rows[time].Items[day].DataObject.strnumoccurred}"
                                 rendered="{!behaviorResponse.editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
                                 styleClass="occurrencesInput" html-width="2"
                                 />
@@ -206,7 +206,7 @@
                                 rendered="{!behaviorResponse.editable && table.rows[time].Items[day].Active && table.IsTimeBased}"
                                 styleClass="occurredInput" 
                                 />
-                        <apex:outputText value="{!table.rows[time].Items[day].DataObject.Occurrences}"
+                        <apex:outputText value="{!table.rows[time].Items[day].DataObject.strnumoccurred}"
                                 rendered="{!!behaviorResponse.editable && table.rows[time].Items[day].Active && !table.IsTimeBased}"
                                 styleClass="occurrencesOutput"
                                 />
