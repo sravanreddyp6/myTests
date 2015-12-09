@@ -67,7 +67,7 @@
 		<apex:outputPanel layout="block" style="display: none; " rendered="{!editEnabled}">
 			<apex:outputPanel layout="block" id="evalFormButtons" style="right: 10px; float: right; position: relative;">
 				<input class="btn" type="submit" value="Save" id="btnSave" onclick="isModified=false; jQuery('#btnHiddenSave').click(); return false;" />
-				<input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />
+				<input class="btn" type="button" value="Cancel" id="btnCancel" onclick="clearPanel(); return false;" />
 			</apex:outputPanel>
 		</apex:outputPanel>
 		<!-- This hidden button is here, so that when we submit the form programmatically by
@@ -332,13 +332,14 @@
 					event.preventDefault();
 					var formData = $(this).serializeArray();
 					var jsonData = JSON.stringify(formData);
-
+					$(this).closest("[id$=evalFormBody]").find("#btnSave, #btnCancel").prop("disabled", true);
 					// vf remote to save data
 					GenerateEvalComponent.saveFields('{!parentID}', '{!evalSectionUuid}', '{!evalSectionType}', '{!evaltype}', jsonData, function(result, event) {
 						if (!event.status) {
 							$('#evalSecValMsgs .error-messages').html('<li>' + event.message + '</li>');
 							$('#evalSecValMsgs').show();
 							setUpFields();
+							$(this).closest("[id$=evalFormBody]").find("#btnSave, #btnCancel").prop("disabled", false);
 						} else {
 							{!onEntrySaveSuccess}
 						}
