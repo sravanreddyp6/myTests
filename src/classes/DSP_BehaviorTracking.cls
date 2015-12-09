@@ -331,7 +331,7 @@ public without sharing class DSP_BehaviorTracking {
     	public ID oid { get; set; }
     	public ID id { get; set; }
     	public Decimal occurrences { get; set;}
-    	public String strnumoccurred;
+    	public String strnumoccurred;	// need this otherwise submit from front end defaults all values to 0
     	public Boolean occurred { get; set; }
     	public Datetime daytime { get; set; }
     	public ABRWrapper () {}	
