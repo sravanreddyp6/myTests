@@ -419,6 +419,10 @@ public with sharing class referrals_Controller{
 			}
 			else if (this.operatinggroup == 'CareMeridian'){
 				qs += 'FacilityId__c = 13';
+			}else if(this.operatinggroup == 'Cambridge' || this.operatinggroup == 'Hastings'){
+				string OpGrpforCambridge = '\'%' +'Cambridge'+ '%\'';
+	        	string OpGrpforHastings = '\'%' +'Hastings'+ '%\'';
+				qs += 'FacilityId__c Not In (20, 13) AND (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
 			}
 			else {
 				qs += 'FacilityId__c Not In (20, 13) AND Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
@@ -598,6 +602,10 @@ public with sharing class referrals_Controller{
 			}
 			else if (this.operatinggroup == 'CareMeridian'){
 				qs += 'FacilityId__c = 13';
+			}else if(this.operatinggroup == 'Cambridge' || this.operatinggroup == 'Hastings'){
+				string OpGrpforCambridge = '\'%' +'Cambridge'+ '%\'';
+	        	string OpGrpforHastings = '\'%' +'Hastings'+ '%\'';
+				qs += 'FacilityId__c Not In (20, 13) AND (Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforCambridge+' OR Alias_lookup__r.Alias_Operating_Group__c LIKE '+OpGrpforHastings+')';
 			}
 			else {
 				qs += 'FacilityId__c Not In (20, 13) AND Alias_lookup__r.Alias_Operating_Group__c =:opGroup';
