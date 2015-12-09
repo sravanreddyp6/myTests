@@ -239,7 +239,9 @@ public with sharing class GenerateEvalComponent {
 		containsSkinAssessment = false;
 		containsRestraintReduction = false;
 		for (Eval__c eval: listEvalItems) {
-			System.debug(eval.Composite__c);
+			if (sectionsToBypass.contains(eval.Composite__c)) {
+				continue;
+			}
 			if (eval.Composite__c == 'Head to Toe~Skin/Body~Wound Detail' || eval.Composite__c == 'Residential~Skin/Body~Wound Detail') {
 				compositeToHtmlMap.put(eval.Composite__c, 'N/A');
 				if (evalName == 'Residential' || compositeToSectionTypeMap.get(eval.Composite__c) != 'Activity Log') {
@@ -621,7 +623,7 @@ public with sharing class GenerateEvalComponent {
 		String isValidField = '';
 		if (isValidFieldId != null) {
 			Boolean isWoundDetail = (cat == 'Skin/Body' && subCategory == 'Wound Detail');
-			Boolean isPressureUlcerDetail = (cat == 'Skin/Body' && subCategory == 'Pressure Ulcer Details');
+			Boolean isPressureUlcerDetail = (cat == 'Skin/Body' && (subCategory == 'Pressure Ulcer Details' || subCategory == 'Pressure Ulcer Detail'));
 			Boolean isSkinAssessment = (evalName == 'Residential' && cat == 'Skin/Body' && subCategory == 'Skin Assessment');
 			Boolean isFallRiskAssessment = (evalName == 'Residential' && cat == 'Fall Risk Assessment' && subCategory == 'Fall Assessment');
 			Boolean isReductionReview = (evalName == 'Restraint Event' && cat == 'Reduction Review' && subCategory == 'Reduction Review');
