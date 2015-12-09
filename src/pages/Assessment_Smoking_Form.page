@@ -8,23 +8,27 @@
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresd.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />   
     <script>
-            jQuery( document ).ready(function() {  setQuestions() });
+            jQuery( document ).ready(function() {  setQuestions(); jQuery("[id$=evalType]").html('Smoking Assessment'); });
             
             function setQuestions(){
-
+	
                 var smoker = jQuery("[id$=smoker]");
                 var wishesToSmoke = jQuery("[id$=wishtoSmoke]");
-                jQuery('.wishesToSmoke').addClass('noDisplay');
-                jQuery('.wishesToSmokeInFac').addClass('noDisplay');
+                
+				if({!Evaluation__c.Status__c != 'Inactive Draft'}){
+					jQuery("[id$=myFrm] :input").prop('disabled', true);
+				}                
+                //jQuery('.wishesToSmoke').addClass('noDisplay');
+                //jQuery('.wishesToSmokeInFac').addClass('noDisplay');
                 if(smoker.val() == 1){
-                    jQuery('.wishesToSmoke').removeClass('noDisplay');               
+                    //jQuery('.wishesToSmoke').removeClass('noDisplay');               
                 }
-                    else{jQuery('.wishesToSmoke').val(' '); jQuery('.wishesToSmokeInFac').children().val('1'); console.log( jQuery('.wishesToSmokeInFac') ); }
+                   // else{jQuery('.wishesToSmoke').val(' '); jQuery('.wishesToSmokeInFac').children().val('1'); console.log( jQuery('.wishesToSmokeInFac') ); }
                 
                 if(wishesToSmoke.val() == 1 && smoker.val() == 1){
-                    jQuery('.wishesToSmokeInFac').removeClass('noDisplay');
+                   // jQuery('.wishesToSmokeInFac').removeClass('noDisplay');
                 }
-                    else{jQuery('.wishesToSmokeInFac').val('1');}
+                   // else{jQuery('.wishesToSmokeInFac').val('1');}
                 
             }
 
@@ -49,7 +53,7 @@
                 </div>
             </apex:pageBlockButtons>
             <apex:pageBlockSection columns="1" >
-            <!-- -->
+            <!-- 
                     
                     <apex:pageBlockSectionItem >
                         <apex:outputLabel >Smoker</apex:outputLabel>
@@ -74,10 +78,10 @@
                             </div> 
                         </apex:outputPanel>                  
                     </apex:pageBlockSectionItem>                              
-            
+            -->
              
                 <apex:repeat value="{!EvalQuestions }" var="Qu" rendered="true">
-                    <apex:pageBlockSectionItem rendered="{!Qu.Field_Sequence__c != 1 && Qu.Field_Sequence__c != 2}">
+                    <apex:pageBlockSectionItem >
                         <apex:outputLabel styleClass="wishesToSmokeInFac" >{!Qu.Field_Name__c}  </apex:outputLabel>
                         <apex:outputPanel styleClass="wishesToSmokeInFac" >
                             <div class="requiredInput">

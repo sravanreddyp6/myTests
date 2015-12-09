@@ -25,16 +25,23 @@ public with sharing class Assessment_Smoking_Form {
         theAssessment = (Evaluation__c)controller.getRecord();
         if(theAssessment.id ==null)
             theAssessment.Status__c = 'Inactive Draft';
-        if(SAid != null){
-            SA = [select ID, Person_Being_Served__c, Admission__c, Name from service_assignment__c where id = :SAid];
+            SA = [select ID, Person_Being_Served__c, Person_Being_Served__r.name, Admission__c, Admission__r.State__c, Name from service_assignment__c where id = :SAid];
             
-        }
-
+		list<string> IgnoreQuestions = new list<string>();
+		if(SA.Admission__r.State__c == 'MN'){
+			IgnoreQuestions.add('smoker');
+			IgnoreQuestions.add('wishtoSmoke');
+			IgnoreQuestions.add('callEmergency');
+		}
         EvalQuestions = [select id, name, visibility_rules__c, visibility_row_rules__c, 
             Field_Name__c, Field_Sequence__c, Field_Type__c, Field_Sub_Type__c,  
             Eval_Type__c, Composite__c, htmlid__c
                 from Eval__c 
-                    where Sub_Category__c = 'Smoking Assessment' AND Visible__c = true AND Field_Name__c != 'Blank Space' AND Field_Type__c !='Hidden'
+                    where Sub_Category__c = 'Smoking Assessment' 
+                    AND Visible__c = true 
+                    AND Field_Name__c != 'Blank Space' 
+                    AND Field_Type__c !='Hidden'
+                    AND htmlid__c NOT IN :IgnoreQuestions
                      Order By Field_Sequence__c];
             mapEvalQ = new map<string, QandA>();
             
@@ -60,8 +67,11 @@ public with sharing class Assessment_Smoking_Form {
             }
             theAssessment.RecordTypeID = utility.getEValuationRecordType('Smoking Assessment');
             theAssessment.Status__c = 'Inactive Draft';
+            theAssessment.name = 'Smoking Assessment - ' + SA.Person_Being_Served__r.name + ' - Inactive Draft';
             upsert theAssessment;
-            
+            list<Eval_Value__c > answers = new list<Eval_Value__c >();
+            list<string> errors = new list<string>();            
+            /*
             boolean smoker = false;
             boolean smokeInFac = false;            
             for(string item: mapEvalQ.keySet() ){
@@ -72,8 +82,7 @@ public with sharing class Assessment_Smoking_Form {
                     smokeInFac  = true;
                 }                                
             }
-            list<Eval_Value__c > answers = new list<Eval_Value__c >();
-            list<string> errors = new list<string>();
+
             for(string item2: mapEvalQ.keySet() ){
                 boolean addError = false;
                 if(smoker && mapEvalQ.get(item2).theEval.htmlid__c !='smoker' ){
@@ -102,7 +111,24 @@ public with sharing class Assessment_Smoking_Form {
                  //   ApexPages.Message myMsg2 = new ApexPages.Message(ApexPages.Severity.FATAL, 'test');
                  //   ApexPages.addMessage(myMsg2);                      
                  }
-            if(errors.size() > 0){
+            
+            */
+            
+            for(string item2: mapEvalQ.keySet() ){
+                boolean addError = false; 
+                    if(string.isBlank(mapEvalQ.get(item2).theValue.Text_Under_250__c) ){
+                        addError = true;                                              
+                    }                 
+
+                if(addError){
+                    errors.add(mapEvalQ.get(item2).theEval.Field_Name__c + ' is required');
+                }
+                
+
+                answers.add( mapEvalQ.get(item2).theValue );                
+            } 
+                        
+			if(errors.size() > 0){
                 for(string err: errors){
                     ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.FATAL, err);
                     ApexPages.addMessage(myMsg);
@@ -110,8 +136,8 @@ public with sharing class Assessment_Smoking_Form {
                     Database.rollback(sp);
                     theAssessment = orgEval.clone();
                     return null;                    
-            }
-            
+            }                        
+                        
             for(Eval_Value__c a: answers){
                 a.Eval_Section_Id__c = 'Smoking Assessment';
                 a.Eval_Section_Type__c = 'Smoking Assessment';
@@ -126,9 +152,9 @@ public with sharing class Assessment_Smoking_Form {
         
         
         }
-        catch(DmlException e){  
-        	theAssessment = orgEval.clone();            
+        catch(DmlException e){
             Database.rollback(sp);
+           	theAssessment = orgEval.clone();   
             
         }
 
@@ -144,7 +170,7 @@ public with sharing class Assessment_Smoking_Form {
         try{
             Evaluation__c  newAssessment = theAssessment.Clone();
             newAssessment.Status__c = 'Inactive Draft';
-
+			newAssessment.name = 'Smoking Assessment - ' + SA.Person_Being_Served__r.name + ' - Inactive Draft';
             insert newAssessment;
             
             list<Eval_Value__c > newAnswers = new list<Eval_Value__c >();
@@ -159,6 +185,7 @@ public with sharing class Assessment_Smoking_Form {
             insert newAnswers;
             
             theAssessment.Status__c = 'Inactive Final';
+            theAssessment.name = 'Smoking Assessment - ' + SA.Person_Being_Served__r.name + ' - Inactive Final';
             update theAssessment;
                     
             PageReference pageRef = new PageReference('/apex/Assessment_Smoking_Form?id=' + newAssessment.id);
