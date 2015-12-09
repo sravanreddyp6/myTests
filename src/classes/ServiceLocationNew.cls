@@ -109,7 +109,7 @@ public with sharing class ServiceLocationNew {
 			Alias__c a = this.alias;
 			this.location.State__c = a.Alias_State__c;
 			//Query most recently created service location in the System for the selected alias
-			List<Service_location__c> existingLocs = [SELECT Id, Name, ProgramID__c, FacilityID__c, Program_Rollup__c, Alias_lookup__r.Name FROM Service_location__c WHERE Alias_lookup__c = :this.location.Alias_lookup__c order by CreatedDate desc LIMIT 1];
+			List<Service_location__c> existingLocs = [SELECT Id, Name, ProgramID__c, FacilityID__c, Program_Rollup__c, Alias_lookup__r.Name FROM Service_location__c WHERE Alias_lookup__c = :this.location.Alias_lookup__c order by CreatedDate desc LIMIT 1];//Can use ProgramId desc but it is not always numeric
 			if(existingLocs.size() == 0){
 				this.location.ProgramID__c = a.Name+'001';
 				this.location.Program_Rollup__c = a.Name+'001';

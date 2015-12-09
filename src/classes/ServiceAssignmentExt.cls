@@ -247,8 +247,8 @@ public without sharing class ServiceAssignmentExt {
 			List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
 			endOfServiceCsValues.add(new selectOption('', '--None--'));
 			string operatingGroup = getOperatingGroup();
-			string physicalLocation = ServiceLocation.Physical_location__c;
-			string populationServed = ServiceLocation.Population_Served__c;
+			string physicalLocation = null != ServiceLocation.Physical_location__c ? ServiceLocation.Physical_location__c: '';
+			string populationServed = null != ServiceLocation.Population_Served__c ? ServiceLocation.Population_Served__c: '';
 			for(Schema.PicklistEntry f : ple){
 				string label = f.getLabel();
 				if((operatingGroup == 'Cambridge' || operatingGroup == 'Redwood')){
