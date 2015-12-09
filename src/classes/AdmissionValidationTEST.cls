@@ -91,6 +91,7 @@ private class AdmissionValidationTEST {
             Admission__c = Adm.Id,
             Person_Being_Served__c = aContactId,
             Start_Date__c = date.newInstance(2013, 1, 1),
+            SA_Start_Datetime__c = DateTime.newInstance( 2013, 1, 1, 0, 0, 0),
             End_Date__c = date.newInstance(2013, 1, 31),
             Status__c = 'Inactive'
         );
@@ -106,7 +107,7 @@ private class AdmissionValidationTEST {
         );
         //insert ServAssign2;
 
-          Service_Assignment__c ServAssign3 = new Service_Assignment__c(
+        Service_Assignment__c ServAssign3 = new Service_Assignment__c(
             Name = 'TEST SERV ASSIGN3',
             Admission__c = Adm2.Id,
             Person_Being_Served__c = aContactId,
@@ -119,6 +120,7 @@ private class AdmissionValidationTEST {
             Name = 'TEST SERV ASSIGN 4',
             Admission__c = Adm2.Id,
             Person_Being_Served__c = aContactId,
+            SA_Start_Datetime__c = DateTime.newInstance( 2013, 8, 1, 0, 0, 0),
             Start_Date__c = date.newInstance(2013, 8, 1),
             Status__c = 'Active'
         );
@@ -129,27 +131,18 @@ private class AdmissionValidationTEST {
 
         myListOfAdms.add(Adm);
 
-        //AdmissionValidation.checkForActiveServiceAssignments(myListOfAdms);
-        //AdmissionValidation.checkServiceAssignmentEndDates(myListOfAdms);
-
+		// try to add another active admission - cannot do it
         Adm.Status__c = 'Active';
         Adm.Discharged_Date__c = NULL;
         Adm.Discharged_Status__c = NULL;
         Adm.Reason_for_Discharge__c = NULL;
-        update Adm;
-
-        Adm2.Status__c = 'Discharged';
-        Adm2.Discharged_Date__c = date.newInstance(2013, 8, 31);
-        Adm2.Status__c = 'Discharged';
-        Adm2.Discharged_Status__c = 'Positive';
-        Adm2.Reason_for_Discharge__c = 'TEST REASON FOR DISCHARGE';
-
-        try{
-               update Adm2;
+        try  {
+        	update Adm;
         }
-        catch(DmlException e){
-            System.Assert( e.getMessage().contains('Discharged Date cannot be before a Service Assignment End Date'), e.getMessage() );
+        catch (DmlException e ) {
+        	System.Assert( e.getMessage().contains('This Admission can not be set to Active until there are no other Active Admissions for this PBS'), e.getMessage() );
         }
+
 
         ServAssign.Status__c = 'Active';
         ServAssign.End_Date__c = NULL;
@@ -157,20 +150,44 @@ private class AdmissionValidationTEST {
         ServAssign3.Status__c = 'Inactive';
         ServAssign3.End_Date__c = date.newInstance(2013,7,31);
 
-        ServAssign4.Status__c = 'Inactive';
-        ServAssign4.End_Date__c = date.newInstance(2013,8,31);
+ 		// update the service assignment to active - cannot do it while admission is inactive
+		try {
+        	update ServAssign;
+		}
+		catch ( DMLException e ) {
+			System.Assert( e.getMessage().contains('Service Assignments cannot be saved as Active when their Admission is set to Discharged.'), e.getMessage() );
+		}
+        
+        // add a service assignment on active admission
+        insert ServAssign4;
+        
 
-        update ServAssign;
-        //update ServAssign2;
-        //update ServAssign3;
-        //update ServAssign4;
 
-        update Adm2;
-        delete Adm2;
-        undelete Adm2;
+        // set the admission date to after the SA start date
+        Adm2.Admission_Effective_DateTime__c = DateTime.NewInstance(2013, 9, 1, 0,0,0);
+        try{
+               update Adm2;
+        }
+        catch(DmlException e){
+        	System.Assert( e.getMessage().contains('Admission Date cannot be after a Service Assignment Start Date'), e.getMessage() );
+        }
 
-        //AdmissionValidation.checkForActiveServiceAssignments(myListOfAdms);
-        //AdmissionValidation.checkServiceAssignmentEndDates(myListOfAdms);
+        // discharge the active admission - cannot do it
+        Adm2.Status__c = 'Discharged';
+        Adm2.Discharged_Date__c = date.newInstance(2013, 8, 31);
+        Adm2.Discharged_Status__c = 'Positive';
+        Adm2.Reason_for_Discharge__c = 'TEST REASON FOR DISCHARGE';
+        try{
+               update Adm2;
+        }
+        catch(DmlException e){
+            System.Assert( e.getMessage().contains('Discharged Status is prevented while there is an Active Service Assignment'), e.getMessage() );
+        }
+        
+        // get some coverage on other trigger actions
+        delete adm;
+        undelete adm;
+        
     }
 
     static testmethod void unitTest2() {
@@ -233,9 +250,7 @@ private class AdmissionValidationTEST {
             update Adm;
         }
         catch(DmlException e){
-            System.Assert( e.getMessage().contains('You have attempted to discharge an admission with a discharge date prior ' +
-            'to the end date for a service assignment associated with the admission. Please check the end dates of the associated ' +
-            'service assignments and adjust as needed.  The last service assignment end date for this admission is currently'), e.getMessage() );
+            System.Assert( e.getMessage().contains('Discharged Date cannot be before a Service Assignment End Date'), e.getMessage() );
         }
 
         ServAssign.End_Date__c = date.newInstance(2013, 7, 31);
@@ -253,6 +268,10 @@ private class AdmissionValidationTEST {
             Reason_for_Discharge__c = 'TEST REASON FOR DISCHARGE',
             Network_Offering__c = 'ARY'
         );
-        insert Adm4;
+        try  {
+        	insert Adm4;
+        } catch (DMLException e) {
+        	System.Assert( e.getMessage().contains('overlap'), e.getMessage() );
+        }
     }
 }
