@@ -131,7 +131,7 @@ public class identityEditNew {
  	public List<SelectOption> getVendorvalues() {
 		List<SelectOption> Options = new List<SelectOption>();
 		Options.add(new SelectOption('NONE','NONE') );
-		List<TMN_Corp_Contract__c> tmnContract = [select id,name,Supplier__r.name,Type_of_Contract__c,Description__c,BAA_HIPAA_in_Contract__c from TMN_Corp_Contract__c  where (Type_of_Contract__c = 'BAA' OR BAA_HIPAA_in_Contract__c = 'Yes') AND Status__c in ('NEW','ACTIVE','RENEW') order by Supplier__r.name];		
+		List<TMN_Corp_Contract__c> tmnContract = [select id,name,Supplier__r.name,Type_of_Contract__c,Description__c,BAA_HIPAA_in_Contract__c from TMN_Corp_Contract__c  where (Type_of_Contract__c = 'BAA' OR BAA_HIPAA_in_Contract__c = 'Yes') AND Status__c in ('NEW','ACTIVE','RENEWED') order by Supplier__r.name];		
 				for(TMN_Corp_Contract__c contract:tmnContract){
 					Options.add(new SelectOption(contract.Supplier__r.name,contract.Supplier__r.name));
 				}
