@@ -439,9 +439,10 @@ public without sharing class TransactionQueueTriggeredActions {
 					system.debug( t.input_params__c);
 					Map<String, String> inputs = (Map<string, string>) json.deserialize(t.input_params__c, Map<String, String>.class);
 					
-					system.debug( 'WORKSHEET ID: ' + inputs.get('Action_plan_worksheet__c'));
-					system.debug( 'NEW TARGET ID: ' + inputs.get('newid'));
-					system.debug( 'ABR LIST: ' + json.deserialize(inputs.get('behavior_results'), List<DSP_BehaviorTracking.ABRWrapper>.class));
+					//system.debug( 'WORKSHEET ID: ' + inputs.get('Action_plan_worksheet__c'));
+					//system.debug( 'NEW TARGET ID: ' + inputs.get('newid'));
+					//system.debug( 'JSON for results: ' + inputs.get('behavior_results'));
+					//system.debug( 'ABR LIST: ' + json.deserialize(inputs.get('behavior_results'), List<DSP_BehaviorTracking.ABRWrapper>.class));
 					
 					ID wksheetId = inputs.get('Action_plan_worksheet__c');
 					ID newID = inputs.get('newid');
