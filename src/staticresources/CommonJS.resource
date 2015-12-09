@@ -22,6 +22,8 @@
 		var type = $obj.attr('type');
 		if (type && type === 'checkbox' && !$obj.prop("disabled")) {
 			return $obj.prop('checked') ? '1' : '0';
+		} else if ($obj.prop("disabled")) {
+			return '0';
 		} else {
 			return val;
 		}
