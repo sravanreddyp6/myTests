@@ -740,7 +740,7 @@
                         <apex:actionRegion >
                         <apex:selectList rendered="{!editSA}" id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:SE_label}&quot;,&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:Specify}&quot;] }" >
                             <apex:selectOptions value="{!StatusValues}"/>
-                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit,enddatePanel" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
+                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit,enddatePanelNR" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
                             </apex:actionSupport>
                         </apex:selectList>
                         </apex:actionRegion>                   
@@ -889,7 +889,7 @@
                     
                     <apex:outputLabel id="end1Lab" value="End Date" />
                     <apex:outputPanel >
-                        <apex:outputPanel id="enddatePanel">
+                        <apex:outputPanel id="enddatePanelNR">
                             <apex:outputPanel rendered="{!theServAssign.Status__c == 'Inactive'}">
                                     <span class="requiredExample"> </span>
                             </apex:outputPanel>
@@ -1816,7 +1816,7 @@ END: Uncomment to have the element collapsed by default -->
                 <apex:pageBlockSection columns="1" id="seizureEntry">
                     <apex:pageBlockSectionItem >
                     	<apex:outputLabel Value="Start Time"/>
-                    	<apex:outputPanel>
+                    	<apex:outputPanel >
                     	<div class="requiredInput">
                             <div class="requiredBlock"></div>
                         	<c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_startDateTime" dateTimeVal="{! IF(seizure.Start_DateTime__c==null, NOW(), seizure.Start_DateTime__c) }" datetimepickerid="seizureEntry_startDateTimeInput"/>
@@ -1825,7 +1825,7 @@ END: Uncomment to have the element collapsed by default -->
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem > 
                     	<apex:outputLabel Value="End Time"/>
-                    	<apex:outputPanel>
+                    	<apex:outputPanel >
                     	<div class="requiredInput">
                             <div class="requiredBlock"></div>
                         	<c:MilitaryDateTimeWithSeconds edit="true" shiftTop="20" hiddenFieldId="seizureEntry_endDateTime" dateTimeVal="{! IF(seizure.End_DateTime__c==null, NOW(), seizure.End_DateTime__c) }" datetimepickerid="seizureEntry_endDateTimeInput"/>
@@ -1834,7 +1834,7 @@ END: Uncomment to have the element collapsed by default -->
                     </apex:pageBlockSectionItem>
                     <apex:pageBlockSectionItem > 
                     	<apex:outputLabel Value="Observed By"/>
-                    	<apex:outputPanel>
+                    	<apex:outputPanel >
                     	<div class="requiredInput">
                             <div class="requiredBlock"></div>
 							<apex:inputField value="{!seizure.Observed_By__c}" id="seizureEntry_observedBy"/>
