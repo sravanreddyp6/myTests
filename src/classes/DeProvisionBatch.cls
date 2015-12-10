@@ -17,7 +17,11 @@ global class DeProvisionBatch implements Database.Batchable<sObject>, Schedulabl
 			       	List<Messaging.SingleEmailMessage> mails =   new List<Messaging.SingleEmailMessage>();
 					for(TMN_User__c tmn:scope) {
     				Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
-    				String	emailTemplate = '@RECIPIENTADDRESS@={'+tmn.identity_id__c+'}';
+    				String	emailTemplate = 'This message is an automated notification from TMNAccess: Workforce. Because the last day value in TMNAccess: Workforce is today a deprovisioning event has been triggered for '+tmn.First_Name__c+' '+tmn.Last_Name__c+'.';
+    				emailTemplate += '<BR/>';
+    				emailTemplate += '<BR/>';
+    				emailTemplate += '<BR/>';
+    				emailTemplate += '<BR/> @RECIPIENTADDRESS@={'+tmn.identity_id__c+'}';
 					emailTemplate += '<BR/> @CODE_CATALOG@=\'depro\'';
             		mail.setTargetObjectId(userList[0].id);
          			mail.setSubject('De Provision for '+tmn.Last_Name__c+' '+tmn.First_Name__c);
