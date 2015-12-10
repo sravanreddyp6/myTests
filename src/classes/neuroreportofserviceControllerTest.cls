@@ -63,12 +63,12 @@ public class neuroreportofserviceControllerTest {
 		pnlist.add(PN3);
 		update PN3;
 		
-		Progress_Note__c PN4 = TMN_Generic_Core_TestData.createProgressNote(testData.theSA, testData.theAdm, testData.theServiceCode, testData.contactID, Datetime.now().addDays(-6),Datetime.now().addDays(-5));
+		/*Progress_Note__c PN4 = TMN_Generic_Core_TestData.createProgressNote(testData.theSA, testData.theAdm, testData.theServiceCode, testData.contactID, Datetime.now().addDays(-6),Datetime.now().addDays(-5));
 		PN4.Therapy_Discipline__c = 'SLP';
 		PN4.RecordtypeId = therapyId;
 		PN4.Type_of_Contact__c = 'Phone';
 		pnlist.add(PN4);
-		update PN4;
+		update PN4;  */
 		
 		/*update pnlist;
 		
