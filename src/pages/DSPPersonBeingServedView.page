@@ -296,7 +296,10 @@
             <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResponsesTypes != '' , CONTAINS(pbsViewResponse.evalResponsesTypes, 'PPD Skin Test'))}" >
                 <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResponses['PPD Skin Test']}"
                     columnsToFetch="{!pbsViewResponse.mapEvalResponseFlds['PPD Skin Test']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResponseFldLbls}"
-                    type="PPD Skin Test" displayTitle="false" style="padding:5px;text-align:left;" />
+                    type="PPD Skin Test" displayTitle="false" esign="true" showdisregard="true" style="padding:5px;text-align:left;" 
+                    customLabels="{!pbsViewResponse.mapCustomLabels['PPD Skin Test']}"
+                    customLabelsKeys = "{!pbsViewResponse.customlabelslist['PPD Skin Test']}"
+                    />
             </apex:outputPanel>
             <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResponsesTypes = '' , !CONTAINS(pbsViewResponse.evalResponsesTypes, 'PPD Skin Test'))}" style="padding-left:10px;padding-top:3px">No PPD skin tests to display</apex:outputPanel>
         </apex:pageBlock>
