@@ -40,7 +40,9 @@ public without sharing class DSPPersonBeingServed_WithoutSharing {
     public map<String, list<String>> getmapEvalResponseFlds(){ return this.mapEvalResponseFlds; }
     public map<String, String> mapEvalResponseFldLbls = new map<String, String>();
     public map<String, String> getmapEvalResponseFldLbls(){ return this.mapEvalResponseFldLbls; }
-    
+    public map<String, map<string, string>> mapCustomLabels = new map<string, map<string, string>>();
+    public map<String, map<string, string>> getmapCustomLabels() { return this.mapCustomLabels; }
+    public map<string, string> customlabelslist { get; set; }
     
     // Filter some of the Additional Info Fields
     public string dontShowFields {
@@ -208,6 +210,13 @@ public without sharing class DSPPersonBeingServed_WithoutSharing {
             mapEvalResponses.get(evalRes.RecordType.Name).add(evalRes);
         }
         evalResponsesTypes = String.join((new list<String>(this.mapEvalResponses.keyset())),',');
+        
+        // get custom labels to override the map headers
+        customlabelslist = new Map<String, String>();
+        mapCustomLabels.put('PPD Skin Test',  new Map<string, string>{'Time_Given__c'=>'Date Administered','Time_Observed__c' =>'Date Read'});
+        List<string> tmp = new List<string>(mapcustomlabels.get('PPD Skin Test').keyset());
+        
+        customlabelslist.put( 'PPD Skin Test', string.join(tmp, ','));
     }
     
 }
