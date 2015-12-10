@@ -205,6 +205,7 @@ public with sharing class Assessment_Smoking_Form {
                 theAssessment.ServiceAssignment__c = SA.id;
                 
             }
+            	theAssessment.name = 'Smoking Assessment - ' + SA.Person_Being_Served__r.name + ' - Active Final';
                 theAssessment.Status__c = 'Active Final';
                 upsert theAssessment; 
             }
