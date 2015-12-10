@@ -346,14 +346,6 @@ public without sharing class ServiceAssignmentExt {
     private Boolean pshowDiag, pshowLocation, pshowCodes, pshowServAssignClose, pshowNurseAssessment;
     private string popGroup;
     private static Boolean psetFlags = false;
-    public Boolean showDiagnosis { get {
-    	//Returning a dummy value. Commented for easy deployment - Will delete after the release - Sravan - 11/13/2015
-       /* if (! psetFlags ) {
-            psetFlags = setShowFlags();
-        }
-        return pshowDiag;*/
-        return false;
-    }}
     public Boolean showCodes { get {
         if (! psetFlags ) {
             psetFlags = setShowFlags();
@@ -1439,7 +1431,7 @@ public without sharing class ServiceAssignmentExt {
             errors.add('Highest level of education at Start of Service: You must enter a value');
         }
 		//Not mentioned in the req. May need to change to Servicelocation Network offering - Sravan 
-        if(opGroup == 'Cambridge' && admission.Network_offering__c == 'ARY' && (theServAssign.Model__c.Equals('FCT') || theServAssign.service_location__r.service_value__c.Contains('Host Home')) && theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c == null){
+        if(opGroup == 'Cambridge' && serviceLocation.Network_offering__c == 'ARY' && (theServAssign.Model__c.Equals('FCT') || theServAssign.service_location__r.service_value__c.Contains('Host Home')) && theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c == null){
             errors.add('Number of Out-of-Home Placements Pre-Service: You must enter a value');
         }
 
@@ -1460,13 +1452,10 @@ public without sharing class ServiceAssignmentExt {
             if(serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Educational_Involvement_at_End_of_Servic__c == null){
                 errors.add('Educational Involvement at End of Service : You must enter a value.');
             }
-            if(serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Educational_Involvement_at_End_of_Servic__c == null){
-                errors.add('Educational Involvement at End of Service : You must enter a value.');
-            }
             if(serviceLocation.Network_offering__c == 'ARY' && (opGroup == 'Cambridge' || opGroup == 'Redwood' || opGroup == 'NeuroRestorative') && theservAssign.Highest_Level_of_Education_at_End_of_Ser__c == null){
                 errors.add('Highest Level of Education at End of Service : You must enter a value.');
             }
-            if(admission.Network_offering__c == 'ARY' && opGroup == 'Cambridge' && (theServAssign.Model__c.Equals('FCT') || theServAssign.service_location__r.service_value__c.Contains('Host Home')) && theservAssign.Total_no_of_Internal_moves_during_Servic__c == null){
+            if(opGroup == 'Cambridge' && serviceLocation.Physical_Location__c == 'Host Home' && theservAssign.Total_no_of_Internal_moves_during_Servic__c == null){
                 errors.add('Total Number of Internal Moves During Service : You must enter a value.');
             }
             if(theServAssign.Was_dissatisfaction_reason_for_service_e__c == null && opGroup == 'NeuroRestorative'){
@@ -2509,6 +2498,138 @@ public without sharing class ServiceAssignmentExt {
     	return 'no error';
 
     }
+    
+    //Delete below code after Dec 23 release - Sravan
+    	public static Boolean showdiagModal { get; set; }
+    public string diagEditId {get; set; }
+    
+    public Boolean newDiagnosis{ get; set;} // comment after release
+   
+   public Boolean showDiagnosis { get {
+    	//Returning a dummy value. Commented for easy deployment - Will delete after the release - Sravan - 11/13/2015
+       /* if (! psetFlags ) {
+            psetFlags = setShowFlags();
+        }
+        return pshowDiag;*/
+        return false; 
+    }}
+    
+    
+    public list<Diagnosis__c> diagnoses{get; set;}
+
+    public Diagnosis__c diag {
+        get {
+            if (diag == null)
+                diag = new Diagnosis__c();
+            return diag;
+        }
+        set;
+    }
+    
+    public void showAddDiagnosis() {
+       /* newDiagnosis = true;
+        showdiagModal = true;
+        diag = new Diagnosis__c();
+        System.Debug('showdiagModal='+ showdiagModal);*/
+    }
+
+    public void showEditDiagnosis() {
+       /* showdiagModal = true;
+        System.Debug('showdiagModal=' + showdiagModal);*/
+    }
+
+    public void saveDiagnosis() {
+       /* Boolean foundDiag = false;
+        Diagnosis__c dgnew = this.diag;
+        System.debug('dgnew: ' + dgnew);
+        // if this diagnosis contains an ID, look for it to update
+        if ( diagnoses != null ) {
+            for ( Diagnosis__c dg : diagnoses ) {
+                if ( dg.Id != null && dg.Id == dgnew.Id ) {
+                    // update in place
+                    dg.Effective_Date__c = dgnew.Effective_Date__c;
+                    dg.Axis_I__c = dgnew.Axis_I__c;
+                    dg.Axis_II__c = dgnew.Axis_II__c;
+                    dg.Axis_III__c = dgnew.Axis_III__c;
+                    dg.Axis_IV__c = dgnew.Axis_IV__c;
+                    dg.Axis_V__c = dgnew.Axis_V__c;
+                    dg.Primary_Diagnosis__c = dgnew.Primary_Diagnosis__c;
+                    dg.Secondary_Diagnosis__c = dgnew.Secondary_Diagnosis__c;
+                    dg.Level_of_Disability__c = dgnew.Level_of_Disability__c;
+                    dg.Comments__c = dgnew.Comments__c;
+                    system.debug('updating ' + dg.Id + ', ' + dgnew);
+                    foundDiag = true;
+                    break;
+                }
+            }
+        }
+        if ( !foundDiag )
+            this.diagnoses.add(dgnew);
+
+        this.diag= new Diagnosis__c();
+        //newDiagnosis = false;*/
+    }
+
+    public void refreshDiagnoses() {
+        // requery the diagnosis list
+     /*   diagnoses = [select id, Service_Assignment__r.Name, Service_Assignment__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Axis_I__c,Axis_II__c,Axis_III__c,Axis_IV__c,Axis_V__c, Effective_Date__c, Comments__c from Diagnosis__c where Service_Assignment__c = :currentID order by createddate desc];
+        newDiagnosis = false;*/
+
+    }
+
+    public void createDiagnoses() {
+       /* if (diagnoses != null && this.theServAssign.Id != null) {
+            for (Diagnosis__c dg : diagnoses ) {
+                dg.Service_Assignment__c = this.theServAssign.Id;
+            }
+            System.Debug('DIAG LIST = ' + diagnoses);
+            upsert diagnoses;
+        }*/
+
+    } 
+    
+      @RemoteAction
+    public static Diagnosis__c loadDiagnosis(string diagnosisId) {
+        /*Diagnosis__c dg =
+                [select Id, Effective_Date__c, Axis_I__c, Axis_II__c, Axis_III__c, Axis_IV__c, Axis_V__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Level_of_Disability__c, Comments__c, Service_Assignment__c
+                 from Diagnosis__c where id = :diagnosisId];
+        system.debug('LOD:' + dg.Level_Of_disability__c);
+        return dg;*/
+        return new Diagnosis__c();
+    }
+
+
+    @RemoteAction
+    public static boolean saveSingleDiagnosis (string diagId, long effDate, string axisI, string axisII, string axisIII, string axisIV, string axisV, string primDiag, string secondDiag, string lod, string comments, string saID) {
+        /*Diagnosis__c dg;
+        ID newID;
+        if (diagId == '') {
+
+            dg = new Diagnosis__c ( Effective_Date__c = datetime.newInstance(effDate), Axis_I__c = axisI, Axis_II__c = axisII, Axis_III__c = axisIII, Axis_IV__c = axisIV, Axis_V__c = axisV, Primary_Diagnosis__c = primDiag, Secondary_Diagnosis__c = secondDiag, Level_of_Disability__c = lod, Comments__c = comments, Service_Assignment__c = saID );
+        }
+        else {
+
+            dg = [select Id, Effective_Date__c, Axis_I__c, Axis_II__c, Axis_III__c, Axis_IV__c, Axis_V__c, Primary_Diagnosis__c, Secondary_Diagnosis__c, Level_of_Disability__c, Comments__c, Service_Assignment__c
+                  from Diagnosis__c where id = :diagId];
+
+            dg.Effective_Date__c = datetime.newInstance(effDate);
+            dg.Axis_I__c = axisI;
+            dg.Axis_II__c = axisII;
+            dg.Axis_III__c = axisIII;
+            dg.Axis_IV__c = axisIV;
+            dg.Axis_V__c = axisV;
+            dg.Primary_Diagnosis__c = primDiag;
+            dg.Secondary_Diagnosis__c = secondDiag;
+            dg.Level_of_Disability__c = lod;
+            dg.Comments__c = comments;
+            dg.Service_Assignment__c = saID;
+            system.debug('updating ' + dg.Id + ', ' + dg);
+        }
+
+        upsert dg;
+        return true;*/
+        return false;
+    } 
 
 
 }
