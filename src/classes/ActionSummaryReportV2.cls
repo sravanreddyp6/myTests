@@ -19,6 +19,8 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 	public List<IsolationEvent> isolationEvents { get; set; }
 	public List<RestraintEvent> restraintEvents { get; set; }
 	public List<VitalsDetail> vitalsDetails { get; set; }
+	
+	public map<string, totalInfo> SkillBehaviorTotals {get; set;}
 
 	public DiagnosticsIvEvaluation diagnosticsIvEvaluation { get; set; }
 	public List<SelectOption> yesNoOptions {
@@ -674,6 +676,34 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 		public List<ObjectiveSkillResult> skillResults { get; set; }
 		public List<ObjectiveBehaviorCountResult> countResults { get; set; }
 		public List<ObjectiveNarrativeResult> narrativeResults { get; set; }
+		public integer TotalOccurrences {get{
+			integer t=0;
+			for(ObjectiveBehaviorCountResult item: countResults){
+				t=t+ item.occurrences ;				
+			}
+			return t;
+		}  set;}
+		public integer metObj {get{
+			integer t=0;
+			for(ObjectiveSkillResult item: skillResults){
+				t=t+ item.met;				
+			}
+			return t;
+		} set;}
+		public integer notMetObj {get{
+			integer t=0;
+			for(ObjectiveSkillResult item: skillResults){
+				t=t+ item.notMet;				
+			}
+			return t;
+		} set;}
+		public integer percMetObj {get{
+			double t=0;
+			t= (metObj + notMetObj);
+			t= (metObj ) / t;
+			t=t*100;
+			return integer.valueof(math.roundToLong(t));
+		} set;}
 
 		public Objective(Action_Plan_Objective__c objectiveSObject) {
 			this.objectiveSObject = objectiveSObject;
@@ -729,6 +759,7 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 					)
 				);
 			}
+			//SkillBehaviorTotals.put(objectiveSObject.Id, new totalInfo(objectiveSObject.Id));
 			skillResults.sort();
 		}
 
@@ -1133,5 +1164,17 @@ public with sharing class ActionSummaryReportV2 implements AuthenticatedAction {
 			}
 		}
 		return vals;
+	}
+	
+	public class totalInfo{
+		public integer Occurrences {get; set;}
+		public integer metObj {get; set;}
+		public integer notMetObj {get; set;}
+		public integer percMetObj {get; set;}
+		
+		
+		public totalInfo(string i){
+		}	
+		
 	}
 }
