@@ -481,10 +481,10 @@ private class ServiceAssignmentExtTest {
     
     public testmethod static void remoteActionfindDuplicateSeizure(){
         CreateObjects();
-        Datetime stEndTime = Datetime.now();
+        Datetime stEndTime = DateTime.newInstance(2013, 1,1,0,0,0);
         Seizure__c seizure = new Seizure__c();
         seizure.Start_DateTime__c = stEndTime;
-        seizure.End_DateTime__c = stEndTime.addDays(1);
+        seizure.End_DateTime__c = DateTime.newInstance(2013, 1,2,0,0,0);
         seizure.Service_Assignment__c = ServAssign.Id;
         insert seizure;
         System.assertequals(false, ServiceAssignmentExt.findDuplicateSeizure(
