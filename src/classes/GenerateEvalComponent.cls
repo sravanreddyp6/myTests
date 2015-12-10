@@ -725,6 +725,10 @@ public with sharing class GenerateEvalComponent {
 		public String value;
 	}
 
+	@RemoteAction
+	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm) {
+		saveFields(evalId, evalSectionId, evalSectionType, evalType, jsonForm, false, false);
+	}
 
 	@RemoteAction
 	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm, Boolean batchInsert, Boolean batchUpsert) {
