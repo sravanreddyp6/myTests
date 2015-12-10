@@ -132,7 +132,8 @@ public with sharing class GenerateEvalComponent {
 	public transient Map<String, String> compositeToHeaderMap {get; set; }
 	public transient Map<String, String> compositeToSectionTypeMap { get; set; }
 	public transient Integer numSection { get; set; }
-	public transient Boolean batchInsert { get; set; }
+	public Boolean batchInsert { get; set; }
+	public Boolean batchUpsert { get; set; }
 
 	public Boolean containsWoundDetail { get; set; }
 	public Boolean containsWoundDetailLog { get; set; }
@@ -142,8 +143,6 @@ public with sharing class GenerateEvalComponent {
 	public Boolean containsSkinAssessment { get; set; }
 	public Boolean containsRestraintReduction { get; set; }
 
-	public Boolean isInsert { get; set; }
-
 	public List<String> generateForm() {
 		List<String> composites = new List<String>();
 		compositeToHtmlMap = new Map<String, String>();
@@ -151,9 +150,8 @@ public with sharing class GenerateEvalComponent {
 		compositeToSectionTypeMap = new Map<String, String>();
 
 		List<Eval__c> listEvalItems;
-		batchInsert = (subcat == null || subcat == '');
 		String additionalCondition = '';
-		if (!batchInsert) {
+		if (!batchInsert && !batchUpsert) {
 			additionalCondition += 'AND Sub_Category__c = :subcat ';
 		}
 
@@ -197,39 +195,65 @@ public with sharing class GenerateEvalComponent {
 		// The query to get these populated values can potentially run VERY slow, so we'll
 		// optimize by not running it when we KNOW it's not necessary (e.g. when we're doing insert)
 		List<Eval_Value__c> listEvalValues = new List<Eval_Value__c>();
-		if (batchInsert || evalSectionId != '') {
+		if (batchInsert || batchUpsert || evalSectionId != '') {
 			listEvalValues = Database.query(
 				'SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c, ' +
 				'       text_over_250__c, text_under_250__c, eval__c, eval__r.length__c, ' +
-				'       eval__r.composite__c, eval_section_type__c, eval__r.eval_type__r.name ' +
+				'       eval__r.composite__c, eval_section_type__c, eval__r.eval_type__r.name, ' +
+				'       eval_section_id__c ' +
 				'  FROM eval_value__c '+
 				' WHERE eval__c in :listEvalItems ' +
 				'   AND eval__r.Visible__c = true ' +
 				'   AND what_id__c = :evaluationID ' +
-				(batchInsert ? '' :'   AND eval_Section_Id__c = :evalSectionId')  // We don't need to fill in the values for batch insert, but we do need to figure out whether a section should be bypassed or not
+				((batchInsert || batchUpsert) ? '' :'   AND eval_Section_Id__c = :evalSectionId ') + // We don't need to fill in the values for batch insert, but we do need to figure out whether a section should be bypassed or not
+				(batchUpsert ? '   AND eval_section_type__c = :evalName' : '')
 			);
 		}
 		Set<String> sectionsToBypass = new Set<String>();
+		Map<Id, Eval_Value__c> evalIdToValueMap = new Map<Id, Eval_Value__c>();
 		for (Eval_Value__c value: listEvalValues) {
+			evalIdToValueMap.put(value.Eval__c, value);
 			if (!repeatables.contains(value.Eval__r.Composite__c)) {
-				sectionsToBypass.add(value.Eval__r.Composite__c);
+				if (batchInsert) {
+					sectionsToBypass.add(value.Eval__r.Composite__c);
+				}
+				if (batchUpsert) {
+					if (value.Eval_Section_Id__c.split('~')[0] != UserInfo.getUserId()) {
+						sectionsToBypass.add(value.Eval__r.Composite__c);
+					}
+				}
 			}
 		}
 		Component.Apex.OutputPanel fullPanel = new Component.Apex.OutputPanel(layout='none');
 
 		numSection = 0;
+		if ((evalSectionId == '' || evalSectionId == null) && !batchUpsert) {
+			evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
+		}
 		for (String composite: sectionMap.keySet()) {
 			if (batchInsert) {
 				if (!sectionsToBypass.contains(composite)) {
 					numSection ++;
-					compositeToHtmlMap.put(composite, generateSubsection(sectionMap.get(composite), dd, new List<Eval_Value__c>()));
+					compositeToHtmlMap.put(composite, generateSubsection(sectionMap.get(composite), dd, new List<Eval_Value__c>(), evalSectionId));
+				}
+			} else if (batchUpsert) {
+				if (!sectionsToBypass.contains(composite)) {
+					numSection ++;
+					String sectionId = evalSectionId;
+					for (Eval__c eval: sectionMap.get(composite)) {
+						if (evalIdToValueMap.containsKey(eval.Id)) {
+							sectionId = evalIdToValueMap.get(eval.Id).Eval_Section_Id__c;
+							break;
+						}
+					}
+					compositeToHtmlMap.put(composite, generateSubsection(sectionMap.get(composite), dd, listEvalValues, sectionId));
 				}
 			} else {
 				numSection ++;
-				compositeToHtmlMap.put(composite, generateSubsection(sectionMap.get(composite), dd, listEvalValues));
+				compositeToHtmlMap.put(composite, generateSubsection(sectionMap.get(composite), dd, listEvalValues, evalSectionId));
 			}
 		}
-		compositeToSectionTypeMap = determineSectionTypes(listEvalItems, listEvalValues, evalSecType);
+		compositeToSectionTypeMap = determineSectionTypes(listEvalItems, listEvalValues, evalSecType, batchInsert, batchUpsert);
 
 		containsWoundDetail = false;
 		containsWoundDetailLog = false;
@@ -270,7 +294,7 @@ public with sharing class GenerateEvalComponent {
 		return composites;
 	}
 
-	public static Map<String, String> determineSectionTypes(List<Eval__c> listEvalItems, List<Eval_Value__c> listEvalValues, String evalSecType) {
+	private static Map<String, String> determineSectionTypes(List<Eval__c> listEvalItems, List<Eval_Value__c> listEvalValues, String evalSecType, Boolean batchInsert, Boolean batchUpsert) {
 		Map<String, String> compositeToSectionTypeMap = new Map<String, String>();
 		if (evalSecType != null && evalSecType != '') {
 			for (Eval__c eval: listEvalItems) {
@@ -282,30 +306,25 @@ public with sharing class GenerateEvalComponent {
 		for (Eval__c eval: listEvalItems) {
 			compositeToSectionTypeMap.put(eval.Composite__c, eval.Eval_Type__r.Name);
 		}
+		if (batchUpsert) {
+			return compositeToSectionTypeMap;
+		}
 		Set<String> compositesWithMainEntry = new Set<String>();
 		for (Eval_Value__c value: listEvalValues) {
 			if (compositesWithMainEntry.contains(value.Eval__r.Composite__c)) {
 				continue;
 			}
-			if (value.Eval_Section_Type__c != value.Eval__r.Eval_Type__r.Name) {
-				compositeToSectionTypeMap.put(value.Eval__r.Composite__c, value.Eval_Section_Type__c);
+			if (value.Eval_Section_Type__c == value.Eval__r.Eval_Type__r.Name) {
 				compositesWithMainEntry.add(value.Eval__r.Composite__c);
-			} else {
 				compositeToSectionTypeMap.put(value.Eval__r.Composite__c, 'Activity Log');
 			}
 		}
 		return compositeToSectionTypeMap;
 	}
 
-	private String generateSubsection(List<Eval__c> listEvalItems, List<Eval_Drop_Down__c> dd, List<Eval_Value__c> listEvalValues) {
+	private String generateSubsection(List<Eval__c> listEvalItems, List<Eval_Drop_Down__c> dd, List<Eval_Value__c> listEvalValues, String evalSectionId) {
 		// get the list of controls for this type, category, and subcategory
 		List<String> htmlControls = new List<String>();
-		if (evalSectionId == '' || evalSectionId == null) {
-			isInsert = true;
-			evalSectionId = UserInfo.getUserId() + '-' + String.valueOf(DateTime.now().getTime());
-		} else {
-			isInsert = false;
-		}
 
 		Map<ID, List<Eval_Drop_Down__c>> ddOptions = new Map<ID, List<Eval_Drop_Down__c>>();
 
@@ -346,7 +365,9 @@ public with sharing class GenerateEvalComponent {
 			try {
 				subcategory = e.Sub_Category__c;
 				sectionComposite = e.Composite__c;
-				newHtmlLbl = '<td class="text_right"><input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" /><label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
+				newHtmlLbl = '<td class="text_right">';
+				newHtmlLbl += '<input type="hidden" name="' + e.Id + '_esi" value="' + evalSectionId + '" />';
+				newHtmlLbl += '<label id="' + e.htmlid__c + 'Label" for="' + e.htmlid__c + '" class="labelCol" style="display: table-cell;">' + e.field_name__c + '</label></td>';
 				newHtmlFld = '';
 				strval = '';
 				//EC-169 the questions 1 through 10 do NOT apply to the section if entering an activity log
@@ -706,7 +727,7 @@ public with sharing class GenerateEvalComponent {
 
 
 	@RemoteAction
-	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm) {
+	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm, Boolean batchInsert, Boolean batchUpsert) {
 		// Deserialize the form
 		List<FormKeyVal> objs = (List<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);
 		Map<Id, String> evalIdToSectionId = new Map<Id, String>();
@@ -737,11 +758,6 @@ public with sharing class GenerateEvalComponent {
 				formData.put(d.name, oldMapVal +';'+ formData.get(d.name));
 			}
 		}
-		// If evalSectionType is not passed in from the form, that means it cannot be
-		// determined from the client side - it means that we have to infer it here. Generally,
-		// we check to see if there exists an Eval_Value__c whose Eval_Section_Type__c is not
-		// Activity Log - signalling that it belongs to a main entry.
-		Boolean batchInsert = (evalSectionType == null || evalSectionType == '');
 
 		Set<String> composites = new Set<String>();
 		for (Eval__c eval: [ SELECT Id, Composite__c FROM Eval__c WHERE Id IN :formData.keySet() ]) {
@@ -758,10 +774,6 @@ public with sharing class GenerateEvalComponent {
 			   AND visible__c = true
 			ORDER BY category_sequence__c, sub_category_sequence__c, field_sequence__c
 		]);
-		Map<String, String> sectionTypeMap = new Map<String, String>();
-		for (Eval__c eval: mapEvalItems.values()) {
-			sectionTypeMap.put(eval.Composite__c, eval.Eval_Type__r.Name);
-		}
 		// get any populated values for this eval and section
 		List<Eval_Value__c> listEvalValues = Database.query('' +
 			'SELECT id, boolean__c, currency__c, date_time__c, number_no_decimal__c, ' +
@@ -778,11 +790,9 @@ public with sharing class GenerateEvalComponent {
 		mapEvalValues = new Map<ID, Eval_Value__c>();
 		for (Eval_Value__c ev: listEvalValues) {
 			mapEvalValues.put(ev.eval__c, ev);
-
-			if (ev.Eval_Section_Type__c == ev.Eval__r.Eval_Type__r.Name) {
-				sectionTypeMap.put(ev.Eval__r.Composite__c, 'Activity Log');
-			}
 		}
+
+		Map<String, String> sectionTypeMap = determineSectionTypes(mapEvalItems.values(), listEvalValues, evalSectionType, batchInsert, batchUpsert);
 
 		List<Eval_Value__c> newValues = new List<Eval_Value__c>();
 		List<Eval_Value__c> delValues = new List<Eval_Value__c>();
@@ -803,14 +813,14 @@ public with sharing class GenerateEvalComponent {
 			Eval__c ei = mapEvalItems.get((ID)f);
 
 			// construct new eval_value object
-			if (mapEvalValues.containsKey((ID)f) && !batchInsert)  {
+			if (mapEvalValues.containsKey((ID)f) && (!batchInsert || batchUpsert))  {
 				// value exists - need to update value
 				ev = (Eval_Value__c) mapEvalValues.remove((ID)f);
 			} else {
 				ev = new Eval_Value__c();
 				ev.eval__c = (ID)f;
 				ev.eval_Section_Id__c = evalIdToSectionId.get((Id)f);
-				ev.Eval_Section_Type__c = batchInsert? sectionTypeMap.get(ei.Composite__c) : evalSectionType;
+				ev.Eval_Section_Type__c = (batchInsert || batchUpsert) ? sectionTypeMap.get(ei.Composite__c) : evalSectionType;
 				ev.what_id__c = evalID;
 				ev.what_id_object__c = 'Evaluation__c';
 			}
@@ -898,8 +908,6 @@ public with sharing class GenerateEvalComponent {
 			// We never delete values when doing a batch insert
 			delete delValues;
 		}
-		System.debug(evalIdToSectionId);
-		System.debug(newValues);
 		upsert newValues;
 	}
 

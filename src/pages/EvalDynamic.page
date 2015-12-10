@@ -94,7 +94,7 @@
 			jQuery("#panel-form").empty().append(jQuery("[id$='lateEntriesForm']"));
 		}
 
-		function showForm(key) {
+		function showForm() {
 			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
 			jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
 			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
@@ -227,7 +227,8 @@
 				search_contains: true
 			}).change(filterNavigation);
 
-			$("[id$='dialog-confirm-navigation']").dialog({
+			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
+			$confirmDialog.dialog({
 				resizable: false,
 				draggable: false,
 				height: 200,
@@ -238,12 +239,12 @@
 						jQuery(this).dialog("close");
 						isModified = false;
 						jQuery('#btnSave').trigger("click");
-						createPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+						$confirmDialog.trigger("yesClicked");
 					},
 					No: function() {
 						jQuery(this).dialog("close");
 						isModified = false;
-						createPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+						$confirmDialog.trigger("noClicked");
 					},
 					Cancel: function() {
 						jQuery(this).dialog("close");
@@ -269,7 +270,7 @@
 			});
 		});
 
-		window.createPanel = function(evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+		window._createPanel = function(actionFn, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
 			evaltype = evaltype1,
 			cat = cat1,
 			subCat = subCat1,
@@ -277,12 +278,35 @@
 			evalSectionType = evalSectionType1,
 			canEdit = canEdit1;
 
-			if (isModified && canEdit) {
-				jQuery("[id$='dialog-confirm-navigation']").dialog("open");
+			var $confirmDialog = jQuery("[id$='dialog-confirm-navigation']");
+			if (isModified && (canEdit == null || canEdit)) {
+				$confirmDialog.dialog("open");
+				$confirmDialog.off("yesClicked");
+				$confirmDialog.off("noClicked");
+				$confirmDialog.one("yesClicked", actionFn);
+				$confirmDialog.one("noClicked", actionFn);
 			} else {
-				createPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+				actionFn();
 			}
-		}
+		};
+
+		window.createSingleUpsertPanel = function(evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			_createPanel(function () {
+				createSingleUpsertPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+			}, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1);
+		};
+
+		window.createBatchInsertPanel = function(evaltype1, cat1) {
+			_createPanel(function () {
+				createBatchInsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};
+
+		window.createBatchUpsertPanel = function(evaltype1, cat1) {
+			_createPanel(function () {
+				createBatchUpsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};
 	</script>
 	<style>
 		.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
@@ -470,13 +494,21 @@
 	<!-- /.container -->
 
 	<apex:form id="wholePage">
-		<apex:actionFunction name="createPanelAF" action="{!myAction}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm('{!evalType+'~'+cat+'~'+subCat+'~'+evalSecType}');filterNavigation();">
+		<apex:actionFunction name="createSingleUpsertPanelAF" action="{!singleUpsert}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm();filterNavigation();">
 			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
-			<apex:param name="Category" value="" assignTo="{!cat}" />
-			<apex:param name="SubCategory" value="" assignTo="{!subCat}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
+			<apex:param name="subCategory" value="" assignTo="{!subCat}" />
 			<apex:param name="evalSectionId" value="" assignTo="{!evalSecId}" />
 			<apex:param name="evalSectionType" value="" assignTo="{!evalSecType}" />
 			<apex:param name="canEdit" value="" assignTo="{!canEdit}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="createBatchInsertPanelAF" action="{!batchInsert}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm();filterNavigation();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="createBatchUpsertPanelAF" action="{!batchUpsert}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm();filterNavigation();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
 		</apex:actionFunction>
 		<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (OR(evalType=='CNA Workbook', AND(evalType=='Residential', thisEval.OwnerId == $User.Id)),'completeShift();', 'location.reload(true);')} return false;" />
@@ -506,7 +538,7 @@
 		</apex:actionregion>
 	</apex:form>
 
-	<c:EvalSection id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="{!canEdit}" parentID="{!evalId}" currentAssessId="{!currentAssessId}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters(); " />
+	<c:EvalSection id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="{!canEdit}" parentID="{!evalId}" currentAssessId="{!currentAssessId}" isBatchInsert="{!isBatchInsert}" isBatchUpsert="{!isBatchUpsert}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters(); " />
 
 	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
 		<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}" enddate="{!thisEval.Shift_End_Time__c}" />

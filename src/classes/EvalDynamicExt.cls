@@ -26,6 +26,9 @@ public with sharing class EvalDynamicExt {
 	public Boolean isApprover { get; set; }
 	public Boolean showEndOfShiftDON { get; set; }  // EC-163
 
+	public Boolean isBatchInsert { get; set; }
+	public Boolean isBatchUpsert { get; set; }
+
 	public Boolean isEditable;
 	public Boolean isDON { get; set; }
 	public Boolean isTierIII { get; set; }
@@ -173,22 +176,46 @@ public with sharing class EvalDynamicExt {
 		}
 	}
 
-	public void myAction(){
-		Boolean batchInsert = (evalSecType == null || evalSecType == '');
+	public void singleUpsert() {
+		isBatchInsert = false;
+		isBatchUpsert = false;
 		if (evalSecId == '' || evalSecId == null) {
 			evalSecId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
 		}
-		string displayKey = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
-		key = displayKey;
-
-
-		if (!batchInsert && key.contains('Restraint Event~Reduction Review~Reduction Review')) {
+		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
+		if (key.contains('Restraint Event~Reduction Review~Reduction Review')) {
 			currentAssessId = EvalDynamicExt.retrieveAssessmentforRestraint(evalSecId, evalID);
 			if (currentAssessId == null) {
 				currentAssessId = EvalDynamicExt.createAssessmentforRestraint(evalSecId, evalID, PBSID, SAID, AdmID, accId);
 			}
-		} else if (batchInsert && key.contains('Restraint Event~Reduction Review')) {
+		}
+	}
+
+	private void batchSetup() {
+		canEdit = true;
+		subCat = '';
+		evalSecType = '';
+		evalSecId = UserInfo.getUserId() + '-' + Datetime.now().getTime();
+	}
+	public void batchInsert() {
+		isBatchInsert = true;
+		isBatchUpsert = false;
+		batchSetup();
+		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
+		if (key.contains('Restraint Event~Reduction Review')) {
 			currentAssessId = EvalDynamicExt.createAssessmentforRestraint(evalSecId, evalID, PBSID, SAID, AdmID, accId);
+		}
+	}
+	public void batchUpsert() {
+		isBatchUpsert = true;
+		isBatchInsert = false;
+		batchSetup();
+		key = evalType+'~'+cat+'~'+subCat+'~'+evalSecType;
+		if (key.contains('Restraint Event~Reduction Review')) {
+			currentAssessId = EvalDynamicExt.retrieveAssessmentforRestraint(evalSecId, evalID);
+			if (currentAssessId == null) {
+				currentAssessId = EvalDynamicExt.createAssessmentforRestraint(evalSecId, evalID, PBSID, SAID, AdmID, accId);
+			}
 		}
 	}
 
