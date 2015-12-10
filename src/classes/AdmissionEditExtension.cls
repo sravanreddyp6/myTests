@@ -159,6 +159,9 @@ public with sharing class AdmissionEditExtension {
 		setDischargeFields();
     		
 		List<string> messages = new List<string>();
+		if (admission.Status__c == null){
+			messages.add('Admission Status: You must enter a value.');
+		}
 		try {
 			admission.Admission_Effective_DateTime__c = DateTime.parse(admEffDateTime);
 		}
