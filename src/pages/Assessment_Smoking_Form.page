@@ -18,7 +18,10 @@
                 if({!Evaluation__c.Status__c != 'Inactive Draft'}){
                     jQuery("[id$=myFrm] :input").prop('disabled', true);
                     jQuery(".btn").prop('disabled', false);
-                }                
+                }  
+                if({! NOT($ObjectType.Evaluation__c.createable) }){
+                	jQuery("[id$=myFrm] :input").prop('disabled', true);	
+                }              
                 //jQuery('.wishesToSmoke').addClass('noDisplay');
                 //jQuery('.wishesToSmokeInFac').addClass('noDisplay');
                 if(smoker.val() == 1){
@@ -47,9 +50,9 @@
             <apex:pageMessages id="errors"></apex:pageMessages>
             <apex:pageBlockButtons >
                 <div style="float:right;">
-                    <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" onComplete="setQuestions();" rendered="{!Evaluation__c.Status__c == 'Inactive Draft'}"/>
-                    <apex:commandButton action="{!Revise}" value="Revise" reRender="myFrm"  rendered="{!Evaluation__c.Status__c == 'Active Final'}" />
-                    <apex:commandButton action="{!Finalize}" value="Finalize" rendered="{!Evaluation__c.Status__c == 'Inactive Draft'}"/>
+                    <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" onComplete="setQuestions();" rendered="{!Evaluation__c.Status__c == 'Inactive Draft' && $ObjectType.Evaluation__c.createable}"/>
+                    <apex:commandButton action="{!Revise}" value="Revise" reRender="myFrm"  rendered="{!Evaluation__c.Status__c == 'Active Final' && $ObjectType.Evaluation__c.createable}" />
+                    <apex:commandButton action="{!Finalize}" value="Finalize" rendered="{!Evaluation__c.Status__c == 'Inactive Draft' && $ObjectType.Evaluation__c.createable}"/>
                     <apex:commandButton action="{!myCancel}" value="Cancel" rendered="{!Evaluation__c.Status__c == 'Inactive Draft'}"/>
                 </div>
             </apex:pageBlockButtons>
