@@ -147,7 +147,19 @@ private void initDependentPicklists() {
            		 return null;
 			}
 		}
+		
+		
+		// make sure rate field is numeric without changing the field type - protects existing data
+		if ( !String.IsBlank(authorization.rate__c )) {
 			
+			Pattern numPattern = Pattern.compile('^[0-9]*.[0-9]{0,2}$');
+			Matcher pattmatch = numPattern.matcher(authorization.rate__c);
+			if ( !pattmatch.matches()) {
+				 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please enter a numeric value for the rate.'));
+           		 return null;
+			}
+				
+		}			
 		if ( authorization.rate_unit__c != 'Unit')
 			authorization.rate_unit_other__c = '';
 		else {
