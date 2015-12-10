@@ -31,7 +31,13 @@ public with sharing class Assessment_Smoking_Form {
 		if(SA.Admission__r.State__c == 'MN'){
 			IgnoreQuestions.add('smoker');
 			IgnoreQuestions.add('wishtoSmoke');
-			IgnoreQuestions.add('callEmergency');
+			IgnoreQuestions.add('smokeSupervision');
+			IgnoreQuestions.add('smokeAssistance');
+			IgnoreQuestions.add('smokealongFamily');
+			IgnoreQuestions.add('storeSmokeStaff');
+			IgnoreQuestions.add('smokingApron');
+			
+			
 		}
         EvalQuestions = [select id, name, visibility_rules__c, visibility_row_rules__c, 
             Field_Name__c, Field_Sequence__c, Field_Type__c, Field_Sub_Type__c,  
