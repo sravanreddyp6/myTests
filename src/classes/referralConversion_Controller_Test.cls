@@ -9,9 +9,19 @@ private class referralConversion_Controller_Test {
         
         {
         Person_Being_Referred__c pbr = Referral_CreateTestData.createPersonBeingReferred(30, Date.valueOf('1983-01-01'));
-        Referral__c theRef = Referral_CreateTestData.createReferral('California', 'Active', 'Conversion Test', 'CA', pbr);
+        Referral__c theRef = Referral_CreateTestData.createReferral('NeuroRestorative', 'Active', 'Conversion Test', 'CA', pbr);
         Referral_CreateTestData.createRelatedParty('Mom', 'Guardian', pbr);
         Referral_CreateTestData.createAgencyInvolved('Involved Agency','Case Worker', theRef);
+        Service_Code__c codes = new Service_Code__c(Start_Date__c=Date.NewInstance(2013, 10, 10), Program_Code__c = theRef.Service_Location__r.ProgramID__c); insert codes;
+        Referral_Location__c rloc = Referral_CreateTestData.createReferralLocation('Test Alias', 'Test Location', 'New', u, theRef);
+        Funding_Source__c newfs= Referral_CreateTestData.createFundingSource('NeuroRestorative', 'Primary', '123', 'Pending', 
+                                                                                 'Service', 'Authorization comment', theRef);
+        newfs.authorization_type__c = 'Inital';
+        newfs.authorization_number__c = '11111111111';
+        newfs.received_date_time__c = datetime.newinstance(2014, 9, 18);
+        newfs.status__c = '';
+        newfs.Funding_Source__c = 'Medicaid';
+        update newfs;													                 
                                                                           
         ApexPages.StandardController sc = new ApexPages.StandardController( theRef );
         referralConversion_Controller conv = new referralConversion_Controller( sc );
@@ -42,7 +52,7 @@ private class referralConversion_Controller_Test {
         conv = new referralConversion_Controller( sc );
 
         pr = conv.convertReferral();
-        
+            
         if ( pr != null ) {
             
             
@@ -50,7 +60,7 @@ private class referralConversion_Controller_Test {
             System.assertNotEquals( null, conv.idPBS ); 
             System.assertNotEquals( null, conv.idAdm );
             System.assertNotEquals( null, conv.idSA );
-            
+
             // now create a new referrals with the PBS
             Referral__c thePBSRef = createReferral2('California', 'Active', 'Conversion Test2', 'CA', conv.idPBS);
             String pbsfname = conv.person.FirstName;
@@ -69,6 +79,18 @@ private class referralConversion_Controller_Test {
             }
         
       	}
+             ID clsRef = conv.closeReferral(conv.idPBS, theRef);
+             Admission__c currAdm = new Admission__c(Person_Being_Served__c = conv.idPBS,
+                Admission_Effective_DateTime__c = DateTime.now(),
+                Network_Offering__c = 'ARY',
+                Program__c = theRef.Service_Location_Program__c,
+                Referral_Date__c = theRef.Referral_Date__c,
+                State__c = theRef.Service_Location_State__c,
+                Status__c = 'Active'); 
+            insert currAdm;
+            ID creSA = conv.createServiceAssignment(conv.idPBS, currAdm.Id, theRef);
+           // referralConversion_Controller.personRecord pr1 = new referralConversion_Controller.personRecord(pbr);
+
         }
         
         Test.StopTest();
@@ -94,6 +116,7 @@ private class referralConversion_Controller_Test {
 			pbr2.Primary_Language__c = 'English';
 			pbr2.Non_Verbal__c = false;
 			update pbr2;
+            
 			
 			
 			ApexPages.StandardController sc = new ApexPages.StandardController( evalRef );
@@ -105,7 +128,13 @@ private class referralConversion_Controller_Test {
 			exEval.RecordTypeId = Utility.getEValuationRecordType('CareMeridian');
 			exEval.Referral__c = evalRef.Id;
 			insert exEval;
+            
+            List<RecordType> rt = [select id from RecordType where DeveloperName = 'Allergy' and sObjectType = 'Evaluation_Response__c' limit 1];
+            Evaluation_Response__c eval = new Evaluation_Response__c( RecordTypeId = rt[0].Id, Evaluation__c = exEval.Id,
+                                                                     Allergy_type__c = 'Food', Allergy_Details__c = 'Rice', Life_Threatening__c = false); 
+            insert eval;
 			pr = conv.convertReferral();
+
         }
     
     	Test.StopTest();
@@ -164,11 +193,65 @@ private class referralConversion_Controller_Test {
 			List<Authorization__c> auths = [ select id, name from authorization__c where funding_source__r.service_assignment__r.referral__c = :fsref.Id ];
 			//System.AssertEquals( auths.size(), 2);
 			
+            conv.getNumAuthPopulatedFields(newfs);
+           /* newfs.authorization_type__c = 'Open Ended Stay';
+            update newfs;
+            conv.getNumAuthPopulatedFields(newfs);
+			newfs.authorization_type__c = 'Open Ended Charge';
+            update newfs;
+            conv.getNumAuthPopulatedFields(newfs);
+			newfs.authorization_type__c = 'Bed Hold';
+            update newfs;
+            conv.getNumAuthPopulatedFields(newfs); */
+			
         }
     
     	Test.StopTest();
     }
     
+    static testMethod void testConvertDiagnosis() {
+    	
+    	
+      	User u2 = Referral_CreateTestData.createTestUser( 'testuzz', 'convuser@tmn.int','Conversion', 'TestUser2' );
+		Test.StartTest();
+		System.RunAs(u2)
+		
+		{
+			Person_Being_Referred__c pbr2 = Referral_CreateTestData.createPersonBeingReferred(28, Date.valueOf('1985-01-01'));
+            Contact pbs = new Contact(LastName='Last Test', FirstName= 'Test First', Birthdate = Date.Today());
+            insert pbs;
+			Referral__c diagRef = Referral_CreateTestData.createReferral('CareMeridian', 'Active', 'Conversion Test3', 'CA', pbr2);
+			Referral_CreateTestData.createRelatedParty('Mom', 'Guardian', pbr2);
+			pbr2.State__c = 'California';
+			pbr2.City__c = 'San Francisco';
+			pbr2.Street_1__c = '10 Main St.';
+			pbr2.Street_2__c = 'Suite 201';
+			pbr2.Zip_Code__c = '90024';
+			pbr2.Ethnicity__c = 'Caucasian';
+			pbr2.Primary_Language__c = 'English';
+			pbr2.Non_Verbal__c = false;
+			update pbr2;
+			
+            Diagnosis__c diag = new Diagnosis__c(Status__c = 'Active', PBR__c  = pbr2.Id); insert diag;
+            ICD__c icd = new ICD__c(Code_Type__c = 'ICD-10', Icd_Description__c = 'testing'); insert icd;
+                             
+			ApexPages.StandardController sc = new ApexPages.StandardController( diagRef );
+			referralConversion_Controller conv = new referralConversion_Controller( sc );
+			PageReference pr; 
+			pr = conv.convertReferral();
+			
+            Contact cont = conv.personBeingServedRecord;
+            conv.getPBSRec();
+            conv.getProgram();
+            conv.getServiceLine();
+            conv.getLocation();
+            ID clsRef = conv.closeReferral(conv.idPBS, diagRef);
+            referralConversion_Controller.personRecord pr1 = new referralConversion_Controller.personRecord(pbs);
+
+        }
+    
+    	Test.StopTest();
+    }			
  
  public static Referral__c createReferral2(String recordType, string Status, string ReferralName, string State, ID pbs) {
          Service_location__c SL = new Service_location__c(name = '234', UniqueID__c ='234', FacilityID__c =234,Alias__c ='234',ProgramID__c ='234',Program__c='234', Service_value__c = 'CA-MNTR-SL-Rancho-IDD');
