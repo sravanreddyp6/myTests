@@ -340,7 +340,7 @@ public without sharing class ServiceAssignmentExt {
     }
     
     public list<Evaluation__c > getSmokingAssessments(){     
-        return [select id, name, Status__c from Evaluation__c where ServiceAssignment__c = :theServAssign.id AND RecordType.id= :utility.getEValuationRecordType('Smoking Assessment')];
+        return [select id, name, Status__c, createdDate from Evaluation__c where ServiceAssignment__c = :theServAssign.id AND RecordType.id= :utility.getEValuationRecordType('Smoking Assessment') Order By createdDate DESC];
     }
 
     private Boolean pshowDiag, pshowLocation, pshowCodes, pshowServAssignClose, pshowNurseAssessment;
