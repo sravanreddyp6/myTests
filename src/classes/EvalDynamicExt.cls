@@ -176,6 +176,9 @@ public with sharing class EvalDynamicExt {
 		}
 	}
 
+	public void myAction() {
+		// TODO this is a stubbed method, remove it at a later release!
+	}
 	public void singleUpsert() {
 		isBatchInsert = false;
 		isBatchUpsert = false;
