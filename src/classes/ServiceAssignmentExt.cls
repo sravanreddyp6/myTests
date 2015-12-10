@@ -1430,8 +1430,8 @@ public without sharing class ServiceAssignmentExt {
         if(serviceLocation.Network_offering__c == 'ARY' && theServAssign.Highest_Level_of_Education_at_Start__c == null){
             errors.add('Highest level of education at Start of Service: You must enter a value');
         }
-		//Not mentioned in the req. May need to change to Servicelocation Network offering - Sravan 
-        if(opGroup == 'Cambridge' && serviceLocation.Network_offering__c == 'ARY' && (theServAssign.Model__c.Equals('FCT') || theServAssign.service_location__r.service_value__c.Contains('Host Home')) && theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c == null){
+        
+        if(opGroup == 'Cambridge' && serviceLocation.Network_offering__c == 'ARY' && (serviceLocation.Physical_Location__c == 'Host Home' || Servicelocation.Service_Type__c == 'FCT - Family Centered Treatment') && theServAssign.Number_of_Out_of_Home_Placements_Pre_Ser__c == null){
             errors.add('Number of Out-of-Home Placements Pre-Service: You must enter a value');
         }
 
