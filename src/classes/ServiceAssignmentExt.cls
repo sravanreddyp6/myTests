@@ -1383,13 +1383,15 @@ public without sharing class ServiceAssignmentExt {
         List<string> errors = new list<string>();
         string opGroup = getOperatingGroup();
 
+		if(theServAssign.Status__c == null){
+            errors.add('Service Assignment Status: You must select a value.');
+        }
         if(theServAssign.Status__c != 'Inactive'){
             theServAssign.Highest_Level_of_Education_at_End_of_Ser__c = null;
         }
         if(theServAssign.Status__c == 'Created in Error' && theServAssign.Specify_Error__c == null){
             errors.add('Specify Error: You must select a value.');
         }
-
         if (theServAssign.Service_Location__c == null || String.valueOf(theServAssign.Service_Location__c) == ''){
             errors.add('Location of Service: You must select a value.');
             ApexPages.addmessage(new ApexPages.message(ApexPages.Severity.ERROR,'Location of Service: You must select a value.'));
