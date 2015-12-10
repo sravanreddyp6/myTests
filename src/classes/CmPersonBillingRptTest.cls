@@ -44,35 +44,30 @@ private class CmPersonBillingRptTest {
         insert evaluations;
 
         list<eval__c> evals = TMN_Generic_Core_TestData.getEvalTestRecords();
-        list<GenerateEvalComponent.FormKeyVal> evalVals = new list<GenerateEvalComponent.FormKeyVal>();
+        Eval_Type__c evlTyp = [Select Name, id from Eval_Type__c where Name = 'Head to Toe'];
+        list<Eval_Value__c> evalVals = new list<Eval_Value__c>();
         for (Eval__c e : [select id, Field_Type__c, Field_Sub_Type__c
                             from eval__c where eval_type__r.name = 'Head to Toe'
                                                    and category__c = 'TEST'
                                                    and sub_category__c = 'TEST_TEST'
                                                    and visible__c = true]){
-            GenerateEvalComponent.FormKeyVal val = new GenerateEvalComponent.FormKeyVal();
-            val.name= e.id;
-            if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'Boolean') val.value = 'True';
-            else if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'String') val.value = 'Error Message';
-            else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Checkbox')  val.value = '1';
-            else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Dropdown')  val.value = '1';
-            else if(e.Field_Type__c == 'Int' )  val.value = '12';
-            else if(e.Field_Type__c == 'Date')  val.value = '11/12/2013';
-            else if(e.Field_Type__c == 'DateTime') val.value = '04/27/2015 18:00';
-            else if(e.Field_Type__c == 'String') val.value = 'Test';
-            else if(e.Field_Type__c == 'DropDown') val.value = 'Test';
-            else if(e.Field_Type__c == 'Multiselect') {
-                    val.value = 'TEST';
-                    GenerateEvalComponent.FormKeyVal val1 = new GenerateEvalComponent.FormKeyVal();
-                    val1.name= e.id; val1.value = 'TEST1'; evalVals.add(val1);
-            }
+                                                   	
+            Eval_Value__c val = new Eval_Value__c(Eval__c = e.Id, Eval_Section_Id__c =  UserInfo.getUserId() + '-' + DateTime.now().formatLong(),
+                                        What_ID__c = evaluations[0].id, What_ID_Object__c = 'Evaluation__c', Eval_Section_Type__c = evlTyp.Name); 
+            if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'Boolean') val.Boolean__c = true;
+            else if (e.Field_Type__c == 'Hidden' && e.Field_Sub_Type__c == 'String') val.Text_Under_250__c = 'Error Message';
+            else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Checkbox')  val.Boolean__c = true;
+            else if(e.Field_Type__c == 'Boolean' && e.Field_Sub_Type__c == 'Dropdown')  val.Boolean__c = true;
+            else if(e.Field_Type__c == 'Int' )  val.Number_No_Decimal__c = 12;
+            else if(e.Field_Type__c == 'Date')  val.Date_Time__c = datetime.newInstance(2013, 11, 12, 0, 0, 0);
+            else if(e.Field_Type__c == 'DateTime') val.Date_Time__c = datetime.newInstance(2015, 4, 27, 18, 0, 0);
+            else if(e.Field_Type__c == 'String') val.Text_Under_250__c = 'Test';
+            else if(e.Field_Type__c == 'DropDown') val.Text_Under_250__c = 'Test';
+            else if(e.Field_Type__c == 'Multiselect') val.Text_Over_250__c = 'TEST; Test1';
             evalVals.add(val);
         }
-
-        Eval_Type__c evlTyp = [Select Name, id from Eval_Type__c where Name = 'Head to Toe'];
-        GenerateEvalComponent.saveFields(evaluations[0].id, UserInfo.getUserId() + '-' + DateTime.now().formatLong(),
-                                        'Shift', evlTyp.Name, JSON.serialize(evalVals));
-
+        
+        insert evalVals;
         insert (new Evaluation_Response__c( RecordTypeId = Utility.getEvaluationResponseRecordType('Late Entry Note'),
                                             Late_Entry_Note__c = 'Test late note', Evaluation__c = evaluations[0].id ));
 
