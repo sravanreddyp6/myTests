@@ -333,13 +333,14 @@
 					var formData = $(this).serializeArray();
 					var jsonData = JSON.stringify(formData);
 					$(this).closest("[id$=evalFormBody]").find("#btnSave, #btnCancel").prop("disabled", true);
+					var self = this;
 					// vf remote to save data
 					GenerateEvalComponent.saveFields('{!parentID}', '{!evalSectionUuid}', '{!evalSectionType}', '{!evaltype}', jsonData, function(result, event) {
 						if (!event.status) {
 							$('#evalSecValMsgs .error-messages').html('<li>' + event.message + '</li>');
 							$('#evalSecValMsgs').show();
 							setUpFields();
-							$(this).closest("[id$=evalFormBody]").find("#btnSave, #btnCancel").prop("disabled", false);
+							$(self).closest("[id$=evalFormBody]").find("#btnSave, #btnCancel").prop("disabled", false);
 						} else {
 							{!onEntrySaveSuccess}
 						}
