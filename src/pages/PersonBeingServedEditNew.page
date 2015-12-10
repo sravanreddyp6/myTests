@@ -1247,7 +1247,7 @@
 
             </apex:pageBlock>
             
-            <apex:pageBlock mode="maindetail"  rendered="{! (vfVarIsCM || vfVarIsRwExtraItems) }" >
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsCM }" >
                 <c:EvaluationResponseTable pbsParentId="{!PBSId}"
                                            type="PPD Skin Test"
                                            formId="{!$Component.FormID}"
@@ -1260,6 +1260,23 @@
                                           
             <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
             </apex:pageBlock>
+            <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsRwExtraItems }"  >
+                <c:EvaluationResponseTable pbsParentId="{!PBSId}"
+                                           type="PPD Skin Test"
+                                           formId="{!$Component.FormID}"
+                                           uniqueId="PPD_SkinTest"
+                                           rows="5"
+                                           showDisregard="{!$ObjectType.Evaluation__c.updateable}"
+                                           eSign="{!$ObjectType.Evaluation__c.updateable}"
+                                           editEnabled="{!$ObjectType.Evaluation__c.updateable}"
+                                           addEnabled="{!$ObjectType.Evaluation__c.updateable}"
+                                           showAddNew="{!$ObjectType.Evaluation__c.updateable}"                                           
+                                           customLabels="[{&quot;field&quot;:&quot;Time_Given__c&quot;, &quot;label&quot;:&quot;Date Administered&quot;},{&quot;field&quot;:&quot;Time_Observed__c&quot;, &quot;label&quot;:&quot;Date Read&quot;}]"
+                                           />
+                                          
+            <apex:outputPanel >Showing the 5 most recent events click&nbsp;<apex:outputLink value="/apex/EvalResp_ShowAllList?PBS={!contact.id}&FS=PPD Skin Test" >here</apex:outputLink>&nbsp;to view all</apex:outputpanel>
+            </apex:pageBlock>            
+           
             <!-- added isNR for EB-430 by Amruth -->
             <apex:pageBlock mode="maindetail"  rendered="{! vfVarIsCM }">
             <a id="assistiveDevices" />            
