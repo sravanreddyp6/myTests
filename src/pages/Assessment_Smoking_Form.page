@@ -11,13 +11,14 @@
             jQuery( document ).ready(function() {  setQuestions(); jQuery("[id$=evalType]").html('Smoking Assessment'); });
             
             function setQuestions(){
-	
+    
                 var smoker = jQuery("[id$=smoker]");
                 var wishesToSmoke = jQuery("[id$=wishtoSmoke]");
                 
-				if({!Evaluation__c.Status__c != 'Inactive Draft'}){
-					jQuery("[id$=myFrm] :input").prop('disabled', true);
-				}                
+                if({!Evaluation__c.Status__c != 'Inactive Draft'}){
+                    jQuery("[id$=myFrm] :input").prop('disabled', true);
+                    jQuery(".btn").prop('disabled', false);
+                }                
                 //jQuery('.wishesToSmoke').addClass('noDisplay');
                 //jQuery('.wishesToSmokeInFac').addClass('noDisplay');
                 if(smoker.val() == 1){
@@ -47,7 +48,7 @@
             <apex:pageBlockButtons >
                 <div style="float:right;">
                     <apex:commandButton action="{!mySave}" value="Save" reRender="myFrm" onComplete="setQuestions();" rendered="{!Evaluation__c.Status__c == 'Inactive Draft'}"/>
-                    <apex:commandButton action="{!Revise}" value="Revise" rendered="{!Evaluation__c.Status__c == 'Active Final'}" />
+                    <apex:commandButton action="{!Revise}" value="Revise" reRender="myFrm"  rendered="{!Evaluation__c.Status__c == 'Active Final'}" />
                     <apex:commandButton action="{!Finalize}" value="Finalize" rendered="{!Evaluation__c.Status__c == 'Inactive Draft'}"/>
                     <apex:commandButton action="{!myCancel}" value="Cancel" rendered="{!Evaluation__c.Status__c == 'Inactive Draft'}"/>
                 </div>
