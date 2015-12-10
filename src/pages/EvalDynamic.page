@@ -17,6 +17,10 @@
 
 	<apex:pageMessages id="msgs" />
 	<script>
+		// Sometimes the user can run into timeout issue (happens mainly with the previous entry
+		// association), so we increase the timeout here.
+		Visualforce.remoting.timeout = 120000;
+
 		var isModified = false;
 		var evaltype = null;
 		var cat = null;
