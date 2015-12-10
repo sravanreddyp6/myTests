@@ -229,7 +229,7 @@ public with sharing class referralConversion_Controller {
   }
 
 
-  private Contact getPBSRec() {
+  @testvisible private Contact getPBSRec() {
     Contact pBSRec;
     try {
       pBSRec = [select MailingCity, BirthDate, Email, Age__c,Age_year__c,Age_month__c,Age_days__c,
@@ -1082,7 +1082,7 @@ public class personRecord {
 	
 class referralConversionException extends Exception {
     }
- 	
+ 	@testvisible
  	private List<integer> getNumAuthPopulatedFields ( Funding_Source__c fs ) {
 		integer numFields = 0;
 		integer canbefinal = 0;
