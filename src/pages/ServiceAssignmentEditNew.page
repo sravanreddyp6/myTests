@@ -1,4 +1,4 @@
-<apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt,stubController" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">   
+<apex:page standardController="Service_Assignment__c" extensions="ServiceAssignmentExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">   
     <apex:stylesheet value="{!$Resource.pbscardcss}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
@@ -740,7 +740,7 @@
                         <apex:actionRegion >
                         <apex:selectList rendered="{!editSA}" id="saStatus2" value="{!theServAssign.Status__c}" size="1" html-data-countInFormProgress="1" html-data-visibility-rules="{&quot;Created in Error&quot;: [&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:SE_label}&quot;,&quot;{!$Component.myFRM:SAblock:AOServAssignDetail:statusItem1:Specify}&quot;] }" >
                             <apex:selectOptions value="{!StatusValues}"/>
-                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit,enddatePanelNR" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
+                            <apex:actionSupport event="onchange" reRender="saEndSectionEdit,enddatePanel,enddatePanelNR" status="pageProcessing" oncomplete="setStatusDefaults(); setUpFields();saStartDateTime.intializeDateTimePicker(j$('input[id$=startdate]'));">
                             </apex:actionSupport>
                         </apex:selectList>
                         </apex:actionRegion>                   
@@ -1347,7 +1347,7 @@
                         </apex:outputPanel>
                 </apex:pageBlockSectionItem>
                 
-                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home'}" >
+                <apex:pageBlockSectionItem rendered="{!theServAssign.Status__c == 'Inactive' && vfVarIsCB && Service_Assignment__c.Service_location__r.Physical_Location__c == 'Host Home' }" >
                         <apex:outputLabel value="Total Number of Internal Moves During Service" />
                         <apex:outputPanel >
                             <apex:outputPanel id="Total_no_of_Internal_moves_during_Servic__c_wrapper">
