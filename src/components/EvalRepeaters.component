@@ -1,0 +1,162 @@
+<apex:component controller="EvalRepeaters">
+	<apex:attribute name="parentId" description="Id of the parent Evaluation record" type="Id" assignTo="{!evaluationId}" />
+	<apex:attribute name="evaltype" description="Kind of eval" type="string" assignTo="{!evalname}" required="true" />
+	<apex:attribute name="opGrp" description="Operating group for eval" type="string" assignTo="{!operatingGroup}" required="true" />
+	<apex:attribute name="onComplete" description="JavaScript function to call when rendered" type="string" required="false" />
+	<style>
+		.sidebar-module {
+			overflow-x: auto;
+		}
+
+		a.sidebar-interactable {
+			color: #ffffff;
+			cursor: pointer;
+		}
+
+		a.sidebar-interactable:hover {
+			color: #126cf3;
+		}
+
+		.panel-body ul {
+			padding-left: 5px;
+		}
+
+		.panel-body ul li {
+			list-style-type: none;
+			margin-left: 0;
+		}
+
+		.panel.subcategory {
+			margin-left: 1em;
+			margin-right: 0.5em;
+			margin-top: 0.5em;
+		}
+
+		.panel.subcategory.panel-default {
+			border-color: #cfd9db;
+		}
+
+		.panel.subcategory.panel-default > .panel-heading {
+			background-color: #cfd9db;
+			border-color: #cfd9db;
+		}
+
+		.panel-heading.sidebar-expand {
+			cursor: pointer;
+		}
+	</style>
+
+	<apex:repeat value="{!categories}" var="category">
+		<div class="panel {!IF(categoryMap[category].hasError, 'panel-danger', IF(categoryMap[category].completed, 'panel-success', 'panel-warning'))}">
+			<div class="panel-heading sidebar-expand clearfix" data-category="{!category}">
+				<a class="pull-right sidebar-interactable" style="display: block; margin: 5px; ">
+					<span class="glyphicon glyphicon-chevron-down expand-arrow" />
+				</a>
+				<apex:outputPanel layout="none" rendered="{!categoryMap[category].addable}">
+					<a class="pull-right sidebar-interactable batch-entry-insert" style="display: block; margin: 5px; " data-category="{!category}">
+						<span class="glyphicon glyphicon-plus" />
+					</a>
+				</apex:outputPanel>
+				<div class="panel-title">
+					<a data-category="{!category}" class="sidebar-interactable batch-entry-upsert">{!category}</a>
+				</div>
+			</div>
+			<div class="panel-body" style="display: none; ">
+				<apex:repeat value="{!categoryMap[category].panels}" var="eval">
+					<div id="{!eval.compositeKey + 'shift'}" class="subcategory panel {!if ( eval.numErrors > 0, 'panel-danger', if (eval.hasData, 'panel-success', 'panel-warning'))}">
+						<div class="panel-heading">
+							<div class="panel-title">{!eval.subcat + ' -- ' + evaltype}</div>
+						</div>
+						<div class="panel-body">
+							<a id="{!eval.compositeKey}Summary" class="btn btn-info btn-sm pull-right" href="/apex/EvalLogView?evalID={!parentID}&evalname={!evaltype}&opGrp={!opGrp}&cat={!eval.cat}&subcat={!eval.subcat}" role="button" target="_blank"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a>
+							<apex:outputPanel layout="none" rendered="{!eval.addable}">
+								<a id="{! eval.compositeKey}" class="btn btn-info btn-sm pull-right" style="margin-right: 5px;" href="#" role="button" onClick="createSingleUpsertPanel('{!evaltype}', '{!eval.cat}', '{!eval.subcat}', null, '{! IF( AND( eval.compositeKey != 'Reduction Review~Reduction Review~', OR(eval.hasData, AND(parentEvalOwnerID != $User.Id, evaltype != 'Residential', evaltype != 'CNA Workbook'))),'Activity Log',evaltype )}', true); return false;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!eval.hasData}" layout="none">
+								<ul>
+								<apex:repeat value="{! evalDataList[evaltype + '~' + eval.compositeKey]}" var="edata">
+									<apex:outputPanel rendered="{!edata.sectiontype == evaltype}" layout="none">
+										<li>
+											<a href="#" style="color:#781d7d;" onClick="createSingleUpsertPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}','{!evaltype}', {! edata.ownerID == $User.Id && ( (AND(parentEvalStatus == 'Draft', evalType != 'Head to Toe'))  || ( AND(parentShiftStatus == 'Draft', evalType == 'Head to Toe')) || ( AND(CONTAINS(evalType,'Restraint'), parentEvalStatus == 'Not Restrained')))}); return false;">
+												<apex:outputText value="{!edata.owner}" /> @ <apex:outputText value="{!edata.created24}" />
+											</a>
+										</li>
+									</apex:outputPanel>
+								</apex:repeat>
+								</ul>
+							</apex:outputPanel>
+						</div>
+					</div>
+					<apex:outputPanel layout="none" rendered="{!eval.hasActivityLogs}">
+						<div id="{!eval.compositeKey + 'activitylog'}" class="subcategory panel panel-default">
+
+							<div class="panel-heading">
+								<div class="panel-title">{!eval.subcat + ' -- Activity Log'}</div>
+							</div>
+							<div class="panel-body">
+								<ul>
+								<apex:repeat value="{!evalDataList['Activity Log~' + eval.compositeKey]}" var="edata">
+									<apex:outputPanel rendered="{!edata.sectiontype=='Activity Log'}" layout="none">
+										<li>
+											<a href="#" style="color:#781d7d;" onClick="createSingleUpsertPanel('{!evaltype}', '{!edata.cat}', '{!edata.subcat}', '{!edata.sectionid}', 'Activity Log', {! (edata.ownerID == $User.Id)  && (parentEvalStatus != 'Completed') && (parentEvalStatus != 'Disregard')}); return false;">
+												<apex:outputText value="{! edata.owner }" /> @ <apex:outputText value=" {!edata.created24}" />
+											</a>
+										</li>
+									</apex:outputPanel>
+								</apex:repeat>
+							</ul>
+							</div>
+						</div>
+					</apex:outputPanel>
+				</apex:repeat>
+			</div>
+		</div>
+	</apex:repeat>
+	<script>
+		jQuery.noConflict();
+		jQuery(document).ready(function($) {
+			setupButtons({!OR(anyErrors, anyEmpty)});
+			if (!window.openedCategories) {
+				window.openedCategories = [];
+			}
+
+			$(".sidebar-expand").on("click", function (event) {
+				var $this = $(this);
+				var $body = $(this).closest(".panel").children(".panel-body");
+				var index = window.openedCategories.indexOf($this.data("category"));
+				$body.toggle();
+				$glyphicon = $this.find("span.expand-arrow");
+				if ($body.is(":visible")) {
+					$glyphicon.removeClass("glyphicon-chevron-down");
+					$glyphicon.addClass("glyphicon-chevron-up");
+					if (index == -1) {
+						window.openedCategories.push($this.data("category"));
+					}
+				} else {
+					$glyphicon.removeClass("glyphicon-chevron-up");
+					$glyphicon.addClass("glyphicon-chevron-down");
+					if(index != -1) {
+						window.openedCategories.splice(index, 1);
+					}
+				}
+				event.stopPropagation();
+			});
+
+			$(".batch-entry-insert").on("click", function (event) {
+				var $this = $(this);
+				createBatchInsertPanel('{!evaltype}', $this.data("category"));
+				return false;
+			});
+
+			$(".batch-entry-upsert").on("click", function (event) {
+				var $this = $(this);
+				createBatchUpsertPanel('{!evaltype}', $this.data("category"));
+				return false;
+			});
+
+			window.openedCategories.forEach(function (category) {
+				$(".sidebar-expand[data-category='" + category + "']").click();
+			});
+		});
+	</script>
+</apex:component>

@@ -1,0 +1,702 @@
+<apex:page title="{!thisEval.Name}" Controller="EvalDynamicExt" standardStylesheets="true" sidebar="false" tabStyle="Persons_Being_Served_New__tab" showheader="true">
+	<!-- Move this to the top of the page so the user doesn't see a flash -->
+	<style>
+		#tabContainer {
+			display: none;
+		}
+	</style>
+	<!-- Bootstrap core CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/bootstrap.css')}" />
+	<!-- Custom styles for this template -->
+	<apex:stylesheet value="{!URLFOR($Resource.EvalBootstrap, 'css/blog.css')}" />
+
+	<apex:includeScript value="{!URLFOR($Resource.jquery, '/js/jquery-1.7.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.chosen, '/chosen.css')}" />
+	<apex:includescript value="{!URLFOR($Resource.chosen, '/chosen.jquery.js')}" />
+
+	<apex:pageMessages id="msgs" />
+	<script>
+		var isModified = false;
+		var evaltype = null;
+		var cat = null;
+		var subCat = null;
+		var evalSectionId = null;
+		var evalSectionType = null;
+		var canEdit = null;
+
+		jQuery(function($) {
+			$('.collapsearrow').on("click", function(e) {
+				if ($(this).hasClass('panel-collapsed')) {
+					// expand the panel
+					$(this).parents('.inset').find('.panelshrink').slideDown();
+					$(this).removeClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+				} else {
+					// collapse the panel
+					$(this).parents('.inset').find('.panelshrink').slideUp();
+					$(this).addClass('panel-collapsed');
+					$(this).find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+				}
+			});
+			var lastScrollTop = 0;
+			window.setUpMainSectionPosition = function () {
+				var $mainSection = $("#main-section");
+				var paddingTop = window.pageYOffset - $mainSection.offset().top;
+				$blueCard = $("#pbsBlueCard");
+				if ($blueCard.hasClass("stickBlueCard")) {
+					paddingTop += $blueCard.height();
+				}
+				$mainSection.css("padding-top", paddingTop > 0 ? paddingTop : 0);
+			};
+			$(document).on("scroll", function () {
+				var currentScrollTop = $(this).scrollTop();
+				var $sidebar = $("#sidebar");
+				var $mainSection = $("#main-section");
+				var mainSectionTop = $mainSection.offset().top;
+				var paddingTop = window.pageYOffset - mainSectionTop;
+				var sidebarOffsetTop = $sidebar.offset().top;
+				$blueCard = $("#pbsBlueCard");
+				if ($blueCard.hasClass("stickBlueCard")) {
+					paddingTop += $blueCard.height();
+					sidebarOffsetTop -= $blueCard.height();
+				}
+				var currentPaddingTop = Number($mainSection.css("padding-top").replace("px", ""));
+
+				if (window.pageYOffset > sidebarOffsetTop) {
+					if (currentScrollTop < lastScrollTop && currentPaddingTop > paddingTop) {
+						// When user scrolls up, we want the entry screen to be sticky
+						$mainSection.css("padding-top", paddingTop > 0 ? paddingTop : 0);
+					}
+				} else {
+					$mainSection.css("padding-top", 0);
+				}
+				lastScrollTop = currentScrollTop;
+			});
+		});
+
+		function clearPanel() {
+			jQuery("[id$='panel-panel-info']").empty().removeClass('panel panel-info');
+			isModified = false;
+		}
+
+		function showReviewerComments() {
+			openModalDialog('{!$Component.reviewercomments}', 'Approve/Reject', '');
+		}
+
+		function showReporting() {
+			//set up the attributes
+			// hide the old panel
+			jQuery("#panel-form").empty().append(jQuery("[id$='goalobjreportform']"));
+		}
+
+		function showLateEntries() {
+			jQuery("#panel-form").empty().append(jQuery("[id$='lateEntriesForm']"));
+		}
+
+		function showForm() {
+			jQuery("[id$=evalFormBody] .panel-heading [id$=evalFormButtons]").remove();
+			jQuery("#panel-form").empty().append(jQuery("[id$='evalForm']"));
+			jQuery("[id$=evalFormBody] .panel-heading").append(jQuery("[id$=evalFormButtons]"));
+			bindSubmitEvent();
+			setUpFields();
+			var errors = '';
+			jQuery('[id=ErrorMsg]').each(function(_, target) {
+				errors += jQuery(target).val();
+			});
+			jQuery('#evalSecValMsgs .error-messages').html(errors);
+			if (errors) {
+				jQuery('#evalSecValMsgs').show();
+			}
+			setUpMainSectionPosition();
+		}
+
+		function setupButtons(disableFlag) {
+			if (disableFlag) {
+				jQuery("#btnESign").removeClass('btn-success').addClass('btn-danger');
+				jQuery("#btnESign").removeAttr('onclick');
+				jQuery("#btnEsign").removeAttr('href');
+
+				jQuery("#btnDone").removeClass('btn-success').addClass('btn-danger');
+				jQuery("#btnDone").removeAttr('onclick');
+				jQuery("#btnDone").removeAttr('href');
+
+			} else {
+				jQuery("#btnESign").removeClass('btn-danger').addClass('btn-success');
+				jQuery("#btnESign").attr('onclick', 'authenticate();');
+				jQuery("#btnESign").attr('href', '#');
+
+				jQuery("#btnDone").removeClass('btn-danger').addClass('btn-success');
+				jQuery("#btnDone").attr("onclick", "complete('{!evalType}');");
+				jQuery("#btnDone").attr('href', '#');
+
+			}
+			jQuery("#btnESign").prop('disabled', disableFlag);
+			jQuery("#btnDone").prop('disabled', disableFlag);
+
+		}
+
+		function revise() {
+			var r = confirm('Revising this Assessment will create a new Draft and you will be redirected to the new one');
+			if (r == true) {
+				reviseAssessment();
+			} else {
+				return null;
+			}
+
+		}
+
+		function disregard(evalType) {
+
+			if (evalType == 'Residential' || evalType == 'CNA Workbook') {
+				disregardAssessment();
+			}
+
+			if (evalType == 'Head to Toe') {
+				jQuery("[id$='dialog-confirm-disregard']").dialog("open");
+			}
+
+			if (evalType == 'Restraint Event') {
+				disregardAssessment();
+			}
+		}
+
+		//EC-159
+		function complete(evalType) {
+			if (evalType == 'Restraint Event') {
+				openModalDialog('{!$Component.completeRestraintPanel}', 'Complete Restraint Event', '');
+			} else {
+				authenticate();
+			}
+		}
+
+		function endShift() {
+			openModalDialog('{!$Component.endOfShiftDONPanel}', 'End Shift', '');
+		}
+
+		function validateEndtime(errorDomId, endTimeDomId, successfulCallback) {
+
+			document.getElementById(errorDomId).innerHTML = '';
+			var startValue = '{!thisEval.shift_Start_Time__c}';
+			var st = new Date(startValue);
+			var EndValue = jQuery(document.getElementById(endTimeDomId)).val();
+			var en = new Date(EndValue);
+
+			if (EndValue == '' || EndValue == null) {
+				jQuery("[id$=" + errorDomId + "]").append('<li style="Color:red;"> Please enter end time </li>');
+			} else if (en <= st) {
+				jQuery("[id$=" + errorDomId + "]").append('<li style="Color:red;"> End time should be greater than start time </li>');
+			} else {
+				successfulCallback();
+			}
+		}
+
+		filterNavigation = function() {
+			var filter = jQuery('#filter').val().toLowerCase();
+			jQuery('.sidebar-module.sidebar-module-inset > span > div').each(function() {
+				var _this = jQuery(this);
+				var title = _this.find('.panel-title').prop("innerHTML").split(" --")[0].toLowerCase();
+
+				if (title.indexOf(filter) < 0 && filter != '--none--') {
+					_this.hide();
+				} else {
+					_this.show();
+				}
+			});
+		}
+
+		jQuery(document).ready(function($) {
+
+			var titles = [];
+			var uniquetitle = [];
+			$('.sidebar-module.sidebar-module-inset > span > div > div .panel-title').each(function() {
+				var _this = $(this);
+				var title = _this.prop("innerHTML").split(" --")[0];
+				titles.push(title);
+			});
+			$.each(titles, function(i, el) {
+				if ($.inArray(el, uniquetitle) === -1) uniquetitle.push(el);
+			});
+			$.each(uniquetitle, function() {
+				$('#filter')
+					.append($("<option></option>")
+						.attr("value", this)
+						.text(this));
+			});
+			$('#filter').chosen({
+				search_contains: true
+			}).change(filterNavigation);
+
+			var $confirmDialog = $("[id$='dialog-confirm-navigation']");
+			$confirmDialog.dialog({
+				resizable: false,
+				draggable: false,
+				height: 200,
+				modal: true,
+				autoOpen: false,
+				buttons: {
+					Yes: function() {
+						jQuery(this).dialog("close");
+						isModified = false;
+						jQuery('#btnSave').trigger("click");
+						$confirmDialog.trigger("yesClicked");
+					},
+					No: function() {
+						jQuery(this).dialog("close");
+						isModified = false;
+						$confirmDialog.trigger("noClicked");
+					},
+					Cancel: function() {
+						jQuery(this).dialog("close");
+					}
+				}
+			});
+			$("[id$='dialog-confirm-disregard']").dialog({
+				resizable: false,
+				draggable: false,
+				width: 450,
+				modal: true,
+				autoOpen: false,
+				buttons: {
+					"Disregard and Clone": function() {
+						jQuery(this).dialog("close");
+						disregardAssessment();
+					},
+					"Disregard Completely": function() {
+						jQuery(this).dialog("close");
+						disregardAssessment(true);
+					}
+				}
+			});
+		});
+
+		window._createPanel = function(actionFn, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			evaltype = evaltype1,
+			cat = cat1,
+			subCat = subCat1,
+			evalSectionId = evalSectionId1,
+			evalSectionType = evalSectionType1,
+			canEdit = canEdit1;
+
+			var $confirmDialog = jQuery("[id$='dialog-confirm-navigation']");
+			if (isModified && (canEdit == null || canEdit)) {
+				$confirmDialog.dialog("open");
+				$confirmDialog.off("yesClicked");
+				$confirmDialog.off("noClicked");
+				$confirmDialog.one("yesClicked", actionFn);
+				$confirmDialog.one("noClicked", actionFn);
+			} else {
+				actionFn();
+			}
+		};
+
+		window.createSingleUpsertPanel = function(evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			_createPanel(function () {
+				createSingleUpsertPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
+			}, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1);
+		};
+
+		window.createBatchInsertPanel = function(evaltype1, cat1) {
+			_createPanel(function () {
+				createBatchInsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};
+
+		window.createBatchUpsertPanel = function(evaltype1, cat1) {
+			_createPanel(function () {
+				createBatchUpsertPanelAF(evaltype, cat);
+			}, evaltype1, cat1);
+		};
+	</script>
+	<style>
+		.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.modalDialog.ui-draggable {
+			left: 50% !important;
+			margin: 0 0 0 -488px;
+			z-index: 101 !important;
+		}
+
+		.chosen-single {
+			background-color: white !important;
+			background-image: none !important;
+			box-shadow: none !important;
+			border-radius: 0px !important;
+		}
+	</style>
+
+	<c:PersonalRecord pbsId="{!PBSID}" servAssignId="{!SAID}" parentPage="Evaluation" servAssignNew="false" admId="{!AdmId}" />
+
+	<div class="container">
+		<div class="blog-header"></div>
+		<div class="row">
+			<div class="col-sm-4" id="sidebar">
+				<div class="sidebar-module-sm-no-scroll sidebar-module-inset">
+					<apex:outputPanel rendered="{!evalType == 'Head to Toe'}">
+						<h4>Nurse: {!thisEval.Owner.Name}</h4>
+						<p>
+							<apex:outputPanel rendered="{!thisEval.Status__c != 'End of Shift'}" layout="none">
+								Head to Toe Status: {!thisEval.Head_to_Toe_Status__c}
+								<br/> Shift Status:{!thisEval.Status__c}
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!thisEval.Status__c == 'End of Shift'}" layout="none">
+								Head to Toe Status: {!thisEval.Head_to_Toe_Status__c}
+								<br/> Shift Status: {!thisEval.Status__c} by: {!thisEval.Signed_By__r.Name} {!evalStatusDate}
+							</apex:outputPanel>
+							<apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}">
+								<br/> Start Date/Time : {!shiftStartTime}
+							</apex:variable>
+							<apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null}">
+								<br/> End Date/Time :{!shiftEndTime}
+							</apex:variable>
+						</p>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!evalType == 'Residential'}">
+						<h4>Nurse: {!thisEval.Owner.Name}</h4>
+						<p>Status:{!thisEval.Status__c} (
+							<apex:outputText value="{!evalStatusDate}" />)
+							<apex:outputText rendered="{!AND(thisEval.Signed_By__c != '', thisEval.Signed_By__c != thisEval.OwnerId)}" value=" by: {!thisEval.Signed_By__r.Name}" />
+						</p>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!evalType == 'CNA Workbook'}">
+						<h4>CNA: {!thisEval.Owner.Name}</h4>
+						<p>
+							<apex:outputPanel rendered="{!ISBLANK(thisEval.Signed_By__c)}" layout="none">
+								Status: {!thisEval.Status__c}
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!AND(NOT(ISBLANK(thisEval.Signed_By__c)), thisEval.Status__c == 'End of Shift')}" layout="none">
+								Status: {!thisEval.Status__c} by: {!thisEval.Signed_By__r.Name} (
+								<apex:outputText value="{!evalStatusDate}" />)
+							</apex:outputPanel>
+							<apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}">
+								<br/>Start Date/Time : {!shiftStartTime}
+							</apex:variable>
+							<apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null}">
+								<br/>End Date/Time :{!shiftEndTime}
+							</apex:variable>
+						</p>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!evalType == 'Restraint Event'}">
+						<p>
+							Restraint Status:{!thisEval.Status__c}
+							<br/> CreatedDate:
+							<apex:outputText value=" {!shiftCreatedDate}" />
+							<br/>
+							<apex:variable value="" var="a" rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'}">
+								Restrained By: {!thisEval.Owner.Name}
+								<br/>
+							</apex:variable>
+							<apex:variable value="" var="b" rendered="{!thisEval.Shift_Start_Time__c != null}">
+								Start Date/Time : {!shiftStartTime}
+								<br/>
+							</apex:variable>
+							<apex:variable value="" var="c" rendered="{!thisEval.Shift_End_Time__c != null && thisEval.Status__c == 'Restraint Event Ended'}">
+								End Date/Time :{!shiftEndTime}
+							</apex:variable>
+						</p>
+					</apex:outputPanel>
+
+					<apex:outputPanel >
+						<a id="btnPrint" class="btn-info btn-sm centered" href="/apex/EvalLogView?evalID={!$CurrentPage.parameters.evalId}&evalname={!$CurrentPage.parameters.evalType}&opGrp={!$CurrentPage.parameters.opGrp}" target="_blank" role="button">View Summary</a>
+					</apex:outputPanel>
+					<br/>
+					<apex:outputPanel rendered="{!showEsign}">
+						<a id="btnESign" class="btn-success btn-sm pull-left" href="#" role="button" onClick="authenticate(); return false;">Finalize {!evalType}</a>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!showEndOfShiftDON}">
+						<a id="btnEOS" class="btn-success btn-sm pull-left" href="#" role="button" onClick="endShift(); return false;">End Shift</a>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!showRevise}">
+						<a id="btnRevise" class="btn-success btn-sm pull-left" href="#" role="button" onClick="revise(); return false;">Revise {!evalType}</a>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!showshiftDone}">
+						<a id="btnDone" class="btn-success btn-sm pull-left" href="#" role="button" onClick="complete('{!evalType}'); return false;">Complete {!evalType}</a>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!showDisregard}">
+						<a id="btnDisregard" class="btn-success btn-sm pull-right" href="#" role="button" onClick="disregard('{!evalType}'); return false;">Disregard {!evalType}</a>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!showApprove}">
+						<a id="btnApprove" class="btn-success btn-sm pull-left" href="#" role="button" onClick="showReviewerComments(); return false;">Approve/Reject</a>
+					</apex:outputPanel>
+				</div>
+				<!--
+				<label for="filter">Section :&nbsp;</label>
+				<select id="filter" size="1" class="chosenSelect" value="">
+					<option value="--None--">--All--</option>
+				</select>
+				 -->
+
+				<apex:outputPanel rendered="{!AND(evalType == 'Head to Toe', thisEval.Status__c != 'Draft')}" id="lateEntryRepeaters">
+					<div class="sidebar-module-inset sidebar-module-sm-no-scroll" style="height: auto; text-align: left;">
+						<div class="panel panel-success">
+							<div class="panel-heading">
+								<h3 class="panel-title">Late Entry Notes</h3>
+							</div>
+							<div class="panel-body">
+								<apex:repeat value="{!lateEntryNotes}" var="entryNote">
+									<a href="#" onClick="refreshLateEntryNote('{!entryNote.Id}', 'Goal Reporting', 'Objective', 'Id', 'Type'); return false;" style="color:#781d7d;" data-toggle="tooltip" data-placement="top">
+										{!entryNote.CreatedBy.Name} @ <c:MilitaryDatetime dateTimeVal="{!entryNote.CreatedDate}" />
+									</a>
+									<br />
+								</apex:repeat>
+								<apex:outputPanel layout="none" rendered="{!AND(thisEval.Status__c != 'Disregard', OR(isTierII, isTierIII))}">
+									<a id="addLateEntryButton" class="btn btn-info btn-sm pull-right" href="#" role="button" onClick="refreshLateEntryNote(null, 'Head to Toe', 'Late Entry Note', 'Details'); return false;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+								</apex:outputPanel>
+							</div>
+						</div>
+					</div>
+				</apex:outputPanel>
+
+				<apex:outputPanel rendered="{!evalType == 'Head to Toe' || evalType == 'CNA Workbook'}">
+					<div class="sidebar-module-inset sidebar-module-sm-no-scroll" style="height:auto;text-align:left">
+						<div id="objreportingpanel" class="inset">
+							<h4>Plan Reporting</h4>
+							<span class="pull-right collapsearrow"><i class="glyphicon glyphicon-chevron-up"></i></span>
+							<apex:outputPanel id="goalObjRepeaters" layout="block" styleclass="panelshrink">
+								<c:GoalObjRepeaters parentID="{!SAID}" evalID="{!$CurrentPage.Parameters.evalID}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" start="{!thisEval.Shift_Start_Time__c}" end="{!thisEval.Shift_End_Time__c}" />
+							</apex:outputPanel>
+						</div>
+					</div>
+				</apex:outputPanel>
+				<div class="sidebar-module sidebar-module-inset">
+					<apex:outputPanel id="evalRepeaters" layout="none">
+						<c:EvalRepeaters parentID="{!$CurrentPage.parameters.evalId}" evaltype="{!$CurrentPage.parameters.evalType}" opGrp="{!$CurrentPage.parameters.opGrp}" />
+					</apex:outputPanel>
+				</div>
+				<hr />
+				<!-- sidebar-module -->
+			</div>
+			<!-- /.blog-sidebar -->
+
+			<div class="col-sm-8 blog-main" id="main-section">
+				<apex:outputPanel id="evalFormBody" styleClass="blog-post" layout="block">
+					<apex:outputPanel id="panel-panel-info" styleClass="panel panel-info" layout="block" rendered="{! cat != ''}">
+						<div class="panel-heading clearfix">
+							<h3 class="panel-title pull-left" style="margin-top: 5px; ">{!$CurrentPage.parameters.Category} -- {! evaltype}</h3>
+						</div>
+						<div id="panel-form" class="panel-body">
+
+						</div>
+					</apex:outputPanel>
+
+				</apex:outputPanel>
+				<!-- /.blog-post -->
+			</div>
+			<!-- /.blog-main -->
+		</div>
+		<!-- /.row -->
+	</div>
+	<!-- /.container -->
+
+	<apex:form id="wholePage">
+		<apex:actionFunction name="createSingleUpsertPanelAF" action="{!singleUpsert}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm();filterNavigation();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
+			<apex:param name="subCategory" value="" assignTo="{!subCat}" />
+			<apex:param name="evalSectionId" value="" assignTo="{!evalSecId}" />
+			<apex:param name="evalSectionType" value="" assignTo="{!evalSecType}" />
+			<apex:param name="canEdit" value="" assignTo="{!canEdit}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="createBatchInsertPanelAF" action="{!batchInsert}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm();filterNavigation();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="createBatchUpsertPanelAF" action="{!batchUpsert}" rerender="evalFormBody,evalRepeaters, outputsection" status="myStatus" oncomplete="showForm();filterNavigation();">
+			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+			<apex:param name="category" value="" assignTo="{!cat}" />
+		</apex:actionFunction>
+		<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();" />
+		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (OR(evalType=='CNA Workbook', AND(evalType=='Residential', thisEval.OwnerId == $User.Id)),'completeShift();', 'location.reload(true);')} return false;" />
+		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="" uniqueId="2" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialog2(); saveLateEntryNote(); return false;" />
+		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="EndOfShiftEsign" uniqueId="Esign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialogEsign(); location.reload(true); return false;" />
+		<apex:actionFunction name="reviseAssessment" action="{!reviseAssessment}" status="myStatus" reRender="msgs" />
+		<apex:actionFunction name="disregardAssessment" action="{!disregardAssessment}" status="myStatus" reRender="msgs">
+			<apex:param name="cloneDisabled" value="" assignTo="{!disregardCloneDisabled}" />
+		</apex:actionFunction>
+		<apex:actionfunction name="completeShift" action="{!completeShift}" status="myStatus" reRender="msgs" />
+		<apex:actionregion >
+			<apex:actionfunction name="rerenderGoalObjRpt" rerender="evalFormBody, pnlgoalobjReporting" status="myStatus" onComplete="showReporting();">
+				<apex:param name="evaltype" value="" AssignTo="{!evalType}" />
+				<apex:param name="Category" value="" AssignTo="{!cat}" />
+				<apex:param name="SubCategory" value="" AssignTo="{!subCat}" />
+				<apex:param name="currobjID" value="" />
+				<apex:param name="currobjType" value="" />
+			</apex:actionfunction>
+		</apex:actionregion>
+		<apex:actionregion >
+			<apex:actionfunction name="refreshLateEntryNote" action="{!refreshLateEntryNote}" rerender="evalFormBody, lateEntriesPanel" status="myStatus" onComplete="showLateEntries();">
+				<apex:param name="lateEntryNoteId" value="" />
+				<apex:param name="evaltype" value="" assignTo="{!evalType}" />
+				<apex:param name="Category" value="" assignTo="{!cat}" />
+				<apex:param name="SubCategory" value="" />
+			</apex:actionfunction>
+		</apex:actionregion>
+	</apex:form>
+
+	<c:EvalSection id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="{!canEdit}" parentID="{!evalId}" currentAssessId="{!currentAssessId}" isBatchInsert="{!isBatchInsert}" isBatchUpsert="{!isBatchUpsert}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters(); " />
+
+	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
+		<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}" enddate="{!thisEval.Shift_End_Time__c}" />
+	</apex:outputPanel>
+
+	<apex:outputPanel id="lateEntriesPanel" style="display: none; ">
+		<apex:form id="lateEntriesForm">
+			<apex:variable var="lateEntryEditable" value="{!OR($CurrentPage.parameters.lateEntryNoteId == null, $CurrentPage.parameters.lateEntryNoteId == '')}" />
+			<apex:pageMessages id="lateEntriesMessages" />
+			<apex:actionRegion >
+				<apex:actionFunction name="saveLateEntryNote" action="{!saveLateEntryNote}" status="myStatus" rerender="lateEntriesForm, lateEntryRepeaters" oncomplete="clearPanel(); " />
+				<apex:actionFunction name="validateLateEntryNote" action="{!validateLateEntryNote}" status="myStatus" rerender="lateEntriesForm" oncomplete="if (jQuery('[id$=lateEntriesMessages]').children().length == 0) { authenticate2(); }" />
+				<apex:pageblock id="lateEntriesBlock">
+					<apex:outputPanel layout="block" style="right: 10px; float: right; position: relative;" rendered="{!lateEntryEditable}">
+						<input class="btn" type="submit" value="Save" id="btnSave" onclick="validateLateEntryNote(); return false;" />
+						<input class="btn" type="button" value="Cancel" onclick="clearPanel(); return false;" />
+					</apex:outputPanel>
+					<apex:pageBlockSection columns="1" rendered="{!lateEntryEditable}">
+						<apex:pageBlockSectionItem >
+							<apex:outputLabel value="Late Entry Note" />
+							<apex:outputPanel styleClass="requiredInput" layout="block" style="display: inline-block; ">
+								<apex:outputPanel styleClass="requiredBlock" layout="block" />
+								<apex:inputField id="lateEntryInput" value="{!lateEntryNote.Late_Entry_Note__c}" style="width: 200%; " />
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+					</apex:pageBlockSection>
+					<apex:pageBlockSection columns="1" rendered="{!!lateEntryEditable}">
+						<apex:outputField id="lateEntryInput" value="{!lateEntryNote.Late_Entry_Note__c}" />
+					</apex:pageBlockSection>
+				</apex:pageblock>
+			</apex:actionRegion>
+		</apex:form>
+	</apex:outputPanel>
+
+	<apex:pageBlock rendered="{! evalType == 'CNA Workbook' || evalType == 'Residential'}">
+		<Apex:pageblocksection columns="1" title="Approval History">
+			<apex:datatable style="width: 100%;" value="{!approvalHistory}" var="a">
+				<apex:column value="{!a.actorid}" headervalue="By" />
+				<apex:column value="{!a.stepstatus}" headervalue="Status" />
+				<apex:column value="{!a.comments}" headervalue="Comments" />
+				<apex:column value="{!a.createddate}" headervalue="Date" />
+			</apex:datatable>
+		</Apex:pageblocksection>
+	</apex:pageBlock>
+
+	<apex:outputPanel id="dialog-confirm-navigation" title="Confirm save" layout="block">
+		<apex:outputPanel layout="inline">
+			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+			</apex:outputPanel>
+			Do you want to save before navigating away?
+		</apex:outputPanel>
+	</apex:outputPanel>
+
+	<apex:outputPanel id="dialog-confirm-disregard" title="Confirm disregard" layout="block">
+		<apex:outputPanel layout="inline">
+			<apex:outputPanel layout="inline" styleClass="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;">
+			</apex:outputPanel>
+			Do you want to disregard and clone the evaluation, or disregard it completely?
+		</apex:outputPanel>
+	</apex:outputPanel>
+
+	<apex:outputPanel id="reviewercomments" title="Reviewer Comments" layout="block" style="display:none">
+		<apex:form id="reviewForm">
+			<apex:pageblock >
+				<apex:pageblocksection columns="1">
+					<apex:outputlabel for="comments" value="Reviewer Comments" />
+					<apex:inputtextarea id="commenttext" value="{!revcomments}" rows="10" cols="80" />
+				</apex:pageblocksection>
+				<div align="right">
+					<apex:commandLink styleClass="btn" value="Approve" action="{!ApproveReject}" status="myStatus">
+						<apex:param name="theaction" assignTo="{!approvalaction}" value="Approve" />
+					</apex:commandLink>
+					<apex:commandLink styleClass="btn" value="Reject" action="{!ApproveReject}" status="myStatus">
+						<apex:param name="theaction" assignTo="{!approvalaction}" value="Reject" />
+					</apex:commandLink>
+					<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.reviewercomments}'); return false;" />
+				</div>
+			</apex:pageblock>
+		</apex:form>
+	</apex:outputPanel>
+
+	<apex:outputPanel id="completeRestraintPanel" title="Enter End Time" layout="block" style="display:none">
+		<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+		<apex:form id="dateFieldForm">
+			<apex:actionfunction name="completeRestraintEvent" action="{!completeRestraintEvent}" status="myStatus" reRender="msgs" oncomplete="closeModalDialog('{!$Component.completeRestraintPanel}'); authenticate(); return false;" />
+			<apex:pageblock >
+				<div id="resEventtimeErrors"></div>
+				<apex:pageblocksection columns="1" id="resTimeSection">
+					<apex:pageBlockSectionItem id="endTimeItem">
+						<apex:outputlabel value="Event End Time" />
+						<apex:outputPanel layout="none">
+							<c:MilitaryDatetime dateTimeVal="{!thisEval.Shift_End_Time__c}" edit="true" hiddenFieldId="eventEndTime" />
+							<apex:inputHidden id="eventEndTime" value="{!thisEval.Shift_End_Time__c}" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				</apex:pageblocksection>
+				<div align="center">
+					<apex:commandLink styleClass="btn" value="Save & E-sign" onClick="validateEndtime('resEventtimeErrors', '{!$Component.resTimeSection.endTimeItem.eventEndTime}', completeRestraintEvent); return false;" />
+					<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.completeRestraintPanel}'); return false;" />
+				</div>
+			</apex:pageblock>
+		</apex:form>
+	</apex:outputPanel>
+
+	<apex:outputPanel id="endOfShiftDONPanel" title="Enter End Time" layout="block" style="display: none; ">
+		<span class="ui-helper-hidden-accessible"><input type="text"/></span>
+		<apex:form id="endOfShiftDateForm">
+			<apex:actionfunction name="endShiftDON" action="{!endShiftDON}" status="myStatus" reRender="msgs" oncomplete="closeModalDialog('{!$Component.endOfShiftDONPanel}'); authenticateEsign(); return false;" />
+			<apex:pageblock >
+				<div id="endOfShiftTimeErrors"></div>
+				<apex:pageblocksection columns="1" id="endTimeSection">
+					<apex:pageBlockSectionItem id="endTimeItem">
+						<apex:outputlabel value="Shift End Time" />
+						<apex:outputPanel layout="none">
+							<c:MilitaryDatetime dateTimeVal="{!thisEval.Shift_End_Time__c}" edit="true" hiddenFieldId="shiftEndTimeDON" />
+							<apex:inputHidden id="shiftEndTimeDON" value="{!thisEval.Shift_End_Time__c}" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				</apex:pageblocksection>
+				<div align="center">
+					<apex:commandLink styleClass="btn" value="Save & E-sign" onClick="validateEndtime('endOfShiftTimeErrors', '{!$Component.endTimeSection.endTimeItem.shiftEndTimeDON}', endShiftDON); return false;" />
+					<apex:commandLink styleClass="btn" value="Cancel" onClick="closeModalDialog('{!$Component.endOfShiftDONPanel}'); return false;" />
+				</div>
+			</apex:pageblock>
+		</apex:form>
+	</apex:outputPanel>
+
+
+	<apex:actionStatus id="myStatus">
+		<apex:facet name="start">
+			<style>
+				.thinkingwheel {
+					position: fixed;
+					left: 50%;
+					top: 50%;
+					background-color: white;
+					border: 2px solid gray;
+					padding: 2px;
+					z-index: 2000;
+				}
+
+				.foggy {
+					opacity: 0.8;
+					background-color: #ccc;
+					position: fixed;
+					width: 100%;
+					height: 100%;
+					top: 0px;
+					left: 0px;
+					z-index: 1000;
+				}
+			</style>
+
+			<div class="foggy" />
+			<div class="thinkingwheel">
+				<span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." /> Processing . . . </span>
+			</div>
+		</apex:facet>
+		<apex:facet name="stop"> </apex:facet>
+	</apex:actionStatus>
+</apex:page>
