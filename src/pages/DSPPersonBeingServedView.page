@@ -277,7 +277,7 @@
             <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResponsesTypes != '' , CONTAINS(pbsViewResponse.evalResponsesTypes, 'Immunization - Adult'))}">
                 <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResponses['Immunization - Adult']}"
                     columnsToFetch="{!pbsViewResponse.mapEvalResponseFlds['Immunization - Adult']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResponseFldLbls}"
-                    type="Immunization - Adult" displayTitle="false" style="padding:5px;text-align:left;" />
+                    type="Immunization - Adult" displayTitle="false" esign="true" showdisregard="true" style="padding:5px;text-align:left;" />
             </apex:outputPanel>
             <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResponsesTypes = '' , !CONTAINS(pbsViewResponse.evalResponsesTypes, 'Immunization - Adult'))}" style="padding-left:10px;padding-top:3px">No immunizations to display</apex:outputPanel>
         </apex:pageBlock>
@@ -286,7 +286,7 @@
             <apex:outputPanel layout="none" rendered="{!AND( pbsViewResponse.evalResponsesTypes != '' , CONTAINS(pbsViewResponse.evalResponsesTypes, 'Immunization - Child'))}" >
                 <c:EvaluationResponseTablePdfNoCntroller responses="{!pbsViewResponse.mapEvalResponses['Immunization - Child']}"
                     columnsToFetch="{!pbsViewResponse.mapEvalResponseFlds['Immunization - Child']}" columnsToHeadersMap="{!pbsViewResponse.mapEvalResponseFldLbls}"
-                    type="Immunization - Child" displayTitle="false" style="padding:5px;text-align:left;" />
+                    type="Immunization - Child" displayTitle="false" esign="true" showdisregard="true"  style="padding:5px;text-align:left;" />
             </apex:outputPanel>
              <apex:outputPanel layout="block" rendered="{!OR( pbsViewResponse.evalResponsesTypes = '' , !CONTAINS(pbsViewResponse.evalResponsesTypes, 'Immunization - Child'))}" style="padding-left:10px;padding-top:3px">No immunizations to display</apex:outputPanel>
         </apex:pageBlock>
