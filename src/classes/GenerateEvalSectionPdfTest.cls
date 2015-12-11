@@ -43,7 +43,7 @@ private class GenerateEvalSectionPdfTest {
         }
 
         GenerateEvalComponent.saveFields(evaluation.id, UserInfo.getUserId() + '-' + DateTime.now().formatLong(),
-                                        'Shift', evlTyp.Name, JSON.serialize(evalVals));
+                                        'Shift', evlTyp.Name, JSON.serialize(evalVals), false, false);
 
         pageReference pageRef = Page.EvalLogView;
         Test.setCurrentPage(pageRef);

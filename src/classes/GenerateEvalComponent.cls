@@ -726,11 +726,6 @@ public with sharing class GenerateEvalComponent {
 	}
 
 	@RemoteAction
-	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm) {
-		saveFields(evalId, evalSectionId, evalSectionType, evalType, jsonForm, false, false);
-	}
-
-	@RemoteAction
 	public static void saveFields(ID evalId, String evalSectionId, String evalSectionType, String EvalType, String jsonForm, Boolean batchInsert, Boolean batchUpsert) {
 		// Deserialize the form
 		List<FormKeyVal> objs = (List<FormKeyVal>) JSON.deserialize(jsonForm, list<FormKeyVal>.class);

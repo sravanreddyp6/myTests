@@ -44,6 +44,7 @@
 				}
 			});
 			var lastScrollTop = 0;
+			window.afterRefresh = function () {};
 			window.setUpMainSectionPosition = function () {
 				var $mainSection = $("#main-section");
 				var paddingTop = window.pageYOffset - $mainSection.offset().top;
@@ -242,8 +243,15 @@
 					Yes: function() {
 						jQuery(this).dialog("close");
 						isModified = false;
-						jQuery('#btnSave').trigger("click");
-						$confirmDialog.trigger("yesClicked");
+						window.afterRefresh = function () {
+							// We use this to make sure that yesClicked is only triggered *after*
+							// the postback is complete. Otherwise we'll run into a race situation
+							// where the EvalRepeaters are refreshed at the same time by both the
+							// save function and the create*Panel function.
+							$confirmDialog.trigger("yesClicked");
+							window.afterRefresh = function () {};
+						};
+						jQuery('[id$=evalFormButtons] #btnSave').trigger("click");
 					},
 					No: function() {
 						jQuery(this).dialog("close");
@@ -287,26 +295,42 @@
 				$confirmDialog.dialog("open");
 				$confirmDialog.off("yesClicked");
 				$confirmDialog.off("noClicked");
-				$confirmDialog.one("yesClicked", actionFn);
+				$confirmDialog.one("yesClicked", function () {
+					var $lastClicked = jQuery("[data-unique-id='" + window.chosenElUniqueId + "']");
+					if ($lastClicked.size() > 0) {
+						$lastClicked.trigger("click");
+					} else {
+						alert("The action you chose is no longer available");
+					}
+				});
 				$confirmDialog.one("noClicked", actionFn);
 			} else {
 				actionFn();
 			}
 		};
 
-		window.createSingleUpsertPanel = function(evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+		// The next 3 methods take in the first argument as the element that the action originates
+		// from. This is necessary so that we can open the correct panel after choosing to save
+		// a dirty panel after modification. Without it, we cannot be certain if a particular
+		// action is still available to the user after a save. For example: in the Residential
+		// assessment, if the user modifies a panel, then click the Add button on the same panel,
+		// the system will ask whether they want to save the modified content or not. Without the
+		// data-unique-id from the element, we might accidentally create 2 different main entries
+		// for that panel (which was the case for the initial version).
+		window.createSingleUpsertPanel = function($el, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1) {
+			window.chosenElUniqueId = $el.data('unique-id');
 			_createPanel(function () {
 				createSingleUpsertPanelAF(evaltype, cat, subCat, evalSectionId, evalSectionType, canEdit);
 			}, evaltype1, cat1, subCat1, evalSectionId1, evalSectionType1, canEdit1);
 		};
-
-		window.createBatchInsertPanel = function(evaltype1, cat1) {
+		window.createBatchInsertPanel = function($el, evaltype1, cat1) {
+			window.chosenElUniqueId = $el.data('unique-id');
 			_createPanel(function () {
 				createBatchInsertPanelAF(evaltype, cat);
 			}, evaltype1, cat1);
 		};
-
-		window.createBatchUpsertPanel = function(evaltype1, cat1) {
+		window.createBatchUpsertPanel = function($el, evaltype1, cat1) {
+			window.chosenElUniqueId = $el.data('unique-id');
 			_createPanel(function () {
 				createBatchUpsertPanelAF(evaltype, cat);
 			}, evaltype1, cat1);
@@ -514,7 +538,7 @@
 			<apex:param name="evaltype" value="" assignTo="{!evalType}" />
 			<apex:param name="category" value="" assignTo="{!cat}" />
 		</apex:actionFunction>
-		<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="filterNavigation();" />
+		<apex:actionFunction name="refreshEvalRepeaters" rerender="evalRepeaters" status="myStatus" oncomplete="afterRefresh(); filterNavigation();" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="CMShiftAssessmentEsign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); {!if (OR(evalType=='CNA Workbook', AND(evalType=='Residential', thisEval.OwnerId == $User.Id)),'completeShift();', 'location.reload(true);')} return false;" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="" uniqueId="2" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialog2(); saveLateEntryNote(); return false;" />
 		<c:Authentication formId="{!$Component.wholePage}" title="E-Sign" handler="EndOfShiftEsign" uniqueId="Esign" objectId="{!$CurrentPage.parameters.evalId}" oncomplete="alert('This document was electronically signed by {!$User.FirstName} ({!$User.Email}) on {!NOW()}'); closeAuthenticationDialogEsign(); location.reload(true); return false;" />
@@ -542,7 +566,7 @@
 		</apex:actionregion>
 	</apex:form>
 
-	<c:EvalSection id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="{!canEdit}" parentID="{!evalId}" currentAssessId="{!currentAssessId}" isBatchInsert="{!isBatchInsert}" isBatchUpsert="{!isBatchUpsert}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters(); " />
+	<c:EvalSection id="outputsection" category="{!cat}" subcategory="{!subCat}" evaltype="{!evalType}" evalSectionUuid="{!evalSecId}" evalSectionType="{!evalSecType}" editEnabled="{!canEdit}" parentID="{!evalId}" currentAssessId="{!currentAssessId}" isBatchInsert="{!isBatchInsert}" isBatchUpsert="{!isBatchUpsert}" onEntrySaveSuccess="clearPanel(); refreshEvalRepeaters();" />
 
 	<apex:outputPanel style="display:none" id="pnlgoalobjReporting" rendered="{!evalType != 'Residential'}">
 		<c:GoalObjReporting id="compGoalObj" type="{!$CurrentPage.parameters.currObjType}" oid="{!$CurrentPage.parameters.currObjId}" sid="{!SAID}" startdate="{!thisEval.Shift_Start_Time__c}" enddate="{!thisEval.Shift_End_Time__c}" />
